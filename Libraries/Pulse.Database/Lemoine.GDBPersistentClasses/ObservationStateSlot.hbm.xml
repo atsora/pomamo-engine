@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ObservationStateSlot" table="ObservationStateSlot">
+    <id name="Id" column="observationstateslotid">
+      <generator class="native">
+        <param name="sequence">observationstateslot_observationstateslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="observationstateslotversion" />
+    <many-to-one name="Machine"
+                 column="machineid" class="Machine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="DateTimeRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="observationstateslotdatetimerange"
+              not-null="true" />
+    <property name="DayRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.DayRangeType, Lemoine.Database"
+              column="observationstateslotdayrange"
+              not-null="true" />
+    <many-to-one name="MachineObservationState"
+                 column="machineobservationstateid"
+                 class="MachineObservationState"
+                 cascade="none" />
+    <many-to-one name="MachineStateTemplate"
+                 column="machinestatetemplateid"
+                 class="MachineStateTemplate"
+                 cascade="none" />
+    <many-to-one name="User"
+                 column="userid"
+                 class="User"
+                 cascade="none" />
+    <many-to-one name="Shift"
+                 column="shiftid"
+                 class="Shift"
+                 cascade="none" />
+    <property name="Production"
+              column="observationstateslotproduction" />
+  </class>
+</hibernate-mapping>

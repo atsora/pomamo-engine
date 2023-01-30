@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="EmailConfig" table="EmailConfig">
+    <id name="Id" column="EmailConfigid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">EmailConfig_EmailConfigid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="emailconfigversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="emailconfigname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="DataType" column="emailconfigdatatype"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="FreeFilter" column="emailconfigfreefilter"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Editor" column="emailconfigeditor"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="MaxLevelPriority" column="maxlevelpriority" not-null="true" />
+    <many-to-one name="EventLevel" column="eventlevelid" class="EventLevel" />
+    <many-to-one name="Machine" column="machineid" class="Machine" />
+    <many-to-one name="MachineFilter" column="machinefilterid" class="MachineFilter" />
+    <property name="To" column="emailconfigto"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Cc" column="emailconfigcc"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Bcc" column="emailconfigbcc"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Active" column="emailconfigactive" not-null="true" />
+    <property name="WeekDays"
+              column="emailconfigweekdays"
+              type="Lemoine.NHibernateTypes.WeekDayType, Lemoine.Database"
+              not-null="true" />
+    <property name="TimePeriod"
+              column="emailconfigtimeperiod"
+              type="Lemoine.NHibernateTypes.TimePeriodOfDayNullIsFullDayType, Lemoine.Database" />
+    <property name="BeginDateTime"
+              column="emailconfigbegindatetime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+    <property name="EndDateTime"
+              column="emailconfigenddatetime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+    <property name="AutoPurge"
+              column="emailconfigautopurge"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

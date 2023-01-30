@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Display" table="display">
+    <id name="Id" column="displayid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">display_displayid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="displayversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Table" column="displaytable"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" not-null="true" />
+    <property name="Pattern" column="displaypattern" />
+    <property name="Variant" column="displayvariant"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Description" column="displaydescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"    />
+  </class>
+</hibernate-mapping>

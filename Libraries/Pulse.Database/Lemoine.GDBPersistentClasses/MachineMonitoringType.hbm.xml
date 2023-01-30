@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineMonitoringType" table="machinemonitoringtype">
+    <id name="Id" column="machinemonitoringtypeid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">machinemonitoringtype_machinemonitoringtype_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinemonitoringtypeversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="machinemonitoringtypename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="machinemonitoringtypetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

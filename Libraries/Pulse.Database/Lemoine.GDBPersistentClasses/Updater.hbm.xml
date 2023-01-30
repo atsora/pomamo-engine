@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Updater" table="Updater" abstract="true" dynamic-update="true">
+    <id name="Id" column="updaterid">
+      <generator class="native">
+        <param name="sequence">updater_updaterid_seq</param>
+      </generator>
+    </id>
+    <discriminator column="updatertypeid" />
+    <!-- Add a version column once the sfkguys view is removed -->
+    <!--version name="Version" column="updaterversion" /-->
+    <bag name="Revisions"
+         lazy="true"
+         cascade="none"
+         order-by="revisiondatetime ASC">
+      <key column="updaterid" />
+      <one-to-many class="Revision" />
+    </bag>
+  </class>
+</hibernate-mapping>

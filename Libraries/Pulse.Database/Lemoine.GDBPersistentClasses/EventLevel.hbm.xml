@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="EventLevel" table="EventLevel">
+    <id name="Id" column="eventlevelid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">eventlevel_eventlevelid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="eventlevelversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="eventlevelname"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="TranslationKey" column="eventleveltranslationkey" />
+    <property name="Priority" column="eventlevelpriority"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

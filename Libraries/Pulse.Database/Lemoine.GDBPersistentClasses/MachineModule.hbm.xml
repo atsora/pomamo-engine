@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineModule" table="machinemodule">
+    <id name="Id" column="MachineModuleid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">machinemodule_machinemoduleid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinemoduleversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="machinemodulename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="machinemodulecode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="machinemoduleexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <many-to-one name="CncAcquisition"
+                 access="nosetter.camelcase-m-underscore"
+                 class="CncAcquisition"
+                 column="cncacquisitionid" />
+    <property name="ConfigPrefix" column="machinemoduleconfigprefix"
+              not-null="true" />
+    <property name="ConfigParameters" column="machinemoduleconfigparameters" />
+    <many-to-one name="MonitoredMachine"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MonitoredMachine"
+                 column="machineid"
+                 not-null="true" />
+    <property name="SequenceVariable" column="machinemodulesequencevariable"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="MilestoneVariable" column="machinemodulemilestonevariable"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="CycleVariable" column="machinemodulecyclevariable"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="StartCycleVariable" column="machinemodulestartcyclevariable"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="SequenceDetectionMethod" column="machinemodulesequencedetectionmethod"
+              not-null="true" />
+    <property name="CycleDetectionMethod" column="machinemodulecycledetectionmethod"
+              not-null="true" />
+    <property name="StartCycleDetectionMethod" column="machinemodulestartcycledetectionmethod"
+              not-null="true" />
+    <property name="DetectionMethodVariable" column="machinemoduledetectionmethodvariable"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="AutoSequenceActivity" column="machinemoduleautosequenceactivity"
+              type="Lemoine.GDBPersistentClasses.EnumMachineModuleAutoSequenceActivity, Pulse.Database"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

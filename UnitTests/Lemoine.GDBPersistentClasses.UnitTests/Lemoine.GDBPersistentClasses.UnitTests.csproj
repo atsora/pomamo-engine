@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <langVersion>preview</langVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\pulselog.log4net" Link="pulselog.log4net">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analysis\Libraries\Lemoine.Analysis\Lemoine.Analysis.csproj" />
+    <ProjectReference Include="..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.NHibernate\Lemoine.NHibernate.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Business\Pulse.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.CycleCountSummary\Lemoine.Plugin.CycleCountSummary.csproj" />
+    <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.DefaultAccumulators\Lemoine.Plugin.DefaultAccumulators.csproj" />
+    <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.IntermediateWorkPieceSummary\Lemoine.Plugin.IntermediateWorkPieceSummary.csproj" />
+    <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.OperationSlotCycles\Lemoine.Plugin.OperationSlotCycles.csproj" />
+    <ProjectReference Include="..\..\Plugins\Analysis\ProductionState\Lemoine.Plugin.RunningMachineModeIsProduction\Lemoine.Plugin.RunningMachineModeIsProduction.csproj" />
+    <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.CyclesWithRealEndFull\Lemoine.Plugin.CyclesWithRealEndFull.csproj" />
+    <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <ProjectReference Include="..\Lemoine.UnitTests\Lemoine.UnitTests.csproj" />
+  </ItemGroup>
+
+</Project>

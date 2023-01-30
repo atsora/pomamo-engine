@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="WorkOrder" table="workorder">
+    <id name="Id" column="workorderid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">workorder_workorderid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="workorderversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="workordername"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="workordercode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="workorderexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <many-to-one name="Customer" column="customerid"
+                 class="Customer"
+                 cascade="none"
+                 not-found="exception" />
+    <property name="DocumentLink" column="workorderdocumentlink"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DeliveryDate" column="workorderdeliverydate" />
+    <many-to-one name="Status" column="workorderstatusid"
+                 class="WorkOrderStatus"
+                 cascade="none"
+                 not-found="exception" />
+    <set name="Projects" table="workorderproject"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IProject, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         lazy="true" cascade="none">
+      <key column="workorderid" />
+      <many-to-many class="Project" column="projectid" />
+    </set>
+  </class>
+</hibernate-mapping>
+
+
+<!-- collection-type="Lemoine.Collections.CustomGenericHashedSetType`2[[Lemoine.Model.IProject, Lemoine.ModelDAO],System.Int32], Lemoine.Collections" -->

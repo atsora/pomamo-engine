@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="OperationSlot" table="OperationSlot">
+    <id name="Id" column="operationslotid">
+      <generator class="native">
+        <param name="sequence">operationslot_operationslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="operationslotversion" />
+    <property name="Display" column="display"
+              update="false" insert="false" />
+    <!-- using the additional generated="always" instruction would be better
+         but it does not use the secondary key yet and patching NHibernate again is necessary for that,
+         else there are many serialization failure.
+         I think this is ok for the moment because the application that creates operationslots is not the same
+         as the application that uses display -->
+    <!-- An alternative solution but that is not better, using formula: -->
+    <!--property name="Display"
+              formula="(select operationslot.display from operationslot where operationslot.operationslotid = operationslotid and operationslot.machineid = machineid)"
+              generated="always" /-->
+    <many-to-one name="Machine"
+                 column="machineid" class="Machine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="DateTimeRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="operationslotdatetimerange"
+              not-null="true" />
+    <property name="DayRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.DayRangeType, Lemoine.Database"
+              column="operationslotdayrange"
+              not-null="true" />
+    <many-to-one name="Operation" column="operationid" class="Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Component" column="componentid" class="Component"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="WorkOrder" column="workorderid" class="WorkOrder"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Line" column="lineid" class="Line"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Task" column="taskid" class="Task"
+                 access="nosetter.camelcase-m-underscore"
+                 not-found="ignore"
+                 cascade="none" />
+    <property name="Day"
+              column="operationslotday"
+              access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Shift" column="shiftid" class="Shift"
+                 access="nosetter.camelcase-m-underscore" /><!-- nosetter required because of the ChangeTracker -->
+    <property name="Duration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationslotduration"
+              optimistic-lock="false" />
+    <property name="RunTime"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationslotruntime" />
+    <property name="TotalCycles" column="operationslottotalcycles"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="AdjustedCycles" column="operationslotadjustedcycles"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="AdjustedQuantity" column="operationslotadjustedquantity"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="PartialCycles" column="operationslotpartialcycles"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="AverageCycleTime"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationslotaveragecycletime" />
+    <property name="AutoTask"
+              column="operationslotautotask" />
+    <property name="ProductionDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationslotproductionduration" />
+  </class>
+</hibernate-mapping>

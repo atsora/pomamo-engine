@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{5E06ED28-7A48-478D-B536-850E09EE10A8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.ModelDAO", "Lemoine.ModelDAO.csproj", "{B09F2576-9FD0-4B32-B609-46310715F780}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Core", "..\Lemoine.Core\Lemoine.Core.csproj", "{25E11219-7BA1-45DD-B4AB-956074341683}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25E11219-7BA1-45DD-B4AB-956074341683} = {5E06ED28-7A48-478D-B536-850E09EE10A8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CFA55031-0079-46DE-9355-104416347B87}
+	EndGlobalSection
+EndGlobal

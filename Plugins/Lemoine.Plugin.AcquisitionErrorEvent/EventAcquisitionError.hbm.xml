@@ -1,0 +1,8 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="Lemoine.Plugin.AcquisitionErrorEvent.EventAcquisitionError, Lemoine.Plugin.AcquisitionErrorEvent"
+            extends="Lemoine.GDBPersistentClasses.EventMachineGeneric, Pulse.Database"
+            discriminator-value="EventAcquisitionError">
+  </subclass>
+</hibernate-mapping>

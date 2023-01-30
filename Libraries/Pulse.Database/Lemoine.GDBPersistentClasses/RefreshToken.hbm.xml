@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="RefreshToken" table="refreshtoken">
+    <id name="Id" column="refreshtokenid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">refreshtoken_refreshtokenid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="refreshtokenversion"
+       access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="User" column="userid"
+                 class="User"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 secondary-key="true"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="Token" column="refreshtoken" not-null="true" />
+    <property name="Creation" column="refreshtokencreation" not-null="true" access="nosetter.camelcase-m-underscore"  type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+    <property name="Expiration" column="refreshtokenexpiration" not-null="true" type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+    <property name="Revoked" column="refreshtokenrevoked" type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+    <property name="OAuth2Name" column="oauth2name" />
+    <property name="OAuth2AuthenticationName" column="oauth2authenticationname" />
+    <property name="OAuth2RefreshToken" column="oauth2refreshtoken" />
+  </class>
+</hibernate-mapping>

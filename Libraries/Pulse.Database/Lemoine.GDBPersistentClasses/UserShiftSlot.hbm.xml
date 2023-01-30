@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="UserShiftSlot" table="usershiftslot">
+    <id name="Id" column="usershiftslotid">
+      <generator class="native">
+        <param name="sequence">usershiftslot_usershiftslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="usershiftslotversion" />
+    <many-to-one name="User"
+                 access="nosetter.camelcase-m-underscore"
+                 column="userid" class="User"
+                 not-null="true" />
+    <many-to-one name="Shift"
+                 column="shiftid" class="Shift"
+                 not-null="true" />
+    <property name="BeginDateTime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeFullType, Lemoine.Database"
+              column="usershiftslotbegin"
+              not-null="true" />
+    <property name="EndDateTime"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
+              column="usershiftslotend" />
+  </class>
+</hibernate-mapping>

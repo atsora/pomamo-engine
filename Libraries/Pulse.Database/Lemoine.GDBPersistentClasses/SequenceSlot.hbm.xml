@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="SequenceSlot" table="sequenceslot">
+    <id name="Id" column="sequenceslotid">
+      <generator class="native">
+        <param name="sequence">sequenceslot_sequenceslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="sequenceslotversion" />
+    <property name="Display" column="display"
+              update="false" insert="false" />
+    <!-- using the additional generated="always" instruction would be better
+         but it does not use the secondary key yet and patching NHibernate again is necessary for that,
+         else there are many serialization failure.
+         I think this is ok for the moment because the application that creates operationslots is not the same
+         as the application that uses display -->
+    <!-- An alternative solution but that is not better, using formula: -->
+    <!--property name="Display"
+              formula="(select operationslot.display from operationslot where operationslot.operationslotid = operationslotid and operationslot.machineid = machineid)"
+              generated="always" /-->
+    <many-to-one name="MachineModule" column="machinemoduleid" class="MachineModule"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 secondary-key="true"
+                 not-null="true" />
+    <many-to-one name="Sequence" column="sequenceid" class="Sequence"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <property name="BeginDateTime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeFullType, Lemoine.Database"
+              column="sequenceslotbegin"
+              not-null="true" />
+    <property name="EndDateTime"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
+              column="sequenceslotend" />
+    <property name="NextBegin"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              column="sequenceslotnextbegin" />
+  </class>
+</hibernate-mapping>

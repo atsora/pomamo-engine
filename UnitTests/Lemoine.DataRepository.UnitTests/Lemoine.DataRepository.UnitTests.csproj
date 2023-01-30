@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="..\..\pulselog.log4net" Link="pulselog.log4net">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="System.Data.Odbc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.DataRepository\Lemoine.DataRepository.csproj" AdditionalProperties="TargetFramework=net6.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="testODBCBuilder-Invalid1.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCBuilder-Invalid2.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCBuilder-Invalid3.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCFactory-Invalid1.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCFactory-Invalid2.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCFactory-Invalid3.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCFactory-Valid.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCSynchroBuilder-Valid.xml" CopyToOutputDirectory="Always" />
+    <None Include="testODBCSynchroFactory-Valid.xml" CopyToOutputDirectory="Always" />
+    <None Include="testSynchroFactodbcconfig-Valid.xml" CopyToOutputDirectory="Always" />
+    <None Include="testSynchroFactodbcconfigUnicode-Valid.xml" CopyToOutputDirectory="Always" />
+    <None Include="testXMLFactory-Valid.xml" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  
+</Project>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="StampingConfigByName" table="stampingconfigbyname">
+    <id name="Id" column="stampingconfigbynameid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">stampingconfigbyname_stampingconfigbynameid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="stampingconfigbynameversion"
+       access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="stampingconfigname" not-null="true" type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="Config" column="stampingconfig" 
+              type="Lemoine.NHibernateTypes.JsonAsT`1[[Lemoine.Model.StampingConfig, Lemoine.ModelDAO]], Lemoine.Database"
+              not-null="true"
+              lazy="true"/>
+  </class>
+</hibernate-mapping>

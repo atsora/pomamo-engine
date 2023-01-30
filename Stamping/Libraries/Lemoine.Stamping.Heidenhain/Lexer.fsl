@@ -1,0 +1,162 @@
+﻿{
+// fsharplint:disable ParameterNames PublicValuesNames
+module Lexer
+
+open FSharp.Text.Lexing
+open Parser
+open System
+open Lemoine.Core.Log
+
+let log = LogManager.GetLogger("Lemoine.Stamping.Heidenhain.Lexer")
+
+let lexeme = LexBuffer<_>.LexemeString
+
+let parseDouble x =
+  try
+    Double.Parse(x, System.Globalization.CultureInfo.InvariantCulture)
+  with
+  | ex ->
+    begin
+      log.Error($"parseDouble: {x} is not a double", ex)
+      reraise()
+    end
+
+let parseInt32 x = 
+  try
+    Int32.Parse(x)
+  with
+  | ex ->
+    begin
+      log.Error($"parseInt32: {x} is not an Int32", ex)
+      reraise()
+    end
+}
+
+let axisname = ['U'-'Z' 'A'-'C' 'U'-'W']
+let iaxisname = "I" axisname
+let char = ['a'-'z' 'A'-'Z']
+let digit = ['0'-'9']
+let natural = digit+
+let frac = '.' digit*
+let number1 = ['-' '+']? digit+ frac?
+let number2 = ['-' '+']? frac
+let whitespace = [' ' '\t']
+let newline = "\r\n" | '\n' | '\r'
+let tolineend = [^ '\n' '\r']+
+let word = [^ '\n' '\r' ' ' '\t']+
+let words = (word ' '*)+
+let starcomment1 = '*' ' '* 'Q' char char tolineend
+let starcomment2 = '*' ' '* [^ 'Q'] tolineend
+let posx = "POS" digit
+
+rule main = parse
+| whitespace { main lexbuf }
+| newline { log.Trace $"main.newline"; NEWLINE (lexbuf.StartPos.AbsoluteOffset) }
+| natural { begin if log.IsTraceEnabled then log.Trace $"natural={lexeme lexbuf}" end; lexeme lexbuf |> parseInt32 |> NATURAL }
+| number1 | number2 { lexeme lexbuf |> parseDouble |> NUMBER }
+| '"' { read_quoted_string "" lexbuf }
+| starcomment1 | starcomment2 { COMMENT (lexeme lexbuf) }
+| "BEGIN PGM" | "END PGM" { begin if log.IsTraceEnabled then log.Trace $"PgmToken={lexeme lexbuf}" end; multipleargs (lexeme lexbuf) [] lexbuf }
+| "BLK FORM " { nargs "BLK FORM" [] 2 lexbuf }
+| "GLOBAL DEF" | "CYCL DEF" { multipleargs (lexeme lexbuf) [] lexbuf }
+| "PATTERN DEF" { PATTERNDEF }
+| posx { POSX (lexeme lexbuf) }
+| "CYCL CALL" { lastarg (lexeme lexbuf) [] lexbuf }
+| "LBL" { LBL }
+| "CALL LBL" { CALLLBL }
+| "REP" { REP }
+| "CALL PGM" { lastarg (lexeme lexbuf) [] lexbuf }
+| "TOOL DEF" { multipleargs (lexeme lexbuf) [] lexbuf }
+| "TOOL CALL " { TOOLCALL }
+| "FUNCTION MODE TURN" { raise (NotImplementedException()) }
+| "FUNCTION COUNT" { raise (NotImplementedException()) }
+| "FUNCTION TURNDATA" { raise (NotImplementedException()) }
+| "FUNCTION TCPM" { multipleargs (lexeme lexbuf) [] lexbuf }
+| "FUNCTION RESET" { lastarg (lexeme lexbuf) [] lexbuf }
+| "FUNCTION " { raise (NotImplementedException()) }
+| "PLANE " { multipleargs "PLANE" [] lexbuf }
+| "SQL " { raise (NotImplementedException()) }
+| "TCH " { multipleargs "TCH" [] lexbuf }
+| "ERROR" { multipleargs "ERROR" [] lexbuf }
+| "FN 14:" whitespace* "ERROR" | "FN 16:" whitespace* "F-PRINT" | "FN 17:" whitespace* "SYSWRITE" | "FN 18:" whitespace* "SYSREAD" | "FN 19:" whitespace* "PLC" | "FN 20:" whitespace* "WAIT FOR" | "FN 26:" whitespace* "TABOPEN" | "FN 27:" whitespace* "TABWRITE" | "FN 28:" whitespace* "TABREAD" | "FN 29:" whitespace* "PLC" | "FN" whitespace* "37: EXPORT" | "FN 38:" whitespace* "SEND" { multipleargs (lexeme lexbuf) [] lexbuf }
+| "FN" { FN }
+| ":" { COLON }
+| "R+" | "R-" | "R0" | "RR" | "RL" { RADIUSCOMPENSATION (lexeme lexbuf) }
+| "FMAX" { FMAX }
+| "FAUTO" { FAUTO }
+| "FU" | "FZ" { FUNIT (lexeme lexbuf) }
+| "F" { FCODE }
+| "EQU" | "NE" | "GT" | "GE" | "LT" | "LE" { COMPARISON (lexeme lexbuf) }
+| "+" | "-" { SIGN (lexeme lexbuf) }
+| "**" | "*" | "/" | "DIV" | "^" | "%" | "||" { OP (lexeme lexbuf) }
+| "SQRT" | "SQ" | "SIN" | "COS" | "TAN" | "ASIN" | "ACOS" | "ATAN" | "LOG" | "EXP" | "NEG" | "INT" | "ABS" | "FRAC" | "SGN" | "LEN" | "ANG" | "CDATA" | "STRCOMP" | "CFGREAD" { FUNC (lexeme lexbuf) }
+| "TOCHAR" | "SUBSTR" | "TONUMB" | "STRLEN" { raise (NotImplementedException()) }
+| "SET UNDEFINED" { SETUNDEFINED }
+| "IS DEFINED" { ISDEFINED }
+| "IS UNDEFINED" { ISUNDEFINED }
+| "IF" { IF }
+| "GOTO" { GOTO }
+| "STOP" { STOP }
+| "PI" { CONST (lexeme lexbuf) }
+| "LP " { LP }
+| "LN" { LN }
+| "L " { LINE }
+| "APPR" { APPR }
+| "DEP" { DEP }
+| "LEN" { LEN }
+| "R" { R }
+| "CCA" { CCA }
+| "LT" | "PLT" | "LN" | "PLN" | "PCT" | "LCT" | "PLCT" { APPROACHSTRATEGY (lexeme lexbuf) }
+| "CHF" { CHF }
+| "CC" { CC }
+| "CP" { CP }
+| "CTP" { CTP }
+| "CT" { CT }
+| "C" { C }
+| "DR+" { DRPLUS (lexeme lexbuf) }
+| "DR-" { DRMINUS (lexeme lexbuf) }
+| "QS" { STRVARPREFIX (lexeme lexbuf) }
+| "QL" | "QR" { VARPREFIX (lexeme lexbuf) }
+| "Q" { QCODE }
+| "DECLARE STRING" { DECLARESTRING }
+| iaxisname | axisname | "NX" | "NY" | "NZ" | "TX" | "TY" | "TZ" { AXIS (lexeme lexbuf) }
+| "M103" | "M118" | "M140" | "M94" | "M197" { mcommand (lexeme lexbuf) [] lexbuf }
+| "M" { MCODE }
+| "S" { SCODE }
+| "DL" | "DR2" | "DR" { TOOLOVERSIZE (lexeme lexbuf) }
+| "PR" | "PA" | "IPA" { POLAR (lexeme lexbuf) }
+| ";" { comment lexbuf }
+| "(" { LBRACKET }
+| ")" { RBRACKET }
+| "=" { EQSYMB }
+| eof { log.Trace "eof"; EOF (lexbuf.StartPos.AbsoluteOffset) }
+| _ { failwith (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
+and comment = parse
+| tolineend { begin if log.IsTraceEnabled then log.Trace $"comment.tolineend={lexeme lexbuf}" end; COMMENT (lexeme lexbuf) }
+| newline { log.Trace $"comment.newline"; NEWLINE (lexbuf.StartPos.AbsoluteOffset) }
+| eof { EOF (lexbuf.StartPos.AbsoluteOffset) }
+| _ { failwith (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
+and lastarg command args = parse
+| whitespace { begin if log.IsTraceEnabled then log.Trace $"lastarg.witespace={lexeme lexbuf}" end; lastarg command args lexbuf }
+| tolineend { begin if log.IsTraceEnabled then log.Trace $"lastarg.tolineend={lexeme lexbuf} start={lexbuf.StartPos.AbsoluteOffset} end={lexbuf.EndPos.AbsoluteOffset} nexline={lexbuf.EndPos.NextLine.AbsoluteOffset}" end; let pos = lexbuf.EndPos.AbsoluteOffset in lexbuf.EndPos <- lexbuf.EndPos.NextLine; COMMAND (command, args @ [lexeme lexbuf], pos) }
+| newline { begin if log.IsTraceEnabled then log.Trace $"lastarg.newline={lexeme lexbuf}" end; COMMAND (command, args @ [lexeme lexbuf], lexbuf.StartPos.AbsoluteOffset) }
+| _ { failwith (sprintf "SyntaxError: Unexpected char in lastarg: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
+and nargs command args n = parse
+| word { begin if log.IsTraceEnabled then log.Trace $"nargs.word={lexeme lexbuf} n={n}" end; if n <= 2 then lastarg command (args @ [lexeme lexbuf]) lexbuf else nargs command (args @ [lexeme lexbuf]) (n-1) lexbuf }
+| whitespace { nargs command args n lexbuf }
+| _ { failwith (sprintf "SyntaxError: Unexpected char in nargs: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
+and multipleargs command args = parse
+| word { begin if log.IsTraceEnabled then log.Trace $"multipleargs.word={lexeme lexbuf}" end; multipleargs command (args @ [lexeme lexbuf]) lexbuf }
+| whitespace { multipleargs command args lexbuf }
+| newline { log.Trace "multipleargs.newline"; COMMAND (command, args, lexbuf.StartPos.AbsoluteOffset) }
+| eof { log.Trace "multipleargs.eof"; let pos = lexbuf.StartPos.AbsoluteOffset in COMMAND (command, args, pos) }
+| _ { failwith (sprintf "SyntaxError: Unexpected char in multipleargs: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
+and mcommand mcode args = parse
+| word { begin if log.IsTraceEnabled then log.Trace $"mcommand.word={lexeme lexbuf}" end; mcommand mcode (args @ [lexeme lexbuf]) lexbuf }
+| whitespace { mcommand mcode args lexbuf }
+| newline | eof { log.Trace "mcommand.newline"; MCOMMAND (mcode, args, lexbuf.StartPos.AbsoluteOffset) }
+| _ { failwith (sprintf "SyntaxError: Unexpected char in mcommand: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
+and read_quoted_string s = parse
+| '"' { QUOTED (s) }
+| [^ '"']+ { read_quoted_string (s+(lexeme lexbuf)) lexbuf }
+| eof { failwith (sprintf "SyntaxError: string %s is not terminated" s) }

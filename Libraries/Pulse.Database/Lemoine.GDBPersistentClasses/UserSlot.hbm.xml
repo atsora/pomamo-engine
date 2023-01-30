@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="UserSlot" table="userslot">
+    <id name="Id" column="userslotid">
+      <generator class="native">
+        <param name="sequence">userslot_userslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="userslotversion" />
+    <many-to-one name="User"
+                 access="nosetter.camelcase-m-underscore"
+                 column="userid" class="User"
+                 not-null="true" />
+    <many-to-one name="Shift"
+                 column="shiftid" class="Shift" />
+    <property name="BeginDateTime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeFullType, Lemoine.Database"
+              column="userslotbegindatetime"
+              not-null="true" />
+    <property name="BeginDay"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.LowerBoundDayType, Lemoine.Database"
+              column="userslotbeginday"
+              not-null="true" />
+    <property name="EndDateTime"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
+              column="userslotenddatetime" />
+    <property name="EndDay"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UpperBoundDayType, Lemoine.Database"
+              column="userslotendday" />
+  </class>
+</hibernate-mapping>

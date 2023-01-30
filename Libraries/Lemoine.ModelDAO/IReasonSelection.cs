@@ -1,0 +1,123 @@
+// Copyright (C) 2009-2023 Lemoine Automation Technologies
+//
+// SPDX-License-Identifier: Apache-2.0
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Lemoine.Model
+{
+  /// <summary>
+  /// Model of table ReasonSelection
+  /// 
+  /// This table lists all the possible reasons
+  /// for a given Machine Mode and Machine Observation State.
+  /// 
+  /// A specific column allows to list the reasons
+  /// that can be effectively selected by the user. 
+  /// </summary>
+  public interface IReasonSelection : IDataWithVersion
+  {
+    // Note: IReasonSelection does not inherit from IVersionable
+    //       else the corresponding properties can't be used in a DataGridView binding
+
+    /// <summary>
+    /// ID
+    /// </summary>
+    int Id { get; }
+
+    /// <summary>
+    /// Reference to the Machine Mode (not null)
+    /// </summary>
+    IMachineMode MachineMode { get; }
+
+    /// <summary>
+    /// Reference to the Machine Observation State (not null)
+    /// </summary>
+    IMachineObservationState MachineObservationState { get; }
+
+    /// <summary>
+    /// Reference to the Reason (not null)
+    /// </summary>
+    IReason Reason { get; set; }
+
+    /// <summary>
+    /// Return a recommended reason score
+    /// </summary>
+    double ReasonScore { get; }
+
+    /// <summary>
+    /// Can this reason be selected by the user ? 
+    /// </summary>
+    bool Selectable { get; set; }
+
+    /// <summary>
+    /// If TRUE, when this reason is selected, the operator must also enter a free detailed entry
+    /// </summary>
+    bool DetailsRequired { get; set; }
+
+    /// <summary>
+    /// Associated MachineFilter
+    /// 
+    /// If null, all machines apply
+    /// </summary>
+    IMachineFilter MachineFilter { get; set; }
+  }
+
+  /// <summary>
+  /// Extensions to IReasonSelection
+  /// </summary>
+  public static class ReasonSelectionExtension
+  {
+    /// <summary>
+    /// Group reason selections with the same reason
+    /// </summary>
+    /// <param name="reasonSelections"></param>
+    /// <returns></returns>
+    public static IEnumerable<IReasonSelection> GroupSameReason (this IEnumerable<IReasonSelection> reasonSelections)
+    {
+      return reasonSelections
+        .GroupBy (s => s.Reason.Id)
+        .Select (g => g.OrderByDescending (a => a.ReasonScore).First ());
+    }
+  }
+
+  /// <summary>
+  /// Equality comparer that considers:
+  /// <item>the reason</item>
+  /// <item>the reason score</item>
+  /// <item>the details required property</item>
+  /// </summary>
+  public class ReasonSelectionReasonEqualityComparer
+    : IEqualityComparer<IReasonSelection>
+  {
+    /// <summary>
+    /// <see cref="IEqualityComparer{T}"/>
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public bool Equals (IReasonSelection x, IReasonSelection y)
+    {
+      return (x.Reason.Id == y.Reason.Id) && (x.ReasonScore == y.ReasonScore)
+        && (x.DetailsRequired == y.DetailsRequired);
+    }
+
+    /// <summary>
+    /// <see cref="IEqualityComparer{T}"/>
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public int GetHashCode (IReasonSelection obj)
+    {
+      int hashCode = 0;
+      unchecked {
+        hashCode += 1000000007 * obj.Reason.Id;
+        hashCode += 1000000009 * obj.ReasonScore.GetHashCode ();
+        hashCode += 1000000011 * obj.DetailsRequired.GetHashCode ();
+      }
+      return hashCode;
+    }
+  }
+}

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="BetweenCycles" table="betweencycles">
+    <id name="Id" column="betweencyclesid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">betweencycles_betweencyclesid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="betweencyclesversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid"
+                 class="Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 secondary-key="true"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="Begin"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="betweencyclesbegin"
+              not-null="true" />
+    <property name="End"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="betweencyclesend"
+              not-null="true" />
+    <many-to-one name="PreviousCycle"
+                 column="previouscycleid"
+                 class="OperationCycle"
+                 access="nosetter.camelcase-m-underscore"
+                 unique="true"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="NextCycle"
+                 column="nextcycleid"
+                 class="OperationCycle"
+                 access="nosetter.camelcase-m-underscore"
+                 unique="true"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="OffsetDuration"
+              access="nosetter.camelcase-m-underscore"
+              column="betweencyclesoffsetduration" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineModification" table="machinemodification">
+    <id name="Id" column="modificationid">
+      <generator class="native">
+        <param name="sequence">modification_modificationid_seq</param>
+      </generator>
+    </id>
+    <discriminator column="modificationreferencedtable" type="string" />
+    <many-to-one name="ModificationMachine"
+                 secondary-key="true"
+                 column="machinemodificationmachineid"
+                 class="Machine"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="Revision"
+                 access="nosetter.camelcase-m-underscore"
+                 column="revisionid"
+                 class="Revision" not-found="exception" />
+    <many-to-one name="ParentGlobal"
+                 access="nosetter.camelcase-m-underscore"
+                 column="parentglobalmodificationid"
+                 class="GlobalModification" not-found="exception" />
+    <many-to-one name="ParentMachine"
+                 access="nosetter.camelcase-m-underscore"
+                 column="parentmachinemodificationid"
+                 class="MachineModification" not-found="exception" />
+    <bag name="SubGlobalModifications"
+         access="nosetter.camelcase-m-underscore"
+         inverse="true" lazy="true"
+         order-by="modificationpriority DESC, modificationid ASC"
+         cascade="none">
+      <key column="parentglobalmodificationid" />
+      <one-to-many class="GlobalModification" />
+    </bag>
+    <bag name="SubMachineModifications"
+         access="nosetter.camelcase-m-underscore"
+         inverse="true" lazy="true"
+         order-by="modificationpriority DESC, modificationid ASC"
+         cascade="none">
+      <key column="parentmachinemodificationid" />
+      <one-to-many class="MachineModification" />
+    </bag>
+    <property name="Priority"
+              column="modificationpriority"
+              not-null="true" />
+    <property name="DateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeMsType, Lemoine.Database"
+              column="modificationdatetime"
+              not-null="true" />
+    <property name="Auto"
+              column="modificationauto"
+              not-null="true" />
+    <join table="machinemodificationstatus"
+          fetch="join"
+          optional="true">
+      <key column="modificationid" />
+      <many-to-one name="ModificationStatusMachine"
+                   secondary-key="true"
+                   column="machinemodificationstatusmachineid"
+                   class="Machine"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="StatusPriority"
+                column="modificationstatuspriority"
+                access="nosetter.camelcase-m-underscore"
+                not-null="true" />
+      <property name="AnalysisStatus" column="analysisstatusid"
+                access="nosetter.camelcase-m-underscore"
+                not-null="true" />
+      <property name="NextAnalysisStatus" column="nextanalysisstatusid"
+                access="nosetter.camelcase-m-underscore" />
+      <property name="AnalysisAppliedDateTime"
+                type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+                column="analysisapplieddatetime" />
+      <property name="AnalysisBegin"
+                type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+                column="analysisbegin" />
+      <property name="AnalysisEnd"
+                type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+                column="analysisend" />
+      <property name="AnalysisIterations"
+                column="analysisiterations" />
+      <property name="AnalysisTotalDuration"
+                type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+                column="analysistotalduration" />
+      <property name="AnalysisLastDuration"
+                type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+                column="analysislastduration" />
+      <property name="AnalysisCompletionOrder"
+                column="analysiscompletionorder" />
+      <property name="AnalysisStepSpan"
+                type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+                column="analysisstepspan" />
+      <property name="AnalysisSubGlobalModifications"
+                access="nosetter.camelcase-m-underscore"
+                column="analysissubglobalmodifications"
+                not-null="true" />
+      <property name="AnalysisSubMachineModifications"
+                access="nosetter.camelcase-m-underscore"
+                column="analysissubmachinemodifications"
+                not-null="true" />
+    </join>
+  </class>
+  <query name="MachineModificationGetLastCompletionOrder">
+    <![CDATA[
+select max (AnalysisCompletionOrder)
+from MachineModification m
+where m.AnalysisCompletionOrder is not null
+    ]]>
+  </query>
+</hibernate-mapping>

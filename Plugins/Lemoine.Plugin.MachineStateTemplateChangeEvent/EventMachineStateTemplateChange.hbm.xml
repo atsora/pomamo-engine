@@ -1,0 +1,8 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Lemoine.Database">
+  <subclass name="Lemoine.Plugin.MachineStateTemplateChangeEvent.EventMachineStateTemplateChange, Lemoine.Plugin.MachineStateTemplateChangeEvent"
+            extends="Lemoine.GDBPersistentClasses.EventMachineGeneric, Pulse.Database"
+            discriminator-value="EventMachineStateTemplateChange">
+  </subclass>
+</hibernate-mapping>

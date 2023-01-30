@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29230.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lem_FileRepoClient.Console", "Lem_FileRepoClient.Console.csproj", "{B9553007-5010-49C3-AF19-E6982FC68526}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{7D92C55C-E37A-4A6E-AEF1-6CBA6A2000EE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Core", "..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj", "{25E11219-7BA1-45DD-B4AB-956074341683}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.FileRepository.Corba", "..\..\Libraries\Lemoine.FileRepository.Corba\Lemoine.FileRepository.Corba.csproj", "{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.CorbaHelper", "..\..\Libraries\Lemoine.CorbaHelper\Lemoine.CorbaHelper.csproj", "{FD422794-9212-4CE2-856F-8E7E2EADD838}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Debug|Any CPU.Build.0 = Debug|x86
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Debug|x86.ActiveCfg = Debug|x86
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Debug|x86.Build.0 = Debug|x86
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Release|Any CPU.ActiveCfg = Release|x86
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Release|Any CPU.Build.0 = Release|x86
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Release|x86.ActiveCfg = Release|x86
+		{B9553007-5010-49C3-AF19-E6982FC68526}.Release|x86.Build.0 = Release|x86
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|x86.Build.0 = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|x86.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|x86.Build.0 = Release|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Debug|x86.Build.0 = Debug|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Release|x86.ActiveCfg = Release|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Release|x86.Build.0 = Release|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25E11219-7BA1-45DD-B4AB-956074341683} = {7D92C55C-E37A-4A6E-AEF1-6CBA6A2000EE}
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1} = {7D92C55C-E37A-4A6E-AEF1-6CBA6A2000EE}
+		{FD422794-9212-4CE2-856F-8E7E2EADD838} = {7D92C55C-E37A-4A6E-AEF1-6CBA6A2000EE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {17FF2DB4-4584-4C5D-B692-EE416662F71B}
+	EndGlobalSection
+EndGlobal

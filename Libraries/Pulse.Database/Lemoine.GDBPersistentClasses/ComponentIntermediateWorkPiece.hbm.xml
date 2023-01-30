@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ComponentIntermediateWorkPiece" table="componentintermediateworkpiece">
+    <id name="Id" column="componentintermediateworkpieceid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">componentintermediateworkpiec_componentintermediateworkpiec_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="componentintermediateworkpieceversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Component"
+                 class="Component"
+                 column="componentid"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="IntermediateWorkPiece"
+                 class="IntermediateWorkPiece"
+                 column="intermediateworkpieceid"
+                 not-null="true"
+                 cascade="none" />
+    <property name="Code" column="intermediateworkpiececodeforcomponent"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="Order" column="intermediateworkpieceorderforcomponent" />
+  </class>
+</hibernate-mapping>

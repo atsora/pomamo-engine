@@ -1,0 +1,8 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Lemoine.Database">
+  <subclass name="Lemoine.Plugin.AcquisitionDelayEvent.EventAcquisitionDelay, Lemoine.Plugin.AcquisitionDelayEvent"
+            extends="Lemoine.GDBPersistentClasses.EventMachineGeneric, Pulse.Database"
+            discriminator-value="EventAcquisitionDelay">
+  </subclass>
+</hibernate-mapping>

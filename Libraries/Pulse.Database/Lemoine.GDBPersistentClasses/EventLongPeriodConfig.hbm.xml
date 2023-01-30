@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="EventLongPeriodConfig" table="EventLongPeriodConfig">
+    <id name="Id" column="eventlongperiodconfigid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">eventlongperiodconfig_eventlongperiodconfigid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="eventlongperiodconfigversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MonitoredMachine"
+                 column="machineid" class="MonitoredMachine" />
+    <many-to-one name="MachineMode"
+                 column="machinemodeid" class="MachineMode" />
+    <many-to-one name="MachineObservationState"
+                 column="machineobservationstateid" class="MachineObservationState" />
+    <property name="TriggerDuration" column="eventtriggerduration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              not-null="true" />
+    <many-to-one name="Level"
+                 column="eventlevelid" class="EventLevel"
+                 not-null="true" />
+  </class>
+  <query name="EventLongPeriodConfigLevels">
+    <![CDATA[
+from EventLevel el
+where el.Id in (select elpc.Level.Id from EventLongPeriodConfig as elpc)
+order by el.Priority, el.Id
+    ]]>
+  </query>
+</hibernate-mapping>

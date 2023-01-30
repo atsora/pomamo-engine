@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:MTConnectStreams version="0.2"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    xsi:schemaLocation="urn:mtconnect.com:MTConnect:0.1
+					http://localhost:3000/public/schemas/mtc.xsd"
+		    xmlns:m="urn:mtconnect.com:MTConnect:0.2">
+  <Header instanceId="1199256590" nextSequence="2858"
+	  creationDate="2007-12-06" sender="MTConnect" bufferSize="10000">
+  </Header>
+  <Streams>
+    <DeviceStream name="mill" uuid="11322343434">
+      <ComponentStream path="//Device[@name='mill']" name="control"
+		       component="Controller">
+	<Events>
+	  <m:Program timestamp="2007-12-06T02:20:51.938"
+		     sequence="11">c:\pulse_build\UnitTest\UnitTests-in\ccisofile.iso</m:Program>
+	  <m:Execution timestamp="2007-12-06T02:20:51.938"
+		       sequence="15">INTERRUPTED</m:Execution>
+	  <m:ControllerMode timestamp="2007-12-06T02:20:51.938"
+			    sequence="16">AUTOMATIC</m:ControllerMode>
+	</Events>
+      </ComponentStream>
+      <ComponentStream path="//Device[@name='mill']" name="axes"
+		       component="Axes">
+	<Samples>
+	  <m:PathFeedrate timestamp="2007-12-06T02:20:51.938"
+			  sequence="22"
+			  subType="ACTUAL"
+			  name="PathFeedrate">0</m:PathFeedrate>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream path="//Device[@name='mill']" name="S"
+		       component="Spindle">
+	<Samples>
+	  <m:SpindleSpeed timestamp="2007-12-06T02:20:51.938"
+			  sequence="23"
+			  subType="ACTUAL"
+			  name="SpindleSpeed">0</m:SpindleSpeed>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream path="//Device[@name='mill']" name="A"
+		       component="Rotary">
+	<Samples>
+	  <m:AxisFeedrate timestamp="2007-12-06T02:20:51.938"
+			  sequence="24"
+			  subType="ACTUAL"
+			  name="Afrt">0</m:AxisFeedrate>
+	</Samples>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</m:MTConnectStreams>

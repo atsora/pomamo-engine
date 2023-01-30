@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineOperationType" table="MachineOperationType">
+    <composite-id>
+      <key-many-to-one name="Machine"
+                       class="Machine"
+                       access="nosetter.camelcase-m-underscore"
+                       column="machineid" />
+      <key-many-to-one name="OperationType"
+                       class="OperationType"
+                       access="nosetter.camelcase-m-underscore"
+                       column="operationtypeid" />
+    </composite-id>
+    <property name="Preference" column="machineoperationtypepreference"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

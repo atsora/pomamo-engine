@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="MachineObservationStateAssociation"
+            extends="MachineModification, Pulse.Database"
+            discriminator-value="MachineObservationStateAssociation">
+    <join table="MachineObservationStateAssociation"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine" column="machineid" class="Machine"
+                   cascade="none"
+                   not-null="true"
+                   secondary-key="true"
+                   not-found="exception" />
+      <many-to-one name="MachineObservationState"
+                   column="machineobservationstateid"
+                   class="MachineObservationState"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <many-to-one name="MachineStateTemplate"
+                   column="machinestatetemplateid"
+                   class="MachineStateTemplate"
+                   cascade="none"
+                   not-null="false"
+                   not-found="exception" />
+      <many-to-one name="User"
+                   column="userid"
+                   class="User"
+                   cascade="none"
+                   not-found="exception" />
+      <many-to-one name="Shift"
+                   column="shiftid"
+                   class="Shift"
+                   cascade="none"
+                   not-found="exception" />
+      <property name="Begin"
+                type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeSecondsType, Lemoine.Database"
+                column="machineobservationstateassociationbegin" />
+      <property name="End"
+                type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType, Lemoine.Database"
+                column="machineobservationstateassociationend" />
+      <property name="Option"
+                column="machineobservationstateassociationoption" />
+    </join>
+  </subclass>
+</hibernate-mapping>

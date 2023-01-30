@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Platforms>x64</Platforms>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+    
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.ServiceTools\Lemoine.ServiceTools.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(ProjectName).dll.options" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\ApplicationTemplate.exe.log4net" Link="$(ProjectName).dll.log4net" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+ 
+</Project>

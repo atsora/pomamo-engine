@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.Plugin.CycleDurationSummary"
+  assembly="Lemoine.Plugin.CycleDurationSummary">
+  <class name="CycleDurationSummary" table="CycleDurationSummary">
+    <id name="Id" column="CycleDurationSummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">CycleDurationSummary_CycleDurationSummaryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="CycleDurationSummaryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid"
+                 class="Lemoine.GDBPersistentClasses.Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="Day" column="cycledurationsummaryday"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <many-to-one name="WorkOrder"
+                 column="workorderid"
+                 class="Lemoine.GDBPersistentClasses.WorkOrder"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="false" />
+    <many-to-one name="Line"
+                 column="lineid"
+                 class="Lemoine.GDBPersistentClasses.Line"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="false" />
+    <many-to-one name="Task"
+                 column="taskid"
+                 class="Lemoine.GDBPersistentClasses.Task"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="false" />
+    <many-to-one name="Component"
+                 column="componentid"
+                 class="Lemoine.GDBPersistentClasses.Component"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="false" />
+    <many-to-one name="Operation"
+                 column="operationid"
+                 class="Lemoine.GDBPersistentClasses.Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="false" />
+    <property name="Offset"
+              column="cycledurationsummaryoffset"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Number"
+              column="cycledurationsummarynumber"
+              not-null="true" />
+    <many-to-one name="Shift"
+                 column="shiftid"
+                 class="Lemoine.GDBPersistentClasses.Shift"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="false" />
+    <property name="Partial"
+              column="cycledurationsummarypartial"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DataGridModifier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RegionArray />
+  <ModificationArray>
+    <Modification xsi:type="PruneEvent" />
+    <Modification xsi:type="DeleteColumnEvent" column="7" />
+    <Modification xsi:type="ShiftColumnEvent" column="7" direction="true" />
+    <Modification xsi:type="DeleteColumnEvent" column="4" />
+    <Modification xsi:type="DeleteRowEvent" row="0" />
+    <Modification xsi:type="DeleteRowEvent" row="0" />
+    <Modification xsi:type="DeleteRowEvent" row="0" />
+    <Modification xsi:type="DeleteRowEvent" row="0" />
+    <Modification xsi:type="DeleteRowEvent" row="0" />
+    <Modification xsi:type="DeleteRowEvent" row="70" />
+    <Modification xsi:type="DeleteRowEvent" row="70" />
+    <Modification xsi:type="DeleteRowEvent" row="70" />
+    <Modification xsi:type="PruneEvent" />
+    <Modification xsi:type="InsertEvent" column="4" row="0" value="Selection" />
+    <Modification xsi:type="DeleteColumnEvent" column="3" />
+    <Modification xsi:type="DeleteRowEvent" row="15" />
+    <Modification xsi:type="DeleteRowEvent" row="17" />
+    <Modification xsi:type="DeleteRowEvent" row="18" />
+    <Modification xsi:type="DeleteRowEvent" row="21" />
+  </ModificationArray>
+</DataGridModifier>

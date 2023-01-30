@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ProductionRateSummary"
+         table="productionratesummary">
+    <id name="Id" column="productionratesummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">productionratesummary_productionratesummaryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="productionratesummaryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid"
+                 class="Machine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="Day"
+              access="nosetter.camelcase-m-underscore"
+              column="day"
+              not-null="true" />
+    <many-to-one name="Shift"
+                 access="nosetter.camelcase-m-underscore"
+                 column="shiftid"
+                 class="Shift" />
+    <many-to-one name="MachineObservationState"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machineobservationstateid"
+                 class="MachineObservationState"
+                 not-null="true" />
+    <property name="Duration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="productionratesummaryduration"
+              not-null="true" />
+    <property name="ProductionRate"
+              access="nosetter.camelcase-m-underscore"
+              column="productionratesummaryrate"
+              not-null="true"/>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ReasonSummary"
+         table="reasonsummary">
+    <id name="Id" column="reasonsummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">reasonsummary_reasonsummaryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="reasonsummaryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid"
+                 class="Machine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="Day"
+              access="nosetter.camelcase-m-underscore"
+              column="reasonsummaryday"
+              not-null="true" />
+    <many-to-one name="Shift"
+                 access="nosetter.camelcase-m-underscore"
+                 column="shiftid"
+                 class="Shift" />
+    <many-to-one name="MachineObservationState"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machineobservationstateid"
+                 class="MachineObservationState"
+                 not-null="true" />
+    <many-to-one name="Reason"
+                 access="nosetter.camelcase-m-underscore"
+                 column="reasonid"
+                 class="Reason"
+                 not-null="true" />
+    <property name="Time"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="reasonsummarytime"
+              not-null="true" />
+    <property name="Number"
+              column="reasonsummarynumber"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

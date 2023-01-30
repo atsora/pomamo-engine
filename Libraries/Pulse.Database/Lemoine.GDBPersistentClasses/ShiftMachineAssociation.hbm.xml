@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="ShiftMachineAssociation"
+            extends="MachineModification, Pulse.Database"
+            discriminator-value="ShiftMachineAssociation">
+    <join table="shiftmachineassociation"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine" column="machineid"
+                   class="Machine"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-null="true"
+                   secondary-key="true"
+                   not-found="exception" />
+      <property name="Day"
+                access="nosetter.camelcase-m-underscore"
+                column="day" />
+      <many-to-one name="Shift"
+                   column="shiftid"
+                   class="Shift"
+                   access="nosetter.camelcase-m-underscore"
+                   not-found="exception" />
+      <property name="Begin"
+                type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeSecondsType, Lemoine.Database"
+                access="nosetter.camelcase-m-underscore"
+                column="shiftmachineassociationbegin"
+                not-null="true" />
+      <property name="End"
+                type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType, Lemoine.Database"
+                column="shiftmachineassociationend" />
+    </join>
+  </subclass>
+</hibernate-mapping>

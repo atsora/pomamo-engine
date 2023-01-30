@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="FieldLegend" table="FieldLegend">
+    <id name="Id" column="fieldlegendid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">fieldlegend_fieldlegendid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="fieldlegendversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Field" column="fieldid" class="Field"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="true" />
+    <property name="StringValue" column="fieldlegendstringvalue"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="MinValue" column="fieldlegendminvalue" />
+    <property name="MaxValue" column="fieldlegendmaxvalue" />
+    <property name="Text" column="fieldlegendtext" not-null="true" />
+    <property name="Color" column="fieldlegendcolor"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

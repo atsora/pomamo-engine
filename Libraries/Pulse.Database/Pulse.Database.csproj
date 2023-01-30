@@ -1,0 +1,825 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;netcoreapp3.1;net6.0</TargetFrameworks>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>16.3.1.0</AssemblyVersion>
+    <NoWarn>0649</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Lemoine.GDBPersistentClasses\StampingConfigByName.hbm.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Caches.CoreMemoryCache">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate.Caches\NHibernate.Caches.CoreMemoryCache\netstandard2.0\NHibernate.Caches.CoreMemoryCache.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr3.Runtime" />
+    <PackageReference Include="Iesi.Collections" />
+    <!-- Implicit dependency, required. See: #175243612 -->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+    <!-- Not required any more with .NET Standard 2.1 or .NET Core 3.1, but required in .NET Standard 2.0-->
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+    <PackageReference Include="MigratorLAT" />
+    <PackageReference Include="MigratorLAT.Framework" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Remotion.Linq" />
+    <PackageReference Include="Remotion.Linq.EagerFetching" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.Xml.XmlSerializer" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\Lemoine.NHibernate\Lemoine.NHibernate.csproj" />
+    <ProjectReference Include="..\Pulse.Business\Pulse.Business.csproj" />
+    <ProjectReference Include="..\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Lemoine.GDBPersistentClasses\nhibernate-configuration.xsd" />
+    <None Include="Lemoine.GDBPersistentClasses\nhibernate-mapping.xsd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\AutoReasonState.hbm.xml">
+      <DependentUpon>AutoReasonState.cs</DependentUpon>
+      <LogicalName>AutoReasonState.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncAlarmSeverity.hbm.xml">
+      <DependentUpon>CncAlarmSeverity.cs</DependentUpon>
+      <LogicalName>CncAlarmSeverity.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncAlarmSeverityPattern.hbm.xml">
+      <DependentUpon>CncAlarmSeverityPattern.cs</DependentUpon>
+      <LogicalName>CncAlarmSeverityPattern.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncVariable.hbm.xml">
+      <DependentUpon>CncVariable.cs</DependentUpon>
+      <LogicalName>CncVariable.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CurrentCncAlarm.hbm.xml">
+      <DependentUpon>CurrentCncAlarm.cs</DependentUpon>
+      <LogicalName>CurrentCncAlarm.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Events\EventAll.hbm.xml">
+      <DependentUpon>EventAll.cs</DependentUpon>
+      <LogicalName>EventAll.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Events\EventGeneric.hbm.xml">
+      <DependentUpon>EventGeneric.cs</DependentUpon>
+      <LogicalName>EventGeneric.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Events\EventMachineGeneric.hbm.xml">
+      <DependentUpon>EventMachineGeneric.cs</DependentUpon>
+      <LogicalName>EventMachineGeneric.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Events\EventMachineMessage.hbm.xml">
+      <DependentUpon>EventMachineMessage.cs</DependentUpon>
+      <LogicalName>EventMachineMessage.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Events\EventMachineModuleGeneric.hbm.xml">
+      <DependentUpon>EventMachineModuleGeneric.cs</DependentUpon>
+      <LogicalName>EventMachineModuleGeneric.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Events\EventMessage.hbm.xml">
+      <DependentUpon>EventMessage.cs</DependentUpon>
+      <LogicalName>EventTest.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventToolLife.hbm.xml">
+      <DependentUpon>EventToolLife.cs</DependentUpon>
+      <LogicalName>EventToolLife.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventToolLifeConfig.hbm.xml">
+      <DependentUpon>EventToolLifeConfig.cs</DependentUpon>
+      <LogicalName>EventToolLifeConfig.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\GlobalModification.hbm.xml">
+      <DependentUpon>GlobalModification.cs</DependentUpon>
+      <LogicalName>GlobalModification.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\GlobalModificationLog.hbm.xml">
+      <DependentUpon>GlobalModificationLog.cs</DependentUpon>
+      <LogicalName>GlobalModificationLog.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\IntermediateWorkPieceTarget.hbm.xml">
+      <DependentUpon>IntermediateWorkPieceTarget.cs</DependentUpon>
+      <LogicalName>IntermediateWorkPieceTarget.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineCncVariable.hbm.xml">
+      <DependentUpon>MachineCncVariable.cs</DependentUpon>
+      <LogicalName>MachineCncVariable.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineModification.hbm.xml">
+      <DependentUpon>MachineModification.cs</DependentUpon>
+      <LogicalName>MachineModification.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineModificationLog.hbm.xml">
+      <DependentUpon>MachineModificationLog.cs</DependentUpon>
+      <LogicalName>MachineModificationLog.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationSlotSplit.hbm.xml">
+      <DependentUpon>OperationSlotSplit.cs</DependentUpon>
+      <LogicalName>OperationSlotSplit.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Package.hbm.xml">
+      <DependentUpon>Package.cs</DependentUpon>
+      <LogicalName>Package.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\PackagePluginAssociation.hbm.xml">
+      <DependentUpon>PackagePluginAssociation.cs</DependentUpon>
+      <LogicalName>PackagePluginAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Plugin.hbm.xml">
+      <DependentUpon>Plugin.cs</DependentUpon>
+      <LogicalName>Plugin.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProcessMachineStateTemplate.hbm.xml">
+      <DependentUpon>ProcessMachineStateTemplate.cs</DependentUpon>
+      <LogicalName>ProcessMachineStateTemplate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProductionAnalysisStatus.hbm.xml">
+      <DependentUpon>ProductionAnalysisStatus.cs</DependentUpon>
+      <LogicalName>ProductionAnalysisStatus.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProductionInformation.hbm.xml">
+      <DependentUpon>ProductionInformation.cs</DependentUpon>
+      <LogicalName>ProductionInformationDateTime.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProductionInformationShift.hbm.xml">
+      <DependentUpon>ProductionInformationShift.cs</DependentUpon>
+      <LogicalName>ProductionInformationShift.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ComponentType.hbm.xml">
+      <DependentUpon>ComponentType.cs</DependentUpon>
+      <LogicalName>ComponentType.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Computer.hbm.xml">
+      <DependentUpon>Computer.cs</DependentUpon>
+      <LogicalName>Computer.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Display.hbm.xml">
+      <DependentUpon>Display.cs</DependentUpon>
+      <LogicalName>Display.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Component.hbm.xml">
+      <DependentUpon>Component.cs</DependentUpon>
+      <LogicalName>Component.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ComponentIntermediateWorkPiece.hbm.xml">
+      <DependentUpon>ComponentIntermediateWorkPiece.cs</DependentUpon>
+      <LogicalName>ComponentIntermediateWorkPiece.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Fact.hbm.xml">
+      <DependentUpon>Fact.cs</DependentUpon>
+      <LogicalName>Fact.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CadModel.hbm.xml">
+      <DependentUpon>CadModel.cs</DependentUpon>
+      <LogicalName>CadModel.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Field.hbm.xml">
+      <DependentUpon>Field.cs</DependentUpon>
+      <LogicalName>Field.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventLongPeriodConfig.hbm.xml">
+      <DependentUpon>EventLongPeriodConfig.cs</DependentUpon>
+      <LogicalName>EventLongPeriodConfig.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventLevel.hbm.xml">
+      <DependentUpon>EventLevel.cs</DependentUpon>
+      <LogicalName>EventLevel.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventLongPeriod.hbm.xml">
+      <DependentUpon>EventLongPeriod.cs</DependentUpon>
+      <LogicalName>EventLongPeriod.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventUnion.hbm.xml">
+      <DependentUpon>EventUnion.cs</DependentUpon>
+      <LogicalName>EventUnion.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\AutoSequence.hbm.xml">
+      <DependentUpon>AutoSequence.cs</DependentUpon>
+      <LogicalName>AutoSequence.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Config.hbm.xml">
+      <DependentUpon>Config.cs</DependentUpon>
+      <LogicalName>Config.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DetectionAnalysisLog.hbm.xml">
+      <DependentUpon>DetectionAnalysisLog.cs</DependentUpon>
+      <LogicalName>DetectionAnalysisLog.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Department.hbm.xml">
+      <DependentUpon>Department.cs</DependentUpon>
+      <LogicalName>Department.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Company.hbm.xml">
+      <DependentUpon>Company.cs</DependentUpon>
+      <LogicalName>Company.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncAcquisition.hbm.xml">
+      <DependentUpon>CncAcquisition.cs</DependentUpon>
+      <LogicalName>CncAcquisition.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DeliverablePiece.hbm.xml">
+      <DependentUpon>DeliverablePiece.cs</DependentUpon>
+      <LogicalName>DeliverablePiece.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncValue.hbm.xml">
+      <DependentUpon>CncValue.cs</DependentUpon>
+      <LogicalName>CncValue.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\FieldLegend.hbm.xml">
+      <DependentUpon>FieldLegend.cs</DependentUpon>
+      <LogicalName>FieldLegend.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CurrentMachineMode.hbm.xml">
+      <DependentUpon>CurrentMachineMode.cs</DependentUpon>
+      <LogicalName>CurrentMachineMode.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CurrentCncValue.hbm.xml">
+      <DependentUpon>CurrentCncValue.cs</DependentUpon>
+      <LogicalName>CurrentCncValue.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Cell.hbm.xml">
+      <DependentUpon>Cell.cs</DependentUpon>
+      <LogicalName>Cell.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ApplicationState.hbm.xml">
+      <DependentUpon>ApplicationState.cs</DependentUpon>
+      <LogicalName>ApplicationState.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncAlarm.hbm.xml">
+      <DependentUpon>CncAlarm.cs</DependentUpon>
+      <LogicalName>CncAlarm.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\BetweenCycles.hbm.xml">
+      <DependentUpon>BetweenCycles.cs</DependentUpon>
+      <LogicalName>BetweenCycles.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ActivityManual.hbm.xml">
+      <DependentUpon>ActivityManual.cs</DependentUpon>
+      <LogicalName>ActivityManual.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ComponentIntermediateWorkPieceUpdate.hbm.xml">
+      <DependentUpon>ComponentIntermediateWorkPieceUpdate.cs</DependentUpon>
+      <LogicalName>ComponentIntermediateWorkPieceUpdate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ComponentMachineAssociation.hbm.xml">
+      <DependentUpon>ComponentMachineAssociation.cs</DependentUpon>
+      <LogicalName>ComponentMachineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventCncValue.hbm.xml">
+      <DependentUpon>EventCncValue.cs</DependentUpon>
+      <LogicalName>EventCncValue.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EventCncValueConfig.hbm.xml">
+      <DependentUpon>EventCncValueConfig.cs</DependentUpon>
+      <LogicalName>EventCncValueConfig.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\EmailConfig.hbm.xml">
+      <DependentUpon>EmailConfig.cs</DependentUpon>
+      <LogicalName>EMailConfig.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\AutoMachineStateTemplate.hbm.xml">
+      <DependentUpon>AutoMachineStateTemplate.cs</DependentUpon>
+      <LogicalName>AutoMachineStateTemplate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftTemplateSlot.hbm.xml">
+      <DependentUpon>ShiftTemplateSlot.cs</DependentUpon>
+      <LogicalName>ShiftTemplateSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\StampingConfigByName.hbm.xml" />
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Task.hbm.xml">
+      <DependentUpon>Task.cs</DependentUpon>
+      <LogicalName>Task.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\TaskMachineAssociation.hbm.xml">
+      <DependentUpon>TaskMachineAssociation.cs</DependentUpon>
+      <LogicalName>TaskMachineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ToolPosition.hbm.xml">
+      <DependentUpon>ToolPosition.cs</DependentUpon>
+      <LogicalName>ToolPosition.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DayTemplate.hbm.xml">
+      <DependentUpon>DayTemplate.cs</DependentUpon>
+      <LogicalName>DayTemplate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DayTemplateItem.hbm.xml">
+      <DependentUpon>DayTemplateItem.cs</DependentUpon>
+      <LogicalName>DayTemplateItem.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DayTemplateSlot.hbm.xml">
+      <DependentUpon>DayTemplateSlot.cs</DependentUpon>
+      <LogicalName>DayTemplateSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DayTemplateChange.hbm.xml">
+      <DependentUpon>DayTemplateChange.cs</DependentUpon>
+      <LogicalName>DayTemplateChange.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DaySlot.hbm.xml">
+      <DependentUpon>DaySlot.cs</DependentUpon>
+      <LogicalName>DaySlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Goal.hbm.xml">
+      <DependentUpon>Goal.cs</DependentUpon>
+      <LogicalName>Goal.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\GoalType.hbm.xml">
+      <DependentUpon>GoalType.cs</DependentUpon>
+      <LogicalName>GoalType.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineMonitoringType.hbm.xml">
+      <DependentUpon>MachineMonitoringType.cs</DependentUpon>
+      <LogicalName>MachineMonitoringType.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\IntermediateWorkPiece.hbm.xml">
+      <DependentUpon>IntermediateWorkPiece.cs</DependentUpon>
+      <LogicalName>IntermediateWorkPiece.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineOperationType.hbm.xml">
+      <DependentUpon>MachineOperationType.cs</DependentUpon>
+      <LogicalName>MachineOperationType.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\JobView.hbm.xml">
+      <DependentUpon>JobView.cs</DependentUpon>
+      <LogicalName>JobView.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Log.hbm.xml">
+      <DependentUpon>Log.cs</DependentUpon>
+      <LogicalName>Log.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Machine.hbm.xml">
+      <DependentUpon>Machine.cs</DependentUpon>
+      <LogicalName>Machine.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineModule.hbm.xml">
+      <DependentUpon>MachineModule.cs</DependentUpon>
+      <LogicalName>MachineModule.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MonitoredMachineAnalysisStatus.hbm.xml">
+      <DependentUpon>MonitoredMachineAnalysisStatus.cs</DependentUpon>
+      <LogicalName>MachineModuleAnalysis.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineMode.hbm.xml">
+      <DependentUpon>MachineMode.cs</DependentUpon>
+      <LogicalName>MachineMode.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineActivitySummary.hbm.xml">
+      <DependentUpon>MachineActivitySummary.cs</DependentUpon>
+      <LogicalName>MachineModuleActivitySummary.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineObservationState.hbm.xml">
+      <DependentUpon>MachineObservationState.cs</DependentUpon>
+      <LogicalName>MachineObservationState.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineModeDefaultReason.hbm.xml">
+      <DependentUpon>MachineModeDefaultReason.cs</DependentUpon>
+      <LogicalName>MachineModeDefaultReason.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStatus.hbm.xml">
+      <DependentUpon>MachineStatus.cs</DependentUpon>
+      <LogicalName>MachineStatus.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\IsoFile.hbm.xml">
+      <DependentUpon>IsoFile.cs</DependentUpon>
+      <LogicalName>IsoFile.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineCategory.hbm.xml">
+      <DependentUpon>MachineCategory.cs</DependentUpon>
+      <LogicalName>MachineCategory.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineSubCategory.hbm.xml">
+      <DependentUpon>MachineSubCategory.cs</DependentUpon>
+      <LogicalName>MachineSubCategory.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilter.hbm.xml">
+      <DependentUpon>MachineFilter.cs</DependentUpon>
+      <LogicalName>MachineFilter.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineCompanyUpdate.hbm.xml">
+      <DependentUpon>MachineCompanyUpdate.cs</DependentUpon>
+      <LogicalName>MachineCompanyUpdate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineDepartmentUpdate.hbm.xml">
+      <DependentUpon>MachineDepartmentUpdate.cs</DependentUpon>
+      <LogicalName>MachineDepartmentUpdate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineCellUpdate.hbm.xml">
+      <DependentUpon>MachineCellUpdate.cs</DependentUpon>
+      <LogicalName>MachineCellUpdate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineObservationStateAssociation.hbm.xml">
+      <DependentUpon>MachineObservationStateAssociation.cs</DependentUpon>
+      <LogicalName>MachineObservationStateAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\IntermediateWorkPieceOperationUpdate.hbm.xml">
+      <DependentUpon>IntermediateWorkPieceOperationUpdate.cs</DependentUpon>
+      <LogicalName>IntermediateWorkPieceOperationUpdate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\LinkOperation.hbm.xml">
+      <DependentUpon>LinkOperation.cs</DependentUpon>
+      <LogicalName>LinkOperation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineModuleDetection.hbm.xml">
+      <DependentUpon>MachineModuleDetection.cs</DependentUpon>
+      <LogicalName>MachineModuleDetection.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineModuleActivity.hbm.xml">
+      <DependentUpon>MachineModuleActivity.cs</DependentUpon>
+      <LogicalName>MachineModuleActivity.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineModuleAnalysisStatus.hbm.xml">
+      <DependentUpon>MachineModuleAnalysisStatus.cs</DependentUpon>
+      <LogicalName>MachineModuleAnalysisStatus.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilterCompany.hbm.xml">
+      <DependentUpon>MachineFilterCompany.cs</DependentUpon>
+      <LogicalName>MachineFilterCompany.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilterItem.hbm.xml">
+      <DependentUpon>MachineFilterItem.cs</DependentUpon>
+      <LogicalName>MachineFilterItem.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilterDepartment.hbm.xml">
+      <DependentUpon>MachineFilterDepartment.cs</DependentUpon>
+      <LogicalName>MachineFilterDepartment.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilterCell.hbm.xml">
+      <DependentUpon>MachineFilterCell.cs</DependentUpon>
+      <LogicalName>MachineFilterCell.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilterMachine.hbm.xml">
+      <DependentUpon>MachineFilterMachine.cs</DependentUpon>
+      <LogicalName>MachineFilterMachine.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilterMachineCategory.hbm.xml">
+      <DependentUpon>MachineFilterMachineCategory.cs</DependentUpon>
+      <LogicalName>MachineFilterMachineCategory.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineFilterMachineSubCategory.hbm.xml">
+      <DependentUpon>MachineFilterMachineSubCategory.cs</DependentUpon>
+      <LogicalName>MachineFilterMachineSubCategory.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStateTemplate.hbm.xml">
+      <DependentUpon>MachineStateTemplate.cs</DependentUpon>
+      <LogicalName>MachineStateTemplate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStateTemplateItem.hbm.xml">
+      <DependentUpon>MachineStateTemplateItem.cs</DependentUpon>
+      <LogicalName>MachineStateTemplateItem.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStateTemplateStop.hbm.xml">
+      <DependentUpon>MachineStateTemplateStop.cs</DependentUpon>
+      <LogicalName>MachineStateTemplateStop.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStateTemplateAssociation.hbm.xml">
+      <DependentUpon>MachineStateTemplateAssociation.cs</DependentUpon>
+      <LogicalName>MachineStateTemplateAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStateTemplateRight.hbm.xml">
+      <DependentUpon>MachineStateTemplateRight.cs</DependentUpon>
+      <LogicalName>MachineStateTemplateRight.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\NamedConfig.hbm.xml">
+      <DependentUpon>NamedConfig.cs</DependentUpon>
+      <LogicalName>NamedConfig.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStateTemplateFlow.hbm.xml">
+      <DependentUpon>MachineStateTemplateFlow.cs</DependentUpon>
+      <LogicalName>MachineStateTemplateFlow.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Line.hbm.xml">
+      <DependentUpon>Line.cs</DependentUpon>
+      <LogicalName>Line.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\LineMachine.hbm.xml">
+      <DependentUpon>LineMachine.cs</DependentUpon>
+      <LogicalName>LineMachine.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\AcquisitionState.hbm.xml">
+      <DependentUpon>AcquisitionState.cs</DependentUpon>
+      <LogicalName>AcquisitionState.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MachineStateTemplateSlot.hbm.xml">
+      <DependentUpon>MachineStateTemplateSlot.cs</DependentUpon>
+      <LogicalName>MachineStateTemplateSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\MaintenanceLog.hbm.xml">
+      <DependentUpon>MaintenanceLog.cs</DependentUpon>
+      <LogicalName>MaintenanceLog.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\StampingValue.hbm.xml">
+      <DependentUpon>StampingValue.cs</DependentUpon>
+      <LogicalName>StampingValue.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Stamp.hbm.xml">
+      <DependentUpon>Stamp.cs</DependentUpon>
+      <LogicalName>Stamp.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Unit.hbm.xml">
+      <DependentUpon>Unit.cs</DependentUpon>
+      <LogicalName>Unit.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Tool.hbm.xml">
+      <DependentUpon>Tool.cs</DependentUpon>
+      <LogicalName>Tool.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserSlot.hbm.xml">
+      <DependentUpon>UserSlot.cs</DependentUpon>
+      <LogicalName>UserSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ReasonSummary.hbm.xml">
+      <DependentUpon>ReasonSummary.cs</DependentUpon>
+      <LogicalName>ReasonSummary.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ReasonSlot.hbm.xml">
+      <DependentUpon>ReasonSlot.cs</DependentUpon>
+      <LogicalName>ReasonSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ReasonSelection.hbm.xml">
+      <DependentUpon>ReasonSelection.cs</DependentUpon>
+      <LogicalName>ReasonSelection.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ReasonGroup.hbm.xml">
+      <DependentUpon>ReasonGroup.cs</DependentUpon>
+      <LogicalName>ReasonGroup.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Reason.hbm.xml">
+      <DependentUpon>Reason.cs</DependentUpon>
+      <LogicalName>Reason.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ObservationStateSlot.hbm.xml">
+      <DependentUpon>ObservationStateSlot.cs</DependentUpon>
+      <LogicalName>ObservationStateSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Sequence.hbm.xml">
+      <DependentUpon>Sequence.cs</DependentUpon>
+      <LogicalName>Sequence.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationSlot.hbm.xml">
+      <DependentUpon>OperationSlot.cs</DependentUpon>
+      <LogicalName>OperationSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\SimpleOperationView.hbm.xml">
+      <DependentUpon>SimpleOperationView.cs</DependentUpon>
+      <LogicalName>SimpleOperation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\PartView.hbm.xml">
+      <DependentUpon>PartView.cs</DependentUpon>
+      <LogicalName>Part.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationSourceWorkPiece.hbm.xml">
+      <DependentUpon>OperationSourceWorkPiece.cs</DependentUpon>
+      <LogicalName>OperationSourceWorkPiece.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Operation.hbm.xml">
+      <DependentUpon>Operation.cs</DependentUpon>
+      <LogicalName>Operation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Revision.hbm.xml">
+      <DependentUpon>Revision.cs</DependentUpon>
+      <LogicalName>Revision.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Updater.hbm.xml">
+      <DependentUpon>Updater.cs</DependentUpon>
+      <LogicalName>Updater.hbm.xml</LogicalName>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Translation.hbm.xml">
+      <DependentUpon>Translation.cs</DependentUpon>
+      <LogicalName>Translation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderProject.hbm.xml">
+      <DependentUpon>WorkOrderProject.cs</DependentUpon>
+      <LogicalName>WorkOrderProject.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderStatus.hbm.xml">
+      <DependentUpon>WorkOrderStatus.cs</DependentUpon>
+      <LogicalName>WorkOrderStatus.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrder.hbm.xml">
+      <DependentUpon>WorkOrder.cs</DependentUpon>
+      <LogicalName>WorkOrder.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationType.hbm.xml">
+      <DependentUpon>OperationType.cs</DependentUpon>
+      <LogicalName>OperationType.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Project.hbm.xml">
+      <DependentUpon>Project.cs</DependentUpon>
+      <LogicalName>Project.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationCycle.hbm.xml">
+      <DependentUpon>OperationCycle.cs</DependentUpon>
+      <LogicalName>OperationCycle.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationCycleDeliverablePiece.hbm.xml">
+      <DependentUpon>OperationCycleDeliverablePiece.cs</DependentUpon>
+      <LogicalName>OperationCycleDeliverablePiece.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Shift.hbm.xml">
+      <DependentUpon>Shift.cs</DependentUpon>
+      <LogicalName>Shift.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftSlot.hbm.xml">
+      <DependentUpon>ShiftSlot.cs</DependentUpon>
+      <LogicalName>ShiftSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\SequenceSlot.hbm.xml">
+      <DependentUpon>SequenceSlot.cs</DependentUpon>
+      <LogicalName>SequenceSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Path.hbm.xml">
+      <DependentUpon>Path.cs</DependentUpon>
+      <LogicalName>Path.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Service.hbm.xml">
+      <DependentUpon>Service.cs</DependentUpon>
+      <LogicalName>Service.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\User.hbm.xml">
+      <DependentUpon>User.cs</DependentUpon>
+      <LogicalName>User.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationInformation.hbm.xml">
+      <DependentUpon>OperationInformation.cs</DependentUpon>
+      <LogicalName>OperationInformation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationMachineAssociation.hbm.xml">
+      <DependentUpon>OperationMachineAssociation.cs</DependentUpon>
+      <LogicalName>OperationMachineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProjectComponentUpdate.hbm.xml">
+      <DependentUpon>ProjectComponentUpdate.cs</DependentUpon>
+      <LogicalName>ProjectComponentUpdate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ReasonMachineAssociation.hbm.xml">
+      <DependentUpon>ReasonMachineAssociation.cs</DependentUpon>
+      <LogicalName>ReasonMachineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\SerialNumberMachineStamp.hbm.xml">
+      <DependentUpon>SerialNumberMachineStamp.cs</DependentUpon>
+      <LogicalName>SerialNumberMachineStamp.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserAttendance.hbm.xml">
+      <DependentUpon>UserAttendance.cs</DependentUpon>
+      <LogicalName>UserAttendance.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderMachineStamp.hbm.xml">
+      <DependentUpon>WorkOrderMachineStamp.cs</DependentUpon>
+      <LogicalName>WorkOrderMachineStamp.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderMachineAssociation.hbm.xml">
+      <DependentUpon>WorkOrderMachineAssociation.cs</DependentUpon>
+      <LogicalName>WorkOrderMachineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderProjectUpdate.hbm.xml">
+      <DependentUpon>WorkOrderProjectUpdate.cs</DependentUpon>
+      <LogicalName>WorkOrderProjectUpdate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\SerialNumberModification.hbm.xml">
+      <DependentUpon>SerialNumberModification.cs</DependentUpon>
+      <LogicalName>SerialNumberModification.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserShiftAssociation.hbm.xml">
+      <DependentUpon>UserShiftAssociation.cs</DependentUpon>
+      <LogicalName>UserShiftAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserShiftSlot.hbm.xml">
+      <DependentUpon>UserShiftSlot.cs</DependentUpon>
+      <LogicalName>UserShiftSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Role.hbm.xml">
+      <DependentUpon>Role.cs</DependentUpon>
+      <LogicalName>Role.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\NonConformanceReason.hbm.xml">
+      <DependentUpon>NonConformanceReason.cs</DependentUpon>
+      <LogicalName>NonConformanceReason.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\NonConformanceReport.hbm.xml">
+      <DependentUpon>NonConformanceReport.cs</DependentUpon>
+      <LogicalName>NonConformanceReport.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserMachineAssociation.hbm.xml">
+      <DependentUpon>UserMachineAssociation.cs</DependentUpon>
+      <LogicalName>UserMachineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserMachineSlot.hbm.xml">
+      <DependentUpon>UserMachineSlot.cs</DependentUpon>
+      <LogicalName>UserMachineSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserMachineAssociationMachine.hbm.xml">
+      <DependentUpon>UserMachineAssociationMachine.cs</DependentUpon>
+      <LogicalName>UserMachineAssociationMachine.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\UserMachineSlotMachine.hbm.xml">
+      <DependentUpon>UserMachineSlotMachine.cs</DependentUpon>
+      <LogicalName>UserMachineSlotMachine.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Right.hbm.xml">
+      <DependentUpon>Right.cs</DependentUpon>
+      <LogicalName>Right.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\IsoFileSlot.hbm.xml">
+      <DependentUpon>IsoFileSlot.cs</DependentUpon>
+      <LogicalName>IsoFileSlot.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderLine.hbm.xml">
+      <DependentUpon>WorkOrderLine.cs</DependentUpon>
+      <LogicalName>WorkOrderLine.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderLineQuantity.hbm.xml">
+      <DependentUpon>WorkOrderLineQuantity.cs</DependentUpon>
+      <LogicalName>WorkOrderLineQuantity.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderLineAssociationQuantity.hbm.xml">
+      <DependentUpon>WorkOrderLineAssociationQuantity.cs</DependentUpon>
+      <LogicalName>WorkOrderLineAssociationQuantity.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderLineAssociation.hbm.xml">
+      <DependentUpon>WorkOrderLineAssociation.cs</DependentUpon>
+      <LogicalName>WorkOrderLineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftTemplate.hbm.xml">
+      <DependentUpon>ShiftTemplate.cs</DependentUpon>
+      <LogicalName>ShiftTemplate.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftTemplateItem.hbm.xml">
+      <DependentUpon>ShiftTemplateItem.cs</DependentUpon>
+      <LogicalName>ShiftTemplateItem.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftTemplateBreak.hbm.xml">
+      <DependentUpon>ShiftTemplateBreak.cs</DependentUpon>
+      <LogicalName>ShiftTemplateBreak.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftTemplateAssociation.hbm.xml">
+      <DependentUpon>ShiftTemplateAssociation.cs</DependentUpon>
+      <LogicalName>ShiftTemplateAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftSlotBreak.hbm.xml">
+      <DependentUpon>ShiftSlotBreak.cs</DependentUpon>
+      <LogicalName>ShiftSlotBreak.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftMachineAssociation.hbm.xml">
+      <DependentUpon>ShiftMachineAssociation.cs</DependentUpon>
+      <LogicalName>ShiftMachineAssociation.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ToolLife.hbm.xml">
+      <DependentUpon>ToolLife.cs</DependentUpon>
+      <LogicalName>ToolLife.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ReasonProposal.hbm.xml">
+      <DependentUpon>ReasonProposal.cs</DependentUpon>
+      <LogicalName>ReasonProposal.hbm.xml</LogicalName>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncDataImportLog.hbm.xml">
+      <DependentUpon>CncDataImportLog.cs</DependentUpon>
+      <LogicalName>CncDataImportLog.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProductionState.hbm.xml">
+      <DependentUpon>ProductionState.cs</DependentUpon>
+      <LogicalName>ProductionState.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProductionRateSummary.hbm.xml">
+      <DependentUpon>ProductionRateSummary.cs</DependentUpon>
+      <LogicalName>ProductionRateSummary.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ProductionStateSummary.hbm.xml">
+      <DependentUpon>ProductionStateSummary.cs</DependentUpon>
+      <LogicalName>ProductionStateSummary.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\SequenceMilestone.hbm.xml">
+      <DependentUpon>SequenceMilestone.cs</DependentUpon>
+      <LogicalName>SequenceMilestone.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\RefreshToken.hbm.xml">
+      <DependentUpon>RefreshToken.cs</DependentUpon>
+      <LogicalName>RefreshToken.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Customer.hbm.xml">
+      <DependentUpon>Customer.cs</DependentUpon>
+      <LogicalName>Customer.hbm.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

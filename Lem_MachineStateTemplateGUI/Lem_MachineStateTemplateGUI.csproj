@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <Platforms>x86</Platforms>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyOriginatorKeyFile>..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj" />
+    <ProjectReference Include="..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.ExcelDataGrid\Lemoine.ExcelDataGrid.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\ApplicationTemplate.exe.log4net" Link="$(ProjectName).dll.log4net" CopyToOutputDirectory="Always" Visible="false" />
+  </ItemGroup>
+  
+</Project>

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Platforms>x64</Platforms>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.DataRepository\Lemoine.DataRepository.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Lem_SynchronizationService.nh.cfg.xml" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <None Include="$(ProjectName).dll.options" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="$(ProjectName).dll.defaultoptions" CopyToOutputDirectory="Always" />
+    <None Remove="app.config" />
+    <None Remove="$(ProjectName).template.exe.config" />
+    <None Remove="$(ProjectName).exe.options" />
+    <None Remove="$(ProjectName).exe.defaultoptions" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.ServiceProcess" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.FileRepository.Corba\Lemoine.FileRepository.Corba.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <None Update="$(ProjectName).exe.defaultoptions" CopyToOutputDirectory="Always" />
+    <None Update="$(ProjectName).exe.options" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\ServiceTemplate.exe.log4net" Link="$(ProjectName).exe.log4net" CopyToOutputDirectory="Always" Visible="false" />
+    <None Remove="$(ProjectName).dll.options" />
+    <None Remove="$(ProjectName).dll.defaultoptions" />
+  </ItemGroup>
+  
+</Project>

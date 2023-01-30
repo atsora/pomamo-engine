@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ComponentType" table="componenttype">
+    <id name="Id" column="componenttypeid" access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">componenttype_componenttypeid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="componenttypeversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="componenttypename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="componenttypetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="componenttypecode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

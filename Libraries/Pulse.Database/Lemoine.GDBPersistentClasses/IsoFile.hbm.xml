@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="IsoFile" table="IsoFile">
+    <id name="Id" column="isofileid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">isoFile_isofileid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="isofileversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="isofilename"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+              not-null="true" />
+    <many-to-one name="Computer"
+                 access="nosetter.camelcase-m-underscore"
+                 column="computerid"
+                 class="Computer"
+                 cascade="none"
+                 not-found="ignore" />
+    <property name="SourceDirectory" column="isofilesourcedirectory"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+              not-null="true" />
+    <property name="StampingDirectory" column="isofilestampingdirectory"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+              not-null="true" />
+    <property name="Size" column="isofilesize" />
+    <property name="StampingDateTime" column="isofilestampingdatetime"
+              not-null="true" />
+    <bag name="Stamps"
+         access="nosetter.camelcase-m-underscore"
+         inverse="true" lazy="true"
+         cascade="none"
+         order-by="stampposition ASC">
+      <key column="stampid" />
+      <one-to-many class="Stamp" />
+    </bag>
+  </class>
+</hibernate-mapping>

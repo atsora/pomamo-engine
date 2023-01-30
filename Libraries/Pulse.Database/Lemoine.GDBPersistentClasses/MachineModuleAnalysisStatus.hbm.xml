@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineModuleAnalysisStatus" table="machinemoduleanalysisstatus">
+    <id name="Id" column="machinemoduleid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="foreign">
+        <param name="property">MachineModule</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinemoduleanalysisstatusversion"
+             access="nosetter.camelcase-m-underscore" />
+    <one-to-one name="MachineModule"
+                class="MachineModule"
+                constrained="true" />
+    <property name="LastMachineModuleDetectionId" column="lastmachinemoduledetectionid"
+              not-null="true" />
+    <property name="AutoSequenceAnalysisDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              column="autosequenceanalysisdatetime"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

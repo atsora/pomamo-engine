@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="ComponentIntermediateWorkPieceUpdate"
+            discriminator-value="ComponentIntermediateWorkPieceUpdate"
+            extends="GlobalModification, Pulse.Database">
+    <join table="ComponentIntermediateWorkPieceUpdate"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Component" column="componentid" class="Component"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <many-to-one name="IntermediateWorkPiece"
+                   column="intermediateworkpieceid"
+                   class="IntermediateWorkPiece"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="TypeOfModification"
+                not-null="true"
+                column="modificationtype" />
+    </join>
+  </subclass>
+</hibernate-mapping>
+ 

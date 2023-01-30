@@ -1,0 +1,153 @@
+﻿<?xml version="1.0"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:gdb="urn:pulse.lemoinetechnologies.com:synchro:gdb"
+      xmlns:odbc="urn:pulse.lemoinetechnologies.com:synchro:odbc"
+      odbc:filename="C:\\"
+      gdb:logthreshold="WARN"
+      every="00:00:00"
+      nodataevery="00:01:00">
+  
+  <Path Id="pulse:0" gdb:action='none'
+        odbc:request="SELECT pathid as Id FROM [PATH]"
+        gdb:notfound='fail'
+        gdb:relation='none'>
+  </Path>
+   
+  <PulseSequenceEvent gdb:action="none"
+    sequencename="pulse:0"
+    sequenceorder="pulse:1"
+    hastool="pulse:2"
+    toolname="pulse:3"
+    tooldiameter="pulse:4"
+    rpm="pulse:5"
+    ipm="pulse:6"
+    sfm="pulse:7"
+    ipr="pulse:8"
+    estimatedtime="pulse:9"
+    toolnumber="pulse:10"
+    odbc:request="SELECT sequencename, sequenceorder, hastool, toolname, tooldiameter, rpm, ipm, sfm,
+    ipr, estimatedtime, toolnumber
+    FROM [SEQUENCE]">
+    
+    <Tool Name="{../@toolname}"
+          Diameter="{../@tooldiameter}"
+          odbc:if="{../@hastool}"
+          gdb:action='reference'
+          gdb:notfound='log create'
+          gdb:relation='none'
+          gdb:newattributes='Id' />
+    
+    <Translation Locale=''
+                 TranslationKey="ToolNumber"
+                 TranslationValue="Tool Number"
+                 gdb:action='reference'
+                 gdb:relation='none'
+                 gdb:notfound='log create'
+                 gdb:newattributes='Id' />
+    
+    <FieldToolNumber gdb:action='none' gdb:relation='none' >
+      <Field Code="ToolNumber"
+             TranslationKey="ToolNumber"
+             Type="String"
+             gdb:action='reference'
+             gdb:relation='none'
+             gdb:notfound='log create'
+             gdb:newattributes='Id' />
+    </FieldToolNumber>
+    
+    <FieldRPM gdb:action='none' gdb:relation='none' >
+      <Field Code="SpindleSpeed"
+             Type="Double"
+             gdb:action='reference'
+             gdb:relation='none'
+             gdb:notfound='log fail'
+             gdb:newattributes='Id' />
+    </FieldRPM>
+    
+    <FieldIPM gdb:action='none' gdb:relation='none' >
+      <Field Code="FeedRateUS"
+             Type="Double"
+             gdb:action='reference'
+             gdb:relation='none'
+             gdb:notfound='log fail'
+             gdb:newattributes='Id' />
+    </FieldIPM>
+    
+    <Sequence Name="{../@sequencename}"
+              Order="{../@sequenceorder}"
+              EstimatedTime="{../@estimatedtime}"
+              gdb:action='reference'
+              gdb:notfound='log create'
+              gdb:relation='none'
+              gdb:newattributes='Id' >
+      
+      <Path Id="{../../../Path/@Id}"
+                 gdb:action='id'
+                 gdb:notfound='fail' />
+      
+      <Tool Id="{../../Tool/@Id}"
+            odbc:if="{../../@hastool}"
+            gdb:action='id'
+            gdb:notfound='fail'/>
+    
+    </Sequence>
+    
+    <StampingValueToolNumber gdb:action='none' gdb:relation='none'>
+      <StampingValue String="{../../@toolnumber}"
+                     odbc:if="{../../@hastool}"
+                     gdb:relation='none'
+                     gdb:action='reference'
+                     gdb:newattributes='Id'
+                     gdb:notfound='create' >
+        
+        <Sequence Id="{../../../Sequence/@Id}"
+                  gdb:action='id'
+                  gdb:notfound='fail' />
+        
+        <Field Id="{../../../FieldToolNumber/Field/@Id}"
+               gdb:action='id'
+               gdb:notfound='fail' />
+      
+      </StampingValue>
+    </StampingValueToolNumber>
+    
+    <StampingValueRPM gdb:action='none' gdb:relation='none'>
+      <StampingValue Double="{../../@rpm}"
+                     odbc:if="{../../@hastool}"
+                     gdb:relation='none'
+                     gdb:action='reference'
+                     gdb:newattributes='Id'
+                     gdb:notfound='create' >
+        
+        <Sequence Id="{../../../Sequence/@Id}"
+                  gdb:action='id'
+                  gdb:notfound='fail' />
+        
+        <Field Id="{../../../FieldRPM/Field/@Id}"
+               gdb:action='id'
+               gdb:notfound='fail' />
+      
+      </StampingValue>
+    </StampingValueRPM>
+    
+    <StampingValueIPM gdb:action='none' gdb:relation='none'>
+      <StampingValue Double="{../../@ipm}"
+                     odbc:if="{../../@hastool}"
+                     gdb:relation='none'
+                     gdb:action='reference'
+                     gdb:newattributes='Id'
+                     gdb:notfound='create' >
+        
+        <Sequence Id="{../../../Sequence/@Id}"
+                  gdb:action='id'
+                  gdb:notfound='fail' />
+        
+        <Field Id="{../../../FieldIPM/Field/@Id}"
+               gdb:action='id'
+               gdb:notfound='fail' />
+      
+      </StampingValue>
+    </StampingValueIPM>
+  
+  </PulseSequenceEvent>
+</root>

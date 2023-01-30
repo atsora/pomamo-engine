@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Stamp" table="Stamp">
+    <id name="Id" column="Stampid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">Stamp_Stampid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="stampversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="IsoFile"
+                 access="nosetter.camelcase-m-underscore"
+                 column="isofileid"
+                 class="IsoFile"
+                 cascade="none"
+                 not-found="ignore" />
+    <property name="Position" column="stampposition" />
+    <many-to-one name="Sequence"
+                 access="nosetter.camelcase-m-underscore"
+                 column="sequenceid"
+                 class="Sequence"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 column="operationid"
+                 class="Operation"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="Component"
+                 access="nosetter.camelcase-m-underscore"
+                 column="componentid"
+                 class="Component"
+                 cascade="none"
+                 not-found="ignore" />
+    <property name="OperationCycleBegin"
+              column="operationcyclebegin"
+              not-null="true" />
+    <property name="OperationCycleEnd"
+              column="operationcycleend"
+              not-null="true" />
+    <property name="IsoFileEnd"
+              column="stampisofileend"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

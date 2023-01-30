@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<m:MTConnectStreams version="0.2"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    xsi:schemaLocation="urn:mtconnect.com:MTConnect:0.1
+					http://localhost:3000/public/schemas/mtc.xsd"
+		    xmlns:m="urn:mtconnect.com:MTConnect:0.2">
+  <Header instanceId="1199256590" nextSequence="2858"
+	  creationDate="2007-12-06" sender="MTConnect" bufferSize="10000">
+  </Header>
+  <Streams>
+    <DeviceStream name="mill" uuid="11322343434">
+      <ComponentStream path="//Device[@name='mill']" name="axes"
+		       component="Axes">
+	<Samples>
+	  <m:GlobalPosition timestamp="2007-12-06T02:20:51.938"
+			    sequence="21"
+			    subType="ACTUAL"
+			    name="GlobalPosition">512.2,56.4,235.76</m:GlobalPosition>
+	  <m:PathFeedrate timestamp="2007-12-06T02:20:51.938"
+			  sequence="22"
+			  subType="ACTUAL"
+			  name="PathFeedrate">4</m:PathFeedrate>
+	  <m:PathFeedrate timestamp="2007-12-06T02:20:51.938"
+			  sequence="23"
+			  subType="OVERRIDE"
+			  name="PathFeedrateOverride">80.5</m:PathFeedrate>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream name="X" component="Linear" componentId="4">
+	<Samples>
+	  <m:Position dataItemId="12" name="Xact" subType="ACTUAL"
+		      sequence="207494527"
+		      timestamp="2008-09-03T12:58:24.717718">512.2</m:Position>
+	  <m:Position dataItemId="13" name="Xcom" subType="COMMANDED"
+		      sequence="207494524"
+		      timestamp="2008-09-03T12:58:24.717718">512.1</m:Position>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream name="Y" component="Linear" componentId="5">
+	<Samples>
+	  <m:Position dataItemId="14" name="Yact" subType="ACTUAL"
+		      sequence="207494527"
+		      timestamp="2008-09-03T12:58:24.717718">56.4</m:Position>
+	  <m:Position dataItemId="15" name="Ycom" subType="COMMANDED"
+		      sequence="207494524"
+		      timestamp="2008-09-03T12:58:24.717718">56.3</m:Position>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream name="Z" component="Linear" componentId="6">
+	<Samples>
+	  <m:Position dataItemId="16" name="Zact" subType="ACTUAL"
+		      sequence="207494527"
+		      timestamp="2008-09-03T12:58:24.717718">235.76</m:Position>
+	  <m:Position dataItemId="17" name="Zcom" subType="COMMANDED"
+		      sequence="207494524"
+		      timestamp="2008-09-03T12:58:24.717718">235.6</m:Position>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream path="//Device[@name='mill']" name="S"
+		       component="Spindle">
+	<Samples>
+	  <m:SpindleSpeed timestamp="2007-12-06T02:20:51.938"
+			  sequence="24"
+			  subType="ACTUAL"
+			  name="SpindleSpeed">100</m:SpindleSpeed>
+	  <m:SpindleSpeed timestamp="2007-12-06T02:20:51.938"
+			  sequence="25"
+			  subType="OVERRIDE"
+			  name="SpindleSpeedOverride">73.2</m:SpindleSpeed>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream path="//Device[@name='mill']" name="A"
+		       component="Rotary">
+	<Samples>
+	  <m:AxisFeedrate timestamp="2007-12-06T02:20:51.938"
+			  sequence="26"
+			  subType="ACTUAL"
+			  name="Afrt">0</m:AxisFeedrate>
+	</Samples>
+      </ComponentStream>
+      <ComponentStream path="//Device[@name='mill']" name="control"
+		       component="Controller">
+	<Events>
+	  <m:Program timestamp="2007-12-06T02:20:51.938"
+		     sequence="11">c:\pulse_build\UnitTest\UnitTests-in\ccisofile.iso</m:Program>
+	  <m:Execution timestamp="2007-12-06T02:20:51.938"
+		       sequence="15">ACTIVE</m:Execution>
+	  <m:ControllerMode timestamp="2007-12-06T02:20:51.938"
+			    sequence="16">MANUAL</m:ControllerMode>
+	  <m:Line timestamp="2007-12-06T02:20:51.938"
+		  sequence="17">6</m:Line>	  
+	  <m:Block timestamp="2007-12-06T02:21:14.842"
+		   sequence="20">N0050 M05 M09 (spindle and coolant
+	  off)</m:Block>
+	</Events>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</m:MTConnectStreams>

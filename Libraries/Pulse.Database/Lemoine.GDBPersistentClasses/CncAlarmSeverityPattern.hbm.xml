@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="CncAlarmSeverityPattern" table="cncalarmseveritypattern">
+    <id name="Id" column="cncalarmseveritypatternid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">cncalarmseveritypattern_cncalarmseveritypatternid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="cncalarmseveritypatternversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="CncInfo" column="cncalarmseveritypatterncncinfo"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database"
+              not-null="true" />
+    <property name="Name" column="cncalarmseveritypatternname"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Status" column="cncalarmseveritypatternstatus"
+              not-null="true" />
+    <property name="Rules"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.JsonAsT`1[[Lemoine.Model.CncAlarmSeverityPatternRules, Lemoine.ModelDAO]], Lemoine.Database"
+              column="cncalarmseveritypatternpattern"
+              not-null="true" />
+    <many-to-one name="Severity"
+                 access="nosetter.camelcase-m-underscore"
+                 class="CncAlarmSeverity"
+                 column="cncalarmseverityid"
+                 not-null="true" />
+  </class>
+</hibernate-mapping>

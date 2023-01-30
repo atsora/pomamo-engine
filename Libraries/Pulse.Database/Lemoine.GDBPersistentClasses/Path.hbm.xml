@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Path" table="pathtable">
+    <id name="Id" column="pathid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">Path_Pathid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="pathversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Number" column="pathnumber" />
+    <many-to-one name="Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 column="operationid"
+                 class="Operation"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />   
+    <set name="Sequences"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSortedSetType`2[[Lemoine.Model.ISequence, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="pathid" on-delete="cascade" />
+      <one-to-many class="Sequence" />
+    </set>
+  </class>
+</hibernate-mapping>

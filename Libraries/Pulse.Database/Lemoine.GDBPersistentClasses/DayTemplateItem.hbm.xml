@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="DayTemplateItem" table="DayTemplateItem">
+    <id name="Id" column="DayTemplateItemid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">DayTemplateItem_DayTemplateItemid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="DayTemplateItemversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="CutOff"
+              column="daytemplateitemcutoff"
+              type="Lemoine.NHibernateTypes.TimeWithoutTZType, Lemoine.Database"
+              not-null="true" />
+    <property name="WeekDays"
+              column="Daytemplateitemweekdays"
+              type="Lemoine.NHibernateTypes.WeekDayType, Lemoine.Database"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

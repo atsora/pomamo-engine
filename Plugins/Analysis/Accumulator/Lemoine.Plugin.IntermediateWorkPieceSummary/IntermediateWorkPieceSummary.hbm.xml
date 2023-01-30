@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.Plugin.IntermediateWorkPieceSummary"
+  assembly="Lemoine.Plugin.IntermediateWorkPieceSummary">
+  <class name="IntermediateWorkPieceSummary" table="IntermediateWorkPieceSummary" mutable="false">
+    <id name="Id" column="IntermediateWorkPieceSummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="assigned" />
+    </id>
+    <many-to-one name="IntermediateWorkPiece" column="intermediateworkpieceid"
+                 class="Lemoine.GDBPersistentClasses.IntermediateWorkPiece"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" not-null="true" />
+    <many-to-one name="Component" column="componentid"
+                 class="Lemoine.GDBPersistentClasses.Component"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="WorkOrder" column="workorderid"
+                 class="Lemoine.GDBPersistentClasses.WorkOrder"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Line" column="lineid"
+                 class="Lemoine.GDBPersistentClasses.Line"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <property name="Day" column="intermediateworkpiecesummaryday" />
+    <many-to-one name="Shift" column="shiftid"
+                 class="Lemoine.GDBPersistentClasses.Shift" />
+    <property name="Counted" column="intermediateworkpiecesummarycounted" not-null="true" />
+    <property name="Corrected" column="intermediateworkpiecesummarycorrected" not-null="true" />
+    <property name="Checked" column="intermediateworkpiecesummarychecked" not-null="true" />
+    <property name="Scrapped" column="intermediateworkpiecesummaryscrapped" not-null="true" />
+  </class>
+</hibernate-mapping>

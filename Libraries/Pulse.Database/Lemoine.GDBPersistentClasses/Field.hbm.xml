@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Field" table="field">
+    <id name="Id" column="fieldid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">field_fieldid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="fieldversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Code" column="fieldcode"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+              not-null="true" />
+    <property name="Name" column="fieldname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="fieldtranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Description" column="fielddescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Type" column="fieldtype"
+              type="Lemoine.GDBPersistentClasses.EnumFieldType, Pulse.Database"
+              not-null="true" />
+    <many-to-one name="Unit"
+                 access="nosetter.camelcase-m-underscore"
+                 column="unitid"
+                 class="Unit"
+                 not-found="ignore" />
+    <property name="StampingDataType" column="stampingdatatype" />
+    <property name="CncDataAggregationType" column="cncdataaggregationtype" />
+    <property name="AssociatedClass" column="fieldassociatedclass" />
+    <property name="AssociatedProperty" column="fieldassociatedproperty" />
+    <property name="MinTime" column="fieldmintime"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
+    <property name="LimitDeviation" column="fieldlimitdeviation" />
+    <property name="Custom" column="fieldcustom"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Active" column="fieldactive"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

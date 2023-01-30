@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<erp>
+  <version>1.0</version>
+  <data>
+    <time>2008-03-05 10:44:53</time>
+    <name>RXP500_Test</name>
+    <ver>3.41 (212)</ver>
+    <mode>MANUAL</mode>
+    <state>RUNNING</state>
+    <feed>2500</feed>
+    <ov_feed>80</ov_feed>
+    <tool>3</tool>
+    <tooltype>Typ1</tooltype>
+    <spinspeed>3000</spinspeed>
+    <ov_spinspeed>90</ov_spinspeed>
+    <job>
+      <name />
+      <ncpgm>C:\pulse_build\UnitTest\UnitTests-in\ccisofile.iso</ncpgm>
+      <start>2008-02-06 10:08:43</start>
+      <subpgm>f:\public\pro\testup\up.bef</subpgm>
+      <substart>2008-02-06 10:09:14</substart>
+      <percent>4%</percent>
+      <line>10</line>
+      <chuck />
+      <pallet />
+    </job>
+    <user />
+  </data>
+</erp>
+

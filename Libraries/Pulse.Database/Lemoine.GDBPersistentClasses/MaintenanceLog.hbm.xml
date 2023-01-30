@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <union-subclass name="MaintenanceLog" table="maintenancelog"
+                  extends="Log, Pulse.Database">
+    <property name="State" column="maintenancelogstate"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+  </union-subclass>
+</hibernate-mapping>

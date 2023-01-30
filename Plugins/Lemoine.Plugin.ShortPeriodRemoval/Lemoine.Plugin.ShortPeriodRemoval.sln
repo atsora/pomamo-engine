@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.2.1.8805
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Plugin.ShortInactivityRemoval", "Lemoine.Plugin.ShortInactivityRemoval.csproj", "{136F2D68-D800-425C-A7D1-67CF11EF7587}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{136F2D68-D800-425C-A7D1-67CF11EF7587}.Debug|x86.Build.0 = Debug|x86
+		{136F2D68-D800-425C-A7D1-67CF11EF7587}.Debug|x86.ActiveCfg = Debug|x86
+		{136F2D68-D800-425C-A7D1-67CF11EF7587}.Release|x86.Build.0 = Release|x86
+		{136F2D68-D800-425C-A7D1-67CF11EF7587}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+EndGlobal

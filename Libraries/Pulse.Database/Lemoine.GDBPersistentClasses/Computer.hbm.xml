@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Computer" table="computer">
+    <id name="Id" column="Computerid" access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">computer_computerid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="computerversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="computername"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="Address" column="computeraddress" />
+    <property name="IsLctr" column="computerislctr"
+              not-null="true" />
+    <property name="IsLpst" column="computerislpst"
+              not-null="true" />
+    <property name="IsCnc" column="computeriscnc"
+              not-null="true" />
+    <property name="IsWeb" column="computerisweb"
+              not-null="true" />
+    <property name="IsAutoReason" column="computerisautoreason"
+              not-null="true" />
+    <property name="IsAlert" column="computerisalert"
+              not-null="true" />
+    <property name="IsSynchronization" column="computerissynchronization"
+              not-null="true" />
+    <property name="WebServiceUrl" column="computerwebserviceurl"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

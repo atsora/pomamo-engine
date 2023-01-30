@@ -1,0 +1,7 @@
+// Copyright (C) 2009-2023 Lemoine Automation Technologies
+//
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Runtime.CompilerServices;
+
+[assembly:InternalsVisibleTo("Pulse.Web.UnitTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010015234dbba0da3f2daf34f84658e780324e556c05a73040756d76f5195f025756000f2fba9747bc1aac7d90666db8df32fe003b41f4453fbc33f955281fea1fb6598ceb59e768047104cd0f78dcffee72560914fb2aa63597f81486396a04ca66c6a9d8bce924f4109c9fc023601b0579cc0c8b998707131624f862bb0a533cac")]

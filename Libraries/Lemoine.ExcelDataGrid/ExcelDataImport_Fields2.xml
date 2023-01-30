@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:gdb="urn:pulse.lemoinetechnologies.com:synchro:gdb"
+      xmlns:odbc="urn:pulse.lemoinetechnologies.com:synchro:odbc"
+      odbc:filename="C:\\"
+      gdb:logthreshold="WARN"
+      every="00:00:00"
+      nodataevery="00:01:00">
+  
+  <Path Id="pulse:0" gdb:action='none'
+             odbc:request="SELECT pathid as Id FROM [PATH]"
+             gdb:notfound='fail'
+             gdb:relation='none'>
+  </Path>
+  
+  <PulseSequenceEvent gdb:action="none"
+    sequencename="pulse:0"
+    sequenceorder="pulse:1"
+    toolname="pulse:2"
+    estimatedtime="pulse:3"
+    feedrate="pulse:4"
+    rpm="pulse:5"
+    hasfeedrate="pulse:6"
+    hasrpm="pulse:7"
+    odbc:request="SELECT sequencename, sequenceorder, toolname, estimatedtime, feedrate, rpm, hasfeedrate, hasrpm
+    FROM [SEQUENCE]">
+    
+    <Tool Name="{../@toolname}"
+          gdb:action='reference'
+          gdb:notfound='log create'
+          gdb:relation='none'
+          gdb:newattributes='Id' />
+    
+    <FeedRate gdb:action='none' gdb:relation='none' >
+      <Field Code="FeedRate"
+             gdb:action='reference'
+             gdb:relation='none'
+             gdb:notfound='log create'
+             gdb:newattributes='Id' />
+    </FeedRate>
+    
+    <SpindleSpeed gdb:action='none' gdb:relation='none' >
+      <Field Code="SpindleSpeed"
+             gdb:action='reference'
+             gdb:relation='none'
+             gdb:notfound='log create'
+             gdb:newattributes='Id' />
+    </SpindleSpeed>
+    
+    <Sequence Name="{../@sequenceorder}"
+              Order="{../@sequenceorder}"
+              EstimatedTime="{../@estimatedtime}"
+              gdb:action='reference'
+              gdb:notfound='log create'
+              gdb:relation='none'
+              gdb:newattributes='Id' >
+      
+      <Path Id="{../../../Path/@Id}"
+                 gdb:action='id'
+                 gdb:notfound='fail' />
+      
+      <Tool Id="{../../Tool/@Id}"
+            gdb:action='id'
+            gdb:notfound='fail'/>
+    
+    </Sequence>
+    
+    <StampingValueFeedRate gdb:action='none' gdb:relation='none' odbc:if="{../@hasfeedrate}">
+      <StampingValue Double="{../../@feedrate}"                     
+                     gdb:relation='none'
+                     gdb:action='reference'
+                     gdb:newattributes='Id'
+                     gdb:notfound='log create' >
+        
+        <Sequence Id="{../../../Sequence/@Id}"
+                  gdb:action='id'
+                  gdb:notfound='fail' />
+        
+        <Field Id="{../../../FeedRate/Field/@Id}"
+               gdb:action='id'
+               gdb:notfound='fail' />
+      
+      </StampingValue>
+    </StampingValueFeedRate>
+    
+    <StampingValueSpindleSpeed gdb:action='none' gdb:relation='none' odbc:if="{../@hasrpm}">
+      <StampingValue Double="{../../@rpm}"                     
+                     gdb:relation='none'
+                     gdb:action='reference'
+                     gdb:newattributes='Id'
+                     gdb:notfound='log create' >
+        
+        <Sequence Id="{../../../Sequence/@Id}"
+                  gdb:action='id'
+                  gdb:notfound='fail' />
+        
+        <Field Id="{../../../SpindleSpeed/Field/@Id}"
+               gdb:action='id'
+               gdb:notfound='fail' />
+      
+      </StampingValue>
+    </StampingValueSpindleSpeed>
+  
+  </PulseSequenceEvent>
+</root>

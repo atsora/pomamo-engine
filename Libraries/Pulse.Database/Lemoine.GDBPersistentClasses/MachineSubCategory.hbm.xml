@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineSubCategory" table="machineSubCategory">
+    <id name="Id" column="machineSubCategoryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">machineSubCategory_machineSubCategoryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machineSubCategoryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="machineSubCategoryname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="machineSubCategorycode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="machineSubCategoryexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DisplayPriority" column="machineSubCategorydisplaypriority" />
+    <set name="Machines"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IMachine, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="machineSubCategoryid" />
+      <one-to-many class="Machine" />
+    </set>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;netcoreapp3.1;net6.0</TargetFrameworks>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>18.0.0.0</AssemblyVersion>
+    <NoWarn>0649</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Caches.CoreMemoryCache">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate.Caches\NHibernate.Caches.CoreMemoryCache\netstandard2.0\NHibernate.Caches.CoreMemoryCache.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr3.Runtime" />
+    <PackageReference Include="Iesi.Collections" />
+    <!-- Implicit dependency, required. See: #175243612 -->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+    <!-- Not required any more with .NET Standard 2.1 or .NET Core 3.1, but required in .NET Standard 2.0-->
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+    <PackageReference Include="MigratorLAT" />
+    <PackageReference Include="MigratorLAT.Framework" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Remotion.Linq" />
+    <PackageReference Include="Remotion.Linq.EagerFetching" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.Xml.XmlSerializer" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\Lemoine.NHibernate\Lemoine.NHibernate.csproj" />
+  </ItemGroup>
+
+</Project>

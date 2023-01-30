@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="AutoMachineStateTemplate" table="AutoMachineStateTemplate">
+    <id name="Id" column="AutoMachineStateTemplateid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">AutoMachineStateTemplate_AutoMachineStateTemplateid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="AutoMachineStateTemplateversion"
+       access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineMode" column="machinemodeid"
+                 class="MachineMode"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="true" />
+    <many-to-one name="Current" column="currentmachinestatetemplateid"
+                 class="MachineStateTemplate"
+                 access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="New" column="newmachinestatetemplateid"
+                 class="MachineStateTemplate"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="true" />
+  </class>
+</hibernate-mapping>

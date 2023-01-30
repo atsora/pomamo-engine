@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="LineMachine" table="linemachine">
+    <id name="Id" column="linemachineid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">linemachine_linemachineid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="linemachineversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Line"
+                 access="nosetter.camelcase-m-underscore"
+                 class="Line"
+                 column="lineid"
+                 not-null="true" />
+    <many-to-one name="Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 class="Machine"
+                 column="machineid"
+                 not-null="true" />
+    <property name="LineMachineStatus" column="linemachinestatus" not-null="true" />
+    <many-to-one name="Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 class="Operation"
+                 column="operationid"
+                 not-null="true" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="IntermediateWorkPieceTarget" table="IntermediateWorkPieceTarget">
+    <id name="Id" column="IntermediateWorkPieceTargetid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">intermediateworkpiecetarget_intermediateworkpiecetargetid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="IntermediateWorkPieceTargetversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="IntermediateWorkPiece" column="intermediateworkpieceid" class="IntermediateWorkPiece"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" not-null="true" />
+    <many-to-one name="Component" column="componentid" class="Component"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="WorkOrder" column="workorderid" class="WorkOrder"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Line" column="lineid" class="Line"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <property name="Day" column="intermediateworkpiecetargetday" />
+    <many-to-one name="Shift" column="shiftid" class="Shift" />
+    <property name="Number" column="intermediateworkpiecetargetnumber" not-null="true" />
+  </class>
+</hibernate-mapping>

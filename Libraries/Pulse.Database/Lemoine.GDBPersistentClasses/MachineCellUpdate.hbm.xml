@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="MachineCellUpdate"
+            extends="MachineModification, Pulse.Database"
+            discriminator-value="MachineCellUpdate">
+    <join table="MachineCellUpdate"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine"
+                   column="machineid"
+                   class="Machine"
+                   access="nosetter.camelcase-m-underscore"
+                   not-null="true"
+                   not-found="exception" />
+      <many-to-one name="OldCell"
+                   column="oldcellid"
+                   access="nosetter.camelcase-m-underscore"
+                   class="Cell"
+                   not-found="exception" />
+      <many-to-one name="NewCell"
+                   column="newcellid"
+                   access="nosetter.camelcase-m-underscore"
+                   class="Cell"
+                   not-found="exception" />
+    </join>
+  </subclass>
+</hibernate-mapping>

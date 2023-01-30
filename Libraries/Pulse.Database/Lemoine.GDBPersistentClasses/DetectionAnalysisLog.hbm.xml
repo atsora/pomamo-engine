@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <union-subclass name="DetectionAnalysisLog" table="detectionanalysislog"
+                  extends="Log, Pulse.Database">
+    <many-to-one name="Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machineid" class="Machine"
+                 not-null="true" />
+    <many-to-one name="MachineModule"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machinemoduleid" class="MachineModule" />
+  </union-subclass>
+</hibernate-mapping>

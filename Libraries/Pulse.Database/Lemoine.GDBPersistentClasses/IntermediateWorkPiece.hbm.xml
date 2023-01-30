@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="IntermediateWorkPiece" table="intermediateworkpiece">
+    <id name="Id" column="intermediateworkpieceid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">intermediateworkpiece_intermediateworkpieceid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="intermediateworkpieceversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="intermediateworkpiecename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="intermediateworkpiececode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="intermediateworkpieceexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DocumentLink" column="intermediateworkpiecedocumentlink"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Weight" column="intermediateworkpieceweight" />
+    <many-to-one name="Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 column="operationid"
+                 class="Operation"
+                 cascade="none"
+                 not-null="true"
+                 not-found="ignore" />
+    <property name="OperationQuantity"
+              column="operationintermediateworkpiecequantity"
+              not-null="true" />
+    <set name="PossibleNextOperations"
+         table="operationsourceworkpiece"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IOperation, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         cascade="none"
+         inverse="true" lazy="true">
+      <key column="intermediateworkpieceid" />
+      <many-to-many class="Operation" column="operationid" />
+    </set>
+    <bag name="ComponentIntermediateWorkPieces"
+         access="nosetter.camelcase-m-underscore"
+         cascade="none"
+         inverse="true" lazy="true" order-by="intermediateworkpieceorderforcomponent ASC">
+      <key column="intermediateworkpieceid" />
+      <one-to-many class="ComponentIntermediateWorkPiece" />
+    </bag>
+  </class>
+</hibernate-mapping>

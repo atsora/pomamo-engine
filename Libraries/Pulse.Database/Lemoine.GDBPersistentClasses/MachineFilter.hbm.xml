@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineFilter" table="machinefilter">
+    <id name="Id" column="machinefilterid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">machinefilter_machinefilterid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinefilterversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="machinefiltername"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+              not-null="true" />
+    <property name="InitialSet" column="machinefilterinitialset"
+              not-null="true" />
+    <list name="Items"
+          access="nosetter.camelcase-m-underscore"
+          inverse="false"
+          cascade="all">
+      <key column="machinefilterid" />
+      <index column="machinefilteritemorder" />
+      <one-to-many class="MachineFilterItem" />
+    </list>
+  </class>
+</hibernate-mapping>

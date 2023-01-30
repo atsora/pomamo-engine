@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Lemoine.Plugin.MaintenanceAction.MaintenanceAction, Lemoine.Plugin.MaintenanceAction" table="maintenanceaction">
+    <id name="Id" column="maintenanceactionid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">maintenanceaction_maintenanceactionid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="maintenanceactionversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 secondary-key="true"
+                 column="machineid"
+                 class="Machine"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="Title" column="maintenanceactiontitle" not-null="true" />
+    <property name="Description" column="maintenanceactiondescription" not-null="true" />
+    <property name="MaintenanceActionType" column="maintenanceactiontypeid"
+              not-null="true" />
+    <property name="Status" column="maintenanceactionstatusid"
+              not-null="true" />
+    <property name="CreationDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeType, Lemoine.Database"
+              column="maintenanceactioncreationdatetime"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="ModifiedDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeType, Lemoine.Database"
+              column="maintenanceactionmodifieddatetime"
+              not-null="true" />
+    <property name="CompletionDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeType, Lemoine.Database"
+              column="maintenanceactioncompletiondatetime" />
+    <property name="StopDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeType, Lemoine.Database"
+              column="maintenanceactionstopdatetime" />
+    <property name="PlannedDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeType, Lemoine.Database"
+              column="maintenanceactionplanneddatetime" />
+    <property name="RemainingMachiningDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="maintenanceactionremainingmachiningduration" />
+    <property name="StandardMachiningFrequency"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="maintenanceactionstandardmachiningfrequency" />
+    <property name="StandardTotalFrequency"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="maintenanceactionstandardtotalfrequency" />
+  </class>
+</hibernate-mapping>

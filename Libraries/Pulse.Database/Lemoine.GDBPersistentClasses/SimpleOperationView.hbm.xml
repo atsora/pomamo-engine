@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="SimpleOperationView" table="simpleoperation">
+    <id name="OperationId" column="operationid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">operation_operationid_seq</param>
+      </generator>
+    </id>
+    <property name="IntermediateWorkPieceId" column="intermediateworkpieceid"
+              access="nosetter.camelcase-m-underscore"
+              generated="insert" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="operationname"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="Code" column="operationcode"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="ExternalCode" column="operationexternalcode" />
+    <property name="DocumentLink" column="operationdocumentlink" />
+    <many-to-one name="Type" column="operationtypeid"
+                 class="OperationType"
+                 cascade="none"
+                 not-found="exception" />
+    <property name="MachiningDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationmachiningduration" />
+    <property name="SetUpDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationsetupduration" />
+    <property name="TearDownDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationteardownduration" />
+    <property name="LoadingDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationloadingduration" />
+    <property name="UnloadingDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationunloadingduration" />
+    <property name="Weight" column="intermediateworkpieceweight" />
+    <many-to-one name="Component" column="componentid"
+                 class="Component"
+                 cascade="none"
+                 not-found="exception" />
+  </class>
+</hibernate-mapping>

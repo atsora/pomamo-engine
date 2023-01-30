@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+  <session-factory>
+    <property name="cache.use_second_level_cache">true</property>
+    <property name="cache.use_query_cache">true</property>
+    <property name="cache.default_expiration">300</property>
+    <!-- 5 minutes -->
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Component, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.ComponentIntermediateWorkPiece, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.ComponentType, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Computer, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Config, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Display, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.IntermediateWorkPiece, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Field, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Machine, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineGroup, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineMode, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineModeDefaultReason, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineModule, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineMonitoringType, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineObservationState, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineStatus, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Operation, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.OperationType, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Project, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Reason, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.ReasonGroup, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.ReasonSelection, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Revision, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Sequence, Pulse.Database"
+      usage="read-write" />
+    <!--class-cache
+        class="Lemoine.GDBPersistentClasses.Service, Pulse.Database"
+        usage="read-only" /-->
+    <!-- Service is a child of Updater -->
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Stamp, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.SuperGroup, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Translation, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Unit, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Updater, Pulse.Database"
+      usage="read-only" />
+    <!--class-cache
+        class="Lemoine.GDBPersistentClasses.User, Pulse.Database"
+        usage="read-only" /-->
+    <!-- User is a child of Updater -->
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.WorkOrder, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.WorkOrderProject, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.WorkOrderStatus, Pulse.Database"
+      usage="read-only" />
+    <!--collection-cache
+        collection="Lemoine.GDBPersistentClasses.Component.IntermediateWorkPieces, Pulse.Database"
+        usage="read-write" /-->
+    <!--collection-cache
+        collection="Lemoine.GDBPersistentClasses.IntermediateWorkPiece.Components, Pulse.Database"
+        usage="read-write" /-->
+    <!--collection-cache
+        collection="Lemoine.GDBPersistentClasses.Operation.IntermediateWorkPieces, Pulse.Database"
+        usage="read-write" /-->
+    <!--collection-cache
+        collection="Lemoine.GDBPersistentClasses.Operation.Sequences, Pulse.Database"
+        usage="read-write" /-->
+    <!--collection-cache
+        collection="Lemoine.GDBPersistentClasses.Project.Components, Pulse.Database"
+        usage="read-write" /-->
+    <!--collection-cache
+        collection="Lemoine.GDBPersistentClasses.Project.WorkOrders, Pulse.Database"
+        usage="read-write" /-->
+    <!--collection-cache
+        collection="Lemoine.GDBPersistentClasses.WorkOrder.Projects, Pulse.Database"
+        usage="read-write" /-->
+  </session-factory>
+</hibernate-configuration>

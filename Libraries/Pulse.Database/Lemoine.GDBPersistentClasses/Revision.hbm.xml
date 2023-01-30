@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Revision" table="revision">
+    <id name="Id" column="revisionid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">revision_revisionid_seq</param>
+      </generator>
+    </id>
+    <many-to-one name="Updater" column="updaterid"
+                 class="Updater"
+                 cascade="none"
+                 not-found="exception" />
+    <property name="DateTime" column="revisiondatetime"
+              not-null="true" />
+    <property name="Comment" column="revisioncomment" />
+    <property name="IPAddress" column="revisionip" />
+    <property name="Application" column="revisionapplication" />
+    <set name="GlobalModifications"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IGlobalModification, Lemoine.ModelDAO],System.Int64], Lemoine.Database"
+         cascade="none">
+      <key column="revisionid" />
+      <one-to-many class="GlobalModification" />
+    </set>
+    <set name="MachineModifications"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IMachineModification, Lemoine.ModelDAO],System.Int64], Lemoine.Database"
+         cascade="none">
+      <key column="revisionid" />
+      <one-to-many class="MachineModification" />
+    </set>
+  </class>
+</hibernate-mapping>

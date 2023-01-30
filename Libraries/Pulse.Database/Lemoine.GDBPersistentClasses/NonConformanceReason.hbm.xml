@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="NonConformanceReason" table="NonConformanceReason">
+    <id name="Id" column="nonconformancereasonid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">NonConformanceReason_NonConformanceReasonid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="nonconformancereasonversion"
+       access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="nonconformancereasonname"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" not-null="true" />
+    <property name="Code" column="nonconformancereasoncode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Description" column="nonconformancereasondescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DetailsRequired"
+              column="nonconformancereasondetailsrequired" not-null="true" />
+  </class>
+</hibernate-mapping>

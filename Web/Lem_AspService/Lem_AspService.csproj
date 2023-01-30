@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
+    <OutputType>Exe</OutputType>
+    <Platforms>x64</Platforms>
+    <UserSecretsId>3a80c30e-cf71-43db-bc3a-426706eeb50f</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup> <!-- Because of log4net -->
+    <PackageReference Include="System.Diagnostics.Debug" VersionOverride="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem" VersionOverride="4.3.0" />
+    <PackageReference Include="System.Net.NameResolution" VersionOverride="4.3.0" />
+    <PackageReference Include="System.Runtime.Extensions" VersionOverride="4.3.1" />
+    <PackageReference Include="System.Runtime.InteropServices" VersionOverride="4.3.0" />
+    <PackageReference Include="System.Threading" VersionOverride="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <!--PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" /-->
+  </ItemGroup>
+
+  <ItemGroup> <!-- Plugin dependencies -->
+    <PackageReference Include="FSharp.Core" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
+    <ProjectReference Include="..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
+    <ProjectReference Include="..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />
+    <ProjectReference Include="..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
+    <ProjectReference Include="..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" />
+    <ProjectReference Include="..\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.Web.ProductionMachiningStatus\Lemoine.Web.ProductionMachiningStatus.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.WebMiddleware\Lemoine.WebMiddleware.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.WebService\Lemoine.WebService.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.Web\Lemoine.Web.csproj" />
+    <ProjectReference Include="..\Libraries\Pulse.Graphql\Pulse.Graphql.csproj" />
+    <ProjectReference Include="..\Libraries\Pulse.Web\Pulse.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='VS'">  <!-- include plugins .dll files for tests (instead of ProjectReference) - projects must be compiled in sln -->
+    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ReasonDefaultManagement.deps.json" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Lem_AspService.dll.options" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
+    <None Include="Lem_AspService.dll.defaultoptions" CopyToOutputDirectory="Always" />
+    <None Include="Lem_AspService.dll.log4net" CopyToOutputDirectory="Always" />
+    <None Include="Lem_AspService.nh.cfg.xml" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>

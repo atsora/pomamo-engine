@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="WorkOrderLineQuantity" table="workorderlinequantity">
+    <id name="Id" column="workorderlinequantityid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">workorderlinequantity_workorderlinequantityid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="workorderlinequantityversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Line"
+                 access="nosetter.camelcase-m-underscore"
+                 secondary-key="true"
+                 class="Line"
+                 column="lineid"
+                 not-null="true" />
+    <many-to-one name="IntermediateWorkPiece"
+                 access="nosetter.camelcase-m-underscore"
+                 class="IntermediateWorkPiece"
+                 column="intermediateworkpieceid"
+                 not-null="true" />
+    <property name="Quantity" column="workorderlinequantitynumber"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineActivitySummary"
+         table="machineactivitysummary">
+    <id name="Id" column="machineactivitysummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">machineactivitysummary_machineactivitysummaryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machineactivitysummaryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid"
+                 class="Machine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="Day"
+              access="nosetter.camelcase-m-underscore"
+              column="machineactivityday"
+              not-null="true" />
+    <many-to-one name="MachineObservationState"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machineobservationstateid"
+                 class="MachineObservationState"
+                 not-null="true" />
+    <many-to-one name="MachineMode"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machinemodeid"
+                 class="MachineMode"
+                 not-null="true" />
+    <many-to-one name="Shift"
+                 access="nosetter.camelcase-m-underscore"
+                 column="shiftid"
+                 class="Shift" />
+    <property name="Time"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="machineactivitytime"
+              not-null="true" />
+  </class>
+  <query name="MachineActivitySummaryRunTotalTime">
+    <![CDATA[
+select sum(a.Time*case when a.MachineMode.Running then 1.0 else 0.0 end) as Run,
+  sum(a.Time*case when (FALSE = a.MachineMode.Running) then 1.0 else 0.0 end) as NotRunning,
+  sum(a.Time) as Total
+from MachineActivitySummary as a
+where a.Machine.Id=:machineId
+  and (:beginDay is null or a.Day>=:beginDay)
+  and (:endDay is null or a.Day<=:endDay)
+]]>
+  </query>
+  <query name="MachineActivitySummaryRunTime">
+    <![CDATA[
+select sum(running.Time) as Run
+from MachineActivitySummary as running
+where running.Machine.Id=:machineId
+  and (:beginDay is null or running.Day>=:beginDay)
+  and (:endDay is null or running.Day<=:endDay)
+  and running.MachineMode.Running=true
+]]>
+  </query>
+</hibernate-mapping>

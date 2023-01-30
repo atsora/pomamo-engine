@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="OperationType" table="operationtype">
+    <id name="Id" column="operationtypeid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">operationtype_operationtypeid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="operationtypeversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="operationtypename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="operationtypetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="operationtypecode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Priority" column="operationtypepriority" />
+  </class>
+</hibernate-mapping>

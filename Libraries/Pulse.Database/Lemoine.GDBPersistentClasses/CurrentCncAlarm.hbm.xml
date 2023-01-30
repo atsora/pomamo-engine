@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="CurrentCncAlarm" table="currentcncalarm">
+    <id name="Id" column="currentcncalarmid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">currentcncalarm_currentcncalarmid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="currentcncalarmversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" />
+    <many-to-one name="MachineModule"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MachineModule"
+                 column="machinemoduleid"
+                 not-null="true" />
+    <property name="DateTime" column="currentcncalarmdatetime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="CncInfo" column="currentcncalarmcncinfo"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database"
+              not-null="true" />
+    <property name="CncSubInfo" column="currentcncalarmcncsubinfo"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Type" column="currentcncalarmtype"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database"
+              not-null="true" />
+    <property name="Number" column="currentcncalarmnumber"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />    
+    <property name="Message" column="currentcncalarmmessage" />
+    <property name="Properties" column="currentcncalarmproperties"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.JsonAsDictionaryType, Lemoine.Database"
+              not-null="true" />
+    <many-to-one name="Severity" column="cncalarmseverityid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="CncAlarmSeverity"
+                 update="false" insert="false" />
+  </class>
+</hibernate-mapping>

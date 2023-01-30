@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Reason" table="Reason">
+    <id name="Id" column="reasonid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">reason_reasonid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="reasonversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="LongDisplay" column="display_long"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="reasonname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey"
+              column="reasontranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="reasoncode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Description" column="reasondescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DescriptionTranslationKey"
+              column="reasondescriptiontranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Color" column="reasoncolor"
+              not-null="true" update="false" insert="false" generated="always" />
+    <property name="ReportColor" column="reasonreportcolor"
+              not-null="true" update="false" insert="false" generated="always" />
+    <property name="CustomColor" column="reasoncustomcolor"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="CustomReportColor" column="reasoncustomreportcolor"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="LinkOperationDirection"
+              column="reasonlinkoperationdirection"
+              not-null="true" />
+    <many-to-one name="ReasonGroup" column="reasongroupid"
+                 class="ReasonGroup"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 not-found="exception"
+                 not-null="true" />
+    <property name="DisplayPriority" column="reasondisplaypriority" />
+  </class>
+</hibernate-mapping>

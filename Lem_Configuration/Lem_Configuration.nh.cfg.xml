@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+  <session-factory>
+    <property name="cache.use_query_cache">true</property>
+    <property name="cache.default_expiration">600</property>
+    <!-- 10 minutes -->
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Translation, Pulse.Database"
+      usage="read-only" />
+  </session-factory>
+</hibernate-configuration>

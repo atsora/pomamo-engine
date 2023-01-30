@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="EventCncValueConfig" table="EventCncValueConfig">
+    <id name="Id" column="eventCncValueconfigid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">eventcncvalueconfig_eventCncValueconfigid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="eventcncvalueconfigversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="eventcncvalueconfigname"
+              not-null="true" />
+    <property name="Message" column="eventmessage"
+              not-null="true" />
+    <many-to-one name="Field"
+                 column="fieldid" class="Field"
+                 not-null="true" />
+    <many-to-one name="MachineFilter"
+                 column="machinefilterid" class="MachineFilter" />
+    <property name="Condition" column="eventcncvaluecondition"
+              not-null="true" />
+    <property name="MinDuration" column="eventcncvalueminduration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
+    <many-to-one name="Level"
+                 column="eventlevelid" class="EventLevel"
+                 not-null="true" />
+  </class>
+  <query name="EventCncValueConfigLevels">
+    <![CDATA[
+from EventLevel el
+where el.Id in (select ecvc.Level.Id from EventCncValueConfig as ecvc)
+order by el.Priority, el.Id
+    ]]>
+  </query>
+</hibernate-mapping>

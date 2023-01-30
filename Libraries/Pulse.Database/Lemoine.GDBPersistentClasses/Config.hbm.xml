@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Config" table="Config">
+    <id name="Id" column="Configid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">config_configid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="Configversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Key" column="configkey"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Description" column="configdescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Value" column="configvalue"
+              type="Lemoine.NHibernateTypes.XmlSerializableType, Lemoine.Database"
+              not-null="true" />
+    <property name="Active" column="configactive"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="IsoFileSlot" table="isofileslot">
+    <id name="Id" column="isofileslotid">
+      <generator class="native">
+        <param name="sequence">isofileslot_isofileslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="isofileslotversion" />
+    <many-to-one name="MachineModule"
+                 column="machinemoduleid" class="MachineModule"
+                 secondary-key="true"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="IsoFile"
+                 access="nosetter.camelcase-m-underscore"
+                 column="isofileid" class="IsoFile"
+                 not-null="true" />
+    <property name="BeginDateTime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeFullType, Lemoine.Database"
+              column="isofileslotbegindatetime"
+              not-null="true" />
+    <property name="EndDateTime"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
+              column="isofileslotenddatetime" />
+    <property name="BeginDay"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.LowerBoundDayType, Lemoine.Database"
+              column="isofileslotbeginday"
+              not-null="true" />
+    <property name="EndDay"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UpperBoundDayType, Lemoine.Database"
+              column="isofileslotendday" />
+  </class>
+</hibernate-mapping>

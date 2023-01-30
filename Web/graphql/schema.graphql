@@ -1,0 +1,479 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  machine(id: ID!): Machine!
+  workOrderStatuses: [WorkOrderStatus!]!
+  componentTypes: [ComponentType!]!
+  operationTypes: [OperationType!]!
+  topWorkInfos: [WorkInfo!]!
+  workOrder(id: ID!): WorkOrder!
+  project(id: ID!): Project!
+  job(id: ID!): Job!
+  component(id: ID!): Component!
+  part(id: ID!): Part!
+  intermediateWorkPiece(id: ID!): IntermediateWorkPiece!
+  operation(id: ID!): Operation!
+  operationRevision(id: ID!): OperationRevision!
+  operationModel(id: ID!): OperationModel!
+  sequences(operationModel: ID!, pathNumber: Int): [Sequence!]!
+}
+
+type Mutation {
+  createWorkOrder(workOrder: NewWorkOrder!): WorkOrder!
+  updateWorkOrder(workOrder: UpdateWorkOrder!): WorkOrder!
+  createProject(project: NewProject!): Project!
+  updateProject(project: Project!): Project!
+  createWorkOrderProject(workOrderProject: NewWorkOrderProject!): WorkOrderProject!
+  removeWorkOrderProject(workOrderProjectId: ID!): Boolean
+  createJob(job: NewJob!): Job!
+  updateJob(job: Job!): Job!
+  createComponent(component: NewComponent!): Component!
+  updateComponent(component: Component!): Component!
+  createProjectComponent(projectComponent: NewProjectComponent!): Boolean
+  createPart(part: NewPart!): Part!
+  updatePart(part: Part!): Part!
+  createIntermediateWorkPiece(intermediateWorkPiece: NewIntermediateWorkPiece!): IntermediateWorkPiece!
+  updateIntermediateWorkPiece(intermediateWorkPiece: IntermediateWorkPiece!): IntermediateWorkPiece!
+  createComponentIntermediateWorkPiece(componentIntermediateWorkPiece: NewComponentIntermediateWorkPiece!): ComponentIntermediateWorkPiece!
+  createOperation(operation: NewOperation!): Operation!
+  updateOperation(operation: Operation!): Operation!
+}
+
+scalar Color
+scalar Picture
+scalar UtcDateTime
+scalar UtcDateTimeRange
+
+interface IDisplayable {
+  display: String!
+}
+
+type Machine implements IDisplayable {
+  id: ID!
+  display: String!
+}
+
+type MachineFilter implements IDisplayable {
+  id: ID!
+  display: String!
+}
+
+type WorkInfoKind implements IDisplayable {
+  id: ID! # String: Component, Part, Job, ...
+  display: String!
+  parent: WorkInfoKind # null if no parent
+  multipleParents: Boolean!
+  child: WorkInfoKind # null if no parent
+  multipleChildren: Boolean!
+}
+
+union WorkInfo = WorkOrder | Project | Job | Component | Part | Operation | IntermediateWorkPiece
+
+interface IWorkInfo {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # null if not applicable
+  children: [WorkInfo!] # null if not applicable
+}
+
+type Customer implements IDisplayable {
+  id: ID!
+  display: String!
+  name: String
+  code: String
+  externalCode: String
+}
+
+type WorkOrderStatus implements IDisplayable {
+  id: ID!
+  display: String!
+}
+
+type ComponentType implements IDisplayable {
+  id: ID!
+  display: String!
+  code: String
+}
+
+type OperationType implements IDisplayable {
+  id: ID!
+  display: String!
+  code: String
+  priority: Int
+}
+
+type WorkOrder implements IWorkInfo & IDisplayable {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # null because not applicable
+  children: [WorkInfo!] # projects or parts
+  customer: Customer
+  deliveryDate: UtcDateTime
+  status: WorkOrderStatus!
+  workOrderProjects: [WorkOrderProject!]!
+}
+
+input NewWorkOrder {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+  deliveryDate: UtcDateTime
+  statusId: ID!
+  projectId: ID # make it a parent of a specific project or part if known
+  quantity: Int # if projectId is set
+}
+
+input UpdateWorkOrder {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+  deliveryDate: UtcDateTime
+  statusId: ID
+}
+
+type Project implements IWorkInfo & IDisplayable {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # work orders
+  children: [WorkInfo!] # components
+  customer: Customer
+  creationDateTime: UtcDateTime!
+  reactivationDateTime: UtcDateTime!
+  archiveDateTime: UtcDateTime
+}
+
+input NewProject {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+}
+
+input UpdateProject {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+}
+
+type WorkOrderProject {
+  workOrder: WorkOrder!
+  project: Project!
+  quantity: Int
+}
+
+input NewWorkOrderProject {
+  workOrderId: ID!
+  projectId: ID!
+  quantity: Int
+}
+
+type Job implements IWorkInfo & IDisplayable {
+  id: ID! # same as project id
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # null because not applicable
+  children: [WorkInfo!] # components
+  customer: Customer
+  deliveryDate: UtcDateTime
+  status: WorkOrderStatus
+  creationDateTime: UtcDateTime!
+  reactivationDateTime: UtcDateTime!
+  archiveDateTime: UtcDateTime
+  quantity: Int
+}
+
+input NewJob {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+  deliveryDate: UtcDateTime
+  statusId: ID
+  quantity: Int  
+}
+
+type Component implements IWorkInfo & IDisplayable {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # projects or jobs
+  children: [WorkInfo!] # operations
+  type: ComponentType!
+  finalWorkPiece: IntermediateWorkPiece # when known
+  estimatedHours: Float
+  componentIntermediateWorkPieces: [ComponentIntermediateWorkPiece!]!
+  project: Project # To be used by updates
+}
+
+input NewComponent {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  typeId: ID
+  estimatedHours: Float
+  projectId: ID
+}
+
+input NewProjectComponent {
+  projectId: ID!
+  compononentId: ID!
+}
+
+type Part implements IWorkInfo & IDisplayable {
+  id: ID! # Same as component ID
+  projectId: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # work orders
+  children: [WorkInfo!] # operations or intermediate work pieces
+  type: ComponentType!
+  customer: Customer
+  creationDateTime: UtcDateTime!
+  reactivationDateTime: UtcDateTime!
+  archiveDateTime: UtcDateTime
+  finalWorkPiece: IntermediateWorkPiece # when known
+  estimatedHours: Float
+  intermediateWorkPieces: [ComponentIntermediateWorkPiece!]!
+}
+
+input NewPart {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+  typeId: ID
+  estimatedHours: Float
+}
+
+type ComponentIntermediateWorkPiece {
+  id: ID!
+  component: Component!
+  intermediateWorkPiece: IntermediateWorkPiece!
+  code: String
+  order: Int
+}
+
+input NewComponentIntermediateWorkPiece {
+  componentId: ID!
+  intermediateWorkPieceId: ID!
+  code: String
+  order: Int
+}
+
+type IntermediateWorkPiece implements IWorkInfo & IDisplayable {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # components or parts
+  children: [WorkInfo!] # unique operation
+  operation: Operation
+  operationQuantity: Int
+  weight: Float
+}
+
+input NewIntermediateWorkPiece {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  weight: Float
+}
+
+type Operation implements IWorkInfo & IDisplayable {
+  id: ID!
+  isSimpleOperation: Boolean!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # component, part or intermediate work piece
+  children: [WorkInfo!] # null because not applicable
+  longDisplay: String
+  shortDisplay: String
+  type: OperationType!
+  quantity: Int # For simpleOperation only
+  weight: Float # For simpleOperation only
+  creationDateTime: UtcDateTime!
+  archiveDateTime: UtcDateTime
+  activeRevision: OperationRevision! # active revision
+  revisions: [OperationRevision!]!
+  defaultActiveModel: OperationModel! # for the active revision
+  intermediateWorkPieces: [IntermediateWorkPiece!]!
+  defaultActiveMachiningDuration: Float
+  defaultActiveLoadingDuration: Float
+  defaultActiveUnloadingDuration: Float
+  defaultActiveSetupDuration: Float
+  defaultActiveTeardownDuration: Float
+  durations: [OperationDuration!]!
+}
+
+input NewOperation {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  typeId: ID!
+  quantity: Int
+  weight: Float # for simple operation only and when available only
+  intermediateWorkPieceId: ID # not for simple operations
+}
+
+type SimpleOperation implements IWorkInfo & IDisplayable { # TODO: not sure if I keep it
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  display: String!
+  parents: [WorkInfo!] # component or part
+  children: [WorkInfo!] # null because not applicable
+  longDisplay: String
+  shortDisplay: String
+  type: OperationType!
+  quantity: Int
+  weight: Float
+  creationDateTime: UtcDateTime!
+  archiveDateTime: UtcDateTime
+  activeRevision: OperationRevision! # active revision
+  revisions: [OperationRevision!]!
+  defaultActiveModel: OperationModel! # for the active revision
+  intermediateWorkPieces: [IntermediateWorkPiece!]!
+  defaultActiveMachiningDuration: Float
+  defaultActiveLoadingDuration: Float
+  defaultActiveUnloadingDuration: Float
+  defaultActiveSetupDuration: Float
+  defaultActiveTeardownDuration: Float
+  durations: [OperationDuration!]!
+}
+
+type OperationRevision implements IDisplayable {
+  id: ID! # To start: Id of the operation
+  operation: Operation!
+  display: String!
+  dateTime: UtcDateTime!
+  number: Int
+  description: String
+  operationModels: [OperationModel!]!
+  isoFiles: [IsoFile!]! # TODO: to check...
+}
+
+type OperationModel {
+  id: ID! # To start: Id of the operation
+  operation: Operation!
+  revision: OperationRevision!
+  display: String!
+  description: String
+  archiveDateTime: UtcDateTime
+  code: String # variable value
+  default: Boolean!
+  cadModelName: String
+  sequenceOperationModels: [SequenceOperationModel!]!
+  pathNumbers: [Int]!
+  # TODO: isofile ?
+  # TODO: machine filter
+}
+
+# TODO: IntermediateWorkPiece / OperationModel with quantities
+
+scalar SequenceKind
+
+type Sequence {
+  id: ID!
+  operation: Operation!
+  models: [OperationModel!]!
+  name: String
+  description: String
+  code: String # variable value
+  toolNumber: String
+  autoOnly: Boolean!
+  operationStep: Int
+  kind: SequenceKind!
+  sequenceOperationModels: [SequenceOperationModel!]!
+  defaultModelDuration: Float
+}
+
+type SequenceOperationModel {
+  id: ID! # To start, Id of the sequence
+  sequence: Sequence!
+  operationModel: OperationModel!
+  order: Float!
+  pathNumber: Int
+  durations: [SequenceDuration!]!
+}
+
+type OperationDuration {
+  id: ID! # To start, Id of the operation
+  operation: Operation!
+  operationModel: OperationModel # if null, applies to all operation models
+  machineFilter: MachineFilter
+  machines: [Machine!] # if not null, restrict to these machines
+  applicableRange: UtcDateTimeRange! # applicable only in this range
+  machining: Float
+  loading: Float
+  unloading: Float
+  setup: Float
+  teardown: Float
+}
+
+type SequenceDuration {
+  id: ID! # To start, Id of the sequence
+  sequenceOperationModel: SequenceOperationModel!
+  machineFilter: MachineFilter
+  machines: [Machine!] # if not null, restrict to these machines
+  applicableRange: UtcDateTimeRange! # applicable only in this range
+  estimatedDuration: Float!
+}
+
+type IsoFile {
+  id: ID!
+  operationRevision: OperationRevision
+}
+
+type OperationTool {
+  id: ID # TODO: later
+  operationModel: OperationModel!
+  toolNumber: String # Unique for an operation model
+  toolName: String
+  toolDiameter: Float
+  toolRadius: Float
+}

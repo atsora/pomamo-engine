@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ProductionAnalysisStatus" table="ProductionAnalysisStatus">
+    <id name="Id" column="machineid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="foreign">
+        <param name="property">Machine</param>
+      </generator>
+    </id>
+    <version name="Version" column="productionanalysisstatusversion"
+             access="nosetter.camelcase-m-underscore" />
+    <one-to-one name="Machine"
+                class="Machine"
+                constrained="true" />
+    <property name="AnalysisDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              column="productionanalysisdatetime"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

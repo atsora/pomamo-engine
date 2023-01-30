@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.DataControls", "Lemoine.DataControls.csproj", "{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{9A99202C-2E44-4308-946B-FFD0DC37EA88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Core", "..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj", "{25E11219-7BA1-45DD-B4AB-956074341683}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.ModelDAO", "..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj", "{B09F2576-9FD0-4B32-B609-46310715F780}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{600ED293-7C90-41F3-A1E3-7BB76A3887B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.BaseControls", "..\Lemoine.BaseControls\Lemoine.BaseControls.csproj", "{B3DA6954-38B4-42F1-82D2-A205C25C10C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25E11219-7BA1-45DD-B4AB-956074341683} = {9A99202C-2E44-4308-946B-FFD0DC37EA88}
+		{B09F2576-9FD0-4B32-B609-46310715F780} = {9A99202C-2E44-4308-946B-FFD0DC37EA88}
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1} = {600ED293-7C90-41F3-A1E3-7BB76A3887B8}
+	EndGlobalSection
+EndGlobal

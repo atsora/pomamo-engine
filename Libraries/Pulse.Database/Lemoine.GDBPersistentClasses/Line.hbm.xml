@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Line" table="linetable">
+    <id name="Id" column="lineid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">line_lineid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="lineversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="linename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="linecode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <set name="Components" table="linecomponent"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IComponent, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         lazy="true" cascade="none">
+      <key column="lineid" />
+      <many-to-many class="Component" column="componentid" />
+    </set>
+  </class>
+</hibernate-mapping>

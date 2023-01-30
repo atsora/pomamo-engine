@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ReasonSlot" table="reasonslot">
+    <id name="Id" column="reasonslotid">
+      <generator class="native">
+        <param name="sequence">reasonslot_reasonslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="reasonslotversion" />
+    <many-to-one name="Machine"
+                 column="machineid"
+                 class="Machine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="DateTimeRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="reasonslotdatetimerange"
+              not-null="true" />
+    <property name="DayRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.DayRangeType, Lemoine.Database"
+              column="reasonslotdayrange"
+              not-null="true" />
+    <many-to-one name="MachineMode"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machinemodeid"
+                 class="MachineMode"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="Reason"
+                 access="nosetter.camelcase-m-underscore"
+                 column="reasonid"
+                 class="Reason"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="MachineObservationState"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machineobservationstateid"
+                 class="MachineObservationState"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="Shift"
+                 access="nosetter.camelcase-m-underscore"
+                 column="shiftid"
+                 class="Shift"
+                 cascade="none" />
+    <property name="OverwriteRequired" column="reasonslotoverwriterequired"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="ReasonDetails" column="reasondetails" />
+    <property name="ReasonScore" column="reasonslotreasonscore"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="ReasonSource" column="reasonslotreasonsource"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="AutoReasonNumber" column="reasonslotautoreasonnumber"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <many-to-one name="ProductionState"
+                 access="nosetter.camelcase-m-underscore"
+                 column="productionstateid"
+                 class="ProductionState"
+                 cascade="none" />
+    <property name="ProductionRate" column="reasonslotproductionrate"
+              access="nosetter.camelcase-m-underscore" />
+  </class>
+  <query name="ReasonSlotMinBeginDateTime">
+    <![CDATA[
+select min (DateTimeRange)
+from ReasonSlot r
+where r.Machine = :Machine
+    ]]>
+  </query>
+</hibernate-mapping>

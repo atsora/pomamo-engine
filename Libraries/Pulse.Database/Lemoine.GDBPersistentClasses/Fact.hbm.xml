@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Fact" table="fact">
+    <id name="Id" column="factid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">fact_factid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="factversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine" column="machineid"
+                 class="MonitoredMachine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="Begin"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              column="factbegindatetime" not-null="true" />
+    <property name="End"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              column="factenddatetime" not-null="true" />
+    <many-to-one name="CncMachineMode" column="machinemodeid"
+                 class="MachineMode"
+                 not-null="true" />
+  </class>
+</hibernate-mapping>

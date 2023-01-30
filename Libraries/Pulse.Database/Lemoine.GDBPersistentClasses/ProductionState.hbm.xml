@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ProductionState" table="ProductionState">
+    <id name="Id" column="ProductionStateid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">productionstate_productionstateid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="productionstateversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="LongDisplay" column="display_long"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="productionstatename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey"
+              column="productionstatetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Description" column="productionstatedescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DescriptionTranslationKey"
+              column="productionstatedescriptiontranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Color" column="productionstatecolor"
+              not-null="true" />
+    <property name="DisplayPriority" column="productionstatedisplaypriority" />
+  </class>
+</hibernate-mapping>

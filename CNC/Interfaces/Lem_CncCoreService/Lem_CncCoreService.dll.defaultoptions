@@ -1,0 +1,3 @@
+Database.Npgsql.Pooling: 0
+Port:5002
+CncCoreService.Urls:http://*:5002

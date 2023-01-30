@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="EventMachineModuleGeneric" table="eventmachineModulegeneric" mutable="false">
+    <id name="Id" column="eventid">
+      <generator class="native">
+        <param name="sequence">event_eventid_seq</param>
+      </generator>
+    </id>
+    <discriminator column="eventtype" type="string" />
+    <many-to-one name="Level"
+                 column="eventlevelid" class="EventLevel"
+                 not-null="true" />
+    <property name="DateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="eventdatetime"
+              not-null="true" />
+    <many-to-one name="MachineModule"
+                 secondary-key="true"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machinemoduleid" class="MachineModule"
+                 not-null="true" />
+    <property name="Data"
+              type="Lemoine.NHibernateTypes.JsonAsDictionaryType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="eventdata"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

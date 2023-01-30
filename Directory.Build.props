@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+<!-- Directory.Build.props is imported very early in Microsoft.Common.props, and properties defined later are unavailable to it. 
+     So, avoid referring to properties that are not yet defined (and will evaluate to empty). 
+     More info in https://docs.microsoft.com/fr-fr/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
+  
+  
+  <!-- ALL - common assembly infos -->
+  <PropertyGroup Condition=" '$(UsingMicrosoftNETSdk)' == 'true' ">
+    <Product>Pulse</Product>
+    <Authors>LAT</Authors>
+    <Company>Lemoine Automation Technologies</Company>
+    <Copyright>Copyright(c) 2009-2022</Copyright>
+    <AssemblyVersion>13.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+  
+  
+  <!-- ALL - signing properties -->
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+  </PropertyGroup>
+  
+  
+  <!-- ALL - default configuration -->
+  <PropertyGroup Condition=" '$(MSBuildProjectExtension)' != '.vcxproj' ">
+    <Configurations>Debug;Release;VS</Configurations>
+    <OutputPath>bin\$(Configuration)\</OutputPath> <!-- prevent .exe to search libraries in ...\bin\x86\Release\netstandard2.0\... --> 
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages> <!-- ensure that all localization resources dlls are not deployed -->
+  </PropertyGroup>
+  
+
+  <!-- ALL - ignore nuget warning about framework diff between .NETFramework,Version=v4.8 / .NETStandard,Version=v2.0 -->
+  <PropertyGroup>
+    <NoWarn>NU1701;NU1702</NoWarn>
+  </PropertyGroup>
+
+  
+  <!-- ALL - SLN: allow projects to assign their $(configuration) to referenced project that are not in the solution - https://github.com/dotnet/sdk/issues/10050 -->
+  <PropertyGroup>
+    <ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform>
+  </PropertyGroup>
+    
+  
+</Project>

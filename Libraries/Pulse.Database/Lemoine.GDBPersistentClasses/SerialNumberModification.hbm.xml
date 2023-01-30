@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="SerialNumberModification"
+            extends="MachineModification, Pulse.Database"
+            discriminator-value="SerialNumberModification">
+    <join table="SerialNumberModification"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine" column="machineid" class="Machine"
+                   cascade="none"
+                   not-null="true"
+                   secondary-key="true"
+                   not-found="exception" />
+      <property name="BeginOrEndDateTime"
+                column="beginorenddatetime"
+                not-null="true" />
+      <property name="IsBegin"
+                column="isbegin"
+                not-null="true" />      
+      <property name="SerialNumber"
+                column="serialnumber"
+                not-null="true" />
+    </join>
+  </subclass>
+</hibernate-mapping>

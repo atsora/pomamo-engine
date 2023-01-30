@@ -1,0 +1,105 @@
+/*-*- idl -*-******************************************************************
+PROJECT : SOFTEK PULSE
+LIBRARY : PulseFileRepository
+PURPOSE : Définition de l'interface CORBA PULSE::FileRepository
+*******************************************************************************
+CONTENT :
+*******************************************************************************
+BKMARKS :
+*******************************************************************************
+BALISES :
+*******************************************************************************
+NOTES   :
+******************************************************************************/
+#ifndef FileRepository_IDL
+#define FileRepository_IDL
+
+module PULSE {
+    typedef sequence<octet> OctetSeq;
+
+      /*! Entrée de description de fichier */
+    struct FileEntry {
+          /*! Nom du fichier */
+        string name;
+          /*! Taille du fichier en octets -- approximativement. */
+        unsigned long size;
+          /*! Présence de fichiers companions (implicitement dans
+            un sous répertoire nommé "." + name, qui n'apparaît pas dans
+            les subdirs) */
+        boolean companions;
+    };
+      /*! Séquence<Entrée de description de fichier>. */
+    typedef sequence<FileEntry> FileEntrySeq;
+    
+      /*! Entrée de description de répertoire */
+    struct DirEntry {
+          /*! nom du répertoire */
+        string name;
+          /*! nombre de sous-répertoires */
+        unsigned long subdirs;
+          /*! nombre de fichiers */
+        unsigned long files;
+    };
+      /*! Séquence<Entrée de description de répertoire>. */
+    typedef sequence<DirEntry> DirEntrySeq;
+
+      /*! Interface utilisée pour effectuer le transfert de fichiers.
+       */
+    interface FileIterator {
+          /*! Récupère une partie du fichier.
+            La taille limite de bloc est définie par l'implémentation CORBA;
+            il est souhaitable de garder une taille raisonnable (4-64 KB)
+
+            eof sera mise à true si la fin du fichier a été atteinte (ainsi
+            même si length(data)==blocksize, si eof==true alors on n'a pas
+            besoin de faire un appel supplémentaire; en fait on ne PEUT pas
+            faire cet appel supplémentaire, car destroy() aura été
+            implicitement appelée. */
+        void getData(in unsigned long blocksize,
+                     out OctetSeq data,
+                     out boolean eof);
+
+          /*! Détruit le servant associé au fichier distant, et ferme ce
+            dernier.
+
+            Implicitement appelée par getData() lors de la récupération du
+            dernier tronçon du fichier. */
+        void shutdown();
+    };
+
+    exception BadNamespace { };
+    exception BadPath { };
+    
+      /*! Interface utilisée par l'objet principal "dépôt de fichiers".
+
+      Le nom canonique est PULSE.Context/PulseFileRepository.Object
+      */
+    interface FileRepository {
+          /*! Ouvre un fichier pour lecture */
+        FileIterator openFile(in string nspace,
+                              in string path)
+            raises (BadNamespace, BadPath);
+
+          //! récupère les infos relatives à un fichier
+        boolean getFileInfo(in string nspace,
+                            in string fileName,
+                            out unsigned long dwLowDateTimeWrite,
+                            out unsigned long dwHighDateTimeWrite,
+                            out unsigned long nFileSizeHigh,
+                            out unsigned long nFileSizeLow)
+            raises (BadNamespace, BadPath);
+
+          /*! Liste le contenu d'un répertoire donné dans un
+            espace de noms donné. Le répertoire racine doit être appelé
+            "/".
+          */
+        void listDirectory(in string nspace,
+                           in string path,
+                           out DirEntrySeq subdirs_seq,
+                           out FileEntrySeq file_seq)
+            raises (BadNamespace, BadPath);
+    };
+
+};
+
+#endif // FileRepository_IDL

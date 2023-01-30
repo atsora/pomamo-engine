@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Log" abstract="true" mutable="false">
+    <id name="Id" column="logid">
+      <generator class="native">
+        <param name="sequence">log_logid_seq</param>
+      </generator>
+    </id>
+    <property name="DateTime" column="datetime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              not-null="true" />
+    <property name="Level" column="level"
+              type="Lemoine.GDBPersistentClasses.EnumLogLevel, Pulse.Database"
+              not-null="true" />
+    <property name="Message" column="message"
+              type="Lemoine.NHibernateTypes.TruncatedString1023Type, Lemoine.Database"
+              not-null="true" />
+    <property name="Module" column="module" />
+    <union-subclass name="SynchronizationLog" table="synchronizationlog">
+      <property name="XmlElement" column="xmlelement"
+                type="Lemoine.NHibernateTypes.TruncatedString2047Type, Lemoine.Database" />
+    </union-subclass>
+  </class>
+</hibernate-mapping>

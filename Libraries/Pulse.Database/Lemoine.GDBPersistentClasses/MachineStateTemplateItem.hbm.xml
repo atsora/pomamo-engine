@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineStateTemplateItem" table="MachineStateTemplateItem">
+    <id name="Id" column="MachineStateTemplateItemid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">MachineStateTemplateItem_MachineStateTemplateItemid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="MachineStateTemplateItemversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineObservationState"
+                 column="machineobservationstateid"
+                 class="MachineObservationState"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="Shift"
+                 column="shiftid"
+                 class="Shift"
+                 cascade="none"
+                 not-found="exception" />
+    <property name="WeekDays"
+              column="machinestatetemplateitemweekdays"
+              type="Lemoine.NHibernateTypes.WeekDayType, Lemoine.Database"
+              not-null="true" />
+    <property name="TimePeriod"
+              column="machinestatetemplateitemtimeperiod"
+              type="Lemoine.NHibernateTypes.TimePeriodOfDayNullIsFullDayType, Lemoine.Database" />
+    <property name="Day"
+              column="machinestatetemplateitemday"
+              type="Lemoine.NHibernateTypes.LocalDayType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

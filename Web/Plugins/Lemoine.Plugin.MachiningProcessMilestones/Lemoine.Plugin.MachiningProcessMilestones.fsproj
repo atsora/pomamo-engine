@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" IsImplicitlyDefined="true" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="InstallationExtension.fs" />
+    <Compile Include="Plugin.fs" />
+    <Compile Include="Milestone.fs" />
+    <EmbeddedResource Include="Milestone.hbm.xml">
+      <LogicalName>Milestone.hbm.xml</LogicalName>
+    </EmbeddedResource>
+    <Compile Include="NHibernateExtension.fs" />
+    <None Include="MachiningProcessMilestones.nhibernateextension">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="MilestoneDAO.fs" />
+    <Compile Include="MilestonesGetResponseDTO.fs" />
+    <Compile Include="MilestonesGetRequestDTO.fs" />
+    <Compile Include="MilestonesGetService.fs" />
+    <Compile Include="MilestonesSaveResponseDTO.fs" />
+    <Compile Include="MilestonesSaveRequestDTO.fs" />
+    <Compile Include="MilestonesSaveService.fs" />
+    <Compile Include="MilestonesRemoveResponseDTO.fs" />
+    <Compile Include="MilestonesRemoveRequestDTO.fs" />
+    <Compile Include="MilestonesRemoveService.fs" />
+    <Compile Include="WebExtension.fs" />
+    <Compile Include="WebServices.fs" />
+    <Compile Include="CacheDomainExtension.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
+    <ProjectReference Include="..\..\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Web\Lemoine.Web.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Web\Pulse.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

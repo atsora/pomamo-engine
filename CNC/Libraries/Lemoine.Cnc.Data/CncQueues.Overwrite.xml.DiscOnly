@@ -1,0 +1,141 @@
+﻿<?xml version="1.0"?>
+<!-- Configuration file that describes the way data are stored between Lem_CncService and Lem_CncService
+
+  /++++++++++/    /+++++++++++++++/    /++++++++++++++++/              /++++++++++++++++++++/    /++++++++++/
+ / Machines / => / Input modules / => / Lem_CncService / => QUEUES => / Lem_CncDataService / => / Database /
+/++++++++++/    /+++++++++++++++/    /++++++++++++++++/       |      /++++++++++++++++++++/    /++++++++++/
+                                                              |
+                                                         CncQueues.xml
+
+-->
+
+<queueconfiguration xmlns="http://config.cnc.pulse.lemoinetechnologies.com"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <queue type="Lemoine.Cnc.Data.MultiConfigurableCncDataQueue, Lemoine.Cnc.Data">
+    <configuration prefix="CncDataFifoDb-"
+                   SynchroMode="Normal"
+                   CheckIntegrity="false"
+                   Persistent="true"
+                   QueueType="Lemoine.Cnc.SQLiteQueue.SQLiteCncDataQueue, Lemoine.Cnc.SQLiteQueue" />
+    <queues>
+      <!-- Sub queue for machine mode -->
+      <queue>
+        <configuration suffix=""
+                       commandfilter="MachineMode"
+                       regexfieldfilter=""
+                       writepriority="0"
+                       readpriority="0" />
+      </queue>
+      
+      <!-- Sub queue for stamp action -->
+      <queue>
+        <configuration suffix="-StampAction"
+                       commandfilter="Stamp|Action|DetectionTimeStamp|CncVariableSet"
+                       regexfieldfilter=""
+                       writepriority="10"
+                       readpriority="10" />
+      </queue>
+      
+      <!-- Sub queue for machine module activity -->
+      <queue>
+        <configuration suffix="-MachineModuleActivity"
+                       commandfilter="MachineModuleActivity"
+                       regexfieldfilter=""
+                       writepriority="20"
+                       readpriority="20" />
+      </queue>
+      
+      <!-- Sub queue for cnc alarms -->
+      <queue>
+        <configuration suffix="-CncAlarm"
+                       commandfilter="CncAlarm"
+                       regexfieldfilter=""
+                       writepriority="30"
+                       readpriority="30" />
+      </queue>
+      
+      <!-- CNC VALUES -->
+      
+      <!-- 4: sub queue for feedrate or rapid traverse override -->
+      <queue>
+        <configuration suffix="-CV-04"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="(FeedrateOverride|RapidTraverseOverride)"
+                       writepriority="40"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- 1: sub queue for feedrate -->
+      <queue>
+        <configuration suffix="-CV-01"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^(Feedrate|FeedrateUS|RapidTraverseRate|RapidTraverseRateUS)$"
+                       writepriority="41"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- StackLight -->
+      <queue>
+        <configuration suffix="-StackLight"
+                       commandfilter="CncValue"
+                       regexfieldfilter="^StackLight$"
+                       writepriority="42"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- 2: sub queue for spindle speed -->
+      <queue>
+        <configuration suffix="-CV-02"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^SpindleSpeed$"
+                       writepriority="50"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- 3: sub queue for spindle load -->
+      <queue>
+        <configuration suffix="-CV-03"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="SpindleLoad"
+                       writepriority="60"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- 5: sub queue for spindle speed override -->
+      <queue>
+        <configuration suffix="-CV-05"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="SpindleSpeedOverride"
+                       writepriority="80"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- 6: sub queue for cnc modes -->
+      <queue>
+        <configuration suffix="-CV-06"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="CncModes"
+                       writepriority="90"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- 7: sub queue for program name -->
+      <queue>
+        <configuration suffix="-CV-07"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="ProgramName"
+                       writepriority="100"
+                       readpriority="-1" />
+      </queue>
+      
+      <!-- Other: sub queue for othe cnc values -->
+      <queue>
+        <configuration suffix="-CV-other"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter=""
+                       writepriority="110"
+                       readpriority="-1" />
+      </queue>
+    </queues>
+  </queue>
+</queueconfiguration>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="DayTemplateChange"
+            extends="GlobalModification, Pulse.Database"
+            discriminator-value="DayTemplateChange">
+    <join table="DayTemplateChange"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="DayTemplate"
+                   column="daytemplateid"
+                   class="DayTemplate"
+                   access="nosetter.camelcase-m-underscore"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="Begin"
+                type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeSecondsType, Lemoine.Database"
+                access="nosetter.camelcase-m-underscore"
+                column="daytemplatechangebegin"
+                not-null="true" />
+      <property name="End"
+                type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType, Lemoine.Database"
+                column="daytemplatechangeend" />
+      <property name="Force"
+                column="daytemplatechangeforce"
+                not-null="true" />
+    </join>
+  </subclass>
+</hibernate-mapping>

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="DaySlot" table="DaySlot">
+    <id name="Id" column="DaySlotid">
+      <generator class="native">
+        <param name="sequence">DaySlot_DaySlotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="DaySlotversion" />
+    <property name="Day"
+              access="nosetter.camelcase-m-underscore"
+              column="Day" />
+    <property name="WeekYear"
+              access="nosetter.camelcase-m-underscore"
+              column="weekyear" />
+    <property name="WeekNumber"
+              access="nosetter.camelcase-m-underscore"
+              column="weeknumber" />
+    <property name="DateTimeRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="dayslotrange"
+              not-null="true" />
+    <many-to-one name="DayTemplate"
+                 access="nosetter.camelcase-m-underscore"
+                 column="DayTemplateid"
+                 class="DayTemplate"
+                 not-null="true"
+                 not-found="exception" />
+  </class>
+</hibernate-mapping>

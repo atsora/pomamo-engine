@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="ProductionInformationShift"
+            discriminator-value="ProductionInformationShift"
+            extends="MachineModification, Pulse.Database">
+    <join table="ProductionInformationShift"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine" column="machineid" class="Machine"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="Day" column="day"
+                access="nosetter.camelcase-m-underscore"
+                not-null="true" />
+      <many-to-one name="Shift" column="shiftid" class="Shift"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <many-to-one name="WorkOrder" column="workorderid" class="WorkOrder"
+                   cascade="none"
+                   not-found="exception" />
+      <many-to-one name="IntermediateWorkPiece" column="intermediateworkpieceid" class="IntermediateWorkPiece"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="Checked" column="productioninformationshiftchecked" not-null="true" />
+      <property name="Scrapped" column="productioninformationshiftscrapped" not-null="true" />
+      <property name="InProgress" column="productioninformationshiftinprogress" />
+    </join>
+  </subclass>
+</hibernate-mapping>
+ 

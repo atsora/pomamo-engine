@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ShiftTemplateBreak" table="ShiftTemplateBreak">
+    <id name="Id" column="ShiftTemplateBreakid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">ShiftTemplateBreak_ShiftTemplateBreakid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="ShiftTemplateBreakversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="WeekDays"
+              column="ShifttemplateBreakweekdays"
+              type="Lemoine.NHibernateTypes.WeekDayType, Lemoine.Database"
+              not-null="true" />
+    <property name="TimePeriod"
+              column="ShifttemplateBreaktimeperiod"
+              type="Lemoine.NHibernateTypes.TimePeriodOfDayNullIsFullDayType, Lemoine.Database" />
+    <property name="Day"
+              column="ShifttemplateBreakday"
+              type="Lemoine.NHibernateTypes.LocalDayType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

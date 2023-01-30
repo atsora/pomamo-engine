@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="JobView" table="job">
+    <id name="ProjectId" column="projectid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">project_projectid_seq</param>
+      </generator>
+    </id>
+    <property name="WorkOrderId" column="workorderid"
+              access="nosetter.camelcase-m-underscore"
+              generated="insert" />
+    <property name="ProjectVersion" column="projectversion"
+              access="nosetter.camelcase-m-underscore"
+              generated="always" />
+    <property name="WorkOrderVersion" column="workorderversion"
+              access="nosetter.camelcase-m-underscore"
+              generated="always" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="jobname"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="Code" column="jobcode"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="ExternalCode" column="jobexternalcode" />
+    <property name="DocumentLink" column="jobdocumentlink" />
+    <property name="CreationDateTime" column="projectcreationdatetime"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="ReactivationDateTime" column="projectreactivationdatetime" />
+    <property name="ArchiveDateTime" column="projectarchivedatetime" />
+    <property name="DeliveryDate" column="workorderdeliverydate" />
+    <many-to-one name="Status" column="workorderstatusid"
+                 class="WorkOrderStatus"
+                 cascade="none"
+                 not-found="exception" />
+    <set name="Components"
+         access="nosetter.camelcase-m-underscore"
+         inverse="true" lazy="true"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IComponent, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         cascade="none">
+      <key column="projectid" on-delete="cascade" />
+      <one-to-many class="Component" />
+    </set>
+  </class>
+</hibernate-mapping>

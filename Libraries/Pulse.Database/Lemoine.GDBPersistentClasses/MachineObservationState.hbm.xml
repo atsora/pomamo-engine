@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineObservationState" table="machineobservationstate">
+    <id name="Id" column="machineobservationstateid" access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">machineobservationstate_machineobservationstateid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machineobservationstateversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="machineobservationstatename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="machineobservationstatetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="UserRequired" column="machineobservationstateuserrequired" />
+    <property name="ShiftRequired" column="machineobservationstateshiftrequired" />
+    <property name="OnSite" column="machineobservationstateonsite" />
+    <many-to-one name="SiteAttendanceChange"
+                 column="machineobservationstateidsiteattendancechange"
+                 class="MachineObservationState" />
+    <property name="LinkOperationDirection"
+              column="machineobservationstatelinkoperation"
+              not-null="true" />
+    <property name="IsProduction"
+              column="machineobservationstateisproduction"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

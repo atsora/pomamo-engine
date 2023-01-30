@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Lemoine.Plugin.MachiningProcessMilestones.Milestone, Lemoine.Plugin.MachiningProcessMilestones"
+         table="mpmilestone"
+         lazy="false">
+    <!--
+    Lazy because of F#, see https://stackoverflow.com/questions/741489/ignore-public-internal-fields-for-nhibernate-proxy
+    Ok since there is no external reference to milestone
+    -->
+    <id name="Id" column="mpmilestoneid">
+      <generator class="native">
+        <param name="sequence">mpmilestone_mpmilestoneid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="mpmilestoneversion" />
+    <many-to-one name="Machine"
+                 secondary-key="true"
+                 column="machineid"
+                 class="Machine"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="DateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeType, Lemoine.Database"
+              column="mpmilestonedatetime"
+              not-null="true" />
+    <property name="Message" column="mpmilestonemessage" not-null="true" />
+    <property name="CreationDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeType, Lemoine.Database"
+              column="mpmilestonecreationdatetime"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

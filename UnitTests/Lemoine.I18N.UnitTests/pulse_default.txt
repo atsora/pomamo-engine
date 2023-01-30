@@ -1,0 +1,7 @@
+# Convention '\' (92) represents the end of line (can not be escaped yet) and will be replaced by '\n' (10)
+#
+# Warning : We should keep the order for compatibility between versions
+#
+*MMS_MNR
+MaxN:Max N
+

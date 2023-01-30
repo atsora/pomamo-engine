@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="factodbcsynchroconfig.xsd"
+  xmlns:pulse="urn:pulse.lemoinetechnologies.com:synchro:odbc"
+  xmlns:company="http://company.pulse.com" 
+  pulse:dsnname="MSSQLuser" pulse:user="User"
+  pulse:password="password">
+  <fact machineid="1" pulse:request="" />
+  <job name='MyJobName' completed='true' pulse:request="">
+    <component name='MyComponentName' completed='false'
+	       pulse:request="">
+      <sfkprocess name='MySfkProcessName' type='MySfkProcessType' order='2'
+                  completed='0' pulse:request="" />
+    </component>
+  </job>
+  <company:machines>
+    <company:machine id="1" companyid="2" serverid="1" />
+    <company:machine id="2" companyid="3" serverid="1" />
+  </company:machines>
+  <company:operators>
+    <company:operator id="1" unicodename="髢" companyid="10" />
+  </company:operators>
+</root>

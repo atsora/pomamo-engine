@@ -1,0 +1,284 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<log4net>
+  <appender name="dbgviewAp" type="log4net.Appender.DebugAppender">
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="profilerRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.profile" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="DEBUG" />
+    <filter type="log4net.Filter.LoggerMatchFilter">
+      <loggerToMatch value="Lemoine.Profiler.Recorder" />
+    </filter>
+    <filter type="log4net.Filter.DenyAllFilter" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="critRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.crit" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="FATAL" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="errorRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.error" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="ERROR" />
+
+    <filter type="log4net.Filter.StringMatchFilter">
+      <acceptOnMatch value="false" />
+      <stringToMatch value="NHibernate.StaleObjectStateException:" />
+    </filter>
+    <filter type="log4net.Filter.StringMatchFilter">
+      <acceptOnMatch value="false" />
+      <regexToMatch value="NHibernate\.(Event\.Default\.AbstractFlushingEventListener|AdoNet\.AbstractBatcher).*(SqlState|Code): 40001" />
+    </filter>
+    <filter type="log4net.Filter.StringMatchFilter">
+      <acceptOnMatch value="false" />
+      <regexToMatch value="NHibernate\.Exceptions\.GenericADOExceptionReporter.*ERROR: 40001" />
+    </filter>
+    <filter type="log4net.Filter.StringMatchFilter">
+      <acceptOnMatch value="false" />
+      <stringToMatch value="40001: could not serialize access" />
+    </filter>
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="warnRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.warn" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="WARN" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="infoRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.info" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="INFO" />
+
+    <filter type="log4net.Filter.LoggerMatchFilter">
+      <acceptOnMatch value="false" />
+      <loggerToMatch value="Transaction" />
+    </filter>
+    <!-- already in txnRollingAp -->
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="debugRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.debug" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="DEBUG" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="sqlRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.sqldebug" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="DEBUG" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="txnRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.txnlog" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="DEBUG" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="requestsRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.requests" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="DEBUG" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <appender name="perfCacheRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.perfCache" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="DEBUG" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger: %message%newline" />
+    </layout>
+  </appender>
+
+  <appender name="perfStatsCacheRollingAp" type="log4net.Appender.RollingFileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.perfStatsCache" />
+    <appendToFile value="true" />
+    <rollingStyle value="Size" />
+    <maximumFileSize value="2MB" />
+    <maxSizeRollBackups value="4" />
+    <staticLogFileName value="true" />
+    <threshold value="INFO" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date %logger: %message%newline" />
+    </layout>
+  </appender>
+
+  <appender name="pluginStatusFileAp" type="log4net.Appender.FileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.pluginstatus" />
+    <appendToFile value="false" />
+    <threshold value="DEBUG" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%level] %message%newline" />
+    </layout>
+  </appender>
+
+  <appender name="consoleAp" type="log4net.Appender.ConsoleAppender">
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %level %logger %ndc: %message (%file:%line)%newline" />
+    </layout>
+  </appender>
+
+  <root>
+    <level value="DEBUG" />
+    <!--appender-ref ref="dbgviewAp" /-->
+    <!--appender-ref ref="profilerRollingAp" /-->
+    <appender-ref ref="critRollingAp" />
+    <appender-ref ref="errorRollingAp" />
+    <!--appender-ref ref="warnRollingAp" /-->
+    <!--appender-ref ref="infoRollingAp" /-->
+    <!--appender-ref ref="debugRollingAp" /-->
+    <!--appender-ref ref="consoleAp" /-->
+  </root>
+
+  <logger name="Perf.Cache">
+    <level value="INFO" />
+    <appender-ref ref="perfCacheRollingAp" />
+  </logger>
+
+  <logger name="PerfStats.Cache">
+    <level value="INFO" />
+    <appender-ref ref="perfStatsCacheRollingAp" />
+  </logger>
+
+  <logger name="Lemoine.Extensions.PluginStatus">
+    <level value="INFO" />
+    <appender-ref ref="pluginStatusFileAp" />
+  </logger>
+
+  <logger name="Lemoine.Web.Request">
+    <level value="DEBUG" />
+    <appender-ref ref="requestsRollingAp" />
+  </logger>
+
+  <logger name="Lemoine.GDBPersistentClasses.DAOTransaction">
+    <level value="INFO" />
+    <appender-ref ref="sqlRollingAp" />
+  </logger>
+
+  <logger name="Transaction">
+    <level value="INFO" />
+    <appender-ref ref="txnRollingAp" />
+  </logger>
+
+  <logger name="NHibernate">
+    <level value="WARN" />
+  </logger>
+  <logger name="NHibernate.SQL">
+    <level value="WARN" />
+    <!-- Change it to DEBUG to track the SQL requests  -->
+    <appender-ref ref="sqlRollingAp" />
+  </logger>
+
+  <logger name="Lemoine.NHibernateTypes">
+    <level value="WARN" />
+  </logger>
+
+  <logger name="Lemoine.Threading.WriteLockHolder">
+    <level value="WARN" />
+  </logger>
+
+  <logger name="Lemoine.Threading.ReadLockHolder">
+    <level value="WARN" />
+  </logger>
+
+  <!-- To use NHProf NHibernate profiler -->
+  <!-- To run it you must also have the following files in the current directory:
+       HibernatingRhinos.Profiler.Appender.dll,
+       HibernatingRhinos.Profiler.Appender.NHibernateLog4Net.dll
+       and NHibernate.dll -->
+  <!--
+  <appender name="NHProfAppender"
+      type="HibernatingRhinos.Profiler.Appender.NHibernate.NHProfAppender, 
+      HibernatingRhinos.Profiler.Appender.NHibernateLog4Net">
+    <sink value="tcp://127.0.0.1:22897" />
+  </appender>
+  <logger name="HibernatingRhinos.Profiler.Appender.NHibernate.NHProfAppender.Setup">
+    <appender-ref ref="NHProfAppender"/>
+  </logger>
+  -->
+
+</log4net>

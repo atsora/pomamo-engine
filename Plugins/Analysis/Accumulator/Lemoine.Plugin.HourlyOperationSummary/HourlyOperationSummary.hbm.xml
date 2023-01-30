@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.Plugin.HourlyOperationSummary"
+  assembly="Lemoine.Plugin.HourlyOperationSummary">
+  <class name="HourlyOperationSummary" table="hourlyoperationsummary">
+    <id name="Id" column="hourlyoperationsummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">hourlyoperationsummary_hourlyoperationsummaryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="hourlyoperationsummaryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine" column="machineid"
+                 class="Lemoine.GDBPersistentClasses.Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 secondary-key="true"
+                 not-null="true" />
+    <many-to-one name="Operation" column="operationid"
+                 class="Lemoine.GDBPersistentClasses.Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Component" column="componentid"
+                 class="Lemoine.GDBPersistentClasses.Component"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="WorkOrder" column="workorderid"
+                 class="Lemoine.GDBPersistentClasses.WorkOrder"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Line" column="lineid"
+                 class="Lemoine.GDBPersistentClasses.Line"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Task" column="taskid"
+                 class="Lemoine.GDBPersistentClasses.Task"
+                 access="nosetter.camelcase-m-underscore"
+                 not-found="ignore"
+                 cascade="none" />
+    <property name="Day"
+              column="hourlyoperationsummaryday" />
+    <many-to-one name="Shift" column="shiftid"
+                 class="Lemoine.GDBPersistentClasses.Shift" />
+    <property name="LocalDateHour"
+              column="localdatehour"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Duration"
+              column="hourlyoperationsummaryduration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              not-null="true" />
+    <property name="TotalCycles" column="hourlyoperationsummarytotalcycles" not-null="true" />
+    <property name="AdjustedCycles" column="hourlyoperationsummaryadjustedcycles" not-null="true" />
+    <property name="AdjustedQuantity" column="hourlyoperationsummaryadjustedquantity" not-null="true" />
+  </class>
+</hibernate-mapping>

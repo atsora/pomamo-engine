@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="OperationCycle" table="operationcycle">
+    <id name="Id" column="operationcycleid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">operationcycle_operationcycleid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="operationcycleversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid"
+                 class="Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 not-null="true"
+                 secondary-key="true"
+                 not-found="exception" />
+    <property name="Begin"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="operationcyclebegin" />
+    <property name="End"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="operationcycleend" />
+    <property name="DateTime"
+              access="nosetter.camelcase-m-underscore"
+              column="operationcycledatetime"
+              update="false" insert="false" />
+    <!-- formula="operationcycledatetime(operationcyclebegin, operationcycleend, operationcyclestatus)" or generated="always"-->
+    <property name="OffsetDuration"
+              access="nosetter.camelcase-m-underscore"
+              column="operationcycleoffsetduration" />
+    <property name="Status"
+              column="operationcyclestatus"
+              not-null="true" />
+    <property name="Full"
+              column="operationcyclefull"
+              not-null="true" />
+    <property name="Quantity"
+              column="operationcyclequantity" />
+    <many-to-one name="OperationSlot"
+                 column="operationslotid"
+                 class="OperationSlot"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 not-found="exception" />
+  </class>
+  <query name="AnyOperationCycleStrictlyAfter">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine=:Machine
+  and ( (oc.End is not null and (oc.Status is null or oc.Status=0 or oc.Status=1) and oc.End>:DateTime)
+        or (oc.Begin is not null and (oc.Status is null or oc.Status=0 or oc.Status=2) and oc.Begin>:DateTime))
+    ]]>
+  </query>
+  <query name="OperationCycleForMachineDesc">
+    <![CDATA[
+select oc
+from OperationCycle oc
+left join oc.OperationSlot os with os.Machine.Id=:MachineId
+where oc.Machine.Id=:MachineId
+order by oc.DateTime desc, oc.End desc
+    ]]>
+  </query>
+  
+  <query name="FullOperationCycleForMachineDesc">
+    <![CDATA[
+select oc
+from OperationCycle as oc
+left join oc.OperationSlot as os with os.Machine.Id=:MachineId
+where oc.Machine.Id=:MachineId
+  and oc.End is not null
+  and oc.Full=true
+order by oc.DateTime desc, oc.End desc
+    ]]>
+  </query>
+  <query name="FullOperationCycleForMachineDescBefore">
+    <![CDATA[
+select oc
+from OperationCycle as oc
+where oc.Machine.Id=:MachineId
+  and oc.End is not null
+  and oc.Full=true
+  and oc.End <= :Before
+order by oc.DateTime desc, oc.End desc
+    ]]>
+  </query>
+  <query name="OperationCycleForMachineAscAfter">
+    <![CDATA[
+select oc
+from OperationCycle as oc
+left join oc.OperationSlot as os with os.Machine.Id=:MachineId
+where oc.Machine.Id=:MachineId
+  and oc.DateTime > :After
+order by oc.DateTime asc, oc.End asc
+    ]]>
+  </query>
+  <query name="OperationCycleWithOperationSlot">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine.Id=:MachineId
+  and oc.OperationSlot=:OperationSlot
+order by oc.DateTime, oc.End
+    ]]>
+  </query>
+  <query name="OperationCycleWithOperation">
+    <![CDATA[
+from OperationCycle oc
+where oc.OperationSlot.Operation=:Operation
+order by oc.DateTime, oc.End
+    ]]>
+  </query>
+  <query name="OperationCycleInRangeExceptInSlot">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine=:Machine
+  and oc.OperationSlot<>:OperationSlot
+  and ( (oc.End is not null and (oc.Status is null or oc.Status=0 or oc.Status=1) and oc.End>=:RangeBegin and (:RangeEnd is null or oc.End<=:RangeEnd))
+        or (oc.Begin is not null and (oc.Status is null or oc.Status=0 or oc.Status=2) and oc.Begin>=:RangeBegin and (:RangeEnd is null or oc.Begin<:RangeEnd)))
+order by oc.DateTime, oc.End
+    ]]>
+  </query>
+  <query name="OperationCycleInRange">
+    <![CDATA[
+select oc
+from OperationCycle as oc
+left join oc.OperationSlot as os with os.Machine.Id=:MachineId
+where oc.Machine.Id=:MachineId
+  and ( (oc.End is not null and (oc.Status is null or oc.Status=0 or oc.Status=1) and (:RangeBegin is null or oc.End>:RangeBegin) and (:RangeEnd is null or oc.End<=:RangeEnd))
+        or (oc.Begin is not null and (oc.Status is null or oc.Status=0 or oc.Status=2) and (:RangeBegin is null or oc.Begin>=:RangeBegin) and (:RangeEnd is null or oc.Begin<:RangeEnd)))
+order by oc.DateTime, oc.End
+    ]]>
+  </query>
+  <query name="OperationCycleAtDate">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine=:Machine
+  and oc.Begin is not null
+  and oc.Begin <= :Date
+  and (oc.End is null or oc.End > :Date)
+  order by oc.DateTime desc, oc.End desc
+    ]]>
+  </query>
+  
+  <query name="OperationCycleAtDateEnd">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine=:Machine
+  and (oc.Begin is null or oc.Begin < :Date)
+  and oc.End is not null 
+  and oc.End >= :Date
+  order by oc.DateTime desc, oc.End desc
+    ]]>
+  </query>
+  
+  <query name="OperationCycleWithBeginEqualTo">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine=:Machine
+  and oc.Begin=:Date
+    ]]>
+  </query>
+  
+  <query name="OperationCycleWithEndEqualTo">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine=:Machine
+  and oc.End=:Date
+    ]]>
+  </query>
+  
+  <query name="LastFullOperationCyclesNotAssociated">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine.Id=:MachineId
+  and oc.OperationSlot=:OperationSlot
+  and oc.Full=true
+  and oc.End is not null
+  and not oc.Id in (select ocdp.OperationCycle.Id from OperationCycleDeliverablePiece as ocdp)
+  and oc.DateTime <= :Date
+  order by oc.DateTime desc, oc.End desc
+    ]]>
+  </query>
+  
+  <query name="OperationCyclesNotAssociated">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine.Id=:MachineId
+  and oc.OperationSlot=:OperationSlot
+  and oc.Begin is not null 
+  and oc.Begin <= :Date
+  and not oc.Id in (select ocdp.OperationCycle.Id from OperationCycleDeliverablePiece as ocdp)
+  order by oc.DateTime desc, oc.End desc
+    ]]>
+  </query>
+  
+  <query name="OperationCyclesAroundDate">
+    <![CDATA[
+from OperationCycle oc
+where oc.Machine=:Machine
+  and (   (oc.End is not null and (oc.Status is null or oc.Status=0 or oc.Status=1) and oc.End >= :RangeBegin and oc.End <= :RangeEnd)
+       or (oc.Begin is not null and (oc.Status is null or oc.Status=0 or oc.Status=2) and oc.Begin >= :RangeBegin and oc.Begin <= :RangeEnd))  
+  order by oc.DateTime asc, oc.End
+    ]]>
+  </query>
+  
+  <query name="OperationCycleSlotPeriod">
+    <![CDATA[
+select min(oc.End), max(oc.End)
+from OperationCycle oc
+where oc.Machine.Id=:MachineId
+  and oc.OperationSlot=:OperationSlot
+  and oc.End is not null
+  and oc.Full=true
+    ]]>
+  </query>
+</hibernate-mapping>

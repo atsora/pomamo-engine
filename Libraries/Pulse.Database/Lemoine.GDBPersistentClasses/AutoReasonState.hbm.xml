@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="AutoReasonState" table="autoreasonstate">
+    <id name="Id" column="autoreasonstateid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">autoreasonstate_autoreasonstateid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="autoreasonstateversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid" class="MonitoredMachine"
+                 access="nosetter.camelcase-m-underscore"
+                 secondary-key="true"
+                 not-found="ignore"
+                 not-null="true" />
+    <property name="Key" column="autoreasonstatekey"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Value" column="autoreasonstatevalue"
+              type="Lemoine.NHibernateTypes.XmlSerializableType, Lemoine.Database"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

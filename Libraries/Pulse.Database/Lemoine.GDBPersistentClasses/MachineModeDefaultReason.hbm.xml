@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineModeDefaultReason" table="MachineModeDefaultReason">
+    <id name="Id" column="MachineModeDefaultReasonid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">MachineModeDefaultReason_MachineModeDefaultReasonid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinemodedefaultreasonversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineMode" column="machinemodeid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MachineMode"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="MachineObservationState" column="machineobservationstateid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MachineObservationState"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="IncludeMachineFilter" column="includemachinefilterid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MachineFilter"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="ExcludeMachineFilter" column="excludemachinefilterid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MachineFilter"
+                 cascade="none"
+                 not-found="ignore" />
+    <property name="MaximumDuration"
+              column="defaultreasonmaximumduration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
+    <many-to-one name="Reason" column="reasonid"
+                 class="Reason"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="OverwriteRequired"
+              column="defaultreasonoverwriterequired"
+              not-null="true" />
+    <property name="Auto"
+              column="machinemodedefaultreasonauto"
+              not-null="true" />
+    <property name="Score"
+              column="machinemodedefaultreasonscore"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

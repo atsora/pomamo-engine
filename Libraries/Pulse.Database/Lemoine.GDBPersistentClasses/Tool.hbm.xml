@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Tool" table="tool">
+    <id name="Id" column="toolid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">tool_toolid_seq</param>
+      </generator>
+    </id>
+    <!-- Add a version column once the sfktools view is removed -->
+    <!--version name="Version" column="toolversion"
+             access="nosetter.camelcase-m-underscore" /-->
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="toolname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="toolcode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Diameter" column="tooldiameter" />
+    <property name="Radius" column="toolradius" />
+  </class>
+</hibernate-mapping>

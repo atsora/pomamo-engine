@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ShiftSlot" table="shiftslot">
+    <id name="Id" column="shiftslotid">
+      <generator class="native">
+        <param name="sequence">shiftslot_shiftslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="shiftslotversion" />
+    <property name="DateTimeRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="shiftslotrange"
+              not-null="true" />
+    <property name="Day"
+              access="nosetter.camelcase-m-underscore"
+              column="day" />
+    <many-to-one name="Shift"
+                 access="nosetter.camelcase-m-underscore"
+                 column="shiftid"
+                 class="Shift"
+                 not-found="exception" />
+    <many-to-one name="ShiftTemplate"
+                 access="nosetter.camelcase-m-underscore"
+                 column="shifttemplateid"
+                 class="ShiftTemplate"
+                 not-found="exception" />
+    <property name="EffectiveDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="shiftsloteffectiveduration" />
+    <property name="TemplateProcessed"
+              column="shiftslottemplateprocessed"
+              not-null="true" />
+    <set name="Breaks"
+         access="nosetter.camelcase-m-underscore"
+         inverse="false"
+         lazy="true"
+         cascade="delete-orphan">
+      <key column="shiftslotid" />
+      <one-to-many class="ShiftSlotBreak" />
+    </set>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="StampingValue" table="StampingValue">
+    <id name="Id" column="stampingvalueid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">stampingvalue_stampingvalueid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="stampingvalueversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Sequence"
+                 column="sequenceid" class="Sequence"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="Field"
+                 column="fieldid" class="Field"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="String"
+              access="nosetter.camelcase-m-underscore"
+              column="stampingvaluestring" />
+    <property name="Int"
+              access="nosetter.camelcase-m-underscore"
+              column="stampingvalueint" />
+    <property name="Double"
+              access="nosetter.camelcase-m-underscore"
+              column="stampingvaluedouble" />
+  </class>
+</hibernate-mapping>

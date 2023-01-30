@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="jobconfig.xsd"
+      xmlns:pulse="http://odbc.pulse.com"
+      pulse:dsnname="MysqlDB" pulse:user="nicolas" pulse:password="soultz">
+  <job name="pulse:1:string" 
+       pulse:request="SELECT name FROM `job` ">
+    <component name="pulse:1:string"
+	       pulse:request="SELECT name FROM `component`" />
+  </job>
+</root>

@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Platforms>x64</Platforms>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\nrela\.nuget\packages\fsharp.core\6.0.1\contentFiles\any\netstandard2.1\FSharp.Core.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Caches.CoreMemoryCache">
+      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate.Caches\NHibernate.Caches.CoreMemoryCache\netstandard2.0\NHibernate.Caches.CoreMemoryCache.dll</HintPath>
+    </Reference>
+    <PackageReference Include="CommandLineParser" />
+  </ItemGroup>
+  
+  <!-- Plugin dependencies -->
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
+    <ProjectReference Include="..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
+    <ProjectReference Include="..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
+    <ProjectReference Include="..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
+    <ProjectReference Include="..\..\Web\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Business\Pulse.Business.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" />
+    <ProjectReference Include="..\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />
+    <ProjectReference Include="..\Libraries\Lemoine.Analysis\Lemoine.Analysis.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(Configuration)'=='VS'">   <!-- include plugins .dll files for tests (instead of ProjectReference) - projects must be compiled in sln -->
+    <None Include="..\..\Plugins\Lemoine.Plugin.IdleTimePerPeriod2\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.IdleTimePerPeriod2.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ProductionSwitcher\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ProductionSwitcher.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.SetupSwitcher\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.SetupSwitcher.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ShortPeriodRemoval\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ShortPeriodRemoval.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(ProjectName).dll.log4net" CopyToOutputDirectory="Always" />
+    <None Include="$(ProjectName).dll.options" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="$(ProjectName).dll.defaultoptions" CopyToOutputDirectory="Always" />
+    <None Include="$(ProjectName).nh.cfg.xml" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>

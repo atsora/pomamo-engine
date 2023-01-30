@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Department" table="department">
+    <id name="Id" column="departmentid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">department_departmentid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="departmentversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="departmentname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="departmentcode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="departmentexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DisplayPriority" column="departmentdisplaypriority" />
+    <set name="Machines"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IMachine, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="departmentid" />
+      <one-to-many class="Machine" />
+    </set>
+  </class>
+</hibernate-mapping>

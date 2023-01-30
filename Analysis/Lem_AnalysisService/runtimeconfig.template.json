@@ -1,0 +1,5 @@
+{
+  "additionalProbingPaths": [
+    "./netcoreapp3.1/"
+  ]
+}

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="WorkOrderProject" table="workorderproject">
+    <id name="Id" column="workorderprojectid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">workorderproject_workorderprojectid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="workorderprojectversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="WorkOrder"
+                 class="WorkOrder"
+                 column="workorderid"
+                 not-null="true" />
+    <many-to-one name="Project"
+                 class="Project"
+                 column="projectid"
+                 not-null="true" />
+    <property name="Quantity" column="workorderprojectquantity"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

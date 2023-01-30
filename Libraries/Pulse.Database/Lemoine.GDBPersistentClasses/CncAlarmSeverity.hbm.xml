@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="CncAlarmSeverity" table="cncalarmseverity">
+    <id name="Id" column="cncalarmseverityid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">cncalarmseverity_cncalarmseverityid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="cncalarmseverityversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="CncInfo" column="cncalarmseveritycncinfo"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database"
+              not-null="true" />
+    <property name="Name" column="cncalarmseverityname"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database"
+              not-null="true" />
+    <property name="Status" column="cncalarmseveritystatus"
+              not-null="true" />
+    <property name="Description" column="cncalarmseveritydescription"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="StopStatus" column="cncalarmseveritystopstatus"
+              type="Lemoine.GDBPersistentClasses.EnumCncAlarmSeverityStopStatus, Pulse.Database"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="Color" column="cncalarmseveritycolor"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="Focus" column="cncalarmseverityfocus" />
+  </class>
+</hibernate-mapping>

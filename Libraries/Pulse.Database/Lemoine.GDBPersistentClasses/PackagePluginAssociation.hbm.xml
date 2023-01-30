@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="PackagePluginAssociation" table="packagepluginassociation">
+    <id name="Id" column="packagepluginassociationid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">PackagePluginAssociation_PackagePluginAssociationid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="packagepluginassociationversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Parameters" column="packagepluginassociationparameters" />
+    <many-to-one name="Package"
+                 column="packageid"
+                 class="Package"
+                 not-null="true" />
+    <many-to-one name="Plugin"
+                 column="pluginid"
+                 class="Plugin"
+                 not-null="true" />
+    <property name="Name"
+              column="packagepluginassociationname"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Active"
+              column="packagepluginassociationactive"
+              not-null="true" />
+    <property name="Custom"
+              column="packagepluginassociationcustom"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

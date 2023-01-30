@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupCompany\Lemoine.Plugin.GroupCompany.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupConcurrentGroups\Lemoine.Plugin.GroupConcurrentGroups.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupDepartment\Lemoine.Plugin.GroupDepartment.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupLateProduction\Lemoine.Plugin.GroupLateProduction.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupMachineCategory\Lemoine.Plugin.GroupMachineCategory.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupMachineFilter\Lemoine.Plugin.GroupMachineFilter.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupOfGroups\Lemoine.Plugin.GroupOfGroups.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupSingleMachine\Lemoine.Plugin.GroupSingleMachine.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupStoppedMachines\Lemoine.Plugin.GroupStoppedMachines.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupZoomFromRegex\Lemoine.Plugin.GroupZoomFromRegex.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.GroupZoomZoomable\Lemoine.Plugin.GroupZoomZoomable.csproj" />
+  </ItemGroup>
+  
+</Project>

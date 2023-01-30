@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Cnc.ICncModule", "Lemoine.Cnc.ICncModule.csproj", "{3BEC4444-703D-49E6-9A4B-40726E679ECD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{9A1C1131-235D-4BE6-8554-632AAF4EEB8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.ModelDAO", "..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj", "{B09F2576-9FD0-4B32-B609-46310715F780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Collections", "..\..\Libraries\Lemoine.Collections\Lemoine.Collections.csproj", "{E6A12EE6-DA35-47CE-9E1C-DB7C93325401}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Info", "..\..\Libraries\Lemoine.Info\Lemoine.Info.csproj", "{664BA3FE-C5BA-4EBB-A6C4-129454F36CD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.I18N", "..\..\Libraries\Lemoine.I18N\Lemoine.I18N.csproj", "{052C1A29-1994-4E36-A468-5FFC6B13E321}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Core", "..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj", "{25E11219-7BA1-45DD-B4AB-956074341683}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BEC4444-703D-49E6-9A4B-40726E679ECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEC4444-703D-49E6-9A4B-40726E679ECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEC4444-703D-49E6-9A4B-40726E679ECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEC4444-703D-49E6-9A4B-40726E679ECD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6A12EE6-DA35-47CE-9E1C-DB7C93325401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A12EE6-DA35-47CE-9E1C-DB7C93325401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A12EE6-DA35-47CE-9E1C-DB7C93325401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A12EE6-DA35-47CE-9E1C-DB7C93325401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{664BA3FE-C5BA-4EBB-A6C4-129454F36CD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{664BA3FE-C5BA-4EBB-A6C4-129454F36CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{664BA3FE-C5BA-4EBB-A6C4-129454F36CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{664BA3FE-C5BA-4EBB-A6C4-129454F36CD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{052C1A29-1994-4E36-A468-5FFC6B13E321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{052C1A29-1994-4E36-A468-5FFC6B13E321}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{052C1A29-1994-4E36-A468-5FFC6B13E321}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{052C1A29-1994-4E36-A468-5FFC6B13E321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B09F2576-9FD0-4B32-B609-46310715F780} = {9A1C1131-235D-4BE6-8554-632AAF4EEB8F}
+		{E6A12EE6-DA35-47CE-9E1C-DB7C93325401} = {9A1C1131-235D-4BE6-8554-632AAF4EEB8F}
+		{664BA3FE-C5BA-4EBB-A6C4-129454F36CD7} = {9A1C1131-235D-4BE6-8554-632AAF4EEB8F}
+		{052C1A29-1994-4E36-A468-5FFC6B13E321} = {9A1C1131-235D-4BE6-8554-632AAF4EEB8F}
+		{25E11219-7BA1-45DD-B4AB-956074341683} = {9A1C1131-235D-4BE6-8554-632AAF4EEB8F}
+	EndGlobalSection
+EndGlobal

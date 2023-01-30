@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <union-subclass name="EventCncValue" table="EventCncValue"
+                  extends="EventUnion, Pulse.Database">
+    <property name="Message" column="eventmessage" not-null="true" />
+    <many-to-one name="MachineModule"
+                 secondary-key="true"
+                 column="machinemoduleid" class="MachineModule"
+                 not-null="true" />
+    <many-to-one name="Field"
+                 column="fieldid" class="Field"
+                 not-null="true" />
+    <property name="String"
+              access="nosetter.camelcase-m-underscore"
+              column="cncvaluestring" />
+    <property name="Int"
+              access="nosetter.camelcase-m-underscore"
+              column="cncvalueint" />
+    <property name="Double"
+              access="nosetter.camelcase-m-underscore"
+              column="cncvaluedouble" />
+    <property name="Duration" column="eventcncvalueduration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              not-null="true" />
+    <many-to-one name="Config"
+                 column="eventCncValueconfigid" class="EventCncValueConfig" />
+  </union-subclass>
+</hibernate-mapping>

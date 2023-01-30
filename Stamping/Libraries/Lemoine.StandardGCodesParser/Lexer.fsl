@@ -1,0 +1,70 @@
+﻿{
+// fsharplint:disable ParameterNames PublicValuesNames
+module Lexer
+
+open FSharp.Text.Lexing
+open Parser
+open System
+open Lemoine.Core.Log
+
+let log = LogManager.GetLogger("Lemoine.StandardGCodesParser.Lexer")
+
+let lexeme = LexBuffer<_>.LexemeString
+
+let parseDouble (x: string) =
+  try
+    Double.Parse(x.Replace(" ", ""), System.Globalization.CultureInfo.InvariantCulture)
+  with
+  | ex ->
+    begin
+      log.Error($"parseDouble: {x} is not a double", ex)
+      reraise()
+    end
+}
+
+let whitespace = [' ' '\t']
+let code = ['A'-'Z']
+let char = ['a'-'z' 'A'-'Z']
+let digit = ['0'-'9']
+let number = (['-' '+']whitespace*)?digit+('.'digit*)?
+let number2 = (['-' '+']whitespace*)?'.'digit+
+let newline = "\r\n" | '\n' | '\r'
+
+rule main = parse
+| whitespace { main lexbuf }
+| newline { NEWLINE (lexbuf.StartPos.AbsoluteOffset) }
+| number { lexeme lexbuf |> parseDouble |> NUMBER }
+| number2 { lexeme lexbuf |> parseDouble |> NUMBER }
+| "/" { ESCAPE }
+| "**" | "*" | "/" | "MOD" | "+" | "-" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "AND" | "OR" | "XOR" { OP (lexeme lexbuf)}
+| "ATAN" | "ABS" | "ACOS" | "ASIN" | "COS" | "EXP" | "FIX" | "FUP" | "ROUND" | "LN" | "SIN" | "SQRT" | "TAN" { FUNC (lexeme lexbuf) }
+| code { lexbuf.LexemeChar 0 |> XCODE }
+| "," { extra lexbuf }
+| "(" { comment lexbuf }
+| ")" { main lexbuf }
+| ";" { comment2 lexbuf }
+| "[" { LBRACKET }
+| "]" { RBRACKET }
+| "<" { file lexbuf }
+| ">" { main lexbuf }
+| "#" { VARPREFIX }
+| "=" { EQSYMB }
+| "%" { PERCENT }
+| eof { EOF (lexbuf.StartPos.AbsoluteOffset) }
+| _ { failwith (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
+and comment = parse
+| [^')']+ { COMMENT (lexeme lexbuf) }
+| ")" { main lexbuf }
+| eof { failwith "Comment is not terminated" }
+and comment2 = parse
+| [^ '\n' '\r']+ { COMMENT (lexeme lexbuf) }
+| newline { main lexbuf }
+| eof { EOF (lexbuf.StartPos.AbsoluteOffset) }
+and extra = parse
+| [^ '\n' '\r']+ { EXTRA (lexeme lexbuf) }
+| newline { main lexbuf }
+| eof { EOF (lexbuf.StartPos.AbsoluteOffset) }
+and file = parse
+| [^'>']+ { FILE (lexeme lexbuf) }
+| ">" { main lexbuf }
+| eof { failwith "File is not terminated" }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cncodbcconfig.xsd"
+      xmlns:pulse="http://odbc.pulse.com"
+      xmlns:machine="http://machine.pulse.com"
+      pulse:dsnname="CncOdbcTest">
+  <machine:machine name='MxSim01' />
+  <data running="pulse:1" auto="pulse:2" program="pulse:3"
+	feed="pulse:4" spindlespeed="pulse:5" spindleload="pulse:6"
+	ov_feed="pulse:7" ov_spindlespeed="pulse:8"
+	pulse:request="SELECT Switch(NCStatus=1,'true', NCStatus=2,'false', NCStatus=3,'false', NCStatus=4,'true', NCStatus=5,'true', NCStatus=6,'false', NCStatus=7,'false') AS running,
+		       IIF(MachineMode=1, 'true', 'false') AS auto,
+		       IIF(SubProgName='', ProgName, SubProgName) AS program,
+		       Feed AS feedrate,
+		       IIF(SpindleSpeed1=0, SpindleSpeed2, SpindleSpeed1) AS spindlespeed,
+		       IIF(SpindleLoad1=0, SpindleLoad2, SpindleLoad1) AS spindleload,
+		       FeedOv AS ov_feed, SpindleOv AS ov_spindlespeed
+		       FROM CNCStatusDataLog
+		       WHERE MachineName='{../machine:machine/@name}'
+		       AND LogDate=CDate('2009-03-31 10:19:59')" />
+</root>

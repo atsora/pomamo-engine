@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineStateTemplate" table="MachineStateTemplate">
+    <id name="Id" column="MachineStateTemplateid" access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">MachineStateTemplate_MachineStateTemplateid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="MachineStateTemplateversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="MachineStateTemplatename"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="TranslationKey" column="machinestatetemplatetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Category" column="machinestatetemplatecategoryid" />
+    <property name="UserRequired" column="machinestatetemplateuserrequired" />
+    <property name="ShiftRequired" column="machinestatetemplateshiftrequired" />
+    <property name="OnSite" column="machinestatetemplateonsite" />
+    <many-to-one name="SiteAttendanceChange"
+                 column="machinestatetemplateidsiteattendancechange"
+                 class="MachineStateTemplate" />
+    <property name="LinkOperationDirection"
+              column="machinestatetemplatelinkoperation"
+              not-null="true" />
+    <list name="Items"
+          access="nosetter.camelcase-m-underscore"
+          inverse="false"
+          lazy="false"
+          cascade="delete-orphan">
+      <key column="machinestatetemplateid" />
+      <index column="machinestatetemplateitemorder" />
+      <one-to-many class="MachineStateTemplateItem" />
+    </list>
+    <set name="Stops"
+         access="nosetter.camelcase-m-underscore"
+         inverse="false"
+         lazy="false"
+         cascade="delete-orphan">
+      <key column="machinestatetemplateid" />
+      <one-to-many class="MachineStateTemplateStop" />
+    </set>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <joined-subclass name="MachineFilterCompany" table="machinefiltercompany"
+                  extends="MachineFilterItem, Pulse.Database">
+    <key column="machinefilteritemid" />
+    <many-to-one name="Company"
+                 column="companyid"
+                 class="Company"
+                 cascade="none"
+                 not-null="true" />
+  </joined-subclass>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+﻿[Unit]
+Description=Lemoine Auto-reason Service
+
+[Service]
+WorkingDirectory=/usr/share/lpulse
+ExecStart=/usr/bin/dotnet /usr/share/lpulse/Lem_AutoReasonService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=lpulse-autoreason
+User=lpulse
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

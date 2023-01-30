@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.Plugin.IntermediateWorkPieceSummary"
+  assembly="Lemoine.Plugin.IntermediateWorkPieceSummary">
+  <class name="IntermediateWorkPieceByMachineSummary" table="iwpbymachinesummary">
+    <id name="Id" column="iwpbymachinesummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">iwpbymachinesummary_iwpbymachinesummaryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="iwpbymachinesummaryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine" column="machineid"
+                 class="Lemoine.GDBPersistentClasses.Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 secondary-key="true"
+                 not-null="true" />
+    <many-to-one name="IntermediateWorkPiece" column="intermediateworkpieceid"
+                 class="Lemoine.GDBPersistentClasses.IntermediateWorkPiece"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" not-null="true" />
+    <many-to-one name="Component" column="componentid"
+                 class="Lemoine.GDBPersistentClasses.Component"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="WorkOrder" column="workorderid"
+                 class="Lemoine.GDBPersistentClasses.WorkOrder"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Line" column="lineid"
+                 class="Lemoine.GDBPersistentClasses.Line"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <many-to-one name="Task" column="taskid"
+                 class="Lemoine.GDBPersistentClasses.Task"
+                 access="nosetter.camelcase-m-underscore"
+                 not-found="ignore"
+                 cascade="none" />
+    <property name="Day"
+              column="iwpbymachinesummaryday" />
+    <many-to-one name="Shift" column="shiftid"
+                 class="Lemoine.GDBPersistentClasses.Shift" />
+    <property name="Counted" column="iwpbymachinesummarycounted" not-null="true" />
+    <property name="Corrected" column="iwpbymachinesummarycorrected" not-null="true" />
+    <property name="Checked" column="iwpbymachinesummarychecked" not-null="true" />
+    <property name="Scrapped" column="iwpbymachinesummaryscrapped" not-null="true" />
+    <property name="Targeted" column="iwpbymachinesummarytargeted" />
+  </class>
+</hibernate-mapping>

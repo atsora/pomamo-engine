@@ -1,0 +1,14 @@
+﻿[Unit]
+Description=Lemoine Alert Service
+
+[Service]
+WorkingDirectory=/usr/share/lpulse
+ExecStart=/usr/bin/dotnet /usr/share/lpulse/Lem_AlertService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=lpulse-alert
+User=lpulse
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

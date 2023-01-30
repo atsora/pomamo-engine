@@ -1,0 +1,95 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Extensions", "Lemoine.Extensions.csproj", "{2A06696E-3ABA-47CB-83C2-E745D5C4257F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{6D39D0AB-C710-43A7-8E15-5C4B3E2DA457}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.ModelDAO", "..\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj", "{B09F2576-9FD0-4B32-B609-46310715F780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.CorbaHelper", "..\Lemoine.CorbaHelper\Lemoine.CorbaHelper.csproj", "{FD422794-9212-4CE2-856F-8E7E2EADD838}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Core", "..\Lemoine.Core\Lemoine.Core.csproj", "{25E11219-7BA1-45DD-B4AB-956074341683}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Database", "..\Lemoine.Database\Lemoine.Database.csproj", "{04DF8132-538B-44A9-A901-38D33DAB1887}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{86372CC1-8DFA-44CA-BBFD-A229E5E4B99B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Plugin.IdleTimePerPeriod2", "..\..\Plugins\Lemoine.Plugin.IdleTimePerPeriod2\Lemoine.Plugin.IdleTimePerPeriod2.csproj", "{D7C7FDFC-48D3-4459-BE26-F9E9BFA70AE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Plugin.CncSummaryByStateSlot2", "..\..\Plugins\Lemoine.Plugin.CncSummaryByStateSlot2\Lemoine.Plugin.CncSummaryByStateSlot2.csproj", "{1D4EE55F-1BF5-48A5-96AA-FDCEF05C2723}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{C3D88BC2-4528-43B3-BF96-E9BB7E2E6E39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Plugins.UnitTests", "..\..\Plugins\Lemoine.Plugins.UnitTests\Lemoine.Plugins.UnitTests.csproj", "{68E38576-2059-44D6-9FC9-BAC40FD04B0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{DB53B9CE-59EA-48BC-9C51-4BE2FDDBAD78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Extensions.Analysis", "..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj", "{B1DD3414-CF00-4E32-9B6D-E3D2BD632339}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Extensions.Cnc", "..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj", "{54CDB0EE-0586-4EC1-8168-C9453F88251B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Extensions.Database", "..\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj", "{59604EBE-37C1-4926-A9DA-91F1BC98539E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Business", "..\Lemoine.Business\Lemoine.Business.csproj", "{F6202A2E-03A5-4067-A8EC-A2592A63DA15}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04DF8132-538B-44A9-A901-38D33DAB1887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04DF8132-538B-44A9-A901-38D33DAB1887}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04DF8132-538B-44A9-A901-38D33DAB1887}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7C7FDFC-48D3-4459-BE26-F9E9BFA70AE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7C7FDFC-48D3-4459-BE26-F9E9BFA70AE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7C7FDFC-48D3-4459-BE26-F9E9BFA70AE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D4EE55F-1BF5-48A5-96AA-FDCEF05C2723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D4EE55F-1BF5-48A5-96AA-FDCEF05C2723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68E38576-2059-44D6-9FC9-BAC40FD04B0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68E38576-2059-44D6-9FC9-BAC40FD04B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68E38576-2059-44D6-9FC9-BAC40FD04B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1DD3414-CF00-4E32-9B6D-E3D2BD632339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1DD3414-CF00-4E32-9B6D-E3D2BD632339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54CDB0EE-0586-4EC1-8168-C9453F88251B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54CDB0EE-0586-4EC1-8168-C9453F88251B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59604EBE-37C1-4926-A9DA-91F1BC98539E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59604EBE-37C1-4926-A9DA-91F1BC98539E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59604EBE-37C1-4926-A9DA-91F1BC98539E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6202A2E-03A5-4067-A8EC-A2592A63DA15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6202A2E-03A5-4067-A8EC-A2592A63DA15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B09F2576-9FD0-4B32-B609-46310715F780} = {6D39D0AB-C710-43A7-8E15-5C4B3E2DA457}
+		{FD422794-9212-4CE2-856F-8E7E2EADD838} = {6D39D0AB-C710-43A7-8E15-5C4B3E2DA457}
+		{25E11219-7BA1-45DD-B4AB-956074341683} = {6D39D0AB-C710-43A7-8E15-5C4B3E2DA457}
+		{04DF8132-538B-44A9-A901-38D33DAB1887} = {6D39D0AB-C710-43A7-8E15-5C4B3E2DA457}
+		{D7C7FDFC-48D3-4459-BE26-F9E9BFA70AE8} = {86372CC1-8DFA-44CA-BBFD-A229E5E4B99B}
+		{1D4EE55F-1BF5-48A5-96AA-FDCEF05C2723} = {86372CC1-8DFA-44CA-BBFD-A229E5E4B99B}
+		{68E38576-2059-44D6-9FC9-BAC40FD04B0F} = {C3D88BC2-4528-43B3-BF96-E9BB7E2E6E39}
+		{B1DD3414-CF00-4E32-9B6D-E3D2BD632339} = {DB53B9CE-59EA-48BC-9C51-4BE2FDDBAD78}
+		{54CDB0EE-0586-4EC1-8168-C9453F88251B} = {DB53B9CE-59EA-48BC-9C51-4BE2FDDBAD78}
+		{59604EBE-37C1-4926-A9DA-91F1BC98539E} = {DB53B9CE-59EA-48BC-9C51-4BE2FDDBAD78}
+		{F6202A2E-03A5-4067-A8EC-A2592A63DA15} = {6D39D0AB-C710-43A7-8E15-5C4B3E2DA457}
+	EndGlobalSection
+EndGlobal

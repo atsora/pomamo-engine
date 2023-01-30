@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ReasonProposal" table="reasonproposal">
+    <id name="Id" column="reasonproposalid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">reasonproposal_reasonproposalid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="reasonproposalversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine" column="machineid"
+                 class="Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 secondary-key="true"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="ModificationId"
+              column="modificationid"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="DateTimeRange"
+              column="reasonproposaldatetimerange"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <many-to-one name="Reason"
+                 column="reasonid"
+                 class="Reason"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 not-found="exception" />
+    <property name="ReasonScore"
+              column="reasonproposalscore"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Kind"
+              column="reasonproposalkind"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="ReasonDetails"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="reasonproposaldetails" />
+  </class>
+</hibernate-mapping>

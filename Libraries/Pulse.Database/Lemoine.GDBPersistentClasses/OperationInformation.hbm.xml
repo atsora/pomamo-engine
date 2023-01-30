@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="OperationInformation"
+            extends="GlobalModification, Pulse.Database"
+            discriminator-value="OperationInformation">
+    <join table="OperationInformation"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Operation" column="operationid" class="Operation"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="OldMachiningDuration"
+                type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+                column="oldoperationmachiningduration" />
+    </join>
+  </subclass>
+</hibernate-mapping>

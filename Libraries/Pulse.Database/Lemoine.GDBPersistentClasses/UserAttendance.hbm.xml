@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="UserAttendance"
+            extends="GlobalModification, Pulse.Database"
+            discriminator-value="UserAttendance">
+    <join table="userattendance"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="User"
+                   column="userid"
+                   class="User"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <many-to-one name="Shift"
+                   column="shiftid"
+                   class="Shift"
+                   cascade="none"
+                   not-null="false"
+                   not-found="exception" />
+      <property name="Begin"
+                type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+                column="userattendancebegin" />
+      <property name="End"
+                type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+                column="userattendanceend" />
+    </join>
+  </subclass>
+</hibernate-mapping>

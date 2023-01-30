@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Component" table="component">
+    <id name="Id" column="componentid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">component_componentid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="componentversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="componentname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="componentcode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="componentexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DocumentLink" column="componentdocumentlink"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <many-to-one name="Project"
+                 access="nosetter.camelcase-m-underscore"
+                 column="projectid"
+                 class="Project"
+                 cascade="none"
+                 not-found="exception" />
+    <many-to-one name="Type" column="componenttypeid"
+                 class="ComponentType"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="EstimatedHours" column="componentestimatedhours" />
+    <many-to-one name="FinalWorkPiece" column="finalworkpieceid"
+                 class="IntermediateWorkPiece"
+                 cascade="none"
+                 not-found="exception" />
+    <bag name="ComponentIntermediateWorkPieces"
+         access="nosetter.camelcase-m-underscore"
+         table="componentintermediateworkpiece"
+         cascade="none"
+         inverse="true" lazy="true"
+         order-by="intermediateworkpieceorderforcomponent ASC">
+      <key column="componentid" />
+      <one-to-many class="ComponentIntermediateWorkPiece" />
+    </bag>
+    <set name="Stamps"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IStamp, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="componentid" />
+      <one-to-many class="Stamp" />
+    </set>
+  </class>
+</hibernate-mapping>

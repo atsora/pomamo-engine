@@ -1,0 +1,106 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{5ACDB21A-5BBB-4D0C-A4D4-6D276D003FB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.BaseControls", "..\..\..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj", "{B3DA6954-38B4-42F1-82D2-A205C25C10C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.DataControls", "..\..\..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj", "{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{CFDC19CB-2391-491C-8195-5572EE0C7598}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.CorbaHelper", "..\..\..\Libraries\Lemoine.CorbaHelper\Lemoine.CorbaHelper.csproj", "{FD422794-9212-4CE2-856F-8E7E2EADD838}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.ModelDAO", "..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj", "{B09F2576-9FD0-4B32-B609-46310715F780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Extensions", "..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj", "{2A06696E-3ABA-47CB-83C2-E745D5C4257F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.NHibernate", "..\..\..\Libraries\Lemoine.NHibernate\Lemoine.NHibernate.csproj", "{1D7790E9-8A1D-4B43-B4E7-9DF293EA984A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Core", "..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj", "{25E11219-7BA1-45DD-B4AB-956074341683}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Database", "..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj", "{04DF8132-538B-44A9-A901-38D33DAB1887}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.FileRepository.Corba", "..\..\..\Libraries\Lemoine.FileRepository.Corba\Lemoine.FileRepository.Corba.csproj", "{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WizardInitialConfiguration", "WizardInitialConfiguration.csproj", "{C3F69587-5FC5-4EBA-BF9B-05208BF37570}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lem_Settings", "..\..\software\Lem_Settings.csproj", "{02C7DDC6-EB5B-442A-B170-7C8C1A958E62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Settings", "..\..\library\Lemoine.Settings.csproj", "{EDB28C98-8565-488A-9EC5-2D1CFA53F373}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Debug|Any CPU.Build.0 = Debug|x86
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Release|Any CPU.ActiveCfg = Release|x86
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1}.Release|Any CPU.Build.0 = Release|x86
+		{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD}.Release|Any CPU.ActiveCfg = Release|x86
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Debug|Any CPU.Build.0 = Debug|x86
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Release|Any CPU.ActiveCfg = Release|x86
+		{FD422794-9212-4CE2-856F-8E7E2EADD838}.Release|Any CPU.Build.0 = Release|x86
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Debug|Any CPU.Build.0 = Debug|x86
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.ActiveCfg = Release|x86
+		{B09F2576-9FD0-4B32-B609-46310715F780}.Release|Any CPU.Build.0 = Release|x86
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D7790E9-8A1D-4B43-B4E7-9DF293EA984A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D7790E9-8A1D-4B43-B4E7-9DF293EA984A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D7790E9-8A1D-4B43-B4E7-9DF293EA984A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D7790E9-8A1D-4B43-B4E7-9DF293EA984A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E11219-7BA1-45DD-B4AB-956074341683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04DF8132-538B-44A9-A901-38D33DAB1887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04DF8132-538B-44A9-A901-38D33DAB1887}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04DF8132-538B-44A9-A901-38D33DAB1887}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04DF8132-538B-44A9-A901-38D33DAB1887}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{041CDD27-E0ED-4836-AA00-4CC83D189BF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{041CDD27-E0ED-4836-AA00-4CC83D189BF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{041CDD27-E0ED-4836-AA00-4CC83D189BF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{041CDD27-E0ED-4836-AA00-4CC83D189BF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3F69587-5FC5-4EBA-BF9B-05208BF37570}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3F69587-5FC5-4EBA-BF9B-05208BF37570}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3F69587-5FC5-4EBA-BF9B-05208BF37570}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3F69587-5FC5-4EBA-BF9B-05208BF37570}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02C7DDC6-EB5B-442A-B170-7C8C1A958E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C7DDC6-EB5B-442A-B170-7C8C1A958E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C7DDC6-EB5B-442A-B170-7C8C1A958E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C7DDC6-EB5B-442A-B170-7C8C1A958E62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDB28C98-8565-488A-9EC5-2D1CFA53F373}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDB28C98-8565-488A-9EC5-2D1CFA53F373}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDB28C98-8565-488A-9EC5-2D1CFA53F373}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDB28C98-8565-488A-9EC5-2D1CFA53F373}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B3DA6954-38B4-42F1-82D2-A205C25C10C1} = {5ACDB21A-5BBB-4D0C-A4D4-6D276D003FB9}
+		{6041A83A-100F-4BA8-B8FC-03B9AFB5AECD} = {5ACDB21A-5BBB-4D0C-A4D4-6D276D003FB9}
+		{FD422794-9212-4CE2-856F-8E7E2EADD838} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+		{B09F2576-9FD0-4B32-B609-46310715F780} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+		{2A06696E-3ABA-47CB-83C2-E745D5C4257F} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+		{1D7790E9-8A1D-4B43-B4E7-9DF293EA984A} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+		{25E11219-7BA1-45DD-B4AB-956074341683} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+		{04DF8132-538B-44A9-A901-38D33DAB1887} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+		{6BA2D784-3ABC-4874-AB1C-3CE876B7E4E1} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+		{041CDD27-E0ED-4836-AA00-4CC83D189BF7} = {CFDC19CB-2391-491C-8195-5572EE0C7598}
+	EndGlobalSection
+EndGlobal

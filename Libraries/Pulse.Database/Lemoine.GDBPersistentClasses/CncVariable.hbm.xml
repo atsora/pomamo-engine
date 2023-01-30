@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="CncVariable" table="cncvariable">
+    <id name="Id" column="cncvariableid">
+      <generator class="native">
+        <param name="sequence">cncvariable_cncvariableid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="cncvariableversion" />
+    <many-to-one name="MachineModule"
+                 column="machinemoduleid"
+                 class="MachineModule"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="Key" column="cncvariablekey"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Value" column="cncvariablevalue"
+              type="Lemoine.NHibernateTypes.XmlSerializableType, Lemoine.Database"
+              not-null="true" />
+    <property name="DateTimeRange" column="cncvariabledatetimerange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

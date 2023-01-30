@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="EventUnion" abstract="true" mutable="false">
+    <id name="Id" column="eventid">
+      <generator class="native">
+        <param name="sequence">event_eventid_seq</param>
+      </generator>
+    </id>
+    <many-to-one name="Level"
+                 column="eventlevelid" class="EventLevel"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="true" />
+    <property name="DateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="eventdatetime"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

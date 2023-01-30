@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="ReasonMachineAssociation"
+            extends="MachineModification, Pulse.Database"
+            discriminator-value="ReasonMachineAssociation">
+    <join table="ReasonMachineAssociation"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine" column="machineid"
+                   secondary-key="true"
+                   class="Machine"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <many-to-one name="Reason"
+                   column="reasonid"
+                   class="Reason"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-found="exception" />
+      <property name="Begin"
+                type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeSecondsType, Lemoine.Database"
+                column="reasonmachineassociationbegin"
+                not-null="true" />
+      <property name="End"
+                type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType, Lemoine.Database"
+                column="reasonmachineassociationend" />
+      <property name="ReasonDetails"
+                type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
+                column="reasondetails" />
+      <property name="OptionalReasonScore"
+                column="reasonmachineassociationreasonscore"
+                access="nosetter.camelcase-m-underscore" />
+      <property name="Kind"
+                column="reasonmachineassociationkind"
+                access="nosetter.camelcase-m-underscore"
+                not-null="true" />
+      <property name="Option"
+                column="reasonmachineassociationoption" />
+      <property name="Dynamic"
+                type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
+                column="reasonmachineassociationdynamic" />
+    </join>
+  </subclass>
+</hibernate-mapping>

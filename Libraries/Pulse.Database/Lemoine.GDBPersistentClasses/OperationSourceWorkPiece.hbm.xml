@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="OperationSourceWorkPiece" table="operationsourceworkpiece">
+    <id name="Id" column="operationsourceworkpieceid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">operationsourceworkpiece_operationsourceworkpieceid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="operationsourceworkpieceversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Operation"
+                 class="Operation"
+                 column="operationid"
+                 access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="IntermediateWorkPiece"
+                 class="IntermediateWorkPiece"
+                 column="intermediateworkpieceid"
+                 access="nosetter.camelcase-m-underscore" />
+    <property name="Quantity"
+              column="operationsourceworkpiecequantity"
+              not-null="true" />
+    <property name="QuantityDenominator"
+              column="operationsourceworkpiecequantitydenominator"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

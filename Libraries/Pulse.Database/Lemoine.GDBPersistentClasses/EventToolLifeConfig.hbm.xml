@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="EventToolLifeConfig" table="EventToolLifeConfig">
+    <id name="Id" column="eventtoollifeconfigid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">EventToolLifeConfig_EventToolLifeConfigid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="eventtoollifeconfigversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineFilter"
+                 column="machinefilterid" class="MachineFilter" />
+    <many-to-one name="MachineObservationState"
+                 column="machineobservationstateid" class="MachineObservationState" />
+    <many-to-one name="Level"
+                 column="eventlevelid" class="EventLevel"
+                 not-null="true" />
+    <property name="Type" column="eventtoollifeconfigtypeid"
+              not-null="true" />
+  </class>
+  <query name="EventToolLifeConfigLevels">
+    <![CDATA[
+from EventLevel el
+where el.Id in (select etlc.Level.Id from EventToolLifeConfig as etlc)
+order by el.Priority, el.Id
+    ]]>
+  </query>
+</hibernate-mapping>

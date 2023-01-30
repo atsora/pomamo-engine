@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="UserMachineSlot" table="UserMachineSlot">
+    <id name="Id" column="usermachineslotid">
+      <generator class="native">
+        <param name="sequence">usermachineslot_usermachineslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="usermachineslotversion" />
+    <many-to-one name="User"
+                 access="nosetter.camelcase-m-underscore"
+                 column="userid" class="User"
+                 not-null="true" />
+    <property name="BeginDateTime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeFullType, Lemoine.Database"
+              column="usermachineslotbegin"
+              not-null="true" />
+    <property name="EndDateTime"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
+              column="usermachineslotend" />
+    <map name="Machines"
+         access="nosetter.camelcase-m-underscore"
+         inverse="false"
+         lazy="false"
+         cascade="all-delete-orphan">
+      <key column="usermachineslotid" />
+      <index column="machineid" type="Int32" />
+      <one-to-many class="UserMachineSlotMachine" />
+    </map>
+  </class>
+</hibernate-mapping>

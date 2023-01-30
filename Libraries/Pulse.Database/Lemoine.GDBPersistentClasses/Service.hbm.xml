@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="Service"
+            extends="Updater, Pulse.Database"
+            discriminator-value="2">
+    <join table="service">
+      <key column="serviceid" />
+      <property name="Display" column="display"
+                update="false" insert="false" generated="always" />
+      <property name="Name" column="servicename"
+                not-null="true" />
+      <property name="Program" column="serviceprogram"
+                type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+                not-null="true" />
+      <property name="Lemoine" column="servicelemoine"
+                not-null="true" />
+      <many-to-one name="Computer" column="computerid"
+                   class="Computer"
+                   cascade="none"
+                   not-null="true"
+                   not-found="ignore" />
+    </join>
+  </subclass>
+</hibernate-mapping>

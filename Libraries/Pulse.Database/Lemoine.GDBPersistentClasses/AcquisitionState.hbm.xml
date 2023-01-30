@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="AcquisitionState" table="acquisitionstate">
+    <id name="Id" column="AcquisitionStateId"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">acquisitionState_acquisitionStateid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="acquisitionstateversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineModule"
+              secondary-key="true"
+              column="machinemoduleid" class="MachineModule"
+              not-null="true" />
+    <property name="Key" column="acquisitionStatekey"
+              type="Lemoine.GDBPersistentClasses.AcquisitionStateKeyType, Pulse.Database"
+              not-null="true" />
+    <property name="DateTime" column="acquisitionstatedatetime"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\pulselog.log4net" Link="pulselog.log4net">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Plugin dependencies -->
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" />
+    <PackageReference Include="Microsoft.CodeAnalysis" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
+    <ProjectReference Include="..\..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />
+    <ProjectReference Include="..\..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
+    <ProjectReference Include="..\..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
+    <!-- <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" /> -->
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\..\UnitTests\Lemoine.UnitTests\Lemoine.UnitTests.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.ActivityIsProduction\Lemoine.Plugin.ActivityIsProduction.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.AfterDynamicTime\Lemoine.Plugin.AfterDynamicTime.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.ApplicableAtMachineStateShift\Lemoine.Plugin.ApplicableAtMachineStateShift.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.CncValueTime\Lemoine.Plugin.CncValueTime.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.CycleIsProduction\Lemoine.Plugin.CycleIsProduction.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.DynamicTimesCycle\Lemoine.Plugin.DynamicTimesCycle.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.NextSpecificMachineMode\Lemoine.Plugin.NextSpecificMachineMode.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.NGoodCyclesIsProduction\Lemoine.Plugin.NGoodCyclesIsProduction.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.SameCncValue\Lemoine.Plugin.SameCncValue.csproj" />
+    <ProjectReference Include="..\Lemoine.Plugin.SameMachineMode\Lemoine.Plugin.SameMachineMode.csproj" />
+  </ItemGroup>
+  
+</Project>

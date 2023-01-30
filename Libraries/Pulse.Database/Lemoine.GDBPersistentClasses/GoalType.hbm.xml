@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="GoalType" table="goaltype">
+    <id name="Id" column="goaltypeid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">goaltype_goaltypeid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="goaltypeversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="goaltypename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="goaltypetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <many-to-one name="Unit"
+                 access="nosetter.camelcase-m-underscore"
+                 column="unitid"
+                 class="Unit"
+                 not-found="ignore" />
+  </class>
+</hibernate-mapping>

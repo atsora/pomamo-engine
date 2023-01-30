@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Cell" table="cell">
+    <id name="Id" column="cellid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">cell_cellid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="cellversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="cellname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="cellcode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="cellexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DisplayPriority" column="celldisplaypriority" />
+    <property name="Kind" column="cellkind" not-null="true" />
+    <set name="Machines"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IMachine, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="cellid" />
+      <one-to-many class="Machine" />
+    </set>
+  </class>
+</hibernate-mapping>

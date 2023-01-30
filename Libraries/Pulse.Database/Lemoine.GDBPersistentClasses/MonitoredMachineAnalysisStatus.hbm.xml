@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MonitoredMachineAnalysisStatus" table="monitoredmachineanalysisstatus">
+    <id name="Id" column="machineid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="foreign">
+        <param name="property">MonitoredMachine</param>
+      </generator>
+    </id>
+    <version name="Version" column="monitoredmachineanalysisstatusversion"
+             access="nosetter.camelcase-m-underscore" />
+    <one-to-one name="MonitoredMachine"
+                class="MonitoredMachine" constrained="true" />
+    <property name="ActivityAnalysisDateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              column="activityanalysisdatetime"
+              not-null="true" />
+    <property name="ActivityAnalysisCount"  
+              column="activityanalysiscount"
+              not-null="true" />
+  </class>
+  <query name="MinActivityAnalysisDateTime">
+    <![CDATA[
+select min(m.ActivityAnalysisDateTime)
+from MonitoredMachineAnalysisStatus m
+    ]]>
+  </query>
+</hibernate-mapping>

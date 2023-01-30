@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\pulselog.log4net" Link="pulselog.log4net">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.CycleCountSummary\Lemoine.Plugin.CycleCountSummary.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.CycleDurationSummary\Lemoine.Plugin.CycleDurationSummary.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.DefaultAccumulators\Lemoine.Plugin.DefaultAccumulators.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.IntermediateWorkPieceSummary\Lemoine.Plugin.IntermediateWorkPieceSummary.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.OperationSlotCycles\Lemoine.Plugin.OperationSlotCycles.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Analysis\ProductionState\Lemoine.Plugin.RunningMachineModeIsProduction\Lemoine.Plugin.RunningMachineModeIsProduction.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Analysis\StateMachine\Lemoine.Plugin.AnalysisStateMachineProductionShop\Lemoine.Plugin.AnalysisStateMachineProductionShop.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\DynamicTimes\Lemoine.Plugin.SameMachineMode\Lemoine.Plugin.SameMachineMode.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Lemoine.Plugin.AutoMachineStateTemplateConfig\Lemoine.Plugin.AutoMachineStateTemplateConfig.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Lemoine.Plugin.CyclesWithRealEndFull\Lemoine.Plugin.CyclesWithRealEndFull.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Lemoine.Plugin.DefaultReasonMinimalConfig\Lemoine.Plugin.DefaultReasonMinimalConfig.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Lemoine.Plugin.DefaultReasonWithDurationConfig\Lemoine.Plugin.DefaultReasonWithDurationConfig.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <ProjectReference Include="..\..\..\UnitTests\Lemoine.UnitTests\Lemoine.UnitTests.csproj" />
+    <ProjectReference Include="..\..\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Analysis\Lemoine.Analysis.csproj" />
+  </ItemGroup>
+ 
+</Project>

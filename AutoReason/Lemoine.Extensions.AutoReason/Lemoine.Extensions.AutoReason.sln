@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29409.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Extensions.AutoReason", "Lemoine.Extensions.AutoReason.csproj", "{02B416E9-51EE-44B2-923C-BA33364CD62C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{6B3D1153-D3FB-4994-A042-D32EA1BEA7D0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Core", "..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj", "{25359A37-9865-4B8D-89DF-51EFDE65D535}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.ModelDAO", "..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj", "{A453E60E-43F9-42FF-97BC-57429A4A96A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Extensions", "..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj", "{A491F9AC-E649-458B-83DB-E6B3E86DCD94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02B416E9-51EE-44B2-923C-BA33364CD62C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02B416E9-51EE-44B2-923C-BA33364CD62C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02B416E9-51EE-44B2-923C-BA33364CD62C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02B416E9-51EE-44B2-923C-BA33364CD62C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25359A37-9865-4B8D-89DF-51EFDE65D535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25359A37-9865-4B8D-89DF-51EFDE65D535}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25359A37-9865-4B8D-89DF-51EFDE65D535}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25359A37-9865-4B8D-89DF-51EFDE65D535}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A453E60E-43F9-42FF-97BC-57429A4A96A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A453E60E-43F9-42FF-97BC-57429A4A96A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A453E60E-43F9-42FF-97BC-57429A4A96A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A453E60E-43F9-42FF-97BC-57429A4A96A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A491F9AC-E649-458B-83DB-E6B3E86DCD94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A491F9AC-E649-458B-83DB-E6B3E86DCD94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A491F9AC-E649-458B-83DB-E6B3E86DCD94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A491F9AC-E649-458B-83DB-E6B3E86DCD94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25359A37-9865-4B8D-89DF-51EFDE65D535} = {6B3D1153-D3FB-4994-A042-D32EA1BEA7D0}
+		{A453E60E-43F9-42FF-97BC-57429A4A96A2} = {6B3D1153-D3FB-4994-A042-D32EA1BEA7D0}
+		{A491F9AC-E649-458B-83DB-E6B3E86DCD94} = {6B3D1153-D3FB-4994-A042-D32EA1BEA7D0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F1EB685-3BA9-4156-96F6-0CD2525EFC40}
+	EndGlobalSection
+EndGlobal

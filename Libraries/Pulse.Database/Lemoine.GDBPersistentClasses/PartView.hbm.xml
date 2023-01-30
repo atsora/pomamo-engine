@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="PartView" table="part">
+    <id name="ComponentId" column="componentid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">component_componentid_seq</param>
+      </generator>
+    </id>
+    <property name="ProjectId" column="projectid"
+              access="nosetter.camelcase-m-underscore"
+              generated="insert" />
+    <property name="ComponentVersion" column="componentversion"
+              access="nosetter.camelcase-m-underscore"
+              generated="always" />
+    <property name="ProjectVersion" column="projectversion"
+              access="nosetter.camelcase-m-underscore"
+              generated="always" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="partname"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="Code" column="partcode"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <property name="ExternalCode" column="partexternalcode" />
+    <property name="DocumentLink" column="partdocumentlink" />
+    <property name="CreationDateTime" column="projectcreationdatetime"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="ReactivationDateTime" column="projectreactivationdatetime" />
+    <property name="ArchiveDateTime" column="projectarchivedatetime" />
+    <set name="WorkOrders"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IWorkOrder, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         table="workorderproject"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="projectid" />
+      <many-to-many class="WorkOrder" column="workorderid" />
+    </set>
+    <many-to-one name="Type" column="componenttypeid"
+                 class="ComponentType"
+                 cascade="none"
+                 not-found="exception" />
+    <property name="EstimatedHours" column="componentestimatedhours" />
+    <many-to-one name="FinalWorkPiece" column="finalworkpieceid"
+                 class="IntermediateWorkPiece"
+                 cascade="none"
+                 not-found="exception" />
+    <bag name="IntermediateWorkPieces"
+         access="nosetter.camelcase-m-underscore"
+         table="componentintermediateworkpiece"
+         lazy="true" order-by="intermediateworkpieceorderforcomponent ASC">
+      <key column="componentid" />
+      <many-to-many class="IntermediateWorkPiece"
+                    column="intermediateworkpieceid" />
+    </bag>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="ProcessMachineStateTemplate"
+            discriminator-value="ProcessMachineStateTemplate"
+            extends="MachineModification, Pulse.Database">
+    <join table="ProcessMachineStateTemplate"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine" column="machineid" class="Machine"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-null="true"
+                   secondary-key="true"
+                   not-found="exception" />
+    <property name="Range"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="processmachinestatetemplaterange"
+              not-null="true" />
+    </join>
+  </subclass>
+</hibernate-mapping>

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\pulselog.log4net" Link="pulselog.log4net">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <PackageReference Include="Iesi.Collections" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.NHibernate\Lemoine.NHibernate.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonBetweenComponents\Lemoine.Plugin.AutoReasonBetweenComponents.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonBetweenOperationsActivity\Lemoine.Plugin.AutoReasonBetweenOperationsActivity.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonBetweenOperationsNoActivity\Lemoine.Plugin.AutoReasonBetweenOperationsNoActivity.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonBetweenPrograms\Lemoine.Plugin.AutoReasonBetweenPrograms.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonBreak\Lemoine.Plugin.AutoReasonBreak.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonCncAlarm\Lemoine.Plugin.AutoReasonCncAlarm.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonCncValue\Lemoine.Plugin.AutoReasonCncValue.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonForward\Lemoine.Plugin.AutoReasonForward.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonLongIdleSameMachineMode\Lemoine.Plugin.AutoReasonLongIdleSameMachineMode.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonMachineMode\Lemoine.Plugin.AutoReasonMachineMode.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonMidCycle\Lemoine.Plugin.AutoReasonMidCycle.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonNoRunningMachineModeInShift\Lemoine.Plugin.AutoReasonNoRunningMachineModeInShift.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonPalletChangeSequence\Lemoine.Plugin.AutoReasonPalletChangeSequence.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonRedStackLight\Lemoine.Plugin.AutoReasonRedStackLight.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonRestartAfterBreak\Lemoine.Plugin.AutoReasonRestartAfterBreak.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonShiftEnd\Lemoine.Plugin.AutoReasonShiftEnd.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonShiftNoProduction\Lemoine.Plugin.AutoReasonShiftNoProduction.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonShiftStart\Lemoine.Plugin.AutoReasonShiftStart.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonStopBetweenCycles\Lemoine.Plugin.AutoReasonStopBetweenCycles.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonStopDuringMachiningSequence\Lemoine.Plugin.AutoReasonStopDuringMachiningSequence.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonStopSequence\Lemoine.Plugin.AutoReasonStopSequence.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonToolChange\Lemoine.Plugin.AutoReasonToolChange.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonUniqueMachineModeInShift\Lemoine.Plugin.AutoReasonUniqueMachineModeInShift.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\AutoReason\Lemoine.Plugin.AutoReasonWeekend\Lemoine.Plugin.AutoReasonWeekend.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\DynamicTimes\Lemoine.Plugin.CycleIsProduction\Lemoine.Plugin.CycleIsProduction.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\DynamicTimes\Lemoine.Plugin.DynamicTimesCycle\Lemoine.Plugin.DynamicTimesCycle.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\DynamicTimes\Lemoine.Plugin.SameMachineMode\Lemoine.Plugin.SameMachineMode.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <ProjectReference Include="..\..\..\UnitTests\Lemoine.UnitTests\Lemoine.UnitTests.csproj" />
+    <ProjectReference Include="..\..\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.AutoReason\Lemoine.AutoReason.csproj" />
+  </ItemGroup>
+
+</Project>

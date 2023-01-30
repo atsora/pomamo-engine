@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="AutoSequence" table="Autosequence">
+    <id name="Id" column="autosequenceid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">autosequence_autosequenceid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="autosequenceversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineModule" column="machinemoduleid"
+                 secondary-key="true"
+                 class="MachineModule" not-null="true" />
+    <many-to-one name="Sequence" column="sequenceid"
+                 class="Sequence"
+                 access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Operation" column="operationid"
+                 class="Operation"
+                 access="nosetter.camelcase-m-underscore" />
+    <property name="Begin"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              column="autosequencebegin"
+              not-null="true" />
+    <property name="End"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType, Lemoine.Database"
+              column="autosequenceend" />
+  </class>
+  <query name="AutoSequenceMonitoredMachine">
+    <![CDATA[
+from AutoSequence
+where MachineModule.MonitoredMachine=:Machine
+order by Begin asc
+    ]]>
+  </query>
+  <query name="AutoSequenceDeleteBefore">
+    <![CDATA[
+delete AutoSequence a
+where a.MachineModule = :MachineModuleParameter
+  and a.End is not null
+  and a.End <= :BeforeParameter
+    ]]>
+  </query>
+</hibernate-mapping>

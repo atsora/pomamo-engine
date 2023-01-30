@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ShiftTemplateSlot" table="ShiftTemplateslot">
+    <id name="Id" column="ShiftTemplateslotid">
+      <generator class="native">
+        <param name="sequence">ShiftTemplateslot_ShiftTemplateslotid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="ShiftTemplateslotversion" />
+    <many-to-one name="ShiftTemplate"
+                 access="nosetter.camelcase-m-underscore"
+                 column="ShiftTemplateid"
+                 class="ShiftTemplate"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="DateTimeRange"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="shifttemplateslotrange"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

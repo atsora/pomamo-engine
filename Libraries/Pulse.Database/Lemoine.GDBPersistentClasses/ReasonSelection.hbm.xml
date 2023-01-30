@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ReasonSelection" table="ReasonSelection">
+    <id name="Id" column="ReasonSelectionid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">ReasonSelection_ReasonSelectionid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="reasonselectionversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineMode" column="machinemodeid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MachineMode"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="MachineObservationState" column="machineobservationstateid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="MachineObservationState"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="Reason" column="reasonid"
+                 access="nosetter.camelcase-m-underscore"
+                 class="Reason"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="Selectable"
+              column="reasonselectionselectable"
+              not-null="true" />
+    <property name="DetailsRequired"
+              column="reasonselectiondetailsrequired"
+              not-null="true" />
+    <many-to-one name="MachineFilter" column="machinefilterid"
+                 class="MachineFilter"
+                 cascade="none"
+                 not-found="ignore" />
+  </class>
+</hibernate-mapping>

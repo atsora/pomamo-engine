@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineFilterItem" table="machinefilteritem" abstract="true" mutable="false">
+    <id name="Id" column="machinefilteritemid">
+      <generator class="native">
+        <param name="sequence">machinefilteritemid_seq</param>
+      </generator>
+    </id>
+    <property name="Order" column="machinefilteritemorder"
+              not-null="true" />
+    <property name="Rule" column="machinefilteritemrule"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

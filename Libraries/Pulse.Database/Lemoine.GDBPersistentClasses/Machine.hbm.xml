@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Machine" table="machine">
+    <id name="Id" column="machineid">
+      <generator class="native">
+        <param name="sequence">machine_machineid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machineversion" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="machinename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="machinecode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="machineexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <many-to-one name="MonitoringType" column="machinemonitoringtypeid"
+                 class="MachineMonitoringType"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="DisplayPriority" column="machinedisplaypriority" />
+    <many-to-one name="Company"
+                 column="companyid"
+                 class="Company"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="Department"
+                 column="departmentid"
+                 class="Department"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="Cell"
+                 column="cellid"
+                 class="Cell"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="Category"
+                 column="machinecategoryid"
+                 class="MachineCategory"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="SubCategory"
+                 column="machinesubcategoryid"
+                 class="MachineSubCategory"
+                 cascade="none"
+                 not-found="ignore" />
+    <joined-subclass name="MonitoredMachine" table="monitoredmachine">
+      <key column="machineid" />
+      <set name="MachineModules"
+           access="nosetter.camelcase-m-underscore"
+           collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IMachineModule, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+           inverse="true" lazy="true" cascade="none">
+        <key column="machineid" on-delete="cascade" />
+        <one-to-many class="MachineModule" />
+      </set>
+      <many-to-one name="MainMachineModule" column="mainmachinemoduleid"
+                   class="MachineModule" />
+      <many-to-one name="PerformanceField" column="performancefieldid"
+                   class="Field" />
+      <property name="OperationBar" column="monitoredmachineoperationbar"
+                not-null="true" />
+      <property name="PalletChangingDuration" column="palletchangingduration"
+                type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
+      <property name="OperationFromCnc" column="operationfromcnc"
+                not-null="true" />
+      <many-to-one name="StampingConfigByName"
+                   column="stampingconfigbynameid"
+                   class="StampingConfigByName"
+                   cascade="none"
+                   not-found="ignore" />
+    </joined-subclass>
+  </class>
+</hibernate-mapping>

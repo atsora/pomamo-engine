@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineStatus" table="machinestatus">
+    <id name="Id" column="machineid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="foreign">
+        <param name="property">MonitoredMachine</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinestatusversion"
+             access="nosetter.camelcase-m-underscore" />
+    <one-to-one name="MonitoredMachine"
+                class="MonitoredMachine"
+                constrained="true" />
+    <many-to-one name="CncMachineMode" column="cncmachinemodeid"
+                 class="MachineMode"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="MachineMode" column="machinemodeid"
+                 class="MachineMode"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="Reason" column="reasonid"
+                 class="Reason"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="MachineStateTemplate"
+                 column="machinestatetemplateid"
+                 class="MachineStateTemplate"
+                 cascade="none" />
+    <many-to-one name="MachineObservationState"
+                 column="machineobservationstateid"
+                 class="MachineObservationState"
+                 not-null="true"
+                 cascade="none" />
+    <many-to-one name="Shift"
+                 column="shiftid"
+                 class="Shift"
+                 cascade="none" />
+    <property name="ReasonSlotEnd"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              column="reasonslotenddatetime"
+              not-null="true" />
+    <property name="ManualActivity"
+              column="machinestatusmanualactivity"
+              not-null="true" />
+    <property name="ManualActivityEnd"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              column="activityenddatetime" />
+    <property name="ReasonDetails" column="reasondetails" />
+    <property name="ReasonScore" column="machinestatusreasonscore"
+              not-null="true" />
+    <property name="ReasonSource" column="machinestatusreasonsource"
+              not-null="true" />
+    <property name="AutoReasonNumber" column="machinestatusautoreasonnumber"
+              not-null="true" />
+    <property name="OverwriteRequired" column="machinestatusoverwriterequired"
+              not-null="true" />
+    <property name="ConsolidationLimit"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
+              column="machinestatusconsolidationlimit" />
+  </class>
+</hibernate-mapping>

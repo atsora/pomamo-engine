@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Sequence" table="sequence">
+    <id name="Id" column="sequenceid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">sequence_sequenceid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="sequenceversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <many-to-one name="CadModel"
+                 access="nosetter.camelcase-m-underscore"
+                 column="cadmodelid"
+                 class="CadModel"
+                 cascade="none"
+                 not-found="ignore" />
+    <many-to-one name="Path"
+                 access="nosetter.camelcase-m-underscore"
+                 column="pathid"
+                 class="Path"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />   
+    <many-to-one name="Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 column="operationid"
+                 class="Operation"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="Name" column="sequencename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Description" column="sequencedescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="ToolNumber" column="sequencetoolnumber"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Order" column="sequenceorder"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="EstimatedTime" column="sequenceestimatedtime"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="Frequency" column="sequencefrequency"
+              access="nosetter.camelcase-m-underscore" />
+    <property name="OperationStep" column="sequenceoperationstep" />
+    <many-to-one name="Tool"
+                 access="nosetter.camelcase-m-underscore"
+                 column="toolid"
+                 class="Tool"
+                 cascade="none"
+                 not-found="ignore" />
+    <property name="AutoOnly" column="sequenceautoonly"
+              not-null="true" />
+    <property name="Kind" column="sequencekind"
+              type="Lemoine.GDBPersistentClasses.SequenceKindType, Pulse.Database"
+              not-null="true" />
+    <property name="Detail" column="sequencedetail"
+              type="Lemoine.NHibernateTypes.JsonAsT`1[[Lemoine.Model.SequenceDetail, Lemoine.ModelDAO]], Lemoine.Database"
+              not-null="false"
+              lazy="true"/>
+    <set name="Stamps"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IStamp, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="sequenceid" />
+      <one-to-many class="Stamp" />
+    </set>
+    <set name="StampingValues"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IStampingValue, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="sequenceid" on-delete="cascade" />
+      <one-to-many class="StampingValue" />
+    </set>
+  </class>
+</hibernate-mapping>

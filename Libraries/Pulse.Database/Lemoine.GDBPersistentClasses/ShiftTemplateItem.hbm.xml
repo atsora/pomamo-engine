@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ShiftTemplateItem" table="ShiftTemplateItem">
+    <id name="Id" column="ShiftTemplateItemid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">ShiftTemplateItem_ShiftTemplateItemid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="ShiftTemplateItemversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Shift"
+                 column="shiftid"
+                 class="Shift"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="WeekDays"
+              column="Shifttemplateitemweekdays"
+              type="Lemoine.NHibernateTypes.WeekDayType, Lemoine.Database"
+              not-null="true" />
+    <property name="TimePeriod"
+              column="Shifttemplateitemtimeperiod"
+              type="Lemoine.NHibernateTypes.TimePeriodOfDayNullIsFullDayType, Lemoine.Database" />
+    <property name="Day"
+              column="Shifttemplateitemday"
+              type="Lemoine.NHibernateTypes.LocalDayType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

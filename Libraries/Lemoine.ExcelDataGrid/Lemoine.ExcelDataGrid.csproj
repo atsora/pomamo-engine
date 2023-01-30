@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="NPOI" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Lemoine.DataRepository\Lemoine.DataRepository.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="ExcelDataImport_Fields2.xml" CopyToOutputDirectory="Always" />
+    <None Include="ExcelDataImport_Tools.xml" CopyToOutputDirectory="Always" />
+    <None Include="ExcelDataImport_Fields.xml" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  
+</Project>

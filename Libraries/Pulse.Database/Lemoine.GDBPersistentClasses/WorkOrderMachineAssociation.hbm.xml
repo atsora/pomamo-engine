@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="WorkOrderMachineAssociation"
+            extends="MachineModification, Pulse.Database"
+            discriminator-value="WorkOrderMachineAssociation">
+    <join table="WorkOrderMachineAssociation"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="WorkOrder" column="workorderid" class="WorkOrder"
+                   cascade="none"
+                   not-found="exception" />
+      <many-to-one name="Line" column="lineid" class="Line"
+                   cascade="none"
+                   not-found="ignore" />
+      <many-to-one name="Machine" column="machineid" class="Machine"
+                   cascade="none"
+                   not-null="true"
+                   secondary-key="true"
+                   not-found="exception" />
+      <property name="Begin"
+                type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeSecondsType, Lemoine.Database"
+                column="workordermachineassociationbegindatetime"
+                not-null="true" />
+      <property name="End"
+                type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType, Lemoine.Database"
+                column="workordermachineassociationenddatetime" />
+      <property name="Option"
+                column="workordermachineassociationoption" />
+      <property name="ResetTask"
+                column="workordermachineassociationresettask" />
+    </join>
+  </subclass>
+</hibernate-mapping>

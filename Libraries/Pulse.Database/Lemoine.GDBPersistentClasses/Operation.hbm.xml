@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Operation" table="operation">
+    <id name="Id" column="Operationid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">operation_operationid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="operationversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="LongDisplay" column="display_long"
+              update="false" insert="false" generated="always" />
+    <property name="ShortDisplay" column="display_short"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="operationname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="Code" column="operationcode"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="ExternalCode" column="operationexternalcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DocumentLink" column="operationdocumentlink"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <many-to-one name="Type" column="operationtypeid"
+                 class="OperationType"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="MachiningDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationmachiningduration" />
+    <property name="SetUpDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationsetupduration" />
+    <property name="TearDownDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationteardownduration" />
+    <property name="LoadingDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationloadingduration" />
+    <property name="UnloadingDuration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              column="operationunloadingduration" />
+    <property name="CreationDateTime" column="operationtimestamp"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Lock"
+              column="operationlock"
+              not-null="true" />
+    <many-to-one name="MachineFilter" column="machinefilterid"
+                 class="MachineFilter"
+                 cascade="none"
+                 not-null="false"
+                 not-found="ignore" />
+    <property name="ArchiveDateTime" column="operationarchivedatetime" />
+    <set name="IntermediateWorkPieces"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IIntermediateWorkPiece, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="operationid" on-delete="cascade" />
+      <one-to-many class="IntermediateWorkPiece" />
+    </set>
+    <set name="Sources"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IIntermediateWorkPiece, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         table="operationsourceworkpiece"
+         lazy="true"
+         cascade="none">
+      <key column="operationid" />
+      <many-to-many class="IntermediateWorkPiece" column="intermediateworkpieceid" />
+    </set>
+    <set name="Paths"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSortedSetType`2[[Lemoine.Model.IPath, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="operationid" on-delete="cascade" />
+      <one-to-many class="Path" />
+    </set>
+    <set name="Sequences"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.ISequence, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="operationid" on-delete="cascade" />
+      <one-to-many class="Sequence" />
+    </set>
+    <set name="Stamps"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IStamp, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="operationid" />
+      <one-to-many class="Stamp" />
+    </set>
+  </class>
+</hibernate-mapping>

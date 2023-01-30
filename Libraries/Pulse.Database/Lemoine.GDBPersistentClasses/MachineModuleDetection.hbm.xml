@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineModuleDetection" table="MachineModuleDetection"
+         mutable="false">
+    <id name="Id" column="MachineModuleDetectionid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">MachineModuleDetection_MachineModuleDetectionid_seq</param>
+      </generator>
+    </id>
+    <many-to-one name="MachineModule" column="machinemoduleid"
+                 secondary-key="true"
+                 class="MachineModule" not-null="true" />
+    <property name="DateTime" column="machinemoduledetectiondatetime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeSecondsType, Lemoine.Database"
+              not-null="true" />
+    <property name="Name" column="MachineModuleDetectionname" />
+    <many-to-one name="Stamp" column="stampid"
+                 class="Stamp" not-null="false" />
+    <property name="StopNcProgram" column="machinemoduledetectionstopncprogram" />
+    <property name="StartCycle" column="machinemoduledetectionstartcycle" />
+    <property name="StopCycle" column="machinemoduledetectionstopcycle" />
+    <property name="Quantity" column="machinemoduledetectionquantity" />
+    <property name="OperationCode" column="operationcode"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="CustomType" column="machinemoduledetectioncustomtype"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="CustomValue" column="machinemoduledetectioncustomvalue"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="SequenceMilestone" column="sequencemilestone"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
+  </class>
+  <query name="Clean">
+    <![CDATA[
+delete MachineModuleDetection a
+where a.MachineModule = :MachineModuleParameter
+  and a.Id < :BeforeIdParameter
+  and a.DateTime < :MaxDateTimeParameter
+    ]]>
+  </query>
+</hibernate-mapping>

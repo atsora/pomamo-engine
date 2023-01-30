@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ToolLife" table="toollife">
+    <id name="Id" column="toollifeid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">ToolLife_ToolLifeid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="toollifeversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineModule"
+                 column="machinemoduleid"
+                 class="MachineModule"
+                 secondary-key="true"
+                 not-null="true" />
+    <many-to-one name="Position"
+                 column="toolpositionid"
+                 class="ToolPosition"
+                 not-null="true" />
+    <property name="Direction"
+              column="toollifedirection"
+              not-null="true" />
+    <property name="Value"
+              column="toollifevalue"
+              not-null="true" />
+    <property name="Warning"
+              column="toollifewarning" />
+    <property name="Limit"
+              column="toollifelimit" />
+    <many-to-one name="Unit"
+                 column="unitid"
+                 class="Unit" />
+  </class>
+  <query name="ToolLifeAllByMachineModule">
+    <![CDATA[
+select tl
+from ToolLife as tl
+left join tl.Position as tp with tp.MachineModule.Id=:MachineModuleId
+where tl.MachineModule.Id=:MachineModuleId
+    ]]>
+  </query>
+</hibernate-mapping>

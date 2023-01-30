@@ -1,0 +1,93 @@
+﻿<?xml version="1.0"?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+  <session-factory>
+    <property name="cache.use_second_level_cache">true</property>
+    <property name="cache.use_query_cache">true</property>
+    <property name="cache.default_expiration">600</property>
+    <!-- 10 minutes -->
+    <!--class-cache
+        class="Lemoine.GDBPersistentClasses.AutoSequence, Pulse.Database"
+        usage="read-write" /-->
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Cell, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.CncAlarm, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.CncValue, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.CncVariable, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Company, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Computer, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Config, Pulse.Database"
+      usage="read-only" />
+    <!--class-cache
+        class="Lemoine.GDBPersistentClasses.DetectionAnalysisLog, Pulse.Database"
+        usage="read-write" /-->
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Department, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.AcquisitionState, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Fact, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Field, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.IsoFile, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Machine, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineCategory, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineFilter, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineFilterItem, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineMode, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineModule, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.MachineSubCategory, Pulse.Database"
+      usage="read-only" />
+    <!--class-cache
+        class="Lemoine.GDBPersistentClasses.OperationCycle, Pulse.Database"
+        usage="read-write" />
+      <class-cache
+        class="Lemoine.GDBPersistentClasses.OperationSlot, Pulse.Database"
+        usage="read-write" /-->
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Package, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.PackagePluginAssociation, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Plugin, Pulse.Database"
+      usage="read-write" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Sequence, Pulse.Database"
+      usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.Stamp, Pulse.Database"
+      usage="read-only" />
+  </session-factory>
+</hibernate-configuration>

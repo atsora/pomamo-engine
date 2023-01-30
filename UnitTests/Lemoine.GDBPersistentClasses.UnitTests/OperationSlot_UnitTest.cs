@@ -1,0 +1,1219 @@
+// Copyright (C) 2009-2023 Lemoine Automation Technologies
+//
+// SPDX-License-Identifier: Apache-2.0
+
+using System;
+using System.Collections.Generic;
+using Lemoine.Model;
+using Lemoine.ModelDAO;
+using Lemoine.UnitTests;
+using Lemoine.Core.Log;
+using NHibernate;
+using NHibernate.Criterion;
+using NUnit.Framework;
+using System.Linq;
+using Lemoine.Plugin.CycleCountSummary;
+using Lemoine.Plugin.IntermediateWorkPieceSummary;
+
+namespace Lemoine.GDBPersistentClasses.UnitTests
+{
+  /// <summary>
+  /// Unit tests for the class OperationSlot
+  /// </summary>
+  [TestFixture]
+  public class OperationSlot_UnitTest : WithDayTimeStamp
+  {
+    string previousDSNName;
+
+    static readonly ILog log = LogManager.GetLogger (typeof (OperationSlot_UnitTest).FullName);
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public OperationSlot_UnitTest ()
+      : base (UtcDateTime.From (2011, 07, 31))
+    {
+    }
+
+    /// <summary>
+    /// Test Save / Delete / Save
+    /// </summary>
+    [Test]
+    public void TestSaveDeleteSave ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        IMachine machine = daoFactory.MachineDAO.FindById (1);
+        IOperation operation1 = daoFactory.OperationDAO.FindById (1);
+        IOperation operation2 = daoFactory.OperationDAO.FindById (2);
+        IOperationSlot operationSlot =
+          ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
+                                                           operation1,
+                                                           null,
+                                                           null,
+                                                           null, null, null, null,
+                                                           new UtcDateTimeRange (UtcDateTime.From (2011, 08, 23, 23, 00, 00)));
+        daoFactory.OperationSlotDAO.MakePersistent (operationSlot);
+        IOperationSlot operationSlot2 =
+          ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
+                                                           operation2,
+                                                           null,
+                                                           null,
+                                                           null, null, null, null,
+                                                           new UtcDateTimeRange (operationSlot.BeginDateTime));
+        daoFactory.OperationSlotDAO.MakeTransient (operationSlot);
+        daoFactory.OperationSlotDAO.MakePersistent (operationSlot2);
+        transaction.Rollback ();
+      }
+    }
+
+    /// <summary>
+    /// Test the Consolidate method
+    /// </summary>
+    [Test]
+    public void TestConsolidate ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        // Reference data
+        IMonitoredMachine machine =
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+          .FindById (1);
+        Assert.NotNull (machine);
+        IOperation operation1 =
+          ModelDAOHelper.DAOFactory.OperationDAO
+          .FindById (1);
+        Assert.NotNull (operation1);
+
+        // full cycle ending at 2006.3
+        IOperationCycle operationCycle0 =
+          ModelDAOHelper.ModelFactory
+          .CreateOperationCycle (machine);
+        operationCycle0.SetRealEnd (UtcDateTime.From (2006, 06, 03));
+        ModelDAOHelper.DAOFactory.OperationCycleDAO
+          .MakePersistent (operationCycle0);
+
+        // partial cycle starting at 2012.1
+        IOperationCycle operationCycle1 =
+          ModelDAOHelper.ModelFactory
+          .CreateOperationCycle (machine);
+        operationCycle1.Begin = UtcDateTime.From (2012, 06, 01);
+        ModelDAOHelper.DAOFactory.OperationCycleDAO
+          .MakePersistent (operationCycle1);
+
+        // full cycle from 2012.2 to 2012.3
+        IOperationCycle operationCycle2 =
+          ModelDAOHelper.ModelFactory
+          .CreateOperationCycle (machine);
+        operationCycle2.Begin = UtcDateTime.From (2012, 06, 02);
+        operationCycle2.SetRealEnd (UtcDateTime.From (2012, 06, 03));
+        ModelDAOHelper.DAOFactory.OperationCycleDAO
+          .MakePersistent (operationCycle2);
+
+        // full cycle ending at 2012.5
+        IOperationCycle operationCycle3 =
+          ModelDAOHelper.ModelFactory
+          .CreateOperationCycle (machine);
+        operationCycle3.SetRealEnd (UtcDateTime.From (2012, 06, 05));
+        ModelDAOHelper.DAOFactory.OperationCycleDAO
+          .MakePersistent (operationCycle3);
+
+        IOperationSlot operationSlot =
+          ModelDAOHelper.ModelFactory
+          .CreateOperationSlot (machine,
+                                operation1,
+                                null,
+                                null,
+                                null, null, null, null,
+                                new UtcDateTimeRange (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
+        operationSlot.AverageCycleTime = null;
+        ModelDAOHelper.DAOFactory.OperationSlotDAO
+          .MakePersistent (operationSlot);
+        UpdateSummaries (operationSlot);
+
+        (operationSlot as OperationSlot)
+          .Consolidate (null);
+
+        ModelDAOHelper.DAOFactory.Flush ();
+        DAOFactory.EmptyAccumulators ();
+
+        {
+          IList<IOperationCycle> operationCycles =
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .FindAll ();
+          Assert.AreEqual (4, operationCycles.Count);
+          int i = 0;
+          // first cycle removed from slot
+          Assert.IsNull (operationCycles[i].Begin);
+          Assert.AreEqual (UtcDateTime.From (2006, 06, 03), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.IsNull (operationCycles[i].OperationSlot);
+          ++i;
+          // second cycle in slot, partial, estimated end equal to next cycle begin
+          Assert.IsTrue (!operationCycles[i].Full);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 01), operationCycles[i].Begin);
+          Assert.IsTrue (operationCycles[i].Status.HasFlag (OperationCycleStatus.EndEstimated));
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 02), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (operationSlot, operationCycles[i].OperationSlot);
+          ++i;
+          // third cycle in slot, full, no estimation
+          Assert.IsTrue (operationCycles[i].Full);
+          Assert.AreEqual (new OperationCycleStatus (), operationCycles[i].Status);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 02), operationCycles[i].Begin);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 03), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (operationSlot, operationCycles[i].OperationSlot);
+          ++i;
+          // fourth cycle in slot, full, no estimation
+          Assert.IsTrue (operationCycles[i].Full);
+          Assert.AreEqual (OperationCycleStatus.BeginEstimated, operationCycles[i].Status);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 03), operationCycles[i].Begin);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 05), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (operationSlot, operationCycles[i].OperationSlot);
+        }
+        CheckSummaries (operationSlot);
+
+        Assert.AreEqual (1, operationSlot.PartialCycles);
+        Assert.AreEqual (2, operationSlot.TotalCycles);
+        Assert.AreEqual (TimeSpan.FromDays (2), operationSlot.AverageCycleTime);
+
+        transaction.Rollback ();
+      }
+    }
+
+    /// <summary>
+    /// Test the Consolidate method (2)
+    /// </summary>
+    [Test]
+    public void TestConsolidate2 ()
+    {
+      try {
+        Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.CyclesWithRealEndFull.OperationCycleFullExtension));
+
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          // Reference data
+          IMonitoredMachine machine =
+            ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindById (1);
+          Assert.NotNull (machine);
+          IOperation operation1 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (1);
+          Assert.NotNull (operation1);
+
+          IOperationCycle operationCycle0 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle (machine);
+          operationCycle0.Begin = UtcDateTime.From (2008, 01, 10);
+          operationCycle0.SetRealEnd (UtcDateTime.From (2008, 01, 25));
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle0);
+
+          IOperationSlot operationSlot =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationSlot (machine,
+                                  operation1,
+                                  null, null, null, null, null, null,
+                                  new UtcDateTimeRange (UtcDateTime.From (2008, 01, 05)));
+          ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .MakePersistent (operationSlot);
+          operationSlot.ConsolidateRunTime ();
+          UpdateSummaries (operationSlot);
+
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (1, operationSlot.TotalCycles);
+          Assert.AreEqual (0, operationSlot.PartialCycles);
+
+          // shorten operation slot
+          operationSlot.EndDateTime = UtcDateTime.From (2008, 01, 20);
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          // get operation cycles in order (FindAll does not ensure that)
+          IList<IOperationCycle> operationCycles =
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .FindAllInRange (machine, new UtcDateTimeRange (UtcDateTime.From (2008, 01, 01)));
+
+          Assert.AreEqual (2, operationCycles.Count);
+
+          Assert.IsTrue (operationCycles[0].End <= operationCycles[1].End);
+          int i = 0;
+          Assert.AreEqual (false, operationCycles[i].Full);
+          Assert.AreEqual (UtcDateTime.From (2008, 01, 10), operationCycles[i].Begin);
+          Assert.AreEqual (UtcDateTime.From (2008, 01, 20), operationCycles[i].End);
+          Assert.AreEqual (OperationCycleStatus.EndEstimated, operationCycles[i].Status);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (operationSlot, operationCycles[i].OperationSlot);
+
+
+          ++i;
+          Assert.AreEqual (true, operationCycles[i].Full);
+          Assert.IsFalse (operationCycles[i].Begin.HasValue);
+          Assert.IsTrue (operationCycles[i].Status.HasFlag (OperationCycleStatus.BeginEstimated));
+          Assert.AreEqual (UtcDateTime.From (2008, 01, 25), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (null, operationCycles[i].OperationSlot);
+
+          Assert.AreEqual (0, operationSlot.TotalCycles);
+          Assert.AreEqual (1, operationSlot.PartialCycles);
+          CheckSummaries (operationSlot);
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+      }
+    }
+
+    /// <summary>
+    /// Test the Consolidate method (3)
+    /// </summary>
+    [Test]
+    public void TestConsolidate3 ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.OperationSlotCycles.OperationSlotCyclesAccumulatorExtension));
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.IntermediateWorkPieceSummary.IntermediateWorkPieceByMachineSummaryAccumulatorExtension));
+
+          // Reference data
+          IMonitoredMachine machine =
+            ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindById (1);
+          Assert.NotNull (machine);
+          IOperation operation1 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (1);
+          Assert.NotNull (operation1);
+
+          IOperationCycle operationCycle0 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle (machine);
+          operationCycle0.Begin = T (10);
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle0);
+
+          IOperationCycle operationCycle1 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle (machine);
+          operationCycle1.Begin = T (20);
+          operationCycle1.SetRealEnd (T (25));
+          operationCycle1.OperationSlot = null;
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle1);
+
+          IOperationSlot operationSlot =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationSlot (machine,
+                                  operation1,
+                                  null, null, null, null, null, null,
+                                  R (5, 20));
+          ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .MakePersistent (operationSlot);
+          UpdateSummaries (operationSlot);
+
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (1, operationSlot.PartialCycles);
+          Assert.AreEqual (0, operationSlot.TotalCycles);
+
+          operationSlot.EndDateTime = T (25);
+
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (1, operationSlot.PartialCycles);
+          Assert.AreEqual (1, operationSlot.TotalCycles);
+
+          IList<IOperationCycle> operationCycles =
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .FindAllInRange (machine, new UtcDateTimeRange (T (1)));
+          Assert.AreEqual (2, operationCycles.Count);
+
+          Assert.IsTrue (operationCycles[0].End.HasValue);
+          Assert.AreEqual (operationCycles[0].End.Value, operationCycles[1].Begin);
+          CheckSummaries (operationSlot);
+          /*
+          Assert.AreEqual (0, operationSlot.PartialCycles);
+
+          // shorten operation slot
+          operationSlot.EndDateTime = UtcDateTime.From (2008, 01, 20);
+          (operationSlot as OperationSlot)
+            .Consolidate ();
+
+          // get operation cycles in order (FindAll does not ensure that)
+          IList<IOperationCycle> operationCycles =
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .FindAllInRange(machine, UtcDateTime.From(2008, 01, 01), null);
+
+          Assert.AreEqual (2, operationCycles.Count);
+
+          Assert.IsTrue (operationCycles [0].End <= operationCycles[1].Begin);
+          int i = 0;
+          Assert.AreEqual (true, operationCycles [i].IsPartial());
+          Assert.AreEqual (UtcDateTime.From(2008, 01, 10), operationCycles [i].Begin);
+          Assert.AreEqual (UtcDateTime.From(2008, 01, 20), operationCycles [i].End);
+          Assert.AreEqual (OperationCycleStatus.EndEstimated, operationCycles [i].Status);
+          Assert.AreEqual (machine, operationCycles [i].Machine);
+          Assert.AreEqual (operationSlot, operationCycles [i].OperationSlot);
+
+
+          ++i;
+          Assert.AreEqual (true, operationCycles [i].IsFull());
+          Assert.AreEqual (UtcDateTime.From(2008, 01, 20), operationCycles [i].Begin);
+          Assert.AreEqual (OperationCycleStatus.BeginEstimated, operationCycles [i].Status);
+          Assert.AreEqual (UtcDateTime.From (2008, 01, 25), operationCycles [i].End);
+          Assert.AreEqual (machine, operationCycles [i].Machine);
+          Assert.AreEqual (null, operationCycles [i].OperationSlot);
+
+          Assert.AreEqual (0, operationSlot.TotalCycles);
+          Assert.AreEqual (1, operationSlot.PartialCycles);
+           */
+        }
+        finally {
+          transaction.Rollback ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the Consolidate method
+    /// for OperationCycle in case a new operation slot is coming
+    /// </summary>
+    [Test]
+    public void TestConsolidateOperationCycleNewOperationSlot ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.OperationSlotCycles.OperationSlotCyclesAccumulatorExtension));
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.IntermediateWorkPieceSummary.IntermediateWorkPieceByMachineSummaryAccumulatorExtension));
+
+          // Reference data
+          IMachine machine =
+          ModelDAOHelper.DAOFactory.MachineDAO
+          .FindById (1);
+          Assert.NotNull (machine);
+          IOperation operation1 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (1);
+          Assert.NotNull (operation1);
+
+          IOperationCycle operationCycle0 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle ((IMonitoredMachine)machine);
+          operationCycle0.SetRealEnd (UtcDateTime.From (2006, 06, 03));
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle0);
+          IOperationCycle operationCycle1 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle ((IMonitoredMachine)machine);
+          operationCycle1.Begin = UtcDateTime.From (2012, 06, 01);
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle1);
+          IOperationCycle operationCycle2 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle ((IMonitoredMachine)machine);
+          operationCycle2.Begin = UtcDateTime.From (2012, 06, 02);
+          operationCycle2.SetRealEnd (UtcDateTime.From (2012, 06, 03));
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle2);
+          IOperationCycle operationCycle3 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle ((IMonitoredMachine)machine);
+          operationCycle3.SetRealEnd (UtcDateTime.From (2012, 06, 05));
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle3);
+
+          IOperationSlot operationSlot =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationSlot (machine,
+                                  operation1,
+                                  null, null, null, null, null, null,
+                                  new UtcDateTimeRange (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
+          ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .MakePersistent (operationSlot);
+          UpdateSummaries (operationSlot);
+
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          {
+            IOperation operation2 =
+              ModelDAOHelper.DAOFactory.OperationDAO
+              .FindById (2);
+            Assert.NotNull (operation2);
+            IOperationMachineAssociation operationMachineAssociation =
+              ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine,
+                                                                             UtcDateTime.From (2012, 06, 03, 01, 00, 00));
+            operationMachineAssociation.Operation = operation2;
+            ((OperationMachineAssociation)operationMachineAssociation).Apply ();
+          }
+          IOperationSlot operationSlot2 =
+            ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAt (machine,
+                                                               UtcDateTime.From (2012, 06, 03, 01, 00, 00));
+          Assert.IsNotNull (operationSlot2);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          IList<IOperationCycle> operationCycles =
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .FindAll ();
+          Assert.AreEqual (4, operationCycles.Count);
+          int i = 0;
+          Assert.IsNull (operationCycles[i].Begin);
+          Assert.AreEqual (UtcDateTime.From (2006, 06, 03), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.IsNull (operationCycles[i].OperationSlot);
+          ++i;
+          Assert.IsFalse (operationCycles[i].Full);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 01), operationCycles[i].Begin);
+          // glueing generated partial cycle with an estimated end
+          Assert.IsTrue (operationCycles[i].Status.HasFlag (OperationCycleStatus.EndEstimated));
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 02), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (operationSlot, operationCycles[i].OperationSlot);
+          ++i;
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 02), operationCycles[i].Begin);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 03), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (operationSlot, operationCycles[i].OperationSlot);
+          ++i;
+          Assert.AreEqual (operationSlot2.BeginDateTime, operationCycles[i].Begin);
+          Assert.AreEqual (OperationCycleStatus.BeginEstimated, operationCycles[i].Status);
+          Assert.AreEqual (UtcDateTime.From (2012, 06, 05), operationCycles[i].End);
+          Assert.AreEqual (machine, operationCycles[i].Machine);
+          Assert.AreEqual (operationSlot2, operationCycles[i].OperationSlot);
+
+          Assert.AreEqual (1, operationSlot.PartialCycles);
+          Assert.AreEqual (1, operationSlot.TotalCycles);
+          CheckSummaries (operationSlot);
+          Assert.AreEqual (0, operationSlot2.PartialCycles);
+          Assert.AreEqual (1, operationSlot2.TotalCycles);
+          CheckSummaries (operationSlot2);
+
+        }
+        finally {
+          transaction.Rollback ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the Consolidate method
+    /// OperationSlot grows: last partial cycle estimated end should also grow
+    /// </summary>
+    [Test]
+    public void TestConsolidateOperationSlotGrowsLastPartialCycleGrows ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.OperationSlotCycles.OperationSlotCyclesAccumulatorExtension));
+
+          // Reference data
+          IMachine machine =
+          ModelDAOHelper.DAOFactory.MachineDAO
+          .FindById (1);
+          Assert.NotNull (machine);
+          IOperation operation1 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (1);
+          Assert.NotNull (operation1);
+
+          IOperationSlot operationSlot =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationSlot (machine,
+                                  operation1, null, null, null, null, null, null,
+                                  new UtcDateTimeRange (UtcDateTime.From (2006, 01, 16, 00, 00, 00)));
+          UpdateSummaries (operationSlot);
+
+          ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .MakePersistent (operationSlot);
+
+          IOperationCycle operationCycle0 =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationCycle ((IMonitoredMachine)machine);
+          operationCycle0.Begin = UtcDateTime.From (2006, 06, 03);
+          operationCycle0.OperationSlot = operationSlot;
+          ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .MakePersistent (operationCycle0);
+
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          IList<IOperationCycle> operationCycles =
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+            .FindAll ();
+          Assert.AreEqual (1, operationCycles.Count);
+          IOperationCycle operationCycle1 = operationCycles[0];
+
+          Assert.AreEqual (UtcDateTime.From (2006, 06, 03), operationCycle1.Begin);
+          Assert.IsNull (operationCycle1.End);
+          Assert.AreEqual (operationSlot, operationCycle1.OperationSlot);
+
+          operationSlot.EndDateTime = UtcDateTime.From (2006, 06, 04);
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (UtcDateTime.From (2006, 06, 03), operationCycle1.Begin);
+          Assert.AreEqual (UtcDateTime.From (2006, 06, 04), operationCycle1.End);
+          Assert.AreEqual (OperationCycleStatus.EndEstimated, operationCycle1.Status);
+          Assert.AreEqual (operationSlot, operationCycle1.OperationSlot);
+
+          operationSlot.EndDateTime = UtcDateTime.From (2006, 06, 05);
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (UtcDateTime.From (2006, 06, 03), operationCycle1.Begin);
+          Assert.AreEqual (UtcDateTime.From (2006, 06, 05), operationCycle1.End);
+          Assert.AreEqual (OperationCycleStatus.EndEstimated, operationCycle1.Status);
+          Assert.AreEqual (operationSlot, operationCycle1.OperationSlot);
+          CheckSummaries (operationSlot);
+        }
+        finally {
+          transaction.Rollback ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the optimizations in Consolidate method
+    /// </summary>
+    [Test]
+    public void TestOptimizeConsolidate ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.OperationSlotCycles.OperationSlotCyclesAccumulatorExtension));
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.IntermediateWorkPieceSummary.IntermediateWorkPieceByMachineSummaryAccumulatorExtension));
+
+          // Reference data
+          IMonitoredMachine machine =
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+          .FindById (1);
+          Assert.NotNull (machine);
+          IOperation operation1 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (1);
+          Assert.NotNull (operation1);
+
+          IOperationSlot operationSlot =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationSlot (machine,
+                                  operation1,
+                                  null,
+                                  null,
+                                  null, null, new DateTime (2012, 06, 01), null,
+                                  new UtcDateTimeRange (DT (10), DT (35)));
+          ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .MakePersistent (operationSlot);
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          { // full cycle ending at t(2)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (2));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+            var cycleOperationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAt (machine, DT (2));
+            operationCycle.OperationSlot = cycleOperationSlot;
+          }
+
+          for (int i = 0; i < 20; ++i) {
+            // full cycle ending at T(12+i)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (12 + i));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+            var cycleOperationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAt (machine, DT (12 + i));
+            operationCycle.OperationSlot = cycleOperationSlot;
+          }
+
+          { // partial cycle starting at T(39)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.Begin = DT (39);
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+            var cycleOperationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAt (machine, DT (39));
+            operationCycle.OperationSlot = cycleOperationSlot;
+          }
+
+          { // full cycle from T(40) to T(42)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.Begin = DT (40);
+            operationCycle.SetRealEnd (DT (42));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+            var cycleOperationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAt (machine, DT (42));
+            operationCycle.OperationSlot = cycleOperationSlot;
+          }
+
+          { // full cycle ending at T(50)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (50));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+            var cycleOperationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAt (machine, DT (50));
+            operationCycle.OperationSlot = cycleOperationSlot;
+          }
+
+          { // full cycle ending at T(5)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (5));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+            var cycleOperationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAt (machine, DT (5));
+            operationCycle.OperationSlot = cycleOperationSlot;
+          }
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (0, operationSlot.PartialCycles);
+          Assert.AreEqual (20, operationSlot.TotalCycles);
+          { // Extend operation slot
+            IOperationMachineAssociation association =
+              ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine, DT (1), null, false);
+            association.End = DT (59);
+            association.Operation = operation1;
+            association.Apply ();
+          }
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          { // Test the operation slots
+            IList<IOperationSlot> operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAll (machine);
+            Assert.AreEqual (1, operationSlots.Count);
+            IOperationSlot operationSloti = operationSlots[0];
+            Assert.AreEqual (1, operationSloti.PartialCycles);
+            Assert.AreEqual (24, operationSloti.TotalCycles);
+            Assert.IsTrue (operationSloti.AverageCycleTime.HasValue);
+            Assert.AreEqual (2, operationSloti.AverageCycleTime.Value.Seconds);
+            CheckSummaries (operationSloti);
+          }
+
+        }
+        finally {
+          transaction.Rollback ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the optimizations in Consolidate method
+    /// </summary>
+    [Test]
+    public void TestOptimizeConsolidate2 ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.OperationSlotCycles.OperationSlotCyclesAccumulatorExtension));
+
+          // Reference data
+          IMonitoredMachine machine =
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+          .FindById (1);
+          Assert.NotNull (machine);
+          IOperation operation1 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (1);
+          IOperation operation2 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (2);
+          Assert.NotNull (operation1);
+
+          { // full cycle ending at t(2)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (2));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          for (int i = 0; i < 20; ++i) {
+            // full cycle ending at T(12+i)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (12 + i));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // partial cycle starting at T(39)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.Begin = DT (39);
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // full cycle from T(40) to T(42)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.Begin = DT (40);
+            operationCycle.SetRealEnd (DT (42));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // full cycle ending at T(50)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (50));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // full cycle ending at T(5)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (5));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          IOperationSlot operationSlot =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationSlot (machine,
+                                  operation1,
+                                  null,
+                                  null,
+                                  null, null, null, null,
+                                  new UtcDateTimeRange (DT (10), DT (55)));
+          ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .MakePersistent (operationSlot);
+          UpdateSummaries (operationSlot);
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (1, operationSlot.PartialCycles);
+          Assert.AreEqual (22, operationSlot.TotalCycles);
+
+          { // Create a new operation slot at T(54)
+            IOperationMachineAssociation association =
+              ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine, DT (54), null, false);
+            association.End = DT (59);
+            association.Operation = operation2;
+            association.Apply ();
+          }
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          { // Test the operation slots
+            IList<IOperationSlot> operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAll (machine);
+            Assert.AreEqual (2, operationSlots.Count);
+            int i = -1;
+            IOperationSlot operationSloti;
+            operationSloti = operationSlots[++i];
+            Assert.AreEqual (1, operationSloti.PartialCycles);
+            Assert.AreEqual (22, operationSloti.TotalCycles);
+            Assert.IsTrue (operationSloti.AverageCycleTime.HasValue);
+            Assert.AreEqual (1, operationSloti.AverageCycleTime.Value.Seconds);
+            operationSloti = operationSlots[++i];
+            CheckSummaries (operationSloti);
+          }
+
+        }
+        finally {
+          transaction.Rollback ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the optimizations in Consolidate method
+    /// </summary>
+    [Test]
+    public void TestOptimizeConsolidate3 ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.OperationSlotCycles.OperationSlotCyclesAccumulatorExtension));
+
+          // Reference data
+          IMonitoredMachine machine =
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+          .FindById (1);
+          Assert.NotNull (machine);
+          IOperation operation1 =
+            ModelDAOHelper.DAOFactory.OperationDAO
+            .FindById (1);
+          Assert.NotNull (operation1);
+
+          { // full cycle ending at t(2)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (2));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          for (int i = 0; i < 20; ++i) {
+            // full cycle ending at T(12+i)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (12 + i));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // partial cycle starting at T(39)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.Begin = DT (39);
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // full cycle from T(40) to T(42)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.Begin = DT (40);
+            operationCycle.SetRealEnd (DT (42));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // full cycle ending at T(50)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (50));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          { // full cycle ending at T(5)
+            IOperationCycle operationCycle =
+              ModelDAOHelper.ModelFactory
+              .CreateOperationCycle (machine);
+            operationCycle.SetRealEnd (DT (5));
+            ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .MakePersistent (operationCycle);
+          }
+
+          IOperationSlot operationSlot =
+            ModelDAOHelper.ModelFactory
+            .CreateOperationSlot (machine,
+                                  operation1,
+                                  null,
+                                  null,
+                                  null, null, null, null,
+                                  new UtcDateTimeRange (DT (10), DT (35)));
+          ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .MakePersistent (operationSlot);
+          UpdateSummaries (operationSlot);
+
+          (operationSlot as OperationSlot)
+            .Consolidate (null);
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.AreEqual (0, operationSlot.PartialCycles);
+          Assert.AreEqual (20, operationSlot.TotalCycles);
+
+          { // Extend operation slot
+            IOperationMachineAssociation association =
+              ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine, DT (10), null, false);
+            association.End = DT (59);
+            association.Operation = operation1;
+            association.Apply ();
+          }
+
+          ModelDAOHelper.DAOFactory.Flush ();
+          DAOFactory.EmptyAccumulators ();
+
+          { // Test the operation slots
+            IList<IOperationSlot> operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
+              .FindAll (machine);
+            Assert.AreEqual (1, operationSlots.Count);
+            IOperationSlot operationSloti = operationSlots[0];
+            Assert.AreEqual (1, operationSloti.PartialCycles);
+            Assert.AreEqual (22, operationSloti.TotalCycles);
+            Assert.IsTrue (operationSloti.AverageCycleTime.HasValue);
+            Assert.AreEqual (1, operationSloti.AverageCycleTime.Value.Seconds);
+          }
+        }
+        finally {
+          transaction.Rollback ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    void UpdateSummaries (IOperationSlot operationSlot)
+    {
+      if (operationSlot.Day.HasValue) {
+        UpdateCycleCountSummary (operationSlot);
+        UpdateIntermediateWorkPieceSummary (operationSlot);
+        ModelDAOHelper.DAOFactory.Flush ();
+      }
+    }
+
+    void UpdateCycleCountSummary (IOperationSlot operationSlot)
+    {
+      if (operationSlot.Day.HasValue) {
+        var summary = new CycleCountSummaryDAO ()
+          .FindByKey (operationSlot.Machine,
+          operationSlot.Day.Value,
+          operationSlot.Shift,
+          operationSlot.WorkOrder,
+          operationSlot.Line,
+          operationSlot.Task,
+          operationSlot.Component,
+          operationSlot.Operation);
+        if (null == summary) {
+          summary = new CycleCountSummary (operationSlot.Machine,
+            operationSlot.Day.Value,
+            operationSlot.Shift,
+            operationSlot.WorkOrder,
+            operationSlot.Line,
+            operationSlot.Task,
+            operationSlot.Component,
+            operationSlot.Operation);
+        }
+      ((CycleCountSummary)summary).Full = operationSlot.TotalCycles;
+        ((CycleCountSummary)summary).Partial = operationSlot.PartialCycles;
+        new CycleCountSummaryDAO ().MakePersistent (summary);
+        ModelDAOHelper.DAOFactory.Flush ();
+      }
+      else {
+        // TODO: ... ?
+      }
+    }
+
+    void UpdateIntermediateWorkPieceSummary (IOperationSlot operationSlot)
+    {
+      foreach (IIntermediateWorkPiece intermediateWorkPiece in operationSlot.Operation.IntermediateWorkPieces) {
+        {
+          var summary =
+            new IntermediateWorkPieceByMachineSummaryDAO ()
+            .FindByKey (operationSlot.Machine,
+                        intermediateWorkPiece,
+                        operationSlot.Component,
+                        operationSlot.WorkOrder,
+                        operationSlot.Line,
+                        operationSlot.Task,
+                        operationSlot.Day,
+                        operationSlot.Shift);
+          if (null == summary) {
+            summary = new IntermediateWorkPieceByMachineSummary (operationSlot.Machine,
+                                                            intermediateWorkPiece,
+                                                            operationSlot.Component,
+                                                            operationSlot.WorkOrder,
+                                                            operationSlot.Line,
+                                                            operationSlot.Task,
+                                                            operationSlot.Day,
+                                                            operationSlot.Shift);
+          }
+          summary.Counted += operationSlot.TotalCycles * intermediateWorkPiece.OperationQuantity;
+          summary.Corrected += operationSlot.TotalCycles * intermediateWorkPiece.OperationQuantity;
+          new IntermediateWorkPieceByMachineSummaryDAO ()
+            .MakePersistent (summary);
+        }
+      }
+    }
+
+    void CheckSummaries (IOperationSlot operationSlot)
+    {
+      {
+        if (operationSlot.Day.HasValue) {
+          var summary = new CycleCountSummaryDAO ()
+            .FindByKey (operationSlot.Machine,
+            operationSlot.Day.Value,
+            operationSlot.Shift,
+            operationSlot.WorkOrder,
+            operationSlot.Line,
+            operationSlot.Task,
+            operationSlot.Component,
+            operationSlot.Operation);
+          var operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
+            .FindByDayShift (operationSlot.Machine, operationSlot.Day.Value, operationSlot.Shift)
+            .Where (s => WorkOrder.Equals (operationSlot.WorkOrder, s.WorkOrder))
+            .Where (s => Line.Equals (operationSlot.Line, s.Line))
+            .Where (s => Task.Equals (operationSlot.Task, s.Task))
+            .Where (s => Component.Equals (operationSlot.Component, s.Component))
+            .Where (s => Operation.Equals (operationSlot.Operation, s.Operation));
+          var total = operationSlots
+            .Sum (s => s.TotalCycles);
+          var partial = operationSlots
+            .Sum (s => s.PartialCycles);
+          if (null == summary) {
+            Assert.AreEqual (0, total);
+            Assert.AreEqual (0, partial);
+          }
+          else {
+            Assert.AreEqual (summary.Full, total);
+            Assert.AreEqual (summary.Partial, partial);
+          }
+        }
+      }
+
+      {
+        int counted1 = 0;
+        int corrected1 = 0;
+        int counted2 = 0;
+        int corrected2 = 0;
+        foreach (IIntermediateWorkPiece intermediateWorkPiece in operationSlot.Operation.IntermediateWorkPieces) {
+          {
+            IIntermediateWorkPieceByMachineSummary summary =
+              new IntermediateWorkPieceByMachineSummaryDAO ()
+              .FindByKey (operationSlot.Machine,
+                          intermediateWorkPiece,
+                          operationSlot.Component,
+                          operationSlot.WorkOrder,
+                          operationSlot.Line,
+                          operationSlot.Task,
+                          operationSlot.Day,
+                          operationSlot.Shift);
+            if (null != summary) {
+              counted1 += summary.Counted / intermediateWorkPiece.OperationQuantity;
+              corrected1 += summary.Corrected / intermediateWorkPiece.OperationQuantity;
+            }
+          }
+          {
+            IIntermediateWorkPieceSummary summary =
+              new IntermediateWorkPieceSummaryDAO ()
+              .FindByKey (intermediateWorkPiece,
+                          operationSlot.Component,
+                          operationSlot.WorkOrder,
+                          operationSlot.Line,
+                          operationSlot.Day,
+                          operationSlot.Shift);
+            if (null != summary) {
+              counted2 += summary.Counted / intermediateWorkPiece.OperationQuantity;
+              corrected2 += summary.Corrected / intermediateWorkPiece.OperationQuantity;
+            }
+          }
+        }
+        // Because there may be other operaiton slots that target the same summary,
+        // there is a LessOrEqual
+        Assert.LessOrEqual (operationSlot.TotalCycles, counted1);
+        Assert.LessOrEqual (operationSlot.TotalCycles, corrected1);
+        Assert.LessOrEqual (operationSlot.TotalCycles, counted2);
+        Assert.LessOrEqual (operationSlot.TotalCycles, corrected2);
+      }
+    }
+
+    /// <summary>
+    /// Return different date/times for the tests
+    /// </summary>
+    /// <param name="i"></param>
+    /// <returns></returns>
+    DateTime DT (int i)
+    {
+      return UtcDateTime.From (2012, 06, 01, 12, 00, i);
+    }
+
+    [OneTimeSetUp]
+    public void Init ()
+    {
+      previousDSNName = System.Environment.GetEnvironmentVariable ("DefaultDSNName");
+      System.Environment.SetEnvironmentVariable ("DefaultDSNName",
+                                                 "LemoineUnitTests");
+      ModelDAOHelper.ModelFactory =
+        new GDBPersistentClassFactory ();
+
+      Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.OperationSlotCycles.OperationSlotCyclesAccumulatorExtension));
+      Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.IntermediateWorkPieceSummary.IntermediateWorkPieceByMachineSummaryAccumulatorExtension));
+    }
+
+    [OneTimeTearDown]
+    public void Dispose ()
+    {
+      Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+
+      if (previousDSNName != null) {
+        System.Environment.SetEnvironmentVariable ("DefaultDSNName",
+                                                   previousDSNName);
+      }
+    }
+  }
+}

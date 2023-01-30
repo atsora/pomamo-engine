@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="CurrentMachineMode" table="currentmachinemode">
+    <id name="Id" column="currentmachinemodeid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">currentmachinemode_currentmachinemodeid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="currentmachinemodeversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MonitoredMachine" column="machineid"
+                 class="MonitoredMachine"
+                 not-null="true" />
+    <property name="DateTime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="currentmachinemodedatetime" not-null="true" />
+    <property name="Change"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="currentmachinemodechange" not-null="true" />
+    <many-to-one name="MachineMode" column="machinemodeid"
+                 class="MachineMode"
+                 access="nosetter.camelcase-m-underscore"
+                 not-null="true" />
+  </class>
+</hibernate-mapping>

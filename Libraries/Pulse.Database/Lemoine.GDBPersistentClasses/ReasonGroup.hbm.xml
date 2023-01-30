@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ReasonGroup" table="ReasonGroup">
+    <id name="Id" column="ReasonGroupid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">reasongroup_reasongroupid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="reasongroupversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="LongDisplay" column="display_long"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="reasongroupname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey"
+              column="reasongrouptranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Description" column="reasongroupdescription"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="DescriptionTranslationKey"
+              column="reasongroupdescriptiontranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Color" column="reasongroupcolor"
+              not-null="true" />
+    <property name="ReportColor" column="reasongroupreportcolor"
+              not-null="true" />
+    <set name="Reasons"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IReason, Lemoine.ModelDAO],System.Int32], Lemoine.Database"         
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="reasongroupid" />
+      <one-to-many class="Reason" />
+    </set>
+    <property name="DisplayPriority" column="reasongroupdisplaypriority" />
+  </class>
+</hibernate-mapping>

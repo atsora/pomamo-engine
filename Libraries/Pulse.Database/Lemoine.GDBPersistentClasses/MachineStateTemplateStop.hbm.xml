@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineStateTemplateStop" table="MachineStateTemplateStop">
+    <id name="Id" column="MachineStateTemplateStopid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">MachineStateTemplateStop_MachineStateTemplateStopid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="MachineStateTemplateStopversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="WeekDays"
+              column="machinestatetemplatestopweekdays"
+              type="Lemoine.NHibernateTypes.WeekDayType, Lemoine.Database"
+              not-null="true" />
+    <property name="LocalTime"
+              column="machinestatetemplatestoplocaltime"
+              type="Lemoine.NHibernateTypes.TimeWithoutTZType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

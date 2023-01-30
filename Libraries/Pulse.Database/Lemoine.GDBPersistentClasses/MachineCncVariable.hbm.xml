@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineCncVariable" table="machinecncvariable">
+    <id name="Id" column="machinecncvariableid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">MachineCncVariable_MachineCncVariableid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinecncvariableversion"
+       access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineFilter" column="machinefilterid"
+                 class="MachineFilter"
+                 cascade="none"
+                 not-found="exception" />
+    <property name="CncVariableKey" column="cncvariablekey"
+              access="nosetter.camelcase-m-underscore"              
+              not-null="true" />
+    <property name="CncVariableValue" column="cncvariablevalue"
+              access="nosetter.camelcase-m-underscore"              
+              type="Lemoine.NHibernateTypes.XmlSerializableType, Lemoine.Database"
+              not-null="true" />
+    <many-to-one name="Component" column="componentid"
+                 class="Component"
+                 cascade="none"
+                 not-found="exception" />
+    <many-to-one name="Operation" column="operationid"
+                 class="Operation"
+                 cascade="none"
+                 not-found="exception" />
+    <many-to-one name="Sequence" column="sequenceid"
+                 class="Sequence"
+                 cascade="none"
+                 not-found="exception" />
+
+  </class>
+</hibernate-mapping>

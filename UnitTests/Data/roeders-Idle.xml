@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<erp>
+  <version>1.0</version>
+  <data>
+    <time>2008-03-05 10:44:53</time>
+    <name>RXP500_Test</name>
+    <ver>3.41 (212)</ver>
+    <mode>MANUAL</mode>
+    <state>IDLE</state>
+    <feed>0</feed>
+    <ov_feed>100</ov_feed>
+    <tool />
+    <tooltype />
+    <spinspeed>0</spinspeed>
+    <ov_spinspeed>100</ov_spinspeed>
+    <job>
+      <ncpgm>f:\public\pro\testup\hp.bef</ncpgm>
+    </job>
+    <user/>
+  </data>
+</erp>
+

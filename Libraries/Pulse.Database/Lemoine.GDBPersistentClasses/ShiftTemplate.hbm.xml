@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ShiftTemplate" table="ShiftTemplate">
+    <id name="Id" column="ShiftTemplateid" access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">ShiftTemplate_ShiftTemplateid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="ShiftTemplateversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="ShiftTemplatename"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database" />
+    <set name="Items"
+          access="nosetter.camelcase-m-underscore"
+          inverse="false"
+          lazy="false"
+          cascade="all-delete-orphan">
+      <key column="shifttemplateid" />
+      <one-to-many class="ShiftTemplateItem" />
+    </set>
+    <set name="Breaks"
+         access="nosetter.camelcase-m-underscore"
+         inverse="false"
+         lazy="false"
+         cascade="all-delete-orphan">
+      <key column="shifttemplateid" />
+      <one-to-many class="ShiftTemplateBreak" />
+    </set>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineMode" table="machinemode">
+    <id name="Id" column="machinemodeid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">machinemode_machinemodeid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="machinemodeversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="machinemodename"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey"
+              column="machinemodetranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Running" column="machinemoderunning" />
+    <property name="Auto" column="machinemodeauto" />
+    <property name="Manual" column="machinemodemanual" />
+    <property name="AutoSequence" column="machinemodeautosequence"
+              not-null="true" />
+    <property name="Color" column="machinemodecolor" />
+    <property name="MachineModeCategory" column="machinemodecategoryid"
+              not-null="true" />
+    <many-to-one name="Parent" column="parentmachinemodeid" class="MachineMode"
+                 lazy="false" not-found="exception" />
+  </class>
+</hibernate-mapping>

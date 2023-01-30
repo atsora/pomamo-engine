@@ -1,0 +1,105 @@
+// Copyright (C) 2009-2023 Lemoine Automation Technologies
+//
+// SPDX-License-Identifier: Apache-2.0
+
+using System;
+using System.Collections.Generic;
+
+namespace Lemoine.Model
+{
+  /// <summary>
+  /// Description of IPartView.
+  /// </summary>
+  public interface IPartView: IDataWithIdentifiers
+  {
+    
+    /// <summary>
+    /// Part ID that corresponds also to the Component ID
+    /// </summary>
+    int ComponentId { get; }
+    
+    /// <summary>
+    /// Project ID
+    /// </summary>
+    int ProjectId { get; }
+    
+    /// <summary>
+    /// Full name of the part as used in the shop
+    /// that corresponds also to the name of the component
+    /// or the name of the project
+    /// </summary>
+    string Name { get; set; }
+    
+    /// <summary>
+    /// Code given to the component
+    /// that corresponds also to the code of the component
+    /// or the code of the project
+    /// </summary>
+    string Code { get; set; }
+    
+    /// <summary>
+    /// External code
+    /// 
+    /// It may help synchronizing PUSLE data with an external database
+    /// 
+    /// It corresponds also to the external code of the component
+    /// and the external code of the project
+    /// </summary>
+    string ExternalCode { get; set; }
+    
+    /// <summary>
+    /// Link to the documentation in the network
+    /// 
+    /// It corresponds also to the document link of the component
+    /// and the document link of the project
+    /// </summary>
+    string DocumentLink { get; set; }
+    
+    /// <summary>
+    /// Project creation date/time
+    /// </summary>
+    DateTime CreationDateTime { get; }
+    
+    /// <summary>
+    /// Creation date/time when the project is created.
+    /// Else date/time of the re-activation of the project
+    /// if the project has been archived
+    /// </summary>
+    DateTime ReactivationDateTime { get; set; }
+    
+    /// <summary>
+    /// Unset if the propject is not archived.
+    /// Else date/time when the project is archived.
+    /// </summary>
+    DateTime? ArchiveDateTime { get; set; }
+    
+    /// <summary>
+    /// Work orders that are associated to the project
+    /// </summary>
+    ICollection<IWorkOrder> WorkOrders { get; }
+
+    /// <summary>
+    /// Associated component type
+    /// </summary>
+    IComponentType Type { get; set; }
+    
+    /// <summary>
+    /// Reference to the final work piece (in IntermediateWorkPiece table)
+    /// that corresponds to the finished component
+    /// </summary>
+    IIntermediateWorkPiece FinalWorkPiece { get; set; }
+       
+    /// <summary>
+    /// Estimated hours
+    /// </summary>
+    double? EstimatedHours { get; set; }
+
+    /// <summary>
+    /// Set of intermediate work pieces that are associated to the component
+    /// 
+    /// The intermediate work pieces are ordered by ascending order (if available)
+    /// </summary>
+    ICollection<IIntermediateWorkPiece> IntermediateWorkPieces { get; }
+    
+  }
+}

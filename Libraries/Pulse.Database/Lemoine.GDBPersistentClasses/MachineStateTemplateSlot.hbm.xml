@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="MachineStateTemplateSlot" table="MachineStateTemplateSlot" mutable="false">
+    <id name="Uuid" column="machinestatetemplateslotuuid"
+        access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine"
+                 column="machineid" class="Machine"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="DateTimeRange"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              column="machinestatetemplateslotdatetimerange"
+              not-null="true" />
+    <many-to-one name="MachineStateTemplate"
+                 access="nosetter.camelcase-m-underscore"
+                 column="machinestatetemplateid"
+                 class="MachineStateTemplate"
+                 cascade="none" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="odbcsynchro.xsd"
+  xmlns:pulse="http://odbc.pulse.com"
+  pulse:dsnname="MSSQLuser" pulse:user="User"
+  pulse:password="password">
+  <fact machineid="1" />
+  <machines>
+    <machine id="1" companyid="2" serverid="1" />
+    <machine id="2" companyid="3" serverid="1" />
+  </machines>
+  <operators>
+    <operator id="1" companyid="10" />
+  </operators>
+</root>

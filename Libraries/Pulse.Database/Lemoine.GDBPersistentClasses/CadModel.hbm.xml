@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="CadModel" table="cadmodel">
+    <id name="Id" column="cadmodelid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">cadmodel_cadmodelid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="cadmodelversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="cadmodelname"
+              type="Lemoine.NHibernateTypes.CitextType, Lemoine.Database"
+              not-null="true" />
+    <many-to-one name="Component"
+                 access="nosetter.camelcase-m-underscore"
+                 column="componentid"
+                 class="Component"
+                 cascade="none"
+                 not-found="exception" />
+    <many-to-one name="Operation"
+                 access="nosetter.camelcase-m-underscore"
+                 column="operationid"
+                 class="Operation"
+                 cascade="none"
+                 not-found="exception" />
+    <set name="Sequences"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.ISequence, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true"
+         cascade="none">
+      <key column="cadmodelid" />
+      <one-to-many class="Sequence" />
+    </set>
+  </class>
+</hibernate-mapping>

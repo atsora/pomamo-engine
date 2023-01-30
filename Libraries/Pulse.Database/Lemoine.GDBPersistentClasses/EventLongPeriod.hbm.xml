@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <union-subclass name="EventLongPeriod" table="EventLongPeriod"
+                  extends="EventUnion, Pulse.Database">
+    <many-to-one name="MonitoredMachine"
+                 secondary-key="true"
+                 column="machineid" class="MonitoredMachine"
+                 not-null="true" />
+    <many-to-one name="MachineMode"
+                 column="machinemodeid" class="MachineMode"
+                 not-null="true" />
+    <many-to-one name="MachineObservationState"
+                 column="machineobservationstateid" class="MachineObservationState"
+                 not-null="true" />
+    <property name="TriggerDuration" column="eventtriggerduration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
+              not-null="true" />
+    <many-to-one name="Config"
+                 column="eventlongperiodconfigid" class="EventLongPeriodConfig" />
+  </union-subclass>
+</hibernate-mapping>

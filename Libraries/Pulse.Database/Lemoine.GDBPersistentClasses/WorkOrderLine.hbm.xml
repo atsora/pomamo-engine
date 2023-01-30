@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="WorkOrderLine" table="workorderline">
+    <id name="Id" column="workorderlineid">
+      <generator class="native">
+        <param name="sequence">workorderline_workorderlineid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="workorderlineversion" />
+    <many-to-one name="WorkOrder"
+                 access="nosetter.camelcase-m-underscore"
+                 class="WorkOrder"
+                 column="workorderid"
+                 not-null="true" />
+    <many-to-one name="Line"
+                 access="nosetter.camelcase-m-underscore"
+                 class="Line"
+                 column="lineid"
+                 secondary-key="true"
+                 not-null="true" />
+    <property name="BeginDateTime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UtcLowerBoundDateTimeFullType, Lemoine.Database"
+              column="workorderlinebegin"
+              not-null="true" />
+    <property name="EndDateTime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
+              column="workorderlineend" />
+    <property name="Deadline"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              column="workorderlinedeadline"
+              not-null="true" />
+    <property name="Quantity" column="workorderlinequantity"
+              not-null="true" />
+    <map name="IntermediateWorkPieceQuantities"
+         access="nosetter.camelcase-m-underscore"
+         inverse="false"
+         lazy="false"
+         cascade="delete-orphan">
+      <key column="workorderlineid" />
+      <index column="intermediateworkpieceid" type="Int32" />
+      <one-to-many class="WorkOrderLineQuantity" />
+    </map>
+  </class>
+</hibernate-mapping>

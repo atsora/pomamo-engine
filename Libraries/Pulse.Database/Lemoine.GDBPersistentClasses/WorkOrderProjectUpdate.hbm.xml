@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <subclass name="WorkOrderProjectUpdate"
+            extends="GlobalModification, Pulse.Database"
+            discriminator-value="WorkOrderProjectUpdate">
+    <join table="WorkOrderProjectUpdate"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="WorkOrder" column="workorderid" class="WorkOrder"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <many-to-one name="Project" column="projectid" class="Project"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="OldQuantity" column="oldworkorderprojectquantity" />
+      <property name="NewQuantity" column="newworkorderprojectquantity" />
+      <property name="TypeOfModification" column="modificationtype"
+                not-null="true" />
+    </join>
+  </subclass>
+</hibernate-mapping>

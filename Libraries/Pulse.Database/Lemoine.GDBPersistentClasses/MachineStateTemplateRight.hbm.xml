@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <union-subclass name="MachineStateTemplateRight" table="MachineStateTemplateRight"
+                  extends="Right, Pulse.Database">
+    <many-to-one name="MachineStateTemplate" column="machinestatetemplateid"
+                 class="MachineStateTemplate"
+                 access="nosetter.camelcase-m-underscore" />
+  </union-subclass>
+  <query name="MachineStateTemplateRightWithoutDefault">
+    <![CDATA[
+select m
+from MachineStateTemplateRight r
+join r.MachineStateTemplate m
+where r.Role.Id = :roleId
+  and r.AccessPrivilege = :accessPrivilege
+    ]]>
+  </query>
+</hibernate-mapping>
