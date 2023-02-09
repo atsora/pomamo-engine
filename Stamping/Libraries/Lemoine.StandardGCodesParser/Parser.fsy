@@ -17,6 +17,8 @@ let mutable eventManager: ParseEventManager option = None
 %token <string> FILE
 %token STARTCOMMENT ENDCOMMENT
 %token VARPREFIX EQSYMB
+%token PLUS
+%token MINUS
 %token ESCAPE
 %token PERCENT
 %token <int> NEWLINE
@@ -36,20 +38,9 @@ start:
 ;
 
 header:
-    comments NEWLINE header { eventManager.Value.AddHeaderComments $1 }
+    { }
+  | comments NEWLINE header { eventManager.Value.AddHeaderComments $1 }
   | PERCENT NEWLINE header { }
-  | XCODE NUMBER optcomments NEWLINE {
-      begin
-        match $1 with
-        | 'O' ->
-          let block = eventManager.Value.AddHeader $2 $3 in
-          eventManager.Value.NotifyNewBlock block $4
-        | _ ->
-          let instructions = (XCode($1, Number($2)))::($3) in
-          let block = eventManager.Value.AddBlock instructions;
-          eventManager.Value.NotifyNewBlock block $4
-      end
-    }
 ;
 
 footer:
@@ -81,7 +72,6 @@ blockwithend:
 
 block:
     instructions { eventManager.Value.AddBlock (List.rev $1) }
-  | ESCAPE instructions { eventManager.Value.AddEscapedBlock (List.rev $2) }
 ;
 
 instructions:
@@ -90,11 +80,17 @@ instructions:
 ;
 
 instruction:
-    code { $1 }
+    escape { $1 }
+  | code { $1 }
   | setvariable { $1 }
   | comment { $1 }
   | extra { $1 }
   | file { $1 }
+;
+
+escape:
+    ESCAPE { Escape(0) }
+  | ESCAPE NUMBER { Escape($2) }
 ;
 
 code:
@@ -124,17 +120,21 @@ file:
 ;
 
 setvariable:
-    VARPREFIX value EQSYMB value { SetVariable ($2, $4) }
+    VARPREFIX value EQSYMB op { SetVariable ($2, $4) }
 ;
 
 value:
     NUMBER { Number($1) }
+  | PLUS NUMBER { Number($2) }
+  | MINUS NUMBER { Number(-$2) }
   | VARPREFIX value { eventManager.Value.ResolveVariable $2 }
   | LBRACKET op RBRACKET { $2 }
 ;
 
 op:
     value { $1 }
+  | op PLUS op { eventManager.Value.ApplyOperator $1 "+" $3 }
+  | op MINUS op { eventManager.Value.ApplyOperator $1 "-" $3 }
   | op OP op { eventManager.Value.ApplyOperator $1 $2 $3 }
   | op ESCAPE op { eventManager.Value.ApplyOperator $1 "/" $3 }
   | FUNC LBRACKET op RBRACKET { eventManager.Value.ApplyFunction $1 $3 }

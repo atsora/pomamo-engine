@@ -31,7 +31,7 @@ namespace Lemoine.Stamping.AxisPropertyGetters
     /// <summary>
     /// Default velocity from X, Y and Z
     /// 
-    /// If null, it will be taken from config key "Stamping.Axis.MaxVelocity"
+    /// If null, it will be taken from config key "Stamping.Axis.DefaultMaxVelocity"
     /// </summary>
     [JsonIgnore (Condition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull)]
     public double? MaxVelocity { get; set; } = null;
@@ -50,7 +50,14 @@ namespace Lemoine.Stamping.AxisPropertyGetters
     /// <returns></returns>
     public AxisUnit GetDefaultUnit (string axis)
     {
+      if (this.DefaultUnit.Equals (AxisUnit.Default)) {
+        // Check if it is set by chance in the config table
+        var defaultUnit = (AxisUnit) Lemoine.Info.ConfigSet.LoadAndGet ("Stamping.Axis.DefaultUnit", 0);
+        return defaultUnit;
+      }
+      else {
       return DefaultUnit;
+    }
     }
 
     /// <summary>
@@ -82,7 +89,13 @@ namespace Lemoine.Stamping.AxisPropertyGetters
     {
       switch (axis) {
       case "X" or "Y" or "Z":
-        return this.MaxVelocity ?? Lemoine.Info.ConfigSet.LoadAndGet<double?> ("Stamping.Axis.MaxVelocity", null);
+        if (this.MaxVelocity is null) {
+          var maxVelocity = Lemoine.Info.ConfigSet.LoadAndGet<double?> ("Stamping.Axis.DefaultMaxVelocity", null);
+          return maxVelocity;
+        }
+        else {
+          return this.MaxVelocity;
+        }
       default:
         return null;
       }

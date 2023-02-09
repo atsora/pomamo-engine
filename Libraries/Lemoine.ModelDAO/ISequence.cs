@@ -130,6 +130,11 @@ namespace Lemoine.Model
     /// </summary>
     public IList<double> Angles { get; set; } = null;
 
+    /// <summary>
+    /// Computed time
+    /// </summary>
+    public double? Time { get; set; } = null;
+
     // TODO: tool properties ?
   }
 
@@ -141,7 +146,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Version of the sequence detail data structure
     /// </summary>
-    public int Version { get; set; } = 1;
+    public int Version { get; set; } = 2;
 
     /// <summary>
     /// Sequence paths

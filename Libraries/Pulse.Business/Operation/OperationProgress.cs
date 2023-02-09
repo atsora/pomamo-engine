@@ -581,8 +581,8 @@ namespace Lemoine.Business.Operation
         if ( (null != detail) && (detail.MachiningTime.HasValue || detail.RapidTime.HasValue)) {
           var totalTimeSeconds = (detail.MachiningTime ?? 0.0) + (detail.RapidTime ?? 0.0) + (detail.NonMachiningTime ?? 0.0);
           if (0 < totalTimeSeconds) {
-            var machining = detail.MachiningTime ?? 0.0 / totalTimeSeconds;
-            var rapid = detail.RapidTime ?? 0.0 / totalTimeSeconds;
+            var machining = (detail.MachiningTime ?? 0.0) / totalTimeSeconds;
+            var rapid = (detail.RapidTime ?? 0.0) / totalTimeSeconds;
             if (log.IsDebugEnabled) {
               log.Debug ($"GetProportionMachiningRapid: use detail => ({machining}, {rapid})");
             }

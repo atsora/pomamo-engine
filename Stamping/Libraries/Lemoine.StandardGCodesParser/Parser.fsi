@@ -9,6 +9,8 @@ type token =
   | NEWLINE of (int)
   | PERCENT
   | ESCAPE
+  | MINUS
+  | PLUS
   | VARPREFIX
   | EQSYMB
   | STARTCOMMENT
@@ -27,6 +29,8 @@ type tokenId =
     | TOKEN_NEWLINE
     | TOKEN_PERCENT
     | TOKEN_ESCAPE
+    | TOKEN_MINUS
+    | TOKEN_PLUS
     | TOKEN_VARPREFIX
     | TOKEN_EQSYMB
     | TOKEN_STARTCOMMENT
@@ -50,6 +54,7 @@ type nonTerminalId =
     | NONTERM_block
     | NONTERM_instructions
     | NONTERM_instruction
+    | NONTERM_escape
     | NONTERM_code
     | NONTERM_optcomments
     | NONTERM_comments

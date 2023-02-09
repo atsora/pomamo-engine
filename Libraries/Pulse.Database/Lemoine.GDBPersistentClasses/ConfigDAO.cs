@@ -389,9 +389,14 @@ namespace Lemoine.GDBPersistentClasses
                            TimeSpan.FromMinutes (2),
                            active: false);
       InsertDefaultValue (config);
-      config = new Config ("Stamping.Axis.MaxVelocity",
+      config = new Config ("Stamping.Axis.DefaultMaxVelocity",
                            "Stamping config: default axis max velocity in mm/s for the X, Y and Z axis",
-                           1200000, // 20 000 mm/min
+                           1200000.0, // 20 000 mm/min
+                           active: false);
+      InsertDefaultValue (config);
+      config = new Config ("Stamping.Axis.DefaultUnit",
+                           "Stamping config: default axis unit, 1: Mm, 2: In",
+                           2,
                            active: false);
       InsertDefaultValue (config);
 

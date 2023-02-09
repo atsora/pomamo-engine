@@ -23,6 +23,7 @@ type Block =
     Comment: string option
     StampVariable: bool
     File: string option
+    Escapes: float list
   }
 
 type GCodeGroup =

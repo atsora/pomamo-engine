@@ -36,6 +36,8 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
   let mutable edit = [true]
   let mutable unit = LengthUnitUnknown
   let mutable distance = 0.
+  let mutable blockNumber = 0
+  let mutable headerSection = true
 
   let mmOfIn x = 25.4 * x
 
@@ -110,8 +112,22 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
     variableManager.get k
 
   let setVariable k v =
+    if log.IsTraceEnabled then log.Trace $"setVariable: #{k}={v}"
     variableManager.set k v
     stampingEventHandler.SetData ($"#{k}", v)
+
+  let rec setVariables = function
+  | [] -> ()
+  | ((Number(x) as vx), (Number(y) as vy))::q ->
+    begin
+      setVariable (intOfFloat x) y
+      setVariables q
+    end
+  | (vx, vy)::q ->
+    begin
+      log.Error $"setVariables: unsupported {vx}={vy}";
+      setVariables q
+    end
 
   let floatOfBool = function
   | true -> 1.
@@ -274,7 +290,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
         end
       | (UnknownAxisPosition,_) ->
         begin
-          log.Debug "computeTimeFromVelocity: unknown distance, sip it => return 0"
+          log.Debug "computeTimeFromVelocity: unknown distance, skip it => return 0"
           TimeSpan.FromSeconds (0.)
         end
 
@@ -292,12 +308,20 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
     let uy = axisPropertyGetter.GetDefaultUnit ("Y") in
     let vy = axisPropertyGetter.GetMaxVelocity ("Y") in
     let ty = computeTimeFromVelocity dy uy vy in
-    if (t < ty) || (ty = t && d.HasValue && dy.HasValue && d < dy) then d <- dy; t <- ty
+    if (t < ty) || (ty = t && d.HasValue && dy.HasValue && d < dy) then
+      begin
+        d <- dy
+        t <- ty
+      end
     let dz = if incremental then z.Map (abs) else z <-> position.Z in
     let uz = axisPropertyGetter.GetDefaultUnit ("Z") in
     let vz = axisPropertyGetter.GetMaxVelocity ("Z") in
     let tz = computeTimeFromVelocity dz uz vz in
-    if (t < tz) || (tz = t && d.HasValue && dz.HasValue && d < dz) then d <- dz; t <- tz
+    if (t < tz) || (tz = t && d.HasValue && dz.HasValue && d < dz) then
+      begin
+        d <- dz
+        t <- tz
+      end
     (d, t)
 
   let rec getDwellTime = function
@@ -513,66 +537,98 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
   | [] -> ()
   | h::q -> begin runParameter h; runParameters q end
 
-  let emptyBlock = { N = None; GCodes = []; Parameters = []; SetVariables = []; Comment = None; StampVariable = false; File = None }
+  let emptyBlock = { N = None; GCodes = []; Parameters = []; SetVariables = []; Comment = None; StampVariable = false; File = None; Escapes = [] }
 
-  let rec addBlockInstructions = function
+  let rec addHeaderComments = function
+  | [] -> ()
+  | Comment(c)::_ -> stampingData.Add("ProgramComment", c.Trim())
+  | _::q -> addHeaderComments q
+
+  let rec addBlockInstructions blockNumber = function
     | [] -> emptyBlock
     | XCode('N', Number(n))::q ->
       begin
-        let b = addBlockInstructions q in
+        let b = addBlockInstructions blockNumber q in
         { b with N = Some(intOfFloat n) }
       end
     | XCode('N', x)::q ->
       begin
         log.Error $"addBlockInstructions: invalid N code {x}"
-        addBlockInstructions q
+        addBlockInstructions blockNumber q
       end
     | Comment(x)::q ->
       begin
-        let b = addBlockInstructions q in
+        let b = addBlockInstructions blockNumber q in
         match b.Comment with
         | None -> { b with Comment = Some(x) }
         | Some c ->
           log.Warn $"addBlockInstructions: new comment {x} while {c} is already set => do nothing"
           b
       end
-    | Extra(x)::q -> addBlockInstructions q // Note: for the moment, do nothing with extra
+    | Extra(x)::q -> addBlockInstructions blockNumber q // Note: for the moment, do nothing with extra
     | File(x)::[] -> { emptyBlock with File = Some(x) }
     | File(x)::q ->
       log.Warn "addBlockInstructions: g-code after file"
-      let b = addBlockInstructions q in
+      let b = addBlockInstructions blockNumber q in
       { b with File = Some(x) }
-    | XCode(g, Number(x))::q when (isGCodeByDefault g) -> processGCodeWithParameters g x [] q 1
-    | XCode(g, Number(x))::q -> addParameter (addBlockInstructions q) g (Number x)
+    | XCode(g, Number(x))::q when (isGCodeByDefault g) -> processGCodeWithParameters blockNumber g x [] q 1
+    | XCode(g, Number(x))::q -> addParameter (addBlockInstructions blockNumber q) g (Number x)
     | XCode(g, Undefined(s))::q ->
       begin
         log.Error $"addBlockInstructions: skip {g}{s} because of undefined variables"
-        addBlockInstructions q
+        addBlockInstructions blockNumber q
       end
     | SetVariable(Number(x), Number(y))::q when stampVariablesGetter.IsStampVariable ((intOfFloat x).ToString()) ->
       begin
-        let b = addBlockInstructions q in
+        if log.IsTraceEnabled then log.Trace $"addBlockInstructions: StampVariable {x} detected"
+        let b = addBlockInstructions blockNumber q in
         { b with StampVariable = true }
-      end
-    | SetVariable((Number(x) as vx), (Number(y) as vy))::q ->
-      begin
-        setVariable (intOfFloat x) y
-        let b = addBlockInstructions q in
-        { b with SetVariables = (vx,vy)::b.SetVariables }
       end
     | SetVariable(vx,vy)::q ->
       begin
-        log.Error $"addBlockInstructions: could not set a variable"
-        let b = addBlockInstructions q in
+        let b = addBlockInstructions blockNumber q in
         { b with SetVariables = (vx,vy)::b.SetVariables }
       end
-  and processGCodeWithParameters g x p q i =
+    | Escape(n)::q ->
+        log.Info $"addBlockInstructions: escape {n}"
+        let b = addBlockInstructions blockNumber q in
+        { b with Escapes = n::b.Escapes }
+  and processGCodeWithParameters blockNumber g x p q i =
     if log.IsTraceEnabled then log.Trace $"processGCodeWithParameters: g={g} x={x} p={p} q={q} i={i}"
     match q with
-    | [] -> addGCode configuration.Variant (addBlockInstructions []) g x p
-    | XCode(a, v)::q when not (isParameterOfGCode g x a i) -> addGCode configuration.Variant (addBlockInstructions (XCode(a, v)::q)) g x p
-    | XCode(a, v)::q -> processGCodeWithParameters g x (p@[(a,v)]) q (i+1)
-    | r -> addGCode configuration.Variant (addBlockInstructions r) g x p
+    | [] -> addGCode configuration.Variant (addBlockInstructions blockNumber []) g x p
+    | XCode(a, v)::q when not (isParameterOfGCode g x a i) -> addGCode configuration.Variant (addBlockInstructions blockNumber (XCode(a, v)::q)) g x p
+    | XCode(a, v)::q -> processGCodeWithParameters blockNumber g x (p@[(a,v)]) q (i+1)
+    | r -> addGCode configuration.Variant (addBlockInstructions blockNumber r) g x p
+
+  let addBlockInstructionsOrHeader blockNumber = function
+    | XCode('O', Number(ocode))::comments ->
+      begin
+        if not headerSection then
+          log.Error $"addBlockInstructionsOrHeader: ocode={ocode} is not on the first blocks, block #={blockNumber}"
+        elif not initialization then
+          if log.IsDebugEnabled then log.Debug $"addBlockInstructions: ocode={ocode} comments={comments}"
+          stampingEventHandler.StartProgram (edit.Head, callLevel)
+        addHeaderComments comments
+        emptyBlock
+      end
+    | Comment(x)::[] as comments ->
+      begin
+        if headerSection then
+          addHeaderComments comments
+          emptyBlock
+        else
+          addBlockInstructions blockNumber comments
+      end
+    | instructions ->
+      begin
+        if headerSection then
+          if not initialization then
+            if log.IsDebugEnabled then log.Debug $"addBlockInstructionsOrHeader: no ocode"
+            stampingEventHandler.StartProgram (edit.Head, callLevel)
+          headerSection <- false
+        addBlockInstructions blockNumber instructions
+      end
 
   let operatorFromString = function
   | "**" -> fun x y -> Math.Pow (x, y)
@@ -607,11 +663,6 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
   | "TAN" -> Math.Tan
   | f -> failwith (sprintf "Unsupported function %s" f)
 
-  let rec addHeaderComments = function
-  | [] -> ()
-  | Comment(c)::_ -> stampingData.Add("ProgramComment", c.Trim())
-  | _::q -> addHeaderComments q
-
   member this.StartInitialization () =
     initialization <- true
 
@@ -643,20 +694,16 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
     if not initialization then addHeaderComments comments
     ()
 
-  member this.AddHeader ocode comments =
-    if not initialization then
-      if log.IsDebugEnabled then log.Debug $"AddHeader: ocode={ocode} comments={comments}"
-      stampingEventHandler.StartProgram (edit.Head, callLevel)
-      addHeaderComments comments
-    emptyBlock
-
   member this.AddBlock instructions =
     begin
       if log.IsTraceEnabled then log.Trace $"AddBlock: instructions={instructions}"
-      let block = addBlockInstructions instructions in
+      blockNumber <- blockNumber + 1
+      let block = addBlockInstructionsOrHeader blockNumber instructions in
+      if List.isEmpty block.Escapes then
       match block.Comment with
       | None -> ()
       | Some c -> stampingEventHandler.SetComment (c)
+        setVariables block.SetVariables
       let gcodes = block.GCodes in
       let parameters = block.Parameters in
       runGCodes gcodes parameters block.File
@@ -678,10 +725,6 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
         vector <- Some newVector
       block
     end
-
-  member this.AddEscapedBlock instructions =
-    if log.IsDebugEnabled then log.Debug $"AddEscapedBlock: instructions={instructions}"
-    emptyBlock
 
   member this.NotifyNewBlock block pos =
     if not initialization then
@@ -705,12 +748,19 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
     match k with 
     | Number(x) ->
       try
-        Number(getVariable (intOfFloat x))
+        let r = Number(getVariable (intOfFloat x)) in
+        if log.IsTraceEnabled then log.Trace $"ResolveVariable: #{k}={r}"
+        r
       with
-      | UnknownVariableException(k) -> Undefined(Set.empty.Add(k))
+      | UnknownVariableException(k) -> 
+        begin
+          if log.IsDebugEnabled then log.Debug $"ResolveVariable: unknown variable {k}"
+          Undefined(Set.empty.Add(k))
+        end
     | Undefined(s) -> Undefined(s) 
 
   member this.ApplyOperator x op y =
+    if log.IsTraceEnabled then log.Trace $"ApplyOperator: {x} {op} {y}"
     match (x, y) with
     | (Number(a),Number(b)) -> Number(a |> (operatorFromString op) <| b)
     | (Number(_),Undefined(s)) -> Undefined(s)

@@ -26,8 +26,8 @@ let whitespace = [' ' '\t']
 let code = ['A'-'Z']
 let char = ['a'-'z' 'A'-'Z']
 let digit = ['0'-'9']
-let number = (['-' '+']whitespace*)?digit+('.'digit*)?
-let number2 = (['-' '+']whitespace*)?'.'digit+
+let number = digit+('.'digit*)?
+let number2 = '.'digit+
 let newline = "\r\n" | '\n' | '\r'
 
 rule main = parse
@@ -36,7 +36,9 @@ rule main = parse
 | number { lexeme lexbuf |> parseDouble |> NUMBER }
 | number2 { lexeme lexbuf |> parseDouble |> NUMBER }
 | "/" { ESCAPE }
-| "**" | "*" | "/" | "MOD" | "+" | "-" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "AND" | "OR" | "XOR" { OP (lexeme lexbuf)}
+| "+" { PLUS }
+| "-" { MINUS }
+| "**" | "*" | "MOD" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "AND" | "OR" | "XOR" { OP (lexeme lexbuf)}
 | "ATAN" | "ABS" | "ACOS" | "ASIN" | "COS" | "EXP" | "FIX" | "FUP" | "ROUND" | "LN" | "SIN" | "SQRT" | "TAN" { FUNC (lexeme lexbuf) }
 | code { lexbuf.LexemeChar 0 |> XCODE }
 | "," { extra lexbuf }
