@@ -25,7 +25,7 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;
     static readonly string MAX_DELAY_FOR_ISO_FILE_CREATION_KEY = "StampFileWatch.MaxDelayForFileCreation";
     static readonly int MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = 5;  // seconds
-    static readonly string DELAY_BEFORE_STAMPING_KEY = "StampFileWatchService.DelayBeforeStamping";
+    static readonly string DELAY_BEFORE_STAMPING_KEY = "StampFileWatch.DelayBeforeStamping";
     static readonly int DELAY_BEFORE_STAMPING_DEFAULT = 0;  // seconds    
     static readonly string USE_OLD_LEMSTAMP_KEY = "StampFileWatch.UseOldLemStamp";
     static readonly bool USE_OLD_LEMSTAMP_DEFAULT = false;
