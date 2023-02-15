@@ -27,9 +27,6 @@ namespace Lemoine.Business.Reason
   public class MachineModeDefaultReasonFind
     : IRequest<IEnumerable<IMachineModeDefaultReason>>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (MachineModeDefaultReasonFind).FullName);
 
     #region Getters / Setters
@@ -55,7 +52,6 @@ namespace Lemoine.Business.Reason
     public IMachine Machine { get; set; }
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -72,11 +68,6 @@ namespace Lemoine.Business.Reason
       this.MachineMode = machineMode;
       this.MachineObservationState = machineObservationState;
     }
-    #endregion // Constructors
-
-    #region Methods
-
-    #endregion // Methods
 
     #region IRequest implementation
 
@@ -104,7 +95,9 @@ namespace Lemoine.Business.Reason
             log.Fatal ($"GetMachineModeDefaultReasons: different configurations with the same maximum duration => return an empty list instead (invalid everything)");
             return new List<IMachineModeDefaultReason> ();
           }
-          return result;
+          return result
+            .OrderBy (x => x.MaximumDuration?.TotalSeconds ?? double.MaxValue)
+            .ToList ();
         }
       }
     }
