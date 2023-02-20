@@ -37,6 +37,13 @@ namespace Lemoine.Stamping.StampLineCreators
     public int FractionalDigits { get; set; } = 5;
 
     /// <summary>
+    /// Multiplier for the stamp
+    /// 
+    /// Default: 1.0 (nothing to do)
+    /// </summary>
+    public double Multiplier { get; set; } = 1.0;
+
+    /// <summary>
     /// <see cref="ILineFormatter"/>
     /// </summary>
     /// <param name="variable"></param>
@@ -50,8 +57,17 @@ namespace Lemoine.Stamping.StampLineCreators
       }
 
       if (v is double d) { // Use an invariant culture for a double
+        d *= this.Multiplier;
         d = Math.Round (d, this.FractionalDigits);
         return CreateLine (variable, d.ToString (System.Globalization.CultureInfo.InvariantCulture));
+      }
+      else if (1.0 != this.Multiplier) {
+        if (v is int i) {
+          return CreateLine (variable, (double)i);
+        }
+        else if (v is long l) {
+          return CreateLine (variable, (double)l);
+        }
       }
 
       return string.Format (this.Format, variable, v);
