@@ -278,8 +278,13 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
               return RequiredResetKind.None;
             }
             else if (machineModeDefaultReasons.Any (x => x.MaximumDuration.HasValue)) {
-              var defaultReasonWithNoMaximumDuration = machineModeDefaultReasons.First (x => x.MaximumDuration.HasValue);
-              if ((defaultReasonWithNoMaximumDuration.Reason.Id == newReasonSlot.Reason.Id) && (defaultReasonWithNoMaximumDuration.Score == newReasonSlot.ReasonScore)) {
+              var defaultReasonWithNoMaximumDuration = machineModeDefaultReasons
+                .FirstOrDefault (x => !x.MaximumDuration.HasValue);
+              if (defaultReasonWithNoMaximumDuration is null) {
+                log.Error ($"GetRequiredResetKind: no default reason with no maximum duration");
+                return RequiredResetKind.Main;
+              }
+              else if ((defaultReasonWithNoMaximumDuration.Reason.Id == newReasonSlot.Reason.Id) && (defaultReasonWithNoMaximumDuration.Score == newReasonSlot.ReasonScore)) {
                 if (log.IsDebugEnabled && m_logActive) {
                   log.Debug ($"GetRequiredResetKind: new activity but already the default reason with no maximum duration");
                 }
