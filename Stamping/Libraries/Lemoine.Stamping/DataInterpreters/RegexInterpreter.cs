@@ -79,11 +79,7 @@ namespace Lemoine.Stamping.DataInterpreters
         throw new InvalidOperationException ("Source is not set");
       }
 
-      Regex regex;
-      if (m_regex is not null && !string.IsNullOrEmpty (this.Regex)) {
-        regex = m_regex;
-      }
-      else { // Try to get it from ConfigSet
+      if (m_regex is null || string.IsNullOrEmpty (this.Regex)) { // Try to get it from ConfigSet
         var regexConfigKey = $"Stamping.Regex.{this.Source}";
         string regexConfigValue;
         try {
@@ -93,10 +89,10 @@ namespace Lemoine.Stamping.DataInterpreters
           log.Error ($"Interpret: no config key {regexConfigKey} was set, give up", ex);
           return false;
         }
-        regex = new Regex (regexConfigValue, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        m_regex = new Regex (regexConfigValue, RegexOptions.Compiled | RegexOptions.IgnoreCase);
       }
 
-      if (regex is null || string.IsNullOrEmpty (regex.ToString ())) {
+      if (m_regex is null || string.IsNullOrEmpty (m_regex.ToString ())) {
         log.Error ($"Interpret: Regex is null or empty");
         throw new InvalidOperationException ("Regex is not set");
       }
@@ -110,7 +106,7 @@ namespace Lemoine.Stamping.DataInterpreters
         return false;
       }
 
-      var match = regex.Match (data);
+      var match = m_regex.Match (data);
       if (!match.Success) {
         log.Error ($"Interpret: {data} did not match {m_regex}");
         return false;
