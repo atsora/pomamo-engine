@@ -25,21 +25,21 @@ type Mutation {
   createWorkOrder(workOrder: NewWorkOrder!): WorkOrder!
   updateWorkOrder(workOrder: UpdateWorkOrder!): WorkOrder!
   createProject(project: NewProject!): Project!
-  updateProject(project: Project!): Project!
+  updateProject(project: UpdateProject!): Project!
   createWorkOrderProject(workOrderProject: NewWorkOrderProject!): WorkOrderProject!
   removeWorkOrderProject(workOrderProjectId: ID!): Boolean
   createJob(job: NewJob!): Job!
-  updateJob(job: Job!): Job!
+  updateJob(job: UpdateJob!): Job!
   createComponent(component: NewComponent!): Component!
-  updateComponent(component: Component!): Component!
+  updateComponent(component: UpdateComponent!): Component!
   createProjectComponent(projectComponent: NewProjectComponent!): Boolean
   createPart(part: NewPart!): Part!
-  updatePart(part: Part!): Part!
+  updatePart(part: UpdatePart!): Part!
   createIntermediateWorkPiece(intermediateWorkPiece: NewIntermediateWorkPiece!): IntermediateWorkPiece!
-  updateIntermediateWorkPiece(intermediateWorkPiece: IntermediateWorkPiece!): IntermediateWorkPiece!
+  updateIntermediateWorkPiece(intermediateWorkPiece: UpdateIntermediateWorkPiece!): IntermediateWorkPiece!
   createComponentIntermediateWorkPiece(componentIntermediateWorkPiece: NewComponentIntermediateWorkPiece!): ComponentIntermediateWorkPiece!
   createOperation(operation: NewOperation!): Operation!
-  updateOperation(operation: Operation!): Operation!
+  updateOperation(operation: UpdateOperation!): Operation!
 }
 
 scalar Color
@@ -220,6 +220,18 @@ input NewJob {
   quantity: Int  
 }
 
+input UpdateJob {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+  deliveryDate: UtcDateTime
+  statusId: ID
+  quantity: Int
+}
+
 type Component implements IWorkInfo & IDisplayable {
   id: ID!
   name: String
@@ -237,6 +249,17 @@ type Component implements IWorkInfo & IDisplayable {
 }
 
 input NewComponent {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  typeId: ID
+  estimatedHours: Float
+  projectId: ID
+}
+
+input UpdateComponent {
+  id: ID!
   name: String
   code: String
   externalCode: String
@@ -281,6 +304,17 @@ input NewPart {
   estimatedHours: Float
 }
 
+input UpdatePart {
+  id: ID!
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  customerId: ID
+  typeId: ID
+  estimatedHours: Float
+}
+
 type ComponentIntermediateWorkPiece {
   id: ID!
   component: Component!
@@ -292,6 +326,12 @@ type ComponentIntermediateWorkPiece {
 input NewComponentIntermediateWorkPiece {
   componentId: ID!
   intermediateWorkPieceId: ID!
+  code: String
+  order: Int
+}
+
+input UpdateComponentIntermediateWorkPiece {
+  id: ID!
   code: String
   order: Int
 }
@@ -311,6 +351,15 @@ type IntermediateWorkPiece implements IWorkInfo & IDisplayable {
 }
 
 input NewIntermediateWorkPiece {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  weight: Float
+}
+
+input UpdateIntermediateWorkPiece {
+  id: ID!
   name: String
   code: String
   externalCode: String
@@ -348,6 +397,18 @@ type Operation implements IWorkInfo & IDisplayable {
 }
 
 input NewOperation {
+  name: String
+  code: String
+  externalCode: String
+  documentLink: String
+  typeId: ID!
+  quantity: Int
+  weight: Float # for simple operation only and when available only
+  intermediateWorkPieceId: ID # not for simple operations
+}
+
+input UpdateOperation {
+  id: ID!
   name: String
   code: String
   externalCode: String
