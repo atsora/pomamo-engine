@@ -1,0 +1,6 @@
+[submodule "CNC/Configurations"]
+	path = CNC/Configurations
+	url = git@github.com:miredo/pomamo-cncconfigurations.git
+[submodule "CNC/Modules"]
+	path = CNC/Modules
+	url = git@github.com:miredo/pomamo-cncmodules.git
