@@ -64,7 +64,7 @@ select oc
 from OperationCycle oc
 left join oc.OperationSlot os with os.Machine.Id=:MachineId
 where oc.Machine.Id=:MachineId
-order by oc.DateTime desc, oc.End desc
+order by oc.DateTime desc, oc.End desc, oc.Id desc
     ]]>
   </query>
   
@@ -76,7 +76,7 @@ left join oc.OperationSlot as os with os.Machine.Id=:MachineId
 where oc.Machine.Id=:MachineId
   and oc.End is not null
   and oc.Full=true
-order by oc.DateTime desc, oc.End desc
+order by oc.DateTime desc, oc.End desc, oc.Id desc
     ]]>
   </query>
   <query name="FullOperationCycleForMachineDescBefore">
@@ -87,7 +87,7 @@ where oc.Machine.Id=:MachineId
   and oc.End is not null
   and oc.Full=true
   and oc.End <= :Before
-order by oc.DateTime desc, oc.End desc
+order by oc.DateTime desc, oc.End desc, oc.Id desc
     ]]>
   </query>
   <query name="OperationCycleForMachineAscAfter">
@@ -97,7 +97,7 @@ from OperationCycle as oc
 left join oc.OperationSlot as os with os.Machine.Id=:MachineId
 where oc.Machine.Id=:MachineId
   and oc.DateTime > :After
-order by oc.DateTime asc, oc.End asc
+order by oc.DateTime asc, oc.End asc, oc.Id asc
     ]]>
   </query>
   <query name="OperationCycleWithOperationSlot">
@@ -105,14 +105,14 @@ order by oc.DateTime asc, oc.End asc
 from OperationCycle oc
 where oc.Machine.Id=:MachineId
   and oc.OperationSlot=:OperationSlot
-order by oc.DateTime, oc.End
+order by oc.DateTime, oc.End, oc.Id
     ]]>
   </query>
   <query name="OperationCycleWithOperation">
     <![CDATA[
 from OperationCycle oc
 where oc.OperationSlot.Operation=:Operation
-order by oc.DateTime, oc.End
+order by oc.DateTime, oc.End, oc.Id
     ]]>
   </query>
   <query name="OperationCycleInRangeExceptInSlot">
@@ -122,7 +122,7 @@ where oc.Machine=:Machine
   and oc.OperationSlot<>:OperationSlot
   and ( (oc.End is not null and (oc.Status is null or oc.Status=0 or oc.Status=1) and oc.End>=:RangeBegin and (:RangeEnd is null or oc.End<=:RangeEnd))
         or (oc.Begin is not null and (oc.Status is null or oc.Status=0 or oc.Status=2) and oc.Begin>=:RangeBegin and (:RangeEnd is null or oc.Begin<:RangeEnd)))
-order by oc.DateTime, oc.End
+order by oc.DateTime, oc.End, oc.Id
     ]]>
   </query>
   <query name="OperationCycleInRange">
@@ -133,7 +133,7 @@ left join oc.OperationSlot as os with os.Machine.Id=:MachineId
 where oc.Machine.Id=:MachineId
   and ( (oc.End is not null and (oc.Status is null or oc.Status=0 or oc.Status=1) and (:RangeBegin is null or oc.End>:RangeBegin) and (:RangeEnd is null or oc.End<=:RangeEnd))
         or (oc.Begin is not null and (oc.Status is null or oc.Status=0 or oc.Status=2) and (:RangeBegin is null or oc.Begin>=:RangeBegin) and (:RangeEnd is null or oc.Begin<:RangeEnd)))
-order by oc.DateTime, oc.End
+order by oc.DateTime, oc.End, oc.Id
     ]]>
   </query>
   <query name="OperationCycleAtDate">
@@ -143,7 +143,7 @@ where oc.Machine=:Machine
   and oc.Begin is not null
   and oc.Begin <= :Date
   and (oc.End is null or oc.End > :Date)
-  order by oc.DateTime desc, oc.End desc
+  order by oc.DateTime desc, oc.End desc, oc.Id desc
     ]]>
   </query>
   
@@ -154,7 +154,7 @@ where oc.Machine=:Machine
   and (oc.Begin is null or oc.Begin < :Date)
   and oc.End is not null 
   and oc.End >= :Date
-  order by oc.DateTime desc, oc.End desc
+  order by oc.DateTime desc, oc.End desc, oc.Id desc
     ]]>
   </query>
   
@@ -183,7 +183,7 @@ where oc.Machine.Id=:MachineId
   and oc.End is not null
   and not oc.Id in (select ocdp.OperationCycle.Id from OperationCycleDeliverablePiece as ocdp)
   and oc.DateTime <= :Date
-  order by oc.DateTime desc, oc.End desc
+  order by oc.DateTime desc, oc.End desc, oc.Id desc
     ]]>
   </query>
   
@@ -195,7 +195,7 @@ where oc.Machine.Id=:MachineId
   and oc.Begin is not null 
   and oc.Begin <= :Date
   and not oc.Id in (select ocdp.OperationCycle.Id from OperationCycleDeliverablePiece as ocdp)
-  order by oc.DateTime desc, oc.End desc
+  order by oc.DateTime desc, oc.End desc, oc.Id desc
     ]]>
   </query>
   
@@ -205,7 +205,7 @@ from OperationCycle oc
 where oc.Machine=:Machine
   and (   (oc.End is not null and (oc.Status is null or oc.Status=0 or oc.Status=1) and oc.End >= :RangeBegin and oc.End <= :RangeEnd)
        or (oc.Begin is not null and (oc.Status is null or oc.Status=0 or oc.Status=2) and oc.Begin >= :RangeBegin and oc.Begin <= :RangeEnd))  
-  order by oc.DateTime asc, oc.End
+  order by oc.DateTime asc, oc.End, oc.Id
     ]]>
   </query>
   

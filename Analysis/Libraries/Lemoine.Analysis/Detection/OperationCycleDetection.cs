@@ -23,6 +23,12 @@ namespace Lemoine.Analysis.Detection
   {
     readonly ILog log;
 
+    static readonly string SKIP_EMPTY_BETWEENCYCLES_KEY = "Analysis.SkipEmptyBetweenCycles";
+    static readonly bool SKIP_EMPTY_BETWEENCYCLES_DEFAULT = false;
+
+    static readonly string SKIP_EMPTY_BETWEEN_IF_PREVIOUS_EMPTY_KEY = "Analysis.SkipEmptyBetweenIfPreviousEmpty";
+    static readonly bool SKIP_EMPTY_BETWEEN_IF_PREVIOUS_EMPTY_DEFAULT = true;
+
     #region Members
     readonly IMonitoredMachine m_monitoredMachine;
     readonly Lemoine.Threading.IChecked m_caller;
@@ -295,9 +301,19 @@ namespace Lemoine.Analysis.Detection
         Debug.Assert (previousCycle.End.HasValue);
         Debug.Assert (previousCycle.End.Value <= nextCycle.Begin.Value);
 
-        IBetweenCycles betweenCycles = ModelDAOHelper.ModelFactory
+        var betweenCycles = ModelDAOHelper.ModelFactory
           .CreateBetweenCycles (previousCycle, nextCycle);
-        ModelDAOHelper.DAOFactory.BetweenCyclesDAO.MakePersistent (betweenCycles);
+        if (previousCycle.End.Value < nextCycle.Begin.Value) { // Gap between the cycles
+          ModelDAOHelper.DAOFactory.BetweenCyclesDAO.MakePersistent (betweenCycles);
+        }
+        else if (!Lemoine.Info.ConfigSet.LoadAndGet (SKIP_EMPTY_BETWEENCYCLES_KEY, SKIP_EMPTY_BETWEENCYCLES_DEFAULT)) {
+          if (!previousCycle.Begin.HasValue || (previousCycle.Begin.Value != previousCycle.End.Value)) {
+            ModelDAOHelper.DAOFactory.BetweenCyclesDAO.MakePersistent (betweenCycles);
+          }
+          else if (!Lemoine.Info.ConfigSet.LoadAndGet (SKIP_EMPTY_BETWEEN_IF_PREVIOUS_EMPTY_KEY, SKIP_EMPTY_BETWEEN_IF_PREVIOUS_EMPTY_DEFAULT)) {
+            ModelDAOHelper.DAOFactory.BetweenCyclesDAO.MakePersistent (betweenCycles);
+          }
+        }
 
         foreach (var extension in GetExtensions ()) {
           extension.CreateBetweenCycle (betweenCycles);
