@@ -12,7 +12,7 @@
       <HintPath>FileRepository.dll</HintPath>
     </Reference>
     <Reference Include="IIOPChannel">
-      <HintPath>..\..\3rdParty\IIOP.NET\IIOPChannel.dll</HintPath>
+      <HintPath>..\..\..\pomamo-extern\IIOP.NET\IIOPChannel.dll</HintPath>
     </Reference>
   </ItemGroup>
 

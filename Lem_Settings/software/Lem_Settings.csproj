@@ -14,7 +14,7 @@
   <PropertyGroup Condition="'$(Configuration)'=='VS'">
     <StartAction>Project</StartAction>
     <StartArguments>-lcr</StartArguments>
-    <StartProgram>..\..\..\..\..\pulse_build\ex\Lem_Settings.exe</StartProgram>
+    <StartProgram>..\..\..\..\..\build\ex\Lem_Settings.exe</StartProgram>
   </PropertyGroup>
 
   <ItemGroup>

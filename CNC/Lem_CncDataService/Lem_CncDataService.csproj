@@ -15,10 +15,10 @@
 
   <ItemGroup>
     <Reference Include="NHibernate">
-      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
+      <HintPath>..\..\..\pomamo-extern\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.Caches.CoreMemoryCache">
-      <HintPath>..\..\3rdParty\NHibernateAndCo\NHibernate.Caches\NHibernate.Caches.CoreMemoryCache\netstandard2.0\NHibernate.Caches.CoreMemoryCache.dll</HintPath>
+      <HintPath>..\..\..\pomamo-extern\NHibernateAndCo\NHibernate.Caches\NHibernate.Caches.CoreMemoryCache\netstandard2.0\NHibernate.Caches.CoreMemoryCache.dll</HintPath>
     </Reference>
     <PackageReference Include="CommandLineParser" />
   </ItemGroup>

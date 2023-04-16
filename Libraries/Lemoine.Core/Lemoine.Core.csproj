@@ -16,7 +16,7 @@
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <Reference Include="SharedMemory">
-      <HintPath>..\..\3rdParty\SharedMemory\netstandard2.0\SharedMemory.dll</HintPath>
+      <HintPath>..\..\..\pomamo-extern\SharedMemory\netstandard2.0\SharedMemory.dll</HintPath>
     </Reference>
     <PackageReference Include="MailKit" />
     <PackageReference Include="Microsoft.Win32.Registry" />

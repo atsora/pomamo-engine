@@ -38,3 +38,5 @@ symbolCache.db
 .ionide
 /Build.All.sln
 
+/CommonAssemblyInfo.cpp
+/CommonAssemblyInfo.cs

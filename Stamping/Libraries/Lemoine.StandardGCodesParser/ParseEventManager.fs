@@ -192,7 +192,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
       then angle <- 2. * Math.PI - angle
       r .*. angle
     else 
-      log.Error $"computeArcDistanceWithRadius: {cosangle} is not a valid cosinus pos1={position} pos2={p} cc={cc} => return 0."; UnknownUnit(0.)
+      log.Error $"computeArcDistanceWithRadiusCenter: {cosangle} is not a valid cosinus pos1={position} pos2={p} cc={cc} => return 0."; UnknownUnit(0.)
 
   let computeArcDistanceWithCenter p clockwise cc =
     match computeLinearDistance cc with
@@ -241,17 +241,17 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
     | (In(din), MmMin(fmm)) -> TimeSpan.FromMinutes ((mmOfIn din) / fmm)
     | (In(dx), UnknownFeedUnit(fu)) | (Mm(dx), UnknownFeedUnit(fu))->
       begin
-        if log.IsTraceEnabled then log.Trace $"computeTimeFeedratePerMinuteLinear: unknown feed unit, d={dx} f={fu}"
+        if log.IsTraceEnabled then log.Trace $"computeTimeFeedratePerMinute: unknown feed unit, d={dx} f={fu}"
         TimeSpan.FromMinutes (dx / fu)
       end
     | (UnknownUnit(du), MmMin(fx)) | (UnknownUnit(du), IPM(fx)) ->
       begin
-        if log.IsTraceEnabled then log.Trace $"computeTimeFeedratePerMinuteLinear: unknown distance unit, d={du} f={fx}"
+        if log.IsTraceEnabled then log.Trace $"computeTimeFeedratePerMinute: unknown distance unit, d={du} f={fx}"
         TimeSpan.FromMinutes (du / fx)
       end
     | _ ->
       begin
-        log.Error $"computeTimeFeedratePerMinuteLinear: Invalid distance {d} feedrate {f}"
+        log.Error $"computeTimeFeedratePerMinute: Invalid distance {d} feedrate {f}"
         TimeSpan.FromMinutes (0.)
       end
  
@@ -468,7 +468,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
             begin
               stampingEventHandler.SetData ("G05P", hpcc) // 0: inactive, 10000: active
               modalGroupValues.Set group hpcc
-              end
+            end
           | (pkey, pvalue)::[] -> log.Error $"runGCode: unexpected parameter {pkey}={pvalue} for G05"
           | _ -> log.Error $"runGCode: unexpected list of parameters for G05"
         end
@@ -700,29 +700,29 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
       blockNumber <- blockNumber + 1
       let block = addBlockInstructionsOrHeader blockNumber instructions in
       if List.isEmpty block.Escapes then
-      match block.Comment with
-      | None -> ()
-      | Some c -> stampingEventHandler.SetComment (c)
+        match block.Comment with
+        | None -> ()
+        | Some c -> stampingEventHandler.SetComment (c)
         setVariables block.SetVariables
-      let gcodes = block.GCodes in
-      let parameters = block.Parameters in
-      runGCodes gcodes parameters block.File
-      match gcodes with
-      | _::_ when configuration.AnyGCodeMachining -> stampingEventHandler.TriggerMachining ()
-      | _ -> ()
-      let pos = extractPositionFromParameters parameters position distanceOfFloat configuration in
-      let (distance, motionTime) = computeDistanceMotionTime pos parameters in
-      if log.IsTraceEnabled then log.Trace $"AddBlock: d={distance} t={motionTime} for {instructions}"
-      if 0. <> motionTime.TotalSeconds then
-        if (isMachining () && not configuration.AnyGCodeMachining) then stampingEventHandler.TriggerMachining ()
-        stampingEventHandler.SetMachiningTime (motionTime)
-      if (position <> pos) || (distance.HasValue && (0. < distance.Value)) then
-        addDistance distance
-        let newVector = Vector (position, pos) in
-        if vector.IsSome then recordNewVector newVector
-        position <- pos
-        if newVector.Empty then log.Error $"AddBlock: newVector {newVector} is empty"
-        vector <- Some newVector
+        let gcodes = block.GCodes in
+        let parameters = block.Parameters in
+        runGCodes gcodes parameters block.File
+        match gcodes with
+        | _::_ when configuration.AnyGCodeMachining -> stampingEventHandler.TriggerMachining ()
+        | _ -> ()
+        let pos = extractPositionFromParameters parameters position distanceOfFloat configuration in
+        let (distance, motionTime) = computeDistanceMotionTime pos parameters in
+        if log.IsTraceEnabled then log.Trace $"AddBlock: d={distance} t={motionTime} for {instructions}"
+        if 0. <> motionTime.TotalSeconds then
+          if (isMachining () && not configuration.AnyGCodeMachining) then stampingEventHandler.TriggerMachining ()
+          stampingEventHandler.SetMachiningTime (motionTime)
+        if (position <> pos) || (distance.HasValue && (0. < distance.Value)) then
+          addDistance distance
+          let newVector = Vector (position, pos) in
+          if vector.IsSome then recordNewVector newVector
+          position <- pos
+          if newVector.Empty then log.Error $"AddBlock: newVector {newVector} is empty"
+          vector <- Some newVector
       block
     end
 
