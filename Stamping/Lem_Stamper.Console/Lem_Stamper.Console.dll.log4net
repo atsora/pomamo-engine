@@ -193,13 +193,13 @@
   </appender>
 
   <root>
-    <level value="DEBUG" />
-    <appender-ref ref="dbgviewAp" />
-    <appender-ref ref="debugRollingAp" />
+    <level value="INFO" />
+    <!--appender-ref ref="dbgviewAp" /-->
+    <!--appender-ref ref="debugRollingAp" /-->
     <appender-ref ref="critRollingAp" />
     <appender-ref ref="errorRollingAp" />
     <appender-ref ref="lastErrorAp" />
-    <appender-ref ref="lastDebugAp" />
+    <!--appender-ref ref="lastDebugAp" /-->
   </root>
 
   <logger name="DynamicTime">
@@ -208,7 +208,7 @@
   </logger>
 
   <logger name="Lemoine">
-    <level value="DEBUG" />
+    <level value="INFO" />
     <!--appender-ref ref="warnRollingAp" /-->    
     <appender-ref ref="infoRollingAp" />
     <!--appender-ref ref="debugRollingAp" /-->
