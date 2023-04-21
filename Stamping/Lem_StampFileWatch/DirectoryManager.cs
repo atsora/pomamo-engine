@@ -16,47 +16,37 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
   /// </summary>
   public class DirectoryManager : ThreadClass, IThreadClass
   {
-    #region Members
-    string m_indexFilesDirectory = null;
-    static DirectoryManager m_directoryManager;
     static readonly string INDEX_FILES_DIRECTORY_KEY = "StampFileWatch.IndexFilesDirectory";
     static readonly string INDEX_FILES_DIRECTORY_DEFAULT = "C:\\Users\\Public\\AppData\\Lemoine\\Pulse";
+
     static readonly string SERVICE_USE_CURRENT_USER_KEY = "StampFileWatch.ServiceUseCurrentUser";
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;
+
     static readonly string MAX_DELAY_FOR_ISO_FILE_CREATION_KEY = "StampFileWatch.MaxDelayForFileCreation";
     static readonly int MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = 5;  // seconds
+
     static readonly string DELAY_BEFORE_STAMPING_KEY = "StampFileWatch.DelayBeforeStamping";
     static readonly int DELAY_BEFORE_STAMPING_DEFAULT = 0;  // seconds    
-    static readonly string USE_OLD_LEMSTAMP_KEY = "StampFileWatch.UseOldLemStamp";
-    static readonly bool USE_OLD_LEMSTAMP_DEFAULT = false;
-    static bool m_useCurrentUser = false;
-    static DateTime m_lastReadTime = DateTime.MinValue;
-    static int m_daxDelayForISOFileCreation;
-    static int m_delayBeforeStamping;
-    static bool m_useOldLemStamp = false;
-    #endregion
+
+    readonly string m_indexFilesDirectory;
+    readonly bool m_useCurrentUser = false;
+    DateTime m_lastReadTime = DateTime.MinValue;
+    readonly int m_daxDelayForISOFileCreation;
+    readonly int m_delayBeforeStamping;
 
     static readonly ILog log = LogManager.GetLogger (typeof (DirectoryManager).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public DirectoryManager ()
     {
       m_indexFilesDirectory = Lemoine.Info.ConfigSet.LoadAndGet<string> (INDEX_FILES_DIRECTORY_KEY, INDEX_FILES_DIRECTORY_DEFAULT);
-      m_directoryManager = this;
       m_useCurrentUser = Lemoine.Info.ConfigSet.LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
       m_daxDelayForISOFileCreation = Lemoine.Info.ConfigSet.LoadAndGet<int> (MAX_DELAY_FOR_ISO_FILE_CREATION_KEY, MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT);
       m_delayBeforeStamping = Lemoine.Info.ConfigSet.LoadAndGet<int> (DELAY_BEFORE_STAMPING_KEY, DELAY_BEFORE_STAMPING_DEFAULT);
-      m_useOldLemStamp = Lemoine.Info.ConfigSet.LoadAndGet<bool> (USE_OLD_LEMSTAMP_KEY, USE_OLD_LEMSTAMP_DEFAULT);
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Logger
     /// </summary>
@@ -71,18 +61,18 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
     /// </summary>
     protected override void Run (CancellationToken cancellationToken)
     {
-      log.Info ($"DirectoryManager: info: watching {m_indexFilesDirectory}");
+      log.Info ($"Run: watching {m_indexFilesDirectory}");
       // check directory exists
       if (!Directory.Exists (m_indexFilesDirectory)) {
-        log.Info ($"DirectoryManager: Directory {m_indexFilesDirectory} does not exists, try to create it");
+        log.Info ($"Run: Directory {m_indexFilesDirectory} does not exists, try to create it");
         try {
-          log.Info ($"DirectoryManager: create folder {m_indexFilesDirectory}");
+          log.Info ($"Run: create folder {m_indexFilesDirectory}");
           Directory.CreateDirectory (m_indexFilesDirectory);
-          log.Info ($"DirectoryManager: Directory {m_indexFilesDirectory} created");
+          log.Info ($"Run: Directory {m_indexFilesDirectory} created");
         }
-        catch (Exception e) {
-          log.Fatal ($"DirectoryManager: unable to create folder {m_indexFilesDirectory} {e}");
-          log.Fatal ($"DirectoryManager: Directory {m_indexFilesDirectory} does not exists, exiting");
+        catch (Exception ex) {
+          log.Fatal ($"Run: unable to create folder {m_indexFilesDirectory}", ex);
+          log.Fatal ($"Run: Directory {m_indexFilesDirectory} does not exists, exiting");
           this.SetExitRequested ();
           return;
         }
@@ -118,7 +108,7 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    private static void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
+    void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       if (m_useCurrentUser) {
         using (ImpersonationUtils.ImpersonateCurrentUser ()) {
@@ -134,7 +124,7 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    private static void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
+    void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       log.Info ($"DirectoryManager: OnCreated {fileSystemEventArgs.FullPath}");
       if (m_useCurrentUser) {
@@ -144,7 +134,6 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
       }
       else {
         ProcessOnChanged (sender, fileSystemEventArgs);
-        ;
       }
     }
 
@@ -177,10 +166,8 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    private static void ProcessOnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
+    void ProcessOnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
-      string isoFilePath = null;
-
       // wait to ensure file is created properly after OnCreated event.
       Thread.Sleep (500);
       WatcherChangeTypes watcherChangeType = fileSystemEventArgs.ChangeType;
@@ -189,10 +176,10 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
       try {
         if (File.Exists (fileChangedFullPath)) {
           DateTime lastWriteTime = File.GetLastWriteTime (fileChangedFullPath);
-          log.Info ($"OnChanged: info: File={fileChangedFullPath}, {watcherChangeType.ToString ()}, {lastWriteTime}");
+          log.Info ($"OnChanged: info: File={fileChangedFullPath}, {watcherChangeType}, {lastWriteTime}");
           if (lastWriteTime != m_lastReadTime) {
             m_lastReadTime = lastWriteTime;
-            isoFilePath = m_directoryManager.GetISOFilePathFromIndexFile (fileChangedFullPath);
+            var isoFilePath = GetISOFilePathFromIndexFile (fileChangedFullPath);
 
             // test file exists. ISO file may be generated AFTER index file. Wait for it.
             bool isoFileExists = false;
@@ -215,15 +202,8 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
                 log.Info ($"OnChanged: info: wait {m_delayBeforeStamping} seconds before stamping");
                 Thread.Sleep (1000 * m_delayBeforeStamping);
               }
-              log.Info ($"OnChanged: info: use old Lem_Stamp = {m_delayBeforeStamping}");
-              if (m_useOldLemStamp) {
-                ISOFileManagerLemStamp fileManager = new ISOFileManagerLemStamp (fileChangedFullPath, isoFilePath, m_useCurrentUser);
-                fileManager.RunDirectly ();
-              }
-              else {
-                ISOFileManager fileManager = new ISOFileManager (fileChangedFullPath, isoFilePath, m_useCurrentUser);
-                fileManager.RunDirectly ();
-              }
+              var fileManager = new ISOFileManager (isoFilePath);
+              fileManager.RunDirectly ();
 
               // remove index file
               log.Info ($"OnChanged: info: delete file {fileChangedFullPath}");
@@ -243,10 +223,9 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
       }
       catch (Exception ex) {
         log.Error ("OnChanged: exception", ex);
-        log.Error ("OnChanged: do not exit!!!");
       }
 
-      m_directoryManager.SetActive ();
+      SetActive ();
     }
 
     /// <summary>
@@ -255,17 +234,16 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
     private string GetISOFilePathFromIndexFile (string indexFile)
     {
       // read only the first line of file and ignore others
-      string filePath = null;
-      log.Info ($"getISOFilePathFromIndexFile: info: index File={indexFile}");
+      log.Info ($"GetISOFilePathFromIndexFile: index File={indexFile}");
       try {
         using (StreamReader reader = new StreamReader (indexFile)) {
-          filePath = reader.ReadLine ().Trim();
+          return reader.ReadLine ().Trim ();
         }
       }
-      catch (Exception e) {
-        log.Error ($"getISOFilePathFromIndexFile: info: failed to read file: {indexFile}, {e}");
+      catch (Exception ex) {
+        log.Error ($"GetISOFilePathFromIndexFile: failed to read file: {indexFile}", ex);
+        throw;
       }
-      return filePath;
     }
 
     /// <summary>
@@ -274,16 +252,14 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
     private static void RemoveFile (string file)
     {
       try {
-        log.Info ($"removeFile: info: delete file {file}");
+        log.Info ($"RemoveFile: delete file {file}");
         File.Delete (file);
         return;
       }
-      catch (Exception e) {
-        log.Error ($"removeFile: unable to delete file {file} {e}");
+      catch (Exception ex) {
+        log.Error ($"RemoveFile: unable to delete file {file}", ex);
         return;
       }
     }
-
-    #endregion Methods  
   }
 } 

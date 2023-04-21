@@ -21,12 +21,12 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
 
         LogManager.AddLog4net ();
 
-        var stampFileWatcher = new StampFileWatch ();
-        stampFileWatcher.Initialize ();
+        var stampFileWatch = new StampFileWatch ();
+        stampFileWatch.Initialize ();
       }
 
       catch (Exception) {
-        log.Fatal ("Lem_StampFileWatch: exit requested. Skip");
+        log.Fatal ("Lem_StampFileWatch: exit requested");
         Environment.Exit (1);
       }
     }

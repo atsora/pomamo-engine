@@ -17,31 +17,26 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
   {
     static readonly TimeSpan NOT_RESPONDING_TIMEOUT_KEY = TimeSpan.FromMinutes (5);
 
-    #region Members
-    DirectoryManager m_directoryManager;
+    readonly DirectoryManager m_directoryManager = new DirectoryManager ();
     readonly CheckThreadsAndProcesses m_checkThreads = new CheckThreadsAndProcesses ();
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     bool m_disposed = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (StampFileWatch).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public StampFileWatch ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="IThreadService"/>
     /// </summary>
     public void Initialize ()
     {
-      log.DebugFormat ("StampFileWatch: Initialize");
+      log.Debug ("StampFileWatch: Initialize");
       try {
         InitializeThreads (CancellationToken.None);
       }
@@ -58,7 +53,6 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
         var linkedToken = linkedCancellationTokenSource.Token;
 
         // thread to monitor the index files directory
-        m_directoryManager = new DirectoryManager ();
         m_directoryManager.Start (linkedToken); // TODO: cancellation token
 
         // - Create the thread that checks the other threads
@@ -85,7 +79,7 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
       }
       finally {
         log.Fatal ("InitializeThreads: exit requested. Skip");
-        //Lemoine.Core.Environment.LogAndForceExit (log);
+        Lemoine.Core.Environment.LogAndForceExit (log);
       }
     }
 
@@ -99,7 +93,6 @@ namespace Lemoine.Stamping.Lem_StampFileWatch
       m_checkThreads?.Abort ();
       m_directoryManager?.Abort ();
     }
-    #endregion Methods
 
     #region IDisposable implementation
     /// <summary>
