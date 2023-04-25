@@ -7,6 +7,7 @@ using System;
 using Lemoine.Threading;
 using Lemoine.Core.Log;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Pulse.Extensions.Database.Accumulator.Impl
 {
@@ -18,18 +19,27 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
     , ICheckedCallers
     , IAccumulator
   {
-    IList<IChecked> m_callers = new List<IChecked> ();
+    ConcurrentDictionary<IChecked, IChecked> m_callers = new ConcurrentDictionary<IChecked, IChecked> ();
 
     #region ICheckedCallers implementation
     /// <summary>
-    /// ICheckedCallers implementation
+    /// <see cref="ICheckedCaller"/>
     /// </summary>
     /// <param name="caller"></param>
     public void AddCheckedCaller (IChecked caller)
     {
-      if (!m_callers.Contains (caller)) {
-        m_callers.Add (caller);
+      if (!m_callers.ContainsKey (caller)) {
+        m_callers.TryAdd (caller, caller);
       }
+    }
+
+    /// <summary>
+    /// <see cref="ICheckedCaller"/>
+    /// </summary>
+    /// <param name="caller"></param>
+    public void RemoveCheckedCaller (IChecked caller)
+    {
+      m_callers.TryRemove (caller, out _);
     }
     #endregion // ICheckedCallers implementation
 
@@ -39,8 +49,8 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
     /// </summary>
     public void SetActive ()
     {
-      foreach (var caller in m_callers) {
-        caller.SetActive ();
+      foreach (var kv in m_callers) {
+        kv.Value.SetActive ();
       }
     }
 
@@ -49,8 +59,8 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
     /// </summary>
     public void PauseCheck ()
     {
-      foreach (var caller in m_callers) {
-        caller.PauseCheck ();
+      foreach (var kv in m_callers) {
+        kv.Value.PauseCheck ();
       }
     }
 
@@ -59,8 +69,8 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
     /// </summary>
     public void ResumeCheck ()
     {
-      foreach (var caller in m_callers) {
-        caller.ResumeCheck ();
+      foreach (var kv in m_callers) {
+        kv.Value.ResumeCheck ();
       }
     }
     #endregion // IChecked implementation

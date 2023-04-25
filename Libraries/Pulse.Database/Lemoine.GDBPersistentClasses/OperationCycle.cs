@@ -79,14 +79,18 @@ namespace Lemoine.GDBPersistentClasses
       {
         if (m_active) {
           if ((0 != m_operationCycle.Id) && !m_operationCycle.m_deleted) {
-            AnalysisAccumulator.SetCheckedCaller (m_operationCycle);
-            AnalysisAccumulator.OperationCycleUpdated (m_previous,
-                                                       m_operationCycle);
+            using (var analysisAccumulatorCallerHolder1 = new AnalysisAccumulatorCallerHolder (m_previous)) {
+              using (var analysisAccumulatorCallerHolder2 = new AnalysisAccumulatorCallerHolder (m_operationCycle)) {
+                AnalysisAccumulator.OperationCycleUpdated (m_previous,
+                                                           m_operationCycle);
+              }
+            }
           }
           else if (null != m_previous) {
-            AnalysisAccumulator.SetCheckedCaller (m_operationCycle);
-            AnalysisAccumulator.OperationCycleUpdated (m_previous,
-                                                       null);
+            using (var analysisAccumulatorCallerHolder = new AnalysisAccumulatorCallerHolder (m_previous)) {
+              AnalysisAccumulator.OperationCycleUpdated (m_previous,
+                                                         null);
+            }
           }
           m_operationCycle.m_changeTrackerActive = false;
         }
@@ -147,8 +151,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual DateTime? Begin
     {
       get { return m_begin; }
-      set
-      {
+      set {
         if (!object.Equals (m_begin, value)) {
           if (value.HasValue && End.HasValue && (value.Value.CompareTo (End.Value) > 0)) {
             log.ErrorFormat ("Cycle begin set to {0} > cycle end {1}",
@@ -169,8 +172,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual DateTime? End
     {
       get { return m_end; }
-      protected set
-      {
+      protected set {
         if (!object.Equals (m_end, value)) {
           if (value.HasValue && Begin.HasValue && (value.Value.CompareTo (Begin.Value) < 0)) {
             log.ErrorFormat ("Cycle end set to {0} < cycle begin {1}",
@@ -195,8 +197,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual DateTime DateTime
     {
-      get
-      {
+      get {
         if (m_end.HasValue && !this.Status.HasFlag (OperationCycleStatus.EndEstimated)) {
           return m_end.Value;
         }
@@ -230,8 +231,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IOperationSlot OperationSlot
     {
       get { return m_operationSlot; }
-      set
-      {
+      set {
         if (object.Equals (m_operationSlot, value)) {
           // Nothing to do
           return;
@@ -250,8 +250,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual Double? OffsetDuration
     {
       get { return m_offsetDuration; }
-      set
-      {
+      set {
         if (object.Equals (m_offsetDuration, value)) {
           // Nothing to do
           return;
@@ -280,8 +279,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual bool Full
     {
       get { return m_full; }
-      set
-      {
+      set {
         if (object.Equals (m_full, value)) {
           // Nothing to do
           return;
@@ -302,8 +300,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual int? Quantity
     {
       get { return m_quantity; }
-      set
-      {
+      set {
         if (object.Equals (m_quantity, value)) {
           // Nothing to do
           return;

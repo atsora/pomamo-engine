@@ -36,9 +36,7 @@ namespace Lemoine.Model
           return this.Upper.Value.Subtract (this.Lower.Value);
         }
         else {
-          log.DebugFormat ("Duration.get: " +
-                           "upper or lower is not oo " +
-                           "=> return null because there is no valid duration");
+          log.Debug ("Duration.get: upper or lower is oo => return null because there is no valid duration");
           return null;
         }
       }

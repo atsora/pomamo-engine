@@ -17,13 +17,65 @@ using System.Linq;
 using Pulse.Extensions.Database.Accumulator;
 using System.Collections.Concurrent;
 using Lemoine.Database.Persistent;
+using System.Collections;
 
 namespace Lemoine.GDBPersistentClasses
 {
   /// <summary>
+  /// Disposable class to add temporary a <see cref="IChecked"/> object to <see cref="AnalysisAccumulator"/>
+  /// </summary>
+  public class AnalysisAccumulatorCallerHolder : IDisposable
+  {
+    readonly IChecked m_caller;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public AnalysisAccumulatorCallerHolder (IChecked caller)
+    {
+      Debug.Assert (null != caller);
+
+      m_caller = caller;
+      if (null != m_caller) {
+        var accumulators = AnalysisAccumulator.GetAccumulators ();
+        foreach (var accumulator in accumulators) {
+          if (accumulator is ICheckedCaller) {
+            ICheckedCaller checkedAccumulator = (ICheckedCaller)accumulator;
+            checkedAccumulator.SetCheckedCaller (caller);
+          }
+          if (accumulator is ICheckedCallers) {
+            ICheckedCallers checkedAccumulator = (ICheckedCallers)accumulator;
+            checkedAccumulator.AddCheckedCaller (caller);
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Implements IDisposable
+    /// </summary>
+    public void Dispose ()
+    {
+      if (null != m_caller) {
+        var accumulators = AnalysisAccumulator.GetAccumulators ();
+        foreach (var accumulator in accumulators) {
+          if (accumulator is ICheckedCaller) {
+            ICheckedCaller checkedAccumulator = (ICheckedCaller)accumulator;
+            checkedAccumulator.SetCheckedCaller (null);
+          }
+          if (accumulator is ICheckedCallers) {
+            ICheckedCallers checkedAccumulator = (ICheckedCallers)accumulator;
+            checkedAccumulator.RemoveCheckedCaller (m_caller);
+          }
+        }
+      }
+    }
+  }
+
+  /// <summary>
   /// Description of AnalysisAccumulator.
   /// </summary>
-  public sealed class AnalysisAccumulator : ISessionAccumulator
+  public sealed class AnalysisAccumulator : ISessionAccumulator, IEnumerable<IAccumulator>
   {
     #region Members
     IDictionary<ISession, HashSet<string>> m_messages = new ConcurrentDictionary<ISession, HashSet<string>> (); // Web service messages
@@ -140,8 +192,7 @@ namespace Lemoine.GDBPersistentClasses
     IList<IAccumulator> GetAccumulators (ISession session)
     {
       if (null == session) {
-        log.ErrorFormat ("GetAccumulators: " +
-                         "null session");
+        log.Error ("GetAccumulators: null session");
         throw new ArgumentNullException ("session");
       }
 
@@ -406,27 +457,6 @@ namespace Lemoine.GDBPersistentClasses
       finally {
         // Clean now the session (remove the accumulators and the session locks, else there is a memory leak)
         RemoveAccumulators (session);
-      }
-    }
-
-    /// <summary>
-    /// Initialize the caller
-    /// </summary>
-    /// <param name="caller"></param>
-    public static void SetCheckedCaller (IChecked caller)
-    {
-      if (null != caller) {
-        IList<IAccumulator> accumulators = Instance.GetAccumulators (NHibernateHelper.GetCurrentSession ());
-        foreach (var accumulator in accumulators) {
-          if (accumulator is ICheckedCaller) {
-            ICheckedCaller checkedAccumulator = (ICheckedCaller)accumulator;
-            checkedAccumulator.SetCheckedCaller (caller);
-          }
-          if (accumulator is ICheckedCallers) {
-            ICheckedCallers checkedAccumulator = (ICheckedCallers)accumulator;
-            checkedAccumulator.AddCheckedCaller (caller);
-          }
-        }
       }
     }
 
@@ -929,7 +959,36 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
+
+    /// <summary>
+    /// Get the associated accumulators
+    /// </summary>
+    /// <returns></returns>
+    public static IEnumerable<IAccumulator> GetAccumulators ()
+    {
+      return Instance;
+    }
     #endregion // Methods
+
+    #region Implements IEnunerable<IAccumulator>
+    /// <summary>
+    /// <see cref="IEnumerable{IAccumulator}"/>
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator<IAccumulator> GetEnumerator ()
+    {
+      return GetAccumulators (NHibernateHelper.GetCurrentSession ()).GetEnumerator ();
+    }
+
+    /// <summary>
+    /// <see cref="IEnumerable{IAccumulator}"/>
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator IEnumerable.GetEnumerator ()
+    {
+      return GetAccumulators (NHibernateHelper.GetCurrentSession ()).GetEnumerator ();
+    }
+    #endregion // Implements IEnumerable<IAccumulator>
 
     #region Instance
     static internal AnalysisAccumulator Instance

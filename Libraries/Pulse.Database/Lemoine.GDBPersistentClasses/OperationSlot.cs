@@ -84,15 +84,21 @@ namespace Lemoine.GDBPersistentClasses
       {
         if (m_active) {
           if ((0 != m_operationSlot.Id) && !m_operationSlot.m_deleted) {
-            AnalysisAccumulator.SetCheckedCaller (m_operationSlot);
-            AnalysisAccumulator.OperationSlotUpdated (m_previous,
-                                                      m_operationSlot);
+            using (var analysisAccumulatorCallerHolder1 = new AnalysisAccumulatorCallerHolder (m_previous)) {
+              using (var analysisAccumulatorCallerHolder2 = new AnalysisAccumulatorCallerHolder (m_operationSlot)) {
+                AnalysisAccumulator.OperationSlotUpdated (m_previous,
+                                                          m_operationSlot);
+              }
+            }
           }
           else if (null != m_previous) {
             Debug.Assert (null != m_operationSlot);
-            AnalysisAccumulator.SetCheckedCaller (m_operationSlot);
-            AnalysisAccumulator.OperationSlotRemoved (m_operationSlot,
-                                                      m_previous);
+            using (var analysisAccumulatorCallerHolder1 = new AnalysisAccumulatorCallerHolder (m_previous)) {
+              using (var analysisAccumulatorCallerHolder2 = new AnalysisAccumulatorCallerHolder (m_operationSlot)) {
+                AnalysisAccumulator.OperationSlotRemoved (m_operationSlot,
+                                                          m_previous);
+              }
+            }
           }
           m_operationSlot.m_changeTrackerActive = false;
         }
@@ -135,7 +141,7 @@ namespace Lemoine.GDBPersistentClasses
     /// The default constructor is forbidden
     /// </summary>
     protected OperationSlot ()
-      : base (true)
+  : base (true)
     {
     }
 
@@ -146,7 +152,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="range"></param>
     public OperationSlot (IMachine machine,
                           UtcDateTimeRange range)
-      : base (true, machine, range)
+  : base (true, machine, range)
     {
     }
 
@@ -173,7 +179,7 @@ namespace Lemoine.GDBPersistentClasses
                                       DateTime? day,
                                       IShift shift,
                                       UtcDateTimeRange range)
-      : base (true, machine, range)
+  : base (true, machine, range)
     {
       Debug.Assert ((null == shift) || day.HasValue);
 
@@ -366,7 +372,7 @@ namespace Lemoine.GDBPersistentClasses
                                       "because the slot is in the future");
           }
           else { // Slot in present / past
-            // If the activity is consolidated, keep the consolidated range, to avoid too much process in the future
+                 // If the activity is consolidated, keep the consolidated range, to avoid too much process in the future
             if (m_activityConsolidated && AnalysisConfigHelper.OperationSlotRunTime) {
               Debug.Assert (this.RunTime.HasValue); // activityConsolidated => RunTime.HasValue
               GetLogger ().DebugFormat ("EndDateTime.set: " +
@@ -649,7 +655,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else { // Slot in present / past
         if (!newRange.Equals (this.DateTimeRange)) { // New range
-          // If the operation cycles or activity or production are consolidated, keep the consolidated range, to avoid too much process in the future
+                                                     // If the operation cycles or activity or production are consolidated, keep the consolidated range, to avoid too much process in the future
           if (m_activityConsolidated && AnalysisConfigHelper.OperationSlotRunTime) {
             Debug.Assert (this.RunTime.HasValue); // m_activityConsolidated => this.RunTime.HasValue
             GetLogger ().DebugFormat ("UpdateDateTimeRange: " +
@@ -781,18 +787,19 @@ namespace Lemoine.GDBPersistentClasses
       GetLogger ().Debug ("Consolidate");
       SetActive ();
 
-      AnalysisAccumulator.SetCheckedCaller (this);
+      using (var analysisAccumulatorCallerHolder = new AnalysisAccumulatorCallerHolder (this)) {
 
-      if (false == m_activityConsolidated) {
-        GetLogger ().Debug ("Consolidate: " +
-                            "consolidate the activity properties");
-        ConsolidateRunTime ();
-      }
+        if (false == m_activityConsolidated) {
+          GetLogger ().Debug ("Consolidate: " +
+                              "consolidate the activity properties");
+          ConsolidateRunTime ();
+        }
 
-      if (false == m_productionConsolidated) {
-        GetLogger ().Debug ("Consolidate: " +
-                            "consolidate the production properties");
-        ConsolidateProduction ();
+        if (false == m_productionConsolidated) {
+          GetLogger ().Debug ("Consolidate: " +
+                              "consolidate the production properties");
+          ConsolidateProduction ();
+        }
       }
 
       GetLogger ().Debug ("Consolidate: " +

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Diagnostics;
 
 namespace Lemoine.Threading
 {
@@ -16,5 +17,11 @@ namespace Lemoine.Threading
     /// </summary>
     /// <param name="caller"></param>
     void AddCheckedCaller (IChecked caller);
+
+    /// <summary>
+    /// Remove a checked caller
+    /// </summary>
+    /// <param name="caller"></param>
+    void RemoveCheckedCaller (IChecked caller);
   }
 }
