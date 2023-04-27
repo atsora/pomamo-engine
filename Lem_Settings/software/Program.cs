@@ -14,6 +14,7 @@ using Lemoine.DataControls;
 using Lemoine.Extensions;
 using Lemoine.FileRepository;
 using Lemoine.I18N;
+using Lemoine.Info;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Lemoine.Model;
 using Lemoine.ModelDAO.Interfaces;
@@ -129,7 +130,7 @@ namespace Lem_Settings
 
       // For now, just a simple identification
       if (login.Equals ("superadmin", StringComparison.InvariantCultureIgnoreCase)) {
-        if (password.Equals ("superpassword")) {
+        if (PasswordManager.IsSuperAdmin (password)) {
           return LemSettingsGlobal.UserCategory.SUPER_ADMIN;
         }
         else {
@@ -138,7 +139,7 @@ namespace Lem_Settings
         }
       }
       else if (login.Equals ("admin", StringComparison.InvariantCultureIgnoreCase)) {
-        if (password == "password") {
+        if (PasswordManager.IsAdmin (password)) {
           return LemSettingsGlobal.UserCategory.ADMINISTRATOR;
         }
         else {

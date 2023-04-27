@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Lemoine.Core.Hosting;
 using Lemoine.DataControls;
 using Pulse.Hosting.ApplicationInitializer;
+using Lemoine.Info;
 
 namespace Lem_Configuration
 {
@@ -117,7 +118,7 @@ namespace Lem_Configuration
     {
       // For now, just a simple identification
       if (login.Equals ("superadmin", StringComparison.InvariantCultureIgnoreCase)) {
-        if (password.Equals ("superpassword")) {
+        if (PasswordManager.IsSuperAdmin (password)) {
           return true;
         }
         else {
@@ -126,7 +127,7 @@ namespace Lem_Configuration
         }
       }
       else if (login.Equals ("admin", StringComparison.InvariantCultureIgnoreCase)) {
-        if (password == "password") {
+        if (PasswordManager.IsAdmin (password)) {
           return true;
         }
         else {
