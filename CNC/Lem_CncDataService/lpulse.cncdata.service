@@ -1,0 +1,14 @@
+[Unit]
+Description=Lemoine CncData Service
+
+[Service]
+WorkingDirectory=/usr/share/lpulse
+ExecStart=/usr/bin/dotnet /usr/share/lpulse/Lem_CncDataService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=lpulse-cncdata
+User=lpulse
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

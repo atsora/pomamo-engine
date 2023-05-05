@@ -17,17 +17,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   /// </summary>
   public sealed class OsConfigReader: IOsConfigReader
   {
-    static readonly string LINUX_CONF_DIRECTORY = "/etc/lpulse";
-
     readonly ILog log = LogManager.GetLogger (typeof (OsConfigReader).FullName);
 
     readonly MultiConfigReader m_multiConfigReader = new MultiConfigReader ();
     readonly bool m_isWindows;
     readonly bool m_isLinux;
     readonly IPersistentConfigWriter m_configWriter = null;
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -54,7 +49,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
         m_multiConfigReader.Add (registryConfigReader);
         var commonApplicationData = System.Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
         var commonConfigDirectory = Path.Combine (commonApplicationData, "Lemoine", "PULSE");
-        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (commonConfigDirectory, "lpulse.options.d"));
+        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (commonConfigDirectory, $"{PulseInfo.LinuxPackageName}.options.d"));
         m_multiConfigReader.Add (directoryConfigReader);
         m_multiConfigReader.Add (new OdbcConfigReader ());
         m_multiConfigReader.Add (new InstallerConfigReader ());
@@ -62,10 +57,10 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
         m_configWriter = directoryConfigReader;
       }
       if (m_isLinux) {
-        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (LINUX_CONF_DIRECTORY, "lpulse.options")));
-        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (LINUX_CONF_DIRECTORY, "lpulse.options.d"));
+        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (PulseInfo.LinuxConfDirectory, $"{PulseInfo.LinuxPackageName}.options")));
+        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (PulseInfo.LinuxConfDirectory, $"{PulseInfo.LinuxPackageName}.options.d"));
         m_multiConfigReader.Add (directoryConfigReader);
-        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (LINUX_CONF_DIRECTORY, "lpulse.directories")));
+        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (PulseInfo.LinuxConfDirectory, $"{PulseInfo.LinuxPackageName}.directories")));
         m_configWriter = directoryConfigReader;
       }
 #if NETCOREAPP
@@ -96,7 +91,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
         m_multiConfigReader.Add (registryConfigReader);
         var commonApplicationData = System.Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
         var commonConfigDirectory = Path.Combine (commonApplicationData, "Lemoine", "PULSE");
-        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (commonConfigDirectory, "lpulse.options.d"));
+        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (commonConfigDirectory, $"{PulseInfo.LinuxPackageName}.options.d"));
         m_multiConfigReader.Add (directoryConfigReader);
         m_multiConfigReader.Add (new OdbcConfigReader ());
         m_multiConfigReader.Add (new InstallerConfigReader ());
@@ -104,10 +99,10 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
         m_configWriter = directoryConfigReader;
       }
       if (m_isLinux) {
-        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (LINUX_CONF_DIRECTORY, "lpulse.options")));
-        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (LINUX_CONF_DIRECTORY, "lpulse.options.d"));
+        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (PulseInfo.LinuxConfDirectory, $"{PulseInfo.LinuxPackageName}.options")));
+        var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (PulseInfo.LinuxConfDirectory, $"{PulseInfo.LinuxPackageName}.options.d"));
         m_multiConfigReader.Add (directoryConfigReader);
-        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (LINUX_CONF_DIRECTORY, "lpulse.directories")));
+        m_multiConfigReader.Add (OptionsFileConfigReader.CreateFromPath (Path.Combine (PulseInfo.LinuxConfDirectory, $"{PulseInfo.LinuxPackageName}.directories")));
         m_configWriter = directoryConfigReader;
       }
 #if NETCOREAPP

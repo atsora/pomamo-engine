@@ -264,6 +264,11 @@ namespace Lemoine.Info
         throw;
       }
     }
+
+    /// <summary>
+    /// Get the used database user
+    /// </summary>
+    public static string DatabaseUser => Instance.Username;
     #endregion // Methods
 
     #region Instance

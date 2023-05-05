@@ -75,10 +75,10 @@ namespace Lemoine.Database.Persistent
     volatile NHibernateStatus m_status = NHibernateStatus.NotInitialized;
     NHibernate.Cfg.Configuration m_configuration = null;
     volatile ISessionFactory m_sessionFactory = null;
-    SemaphoreSlim m_semaphoreSlim = new SemaphoreSlim (1, 1);
+    readonly SemaphoreSlim m_semaphoreSlim = new SemaphoreSlim (1, 1);
     string m_applicationName = null;
     bool m_killOrphanedConnectionsFirst = false;
-    ConcurrentDictionary<Type, IPersistentClassModel> m_persistentClassModels = new ConcurrentDictionary<Type, IPersistentClassModel> ();
+    readonly ConcurrentDictionary<Type, IPersistentClassModel> m_persistentClassModels = new ConcurrentDictionary<Type, IPersistentClassModel> ();
     #endregion
 
     /// <summary>

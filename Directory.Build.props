@@ -3,45 +3,43 @@
 <!-- Directory.Build.props is imported very early in Microsoft.Common.props, and properties defined later are unavailable to it. 
      So, avoid referring to properties that are not yet defined (and will evaluate to empty). 
      More info in https://docs.microsoft.com/fr-fr/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
-  
-  
-  <!-- ALL - common assembly infos -->
-  <PropertyGroup Condition=" '$(UsingMicrosoftNETSdk)' == 'true' ">
-    <Product>Pulse</Product>
-    <Authors>LAT</Authors>
-    <Company>Lemoine Automation Technologies</Company>
-    <Copyright>Copyright(c) 2009-2022</Copyright>
-    <AssemblyVersion>14.0.0.0</AssemblyVersion>
-  </PropertyGroup>
-  
-  
-  <!-- ALL - signing properties -->
+    
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <DelaySign>False</DelaySign>
-    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
-  </PropertyGroup>
-  
-  
-  <!-- ALL - default configuration -->
-  <PropertyGroup Condition=" '$(MSBuildProjectExtension)' != '.vcxproj' ">
     <Configurations>Debug;Release;VS</Configurations>
-    <OutputPath>bin\$(Configuration)\</OutputPath> <!-- prevent .exe to search libraries in ...\bin\x86\Release\netstandard2.0\... --> 
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <!--BaseOutputPath>bin\$(ProductDir)</BaseOutputPath-->
+    <OutputPath>bin\$(ProductDir)\$(Configuration)\</OutputPath> <!-- prevents .exe to search libraries in ...\bin\x86\Release\netstandard2.0\... -->
+    <!--BaseIntermediateOutputPath>obj\$(ProductDir)</BaseIntermediateOutputPath--> 
+    <IntermediateOutputPath>obj\$(ProductDir)\$(Configuration)\</IntermediateOutputPath>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages> <!-- ensure that all localization resources dlls are not deployed -->
   </PropertyGroup>
   
-
-  <!-- ALL - ignore nuget warning about framework diff between .NETFramework,Version=v4.8 / .NETStandard,Version=v2.0 -->
-  <PropertyGroup>
-    <NoWarn>NU1701;NU1702</NoWarn>
+  <PropertyGroup Condition=" '$(UsingMicrosoftNETSdk)' == 'true' ">
+    <Authors>Nicolas Relange</Authors>
+    <Company>Atsora Solutions</Company>
+    <Product>$(Product)</Product>
+    <Copyright>Copyright (C) 2023 Atsora Solutions</Copyright>
+    <AssemblyVersion>14.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="$(Product.StartsWith('Atsora')) == 'true'">
+    <DefineConstants>ATSORA</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Product.StartsWith('Lemoine')) == 'true'">
+    <DefineConstants>LEMOINE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('D')) == 'true' Or '$(Configuration)' == 'Debug'">
+    <DefineDebug /><!-- Define the DEBUG constant -->
+    <!--DefineTrace /--><!-- Define the TRACE constant -->
   </PropertyGroup>
 
-  
-  <!-- ALL - SLN: allow projects to assign their $(configuration) to referenced project that are not in the solution - https://github.com/dotnet/sdk/issues/10050 -->
   <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <!-- ignore nuget warning about framework diff between .NETFramework,Version=v4.8 / .NETStandard,Version=v2.0 -->
+    <NoWarn>NU1701;NU1702</NoWarn>
+    <!-- allow projects to assign their $(configuration) to referenced project that are not in the solution - https://github.com/dotnet/sdk/issues/10050 -->
     <ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform>
   </PropertyGroup>
-    
   
 </Project>

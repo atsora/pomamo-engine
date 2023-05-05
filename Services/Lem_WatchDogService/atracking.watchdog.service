@@ -1,0 +1,14 @@
+﻿[Unit]
+Description=Atsora Tracking WatchDog Service
+
+[Service]
+WorkingDirectory=/usr/share/atracking
+ExecStart=/usr/bin/dotnet /usr/share/atracking/Lem_WatchDogService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=atracking-watchdog
+User=atracking
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

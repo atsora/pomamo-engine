@@ -1,0 +1,14 @@
+[Unit]
+Description=Pomamo Analysis Service
+
+[Service]
+WorkingDirectory=/usr/share/pomamo
+ExecStart=/usr/bin/dotnet /usr/share/pomamo/Lem_AnalysisService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=pomamo-analysis
+User=pomamo
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

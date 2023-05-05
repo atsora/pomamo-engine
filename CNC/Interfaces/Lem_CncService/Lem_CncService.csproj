@@ -18,30 +18,30 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
   	<PackageReference Include="System.IO.Ports" /> <!-- indirect dependency for Lemoine.Cnc.Serial -->
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
-    <ProjectReference Include="..\..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
-    <ProjectReference Include="..\..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />
-    <ProjectReference Include="..\..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
-    <ProjectReference Include="..\..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.DataRepository\Lemoine.DataRepository.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net48" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.WebDataAccess\Lemoine.WebDataAccess.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
-    <ProjectReference Include="..\..\Lemoine.Cnc.ICncModule\Lemoine.Cnc.ICncModule.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\..\Lemoine.Cnc.Engine\Lemoine.Cnc.Engine.csproj" AdditionalProperties="TargetFramework=net48" />
-    <ProjectReference Include="..\..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.DataRepository\Lemoine.Cnc.DataRepository.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.CncAlarm\Lemoine.Cnc.CncAlarm.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.Data\Lemoine.Cnc.Data.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.FileRepository.Corba\Lemoine.FileRepository.Corba.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.WebDataAccess\Lemoine.WebDataAccess.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Lemoine.Cnc.ICncModule\Lemoine.Cnc.ICncModule.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Lemoine.Cnc.Engine\Lemoine.Cnc.Engine.csproj" AdditionalProperties="TargetFramework=net48;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.DataRepository\Lemoine.Cnc.DataRepository.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.CncAlarm\Lemoine.Cnc.CncAlarm.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.Data\Lemoine.Cnc.Data.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.FileRepository.Corba\Lemoine.FileRepository.Corba.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">

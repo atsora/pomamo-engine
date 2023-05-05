@@ -1,0 +1,14 @@
+[Unit]
+Description=Pomamo CncData Service
+
+[Service]
+WorkingDirectory=/usr/share/pomamo
+ExecStart=/usr/bin/dotnet /usr/share/pomamo/Lem_CncDataService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=pomamo-cncdata
+User=pomamo
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

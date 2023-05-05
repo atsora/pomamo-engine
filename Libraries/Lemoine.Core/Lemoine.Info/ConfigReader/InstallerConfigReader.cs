@@ -14,7 +14,7 @@ namespace Lemoine.Info.ConfigReader
   /// Read some registry keys from the installer
   /// 
   /// Here are the supported keys:
-  /// <item>DbConnection: from PulsedbName and PulsedbDatabase</item>
+  /// <item>DbConnection: from PomamodbName and PomamodbDatabase</item>
   /// 
   /// Thread safe
   /// </summary>
@@ -49,8 +49,8 @@ namespace Lemoine.Info.ConfigReader
       try {
         if (key.Equals (DB_CONNECTION_CONFIG_KEY, StringComparison.InvariantCultureIgnoreCase)) {
         // Get the properties of the connection in the registry
-          var host = m_registryConfigReader.Get<string> ("PulsedbName");
-          var database = m_registryConfigReader.Get<string> ("PulsedbDatabase");
+          var host = m_registryConfigReader.Get<string> ("PomamodbName");
+          var database = m_registryConfigReader.Get<string> ("PomamodbDatabase");
           return $"{host}/{database}";
         }
       }
@@ -72,7 +72,7 @@ namespace Lemoine.Info.ConfigReader
   /// Read some registry keys from the installer
   /// 
   /// Here are the supported keys:
-  /// <item>DbConnection: from PulsedbName and PulsedbDatabase</item>
+  /// <item>DbConnection: from PomamodbName and PomamodbDatabase</item>
   /// 
   /// Thread safe
   /// </summary>

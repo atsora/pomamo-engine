@@ -28,7 +28,7 @@ namespace Lemoine.Info
   /// 
   /// The OS or .NET Core specific config readers can be overridden, for example to support:
   /// <item>the .NET Core configurations from ASP.NET Core</item>
-  /// <item>configuration files in /etc/lpulse on Linux</item>
+  /// <item>configuration files in /etc/pomamo on Linux</item>
   /// 
   /// The following types are supported:
   /// <item>string</item>

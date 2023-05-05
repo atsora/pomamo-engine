@@ -16,13 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj" />
-    <ProjectReference Include="..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj" />
-    <ProjectReference Include="..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
-    <ProjectReference Include="..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
-    <ProjectReference Include="..\Libraries\Lemoine.ExcelDataGrid\Lemoine.ExcelDataGrid.csproj" />
-    <ProjectReference Include="..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.Database\Lemoine.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.ExcelDataGrid\Lemoine.ExcelDataGrid.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup>

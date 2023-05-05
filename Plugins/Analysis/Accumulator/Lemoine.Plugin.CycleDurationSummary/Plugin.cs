@@ -12,6 +12,7 @@ using Lemoine.Model;
 using Lemoine.GDBMigration;
 using Lemoine.Extensions.Interfaces;
 using Pulse.Extensions.Plugin;
+using Lemoine.Info;
 
 namespace Lemoine.Plugin.CycleDurationSummary
 {
@@ -94,7 +95,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
         return;
       }
 
-      Database.ExecuteSetOfQueries (@"
+      Database.ExecuteSetOfQueries ($@"
 CREATE TABLE public.cycledurationsummary
 (
   cycledurationsummaryid serial NOT NULL,
@@ -138,8 +139,8 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE public.cycledurationsummary
-  OWNER TO ""DatabaseUser"";
-GRANT ALL ON TABLE public.cycledurationsummary TO ""DatabaseUser"";
+  OWNER TO ""{GDBConnectionParameters.DatabaseUser}"";
+GRANT ALL ON TABLE public.cycledurationsummary TO ""{GDBConnectionParameters.DatabaseUser}"";
     GRANT SELECT ON TABLE public.cycledurationsummary TO PUBLIC;
 ");
       Database.PartitionTable (CYCLE_DURATION_SUMMARY, "monitoredmachine");

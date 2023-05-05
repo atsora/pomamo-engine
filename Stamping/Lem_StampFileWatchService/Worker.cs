@@ -87,7 +87,7 @@ namespace Lem_StampFileWatchService
         .ConfigureAppConfiguration ((hostingContext, config) =>
         {
           config.AddCommandLine (options.Configurations.ToArray ());
-          config.AddEnvironmentVariables ("LPULSE_");
+          config.AddEnvironmentVariables ("POMAMO_");
         })
         .ConfigureServices ((hostContext, services) =>
         {

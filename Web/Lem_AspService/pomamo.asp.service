@@ -1,0 +1,14 @@
+[Unit]
+Description=Pomamo Asp Service
+
+[Service]
+WorkingDirectory=/usr/share/pomamo
+ExecStart=/usr/bin/dotnet /usr/share/pomamo/Lem_AspService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=pomamo-asp
+User=pomamo
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

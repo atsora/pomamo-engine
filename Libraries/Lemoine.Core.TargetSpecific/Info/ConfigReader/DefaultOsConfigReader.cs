@@ -19,27 +19,27 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   public sealed class DefaultOsConfigReader : DefaultGenericConfigReader, IGenericConfigReader
   {
     const string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
-    const string LINUX_CONF_DIRECTORY = "/etc/lpulse"; // COMON_CONFIG_DIRECTORY_KEY
+    static readonly string LINUX_CONF_DIRECTORY = $"/etc/{PulseInfo.LinuxPackageName}"; // COMON_CONFIG_DIRECTORY_KEY
     // Windows: %CSIDL_COMMON_APPDATA%\Lemoine\PULSE
 
     const string LOGS_DIRECTORY_KEY = "LogDirectory";
-    const string LINUX_LOG_DIRECTORY = "/var/log/lpulse";
+    static readonly string LINUX_LOG_DIRECTORY = $"/var/log/{PulseInfo.LinuxPackageName}";
     // Windows: 'LocalConfigDirectory'\Logs
 
     const string PFR_DATA_DIRECTORY_KEY = "PfrDataDirectory";
-    const string LINUX_PFR_DATA_DIRECTORY = "/usr/share/lpulse/pfrdata"; // PFR_DATA_DIRECTORY_KEY
+    static readonly string LINUX_PFR_DATA_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/pfrdata"; // PFR_DATA_DIRECTORY_KEY
     // Windows: 'PulseServerInstallDir'\l_ctr\pfrdata
 
     const string SQL_REQUESTS_DIRECTORY_KEY = "SqlRequestsDirectory";
-    const string LINUX_SQL_REQUESTS_DIRECTORY = "/usr/share/lpulse/sql"; // SQL_REQUESTS_DIRECTORY_KEY
+    static readonly string LINUX_SQL_REQUESTS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/sql"; // SQL_REQUESTS_DIRECTORY_KEY
     // Windows: 'PulseServerInstallDir'\sql
 
     const string XML_SCHEMAS_DIRECTORY_KEY = "XmlSchemasDirectory";
-    const string LINUX_XML_SCHEMAS_DIRECTORY = "/usr/share/lpulse/xmlschemas";
+    static readonly string LINUX_XML_SCHEMAS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/xmlschemas";
     // Windows: 'CommonConfigDirectory'\XMLSchemas
 
     const string VERSIONS_DIRECTORY_KEY = "VersionsDirectory";
-    const string LINUX_VERSIONS_DIRECTORY = "/usr/share/lpulse";
+    static readonly string LINUX_VERSIONS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}";
     // Windows: empty
 
     const string ALERT_CONFIG_DIRECTORY_KEY = "Alert.ConfigDirectory";
@@ -48,9 +48,6 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 
     readonly bool m_isWindows;
     readonly bool m_isLinux;
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -75,7 +72,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     /// <returns></returns>
     protected override object Get (string key)
     {
-      // Note: they are also defined on Linux in file lpulse.directories (see OsConfigReader)
+      // Note: they are also defined on Linux in file $"{PulseInfo.LinuxPackageName}.directories" (see OsConfigReader)
 
       switch (key) {
       case COMMON_CONFIG_DIRECTORY_KEY:

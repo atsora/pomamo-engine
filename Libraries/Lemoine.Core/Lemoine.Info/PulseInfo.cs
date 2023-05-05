@@ -36,15 +36,26 @@ namespace Lemoine.Info
     static readonly string INSTALLATION_DIR_KEY = "InstallDir";
     static readonly string PULSE_SERVER_INSTALL_DIR_KEY = "PulseServerInstallDir";
     static readonly string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
-#if NETSTANDARD
-    static readonly string LINUX_CONF_DIRECTORY = "/etc/lpulse";
-#endif // NETSTANDARD
+
+#if ATSORA
+    static readonly string LINUX_PACKAGE_NAME = "atracking";
+    static readonly string WIN_PRODUCT_FOLDER_NAME = "atracking";
+#elif LEMOINE
+    static readonly string LINUX_PACKAGE_NAME = "lpulse";
+    static readonly string WIN_PRODUCT_FOLDER_NAME = "PULSE";
+#else
+    static readonly string LINUX_PACKAGE_NAME = "pomamo";
+    static readonly string WIN_PRODUCT_FOLDER_NAME = "pomamo";
+#endif
+
+    static readonly string LINUX_CONF_DIRECTORY = $"/etc/{LINUX_PACKAGE_NAME}";
+
     static readonly string PFR_DATA_DIRECTORY_KEY = "PfrDataDirectory";
     static readonly string SQL_REQUESTS_DIRECTORY_KEY = "SqlRequestsDirectory";
     static readonly string LOCAL_CONFIGURATION_DIRECTORY_KEY = "LocalConfigurationDirectory";
 
     static readonly string DATABASE_NAME_KEY = "DatabaseName";
-    static readonly string DATABASE_NAME_DEFAULT = "DatabaseName";
+    static readonly string DATABASE_NAME_DEFAULT = Constants.DEFAULT_DATABASE_NAME;
 
     static readonly string LEM_CTR_NAME_KEY = "LemCtrName";
 
@@ -56,7 +67,6 @@ namespace Lemoine.Info
 
     static readonly ILog log = LogManager.GetLogger (typeof (PulseInfo).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Installation directory
     /// 
@@ -372,6 +382,27 @@ namespace Lemoine.Info
     }
 
     /// <summary>
+    /// Product folder name
+    /// </summary>
+    /// <value></value>
+    public static string ProductFolderName =>
+#if NETSTANDARD
+      RuntimeInformation.IsOSPlatform (OSPlatform.Windows) ? WIN_PRODUCT_FOLDER_NAME : LINUX_PACKAGE_NAME;
+#else // !NETSTANDARD
+      WIN_PRODUCT_FOLDER_NAME;
+#endif
+
+    /// <summary>
+    /// Linux conf directory
+    /// </summary>
+    public static string LinuxConfDirectory => $"/etc/{LINUX_PACKAGE_NAME}";
+
+    /// <summary>
+    /// Linux package name
+    /// </summary>
+    public static string LinuxPackageName => LINUX_PACKAGE_NAME;
+
+    /// <summary>
     /// URL of the web service
     /// </summary>
     public static string WebServiceUrl
@@ -386,7 +417,6 @@ namespace Lemoine.Info
     {
       get { return ConfigSet.LoadAndGet<string> (MAIN_WEB_SERVICE_URL_KEY, MAIN_WEB_SERVICE_URL_DEFAULT); }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -403,7 +433,6 @@ namespace Lemoine.Info
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Reload the Pulse info data
     /// </summary>
@@ -434,21 +463,8 @@ namespace Lemoine.Info
             log.Info ($"Load: fallback localApplicationData to {localApplicationData} from home {home}");
           }
         }
-        string pulseDirectory;
-#if !NETSTANDARD
-        if (true) {
-#else // NETSTANDARD
-        if (RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
-#endif // NETSTANDARD
-          pulseDirectory = "PULSE";
-        }
-#if NETSTANDARD
-        else {
-          pulseDirectory = "lpulse";
-        }
-#endif // NETSTANDARD
-        m_defaultLocalConfigurationDirectory = Path.Combine (localApplicationData,
-                                                             pulseDirectory);
+        m_defaultLocalConfigurationDirectory = Path
+          .Combine (localApplicationData, ProductFolderName);
         try {
           if (!System.IO.Directory.Exists (m_defaultLocalConfigurationDirectory)) {
             System.IO.Directory.CreateDirectory (m_defaultLocalConfigurationDirectory);
@@ -489,7 +505,6 @@ namespace Lemoine.Info
         System.IO.Directory.CreateDirectory (directory);
       }
     }
-    #endregion // Methods
 
     #region Instance
     static PulseInfo Instance

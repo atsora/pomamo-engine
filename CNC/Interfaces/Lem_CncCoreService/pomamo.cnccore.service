@@ -1,0 +1,14 @@
+[Unit]
+Description=Pomamo CncCore Service
+
+[Service]
+WorkingDirectory=/usr/share/pomamo
+ExecStart=/usr/bin/dotnet /usr/share/pomamo/Lem_CncCoreService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=pomamo-cnccore
+User=pomamo
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

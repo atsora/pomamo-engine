@@ -87,7 +87,7 @@ namespace Lem_LoopingService
         .ConfigureAppConfiguration ((hostingContext, config) =>
         {
           config.AddCommandLine (options.MicrosoftParameters.ToArray ());
-          config.AddEnvironmentVariables ("LPULSE_");
+          config.AddEnvironmentVariables ("POMAMO_");
         })
         .ConfigureServices ((hostContext, services) =>
         {

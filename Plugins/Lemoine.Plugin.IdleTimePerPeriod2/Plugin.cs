@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using Lemoine.Extensions;
+using Lemoine.Info;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using Lemoine.GDBMigration;
@@ -95,7 +96,7 @@ namespace Lemoine.Plugin.IdleTimePerPeriod2
     
     void Install1 ()
     {
-      Database.ExecuteSetOfQueries (@"CREATE TABLE IF NOT EXISTS plugins.idletimeperperiod2_values 
+      Database.ExecuteSetOfQueries ($@"CREATE TABLE IF NOT EXISTS plugins.idletimeperperiod2_values 
 (
   id bigserial NOT NULL,
   machineid integer,
@@ -118,8 +119,8 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE plugins.idletimeperperiod2_values
-  OWNER TO ""DatabaseUser"";
-GRANT ALL ON TABLE plugins.idletimeperperiod2_values TO ""DatabaseUser"";
+  OWNER TO ""{GDBConnectionParameters.DatabaseUser}"";
+GRANT ALL ON TABLE plugins.idletimeperperiod2_values TO ""{GDBConnectionParameters.DatabaseUser}"";
 GRANT SELECT ON TABLE plugins.idletimeperperiod2_values TO PUBLIC;");
       Database.PartitionTable ("plugins", "idletimeperperiod2_values", "monitoredmachine");
     }

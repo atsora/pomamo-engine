@@ -21,10 +21,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Stamping\Lemoine.Stamping.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Stamping\Lemoine.Stamping.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
 </Project>

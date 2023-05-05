@@ -43,7 +43,7 @@ namespace Pulse.Hosting
       return hostBuilder
         .ConfigureAppConfiguration ((hostingContext, config) => {
           config.AddCommandLine (options.MicrosoftParameters.ToArray ());
-          config.AddEnvironmentVariables ("LPULSE_");
+          config.AddEnvironmentVariables ("POMAMO_");
         });
     }
 

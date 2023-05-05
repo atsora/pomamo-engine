@@ -1,0 +1,14 @@
+﻿[Unit]
+Description=Pomamo Alert Service
+
+[Service]
+WorkingDirectory=/usr/share/pomamo
+ExecStart=/usr/bin/dotnet /usr/share/pomamo/Lem_AlertService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=pomamo-alert
+User=pomamo
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

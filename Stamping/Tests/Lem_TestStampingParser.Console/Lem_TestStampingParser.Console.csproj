@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Stamping\Lemoine.Stamping.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.StandardGCodesParser\Lemoine.StandardGCodesParser.fsproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Stamping\Lemoine.Stamping.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.StandardGCodesParser\Lemoine.StandardGCodesParser.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
 </Project>

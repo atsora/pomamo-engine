@@ -4,35 +4,35 @@
      So, it can override properties and targets defined in most of the build logic.
      More info in https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
 
+  <PropertyGroup Condition=" '$(KeyFile)' != '' And Exists('$(KeyFile)')">
+    <Keyfile>$(KeyFile)</Keyfile>
+  </PropertyGroup>
 
-  <!-- ALL - temporary remove some files during migration to SDK format, avoid problems when switching from master to develop branch -->
-  <ItemGroup>
-    <None Remove="**\*.bak" />
-    <None Remove="**\*~" />
-    <Compile Remove="**\*.AssemblyInfo.cs" />
-    <Compile Remove="**\*.*.AssemblyInfo.cs" />
-    <Compile Remove="Auto.AssemblyInfo.cs" />
-    <Compile Remove="CommonAssemblyInfo.cs" />
-  </ItemGroup>
-  
-
-  <!-- ALL - compilation Release only -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugType>None</DebugType>   <!-- disable .pdb generation -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>   <!-- disable .pdb generation -->
+    <Optimize>true</Optimize>
+    <Obfuscate>true</Obfuscate>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>    <!-- don't copy .pdb files in publish outputdir - should not be needed because of above DebugType=None -->
     <CopyDocumentationFileToOutputDirectory>false</CopyDocumentationFileToOutputDirectory>    <!-- don't copy xml documentation to outputdir -->
     <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>   <!-- don't include reference assemblies option file like .pdb or .xml - used fo nhibernate,sharedmemory,... -->
   </PropertyGroup>
-  
-  
-  <!-- LIBRARIES - platforms properties -->
-  <PropertyGroup Condition=" '$(OutputType)' == 'Library' And $(AssemblyName.EndsWith('UnitTests')) == 'false'">
-    <Platforms>AnyCPU</Platforms>
-    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>  <!-- don't copy all dependent assemblies to outputdir (Microsoft, System, ...) -->
+  <PropertyGroup Condition=" '$(Configuration)' != 'Release'">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
   </PropertyGroup>
   
+  <!-- Libraries - platforms properties -->
+  <PropertyGroup Condition=" '$(OutputType)' == 'Library' And $(AssemblyName.EndsWith('UnitTests')) == 'false'">
+    <Platforms>AnyCPU</Platforms>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>  <!-- don't copy all dependent assemblies to OutDir (Microsoft, System, ...) -->
+    <ProjectReference>
+      <Private>False</Private><!-- Set Private=false in all ProjectReference -> don't copy referenced dll files into OutDir -->
+    </ProjectReference>
+  </PropertyGroup>
   
-  <!-- UNITTESTS - properties -->
+  <!-- Unit tests -->
   <PropertyGroup Condition=" '$(OutputType)' == 'Library' And $(AssemblyName.EndsWith('UnitTests')) == 'true' And $(AssemblyName) != 'Lemoine.UnitTests' ">
     <Platforms>x86</Platforms>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -40,21 +40,11 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   
-  
-  <!-- LIBRARIES - Set Private=false in all ProjectReference -> don't copy referenced dll files into outputdir -->
-  <ItemDefinitionGroup Condition="'$(OutputType)' == 'Library' And $(AssemblyName.EndsWith('UnitTests')) == 'false' ">
-    <ProjectReference>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemDefinitionGroup>
-
-
-  <!-- LIBRARIES - documentation -->
-  <PropertyGroup Condition=" ( '$(OutputType)' == 'Library' And $(AssemblyName.EndsWith('UnitTests')) == 'false' And $(AssemblyName.StartsWith('Lemoine.Plugin')) == 'false') And ( '$(Configuration)' == 'Debug' Or '$(Configuration)' == 'VS' ) ">
+  <!-- Libraries - documentation -->
+  <PropertyGroup Condition=" ( '$(OutputType)' == 'Library' And $(AssemblyName.EndsWith('UnitTests')) == 'false' And $(AssemblyName.StartsWith('Lemoine.Plugin')) == 'false') And ( '$(Configuration)' != 'Release' ) ">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   
-
   <!-- ALL - target to copy the compiled files from VisualStudio output directory to a custom directory (pulse_exe_xxx) - automatically launch when the property CustomOutDir is set in command line -->
   <Target Name="CopyFilesToCustomDirectory" AfterTargets="CopyFilesToOutputDirectory" Condition=" '$(CustomOutDir)' != '' ">
     <Message Text="==> COPY $(AssemblyName) to $(CustomOutDir)" Importance="high"></Message>
@@ -65,6 +55,4 @@
     <Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(CustomOutDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
   </Target>
   
-  
 </Project>
-

@@ -54,9 +54,5 @@ namespace Lemoine.Plugin.OperationSlotCycles
     /// </summary>
     public override int Version { get { return 1; } }
     #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

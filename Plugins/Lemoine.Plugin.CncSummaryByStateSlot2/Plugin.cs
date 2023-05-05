@@ -9,6 +9,7 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using Lemoine.GDBMigration;
 using Lemoine.Extensions.Plugin;
+using Lemoine.Info;
 using Lemoine.Model;
 using Lemoine.Extensions.Interfaces;
 using Pulse.Extensions.Plugin;
@@ -103,7 +104,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
 
     void Install1 ()
     {
-      Database.ExecuteSetOfQueries (@"CREATE TABLE IF NOT EXISTS plugins.cncsummarybystateslot2_values 
+      Database.ExecuteSetOfQueries ($@"CREATE TABLE IF NOT EXISTS plugins.cncsummarybystateslot2_values 
 (
   id bigserial NOT NULL,
   machinemoduleid integer NOT NULL,
@@ -127,8 +128,8 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE plugins.cncsummarybystateslot2_values
-  OWNER TO ""DatabaseUser"";
-GRANT ALL ON TABLE plugins.cncsummarybystateslot2_values TO ""DatabaseUser"";
+  OWNER TO ""{GDBConnectionParameters.DatabaseUser}"";
+GRANT ALL ON TABLE plugins.cncsummarybystateslot2_values TO ""{GDBConnectionParameters.DatabaseUser}"";
 GRANT SELECT ON TABLE plugins.cncsummarybystateslot2_values TO PUBLIC;");
       Database.PartitionTable ("plugins", "cncsummarybystateslot2_values", "machinemodule");
     }

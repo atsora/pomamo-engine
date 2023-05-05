@@ -15,14 +15,14 @@ namespace Lemoine.ServiceTools.ServicesProviders
   /// Return the Lemoine services that are in Auto mode
   /// </summary>
   [SupportedOSPlatform ("windows")]
-  public class LemoineServicesProviderOnWindows : AutoServicesProviderOnWindows, IServiceControllersProvider
+  public class PomamoServicesProviderOnWindows : AutoServicesProviderOnWindows, IServiceControllersProvider
   {
-    readonly ILog log = LogManager.GetLogger (typeof (LemoineServicesProviderOnWindows).FullName);
+    readonly ILog log = LogManager.GetLogger (typeof (PomamoServicesProviderOnWindows).FullName);
 
     /// <summary>
     /// Constructor
     /// </summary>
-    public LemoineServicesProviderOnWindows()
+    public PomamoServicesProviderOnWindows()
       : base ("Lem_AlertService", "Lem_AnalysisService", "Lem_AutoReasonService", "Lem_PFR", "Lem_SynchronizationService", "Lem_AspService", "Lem_CncService", "Lem_CncCoreService", "Lem_CncDataService", "TAO_NT_Naming_Service", "omninames", "Tomcat9", "nscp", "MTConnect Agent", "MTConnectAdapterService")
     {
     }

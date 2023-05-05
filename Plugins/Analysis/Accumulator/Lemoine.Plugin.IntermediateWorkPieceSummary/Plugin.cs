@@ -13,6 +13,7 @@ using Lemoine.GDBMigration;
 using static Lemoine.Plugin.IntermediateWorkPieceSummary.TableName;
 using Lemoine.Extensions.Interfaces;
 using Pulse.Extensions.Plugin;
+using Lemoine.Info;
 
 namespace Lemoine.Plugin.IntermediateWorkPieceSummary
 {
@@ -87,7 +88,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     void Install1 ()
     {
       if (!Database.TableExists (INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY)) {
-        Database.ExecuteSetOfQueries (@"
+        Database.ExecuteSetOfQueries ($@"
 CREATE TABLE public.iwpbymachinesummary
 (
   iwpbymachinesummaryid serial NOT NULL,
@@ -129,8 +130,8 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE public.iwpbymachinesummary
-  OWNER TO ""DatabaseUser"";
-GRANT ALL ON TABLE public.iwpbymachinesummary TO ""DatabaseUser"";
+  OWNER TO ""{GDBConnectionParameters.DatabaseUser}"";
+GRANT ALL ON TABLE public.iwpbymachinesummary TO ""{GDBConnectionParameters.DatabaseUser}"";
 GRANT SELECT ON TABLE public.iwpbymachinesummary TO PUBLIC;
 ");
       }
@@ -139,7 +140,7 @@ GRANT SELECT ON TABLE public.iwpbymachinesummary TO PUBLIC;
       }
 
       if (!Database.TableExists (INTERMEDIATE_WORK_PIECE_SUMMARY)) {
-        Database.ExecuteSetOfQueries (@"
+        Database.ExecuteSetOfQueries ($@"
 CREATE OR REPLACE VIEW public.intermediateworkpiecesummary AS 
  SELECT min(iwpbymachinesummary.iwpbymachinesummaryid) AS intermediateworkpiecesummaryid,
     iwpbymachinesummary.intermediateworkpieceid,
@@ -156,8 +157,8 @@ CREATE OR REPLACE VIEW public.intermediateworkpiecesummary AS
   GROUP BY iwpbymachinesummary.intermediateworkpieceid, iwpbymachinesummary.componentid, iwpbymachinesummary.workorderid, iwpbymachinesummary.lineid, iwpbymachinesummary.iwpbymachinesummaryday, iwpbymachinesummary.shiftid;
 
 ALTER TABLE public.intermediateworkpiecesummary
-  OWNER TO ""DatabaseUser"";
-GRANT ALL ON TABLE public.intermediateworkpiecesummary TO ""DatabaseUser"";
+  OWNER TO ""{GDBConnectionParameters.DatabaseUser}"";
+GRANT ALL ON TABLE public.intermediateworkpiecesummary TO ""{GDBConnectionParameters.DatabaseUser}"";
 GRANT SELECT ON TABLE public.intermediateworkpiecesummary TO PUBLIC;
 ");
       }

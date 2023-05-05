@@ -12,6 +12,7 @@ using System.IO;
 using System.Xml;
 
 using Lemoine.Core.Log;
+using Lemoine.Info;
 using NUnit.Framework;
 
 namespace Lemoine.DataRepository.UnitTests

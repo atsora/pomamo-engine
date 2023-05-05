@@ -46,7 +46,7 @@ namespace Lemoine.Info.UnitTests
       {
         var commonApplicationData = System.Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
         var commonConfigDirectory = Path.Combine (commonApplicationData, "Lemoine", "PULSE");
-        var path = Path.Combine (commonConfigDirectory, "lpulse.options.d", key + ".options");
+        var path = Path.Combine (commonConfigDirectory, $"{PulseInfo.ProductFolderName}.options.d", key + ".options");
         Assert.IsTrue (File.Exists (path));
       }
       Lemoine.Info.ConfigSet.ResetPersistentConfig (key);

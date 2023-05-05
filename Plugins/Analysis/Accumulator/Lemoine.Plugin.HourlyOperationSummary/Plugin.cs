@@ -8,6 +8,7 @@ using System.Diagnostics;
 using Lemoine.Extensions;
 using Lemoine.Core.Log;
 using Lemoine.Extensions.Plugin;
+using Lemoine.Info;
 using Lemoine.Model;
 using Lemoine.GDBMigration;
 using static Lemoine.Plugin.HourlyOperationSummary.TableName;
@@ -94,7 +95,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
         return;
       }
 
-      Database.ExecuteSetOfQueries (@"
+      Database.ExecuteSetOfQueries ($@"
 CREATE TABLE public.hourlyoperationsummary
 (
   hourlyoperationsummaryid serial NOT NULL,
@@ -136,8 +137,8 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE public.hourlyoperationsummary
-  OWNER TO ""DatabaseUser"";
-GRANT ALL ON TABLE public.hourlyoperationsummary TO ""DatabaseUser"";
+  OWNER TO ""{GDBConnectionParameters.DatabaseUser}"";
+GRANT ALL ON TABLE public.hourlyoperationsummary TO ""{GDBConnectionParameters.DatabaseUser}"";
 GRANT SELECT ON TABLE public.hourlyoperationsummary TO PUBLIC;
 ");
       if (!Database.PartitionTable (HOURLY_OPERATION_SUMMARY, "monitoredmachine")) {

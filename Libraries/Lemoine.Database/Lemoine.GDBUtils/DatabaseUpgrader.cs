@@ -133,9 +133,7 @@ namespace Lemoine.GDBUtils
             }
 
             var npgsqlConnection = connection as Npgsql.NpgsqlConnection;
-            if (null != npgsqlConnection) {
-              npgsqlConnection.ReloadTypes ();
-            }
+            npgsqlConnection?.ReloadTypes ();
           }
 
           // Add default values

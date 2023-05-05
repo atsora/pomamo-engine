@@ -108,14 +108,14 @@ namespace Lem_WatchDogService
     static void AddWindowsServiceControllersProvider (IServiceCollection services)
     {
       services
-        .AddSingleton<IServiceControllersProvider> (sp => new MultiServicesProvider (new LemoineServicesProviderOnWindows (), new ConfigServicesProviderOnWindows ()));
+        .AddSingleton<IServiceControllersProvider> (sp => new MultiServicesProvider (new PomamoServicesProviderOnWindows (), new ConfigServicesProviderOnWindows ()));
     }
 
     [SupportedOSPlatform ("linux")]
     static void AddLinuxServiceControllersProvider (IServiceCollection services)
     {
       services
-        .AddSingleton<IServiceControllersProvider> (sp => new MultiServicesProvider (new LemoineServicesProviderOnLinux (), new ConfigServicesProviderOnLinux ()));
+        .AddSingleton<IServiceControllersProvider> (sp => new MultiServicesProvider (new PomamoServicesProviderOnLinux (), new ConfigServicesProviderOnLinux ()));
     }
   }
 }

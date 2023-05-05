@@ -67,17 +67,21 @@ namespace Lem_FileRepoClient.Console
         Lemoine.FileRepository.FileRepoClient.Implementation =
           new Lemoine.FileRepository.FileRepoClientSharedDir (sharedDirectoryPath);
       }
+#if NET48
       else if (Lemoine.Info.PulseInfo.UseFileRepositoryCorba) {
         Lemoine.FileRepository.FileRepoClient.Implementation
           = new Lemoine.FileRepository.Corba.FileRepoClientCorba ();
       }
+#endif // NET48
       else if (Lemoine.Info.PulseInfo.UseFileRepositoryWeb) {
         Lemoine.FileRepository.FileRepoClient.Implementation
           = new Lemoine.FileRepository.FileRepoClientWeb ();
       }
       else if (Lemoine.Info.PulseInfo.UseFileRepositoryMulti) { // Multi
         var multi = Lemoine.FileRepository.FileRepoClientMulti.CreateFromSharedDirectoryWeb (CancellationToken.None);
+#if NET48
         multi.Add (new Lemoine.FileRepository.Corba.FileRepoClientCorba ());
+#endif // NET48
         Lemoine.FileRepository.FileRepoClient.Implementation = multi;
       }
       else { // Default: pfr data dir for the analysis service

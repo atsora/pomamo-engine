@@ -13,11 +13,11 @@ using System.Xml;
 
 using Lemoine.GDBPersistentClasses;
 using Lemoine.GDBUtils;
+using Lemoine.Info;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Data.Odbc;
 using NUnit.Framework;
-using Lemoine.Info;
 
 namespace Lemoine.DataRepository.UnitTests
 {
@@ -39,9 +39,9 @@ namespace Lemoine.DataRepository.UnitTests
     public void TestODBCFactory()
     {
       // With a valid XML file
-      ODBCFactory f = new ODBCFactory (XmlSourceType.URI,
-                                       System.IO.Path.Combine (m_unitTestsIn, "testODBCSynchroFactory-Valid.xml"),
-                                       new ClassicConnectionParameters());
+      var f = new ODBCFactory (XmlSourceType.URI,
+                               System.IO.Path.Combine (m_unitTestsIn, "testODBCSynchroFactory-Valid.xml"),
+                               new ClassicConnectionParameters());
       
       // With an invalid XML file with an empty root element
       Assert.Throws<ODBCFactory.SchemaException>
@@ -112,16 +112,16 @@ namespace Lemoine.DataRepository.UnitTests
     {
       // Test the three values
       string xmlData =
-        @"<?xml version='1.0'?>
+        $@"<?xml version='1.0'?>
 <root xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
       xsi:noNamespaceSchemaLocation='factodbcconfig.xsd'
       xmlns:pulse='urn:pulse.lemoinetechnologies.com:synchro:odbc'
-      pulse:dsnname='LemoineUnitTests' pulse:user='DatabaseUser' pulse:password='DatabasePassword'>
+      pulse:dsnname='LemoineUnitTests' pulse:user='{Constants.DEFAULT_DATABASE_USER}' pulse:password='{Constants.DEFAULT_DATABASE_PASSWORD}'>
 </root>";
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING,
                                        xmlData, new ClassicConnectionParameters());
       Assert.AreEqual(f.ConnectionParameters.OdbcConnectionString(),
-                      "DSN=LemoineUnitTests;UID=DatabaseUser;Pwd=DatabasePassword;");
+                      $"DSN=LemoineUnitTests;UID={Constants.DEFAULT_DATABASE_USER};Pwd={Constants.DEFAULT_DATABASE_PASSWORD};");
       /*
       Assert.AreEqual (f.ConnectionParameters.DsnName, "LemoineUnitTests");
       Assert.AreEqual (f.ConnectionParameters.Username, "DatabaseUser");
@@ -139,11 +139,12 @@ namespace Lemoine.DataRepository.UnitTests
     {
       // Initialization
       string xmlData =
-        @"<?xml version='1.0'?>
+$$"""
+<?xml version='1.0'?>
 <root xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
       xsi:noNamespaceSchemaLocation='factodbcconfig.xsd'
       xmlns:pulse='urn:pulse.lemoinetechnologies.com:synchro:odbc'
-      pulse:dsnname='LemoineUnitTests' pulse:user='DatabaseUser' pulse:password='DatabasePassword'>
+      pulse:dsnname='LemoineUnitTests' pulse:user='{{Constants.DEFAULT_DATABASE_USER}}' pulse:password='{{Constants.DEFAULT_DATABASE_PASSWORD}}'>
   <job name='pulse:1' type='pulse:2:integer'
        customer='pulse:3' hours='pulse:4' status='pulse:5'
        isjobname='pulse:6'
@@ -162,7 +163,8 @@ namespace Lemoine.DataRepository.UnitTests
     <testif pulse:if=""{../@isjobname}"" />
   </job>
   <anyelement attr='anyattr' />
-</root>";
+</root>
+""";
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING, xmlData, new ClassicConnectionParameters());
       XmlDocument doc = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
       
@@ -211,11 +213,12 @@ namespace Lemoine.DataRepository.UnitTests
     {
       // Initialization
       string xmlData =
-        @"<?xml version='1.0'?>
+$$"""
+<?xml version='1.0'?>
 <root xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
       xmlns:gdb=""urn:pulse.lemoinetechnologies.com:synchro:gdb""
       xmlns:odbc='urn:pulse.lemoinetechnologies.com:synchro:odbc'
-      odbc:dsnname='LemoineUnitTests' odbc:user='DatabaseUser' odbc:password='DatabasePassword'>
+      odbc:dsnname='LemoineUnitTests' odbc:user='{{Constants.DEFAULT_DATABASE_USER}}' odbc:password='{{Constants.DEFAULT_DATABASE_PASSWORD}}'>
   <req gdb:action=""none""
        machine=""pulse:0""
        odbc:request=""SELECT machinename AS machine FROM machine WHERE machineid=1"">
@@ -227,7 +230,8 @@ namespace Lemoine.DataRepository.UnitTests
       <MonitoringType TranslationKey='UndefinedValue' gdb:action='reference' gdb:notfound='fail' />
     </Machine>
   </req>
-</root>";
+</root>
+""";
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING, xmlData, new ClassicConnectionParameters());
       XmlDocument doc = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
       
@@ -300,7 +304,7 @@ namespace Lemoine.DataRepository.UnitTests
 <root xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
       xsi:noNamespaceSchemaLocation='factodbcconfig.xsd'
       xmlns:pulse='urn:pulse.lemoinetechnologies.com:synchro:odbc'
-      pulse:dsnname='LemoineUnitTests' pulse:user='DatabaseUser' pulse:password='DatabasePassword'>
+      pulse:dsnname='LemoineUnitTests' pulse:user='LemoineUser' pulse:password='LemoinePass'>
   <job name='pulse:1' type='pulse:2:integer'
        customer='pulse:3' hours='pulse:4' status='pulse:5'
        isjobname='pulse:6'

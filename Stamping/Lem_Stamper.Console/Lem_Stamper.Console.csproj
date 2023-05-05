@@ -24,14 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
-    <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" />
-    <ProjectReference Include="..\Libraries\Lemoine.Stamping\Lemoine.Stamping.csproj" />
-    <ProjectReference Include="..\Libraries\Lemoine.StandardGCodesParser\Lemoine.StandardGCodesParser.fsproj" />
-    <ProjectReference Include="..\Libraries\Lemoine.Stamping.Heidenhain\Lemoine.Stamping.Heidenhain.fsproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.Stamping\Lemoine.Stamping.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.StandardGCodesParser\Lemoine.StandardGCodesParser.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.Stamping.Heidenhain\Lemoine.Stamping.Heidenhain.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup>

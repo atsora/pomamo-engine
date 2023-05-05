@@ -23,12 +23,12 @@ namespace Lemoine.Info
     static readonly string PASSWORD_GROUP = "password";
 
     static readonly string PORT_DEFAULT = "5432";
-    static readonly string USERNAME_DEFAULT = "DatabaseUser";
-    static readonly string PASSWORD_DEFAULT = "DatabasePassword";
-    static readonly string DATABASE_DEFAULT = "DatabaseName";
+    static readonly string USERNAME_DEFAULT = Constants.DEFAULT_DATABASE_USER;
+    static readonly string PASSWORD_DEFAULT = Constants.DEFAULT_DATABASE_PASSWORD;
+    static readonly string DATABASE_DEFAULT = Constants.DEFAULT_DATABASE_NAME;
 
     static readonly string DEFAULT_DSN_NAME_KEY = "DefaultDSNName";
-    static readonly string DEFAULT_DSN_NAME_DEFAULT = "DatabaseName";
+    static readonly string DEFAULT_DSN_NAME_DEFAULT = Constants.DEFAULT_DSN_NAME;
 
     static readonly string DEV_KEY = "dev";
     static readonly bool DEV_DEFAULT = false;
@@ -36,7 +36,7 @@ namespace Lemoine.Info
     static readonly string DEV_SUFFIX = "-dev";
 
     #region Members
-    string m_dsnName = "DatabaseName";
+    string m_dsnName = Constants.DEFAULT_DSN_NAME;
     string m_server = "localhost";
     string m_port = PORT_DEFAULT;
     string m_database = DATABASE_DEFAULT;

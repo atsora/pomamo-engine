@@ -1,0 +1,14 @@
+[Unit]
+Description=Lemoine CncCore Service
+
+[Service]
+WorkingDirectory=/usr/share/lpulse
+ExecStart=/usr/bin/dotnet /usr/share/lpulse/Lem_CncCoreService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=lpulse-cnccore
+User=lpulse
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=Atsora Tracking CncData Service
+
+[Service]
+WorkingDirectory=/usr/share/atracking
+ExecStart=/usr/bin/dotnet /usr/share/atracking/Lem_CncDataService.dll
+Restart=always
+KillSignal=SIGINT
+SyslogIdentifier=atracking-cncdata
+User=atracking
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target
