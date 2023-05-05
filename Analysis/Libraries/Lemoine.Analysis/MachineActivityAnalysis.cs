@@ -141,35 +141,23 @@ namespace Lemoine.Analysis
     /// <summary>
     /// Associated not monitored machine
     /// </summary>
-    public IMachine Machine
-    {
-      get { return m_machine; }
-    }
+    public IMachine Machine => m_machine;
 
     /// <summary>
     /// Reference to PendingModificationAnalysis
     /// </summary>
-    protected PendingModificationAnalysis<Lemoine.Model.IMachineModification, Lemoine.GDBPersistentClasses.MachineModification> PendingModificationAnalysis
-    {
-      get { return m_pendingModificationAnalysis; }
-    }
+    protected PendingModificationAnalysis<Lemoine.Model.IMachineModification, Lemoine.GDBPersistentClasses.MachineModification> PendingModificationAnalysis => m_pendingModificationAnalysis;
 
     /// <summary>
     /// Restricted transaction level
     /// </summary>
-    internal TransactionLevel RestrictedTransactionLevel
-    {
-      get { return m_restrictedTransactionLevel; }
-    }
+    internal TransactionLevel RestrictedTransactionLevel => m_restrictedTransactionLevel;
 
     /// <summary>
     /// Return the state machine
     /// </summary>
     /// <returns></returns>
-    protected virtual IContext GetStateMachine ()
-    {
-      return m_stateMachine;
-    }
+    protected virtual IContext GetStateMachine () => m_stateMachine;
 
     /// <summary>
     /// <see cref="IContext"/>
@@ -721,7 +709,7 @@ namespace Lemoine.Analysis
     public bool RunOperationSlotSplitAnalysis (CancellationToken cancellationToken, TimeSpan maxTime, TimeSpan minTime, TimeSpan? period = null)
     {
       var maxDateTime = GetMaxAnalysisDateTime (maxTime, minTime);
-      return m_operationSlotSplitAnalysis.RunOnce (cancellationToken, maxDateTime, minTime, period.HasValue ? (int?)period.Value.TotalSeconds : (int?) null);
+      return m_operationSlotSplitAnalysis.RunOnce (cancellationToken, maxDateTime, minTime, period.HasValue ? (int?)period.Value.TotalSeconds : (int?)null);
     }
 
     public IEnumerable<IState<T>> GetExtensionAnalysisStates<T> ()

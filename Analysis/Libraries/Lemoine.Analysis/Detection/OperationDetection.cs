@@ -60,9 +60,7 @@ namespace Lemoine.Analysis.Detection
       m_afterExtensions = ServiceProvider
         .Get<IEnumerable<IAfterOperationDetectionExtension>> (new Lemoine.Business.Extension.MonitoredMachineExtensions<IAfterOperationDetectionExtension> (monitoredMachine, (ext, m) => ext.Initialize (m)));
 
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                 this.GetType ().FullName,
-                                                 monitoredMachine.Id));
+      log = LogManager.GetLogger ($"{this.GetType ().FullName}.{monitoredMachine.Id}");
     }
 
     /// <summary>
@@ -130,17 +128,17 @@ namespace Lemoine.Analysis.Detection
                                 DateTime dateTime)
     {
       try {
-        log.DebugFormat ("StartOperation: " +
-                         "insert operation {0} from {1}",
-                         operation, dateTime);
-        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-        using (IDAOTransaction transaction = session.BeginTransaction ("Detection.StartOperation")) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"StartOperation: insert operation {((Lemoine.Collections.IDataWithId<int>)operation)?.Id} from {dateTime}");
+        }
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ())
+        using (var transaction = session.BeginTransaction ("Detection.StartOperation", notTop: true)) {
           AddOperation (operation, new UtcDateTimeRange (dateTime, dateTime.AddSeconds (1)), true);
           transaction.Commit ();
         }
       }
       catch (Exception ex) {
-        log.Error ($"StartOperation: Operation={operation} dateTime={dateTime}", ex);
+        log.Error ($"StartOperation: Operation={((Lemoine.Collections.IDataWithId<int>)operation)?.Id} dateTime={dateTime}", ex);
         throw;
       }
 
@@ -165,9 +163,9 @@ namespace Lemoine.Analysis.Detection
     public void AddOperation (IOperation operation, UtcDateTimeRange range)
     {
       try {
-        log.DebugFormat ("AddOperation: " +
-                         "add operation {0} in {1}",
-                         operation, range);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddOperation: add operation {((Lemoine.Collections.IDataWithId<int>)operation)?.Id} in {range}");
+        }
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
         using (IDAOTransaction transaction = session.BeginTransaction ("Detection.AddOperation", notTop: true)) {
           AddOperation (operation, range, true);
@@ -175,11 +173,7 @@ namespace Lemoine.Analysis.Detection
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("AddOperation: " +
-                         "Operation={0} range={1} " +
-                         "exception={2}",
-                         operation, range,
-                         ex);
+        log.Error ($"AddOperation: Operation={((Lemoine.Collections.IDataWithId<int>)operation)?.Id} range={range}", ex);
         throw;
       }
 
@@ -518,24 +512,22 @@ namespace Lemoine.Analysis.Detection
                                     noSequencePeriodBegin,
                                     noSequencePeriodEnd);
         if (existsNoSequenceSlotBetween) {
-          log.DebugFormat ("IsAutoSequenceActivity: " +
-                           "some auto-sequence activity was detected " +
-                           "in corrected period {0}-{1}",
-                           noSequencePeriodBegin, noSequencePeriodEnd);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsAutoSequenceActivity: some auto-sequence activity was detected in corrected period {noSequencePeriodBegin}-{noSequencePeriodEnd}");
+          }
           return true;
         }
         else {
-          log.DebugFormat ("IsAutoSequenceActivity: " +
-                           "no auto-sequence activity in corrected period {0}-{1}",
-                           noSequencePeriodBegin, noSequencePeriodEnd);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsAutoSequenceActivity: no auto-sequence activity in corrected period {noSequencePeriodBegin}-{noSequencePeriodEnd}");
+          }
           return false;
         }
       }
       else {
-        log.DebugFormat ("IsAutoSequenceActivity: " +
-                         "corrected period {0}-{1} is empty " +
-                         "=> return false",
-                         noSequencePeriodBegin, noSequencePeriodEnd);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsAutoSequenceActivity: corrected period {noSequencePeriodBegin}-{noSequencePeriodEnd} is empty => return false");
+        }
         return false;
       }
     }
@@ -555,9 +547,9 @@ namespace Lemoine.Analysis.Detection
           foreach (var betweenSlot in betweenSlots) {
             if ((null != betweenSlot.WorkOrder)
                 && !object.Equals (betweenSlot.WorkOrder, workOrder)) {
-              log.DebugFormat ("Propagate: " +
-                               "do not propagate the work order {0} because of the existing slot {1}",
-                               workOrder, betweenSlot);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Propagate: do not propagate the work order {workOrder} because of the existing slot {betweenSlot}");
+              }
               workOrderPropagation = false;
               break;
             }
@@ -567,9 +559,9 @@ namespace Lemoine.Analysis.Detection
           foreach (var betweenSlot in betweenSlots) {
             if ((null != betweenSlot.Component)
                 && !object.Equals (betweenSlot.Component, component)) {
-              log.DebugFormat ("Propagate: " +
-                               "do not propagate the component {0} because of the existing slot {1}",
-                               component, betweenSlot);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Propagate: do not propagate the component {component} because of the existing slot {betweenSlot}");
+              }
               componentPropagation = false;
               break;
             }
@@ -579,9 +571,9 @@ namespace Lemoine.Analysis.Detection
           foreach (var betweenSlot in betweenSlots) {
             if ((null != betweenSlot.Line)
                 && !object.Equals (betweenSlot.Line, line)) {
-              log.DebugFormat ("Propagate: " +
-                               "do not propagate the line {0} because of the existing slot {1}",
-                               line, betweenSlot);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Propagate: do not propagate the line {line} because of the existing slot {betweenSlot}");
+              }
               linePropagation = false;
               workOrderPropagation = false;
               break;
@@ -592,9 +584,9 @@ namespace Lemoine.Analysis.Detection
           foreach (var betweenSlot in betweenSlots) {
             if ((null != betweenSlot.Task)
                 && !object.Equals (betweenSlot.Task, task)) {
-              log.DebugFormat ("Propagate: " +
-                               "do not propagate the task {0} because of the existing slot {1}",
-                               task, betweenSlot);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Propagate: do not propagate the task {task} because of the existing slot {betweenSlot}");
+              }
               taskPropagation = false;
               workOrderPropagation = false;
               break;
@@ -635,9 +627,7 @@ namespace Lemoine.Analysis.Detection
                                           operation);
           AddTaskDetectionLog (LogLevel.NOTICE,
                                message);
-          log.InfoFormat ("GuessNextTask: " +
-                          "{0}",
-                          message);
+          log.Info ($"GuessNextTask: {message}");
         }
         return null;
       }
@@ -648,18 +638,16 @@ namespace Lemoine.Analysis.Detection
               && (!nextTasks[1].Order.HasValue
                   || !object.Equals (nextTasks[0].Order.Value,
                                      nextTasks[1].Order.Value))) {
-            log.DebugFormat ("GuessNextTask: " +
-                             "the next task was fully determined by a machine and an order attribute");
+            log.Debug ("GuessNextTask: the next task was fully determined by a machine and an order attribute");
           }
           else {
             // Log it, if there are more than one possible task
-            string message = string.Format ("{0} next possible tasks for {1}",
-                                            nextTasks.Count, operation);
+            string message = $"{nextTasks.Count} next possible tasks for {operation}";
             AddTaskDetectionLog (LogLevel.INFO,
                                  message);
-            log.DebugFormat ("GuessNextTask: " +
-                             "{0}",
-                             message);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GuessNextTask: {message}");
+            }
           }
         }
         return nextTasks[0];
@@ -675,9 +663,7 @@ namespace Lemoine.Analysis.Detection
     {
       Debug.Assert (null != task);
 
-      log.InfoFormat ("ApplyTask: " +
-                      "apply task {0}",
-                      task);
+      log.Info ($"ApplyTask: apply task {task}");
       var taskAssociation = new Lemoine.GDBPersistentClasses
         .WorkOrderMachineAssociation (m_monitoredMachine,
                                       new UtcDateTimeRange (from),
@@ -705,9 +691,9 @@ namespace Lemoine.Analysis.Detection
       using (IDAOTransaction transaction = daoSession.BeginTransaction ("Detection.ExtendOperation")) {
         bool success = true;
         try {
-          log.DebugFormat ("ExtendOperation: " +
-                           "extend operation {0} until {1}",
-                           operation, dateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ExtendOperation: extend operation {operation} until {dateTime}");
+          }
           IOperationSlot operationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
             .GetLastOperationNotNullBefore (m_monitoredMachine, dateTime);
           if (null != operationSlot) {
@@ -716,9 +702,9 @@ namespace Lemoine.Analysis.Detection
               // Last operation slot matches
               if (Bound.Compare<DateTime> (operationSlot.EndDateTime, dateTime) < 0) {
                 // Not long enough, extend it
-                log.DebugFormat ("ExtendOperation: " +
-                                 "extend the last operation slot {0} to {1}",
-                                 operationSlot, dateTime);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"ExtendOperation: extend the last operation slot {operationSlot} to {dateTime}");
+                }
                 var association =
                   new Lemoine.GDBPersistentClasses.OperationMachineAssociation (m_monitoredMachine,
                                                                                 operationSlot.BeginDateTime.Value,
@@ -746,22 +732,19 @@ namespace Lemoine.Analysis.Detection
                 return;
               }
               else { // Nothing to do, the operation slot is already associated to the right operation
-                log.DebugFormat ("ExtendOperation: " +
-                                 "nothing to do, the operation slot at {0} is already associated to {1}",
-                                 dateTime, operation);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"ExtendOperation: nothing to do, the operation slot at {dateTime} is already associated to {operation}");
+                }
                 return;
               }
             }
 
             // The previous operation slot did not match, give up
-            log.WarnFormat ("ExtendOperation: " +
-                            "the previous operation slot did not match, give up");
+            log.Warn ("ExtendOperation: the previous operation slot did not match, give up");
             { // Log it
               IDetectionAnalysisLog detectionAnalysisLog = ModelDAOHelper.ModelFactory
                 .CreateDetectionAnalysisLog (LogLevel.WARN,
-                                             string.Format ("Operation {0} could not be extended to {1} " +
-                                                            "because the previous operation slot did not match",
-                                                            operation, dateTime),
+                                             $"Operation {operation} could not be extended to {dateTime} because the previous operation slot did not match",
                                              m_monitoredMachine,
                                              null);
               ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
@@ -776,9 +759,7 @@ namespace Lemoine.Analysis.Detection
             { // Log it
               IDetectionAnalysisLog detectionAnalysisLog = ModelDAOHelper.ModelFactory
                 .CreateDetectionAnalysisLog (LogLevel.WARN,
-                                             string.Format ("Operation {0} could not be extended to {1} " +
-                                                            "because there is no operation slot before {1}",
-                                                            operation, dateTime),
+                                             $"Operation {operation} could not be extended to {dateTime} because there is no operation slot before {dateTime}",
                                              m_monitoredMachine,
                                              null);
               ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
@@ -788,11 +769,7 @@ namespace Lemoine.Analysis.Detection
           }
         }
         catch (Exception ex) {
-          log.ErrorFormat ("ExtendOperation: " +
-                           "Operation={0} dateTime={1} " +
-                           "exception={2}",
-                           operation, dateTime,
-                           ex);
+          log.Error ($"ExtendOperation: Operation={operation} dateTime={dateTime}", ex);
           success = false;
           throw;
         }
@@ -837,9 +814,9 @@ namespace Lemoine.Analysis.Detection
                                   string module,
                                   string message)
     {
-      log.DebugFormat ("AddDetectionAnalysisLog: " +
-                       "add a detection analysis log with message={0} level={1} module={2}",
-                       message, level, module);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"AddDetectionAnalysisLog: add a detection analysis log with message={message} level={level} module={module}");
+      }
       IDetectionAnalysisLog detectionAnalysisLog = ModelDAOHelper.ModelFactory
         .CreateDetectionAnalysisLog (level, message, m_monitoredMachine);
       ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO

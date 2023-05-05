@@ -164,11 +164,11 @@ namespace Pulse.Extensions.Analysis.Implementation
 
       log = LogManager.GetLogger ($"{this.GetType ().FullName}.{monitoredMachine.Id}.{m_machineModule.Id}");
       if (!Initialize (machineModule.MonitoredMachine)) {
-        log.ErrorFormat ("Initialize: initialize with IMachine failed");
+        log.Debug ("Initialize: initialize with IMachine failed => return false (skip)");
         return false;
       }
       if (!LoadConfiguration (out m_configuration)) {
-        log.ErrorFormat ("Initialize: bad configuration, skip this instance");
+        log.Error ("Initialize: bad configuration, skip this instance");
         return false;
       }
       m_sequenceVariableKey = machineModule.SequenceVariable;
@@ -316,7 +316,7 @@ namespace Pulse.Extensions.Analysis.Implementation
                                                  this.GetType ().FullName,
                                                  machine.Id));
       if (!LoadConfiguration (out m_configuration)) {
-        log.ErrorFormat ("Initialize: bad configuration, skip this instance");
+        log.Error ("Initialize: bad configuration, skip this instance");
         return false;
       }
 
@@ -328,12 +328,12 @@ namespace Pulse.Extensions.Analysis.Implementation
       }
       m_operationDetectionStatus = new OperationDetectionStatusFromAnalysisStatus (m_configuration.OperationDetectionStatusPriority);
       if (!m_operationDetectionStatus.Initialize (machine)) {
-        log.ErrorFormat ("Initialize: initialization of operation detection status failed");
+        log.Error ("Initialize: initialization of operation detection status failed");
         return false;
       }
       m_cycleDetectionStatus = new CycleDetectionStatusFromAnalysisStatus (m_configuration.CycleDetectionStatusPriority);
       if (!m_cycleDetectionStatus.Initialize (machine)) {
-        log.ErrorFormat ("Initialize: initialization of cycle detection status failed");
+        log.Error ("Initialize: initialization of cycle detection status failed");
         return false;
       }
       return true;
@@ -685,11 +685,11 @@ namespace Pulse.Extensions.Analysis.Implementation
     /// <param name="operationNameVariable"></param>
     public IOperation GetOrCreateOperation (string operationName, string operationCode, bool checkCode, bool createJob, string projectName, bool createPart, string componentName, string programComment, IMachineFilter machineFilter, string programCommentVariable, string operationNameVariable)
     {
-      if (string.IsNullOrEmpty(operationName) || string.IsNullOrEmpty (projectName)) {
+      if (string.IsNullOrEmpty (operationName) || string.IsNullOrEmpty (projectName)) {
         log.Error ($"GetOrCreateOperation: Null project or operation. operation={operationName} project={projectName}");
         return null;
       }
-      
+
       IOperation operation = null;
       ISimpleOperation simpleOperation = null;
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
@@ -831,8 +831,8 @@ namespace Pulse.Extensions.Analysis.Implementation
           // if (null == latestOperation || ForceCreateNewOperation (latestOperation.Operation)) {
           //if (null == latestOperation || !latestOperation.Operation.Code.Equals (operationCode)) {
           if (null == latestOperation || (checkCode && !(null != latestOperation.Code && latestOperation.Code.Equals (operationCode)))) {
-              // create a new operation
-              log.DebugFormat ("GetOrCreateOperation: create operation {0}", operationName);
+            // create a new operation
+            log.DebugFormat ("GetOrCreateOperation: create operation {0}", operationName);
             var operationType = ModelDAOHelper.DAOFactory.OperationTypeDAO
               .FindById (1); // undefined
             simpleOperation = ModelDAOHelper.ModelFactory.CreateSimpleOperation (operationType);
@@ -1028,7 +1028,7 @@ namespace Pulse.Extensions.Analysis.Implementation
               order = 1;
             }
             else {
-              order = (int)(operation.Sequences.Where (s => s.Path.Id == path.Id).Count()) +1;
+              order = (int)(operation.Sequences.Where (s => s.Path.Id == path.Id).Count ()) + 1;
             }
             log.Debug ($"CreateNewSequenceAtEnd: order={order}");
             sequence = ModelDAOHelper.ModelFactory.CreateSequence (sequenceName);
@@ -1140,18 +1140,18 @@ namespace Pulse.Extensions.Analysis.Implementation
       }
       string sequencePrefix = null;
       switch (sequenceKind) {
-      case SequenceKind.OptionalStop:
-        sequencePrefix = "M1T";
-        break;
-      case SequenceKind.Stop:
-        sequencePrefix = "M0T";
-        break;
-      default:
-        sequencePrefix = "T";
-        break;
+        case SequenceKind.OptionalStop:
+          sequencePrefix = "M1T";
+          break;
+        case SequenceKind.Stop:
+          sequencePrefix = "M0T";
+          break;
+        default:
+          sequencePrefix = "T";
+          break;
       }
       sequenceName = sequencePrefix + toolNumber;
-  
+
 
       log.Debug ($"CreateNewSequenceAtBegin: sequence={sequencePrefix}{toolNumber}");
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
@@ -1166,7 +1166,7 @@ namespace Pulse.Extensions.Analysis.Implementation
           // create sequence at beginning
           var path = operation.Paths.First ();
           sequence = ModelDAOHelper.ModelFactory.CreateSequence (sequenceName);
-          sequence.ToolNumber = toolNumber.ToString();
+          sequence.ToolNumber = toolNumber.ToString ();
           sequence.Operation = operation;
           sequence.Order = order;
           sequence.Path = path;

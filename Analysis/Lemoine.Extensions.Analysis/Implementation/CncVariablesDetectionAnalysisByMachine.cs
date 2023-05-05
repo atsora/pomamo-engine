@@ -26,7 +26,7 @@ namespace Pulse.Extensions.Analysis.Implementation
     , ICycleDetectionStatusExtension
     , IDetectionAnalysisExtension // TODO: To replace one day by the next line
                                   //    , IDetectionAnalysisByMachineExtension
-    where TConfiguration : Pulse.Extensions.Configuration.IConfigurationWithMachineFilter, ICycleDetectionStatusConfiguration, new ()
+    where TConfiguration : Pulse.Extensions.Configuration.IConfigurationWithMachineFilter, ICycleDetectionStatusConfiguration, new()
   {
     ILog log = LogManager.GetLogger (typeof (CncVariablesDetectionAnalysisByMachine<TConfiguration>).FullName);
 
@@ -158,8 +158,8 @@ namespace Pulse.Extensions.Analysis.Implementation
         if (!cncVariableKeys.Contains (StartCycleVariableKey) && !cncVariableKeys.Contains (EndCycleVariableKey)) {
           return; // Nothing to do
         }
-        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          using (IDAOTransaction transaction = session.BeginTransaction ("CncVariablesDetectionAnalysis.ProcessDetection")) {
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          using (var transaction = session.BeginTransaction ("CncVariablesDetectionAnalysis.ProcessDetection")) {
             // Process first End cycle
             if (cncVariableKeys.Contains (EndCycleVariableKey)) {
               var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
@@ -345,13 +345,7 @@ namespace Pulse.Extensions.Analysis.Implementation
     /// <summary>
     /// ICycleDetectionStatusExtension
     /// </summary>
-    public int CycleDetectionStatusPriority
-    {
-      get
-      {
-        return this.CycleDetectionStatus.CycleDetectionStatusPriority;
-      }
-    }
+    public int CycleDetectionStatusPriority => this.CycleDetectionStatus.CycleDetectionStatusPriority;
 
     /// <summary>
     /// ICycleDetectionStatusExtension
@@ -376,8 +370,8 @@ namespace Pulse.Extensions.Analysis.Implementation
         return true;
       }
       else { // Machine filter
-        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("CncVariablesDetectionAnalysis.InitializeConfiguration.MachineFilter")) {
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          using (var transaction = session.BeginReadOnlyTransaction ("CncVariablesDetectionAnalysis.InitializeConfiguration.MachineFilter")) {
             int machineFilterId = configuration.MachineFilterId;
             machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
               .FindById (machineFilterId);
