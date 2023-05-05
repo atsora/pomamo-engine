@@ -53,8 +53,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Plugin.CreateExtern
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Plugin.ReportingConfig", "..\..\Web\Plugins\Installation\Lemoine.Plugin.ReportingConfig\Lemoine.Plugin.ReportingConfig.csproj", "{2521778C-4BE5-4D7C-950E-BD2B1189468E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Plugin.BorlandStampingTables", "..\Lemoine.Plugin.BorlandStampingTables\Lemoine.Plugin.BorlandStampingTables.csproj", "{DC110FBC-E145-4921-B82E-7D8144C618BE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pulse.Extensions.Business", "..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj", "{7FC8F4ED-F2F8-4B8D-A02C-112D41BEEF63}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pulse.Extensions.Database", "..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj", "{B54C325D-E2BA-4834-99B7-53BF7ED038EA}"

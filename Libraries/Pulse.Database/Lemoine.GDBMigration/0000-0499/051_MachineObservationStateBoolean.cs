@@ -10,38 +10,22 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 051: Add the view machineobservationstateboolean
+  /// Deprecated: Migration 051: Add the view machineobservationstateboolean
   /// for Borland C++ code
   /// </summary>
-  [Migration(51)]
-  public class MachineObservationStateBoolean: MigrationExt
+  [Migration (51)]
+  public class MachineObservationStateBoolean : MigrationExt
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (MachineObservationStateBoolean).FullName);
-    
+    static readonly ILog log = LogManager.GetLogger (typeof (MachineObservationStateBoolean).FullName);
+
     /// <summary>
     /// Update the database
     /// </summary>
     override public void Up ()
     {
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW machineobservationstateboolean AS
- SELECT
-    machineobservationstate.machineobservationstateid AS machineobservationstateid,
-    machineobservationstate.machineobservationstatename AS machineobservationstatename,
-    machineobservationstate.machineobservationstatetranslationkey AS machineobservationstatetranslationkey,
-    CASE
-            WHEN machineobservationstate.machineobservationstateuserrequired = false THEN 0
-            WHEN machineobservationstate.machineobservationstateuserrequired = true  THEN 1
-    END AS machineobservationstateuserrequired,
-    CASE
-            WHEN machineobservationstate.machineobservationstateonsite = false THEN 0
-            WHEN machineobservationstate.machineobservationstateonsite = true  THEN 1
-            ELSE 0
-    END AS machineobservationstateonsite,
-    machineobservationstate.machineobservationstateidsiteattendancechange AS machineobservationstateidsiteattendancechange,
-    machineobservationstate.machineobservationstateversion AS machineobservationstateversion
-FROM machineobservationstate;");
+      // Not necessary any more
     }
-    
+
     /// <summary>
     /// Downgrade the database
     /// </summary>

@@ -12,11 +12,11 @@ namespace Lemoine.GDBMigration
   /// <summary>
   /// Migration 314:
   /// </summary>
-  [Migration(314)]
-  public class FixObservationStateSlotDayRange: MigrationExt
+  [Migration (314)]
+  public class FixObservationStateSlotDayRange : MigrationExt
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (FixObservationStateSlotDayRange).FullName);
-    
+    static readonly ILog log = LogManager.GetLogger (typeof (FixObservationStateSlotDayRange).FullName);
+
     /// <summary>
     /// Update the database
     /// </summary>
@@ -25,14 +25,14 @@ namespace Lemoine.GDBMigration
       FixDayRange ();
       CreateView ();
     }
-    
+
     /// <summary>
     /// Downgrade the database
     /// </summary>
     override public void Down ()
     {
     }
-    
+
     void FixDayRange ()
     {
       Database.ExecuteNonQuery (@"UPDATE observationstateslot 
@@ -50,7 +50,7 @@ WHERE isempty(observationstateslotdayrange)
   AND enddayslot.dayslotrange @> upper(observationstateslot.observationstateslotdatetimerange)
 ");
     }
-    
+
     void CreateView ()
     {
       Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW observationstatebeginendslot AS
@@ -75,29 +75,7 @@ SELECT observationstateslotid, observationstateslotversion, machineid, userid, s
 FROM observationstateslot
 ");
 
-      // For Borland C++
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW observationstateslotbor AS
-SELECT observationstateslotid, observationstateslotversion, machineid,
-  CASE WHEN lower_inf(observationstateslotdatetimerange)
-    THEN '1970-01-01 00:00:00'::timestamp without time zone
-    ELSE lower(observationstateslotdatetimerange)
-  END AS observationstateslotbegindatetime,
-  CASE WHEN lower_inf(observationstateslotdayrange)
-    THEN '1970-01-01 00:00:00'::timestamp without time zone
-    ELSE lower(observationstateslotdayrange)
-  END AS observationstateslotbeginday,
-  CASE WHEN upper_inf(observationstateslotdatetimerange)
-    THEN NULL::timestamp without time zone
-    ELSE upper(observationstateslotdatetimerange)
-  END AS observationstateslotenddatetime,
-  CASE WHEN upper_inf(observationstateslotdayrange)
-    THEN NULL::timestamp without time zone
-    ELSE upper(observationstateslotdayrange)
-  END AS observationstateslotendday,
-  machineobservationstateid,
-  userid, shiftid
-FROM observationstateslot
-");
+      // observationstateslotbor for Borland C++ is deprecated
     }
   }
 }
