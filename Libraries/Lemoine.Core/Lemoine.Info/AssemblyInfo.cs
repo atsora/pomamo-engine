@@ -12,9 +12,6 @@ namespace Lemoine.Info
   /// </summary>
   public sealed class AssemblyInfo
   {
-    #region Members
-    #endregion
-
     static readonly ILog log = LogManager.GetLogger (typeof (AssemblyInfo).FullName);
 
     #region Getters / Setters
@@ -85,18 +82,13 @@ namespace Lemoine.Info
     }
     #endregion
 
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class !)
     /// </summary>
     private AssemblyInfo()
     {
     }
-    #endregion
 
-    #region Methods
-    #endregion
-    
     #region Instance
     static AssemblyInfo Instance
     {

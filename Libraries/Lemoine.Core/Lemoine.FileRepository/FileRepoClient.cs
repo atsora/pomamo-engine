@@ -791,7 +791,7 @@ namespace Lemoine.FileRepository
         }
         else { // Not possibly valid, retry...
           if (!fatalLogSet && (startDateTime.AddMinutes (1) < DateTime.UtcNow)) {
-            log.FatalFormat ("ForceSynchronize: please check the FileRepo in lctr is accessible");
+            log.Fatal ("ForceSynchronize: please check the FileRepo is accessible");
             fatalLogSet = true;
           }
           log.ErrorFormat ("ForceSynchronize: synchronization could not get a possibly valid directory, retry in 1s");

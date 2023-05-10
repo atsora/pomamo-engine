@@ -34,7 +34,7 @@ namespace Lemoine.Info
     static readonly string SHARED_DIRECTORY_PATH_DEFAULT = "";
 
     static readonly string INSTALLATION_DIR_KEY = "InstallDir";
-    static readonly string PULSE_SERVER_INSTALL_DIR_KEY = "PulseServerInstallDir";
+    static readonly string POMAMO_SERVER_INSTALL_DIR_KEY = "PomamoServerInstallDir";
     static readonly string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
 
 #if ATSORA
@@ -57,13 +57,8 @@ namespace Lemoine.Info
     static readonly string DATABASE_NAME_KEY = "DatabaseName";
     static readonly string DATABASE_NAME_DEFAULT = Constants.DEFAULT_DATABASE_NAME;
 
-    static readonly string LEM_CTR_NAME_KEY = "LemCtrName";
-
-    #region Members
     string m_defaultLocalConfigurationDirectory = "";
-
     bool m_valid = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (PulseInfo).FullName);
 
@@ -108,18 +103,18 @@ namespace Lemoine.Info
     {
       get {
         try {
-          var result = Lemoine.Info.ConfigSet.Get<string> (PULSE_SERVER_INSTALL_DIR_KEY);
+          var result = Lemoine.Info.ConfigSet.Get<string> (POMAMO_SERVER_INSTALL_DIR_KEY);
           if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
             log.ErrorFormat ("PulseServerInstallationDirectory: not defined");
           }
           return result;
         }
         catch (ConfigKeyNotFoundException ex) {
-          log.Error ($"PulseServerInstallationDirectory: config key {PULSE_SERVER_INSTALL_DIR_KEY} was not defined", ex);
+          log.Error ($"PulseServerInstallationDirectory: config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
           return null;
         }
         catch (KeyNotFoundException ex) {
-          log.Fatal ($"PulseServerInstallationDirectory: (with deprecated KeyNotFoundException) config key {PULSE_SERVER_INSTALL_DIR_KEY} was not defined", ex);
+          log.Fatal ($"PulseServerInstallationDirectory: (with deprecated KeyNotFoundException) config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
           return null;
         }
       }
@@ -221,20 +216,6 @@ namespace Lemoine.Info
       get {
         return Lemoine.Info.ConfigSet
           .LoadAndGet<string> (DATABASE_NAME_KEY, DATABASE_NAME_DEFAULT);
-      }
-    }
-
-    /// <summary>
-    /// Name of LCTR
-    /// </summary>
-    public static string LemCtrName
-    {
-      get {
-        var result = Lemoine.Info.ConfigSet.Get<string> (LEM_CTR_NAME_KEY);
-        if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
-          log.ErrorFormat ("LemCtrName: LCTR name not defined");
-        }
-        return result;
       }
     }
 

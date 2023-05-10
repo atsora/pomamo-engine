@@ -29,10 +29,8 @@ namespace Lemoine.Info
 
     static readonly ILog log = LogManager.GetLogger (typeof (ComputerInfo).FullName);
 
-    #region Members
     ulong m_totalPhysicalMemory = 0; // 0: not known yet, -1: exception
     Exception m_totalPhysicalMemoryException = null;
-    #endregion // Members
 
     #region Getters / Setters
     /// <summary>
@@ -297,14 +295,12 @@ namespace Lemoine.Info
     }
     #endregion // Memory
 
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class !)
     /// </summary>
     private ComputerInfo ()
     {
     }
-    #endregion
 
     #region Instance
     static ComputerInfo Instance

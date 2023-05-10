@@ -36,7 +36,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 
     const string XML_SCHEMAS_DIRECTORY_KEY = "XmlSchemasDirectory";
     static readonly string LINUX_XML_SCHEMAS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/xmlschemas";
-    // Windows: 'CommonConfigDirectory'\XMLSchemas
+    // Windows: 'CommonConfigDirectory'\xmlschemas
 
     const string VERSIONS_DIRECTORY_KEY = "VersionsDirectory";
     static readonly string LINUX_VERSIONS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}";
@@ -150,7 +150,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
           log.Error ($"GetPfrDataDirectory: Pulse server installation directory was not defined");
           throw new ConfigKeyNotFoundException (PFR_DATA_DIRECTORY_KEY);
         }
-        return Path.Combine (pulseServerInstallationDirectory, "l_ctr", "pfrdata");
+        return Path.Combine (pulseServerInstallationDirectory, "pfrdata");
       }
       else {
         return LINUX_PFR_DATA_DIRECTORY;
@@ -175,7 +175,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     string GetXmlSchemasDirectory ()
     {
       if (m_isWindows) {
-        return Path.Combine (PulseInfo.CommonConfigurationDirectory, "XMLSchemas");
+        return Path.Combine (PulseInfo.CommonConfigurationDirectory, "xmlschemas");
       }
       else {
         return LINUX_XML_SCHEMAS_DIRECTORY;

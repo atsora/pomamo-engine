@@ -174,30 +174,22 @@ namespace Lemoine.Core.Plugin.TargetSpecific
       if (!topDirectoryOnly) {
         var pulseServerDirectory = Lemoine.Info.PulseInfo.PulseServerInstallationDirectory;
         if (!string.IsNullOrEmpty (pulseServerDirectory)) {
-#if !NETCOREAPP
           topOnlyDirectories.Add (pulseServerDirectory);
-#endif // !NETCOREAPP
+          // TODO: remove the sub-directory core in the future
           var coreDirectory = Path.Combine (pulseServerDirectory, "core");
           if (Directory.Exists (coreDirectory)) {
             topOnlyDirectories.Add (coreDirectory);
           }
-#if NETCOREAPP
-          topOnlyDirectories.Add (pulseServerDirectory);
-#endif // NETCOREAPP
         }
         var installationDirectory = Lemoine.Info.PulseInfo.InstallationDir;
         if (!string.IsNullOrEmpty (installationDirectory)
           && !string.Equals (pulseServerDirectory, installationDirectory)) {
-#if !NETCOREAPP
           topOnlyDirectories.Add (installationDirectory);
-#endif // !NETCOREAPP
+          // TODO: remove the sub-directory core in the future
           var coreDirectory = Path.Combine (installationDirectory, "core");
           if (Directory.Exists (coreDirectory)) {
             topOnlyDirectories.Add (coreDirectory);
           }
-#if NETCOREAPP
-          topOnlyDirectories.Add (installationDirectory);
-#endif // NETCOREAPP
         }
       }
       foreach (var directory in directories) {

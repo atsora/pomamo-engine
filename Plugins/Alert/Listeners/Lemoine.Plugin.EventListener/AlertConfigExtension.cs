@@ -23,7 +23,11 @@ namespace Lemoine.Plugin.EventListener
       return true;
     }
 
+#if NET6_0_OR_GREATER
     public IEnumerable<IListener> Listeners => new List<IListener> () { new Lemoine.Alert.GDBListeners.EventListener () };
+#else // !NET6_0_OR_GREATER
+    public IEnumerable<IListener> Listeners => new List<IListener> () { };
+#endif // NETNET6_0_OR_GREATER
 
     public IEnumerable<TriggeredAction> TriggeredActions => null;
   }

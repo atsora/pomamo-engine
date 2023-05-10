@@ -6,12 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
-#if NET45 || NET48
-using IWshRuntimeLibrary;
-#endif // NET45 || NET48
 using Lemoine.BaseControls;
 using Lemoine.Settings;
 using Lemoine.Core.Log;
@@ -49,15 +44,12 @@ namespace Lem_Settings
       LIST_BY_SCORE
     }
 
-    #region Members
     GuiLeft1 m_guiLeft1;
     IItem m_currentItem = null;
     readonly IList<ClickableCell> m_cells = new List<ClickableCell> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SelectionGuiCenter).FullName);
 
-    #region Event
     /// <summary>
     /// Event emitted when an item is double clicked
     /// First argument is the item to launch
@@ -72,9 +64,7 @@ namespace Lem_Settings
     /// First argument is the item
     /// </summary>
     public event Action<IItem> ItemClicked;
-    #endregion // Event
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -82,7 +72,6 @@ namespace Lem_Settings
     {
       InitializeComponent ();
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>
@@ -569,44 +558,7 @@ namespace Lem_Settings
 
     void CreateShortcut ()
     {
-#if NET45 || NET48
-      object shDesktop = (object)"Desktop";
-      var shell = new WshShell ();
-      string shortcutAddress = (string)shell.SpecialFolders.Item (ref shDesktop) + @"\" + m_currentItem.Title + ".lnk";
-
-      // Create a shortcut with attributes
-      var shortcut = (IWshShortcut)shell.CreateShortcut (shortcutAddress);
-      shortcut.Description = "Shortcut for an item in LemSettings: " + m_currentItem.Title + ".";
-      shortcut.TargetPath = Process.GetCurrentProcess ().MainModule.FileName;
-      shortcut.Arguments = String.Format (
-          "{2} -i {0}.{1}", m_currentItem.ID, m_currentItem.SubID,
-          ContextManager.UserCategory == LemSettingsGlobal.UserCategory.END_USER ? "" : " -l");
-
-      // Add an icon
-      try {
-        var icoDir = Path.Combine (Lemoine.Info.PulseInfo.LocalConfigurationDirectory, "icons");
-        if (!Directory.Exists (icoDir))
-          Directory.CreateDirectory (icoDir);
-        var icoPath = Path.Combine (icoDir, m_currentItem.ID + "." + m_currentItem.SubID + ".ico");
-        var inputStream = new MemoryStream ();
-
-        m_currentItem.Image.Save (inputStream, ImageFormat.Png);
-        inputStream.Seek (0, SeekOrigin.Begin);
-        using (FileStream outputStream = System.IO.File.OpenWrite (icoPath)) {
-          PngToIco.ConvertToIcon (inputStream, outputStream);
-        }
-        shortcut.IconLocation = icoPath;
-      }
-      catch (Exception e) {
-        log.ErrorFormat ("LemSettings - couldn't create an icon for the shortcut {0}: {1}",
-                        shortcut.TargetPath + " " + shortcut.Arguments, e);
-      }
-
-      // Save it
-      shortcut.Save ();
-#else // ! (NET45 || NET48)
       throw new NotImplementedException ("Create shortcut not implemented in .NET Core");
-#endif // ! (NET45 || NET48)
     }
   }
 }

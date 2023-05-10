@@ -183,8 +183,7 @@ namespace Lemoine.Alert.GDBListeners
             var factDateTime = fact.Range.Upper.Value;
             TimeSpan age;
             if (now < factDateTime) {
-              log.WarnFormat ("GetData: fact date/time {0} is after now {1}, please check the clock of the lpost is synchronized with the clock of the lctr",
-                factDateTime, now);
+              log.Warn ($"GetData: fact date/time {factDateTime} is after now {now}, please check the clock of the acquisition server is synchronized with the clock of the main server");
               age = TimeSpan.FromTicks (0);
             }
             else {

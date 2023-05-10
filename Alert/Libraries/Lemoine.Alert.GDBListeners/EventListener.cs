@@ -27,11 +27,9 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string FETCH_MAX_ITEMS_KEY = "alert.listener.event.fetch.max";
     static readonly int FETCH_MAX_ITEMS_DEFAULT = 1000;
     
-    #region Members
     IApplicationState m_eventListenerState = null;
     IList<IEvent> m_fetched = new List<IEvent> ();
     readonly XmlSerializer m_xmlSerializer;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventListener).FullName);
 
@@ -71,8 +69,7 @@ namespace Lemoine.Alert.GDBListeners
       }
       
       if (!m_fetched.Any ()) { // No data any more to process
-        log.DebugFormat ("GetData: " +
-                         "no data");
+        log.Debug ("GetData: no data");
         return null;
       }
       else { // 0 < m_fetched.Count
@@ -113,7 +110,7 @@ namespace Lemoine.Alert.GDBListeners
           if (ex is InvalidOperationException && ex.ToString ().Contains ("Use the XmlInclude")) {
             // In case of XML deserialization exception because a plugin was not activated
             // Skip the record
-            log.ErrorFormat ("GetData: skip the record because of a missing XmlInclude, probably because a plugin was not activated. Data {0}", firstData);
+            log.Error ($"GetData: skip the record because of a missing XmlInclude, probably because a plugin was not activated. Data {firstData}");
             using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
               // - Update the application state
               using (IDAOTransaction transaction = session.BeginTransaction ()) {

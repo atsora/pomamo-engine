@@ -131,8 +131,8 @@ namespace Lemoine.DataRepository
     /// <item>the default base path baseUri</item>
     /// <item>the current directory</item>
     /// <item>XmlSchemasDirectory</item>
-    /// <item>"installation path"/share/XMLSchemas (if defined)</item>
-    /// <item>"installation path"/XMLSchemas (if defined)</item>
+    /// <item>"installation path"/share/xmlschemas (if defined)</item>
+    /// <item>"installation path"/xmlschemas (if defined)</item>
     /// <item>"installation path" (if defined)</item>
     /// <item>"Application path"</item>
     /// <item>"Assembly path"</item>
@@ -223,15 +223,15 @@ namespace Lemoine.DataRepository
       // PulseInfo.InstallationDir will be removed one day
       string installationDir = PulseInfo.InstallationDir;
       if (!string.IsNullOrEmpty (installationDir) && Path.IsPathRooted (installationDir)) {
-        // 4a. "installation path"/share/XMLSchemas
+        // 4a. "installation path"/xmlschemas
         testBaseUri = new Uri (installationDir +
-                               "\\share\\XMLSchemas\\");
+                               "\\xmlschemas\\");
         result = base.ResolveUri (testBaseUri,
                                   relativeUri);
         if (result != null) {
           if (result.IsFile && !File.Exists (result.LocalPath)) {
             log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                             "resulted URI is {2} with installation/share/XMLSchemas " +
+                             "resulted URI is {2} with installation/share/xmlschemas " +
                              "but the file does not exist, " +
                              "try another baseUri",
                              baseUri, relativeUri, result);
@@ -239,21 +239,21 @@ namespace Lemoine.DataRepository
           else {
             log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
                             "consider base path is " +
-                            "installation/share/XMLSchemas {2}, " +
+                            "installation/share/xmlschemas {2}, " +
                             "result is {3}",
                             baseUri, relativeUri, testBaseUri, result);
             return result;
           }
         }
-        // 4b. "installation path"/XMLSchemas
+        // 4b. "installation path"/xmlschemas
         testBaseUri = new Uri (installationDir +
-                               "\\XMLSchemas\\");
+                               "\\xmlschemas\\");
         result = base.ResolveUri (testBaseUri,
                                   relativeUri);
         if (result != null) {
           if (result.IsFile && !File.Exists (result.LocalPath)) {
             log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                             "resulted URI is {2} with installation/XMLSchemas " +
+                             "resulted URI is {2} with installation/xmlschemas " +
                              "but the file does not exist, " +
                              "try another baseUri",
                              baseUri, relativeUri, result);
@@ -261,7 +261,7 @@ namespace Lemoine.DataRepository
           else {
             log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
                             "consider base path is " +
-                            "installation/XMLSchemas {2}, " +
+                            "installation/xmlschemas {2}, " +
                             "result is {3}",
                             baseUri, relativeUri, testBaseUri, result);
             return result;

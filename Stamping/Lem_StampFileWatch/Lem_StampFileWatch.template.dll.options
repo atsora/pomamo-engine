@@ -1,8 +1,4 @@
 StampFileWatch.IndexFilesDirectory: C:\Users\Public\AppData\Lemoine\Pulse
-StampFileWatch.LemStampProcess: C:\Program Files (x86)\PULSE\cam\Lem_Stamp.exe
-StampFileWatch.StampingTempDirectory: C:\Users\Public\AppData\Lemoine\temp
-StampFileWatch.FileProgressExtension: .stamp_in_progress
-StampFileWatch.ErrorExtension: .stamp_error
 StampFileWatch.ServiceUseCurrentUser: false
 StampFileWatch.MaxDelayForFileCreation: 5
 StampFileWatch.DelayBeforeStamping: 0
@@ -11,4 +7,3 @@ StampFileWatch.PPR.MAKINO_V99_2: \\conlakfs\MakinoV99L-2
 StampFileWatch.PPR.OKK_VCX350: C:\3PulseReady
 StampFileWatch.PPR.OKK-VCX350: C:\3PulseReady
 StampFileWatch.PPR.xxxxx: zzzzz
-StampFileWatch.UseOldLemStamp: false

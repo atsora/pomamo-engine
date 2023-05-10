@@ -6,6 +6,7 @@ using System;
 using System.Threading;
 using Lemoine.Core.Log;
 using Lemoine.Threading;
+using Pomamo.Stamping.FileDetection;
 
 namespace Lemoine.Stamping.Lem_StampFileWatchService
 {
@@ -13,75 +14,77 @@ namespace Lemoine.Stamping.Lem_StampFileWatchService
   /// Main class of service Lem_StampFileWatchService
   /// </summary>
   public sealed class StampFileWatchService
-    : Lemoine.Threading.IThreadService, IDisposable
+    : Lemoine.Threading.IThreadServiceAsync, IDisposable
   {
-    static readonly TimeSpan NOT_RESPONDING_TIMEOUT_KEY = TimeSpan.FromMinutes (5);
+    static readonly string NOT_RESPONDING_TIMEOUT_KEY = "StampFileWatchService.CheckThreads.Timeout";
+    static readonly TimeSpan NOT_RESPONDING_TIMEOUT_DEFAULT = TimeSpan.FromMinutes (5);
 
-    #region Members
-    DirectoryManager m_directoryManager;
-    readonly CheckThreadsAndProcesses m_checkThreads = new CheckThreadsAndProcesses ();
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     bool m_disposed = false;
-    #endregion
+    IndexFileDetection m_indexFileDetection;
+    readonly CheckThreadsAndProcesses m_check = new CheckThreadsAndProcesses ();
 
-    static readonly ILog log = LogManager.GetLogger (typeof (DirectoryManager).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (StampFileWatchService).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public StampFileWatchService ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="IThreadService"/>
     /// </summary>
     public void Initialize ()
     {
-      log.DebugFormat ("StampFileWatchService: Initialize");
-      try {
-        InitializeThreads (CancellationToken.None);
-      }
-      catch (Exception ex) {
-        log.Error ($"InitializeAsync: exception", ex);
-        throw;
-      }
+      System.Threading.Tasks.Task.Run (() => InitializeAsync (CancellationToken.None)).Wait ();
     }
 
-    void InitializeThreads (CancellationToken cancellationToken)
+    /// <summary>
+    /// Use the default OnStart method
+    /// </summary>
+    public async System.Threading.Tasks.Task InitializeAsync (CancellationToken cancellationToken)
+    {
+      await InitializeThreadsAsync (cancellationToken);
+    }
+
+    async System.Threading.Tasks.Task InitializeThreadsAsync (CancellationToken cancellationToken)
     {
       using (var linkedCancellationTokenSource = CancellationTokenSource
         .CreateLinkedTokenSource (m_cancellationTokenSource.Token, cancellationToken)) {
         var linkedToken = linkedCancellationTokenSource.Token;
 
         // thread to monitor the index files directory
-        m_directoryManager = new DirectoryManager ();
-        m_directoryManager.Start (linkedToken); // TODO: cancellation token
+        m_indexFileDetection = new IndexFileDetection ();
+        m_indexFileDetection.Start (linkedToken);
 
         // - Create the thread that checks the other threads
-        m_checkThreads.AddThread (m_directoryManager);
-        m_checkThreads.NotRespondingTimeout = NOT_RESPONDING_TIMEOUT_KEY;
-        m_checkThreads.Start (linkedToken);
+        m_check.AddThread (m_indexFileDetection);
+        m_check.NotRespondingTimeout = Lemoine.Info.ConfigSet
+          .LoadAndGet<TimeSpan> (NOT_RESPONDING_TIMEOUT_KEY, NOT_RESPONDING_TIMEOUT_DEFAULT);
+        m_check.Start (linkedToken);
 
         // - Check no 'exit' was requested
-        while (!m_directoryManager.ExitRequested) {
-          linkedToken.WaitHandle.WaitOne (100);
-          if (linkedToken.IsCancellationRequested) {
-            log.Info ($"InitializeThreads: cancellation requested (OnStop called), return");
+        while (!m_indexFileDetection.ExitRequested && !m_check.ExitRequested) {
+          await System.Threading.Tasks.Task.Delay (100, linkedToken);
+          if (linkedToken.IsCancellationRequested
+            && !m_indexFileDetection.ExitRequested && !m_check.ExitRequested) {
+            // OnStop was called, return
+            LogManager.SetApplicationStopping ();
+            log.Info ($"InitializeThreadsAsync: cancellation requested (OnStop called), return");
             return;
           }
         }
       }
 
-      log.Fatal ("InitializeThreads: exit was requested");
+      LogManager.SetApplicationStopping ();
+      log.Fatal ("InitializeThreadsAsync: exit was requested");
       try {
-        m_checkThreads.Abort ();
-        log.Fatal ("InitializeThreads: checkThreads aborted because Exit was requested");
-        m_directoryManager.Abort ();
-        log.Fatal ("InitializeThreads: m_directoryManager aborted because Exit was requested");
+        m_check.Abort ();
+        log.Fatal ("InitializeThreadsAsync: checkThreads aborted because Exit was requested");
+        m_indexFileDetection.Abort ();
+        log.Fatal ("InitializeThreadsAsync: m_directoryManager aborted because Exit was requested");
       }
       finally {
         Lemoine.Core.Environment.LogAndForceExit (log);
@@ -93,12 +96,13 @@ namespace Lemoine.Stamping.Lem_StampFileWatchService
     /// </summary>
     public void OnStop ()
     {
+      LogManager.SetApplicationStopping ();
+
       m_cancellationTokenSource?.Cancel ();
 
-      m_checkThreads?.Abort ();
-      m_directoryManager?.Abort ();
+      m_check?.Abort ();
+      m_indexFileDetection?.Abort ();
     }
-    #endregion Methods
 
     #region IDisposable implementation
     /// <summary>
@@ -126,7 +130,7 @@ namespace Lemoine.Stamping.Lem_StampFileWatchService
       }
 
       if (disposing) {
-        m_checkThreads?.Dispose ();
+        m_check?.Dispose ();
         m_cancellationTokenSource?.Dispose ();
       }
 

@@ -3,12 +3,16 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  
-  <ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
     <ProjectReference Include="..\..\..\..\Alert\Libraries\Lemoine.Alert.GDBListeners\Lemoine.Alert.GDBListeners.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
     <ProjectReference Include="..\..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
     <ProjectReference Include="..\..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />

@@ -13,6 +13,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Reflection;
 using Lemoine.Extensions.Interfaces;
+using Lemoine.Info;
 
 namespace Lemoine.Database.Persistent
 {
