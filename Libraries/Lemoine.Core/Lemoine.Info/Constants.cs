@@ -33,11 +33,11 @@ namespace Lemoine.Info
     /// </summary>
     public static string DEFAULT_DATABASE_USER =>
 #if ATSORA
-      "AtsoraApp"
+      "atsoraapp"
 #elif LEMOINE
       "LemoineUser"
 #else
-      "PomamoApp"
+      "pomamoapp"
 #endif
       ;
 
