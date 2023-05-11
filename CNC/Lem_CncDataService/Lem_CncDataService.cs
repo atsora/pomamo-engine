@@ -15,13 +15,6 @@ using Lemoine.Core.Log;
 using Lemoine.Business.Config;
 using System.Linq;
 using Lemoine.FileRepository;
-using Lemoine.ModelDAO.Interfaces;
-using Pulse.Extensions;
-using Lemoine.Extensions.Plugin;
-using Lemoine.Extensions.ExtensionsProvider;
-using Lemoine.Core.Plugin;
-using Lemoine.Extensions.Interfaces;
-using Pulse.Hosting;
 using Lemoine.Core.Hosting;
 
 namespace Lem_CncDataService
@@ -79,13 +72,18 @@ namespace Lem_CncDataService
 
         try {
           machineModules = GetMachineModules ();
-          Debug.Assert (null != machineModules);
+          if (machineModules is null) { // No acquisition server matches
+            log.Error ($"CreateImportClasses: no acquisition server matches, return at once");
+            return;
+          }
         }
         catch (Exception ex) {
           log.Error ("CreateImportClasses: Exception while trying to get the monitored machines => try again in a 30 seconds", ex);
           cancellationToken.WaitHandle.WaitOne (TimeSpan.FromSeconds (30));
         }
       }
+
+      Debug.Assert (null != machineModules);
 
       if (cancellationToken.IsCancellationRequested) {
         return;
@@ -274,6 +272,9 @@ namespace Lem_CncDataService
         if (linkedToken.IsCancellationRequested) {
           return;
         }
+        if (!m_threadImports.Any () && !m_processImports.Any ()) {
+          log.Warn ($"InitializeThreads: there is no import classes");
+        }
 
         // Start the threads and processes
         foreach (ImportCncDataFromQueue import in m_threadImports.Values) {
@@ -401,8 +402,7 @@ namespace Lem_CncDataService
       IEnumerable<IComputer> lposts;
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Lem_CncDataService.GetLPost")) {
-          lposts =
-            ModelDAOHelper.DAOFactory.ComputerDAO.GetLposts ();
+          lposts = ModelDAOHelper.DAOFactory.ComputerDAO.GetLposts ();
         }
       }
 
@@ -415,6 +415,8 @@ namespace Lem_CncDataService
 
     /// <summary>
     /// Get the list of the monitored machine modules that corresponds to this LPost
+    /// 
+    /// Return null if no acquisition server corresponds to this computer
     /// </summary>
     /// <returns></returns>
     ICollection<IMachineModule> GetMachineModules ()
@@ -448,7 +450,7 @@ namespace Lem_CncDataService
           }
 
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetMachineModules: got {0} machine modules", machineModules.Count);
+            log.Debug ($"GetMachineModules: got {machineModules.Count} machine modules");
           }
           return machineModules;
         }
