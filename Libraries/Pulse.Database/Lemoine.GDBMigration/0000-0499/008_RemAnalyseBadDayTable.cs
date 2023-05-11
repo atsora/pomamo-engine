@@ -10,22 +10,18 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 008: remove sfkanlbadday - Aim : rework compactor access
+  /// Migration 008: deprecated
   /// </summary>
   [Migration(08)]
   public class RemAnalyseBadDayTable: Migration
   {
     static readonly ILog log = LogManager.GetLogger(typeof (RemAnalyseBadDayTable).FullName);
-    static readonly string TABLE_NAME = "sfkanlbadday"; 
     
     /// <summary>
     /// Update the database
     /// </summary>
     override public void Up ()
     {
-      if (Database.TableExists (TABLE_NAME)) {
-        Database.RemoveTable (TABLE_NAME);
-      }
     }
     
     /// <summary>

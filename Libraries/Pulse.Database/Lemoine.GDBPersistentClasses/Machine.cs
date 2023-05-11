@@ -16,9 +16,6 @@ namespace Lemoine.GDBPersistentClasses
   /// <summary>
   /// Persistent class of table Machine
   /// 
-  /// This table replaces with the Monitored Machine
-  /// and Machine Path tables the old sfkmach table.
-  /// 
   /// This new table extends the concept of machine
   /// to include also the outsource resources and the not monitored machines.
   /// </summary>

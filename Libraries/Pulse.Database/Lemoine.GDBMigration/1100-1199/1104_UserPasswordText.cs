@@ -23,18 +23,7 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      if (Database.TableExists ("sfkguys")) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkguys CASCADE;");
-      }
-
       MakeColumnText (TableName.USER, "userpassword");
-
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfkguys AS " +
-                                "SELECT userid AS guyid, " +
-                                "userlogin AS guylogin, " +
-                                "userpassword::varchar AS guypass, " +
-                                "username AS guyname " +
-                                "FROM usertable;");
     }
 
     /// <summary>

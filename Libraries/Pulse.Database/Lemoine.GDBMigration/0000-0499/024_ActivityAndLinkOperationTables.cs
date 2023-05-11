@@ -14,7 +14,6 @@ namespace Lemoine.GDBMigration
   /// <item>ActivityDetection</item>
   /// <item>ActivityManual</item>
   /// <item>LinkOperation</item>
-  /// <item>(removed) Temporary view FactTransition before migrating SfkFacts to Fact</item>
   /// </summary>
   [Migration(24)]
   public class ActivityAndLinkOperationTables: Migration

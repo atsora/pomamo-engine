@@ -18,8 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   /// <summary>
   /// Persistent class of table Sequence
   /// 
-  /// This table replaces with the Stamp and StampingValue tables the old sfkoperation table.
-  /// 
   /// It represents a specific machining sequence inside an operation.
   /// A sequence is characterized by a tool, some machining parameters
   /// like the tolerance, the stock...

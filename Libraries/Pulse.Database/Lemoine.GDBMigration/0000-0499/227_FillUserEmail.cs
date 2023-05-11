@@ -10,7 +10,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
 	/// <summary>
-	/// Migration 227:
+	/// Migration 227: deprecated
 	/// </summary>
 	[Migration(227)]
 	public class FillUserEmail: MigrationExt
@@ -22,20 +22,6 @@ namespace Lemoine.GDBMigration
 		/// </summary>
 		override public void Up ()
 		{
-      if (Database.TableExists ("sfkaddr")) {
-        // Subquery to retrieve valid emails from the old user table
-        String regExpEmail = "^email:([A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+)$";
-        String subQuery = "SELECT login, REGEXP_REPLACE(dest, '" + regExpEmail + "', '\\1') As dest " +
-          "FROM sfkaddr " +
-          "WHERE dest LIKE 'email:%'";
-
-        // Add tableuser.usermail based on sfkaddr.dest
-        Database.ExecuteQuery ("UPDATE " + TableName.USER +
-                              " SET useremail = tmp.dest " +
-                              " FROM (" + subQuery + ") AS tmp" +
-                              " WHERE " + TableName.USER + ".userlogin=tmp.login"
-                             );
-      }
 		}
 		
 		/// <summary>

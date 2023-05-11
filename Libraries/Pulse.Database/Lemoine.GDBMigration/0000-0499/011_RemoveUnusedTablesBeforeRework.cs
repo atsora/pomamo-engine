@@ -10,12 +10,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 011: remove the following unused tables before the database rework:
-  /// <item>sfkprojtype (Job type)</item>
-  /// <item>sfkcost (Customer)</item>
-  /// <item>sfkcategory (Category)</item>
-  /// <item>sfkmate (Material)</item>
-  /// <item>sfkstock</item>
+  /// Migration 011: deprecated
   /// </summary>
   [Migration(11)]
   public class RemoveUnusedTablesBeforeRework: Migration
@@ -27,21 +22,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      if (Database.TableExists ("sfkprojtype")) {
-        Database.RemoveTable ("sfkprojtype");
-      }
-      if (Database.TableExists ("sfkcost")) {
-        Database.RemoveTable ("sfkcost");
-      }
-      if (Database.TableExists ("sfkcategory")) {
-        Database.RemoveTable ("sfkcategory");
-      }
-      if (Database.TableExists ("sfkmate")) {
-        Database.RemoveTable ("sfkmate");
-      }
-      if (Database.TableExists ("sfkstock")) {
-        Database.RemoveTable ("sfkstock");
-      }
     }
     
     /// <summary>
@@ -49,7 +29,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      // No rollback is possible
     }
   }
 }

@@ -33,17 +33,6 @@ namespace Lemoine.GDBMigration
       
       RestoreNewSimpleOperation ();
       
-      // Restore sfkprocess
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW sfkprocess AS
- SELECT operation.operationid AS id, operation.operationname AS name, operation.operationtypeid - 1 AS processtypeid,
-        CASE
-            WHEN componentintermediateworkpiece.componentid IS NULL THEN 0
-            ELSE componentintermediateworkpiece.componentid
-        END AS componentid, 1 AS ordernb, operation.operationmachiningduration / 3600 AS hours, 0 AS completed
-   FROM operation
-NATURAL JOIN intermediateworkpiece
-   LEFT JOIN componentintermediateworkpiece USING (intermediateworkpieceid);");
-
       // check for existence of schema reportv2
       bool schemaExists = false;
       using (IDataReader reader =
@@ -76,17 +65,6 @@ NATURAL JOIN intermediateworkpiece
 
       RestoreOldSimpleOperation ();
 
-      // Restore sfkprocess
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW sfkprocess AS
- SELECT operation.operationid AS id, operation.operationname AS name, operation.operationtypeid - 1 AS processtypeid,
-        CASE
-            WHEN componentintermediateworkpiece.componentid IS NULL THEN 0
-            ELSE componentintermediateworkpiece.componentid
-        END AS componentid, 1 AS ordernb, operation.operationestimatedmachininghours AS hours, 0 AS completed
-   FROM operation
-NATURAL JOIN intermediateworkpiece
-   LEFT JOIN componentintermediateworkpiece USING (intermediateworkpieceid);");
-      
       // check for existence of schema reportv2
       bool schemaExists = false;
       using (IDataReader reader =

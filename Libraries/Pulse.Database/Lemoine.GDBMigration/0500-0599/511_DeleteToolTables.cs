@@ -60,10 +60,6 @@ namespace Lemoine.GDBMigration
                                   Migrator.Framework.ForeignKeyConstraint.Cascade);
       MakeColumnJson(TableName.TOOL_POSITION, TableName.TOOL_POSITION + "properties");
       AddUniqueConstraint(TableName.TOOL_POSITION, ColumnName.MACHINE_MODULE_ID, TableName.TOOL_POSITION + "toolid");
-      Database.ExecuteNonQuery(@"
-ALTER TABLE public.toolposition OWNER TO postgres;
-GRANT ALL ON TABLE public.toolposition TO postgres;
-GRANT SELECT ON TABLE public.toolposition TO reportv2;");
       
       // Tool life table
       Database.AddTable(TableName.TOOL_LIFE,
@@ -86,10 +82,6 @@ GRANT SELECT ON TABLE public.toolposition TO reportv2;");
       Database.GenerateForeignKey(TableName.TOOL_LIFE, ColumnName.UNIT_ID,
                                   TableName.UNIT, ColumnName.UNIT_ID,
                                   Migrator.Framework.ForeignKeyConstraint.SetNull);
-      Database.ExecuteNonQuery(@"
-ALTER TABLE public.toollife OWNER TO postgres;
-GRANT ALL ON TABLE public.toollife TO postgres;
-GRANT SELECT ON TABLE public.toollife TO reportv2;");
       
       // Fix display problems
       Database.ExecuteNonQuery(@"

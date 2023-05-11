@@ -121,12 +121,7 @@ OR ({0} IS NULL AND {1} IS NULL AND {2} IS NULL AND {3} IS NULL AND {4} IS NULL 
     
     void MigrateData ()
     {
-      if (Database.TableExists ("sfkcfgs")) { // Clean sfkcfgs
-        Database.ExecuteNonQuery (@"DELETE FROM sfkcfgs 
-WHERE config='UseGoal'
-  AND skey IN ('24x7_goal', 'AllShift_goal', 'OutOfShifts_goal')
-  AND NOT EXISTS (SELECT 1 FROM machine WHERE machineid=sfkcfgs.sfksection::integer);");
-      }
+      // deprecated
     }
   }
 }

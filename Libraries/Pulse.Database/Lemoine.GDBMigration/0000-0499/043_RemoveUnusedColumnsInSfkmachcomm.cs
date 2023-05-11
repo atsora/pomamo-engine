@@ -10,7 +10,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 043 (deprecated): remove the last unused columns of sfkmachcomm
+  /// Migration 043: deprecated
   /// </summary>
   [Migration(43)]
   public class RemoveUnusedColumnsInSfkmachcomm: MigrationExt

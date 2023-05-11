@@ -37,8 +37,6 @@ namespace Lemoine.GDBPersistentClasses
       // - Global
       string firstDayOfWeekKey = ConfigKeys.GetCalendarConfigKey (CalendarConfigKey.FirstDayOfWeek);
       if (null == GetConfig (firstDayOfWeekKey)) {
-        // Note: the migration from sfkcfgs is not implemented here,
-        //       because there is too much code to write
         config = new Config (firstDayOfWeekKey,
                              "Global config: first day of the week",
                              DayOfWeek.Monday);

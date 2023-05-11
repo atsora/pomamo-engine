@@ -10,8 +10,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 012: Migrate the sfkproj table to some new tables
-  /// that include the notion of Work Order
+  /// Migration 012: new work and project tables
   /// </summary>
   [Migration(12)]
   public class NewWorkOrderProjectTables: Migration
@@ -30,8 +29,6 @@ namespace Lemoine.GDBMigration
     static readonly string PROJECT_TABLE = "Project";
     static readonly string PROJECT_ID = "ProjectId";
     static readonly string WORK_ORDER_PROJECT_TABLE = "WorkOrderProject";
-    
-    static readonly string SFKPROJ_TABLE = "sfkproj";
     
     /// <summary>
     /// Update the database
@@ -171,24 +168,6 @@ namespace Lemoine.GDBMigration
         Database.ExecuteNonQuery ("CREATE INDEX workorderproject_projectid_idx " +
                                   "ON workorderproject (projectid);");
       }
-
-      // 2. Old tables deletion
-      if (Database.TableExists (SFKPROJ_TABLE)) {
-        Database.RemoveTable (SFKPROJ_TABLE);
-        Database.ExecuteNonQuery ("DROP FUNCTION IF EXISTS projectclosed();");
-      }
-
-      // 3. View sfkproj for compatibility
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkproj");
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfkproj AS " +
-                                "SELECT projectid AS projectid, projectname AS projectname, " +
-                                "0 AS projectcust, 0 AS projecthours, " +
-                                "workorderstatusid-2 AS projectstatus, " +
-                                "workorderdeliverydate AS projectdue, " +
-                                "0 AS projecttypeid " +
-                                "FROM workorder " +
-                                "NATURAL JOIN workorderproject " +
-                                "NATURAL JOIN project");
     }
     
     /// <summary>
@@ -196,12 +175,7 @@ namespace Lemoine.GDBMigration
     /// </summary>
     public override void Down ()
     {
-      // 1. Drop compatibility view sfkproj
-      if (Database.TableExists (SFKPROJ_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkproj");
-      }
-
-      // 3. New tables deletion
+      // New tables deletion
       if (Database.TableExists (WORK_ORDER_PROJECT_TABLE)) {
         Database.RemoveTable (WORK_ORDER_PROJECT_TABLE);
       }

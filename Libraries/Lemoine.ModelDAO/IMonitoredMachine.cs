@@ -24,8 +24,6 @@ namespace Lemoine.Model
   
   /// <summary>
   /// Model of table MonitoredMachine
-  /// 
-  /// This table replaces with the Machine and Machine Module tables the old sfkmach table
   /// </summary>
   public interface IMonitoredMachine: IMachine
   {

@@ -33,9 +33,6 @@ namespace Lemoine.GDBMigration
     static readonly string WORK_ORDER_TABLE = "WorkOrder";
     static readonly string WORK_ORDER_ID = "WorkOrderId";
 
-    static readonly string SFKMACH_TABLE = "sfkmach";
-
-
     /// <summary>
     /// Update the database
     /// </summary>
@@ -106,44 +103,9 @@ namespace Lemoine.GDBMigration
                                   "ON machine (machinemonitoringtypeid);");
         Database.ExecuteNonQuery ("CREATE INDEX machine_machinedisplaypriority_idx " +
                                   "ON machine (machinedisplaypriority);");
-        // Remove sequence sfkmach_machid_seq
-        if (Database.TableExists (TableName.SFK_MACH)) {
-          Database.ExecuteNonQuery ("ALTER TABLE sfkmach ALTER COLUMN machid DROP DEFAULT;");
-        }
-        else {
-          CreateSfkMach ();
-        }
         Database.GenerateForeignKey (TableName.MACHINE, MACHINE_MONITORING_TYPE_ID,
                                      MACHINE_MONITORING_TYPE_TABLE, MACHINE_MONITORING_TYPE_ID,
                                      Migrator.Framework.ForeignKeyConstraint.SetDefault);
-        if (Database.TableExists (SFKMACH_TABLE)) {
-          // Temporary trigger for sfkmach
-          Database.ExecuteNonQuery ("CREATE OR REPLACE FUNCTION sfkmach_insert_updater() " +
-                                    "  RETURNS trigger AS " +
-                                    "$BODY$ \n" +
-                                    "BEGIN \n" +
-                                    "INSERT INTO machine (machineid, machinename, machinemonitoringtypeid, machinedisplaypriority) " +
-                                    "VALUES (DEFAULT, NEW.machname, 2, NEW.disp_prio) \n" +
-                                    "RETURNING machineid INTO NEW.machid;\n" +
-                                    "RETURN NEW;\n" +
-                                    "END;\n" +
-                                    "$BODY$" +
-                                    "  LANGUAGE plpgsql VOLATILE " +
-                                    "  COST 100;");
-          Database.ExecuteNonQuery ("CREATE TRIGGER sfkmach_updater " +
-                                    "  BEFORE INSERT " +
-                                    "  ON sfkmach " +
-                                    "  FOR EACH ROW " +
-                                    "  EXECUTE PROCEDURE sfkmach_insert_updater();");
-          Database.ExecuteNonQuery ("ALTER TABLE sfkmach " +
-                                    "ALTER COLUMN machid " +
-                                    "SET DEFAULT nextval('machine_machineid_seq'::regclass)");
-          Database.ExecuteNonQuery ("INSERT INTO machine " +
-                                    "(machineid, machinename, machinemonitoringtypeid, machinedisplaypriority) " +
-                                    "SELECT machid, machname, 2, disp_prio FROM sfkmach;");
-          Database.ExecuteNonQuery ("SELECT SETVAL('machine_machineid_seq', " +
-                                    "(SELECT MAX(machineid) FROM machine) + 1);");
-        }
       }
       if (!Database.TableExists (WORK_ORDER_MACHINE_ASSOCIATION_TABLE)) {
         Database.AddTable (WORK_ORDER_MACHINE_ASSOCIATION_TABLE,
@@ -169,69 +131,11 @@ DO ALSO DELETE FROM modification
       }
     }
 
-    void CreateSfkMach ()
-    {
-      if (!Database.TableExists (TableName.SFK_MACH)) {
-        Database.ExecuteNonQuery (@"
-CREATE TABLE public.sfkmach
-        (
-            machid bigint NOT NULL DEFAULT nextval('machine_machineid_seq'::regclass),
-    postid bigint NOT NULL,
-    machpostid bigint NOT NULL,
-    guyid integer NOT NULL,
-    machname character varying COLLATE pg_catalog.""default"" NOT NULL,
-    machserenc bigint NOT NULL,
-    machirpm bigint NOT NULL,
-    machmetric integer NOT NULL,
-    machobsolete integer NOT NULL,
-    machlogpc character varying COLLATE pg_catalog.""default"" NOT NULL,
-    sfkspvid integer NOT NULL,
-    sfkmode bigint NOT NULL,
-    sfkthresh double precision NOT NULL,
-    mclassid double precision NOT NULL,
-    firstevt timestamp without time zone NOT NULL,
-    sfktype integer NOT NULL,
-    sfkcost double precision NOT NULL,
-    activeflag integer NOT NULL,
-    disp_prio integer NOT NULL,
-    manualflag integer NOT NULL,
-    active_negate integer NOT NULL,
-    manual_negate integer NOT NULL,
-    first_feed_evt timestamp without time zone NOT NULL,
-    rpm_below integer NOT NULL,
-    rpm_threshold double precision NOT NULL,
-    no_chupchick integer NOT NULL,
-    g0g1_thresh double precision NOT NULL,
-    opreset_time bigint NOT NULL,
-    machtypeid bigint NOT NULL,
-    tpfilter bigint NOT NULL,
-    montype bigint NOT NULL,
-    jitterchannelwidth double precision NOT NULL,
-    spindleloadbelow integer NOT NULL,
-    spindleloadthreshold double precision NOT NULL,
-    cncignorenoconnect integer NOT NULL,
-    rotthreshold double precision NOT NULL,
-    lightactivitycheckforfull integer NOT NULL,
-    spindleloadindex integer NOT NULL,
-    CONSTRAINT sfkmach_pkey PRIMARY KEY (machid)
-)
-          ");
-      }
-    }
-
     /// <summary>
     /// Downgrade the database
     /// </summary>
     override public void Down ()
     {
-      if (Database.TableExists (TableName.SFK_MACH)) {
-        // Reininitialize the old sequences
-        Database.ExecuteNonQuery ("ALTER TABLE sfkmach ALTER COLUMN machid " +
-                                  "SET DEFAULT nextval('sfkmach_machid_seq'::regclass);");
-        Database.ExecuteNonQuery ("SELECT SETVAL('sfkmach_machid_seq', " +
-                                  "(SELECT MAX(machid) FROM sfkmach) + 1);");
-      }
-
       // New tables deletion
       if (Database.TableExists (WORK_ORDER_MACHINE_ASSOCIATION_TABLE)) {
         Database.RemoveTable (WORK_ORDER_MACHINE_ASSOCIATION_TABLE);
@@ -239,8 +143,6 @@ CREATE TABLE public.sfkmach
       if (Database.TableExists (TableName.MACHINE)) {
         Database.RemoveTable (TableName.MACHINE);
       }
-      Database.ExecuteNonQuery ("DROP TRIGGER IF EXISTS sfkmach_updater ON sfkmach");
-      Database.ExecuteNonQuery ("DROP FUNCTION IF EXISTS sfkmach_insert_updater();");
       if (Database.TableExists (MACHINE_MONITORING_TYPE_TABLE)) {
         Database.RemoveTable (MACHINE_MONITORING_TYPE_TABLE);
       }

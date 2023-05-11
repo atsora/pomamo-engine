@@ -10,7 +10,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 010 (deprecated): Associate the trigger machineprocesstype to table sfkfacts
+  /// Migration 010: deprecated
   /// </summary>
   [Migration(10)]
   public class AddTriggerMachineprocesstype: Migration

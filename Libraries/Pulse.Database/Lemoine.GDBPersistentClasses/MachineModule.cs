@@ -16,8 +16,6 @@ namespace Lemoine.GDBPersistentClasses
   /// <summary>
   /// Persistent class of table MachineModule
   /// 
-  /// This table replaces with the Machine and Monitored Machine tables the old sfkmach table
-  /// 
   /// A monitored machine may be made of several independent modules.
   /// Each module reports its own set of data.
   /// A module can represent for example a Machine Path.

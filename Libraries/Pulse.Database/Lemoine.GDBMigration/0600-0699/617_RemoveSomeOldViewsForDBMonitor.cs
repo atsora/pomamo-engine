@@ -26,8 +26,6 @@ namespace Lemoine.GDBMigration
       DropView ("notexisting");
       DropView ("observationstateslotbor");
       DropView ("reasonbor");
-      DropView ("sfkyreas");
-      DropView ("sfkyrgrp");
     }
 
     /// <summary>
@@ -35,59 +33,9 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      RestoreSfkyrgrp ();
-      RestoreSfkyreas ();
       RestoreReasonbor ();
       RestoreObservationstateslotbor ();
     }
-
-    void RestoreSfkyrgrp ()
-    {
-      Database.ExecuteNonQuery (@"
-CREATE OR REPLACE VIEW public.sfkyrgrp AS 
- SELECT reasongroup.reasongroupid - 20 AS rgrpid,
-        CASE
-            WHEN reasongroup.reasongroupname IS NULL THEN tname.translationvalue
-            ELSE reasongroup.reasongroupname::character varying
-        END AS grpname,
-        CASE
-            WHEN reasongroup.reasongroupdescription IS NULL AND tdesc.translationvalue IS NULL THEN ''::character varying
-            WHEN reasongroup.reasongroupdescription IS NULL THEN tdesc.translationvalue
-            ELSE reasongroup.reasongroupdescription
-        END AS descr
-   FROM reasongroup
-     LEFT JOIN translation tname ON reasongroup.reasongrouptranslationkey::text = tname.translationkey::text AND tname.locale = ''::citext
-     LEFT JOIN translation tdesc ON reasongroup.reasongroupdescriptiontranslationkey::text = tdesc.translationkey::text AND tdesc.locale = ''::citext;
-");
-    }
-
-    void RestoreSfkyreas ()
-    {
-      Database.ExecuteNonQuery (@"
-CREATE OR REPLACE VIEW public.sfkyreas AS 
- SELECT reason.reasonid - 20 AS rid,
-        CASE
-            WHEN reason.reasonname IS NULL THEN tname.translationvalue
-            ELSE reason.reasonname::character varying
-        END AS reason,
-        CASE
-            WHEN reason.reasoncode IS NULL THEN ''::character varying
-            ELSE reason.reasoncode::character varying
-        END AS code,
-        CASE
-            WHEN reason.reasondescription IS NULL AND tdesc.translationvalue IS NULL THEN ''::character varying
-            WHEN reason.reasondescription IS NULL THEN tdesc.translationvalue
-            ELSE reason.reasondescription
-        END AS descr,
-    reason.reasongroupid - 20 AS rgrpid,
-    reason.reasonlinkoperationdirection AS linkwith
-   FROM reason
-     LEFT JOIN translation tname ON reason.reasontranslationkey::text = tname.translationkey::text AND tname.locale = ''::citext
-     LEFT JOIN translation tdesc ON reason.reasondescriptiontranslationkey::text = tdesc.translationkey::text AND tdesc.locale = ''::citext
-  WHERE reason.reasonid >= 15;
-");
-    }
-
     void RestoreReasonbor ()
     {
       Database.ExecuteNonQuery (@"

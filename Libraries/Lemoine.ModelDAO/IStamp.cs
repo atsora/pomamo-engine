@@ -9,9 +9,6 @@ namespace Lemoine.Model
   /// <summary>
   /// Model of table Stamp
   /// 
-  /// This new table is aimed at replacing with the Stamp Detection
-  /// and Sequence tables the sfkstartend and sfkoperation tables.
-  /// 
   /// This table makes the association between a stamp and:
   /// <item>an operation cycle</item>
   /// <item>a sequence</item>

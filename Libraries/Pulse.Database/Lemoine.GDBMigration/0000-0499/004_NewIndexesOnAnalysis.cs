@@ -11,9 +11,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 004: add some new indexes in sfkanly
-  /// 
-  /// Deprecated... sfkanly does not exist any more
+  /// Migration 004: deprecated
   /// </summary>
   [Migration(04)]
   public class NewIndexesOnAnalysis: GDBMigration

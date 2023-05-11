@@ -57,11 +57,6 @@ namespace Lemoine.GDBMigration
       Database.ExecuteNonQuery ("CREATE UNIQUE INDEX monitoredmachine_mainmachinemoduleid_idx " +
                                 "ON monitoredmachine (mainmachinemoduleid) " +
                                 "WHERE mainmachinemoduleid IS NOT NULL;");
-      if (Database.TableExists (TableName.SFK_MACH)) {
-        Database.ExecuteNonQuery ("INSERT INTO monitoredmachine " +
-                                  "(machineid) " +
-                                  "SELECT machid FROM sfkmach;");
-      }
     }
     
     /// <summary>
@@ -215,13 +210,6 @@ OR (autoprocessid IS NOT NULL
       Database.GenerateForeignKey (TableName.OLD_SEQUENCE_DETECTION, ColumnName.MODIFICATION_ID,
                                    TableName.MODIFICATION, ColumnName.MODIFICATION_ID,
                                    Migrator.Framework.ForeignKeyConstraint.Cascade);
-      // Note: the foreign key to the Process table is made in migration 32
-      if (Database.TableExists ("sfkoperation")) {
-        // Temporary foreign key
-        Database.GenerateForeignKey (TableName.OLD_SEQUENCE_DETECTION, ColumnName.OLD_SEQUENCE_ID,
-                                     "sfkoperation", "opid",
-                                     Migrator.Framework.ForeignKeyConstraint.Cascade);
-      }
       Database.GenerateForeignKey (TableName.OLD_SEQUENCE_DETECTION, ColumnName.MACHINE_MODULE_ID,
                                    TableName.MACHINE_MODULE, ColumnName.MACHINE_MODULE_ID,
                                    Migrator.Framework.ForeignKeyConstraint.Cascade);
@@ -247,24 +235,6 @@ DO ALSO DELETE FROM modification
         AddMachineModuleTable ();
       }
 
-      if (Database.TableExists (TableName.SFK_MACH)) {
-        // 3. update sfkmach_insert_updater
-        Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkmach_insert_updater()
-  RETURNS trigger AS
-$BODY$
-BEGIN
-INSERT INTO machine (machineid, machinename, machinemonitoringtypeid, machinedisplaypriority)
- VALUES (DEFAULT, NEW.machname, 2, NEW.disp_prio)
- RETURNING machineid INTO NEW.machid;
-INSERT INTO monitoredmachine (machineid)
- VALUES (NEW.machid);
-RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;");
-      }
-      
       // 4. MachineMode
       Database.ExecuteNonQuery ("DROP VIEW IF EXISTS machinemode CASCADE;");
       if (!Database.TableExists (TableName.MACHINE_MODE)) {
@@ -298,21 +268,6 @@ WHERE modificationreferencedtable='ProcessDetection'");
         Database.RemoveTable (TableName.OLD_SEQUENCE_DETECTION);
       }
 
-      if (Database.TableExists (TableName.SFK_MACH)) {
-        Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkmach_insert_updater()
-  RETURNS trigger AS
-$BODY$
-BEGIN
-INSERT INTO machine (machineid, machinename, machinemonitoringtypeid, machinedisplaypriority)
- VALUES (DEFAULT, NEW.machname, 2, NEW.disp_prio)
- RETURNING machineid INTO NEW.machid;
-RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;");
-      }
-      
       if (Database.TableExists (TableName.OLD_MACHINE_MODULE_STATUS)) {
         Database.RemoveTable (TableName.OLD_MACHINE_MODULE_STATUS);
       }

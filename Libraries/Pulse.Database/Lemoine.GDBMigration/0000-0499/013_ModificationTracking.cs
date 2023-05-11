@@ -11,7 +11,7 @@ namespace Lemoine.GDBMigration
 {
   /// <summary>
   /// Migration 013: New tables to track the modification on some tables:
-  /// <item>User (replaces sfkguys)</item>
+  /// <item>User</item>
   /// <item>Service</item>
   /// <item>Updater</item>
   /// <item>Revision</item>
@@ -32,9 +32,6 @@ namespace Lemoine.GDBMigration
     static readonly string REVISION_ID = "RevisionId";
     static readonly string MODIFICATION_TABLE = "Modification";
     static readonly string MODIFICATION_ID = "ModificationId";
-    
-    static readonly string SFKGUYS_TABLE = "sfkguys";
-    static readonly string SFKLPST_TABLE = "sfklpst";
     
     /// <summary>
     /// Update the database
@@ -343,67 +340,9 @@ namespace Lemoine.GDBMigration
                                   "WHERE analysisstatusid=1;");
       }
       
-      // 2. Old tables deletion
-      if (Database.TableExists (SFKGUYS_TABLE)) {
-        Database.RemoveTable (SFKGUYS_TABLE);
-      }
-      if (Database.TableExists (SFKLPST_TABLE)) {
-        Database.RemoveTable (SFKLPST_TABLE);
-      }
+      // 2. Old tables deletion (deprecated)
       
-      // 3. Views and associated rules for compatibility
-      #region sfkguys view and associated rules
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfkguys AS " +
-                                "SELECT userid AS guyid, " +
-                                "userlogin AS guylogin, " +
-                                "userpassword AS guypass, " +
-                                "username AS guyname " +
-                                $"FROM {TableName.USER};");
-      Database.ExecuteNonQuery ("CREATE RULE sfkguys_insert AS " +
-                                "ON INSERT TO sfkguys " +
-                                "DO INSTEAD " +
-                                $"INSERT INTO {TableName.USER} " +
-                                "(username, userlogin, userpassword) " +
-                                "VALUES (NEW.guyname, NEW.guylogin, NEW.guypass);");
-      Database.ExecuteNonQuery ("CREATE RULE sfkguys_update AS " +
-                                "ON UPDATE TO sfkguys " +
-                                "DO INSTEAD " +
-                                $"UPDATE {TableName.USER} " +
-                                "SET username=NEW.guyname, " +
-                                "    userlogin=NEW.guylogin, " +
-                                "    userpassword=NEW.guypass " +
-                                "WHERE userid = OLD.guyid;");
-      Database.ExecuteNonQuery ("CREATE RULE sfkguys_delete AS " +
-                                "ON DELETE TO sfkguys " +
-                                "DO INSTEAD " +
-                                $"DELETE FROM {TableName.USER} " +
-                                "WHERE userid = OLD.guyid;");
-      #endregion sfkguys view and associated rules
-      #region sfklpst view and associated rules
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfklpst AS " +
-                                "SELECT computerid AS postid, " +
-                                "computername AS postpcname " +
-                                "FROM computer " +
-                                "WHERE ComputerIsLpst=TRUE;");
-      Database.ExecuteNonQuery ("CREATE RULE sfklpst_insert AS " +
-                                "ON INSERT TO sfklpst " +
-                                "DO INSTEAD " +
-                                "INSERT INTO computer " +
-                                "(computername, computeraddress, ComputerIsLpst) " +
-                                "VALUES (NEW.postpcname, NEW.postpcname, TRUE);");
-      Database.ExecuteNonQuery ("CREATE RULE sfklpst_update AS " +
-                                "ON UPDATE TO sfklpst " +
-                                "DO INSTEAD " +
-                                "UPDATE computer " +
-                                "SET computername=NEW.postpcname, " +
-                                "    computeraddress=NEW.postpcname " +
-                                "WHERE computerid=OLD.postid;");
-      Database.ExecuteNonQuery ("CREATE RULE sfklpst_delete AS " +
-                                "ON DELETE TO sfklpst " +
-                                "DO INSTEAD " +
-                                "DELETE FROM computer " +
-                                "WHERE computerid=OLD.postid;");
-      #endregion sfklpst view and associated rules
+      // 3. Views and associated rules for compatibility (deprecated)
     }
     
     /// <summary>
@@ -411,20 +350,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      // 1. Drop compatibility views and rules
-      if (Database.TableExists (SFKGUYS_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkguys CASCADE;");
-      }
-      if (Database.TableExists (SFKLPST_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfklpst;");
-      }
-      if (Database.TableExists ("sfkcfgs")) {
-        Database.ExecuteNonQuery (@"DELETE FROM sfkcfgs
-WHERE config='system' AND sfksection='reporting' AND skey='viewsversion';");
-        Database.ExecuteNonQuery (@"DELETE FROM sfkcfgs
-WHERE config='system' AND sfksection='reporting' AND skey='viewsdate';");
-      }
-
       // 3. New tables deletion
       if (Database.TableExists (MODIFICATION_TABLE)) {
         Database.RemoveTable (MODIFICATION_TABLE);

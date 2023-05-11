@@ -10,7 +10,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 269:
+  /// Migration 269: deprecated
   /// </summary>
   [Migration (269)]
   public class SfkcfgsView : MigrationExt

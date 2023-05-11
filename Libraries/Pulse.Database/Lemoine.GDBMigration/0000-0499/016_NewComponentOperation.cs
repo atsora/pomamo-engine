@@ -10,7 +10,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 016: Migrate the sfkcomp and sfkprocess tables to some new tables
+  /// Migration 016: create the new operation and component tables
   /// </summary>
   [Migration (16)]
   public class NewComponentOperation : Migration
@@ -39,18 +39,12 @@ namespace Lemoine.GDBMigration
     static readonly string COMPONENT_INTERMEDIATE_WORK_PIECE_TABLE = "ComponentIntermediateWorkPiece";
     static readonly string MACHINE_OPERATION_TYPE_TABLE = "MachineOperationType";
 
-    static readonly string SFKPROCESSTYPE_TABLE = "sfkprocesstype";
-    static readonly string SFKPROCESS_TABLE = "sfkprocess";
-    static readonly string SFKCOMPTYPE_TABLE = "sfkcomptype";
-    static readonly string SFKCOMP_TABLE = "sfkcomp";
-    static readonly string SFKMACHINEPROCESSTYPE_TABLE = "sfkmachineprocesstype";
-
     /// <summary>
     /// Update the database
     /// </summary>
     override public void Up ()
     {
-      #region 1. operationtype / sfkprocesstype
+      #region 1. operationtype
       if (!Database.TableExists (OPERATION_TYPE_TABLE)) {
         Database.AddTable (OPERATION_TYPE_TABLE,
                            new Column (OPERATION_TYPE_ID, DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
@@ -71,44 +65,9 @@ namespace Lemoine.GDBMigration
                          new string[] { OPERATION_TYPE_TRANSLATION_KEY },
                          new string[] { "UndefinedValue" }); // id = 1
       }
+      #endregion // 1. operationtype 
 
-      if (Database.TableExists (SFKPROCESSTYPE_TABLE)) {
-        Database.RemoveTable (SFKPROCESSTYPE_TABLE);
-      }
-
-      #region sfkprocesstype view and associated rules
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkprocesstype");
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfkprocesstype AS " +
-                                "SELECT operationtypeid-1 AS id, " +
-                                "CASE WHEN operationtypename IS NULL " +
-                                " THEN translationvalue " +
-                                " ELSE operationtypename::varchar END AS name " +
-                                "FROM operationtype " +
-                                "LEFT OUTER JOIN translation " +
-                                "ON (operationtypetranslationkey=translationkey AND locale='');");
-      Database.ExecuteNonQuery ("CREATE RULE sfkprocesstype_insert AS " +
-                                "ON INSERT TO sfkprocesstype " +
-                                "DO INSTEAD " +
-                                "INSERT INTO operationtype " +
-                                "(operationtypename) " +
-                                "VALUES (NEW.name) " +
-                                "RETURNING operationtype.operationtypeid-1 AS id, " +
-                                "operationtype.operationtypename::varchar AS name;");
-      Database.ExecuteNonQuery ("CREATE RULE sfkprocesstype_update AS " +
-                                "ON UPDATE TO sfkprocesstype " +
-                                "DO INSTEAD " +
-                                "UPDATE operationtype " +
-                                "SET operationtypename=NEW.name " +
-                                "WHERE operationtypeid = OLD.id+1;");
-      Database.ExecuteNonQuery ("CREATE RULE sfkprocesstype_delete AS " +
-                                "ON DELETE TO sfkprocesstype " +
-                                "DO INSTEAD " +
-                                "DELETE FROM operationtype " +
-                                "WHERE operationtypeid = OLD.id+1;");
-      #endregion // sfkprocesstype view and associated rules
-      #endregion // 1. operationtype / sfkprocesstype
-
-      #region 2. componenttype / sfkcomptype
+      #region 2. componenttype 
       if (!Database.TableExists (COMPONENT_TYPE_TABLE)) {
         Database.AddTable (COMPONENT_TYPE_TABLE,
                            new Column (COMPONENT_TYPE_ID, DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
@@ -128,44 +87,9 @@ namespace Lemoine.GDBMigration
                          new string[] { COMPONENT_TYPE_TRANSLATION_KEY },
                          new string[] { "UndefinedValue" }); // id = 1
       }
+      #endregion // 2. componenttype
 
-      if (Database.TableExists (SFKCOMPTYPE_TABLE)) {
-        Database.RemoveTable (SFKCOMPTYPE_TABLE);
-      }
-
-      #region sfkcomptype view and associated rules
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkcomptype");
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfkcomptype AS " +
-                                "SELECT componenttypeid-1 AS comptypeid, " +
-                                "CASE WHEN componenttypename IS NULL " +
-                                " THEN translationvalue " +
-                                " ELSE componenttypename::varchar END AS comptypename " +
-                                "FROM componenttype " +
-                                "LEFT OUTER JOIN translation " +
-                                "ON (componenttypetranslationkey=translationkey AND locale='');");
-      Database.ExecuteNonQuery ("CREATE RULE sfkcomptype_insert AS " +
-                                "ON INSERT TO sfkcomptype " +
-                                "DO INSTEAD " +
-                                "INSERT INTO componenttype " +
-                                "(componenttypename) " +
-                                "VALUES (NEW.comptypename) " +
-                                "RETURNING componenttypeid-1 AS comptypeid, " +
-                                "componenttypename::varchar AS comptypename;");
-      Database.ExecuteNonQuery ("CREATE RULE sfkcomptype_update AS " +
-                                "ON UPDATE TO sfkcomptype " +
-                                "DO INSTEAD " +
-                                "UPDATE componenttype " +
-                                "SET componenttypename=NEW.comptypename " +
-                                "WHERE componenttypeid = OLD.comptypeid+1;");
-      Database.ExecuteNonQuery ("CREATE RULE sfkcomptype_delete AS " +
-                                "ON DELETE TO sfkcomptype " +
-                                "DO INSTEAD " +
-                                "DELETE FROM componenttype " +
-                                "WHERE componenttypeid = OLD.comptypeid+1;");
-      #endregion // sfkcomptype view and associated rules
-      #endregion // 2. componenttype / sfkcomptype
-
-      #region 3. operation / intermediateworkpiece / component / sfkprocess / sfkcomp
+      #region 3. operation / intermediateworkpiece / component
       if (!Database.TableExists (OPERATION_TABLE)) {
         Database.AddTable (OPERATION_TABLE,
                            new Column (OPERATION_ID, DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
@@ -309,140 +233,9 @@ namespace Lemoine.GDBMigration
         Database.ExecuteNonQuery ("CREATE INDEX componentintermediateworkpiece_intermediateworkpieceid_idx " +
                                   "ON componentintermediateworkpiece (intermediateworkpieceid)");
       }
+      #endregion // 3. operation / intermediateworkpiece / component 
 
-      if (Database.TableExists (SFKPROCESS_TABLE)) {
-        Database.RemoveTable (SFKPROCESS_TABLE);
-        Database.ExecuteNonQuery ("DROP FUNCTION IF EXISTS processcompid();");
-        Database.ExecuteNonQuery ("DROP FUNCTION IF EXISTS processuncompleted();");
-      }
-      if (Database.TableExists (SFKCOMP_TABLE)) {
-        Database.RemoveTable (SFKCOMP_TABLE);
-        Database.ExecuteNonQuery ("DROP FUNCTION IF EXISTS componentdone();");
-        Database.ExecuteNonQuery ("DROP FUNCTION IF EXISTS componentundone();");
-      }
-
-      #region sfkprocess view and associated rules
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkprocess");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW sfkprocess AS 
- SELECT operation.operationid AS id, operation.operationname AS name, operation.operationtypeid - 1 AS processtypeid,
- CASE WHEN componentintermediateworkpiece.componentid IS NULL THEN 0 ELSE componentintermediateworkpiece.componentid END AS componentid,
- 1 AS ordernb, operation.operationestimatedmachininghours AS hours, 0 AS completed
-   FROM operation
-NATURAL JOIN intermediateworkpiece
-LEFT OUTER JOIN componentintermediateworkpiece USING (intermediateworkpieceid);");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkprocess_inserter()
-  RETURNS trigger AS
-$BODY$
-DECLARE
-varintermediateworkpieceid int8;
-BEGIN
-  INSERT INTO operation (operationname, operationtypeid,
-    operationestimatedmachininghours)
-  VALUES (NEW.name, NEW.processtypeid+1, NEW.hours)
-  RETURNING operationid AS id INTO STRICT NEW.id;
-  INSERT INTO intermediateworkpiece (operationid)
-  VALUES (NEW.id)
-  RETURNING intermediateworkpieceid
-  INTO STRICT varintermediateworkpieceid;
-  IF NEW.componentid<>0 AND NEW.componentid IS NOT NULL THEN
-    INSERT INTO componentintermediateworkpiece (componentid, intermediateworkpieceid)
-    VALUES (NEW.componentid, varintermediateworkpieceid);
-  END IF;
-  RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE COST 100;");
-      Database.ExecuteNonQuery (@"CREATE TRIGGER sfkprocess_insert INSTEAD OF INSERT
-ON sfkprocess
-FOR EACH ROW
-EXECUTE PROCEDURE sfkprocess_inserter ();");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkprocess_updater()
-  RETURNS trigger AS
-$BODY$
-BEGIN
-  UPDATE operation
-  SET operationname=NEW.name, operationtypeid=NEW.processtypeid+1,
-    operationestimatedmachininghours=NEW.hours
-  WHERE operationid = OLD.id;
-  UPDATE componentintermediateworkpiece
-  SET componentid=NEW.componentid
-  WHERE OLD.componentid<>0 AND OLD.componentid IS NOT NULL
-    AND componentid=OLD.componentid AND intermediateworkpieceid= (SELECT intermediateworkpieceid FROM intermediateworkpiece WHERE operationid=OLD.id);
-  RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE COST 100;");
-      Database.ExecuteNonQuery (@"CREATE TRIGGER sfkprocess_update INSTEAD OF UPDATE
-ON sfkprocess
-FOR EACH ROW
-EXECUTE PROCEDURE sfkprocess_updater ();");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkprocess_deleter()
-  RETURNS trigger AS
-$BODY$
-BEGIN
- DELETE FROM componentintermediateworkpiece
-  WHERE componentid=OLD.componentid
-   AND intermediateworkpieceid=
-    (SELECT intermediateworkpieceid
-     FROM intermediateworkpiece WHERE operationid=OLD.id);
- DELETE FROM intermediateworkpiece WHERE operationid=OLD.id;
- DELETE FROM operation
-  WHERE operationid = OLD.id;
- RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE COST 100;");
-      Database.ExecuteNonQuery (@"CREATE TRIGGER sfkprocess_delete INSTEAD OF DELETE
-ON sfkprocess
-FOR EACH ROW
-EXECUTE PROCEDURE sfkprocess_deleter ();");
-      #endregion // sfkprocess view and associated rules
-      #region sfkcomp view and associated rules
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkcomp");
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfkcomp AS " +
-                                "SELECT componentid AS compid, " +
-                                "componentname AS compname, " +
-                                "projectid AS projid, " +
-                                "projectcreationdatetime AS starttimeref, " +
-                                "projectcreationdatetime AS endtimeref, " +
-                                "componentestimatedhours AS comphouref, " +
-                                "0 AS sfkdone, " +
-                                "componenttypeid-1 AS comptypeid " +
-                                "FROM component " +
-                                "NATURAL JOIN project;");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkcomp_inserter()
-  RETURNS trigger AS
-$BODY$
-DECLARE
-BEGIN
-  INSERT INTO component (componentname, projectid, componentestimatedhours,
-    componenttypeid)
-  VALUES (NEW.compname, NEW.projid, NEW.comphouref, NEW.comptypeid+1)
-  RETURNING componentid AS compid,
-    now() AT TIME ZONE 'UTC' AS starttimeref,
-    now() AT TIME ZONE 'UTC' AS endtimeref
-  INTO STRICT NEW.compid, NEW.starttimeref, NEW.endtimeref;
-  RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE COST 100;");
-      Database.ExecuteNonQuery (@"CREATE TRIGGER sfkcomp_insert INSTEAD OF INSERT
-ON sfkcomp
-FOR EACH ROW
-EXECUTE PROCEDURE sfkcomp_inserter ();");
-      Database.ExecuteNonQuery (@"CREATE RULE sfkcomp_update AS
-ON UPDATE TO sfkcomp DO INSTEAD
-UPDATE component
-SET componentname=NEW.compname, projectid=NEW.projid,
-  componentestimatedhours=NEW.comphouref, componenttypeid=NEW.comptypeid+1
-WHERE componentid = OLD.compid;");
-      Database.ExecuteNonQuery (@"CREATE RULE sfkcomp_delete AS
-ON DELETE TO sfkcomp DO INSTEAD
-DELETE FROM component WHERE componentid = OLD.compid;");
-      #endregion // sfkcomp view and associated rules
-      #endregion // 3. operation / intermediateworkpiece / component / sfkprocess / sfkcomp
-
-      #region 4. machineoperationtype / sfkprocesstype
+      #region 4. machineoperationtype
       if (!Database.TableExists (MACHINE_OPERATION_TYPE_TABLE)) {
         Database.AddTable (MACHINE_OPERATION_TYPE_TABLE,
                            new Column (MACHINE_ID, DbType.Int32, ColumnProperty.PrimaryKey),
@@ -460,30 +253,7 @@ DELETE FROM component WHERE componentid = OLD.compid;");
         Database.ExecuteNonQuery ("CREATE INDEX machineoperationtype_machineid_idx " +
                                   "ON machineoperationtype (machineid);");
       }
-
-      if (Database.TableExists (SFKMACHINEPROCESSTYPE_TABLE)) {
-        Database.RemoveTable (SFKMACHINEPROCESSTYPE_TABLE);
-      }
-
-      #region sfkmachineprocesstype view and associated rules
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkmachineprocesstype");
-      Database.ExecuteNonQuery ("CREATE OR REPLACE VIEW sfkmachineprocesstype AS " +
-                                "SELECT machineid AS machineid, " +
-                                "operationtypeid-1 AS processtypeid " +
-                                "FROM machineoperationtype " +
-                                "WHERE machineoperationtypepreference=1;");
-      Database.ExecuteNonQuery ("CREATE RULE sfkmachineprocesstype_insert AS " +
-                                "ON INSERT TO sfkmachineprocesstype " +
-                                "DO INSTEAD " +
-                                "INSERT INTO machineoperationtype " +
-                                "VALUES (NEW.machineid, NEW.processtypeid+1, 1);");
-      Database.ExecuteNonQuery ("CREATE RULE sfkmachineprocesstype_delete AS " +
-                                "ON DELETE TO sfkmachineprocesstype " +
-                                "DO INSTEAD " +
-                                "DELETE FROM machineoperationtype " +
-                                "WHERE machineid=OLD.machineid AND operationtypeid=OLD.processtypeid+1;");
-      #endregion // sfkmachineprocesstype view and associated rules
-      #endregion // 4. machineoperationtype / sfkprocesstype
+      #endregion // 4. machineoperationtype
     }
 
     /// <summary>
@@ -491,30 +261,7 @@ DELETE FROM component WHERE componentid = OLD.compid;");
     /// </summary>
     override public void Down ()
     {
-      // 1. Drop compatibility views
-      if (Database.TableExists (SFKPROCESSTYPE_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkprocesstype CASCADE;");
-      }
-      if (Database.TableExists (SFKPROCESS_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkprocess CASCADE;");
-      }
-      if (Database.TableExists (SFKCOMPTYPE_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkcomptype CASCADE;");
-      }
-      if (Database.TableExists (SFKCOMP_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkcomp CASCADE;");
-      }
-      if (Database.TableExists (SFKMACHINEPROCESSTYPE_TABLE)) {
-        Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkmachineprocesstype;");
-      }
-      if (Database.TableExists ("sfkcfgs")) {
-        Database.ExecuteNonQuery (@"DELETE FROM sfkcfgs
-WHERE config='system' AND sfksection='reporting' AND skey='viewsversion';");
-        Database.ExecuteNonQuery (@"DELETE FROM sfkcfgs
-WHERE config='system' AND sfksection='reporting' AND skey='viewsdate';");
-      }
-
-      // 3. New tables deletion
+      // New tables deletion
       if (Database.TableExists (MACHINE_OPERATION_TYPE_TABLE)) {
         Database.RemoveTable (MACHINE_OPERATION_TYPE_TABLE);
       }

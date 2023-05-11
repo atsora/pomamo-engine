@@ -34,8 +34,6 @@ namespace Lemoine.GDBMigration
       UpgradeComponentIntermediateWorkPiece ();
       
       UpgradeJobView ();
-      UpgradeSfkProcess ();
-      UpgradeSfkProj ();
       UpgradeSimpleOperationView ();
     }
     
@@ -256,118 +254,6 @@ CREATE TRIGGER job_update
   FOR EACH ROW
   EXECUTE PROCEDURE job_updater();
 ");
-    }
-    
-    void UpgradeSfkProcess ()
-    {
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkprocess_deleter()
-  RETURNS trigger AS
-$BODY$
-BEGIN
- DELETE FROM componentintermediateworkpiece
-  WHERE componentid=OLD.componentid
-   AND intermediateworkpieceid=
-    (SELECT intermediateworkpieceid
-     FROM intermediateworkpiece WHERE operationid=OLD.id);
- DELETE FROM intermediateworkpiece WHERE operationid=OLD.id;
- DELETE FROM operation
-  WHERE operationid = OLD.id;
- RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkprocess_inserter()
-  RETURNS trigger AS
-$BODY$
-DECLARE
-varintermediateworkpieceid int8;
-BEGIN
-  INSERT INTO operation (operationname, operationtypeid,
-    operationestimatedmachininghours)
-  VALUES (NEW.name, NEW.processtypeid+1, NEW.hours)
-  RETURNING operationid AS id INTO STRICT NEW.id;
-  INSERT INTO intermediateworkpiece (operationid)
-  VALUES (NEW.id)
-  RETURNING intermediateworkpieceid
-  INTO STRICT varintermediateworkpieceid;
-  IF NEW.componentid<>0 AND NEW.componentid IS NOT NULL THEN
-    INSERT INTO componentintermediateworkpiece (componentid, intermediateworkpieceid)
-    VALUES (NEW.componentid, varintermediateworkpieceid);
-  END IF;
-  RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION sfkprocess_updater()
-  RETURNS trigger AS
-$BODY$
-BEGIN
-  UPDATE operation
-  SET operationname=NEW.name, operationtypeid=NEW.processtypeid+1,
-    operationestimatedmachininghours=NEW.hours
-  WHERE operationid = OLD.id;
-  UPDATE componentintermediateworkpiece
-  SET componentid=NEW.componentid
-  WHERE OLD.componentid<>0 AND OLD.componentid IS NOT NULL
-    AND componentid=OLD.componentid AND intermediateworkpieceid= (SELECT intermediateworkpieceid FROM intermediateworkpiece WHERE operationid=OLD.id);
-  RETURN NEW;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;");
-      
-      Database.ExecuteNonQuery (@"
-CREATE OR REPLACE VIEW sfkprocess AS
- SELECT operation.operationid AS id, operation.operationname AS name, operation.operationtypeid - 1 AS processtypeid,
-        CASE
-            WHEN componentintermediateworkpiece.componentid IS NULL THEN 0
-            ELSE componentintermediateworkpiece.componentid
-        END AS componentid, 1 AS ordernb, operation.operationestimatedmachininghours AS hours, 0 AS completed
-   FROM operation
-NATURAL JOIN intermediateworkpiece
-   LEFT JOIN componentintermediateworkpiece USING (intermediateworkpieceid);
-
--- Trigger: sfkprocess_delete on sfkprocess
-
--- DROP TRIGGER sfkprocess_delete ON sfkprocess;
-
-CREATE TRIGGER sfkprocess_delete
-  INSTEAD OF DELETE
-  ON sfkprocess
-  FOR EACH ROW
-  EXECUTE PROCEDURE sfkprocess_deleter();
-
--- Trigger: sfkprocess_insert on sfkprocess
-
--- DROP TRIGGER sfkprocess_insert ON sfkprocess;
-
-CREATE TRIGGER sfkprocess_insert
-  INSTEAD OF INSERT
-  ON sfkprocess
-  FOR EACH ROW
-  EXECUTE PROCEDURE sfkprocess_inserter();
-
--- Trigger: sfkprocess_update on sfkprocess
-
--- DROP TRIGGER sfkprocess_update ON sfkprocess;
-
-CREATE TRIGGER sfkprocess_update
-  INSTEAD OF UPDATE
-  ON sfkprocess
-  FOR EACH ROW
-  EXECUTE PROCEDURE sfkprocess_updater();
-");
-    }
-    
-    void UpgradeSfkProj ()
-    {
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW sfkproj AS
- SELECT workorderproject.projectid, project.projectname, 0 AS projectcust, 0 AS projecthours, workorder.workorderstatusid - 2 AS projectstatus, workorder.workorderdeliverydate AS projectdue, 0 AS projecttypeid
-   FROM workorder
-NATURAL JOIN workorderproject
-NATURAL JOIN project;");
     }
     
     void UpgradeSimpleOperationView ()

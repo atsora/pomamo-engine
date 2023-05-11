@@ -65,8 +65,6 @@ namespace Lemoine.GDBMigration
         AddReasonSelectionTable ();
       }
       
-      ConvertSfkyreasToView ();
-      
       if (!Database.TableExists (TableName.REASON_MACHINE_ASSOCIATION)) {
         AddReasonMachineAssociationTable ();
       }
@@ -106,8 +104,6 @@ namespace Lemoine.GDBMigration
       if (Database.TableExists (TableName.REASON_MACHINE_ASSOCIATION)) {
         RemoveReasonMachineAssociationTable ();
       }
-      
-      RestoreSfkyreasTable ();
       
       if (Database.TableExists (TableName.REASON_GROUP)) {
         RemoveReasonGroupTable ();
@@ -173,50 +169,10 @@ ALTER reasongroupcolor SET DEFAULT '#FFFF00'"); // Default is yellow
                        new string [] {"6", "ReasonGroupIdle", "#FFFF00"}); // id = 6 (yellow)
       ResetSequence (TableName.REASON_GROUP,
                      ColumnName.REASON_GROUP_ID);
-      Database.ExecuteNonQuery (@"CREATE VIEW sfkyrgrp AS
-SELECT reasongroupid-20 AS rgrpid,
-  CASE
-    WHEN reasongroupname IS NULL THEN tname.translationvalue
-    ELSE reasongroupname
-  END AS grpname,
-  CASE
-    WHEN reasongroupdescription IS NULL AND tdesc.translationvalue IS NULL THEN ''
-    WHEN reasongroupdescription IS NULL THEN tdesc.translationvalue
-    ELSE reasongroupdescription
-  END AS descr
-FROM reasongroup
-LEFT JOIN translation tname ON reasongrouptranslationkey = tname.translationkey
-                               AND tname.locale = ''
-LEFT JOIN translation tdesc ON reasongroupdescriptiontranslationkey = tdesc.translationkey
-                               AND tdesc.locale= ''");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyrgrp_delete AS
-ON DELETE TO sfkyrgrp DO INSTEAD
-DELETE FROM reasongroup
-WHERE reasongroup.reasongroupid = (old.rgrpid + 20)");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyrgrp_insert AS
-ON INSERT TO sfkyrgrp DO INSTEAD
-INSERT INTO reasongroup (reasongroupname, reasongroupdescription, reasongroupcolor)
-VALUES (new.grpname::citext,
- CASE WHEN new.descr = '' THEN NULL ELSE new.descr END,
- '#FFFF00')
-RETURNING reasongroup.reasongroupid - 20 AS rgrpid,
- reasongroup.reasongroupname::varchar AS rgrpname,
- CASE
-  WHEN reasongroup.reasongroupdescription IS NULL THEN ''
-  ELSE reasongroup.reasongroupdescription
- END AS descr");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyrgrp_update AS
-ON UPDATE TO sfkyrgrp DO INSTEAD
-UPDATE reasongroup
-SET reasongroupname = new.grpname,
- reasongroupdescription =
-  CASE WHEN new.descr = '' THEN NULL ELSE new.descr END
-WHERE reasongroup.reasongroupid = (old.rgrpid + 20)");
     }
 
     void RemoveReasonGroupTable ()
     {
-      Database.ExecuteNonQuery (@"DROP VIEW IF EXISTS sfkyrgrp");
       Database.RemoveTable (TableName.REASON_GROUP);
       // Remove the translations
       Database.Delete (TableName.TRANSLATION,
@@ -305,30 +261,6 @@ ALTER reasoncolor SET DEFAULT '#FFFF00'"); // Default is yellow
                      ColumnName.REASON_ID);
     }
     
-    void RestoreSfkyreasTable ()
-    {
-      Database.ExecuteNonQuery (@"DROP VIEW IF EXISTS sfkyreas");
-      Database.RemoveTable (TableName.REASON);
-      // Remove the translations
-      Database.Delete (TableName.TRANSLATION,
-                       ColumnName.TRANSLATION_KEY,
-                       "ReasonMotion");
-      Database.Delete (TableName.TRANSLATION,
-                       ColumnName.TRANSLATION_KEY,
-                       "ReasonShort");
-      Database.Delete (TableName.TRANSLATION,
-                       ColumnName.TRANSLATION_KEY,
-                       "ReasonUnanswered");
-      Database.Delete (TableName.TRANSLATION,
-                       ColumnName.TRANSLATION_KEY,
-                       "ReasonUnattended");
-      Database.Delete (TableName.TRANSLATION,
-                       ColumnName.TRANSLATION_KEY,
-                       "ReasonOff");
-      Database.RemoveTable (TableName.REASON_SELECTION);
-      Database.RemoveTable (TableName.MACHINE_MODE_DEFAULT_REASON);
-    }
-    
     void AddMachineModeDefaultReasonTable ()
     {
       Database.AddTable (TableName.MACHINE_MODE_DEFAULT_REASON,
@@ -383,76 +315,6 @@ ALTER reasoncolor SET DEFAULT '#FFFF00'"); // Default is yellow
       AddIndex (TableName.REASON_SELECTION,
                 ColumnName.MACHINE_MODE_ID,
                 ColumnName.MACHINE_OBSERVATION_STATE_ID);
-      // Add default values
-      if (Database.TableExists ("sfkyreas")) {
-        Database.ExecuteNonQuery (@"INSERT INTO reasonselection
-(machinemodeid, machineobservationstateid, reasonid, reasonselectiondetailsrequired)
-SELECT machinemodeid, machineobservationstateid, rid+20, askxreas <> 0
-FROM machinemode CROSS JOIN machineobservationstate CROSS JOIN sfkyreas
-WHERE machinemoderunning = FALSE");
-      }
-    }
-    
-    void ConvertSfkyreasToView ()
-    {
-      if (Database.TableExists ("sfkyreas")) {
-        Database.RemoveTable ("sfkyreas");
-      }
-      Database.ExecuteNonQuery (@"CREATE VIEW sfkyreas AS
-SELECT reasonid-20 AS rid,
-  CASE
-    WHEN reasonname IS NULL THEN tname.translationvalue
-    ELSE reasonname::varchar
-  END AS reason,
-  CASE
-    WHEN reasoncode IS NULL THEN ''::varchar
-    ELSE reasoncode::varchar
-  END AS code,
-  CASE
-    WHEN reasondescription IS NULL AND tdesc.translationvalue IS NULL THEN ''
-    WHEN reasondescription IS NULL THEN tdesc.translationvalue
-    ELSE reasondescription
-  END AS descr,
-  reasongroupid-20 AS rgrpid,
-  reasonlinkoperationdirection AS linkwith
-FROM reason
-LEFT JOIN translation tname ON reasontranslationkey = tname.translationkey
-                               AND tname.locale = ''
-LEFT JOIN translation tdesc ON reasondescriptiontranslationkey = tdesc.translationkey
-                               AND tdesc.locale= ''
-WHERE reasonid >= 15");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyreas_delete AS
-ON DELETE TO sfkyreas DO INSTEAD
-DELETE FROM reason
-WHERE reason.reasonid = (old.rid + 20)");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyreas_insert AS
-ON INSERT TO sfkyreas DO INSTEAD
-INSERT INTO reason (reasonname, reasoncode, reasondescription, reasongroupid, reasonlinkoperationdirection)
-VALUES (new.reason::citext,
- CASE WHEN new.code='' THEN NULL ELSE new.code::citext END,
- CASE WHEN new.descr='' THEN NULL ELSE new.descr END,
- new.rgrpid+20, new.linkwith)
-RETURNING reason.reasonid - 20 AS rid,
- reason.reasonname::varchar AS reason,
- CASE
-  WHEN reason.reasoncode IS NULL THEN ''::varchar
-  ELSE reason.reasoncode::varchar
- END AS code,
- CASE
-  WHEN reason.reasondescription IS NULL THEN ''::varchar
-  ELSE reason.reasondescription
- END AS descr,
- reason.reasongroupid - 20 AS rgrpid,
- reason.reasonlinkoperationdirection AS linkwith");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyreas_update AS
-ON UPDATE TO sfkyreas DO INSTEAD
-UPDATE reason
- SET reasonname = new.reason,
-     reasoncode = CASE WHEN new.code='' THEN NULL ELSE new.code END,
-     reasondescription = CASE WHEN new.descr='' THEN NULL ELSE new.descr END,
-     reasongroupid = new.rgrpid+20,
-     reasonlinkoperationdirection = new.linkwith
-WHERE reason.reasonid = (old.rid + 20)");
     }
     
     void AddReasonMachineAssociationTable ()

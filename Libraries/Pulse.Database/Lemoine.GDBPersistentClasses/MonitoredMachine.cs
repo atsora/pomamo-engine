@@ -14,8 +14,6 @@ namespace Lemoine.GDBPersistentClasses
 {
   /// <summary>
   /// Persistent class of table MonitoredMachine
-  /// 
-  /// This table replaces with the Machine and Machine Module tables the old sfkmach table
   /// </summary>
   [Serializable]
   public class MonitoredMachine

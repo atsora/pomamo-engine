@@ -11,7 +11,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 1001: remove some old sfk tables: sfkfacts, sfkanly, sfkanlz
+  /// Migration 1001: deprecated
   /// </summary>
   [Migration (1001)]
   public class RemoveOldSfkAnalysisTables : MigrationExt
@@ -23,11 +23,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      var tables = new string[] { "sfkfacts", "sfkanly", "sfkanlz", "sfkstartend", "sfkelshift", "sfkcompactortasks", "sfkanlytoday" };
-      foreach (var table in tables) {
-        RemoveTable (table);
-      }
-      // Note: there are more to come later... But these are the largest tables
     }
 
     /// <summary>

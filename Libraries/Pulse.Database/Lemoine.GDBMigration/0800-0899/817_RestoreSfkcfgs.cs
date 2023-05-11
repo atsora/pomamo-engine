@@ -11,7 +11,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 817
+  /// Migration 817: deprecated
   /// </summary>
   [Migration (817)]
   public class RestoreSfkcfgs : MigrationExt
@@ -23,17 +23,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      if (!Database.TableExists ("sfkcfgs")) { // View or table
-        Database.ExecuteNonQuery (@"
-CREATE TABLE public.sfkcfgs
-(
-    config character varying,
-    sfksection character varying,
-    skey character varying,
-    sfkvalue character varying
-)
-      ");
-      }
     }
 
     /// <summary>

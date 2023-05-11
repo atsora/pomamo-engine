@@ -25,7 +25,6 @@ namespace Lemoine.GDBMigration
       AddVersionColumns ();
       
       UpgradeBooleanViews ();
-      RemoveSfkyreasSfkyrgrpUpdate ();
     }
     
     /// <summary>
@@ -33,7 +32,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      RestoreSfkyreasSfkyrgrpUpdate ();
       DowngradeBooleanViews ();
     }
     
@@ -165,88 +163,6 @@ namespace Lemoine.GDBMigration
       Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE stampboolean_delete AS
     ON DELETE TO stampboolean DO INSTEAD  DELETE FROM stamp
   WHERE stamp.stampid = old.stampid;");
-    }
-    
-    void RemoveSfkyreasSfkyrgrpUpdate()
-    {
-      Database.ExecuteNonQuery (@"DROP RULE IF EXISTS
-sfkyreas_insert ON sfkyreas");
-      Database.ExecuteNonQuery (@"DROP RULE IF EXISTS
-sfkyreas_update ON sfkyreas");
-      Database.ExecuteNonQuery (@"DROP RULE IF EXISTS
-sfkyreas_delete ON sfkyreas");
-
-      Database.ExecuteNonQuery (@"DROP RULE IF EXISTS
-sfkyrgrp_insert ON sfkyrgrp");
-      Database.ExecuteNonQuery (@"DROP RULE IF EXISTS
-sfkyrgrp_update ON sfkyrgrp");
-      Database.ExecuteNonQuery (@"DROP RULE IF EXISTS
-sfkyrgrp_delete ON sfkyrgrp");
-    }
-    
-    void RestoreSfkyreasSfkyrgrpUpdate()
-    {
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyreas_insert AS
-    ON INSERT TO sfkyreas DO INSTEAD  INSERT INTO reason (reasonname, reasoncode, reasondescription, reasongroupid, reasonlinkoperationdirection)
-  VALUES (new.reason::citext,
-        CASE
-            WHEN new.code::text = ''::text THEN NULL::citext
-            ELSE new.code::citext
-        END,
-        CASE
-            WHEN new.descr::text = ''::text THEN NULL::character varying
-            ELSE new.descr
-        END, new.rgrpid + 20, new.linkwith)
-  RETURNING reason.reasonid - 20 AS rid, reason.reasonname::character varying AS reason,
-        CASE
-            WHEN reason.reasoncode IS NULL THEN ''::character varying
-            ELSE reason.reasoncode::character varying
-        END AS code,
-        CASE
-            WHEN reason.reasondescription IS NULL THEN ''::character varying
-            ELSE reason.reasondescription
-        END AS descr, reason.reasongroupid - 20 AS rgrpid, reason.reasonlinkoperationdirection AS linkwith;
-");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyreas_update AS
-    ON UPDATE TO sfkyreas DO INSTEAD  UPDATE reason SET reasonname = new.reason, reasoncode =
-        CASE
-            WHEN new.code::text = ''::text THEN NULL::character varying
-            ELSE new.code
-        END, reasondescription =
-        CASE
-            WHEN new.descr::text = ''::text THEN NULL::character varying
-            ELSE new.descr
-        END, reasongroupid = new.rgrpid + 20, reasonlinkoperationdirection = new.linkwith
-  WHERE reason.reasonid = (old.rid + 20);");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyreas_delete AS
-    ON DELETE TO sfkyreas DO INSTEAD  DELETE FROM reason
-  WHERE reason.reasonid = (old.rid + 20);");
-      
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyrgrp_insert AS
-    ON INSERT TO sfkyrgrp DO INSTEAD  INSERT INTO reasongroup (reasongroupname, reasongroupdescription)
-  VALUES (new.grpname::citext,
-        CASE
-            WHEN new.descr::text = ''::text THEN NULL::character varying
-            ELSE new.descr
-        END)
-  RETURNING reasongroup.reasongroupid - 20 AS rgrpid, reasongroup.reasongroupname::character varying AS rgrpname,
-        CASE
-            WHEN reasongroup.reasongroupdescription IS NULL THEN ''::character varying
-            ELSE reasongroup.reasongroupdescription
-        END AS descr;");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyrgrp_update AS
-    ON UPDATE TO sfkyrgrp DO INSTEAD  UPDATE reasongroup SET reasongroupname = new.grpname, reasongroupdescription =
-        CASE
-            WHEN new.descr::text = ''::text THEN NULL::character varying
-            ELSE new.descr
-        END
-  WHERE reasongroup.reasongroupid = (old.rgrpid + 20);
-");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE RULE sfkyrgrp_delete AS
-    ON DELETE TO sfkyrgrp DO INSTEAD  DELETE FROM reasongroup
-  WHERE reasongroup.reasongroupid = (old.rgrpid + 20);
-");
-    }
-    
+    }    
   }
 }

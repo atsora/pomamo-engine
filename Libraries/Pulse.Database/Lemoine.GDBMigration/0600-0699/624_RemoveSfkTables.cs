@@ -11,7 +11,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 624: remove some deprecated sfk... tables 
+  /// Migration 624: deprecated
   /// </summary>
   [Migration (624)]
   public class RemoveSfkTables : MigrationExt
@@ -23,9 +23,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      if (Database.TableExists ("sfkscheduling")) {
-        Database.RemoveTable ("sfkscheduling");
-      }
     }
 
     /// <summary>

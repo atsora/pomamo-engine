@@ -677,15 +677,6 @@ namespace Lemoine.GDBMigration
     public static readonly string PROJECT_COMPONENT_UPDATE = "projectcomponentupdate";
     
     /// <summary>
-    /// old sfkmach table name
-    /// </summary>
-    public static readonly string SFK_MACH = "sfkmach";
-    /// <summary>
-    /// old sfkprocesstype table name
-    /// </summary>
-    public static readonly string SFK_PROCESS_TYPE = "sfkprocesstype";
-    
-    /// <summary>
     /// operationmachineassociation table
     /// </summary>
     public static readonly string OPERATION_MACHINE_ASSOCIATION = "operationmachineassociation";

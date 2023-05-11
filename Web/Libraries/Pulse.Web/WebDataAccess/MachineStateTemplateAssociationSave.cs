@@ -27,7 +27,7 @@ namespace Pulse.Web.WebDataAccess
   public class MachineStateTemplateMachineAssociationSave : IReturn<SaveModificationResponseDTO>
   {
     /// <summary>
-    /// User ID
+    /// Machine ID
     /// </summary>
     [ApiMember(Name = "MachineId", Description = "", ParameterType = "path", DataType = "int", IsRequired=true)]
     public int MachineId { get; set; }

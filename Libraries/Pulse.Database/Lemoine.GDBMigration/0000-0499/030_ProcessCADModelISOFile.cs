@@ -19,14 +19,12 @@ namespace Lemoine.GDBMigration
   /// <item>new Unit table</item>
   /// <item>new Field table</item>
   /// <item>migration of the ISO File table</item>
-  /// <item>migration of the old sfkoperation table into three new tables</item>
   /// </summary>
   [Migration(30)]
   public class ProcessCADModelISOFile: MigrationExt
   {
     static readonly string TOOL_NAME = "ToolName";
     static readonly string TOOL_CODE = "ToolCode";
-    static readonly string SFKTOOLS_TABLE = "sfktools";
     
     static readonly string UNIT_NAME = "UnitName";
     static readonly string UNIT_TRANSLATION_KEY = "UnitTranslationKey";
@@ -47,12 +45,9 @@ namespace Lemoine.GDBMigration
     static readonly string ISO_FILE_STAMPING_DIRECTORY = "IsoFileStampingDirectory";
     static readonly string ISO_FILE_SIZE = "IsoFileSize";
     static readonly string ISO_FILE_STAMPING_DATETIME = "IsoFileStampingDateTime";
-    static readonly string SFKISOFILE_TABLE = "sfkisofile";
     
     static readonly string OPERATION_CYCLE_BEGIN = "operationcyclebegin";
     static readonly string OPERATION_CYCLE_END = "operationcycleend";
-    
-    static readonly string SFKOPERATION_TABLE = "sfkoperation";
     
     static readonly ILog log = LogManager.GetLogger(typeof (ProcessCADModelISOFile).FullName);
     
@@ -76,7 +71,7 @@ namespace Lemoine.GDBMigration
       if (!Database.TableExists (TableName.ISO_FILE)) {
         AddISOFileTable ();
       }
-      UpgradeSfkoperation ();
+      CreateOperationTables ();
     }
     
     /// <summary>
@@ -84,7 +79,7 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      DowngradeSfkoperation ();
+      RemoveOperationTables ();
       if (Database.TableExists (TableName.ISO_FILE)) {
         RemoveISOFileTable ();
       }
@@ -121,51 +116,11 @@ namespace Lemoine.GDBMigration
       AddIndex (TableName.TOOL,
                 "ToolDiameter",
                 "ToolRadius");
-      if (Database.TableExists (SFKTOOLS_TABLE)) {
-        Database.RemoveTable (SFKTOOLS_TABLE);
-      }
-      ResetSequence (TableName.TOOL, ColumnName.TOOL_ID);
-      
-      // sfktools view
-      Database.ExecuteNonQuery (@"DROP VIEW IF EXISTS sfktools");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW sfktools AS
-SELECT toolid-1 AS toolid,
- CASE WHEN toolcode IS NULL
-  THEN ''::varchar
-  ELSE toolcode::varchar END AS toolcode,
- CASE WHEN toolname IS NULL
-  THEN ''::varchar
-  ELSE toolname::varchar END AS toolname,
- tooldiameter AS tooldia, toolradius AS toolrad, 0 AS toolmate
-FROM tool
-UNION
-SELECT 0 AS toolid, ''::varchar AS toolcode, '<Undefined>'::varchar AS toolname,
- 0 AS tooldia, 0 AS toolrad, 0 AS toolmate;");
-      Database.ExecuteNonQuery (@"CREATE RULE sfktools_insert AS
-ON INSERT TO sfktools
-DO INSTEAD
-INSERT INTO tool (toolcode, toolname, tooldiameter, toolradius)
-VALUES (NEW.toolcode, NEW.toolname, NEW.tooldia, NEW.toolrad)
-RETURNING toolid-1 AS toolid, toolcode::varchar AS toolcode, toolname::varchar AS toolname,
- tooldiameter AS tooldia, toolradius AS toolrad, 0 AS toolmate;");
-      Database.ExecuteNonQuery (@"CREATE RULE sfktools_update AS
-ON UPDATE TO sfktools
-DO INSTEAD
-UPDATE tool
-SET toolcode=NEW.toolcode, toolname=NEW.toolname, tooldiameter=NEW.tooldia, toolradius=NEW.toolrad
-WHERE toolid = OLD.toolid+1 AND OLD.toolid > 0;");
-      Database.ExecuteNonQuery (@"CREATE RULE sfktools_delete AS
-ON DELETE TO sfktools
-DO INSTEAD
-DELETE FROM tool
-WHERE toolid = OLD.toolid+1 AND OLD.toolid > 0;");
+      ResetSequence (TableName.TOOL, ColumnName.TOOL_ID);      
     }
     
     void RemoveToolTable ()
     {
-      // sfktools views
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfktools");
-      
       // display option
       Database.Delete (TableName.DISPLAY,
                        new string [] {"displaytable"},
@@ -324,108 +279,16 @@ WHERE translationkey LIKE 'Field%'");
       AddIndexCondition (TableName.ISO_FILE,
                          "computerid IS NOT NULL",
                          ColumnName.COMPUTER_ID);
-      if (Database.TableExists (SFKISOFILE_TABLE)) {
-        Database.ExecuteNonQuery (@"INSERT INTO IsoFile
-(IsoFileId, IsoFileName, IsoFileSourceDirectory, IsoFileStampingDirectory, IsoFileSize, IsoFileStampingDateTime)
-SELECT fileid, substring(filename from '[^\\]*$'),
- substring(filename from '^.*\\'),
- '',
- CASE WHEN filesize=-1 THEN NULL ELSE filesize END,
- timezone('UTC'::text, now())
-FROM sfkisofile
-GROUP BY fileid, filename, filesize;");
-        ResetSequence (TableName.ISO_FILE, ColumnName.ISO_FILE_ID);
-
-        #if false // Really too slow on some databases, that's a pity
-        log.Debug ("AddISOFileTable: " +
-                   "complete IsoFile with StampingDirectory and StampingDateTime");
-        Database.ExecuteNonQuery (@"CREATE INDEX sfkoperation_opfileid ON sfkoperation (opfileid)");
-        Database.ExecuteNonQuery (@"UPDATE IsoFile
-SET IsoFileStampingDirectory=substring(sfkoperation.opname from '^.*\\'),
-    IsoFileStampingDateTime=opstampdate
-FROM sfkoperation
-WHERE sfkoperation.opfileid=IsoFile.isofileid");
-        #endif
-
-        log.Debug ("AddISOFileTable: " +
-                   "remove sfkisofile");
-        Database.RemoveTable (SFKISOFILE_TABLE);
-      }
-      
-      // sfkisofile view
-      log.Debug ("AddISOFileTable: " +
-                 "create view sfkisofile");
-      Database.ExecuteNonQuery (@"DROP VIEW IF EXISTS sfkisofile");
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW sfkisofile AS
-SELECT isofileid AS fileid,
- IsoFileSourceDirectory || IsoFileName AS filename,
- ''::varchar AS postpro,
- CASE WHEN IsoFileSize IS NULL THEN -1 ELSE isofilesize END AS filesize,
- 0 AS filecount
-FROM isofile;");
-      Database.ExecuteNonQuery (@"CREATE RULE sfkisofile_insert AS
-ON INSERT TO sfkisofile
-DO INSTEAD
-INSERT INTO isofile (IsoFileName, IsoFileSourceDirectory, IsoFileStampingDirectory, IsoFileSize, IsoFileStampingDateTime)
-VALUES (substring(NEW.filename from '[^\\]*$'), substring(NEW.filename from '^.*\\'), '',
- CASE WHEN NEW.filesize=-1 THEN NULL ELSE NEW.filesize END,
- timezone('UTC'::text, now()))
-RETURNING isofileid AS fileid, isofilesourcedirectory || isofilename AS filename, ''::varchar AS postpro,
- CASE WHEN isofilesize IS NULL THEN -1 ELSE isofilesize END AS filesize,
- 0 AS filecount");
-      Database.ExecuteNonQuery (@"CREATE RULE sfkisofile_update AS
-ON UPDATE TO sfkisofile
-DO INSTEAD
-UPDATE isofile
-SET isofilename=substring(NEW.filename from '[^\\]*$'),
-    isofilesourcedirectory=substring(NEW.filename from '^.*\\'),
-    isofilesize=(CASE WHEN NEW.filesize=-1 THEN NULL ELSE NEW.filesize END)
-WHERE isofileid=OLD.fileid");
-      Database.ExecuteNonQuery (@"CREATE RULE sfkisofile_delete AS
-ON DELETE TO sfkisofile
-DO INSTEAD
-DELETE FROM isofile
-WHERE isofileid = OLD.fileid;");
     }
     
     void RemoveISOFileTable ()
     {
-      // sfkisofile view
-      Database.ExecuteNonQuery ("DROP VIEW IF EXISTS sfkisofile");
-      
-      // sfkisofile table
-      if (!Database.TableExists (SFKISOFILE_TABLE)) {
-        Database.ExecuteNonQuery ("DROP SEQUENCE IF EXISTS sfkisofile_fileid_seq;");
-        Database.ExecuteNonQuery (@"CREATE TABLE sfkisofile
-(
-  fileid bigserial NOT NULL,
-  filename character varying NOT NULL,
-  postpro character varying NOT NULL,
-  filesize integer DEFAULT (-1),
-  filecount bigint DEFAULT 0,
-  CONSTRAINT sfkisofile_pkey PRIMARY KEY (fileid)
-)
-WITH (
-  OIDS=TRUE
-);");
-        if (Database.TableExists (TableName.ISO_FILE)) {
-          Database.ExecuteNonQuery (@"INSERT INTO sfkisofile
-SELECT isofileid AS fileid,
- IsoFileSourceDirectory || IsoFileName AS filename,
- ''::varchar AS postpro,
- CASE WHEN isofilesize IS NULL THEN -1 ELSE isofilesize END AS filesize,
- 0 AS filecount
-FROM isofile");
-          ResetSequence (SFKISOFILE_TABLE, "fileid");
-        }
-      }
-      
       Database.RemoveTable (TableName.ISO_FILE);
     }
 
-    void UpgradeSfkoperation ()
+    void CreateOperationTables ()
     {
-      log.Debug ("UpgradeSfkoperation /B");
+      log.Debug ("CreateOperationTables /B");
       
       if (!Database.TableExists (TableName.OLD_SEQUENCE)) {
         AddProcessTable ();
@@ -436,61 +299,11 @@ FROM isofile");
       if (!Database.TableExists (TableName.STAMP)) {
         AddStampTable ();
       }
-      
-      if (Database.TableExists (SFKOPERATION_TABLE)) {        
-        // Remove the old sfkoperation
-        Database.RemoveTable (SFKOPERATION_TABLE);
-        
-        // sfkoperation view
-        log.Debug ("UpgradeSfkoperation: " +
-                   "create view sfkoperation");
-        Database.ExecuteNonQuery (@"CREATE VIEW sfkoperation AS
-SELECT process.processid AS opid,
-  CASE WHEN processname IS NOT NULL THEN processname ELSE (CASE WHEN isofilename IS NOT NULL THEN isofilestampingdirectory || isofilename ELSE '' END) END AS opname,
-  0 AS optype,
-  CASE WHEN processdescription IS NULL THEN ''::varchar ELSE processdescription END AS opdesc,
-  0 AS opdone,
-  CASE WHEN componentid IS NULL THEN 0 ELSE componentid END AS opcompid,
-  CASE WHEN isofileid IS NULL THEN 0 ELSE isofileid END AS opfileid,
-  CASE WHEN stampposition IS NULL THEN 0 ELSE stampposition END AS opfilepos,
-  CASE WHEN opstrategyid IS NULL THEN 0 ELSE opstrategyid END AS opstratid,
-  CASE WHEN toolid IS NULL THEN 0 ELSE toolid-1 END AS optoolid,
-  1 AS opmetric,
-  CASE WHEN depth.stampingvaluedouble IS NULL THEN 0 ELSE depth.stampingvaluedouble END AS opdepth,
-  CASE WHEN width.stampingvaluedouble IS NULL THEN 0 ELSE width.stampingvaluedouble END AS opwidth,
-  CASE WHEN tolerance.stampingvaluedouble IS NULL THEN 0 ELSE tolerance.stampingvaluedouble END AS optolerance,
-  0 AS opspeedratio,
-  CASE WHEN stock.stampingvaluedouble IS NULL THEN 0 ELSE stock.stampingvaluedouble END AS opstock,
-  CASE WHEN isofilestampingdatetime IS NULL THEN timezone('UTC'::text, now()) ELSE isofilestampingdatetime END AS opstampdate,
-  0 AS opcategoryid,
-  operation.operationid AS opprocessid,
-  CASE WHEN toolminlength.stampingvaluedouble IS NULL THEN -1 ELSE toolminlength.stampingvaluedouble END AS toolminlength,
-  CASE WHEN progfeedrate.stampingvaluedouble IS NULL THEN -1 ELSE progfeedrate.stampingvaluedouble END AS progfeedrate,
-  CASE WHEN progspindlespeed.stampingvaluedouble IS NULL THEN -1 ELSE progspindlespeed.stampingvaluedouble END AS progspindlespeed
-FROM process
-LEFT OUTER JOIN operation USING (operationid)
-LEFT OUTER JOIN stamp USING (processid)
-LEFT OUTER JOIN isofile USING (isofileid)
-LEFT OUTER JOIN stampingvalue strategy ON (strategy.fieldid=40 AND strategy.processid=process.processid)
-LEFT OUTER JOIN sfkopstrategy ON (strategy.stampingvaluestring=opstrategyname)
-LEFT OUTER JOIN stampingvalue depth ON (depth.fieldid=50 AND depth.processid=process.processid)
-LEFT OUTER JOIN stampingvalue width ON (width.fieldid=51 AND width.processid=process.processid)
-LEFT OUTER JOIN stampingvalue tolerance ON (tolerance.fieldid=52 AND tolerance.processid=process.processid)
-LEFT OUTER JOIN stampingvalue stock ON (stock.fieldid=53 AND stock.processid=process.processid)
-LEFT OUTER JOIN stampingvalue toolminlength ON (toolminlength.fieldid=54 AND toolminlength.processid=process.processid)
-LEFT OUTER JOIN stampingvalue progfeedrate ON (progfeedrate.fieldid=55 AND progfeedrate.processid=process.processid)
-LEFT OUTER JOIN stampingvalue progspindlespeed ON (progspindlespeed.fieldid=56 AND progspindlespeed.processid=process.processid);");
-        
-        // Note: for the moment, leave sfkopstrategy and sfkoptype
-      }
     }
     
-    void DowngradeSfkoperation ()
+    void RemoveOperationTables ()
     {
-      log.Debug ("DowngradeSfkoperation /B");
-      
-      // Remove the view sfkoperation
-      Database.ExecuteNonQuery (@"DROP VIEW IF EXISTS sfkoperation");
+      log.Debug ("RemoveOperationTables /B");
       
       if (Database.TableExists (TableName.STAMP)) {
         RemoveStampTable ();
