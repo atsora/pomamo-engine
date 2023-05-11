@@ -61,7 +61,7 @@ namespace Lemoine.Database.Persistent
     {
       // Note that default MaxPoolSize (for the Npgsql connection pool) is
       // 100 since version 3.1 of Npgsql (20 previously)
-      return $"Server=localhost;Database=${Constants.DEFAULT_DATABASE_NAME};User ID=${Constants.DEFAULT_DATABASE_USER};Password=${Constants.DEFAULT_DATABASE_PASSWORD};";
+      return $"Server=localhost;Database=${Constants.DEFAULT_DATABASE_NAME};User ID=${Constants.DEFAULT_DATABASE_USER};Password=${Constants.DEFAULT_DATABASE_PASSWORD};SSL Mode=Prefer;Trust Server Certificate=true;";
     }
 
     static Configuration CreateInitializeNHibernateConfig (params Assembly[] assemblies)

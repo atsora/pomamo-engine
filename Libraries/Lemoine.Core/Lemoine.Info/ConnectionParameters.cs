@@ -126,7 +126,7 @@ namespace Lemoine.Info
       "Port=" + Port + ";" +
       "Database=" + Database + ";" +
       "User ID=" + Username + ";" +
-      "Password=" + Password + ";";
+      "Password=" + Password + ";SSL Mode=Prefer;Trust Server Certificate=true;";
         if (log.IsDebugEnabled) {
           log.Debug ($"ConnectionString.Get: return {connectionString}");
         }
