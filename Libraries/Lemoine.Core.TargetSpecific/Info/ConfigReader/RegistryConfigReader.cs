@@ -31,17 +31,23 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     readonly IDictionary<string, byte> m_notFoundKeys = new ConcurrentDictionary<string, byte> (); // Because there is no concurrent set
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger (typeof (RegistryConfigReader).FullName);
+    static readonly string REGISTRY_KEY =
+#if ATSORA
+      "SOFTWARE\\Atsora\\Tracking";
+#elif LEMOINE
+      "SOFTWARE\\Lemoine\\PULSE";
+#else
+      "SOFTWARE\\Pomamo";
+#endif
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
+    static readonly ILog log = LogManager.GetLogger (typeof (RegistryConfigReader).FullName);
 
     #region Constructors
     /// <summary>
-    /// Constructor considering the default key HKLM\SOFTWARE\Lemoine\PULSE
+    /// Constructor considering the default key REGISTRY_KEY
     /// </summary>
     public RegistryConfigReader (bool lazy = false)
-      : this ("SOFTWARE\\Lemoine\\PULSE", lazy)
+      : this (REGISTRY_KEY, lazy)
     {
     }
 

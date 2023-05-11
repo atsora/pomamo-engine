@@ -43,7 +43,7 @@ namespace Lemoine.Core.Extensions.Hosting
       return hostBuilder
         .ConfigureAppConfiguration ((hostingContext, config) => {
           config.AddCommandLine (options.MicrosoftParameters.ToArray ());
-          config.AddEnvironmentVariables ("LEMOINE_");
+          config.AddEnvironmentVariables ("POMAMO_");
         });
     }
 
