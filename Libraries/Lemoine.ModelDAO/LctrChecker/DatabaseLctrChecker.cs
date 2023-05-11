@@ -41,7 +41,7 @@ namespace Lemoine.ModelDAO.LctrChecker
         }
         var isLctr = lctrComputer.IsLocal ();
         if (log.IsDebugEnabled) {
-          log.Debug ($"IsLctrFromDatabase: return {isLctr}");
+          log.Debug ($"IsLctr: return {isLctr}");
         }
         return isLctr;
       }
