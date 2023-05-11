@@ -78,8 +78,8 @@ namespace Lem_CncDataService
           }
         }
         catch (Exception ex) {
-          log.Error ("CreateImportClasses: Exception while trying to get the monitored machines => try again in a 30 seconds", ex);
-          cancellationToken.WaitHandle.WaitOne (TimeSpan.FromSeconds (30));
+          log.Error ("CreateImportClasses: Exception while trying to get the monitored machines => try again in a 1 minute", ex);
+          cancellationToken.WaitHandle.WaitOne (TimeSpan.FromMinutes (1));
         }
       }
 
@@ -349,6 +349,9 @@ namespace Lem_CncDataService
         if (linkedToken.IsCancellationRequested) {
           return;
         }
+        if (!m_threadImports.Any () && !m_processImports.Any ()) {
+          log.Warn ($"InitializeThreadsAsync: there is no import classes");
+        }
 
         // Start the threads and processes
         foreach (ImportCncDataFromQueue import in m_threadImports.Values) {
@@ -425,7 +428,7 @@ namespace Lem_CncDataService
         using (var transaction = session.BeginReadOnlyTransaction ("CncDataService.GetMachineModules")) {
           var lpost = GetLPost ();
           if (null == lpost) {
-            log.Error ("GetMachineModules: no lpost in database corresponds to this computer");
+            log.Error ("GetMachineModules: no acquisition server in database corresponds to this computer");
             return null;
           }
 

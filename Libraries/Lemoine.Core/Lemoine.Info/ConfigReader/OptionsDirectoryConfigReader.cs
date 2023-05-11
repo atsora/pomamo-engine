@@ -26,10 +26,6 @@ namespace Lemoine.Info.ConfigReader
     MultiConfigReader m_multiConfigReader = new MultiConfigReader ();
     MemoryConfigReader m_persistentConfigReader = null;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -42,7 +38,6 @@ namespace Lemoine.Info.ConfigReader
 
       Load ();
     }
-    #endregion // Constructors
 
     void Load ()
     {
@@ -107,7 +102,13 @@ namespace Lemoine.Info.ConfigReader
     {
       if (!Directory.Exists (m_directoryPath)) {
         log.Warn ($"SetPersistentConfig: {m_directoryPath} does not exist => create it");
-        Directory.CreateDirectory (m_directoryPath);
+        try {
+          Directory.CreateDirectory (m_directoryPath);
+        }
+        catch (Exception ex) {
+          log.Error ($"SetPersistentConfig: CreateDirectory {m_directoryPath} failed", ex);
+          throw;
+        }
       }
 
       var filePath = GetPersistentConfigPath (key);
@@ -121,21 +122,27 @@ namespace Lemoine.Info.ConfigReader
         }
       }
 
-      string vstring;
-      if (v is double vdouble) {
-        vstring = vdouble.ToString (System.Globalization.CultureInfo.InvariantCulture);
+      try {
+        string vstring;
+        if (v is double vdouble) {
+          vstring = vdouble.ToString (System.Globalization.CultureInfo.InvariantCulture);
+        }
+        else {
+          vstring = v.ToString ();
+        }
+        var content = $"{key}:{vstring}";
+        File.WriteAllText (filePath, content);
+        if (m_persistentConfigReader is null) {
+          m_persistentConfigReader = new MemoryConfigReader ();
+        }
+        m_multiConfigReader.Add (m_persistentConfigReader);
+        m_persistentConfigReader.Add (key, v);
+        return true;
       }
-      else {
-        vstring = v.ToString ();
+      catch (Exception ex) {
+        log.Error ("SetPersistentConfigReader: exception", ex);
+        throw;
       }
-      var content = $"{key}:{vstring}";
-      File.WriteAllText (filePath, content);
-      if (m_persistentConfigReader is null) {
-        m_persistentConfigReader = new MemoryConfigReader ();
-      }
-      m_multiConfigReader.Add (m_persistentConfigReader);
-      m_persistentConfigReader.Add (key, v);
-      return true;
     }
 
     string GetPersistentConfigPath (string key)
