@@ -5,12 +5,8 @@
 using System;
 
 using System.Net;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Core.Log;
 using Lemoine.Extensions.Web.Responses;
 

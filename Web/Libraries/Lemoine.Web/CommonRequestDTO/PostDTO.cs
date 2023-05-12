@@ -20,31 +20,10 @@ namespace Lemoine.Web.CommonRequestDTO
 
     static readonly ILog log = LogManager.GetLogger (typeof (PostDTO).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     #endregion // Constructors
 
     #region Methods
-#if NSERVICEKIT
-    /// <summary>
-    /// Deserialize
-    /// </summary>
-    /// <param name="httpRequest"></param>
-    /// <returns></returns>
-    public static T Deserialize<T> (NServiceKit.ServiceHost.IHttpRequest httpRequest)
-    {
-      string json;
-      using (StreamReader sr = new StreamReader(httpRequest.InputStream))
-      {
-        json = sr.ReadToEnd();
-      }
-      T deserializedResult = JsonConvert.DeserializeObject<T> (json);
-      return deserializedResult;
-    }
-#endif // NSERVICEKIT
-
     /// <summary>
     /// Deserialize
     /// </summary>

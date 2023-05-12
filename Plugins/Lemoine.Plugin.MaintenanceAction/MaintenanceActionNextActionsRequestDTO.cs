@@ -18,15 +18,8 @@ namespace Lemoine.Plugin.MaintenanceAction
   [ApiResponse (System.Net.HttpStatusCode.InternalServerError, "Oops, something broke")]
   [Route ("/MaintenanceAction/NextActions", "GET", Summary = "Service to get the next maintenance actions to come", Notes = "To use with the optional ?Number=")]
   [Route ("/MaintenanceAction/NextActions/Get/{Number}", "GET", Summary = "Service to get the next maintenance actions to come", Notes = "")]
-#if NSERVICEKIT
-  [NServiceKit.ServiceHost.Route ("/MaintenanceAction/NextActions", "GET", Summary = "Service to get the next maintenance actions to come", Notes = "To use with the optional ?Number=")]
-  [NServiceKit.ServiceHost.Route ("/MaintenanceAction/NextActions/Get/{Number}", "GET", Summary = "Service to get the next maintenance actions to come", Notes = "")]
-#endif // NSERVICEKIT
   public class MaintenanceActionNextActionsRequestDTO
     : IReturn<MaintenanceActionNextActionsResponseDTO>
-#if NSERVICEKIT
-    , NServiceKit.ServiceHost.IReturn<MaintenanceActionNextActionsResponseDTO>
-#endif // NSERVICEKIT
   {
     /// <summary>
     /// Id of the machine

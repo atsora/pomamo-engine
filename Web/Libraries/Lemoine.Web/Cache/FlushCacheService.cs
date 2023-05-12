@@ -50,15 +50,6 @@ namespace Lemoine.Web.Cache
     /// <returns></returns>
     public override object GetWithoutCache(FlushCacheRequestDTO request)
     {
-#if NSERVICEKIT
-      if (!(this.NServiceKitCacheClient is Lemoine.Core.Cache.ICacheClient)) {
-        log.FatalFormat ("GetWithoutCache: " +
-                         "cache client is not a Lemoine.Core.Cache.ICacheClient");
-        return new ErrorDTO ("Cache client not a Lemoine.Core.Cache.ICacheClient", ErrorStatus.UnexpectedError);
-      }
-      m_cacheClient = this.NServiceKitCacheClient as Lemoine.Core.Cache.ICacheClient;
-      Debug.Assert (null != m_cacheClient);
-#endif // NSERVICEKIT
       m_cacheClient.FlushAll ();
       
       return new OkDTO ("");

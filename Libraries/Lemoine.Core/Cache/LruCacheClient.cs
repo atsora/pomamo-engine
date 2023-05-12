@@ -233,20 +233,7 @@ namespace Lemoine.Core.Cache
         else {
           if (log.IsFatalEnabled) {
             var stackTrace = System.Environment.StackTrace;
-            if (stackTrace.Contains ("NServiceKit")) {
-              // Lemoine.Core.Cache.LruCacheClient (null): Get: cached value ///Data/Translation/Find/?Locale=en&Key=StopAll&format=json=Lemoine.Web.CommonResponseDTO.ErrorDTO is of type Lemoine.Web.CommonResponseDTO.ErrorDTO, expected type is System.String. 
-              // => a wrong type may be used => use level Warn
-              log.WarnFormat ("Get: " +
-                              "NServiceKit cached value {0}={1} is of type {2}, expected type is {3}. StackTrace={4}",
-                              key, item.Value, item.Value?.GetType (), typeof (T),
-                              stackTrace);
-            }
-            else {
-              log.FatalFormat ("Get: " +
-                               "cached value {0}={1} is of type {2}, expected type is {3}. StackTrace={4}",
-                               key, item.Value, item.Value?.GetType (), typeof (T),
-                               stackTrace);
-            }
+            log.Fatal ($"Get: cached value {key}={item.Value} is of type {item.Value?.GetType ()}, expected type is {typeof (T)}. StackTrace={stackTrace}");
           }
           Remove (key);
           return default;

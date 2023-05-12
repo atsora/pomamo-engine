@@ -19,16 +19,8 @@ namespace Lemoine.Plugin.PushTask
   [Route ("/Addon/PushTask/", "GET", Summary = "Service to push a task", Notes = "To use with ?MachineId=&TaskId=")]
   [Route ("/Addon/PushTask/Get", "GET", Summary = "Service to push a task", Notes = "To use with ?MachineId=&TaskId=")]
   [Route ("/Addon/PushTask/Get/{MachineId}/", "GET", Summary = "Service to push a task", Notes = "To use with ?TaskId=")]
-#if NSERVCEKIT
-  [NServiceKit.ServiceHost.Route ("/Addon/PushTask/", "GET", Summary = "Service to push a task", Notes = "To use with ?MachineId=&TaskId=")]
-  [NServiceKit.ServiceHost.Route ("/Addon/PushTask/Get", "GET", Summary = "Service to push a task", Notes = "To use with ?MachineId=&TaskId=")]
-  [NServiceKit.ServiceHost.Route ("/Addon/PushTask/Get/{MachineId}/", "GET", Summary = "Service to push a task", Notes = "To use with ?TaskId=")]
-#endif // NSERVICEKIT
   public class PushTaskRequestDTO
     : IReturn<PushTaskResponseDTO>
-#if NSERVICEKIT
-    , NServiceKit.ServiceHost.IReturn<PushTaskResponseDTO>
-#endif // NSERVICEKIT
   {
     /// <summary>
     /// Id of the machine

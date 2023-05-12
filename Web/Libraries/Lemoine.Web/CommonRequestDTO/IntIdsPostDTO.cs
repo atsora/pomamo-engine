@@ -6,12 +6,8 @@ using System;
 
 using System.Collections.Generic;
 using Lemoine.Model;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Core.Log;
 
 namespace Lemoine.Web.CommonRequestDTO

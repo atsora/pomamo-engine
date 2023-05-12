@@ -18,20 +18,8 @@ namespace Lemoine.Web.Cache
   {
     static readonly ILog log = LogManager.GetLogger(typeof (FlushCacheAndCollectService).FullName);
 
-#if !NSERVICEKIT
-    readonly
-#endif // NSERVICEKIT
-    Lemoine.Core.Cache.ICacheClient m_cacheClient;
+    readonly Lemoine.Core.Cache.ICacheClient m_cacheClient;
 
-    #region Constructors
-#if NSERVICEKIT
-    /// <summary>
-    /// 
-    /// </summary>
-    public FlushCacheAndCollectService ()
-    {
-    }
-#else // !NSERVICEKIT
     /// <summary>
     /// 
     /// </summary>
@@ -39,8 +27,6 @@ namespace Lemoine.Web.Cache
     {
       m_cacheClient = cacheClient;
     }
-#endif // NSERVICEKIT
-    #endregion // Constructors
 
     #region Methods
     /// <summary>
@@ -66,16 +52,6 @@ namespace Lemoine.Web.Cache
     /// </summary>
     public void FlushCache ()
     {
-#if NSERVICEKIT
-      if (!(this.NServiceKitCacheClient is Lemoine.Core.Cache.ICacheClient)) {
-        log.FatalFormat ("GetWithoutCache: " +
-                         "cache client is not a Lemoine.Core.Cache.ICacheClient");
-        return;
-      }
-      m_cacheClient = this.NServiceKitCacheClient as Lemoine.Core.Cache.ICacheClient;
-      Debug.Assert (null != m_cacheClient);
-#endif // NSERVICEKIT
-
       m_cacheClient.FlushAll ();
       GC.Collect ();
     }

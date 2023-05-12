@@ -29,20 +29,8 @@ namespace Lemoine.Web.Config
 
     static readonly ILog log = LogManager.GetLogger (typeof (ConfigNotifyUpdateService).FullName);
 
-#if !NSERVICEKIT
-    readonly
-#endif // NSERVICEKIT
-    Lemoine.Core.Cache.ICacheClient m_cacheClient;
+    readonly Lemoine.Core.Cache.ICacheClient m_cacheClient;
 
-    #region Constructors
-#if NSERVICEKIT
-    /// <summary>
-    /// 
-    /// </summary>
-    public ConfigNotifyUpdateService ()
-    {
-    }
-#else // !NSERVICEKIT
     /// <summary>
     /// 
     /// </summary>
@@ -50,8 +38,6 @@ namespace Lemoine.Web.Config
     {
       m_cacheClient = cacheClient;
     }
-#endif // NSERVICEKIT
-    #endregion // Constructors
 
     #region Methods
     /// <summary>
@@ -61,16 +47,6 @@ namespace Lemoine.Web.Config
     /// <returns></returns>
     public override async Task<object> Get (ConfigNotifyUpdateRequestDTO request)
     {
-#if NSERVICEKIT
-      if (!(this.NServiceKitCacheClient is Lemoine.Core.Cache.ICacheClient)) {
-        log.FatalFormat ("GetWithoutCache: " +
-                         "cache client is not a Lemoine.Core.Cache.ICacheClient");
-        return new ErrorDTO ("Cache client not a Lemoine.Core.Cache.ICacheClient", ErrorStatus.UnexpectedError);
-      }
-      m_cacheClient = this.NServiceKitCacheClient as Lemoine.Core.Cache.ICacheClient;
-      Debug.Assert (null != m_cacheClient);
-#endif // NSERVICEKIT
-
       // Flush the cache
       m_cacheClient.FlushAll ();
 
