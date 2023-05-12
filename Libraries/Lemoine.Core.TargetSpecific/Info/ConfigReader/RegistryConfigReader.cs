@@ -132,6 +132,11 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     {
       try {
         using (RegistryKey odbcKey = m_root.OpenSubKey (m_key)) {
+          if (odbcKey is null) {
+            log.Warn ($"RegistryConfigReader: key {m_key} does not exist");
+            m_notFoundKeys[key] = new byte ();
+            throw new ConfigKeyNotFoundException (key);
+          }
           var v = odbcKey.GetValue (key);
           if (v is null) {
             m_notFoundKeys[key] = new byte ();
