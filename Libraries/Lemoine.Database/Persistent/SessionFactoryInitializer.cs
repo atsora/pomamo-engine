@@ -168,7 +168,7 @@ namespace Lemoine.Database.Persistent
     public static void AddPersistentClassModel (params IPersistentClassModel[] persistentClassModels)
     {
       if (!Instance.m_status.Equals (NHibernateStatus.NotInitialized)) {
-        log.Error ($"AddPersistentClassModel: the status is already {Instance.m_status}, the call to this method is too late");
+        log.Error ($"AddPersistentClassModel: the status is already {Instance.m_status}, the call to this method is too late. Stack={System.Environment.StackTrace}");
       }
 
       foreach (var persistentClassModel in persistentClassModels) {

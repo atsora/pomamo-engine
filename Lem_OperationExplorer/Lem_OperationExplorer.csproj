@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <Platforms>x86</Platforms>
+    <Platforms>x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyOriginatorKeyFile>..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
     <ApplicationIcon>Lem_OperationExplorer.ico</ApplicationIcon>

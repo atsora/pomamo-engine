@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net48</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
-    <Configurations>Debug;Release;VisualStudio;VS</Configurations>
+    <Configurations>Debug;Release;VS</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
