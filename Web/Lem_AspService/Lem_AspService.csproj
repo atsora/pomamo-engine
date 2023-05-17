@@ -68,8 +68,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='VS'">  <!-- include plugins .dll files for tests (instead of ProjectReference) - projects must be compiled in sln -->
-    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ReasonDefaultManagement.deps.json" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\net6.0\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\net6.0\Lemoine.Plugin.ReasonDefaultManagement.deps.json" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup>

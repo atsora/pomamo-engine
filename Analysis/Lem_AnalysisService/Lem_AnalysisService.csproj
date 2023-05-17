@@ -61,11 +61,11 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(Configuration)'=='VS'">   <!-- include plugins .dll files for tests (instead of ProjectReference) - projects must be compiled in sln -->
-    <None Include="..\..\Plugins\Lemoine.Plugin.IdleTimePerPeriod2\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.IdleTimePerPeriod2.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\..\Plugins\Lemoine.Plugin.ProductionSwitcher\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ProductionSwitcher.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\..\Plugins\Lemoine.Plugin.SetupSwitcher\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.SetupSwitcher.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\..\Plugins\Lemoine.Plugin.ShortPeriodRemoval\bin\$(Configuration)\netcoreapp3.1\Lemoine.Plugin.ShortPeriodRemoval.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.IdleTimePerPeriod2\bin\$(Configuration)\net6.0\Lemoine.Plugin.IdleTimePerPeriod2.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ProductionSwitcher\bin\$(Configuration)\net6.0\Lemoine.Plugin.ProductionSwitcher.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\net6.0\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.SetupSwitcher\bin\$(Configuration)\net6.0\Lemoine.Plugin.SetupSwitcher.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ShortPeriodRemoval\bin\$(Configuration)\net6.0\Lemoine.Plugin.ShortPeriodRemoval.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup>
