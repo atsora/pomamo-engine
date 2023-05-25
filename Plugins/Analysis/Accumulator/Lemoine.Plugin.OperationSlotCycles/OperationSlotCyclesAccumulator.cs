@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
+﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies, 2023 Nicolas Relange
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -948,9 +948,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
             newBegin = previousCycle.End.Value;
           }
           else {
-            log.ErrorFormat ("ReadjustCyclesBegin: " +
-                             "previous cycle {0} of {1} has no end",
-                             previousCycle, operationCycle);
+            log.Error ($"ReadjustCyclesBegin: previous cycle {previousCycle} of {operationCycle} has no end");
           }
         }
         else if (null != operationCycle.OperationSlot) { // Consider the start time of the operation slot
@@ -970,8 +968,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
           }
         }
         else if (operationCycle.Begin.HasValue) {
-          log.ErrorFormat ("ReadjustCyclesBegin: " +
-                           "no estimated begin was determined (null)");
+          log.Error ("ReadjustCyclesBegin: no estimated begin was determined (null)");
           operationCycle.Begin = null;
           operationCycle.Full = IsFull (operationCycle);
         }
@@ -1044,11 +1041,12 @@ namespace Lemoine.Plugin.OperationSlotCycles
         if (null != nextCycle) {
           if (nextCycle.Begin.HasValue) {
             newEnd = nextCycle.Begin.Value;
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ReadjustCyclesEnd: new estimated end {newEnd} from next cycle begin");
+            }
           }
           else {
-            log.ErrorFormat ("ReadjustCyclesEnd: " +
-                             "next cycle {0} of {1} has no begin",
-                             nextCycle, operationCycle);
+            log.Error ($"ReadjustCyclesEnd: next cycle {nextCycle} of {operationCycle} has no begin");
           }
         }
         else if (null != operationCycle.OperationSlot) { // Consider the end time of the operation slot
@@ -1056,24 +1054,32 @@ namespace Lemoine.Plugin.OperationSlotCycles
             .FindById (operationCycle.OperationSlot.Id, operationCycle.Machine);
           if (operationSlot.EndDateTime.HasValue) {
             newEnd = operationSlot.EndDateTime.Value;
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ReadjustCyclesEnd: new estimated end {newEnd} from operation slot end");
+            }
           }
         }
 
         operationCycle.Status = operationCycle.Status.Add (OperationCycleStatus.EndEstimated);
 
         if (newEnd.HasValue) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ReadjustCycleEnd: new estimated end is {newEnd}");
+          }
           if (!operationCycle.End.HasValue || !object.Equals (operationCycle.End.Value, newEnd.Value)) {
             operationCycle.SetEstimatedEnd (newEnd.Value);
             operationCycle.Full = IsFull (operationCycle);
           }
         }
         else if (operationCycle.End.HasValue) {
-          log.ErrorFormat ("ReadjustCyclesEnd: " +
-                           "no estimated end was determined (null)");
+          log.Debug ("ReadjustCyclesEnd: no estimated end was determined => reset it");
           operationCycle.SetEstimatedEnd (null);
           operationCycle.Full = IsFull (operationCycle);
         }
-      }
+        else if (log.IsDebugEnabled) {
+          log.Debug ($"ReadjustCyclesEnd: no estimated end was determined and there is no need to reset it");
+        }
+      } // Loop on m_adjustEndCycles
 
       m_adjustEndCycles.Clear ();
     }

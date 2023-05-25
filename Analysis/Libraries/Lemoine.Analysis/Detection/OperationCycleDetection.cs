@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
+﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies, 2023 Nicolas Relange
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -432,13 +432,19 @@ namespace Lemoine.Analysis.Detection
                                                                               IOperationCycle lastOperationCycle,
                                                                               IOperationSlot operationSlot)
     {
-      Debug.Assert (!lastOperationCycle.HasRealEnd ());
-      Debug.Assert (lastOperationCycle.Begin.HasValue);
-      Debug.Assert (!object.Equals (lastOperationCycle.OperationSlot, operationSlot));
+      Debug.Assert (!lastOperationCycle.HasRealEnd (), "last operation cycle has alredy a real end");
+      Debug.Assert (lastOperationCycle.Begin.HasValue, "last operation cycle has no start");
+      Debug.Assert (!object.Equals (lastOperationCycle.OperationSlot, operationSlot), "not a new operation slot");
 
       // The new cycle will be the first cycle of operation slot
-      Debug.Assert ((operationSlot == null) || (0 == operationSlot.TotalCycles));
-      Debug.Assert ((operationSlot == null) || (!operationSlot.AverageCycleTime.HasValue));
+      if (log.IsErrorEnabled && (null != operationSlot)) {
+        if (0 != operationSlot.TotalCycles) {
+          log.Fatal ($"StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: operationSlot at {dateTime}, id={operationSlot.Id}, range={operationSlot.DateTimeRange} has already {operationSlot.TotalCycles} cycles");
+        }
+        if (operationSlot.AverageCycleTime.HasValue) {
+          log.Fatal ($"StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: operationSlot at {dateTime}, id={operationSlot.Id}, range={operationSlot.DateTimeRange} has already an average cycle time {operationSlot.AverageCycleTime.Value}");
+        }
+      }
 
       if (log.IsDebugEnabled) {
         log.Debug ($"StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: two different operation slots between last cycle {lastOperationCycle} and slot {operationSlot} at {dateTime}");
@@ -453,11 +459,7 @@ namespace Lemoine.Analysis.Detection
           && (operationSlot.BeginDateTime.Value
               .Subtract (lastOperationCycle.Begin.Value) < operationCycleAssociationMargin)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: " +
-                           "make the previous partial cycle {0} full with end set to {1} " +
-                           "because its start is close enough to start of slot {2}",
-                           lastOperationCycle,
-                           dateTime, operationSlot);
+          log.Debug ($"StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: make the previous partial cycle {lastOperationCycle} full with end set to {lastOperationCycle} because its start is close enough to start of slot {dateTime}");
         }
         lastOperationCycle.Quantity = quantity;
         lastOperationCycle.SetRealEnd (dateTime); // switch from estimated to real end
@@ -482,11 +484,7 @@ namespace Lemoine.Analysis.Detection
                                                                 operationSlot.Component,
                                                                 operationSlot.WorkOrder)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: " +
-                             "make the previous partial cycle {0} full with end set to {1} " +
-                             "because the operation / component / work order did not change between them",
-                             lastOperationCycle,
-                             dateTime);
+            log.Debug ($"StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: make the previous partial cycle {lastOperationCycle} full with end set to {dateTime} because the operation / component / work order did not change between them");
           }
           lastOperationCycle.Quantity = quantity;
           lastOperationCycle.SetRealEnd (dateTime); // switch from estimated to real end
@@ -506,10 +504,7 @@ namespace Lemoine.Analysis.Detection
       operationCycle.SetRealEnd (dateTime);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: " +
-                         "create a new operation cycle {0} " +
-                         "ending at {1} because the previous partial cycle {2} could not be associated to slot {3}",
-                         operationCycle, dateTime, lastOperationCycle, operationSlot);
+        log.Debug ($"StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot: create a new operation cycle {operationCycle} ending at {dateTime} because the previous partial cycle {lastOperationCycle} could not be associated to slot {operationSlot}");
       }
 
       if (operationSlot != null) {
@@ -591,7 +586,10 @@ namespace Lemoine.Analysis.Detection
           }
           else {
             Debug.Assert (Bound.Compare<DateTime> (lastOperationCycle.DateTime, operationSlot.BeginDateTime) < 0);
-            Debug.Assert (operationSlot.BeginDateTime.HasValue);
+            Debug.Assert (operationSlot.BeginDateTime.HasValue, "operation slot has no start");
+            if (log.IsDebugEnabled) {
+              log.Debug ($"IsSameContinuousOperation: last operation slot is null, while current operation is {operationSlot?.Operation?.Id}");
+            }
             return ModelDAOHelper.DAOFactory.OperationSlotDAO
               .IsContinuousOperationInRange (machine,
                                              new UtcDateTimeRange (lastOperationCycle.DateTime,
@@ -608,11 +606,17 @@ namespace Lemoine.Analysis.Detection
               .FindById (lastOperationSlot.Id, machine);
             Debug.Assert (null != lastOperationSlot);
             if (!object.Equals (lastOperationSlot.Operation, operationSlot.Operation)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"IsSameContinuousOperation: {lastOperationSlot?.Operation?.Id} != {operationSlot?.Operation?.Id}");
+              }
               return false;
             }
             else {
               Debug.Assert (Bound.Compare<DateTime> (lastOperationCycle.DateTime, operationSlot.BeginDateTime) < 0);
               Debug.Assert (operationSlot.BeginDateTime.HasValue);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"IsSameContinuousOperation: {lastOperationSlot?.Operation?.Id} VS {operationSlot?.Operation?.Id}");
+              }
               return ModelDAOHelper.DAOFactory.OperationSlotDAO
                 .IsContinuousOperationInRange (machine,
                                                new UtcDateTimeRange (lastOperationCycle.DateTime,
@@ -704,11 +708,7 @@ namespace Lemoine.Analysis.Detection
             else if (lastOperationCycle.Status.HasFlag (OperationCycleStatus.EndEstimated)) {
               // Shorten the previous full cycle
               if (log.IsInfoEnabled) {
-                log.InfoFormat ("StopCycle: " +
-                                "shorten the full cycle {0} " +
-                                "because its estimated end is before the new cycle end {1}",
-                                lastOperationCycle,
-                                dateTime);
+                log.Info ($"StopCycle: shorten the full cycle {lastOperationCycle} because its estimated end is before the new cycle end {dateTime}");
               }
               lastOperationCycle.SetEstimatedEnd (dateTime);
               lastOperationCycle.Full = IsFull (lastOperationCycle);
@@ -807,10 +807,7 @@ namespace Lemoine.Analysis.Detection
           else { // Last operation cycle has an estimated end
             Debug.Assert (lastOperationCycle.Begin.HasValue);
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("StopCycle: " +
-                               "last operation cycle {0} is a partial cycle," +
-                               "check if the new end may {1} be associated to it",
-                               lastOperationCycle, dateTime);
+              log.Debug ($"StopCycle: last operation cycle {lastOperationCycle} is a partial cycle, check if the new end may {dateTime} be associated to it");
             }
 
             // .. Check the dateTime is valid regarding this last operation cycle
@@ -831,6 +828,9 @@ namespace Lemoine.Analysis.Detection
               // ... Two different operation slots
               //     This should be the first detected cycle
               //     in this operation slot
+              if (log.IsDebugEnabled) {
+                log.Debug ($"StopCycle: new cycle at {dateTime} is not for the same operation than {lastOperationCycle}");
+              }
               operationCycle = StopCycleWhenLastCycleIsPartialAndBelongsToDifferentSlot (quantity, dateTime, lastOperationCycle, operationSlot);
             }
           }
@@ -858,9 +858,7 @@ namespace Lemoine.Analysis.Detection
               if (!sequenceSlot.NextBegin.HasValue
                   || (Bound.Compare<DateTime> (dateTime, sequenceSlot.NextBegin.Value) < 0)) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("StopCycle: " +
-                                   "set the NextBegin {0} to sequence slot {1}",
-                                   dateTime, sequenceSlot);
+                  log.Debug ($"StopCycle: set the NextBegin {dateTime} to sequence slot {sequenceSlot}");
                 }
                 sequenceSlot.NextBegin = dateTime;
               }

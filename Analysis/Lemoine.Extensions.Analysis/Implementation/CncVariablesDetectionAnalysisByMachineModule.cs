@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
+﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies, 2023 Nicolas Relange
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -374,9 +374,7 @@ namespace Pulse.Extensions.Analysis.Implementation
             machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
               .FindById (machineFilterId);
             if (null == machineFilter) {
-              log.ErrorFormat ("Initialize: " +
-                               "machine filter id {0} does not exist",
-                               machineFilterId);
+              log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
               return false;
             }
             else {
@@ -403,16 +401,18 @@ namespace Pulse.Extensions.Analysis.Implementation
     public bool CheckCncVariableChange (IMachineModuleDetection detection, string cncVariable, bool inDetection,
       out ICncVariable oldCncVariable, out ICncVariable newCncVariable)
     {
-      bool variableChange = false;
       newCncVariable = null;
       oldCncVariable = null;
-      log.DebugFormat ("CheckCncVariableChange: cncVariable={0}", cncVariable);
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("CncVariablesDetectionAnalysis.CheckCncVariableChange")) {
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CheckCncVariableChange: cncVariable={cncVariable}");
+      }
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (var transaction = session.BeginReadOnlyTransaction ("CncVariablesDetectionAnalysis.CheckCncVariableChange")) {
           newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
           .FindAt (detection.MachineModule, cncVariable, detection.DateTime);
           if (null == newCncVariable) {
-            log.ErrorFormat ("CheckCncVariableChange: no cnc variable {0} at {1}", cncVariable, detection.DateTime);
+            log.Error ($"CheckCncVariableChange: no cnc variable {cncVariable} at {detection.DateTime}");
+            return false;
           }
           else {
             // get previous CncVariable only if variable is in detection.
@@ -420,17 +420,25 @@ namespace Pulse.Extensions.Analysis.Implementation
               oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
                 .FindAt (detection.MachineModule, cncVariable, detection.DateTime.AddSeconds (-1));
               if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
-                log.DebugFormat ("CheckCncVariableChange: no cnc variable {0} change", cncVariable);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"CheckCncVariableChange: no cnc variable {cncVariable} change");
+                }
+                return false;
               }
               else {
-                variableChange = true;
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"CheckCncVariableChange: cnc variable change for {cncVariable}");
+                }
+                return true;
               }
+            }
+            else { // newCncVariable is null or !inDetection
+              return false;
             }
           }
         } // transaction
       }
-      return variableChange;
-    } // CheckCncVariableChange
+    }
 
 
     /// <summary>
@@ -447,7 +455,7 @@ namespace Pulse.Extensions.Analysis.Implementation
               .FindAt (m_machineModule, key, dateTime);
 
           if (null == cncVariable) {
-            log.WarnFormat ("GetVariableString: no variable {0} at {1}, give up", key, dateTime);
+            log.Warn ($"GetVariableString: no variable {key} at {dateTime}, give up");
             return null;
           }
           return cncVariable.Value.ToString ();
@@ -481,12 +489,14 @@ namespace Pulse.Extensions.Analysis.Implementation
     /// <returns></returns>    
     public string GetOperationNameFromComment (string programOperationcomment, Regex operationRegex)
     {
-      log.DebugFormat ("GetOperationNameFromComment: programOperationcomment={0}", programOperationcomment);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetOperationNameFromComment: programOperationcomment={programOperationcomment}");
+      }
 
       var match = operationRegex.Match (programOperationcomment.Trim ());
       string result = null;
       if (!match.Success) {
-        log.WarnFormat ("GetOperationNameFromComment: no match with regex, invalid operationComment {0}", programOperationcomment);
+        log.Warn ($"GetOperationNameFromComment: no match with regex, invalid operationComment {programOperationcomment}");
       }
       else {
         if (match.Groups["operation"].Success) {
@@ -520,16 +530,16 @@ namespace Pulse.Extensions.Analysis.Implementation
         else {
           if (operationMatch.Groups["operation"].Success) {
             operationName = operationMatch.Groups["operation"].Value.Trim ();
-            log.DebugFormat ("GetOperationNameFromComment: operationName={0}", operationName);
+            log.Debug ($"GetOperationNameFromComment: operationName={operationName}");
             result = true;
 
             // check revision only if operation is ok
             if (operationMatch.Groups["revision"].Success) {
               revisionName = operationMatch.Groups["revision"].Value.Trim ();
-              log.DebugFormat ("GetOperationNameFromComment: revisionName={0}", revisionName);
+              log.Debug ($"GetOperationNameFromComment: revisionName={revisionName}");
             }
             else {
-              log.DebugFormat ("GetOperationNameFromComment: bad revision ");
+              log.Debug ("GetOperationNameFromComment: bad revision ");
             }
           }
         }
@@ -1140,15 +1150,15 @@ namespace Pulse.Extensions.Analysis.Implementation
       }
       string sequencePrefix = null;
       switch (sequenceKind) {
-        case SequenceKind.OptionalStop:
-          sequencePrefix = "M1T";
-          break;
-        case SequenceKind.Stop:
-          sequencePrefix = "M0T";
-          break;
-        default:
-          sequencePrefix = "T";
-          break;
+      case SequenceKind.OptionalStop:
+        sequencePrefix = "M1T";
+        break;
+      case SequenceKind.Stop:
+        sequencePrefix = "M0T";
+        break;
+      default:
+        sequencePrefix = "T";
+        break;
       }
       sequenceName = sequencePrefix + toolNumber;
 
