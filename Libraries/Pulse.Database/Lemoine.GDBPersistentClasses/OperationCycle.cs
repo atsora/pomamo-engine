@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
+﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies, 2023 Nicolas Relange
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -79,10 +79,18 @@ namespace Lemoine.GDBPersistentClasses
       {
         if (m_active) {
           if ((0 != m_operationCycle.Id) && !m_operationCycle.m_deleted) {
-            using (var analysisAccumulatorCallerHolder1 = new AnalysisAccumulatorCallerHolder (m_previous)) {
+            if (m_previous is null) {
               using (var analysisAccumulatorCallerHolder2 = new AnalysisAccumulatorCallerHolder (m_operationCycle)) {
-                AnalysisAccumulator.OperationCycleUpdated (m_previous,
+                AnalysisAccumulator.OperationCycleUpdated (null,
                                                            m_operationCycle);
+              }
+            }
+            else { // m_previous is not null 
+              using (var analysisAccumulatorCallerHolder1 = new AnalysisAccumulatorCallerHolder (m_previous)) {
+                using (var analysisAccumulatorCallerHolder2 = new AnalysisAccumulatorCallerHolder (m_operationCycle)) {
+                  AnalysisAccumulator.OperationCycleUpdated (m_previous,
+                                                             m_operationCycle);
+                }
               }
             }
           }
