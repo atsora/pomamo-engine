@@ -434,7 +434,7 @@ namespace Lemoine.Analysis.Detection
     {
       Debug.Assert (!lastOperationCycle.HasRealEnd (), "last operation cycle has alredy a real end");
       Debug.Assert (lastOperationCycle.Begin.HasValue, "last operation cycle has no start");
-      Debug.Assert (!object.Equals (lastOperationCycle.OperationSlot, operationSlot), "not a new operation slot");
+      Debug.Assert ((operationSlot is null) || !object.Equals (lastOperationCycle.OperationSlot, operationSlot), "a same operation slot is not expected"); // the effective rule is it is not the same operation, see IsSameContinuousOperation
 
       // The new cycle will be the first cycle of operation slot
       if (log.IsErrorEnabled && (null != operationSlot)) {
@@ -544,7 +544,7 @@ namespace Lemoine.Analysis.Detection
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="lastOperationCycle"></param>
+    /// <param name="lastOperationCycle">not null</param>
     /// <param name="dateTime"></param>
     /// <param name="operationSlot">that corresponds to dateTime</param>
     /// <returns></returns>
@@ -552,10 +552,14 @@ namespace Lemoine.Analysis.Detection
     {
       Debug.Assert (null != lastOperationCycle);
 
+      var lastOperationSlot = lastOperationCycle.OperationSlot;
+      if ((null != operationSlot) && object.Equals (lastOperationSlot, operationSlot)) {
+        return true;
+      }
+
       var machine = lastOperationCycle.Machine;
-      IOperationSlot lastOperationSlot = lastOperationCycle.OperationSlot;
-      if (null == operationSlot) {
-        if (null == lastOperationSlot) {
+      if (operationSlot is null) {
+        if (lastOperationSlot is null) {
           return ModelDAOHelper.DAOFactory.OperationSlotDAO
             .IsContinuousOperationInRange (machine,
                                            new UtcDateTimeRange (lastOperationCycle.DateTime,
@@ -685,8 +689,8 @@ namespace Lemoine.Analysis.Detection
     /// <param name="dateTime"></param>
     public void StopCycle (int? quantity, DateTime dateTime)
     {
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (IDAOTransaction transaction = session.BeginTransaction ("Detection.StopCycle")) // Not a top transaction
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (var transaction = session.BeginTransaction ("Detection.StopCycle")) // Not a top transaction
         {
           // . Get the last operation cycle
           //   and process the new cycle differently
@@ -805,6 +809,7 @@ namespace Lemoine.Analysis.Detection
             } // Test on operationSlot
           }
           else { // Last operation cycle has an estimated end
+            Debug.Assert (null != lastOperationCycle);
             Debug.Assert (lastOperationCycle.Begin.HasValue);
             if (log.IsDebugEnabled) {
               log.Debug ($"StopCycle: last operation cycle {lastOperationCycle} is a partial cycle, check if the new end may {dateTime} be associated to it");
@@ -1074,7 +1079,7 @@ namespace Lemoine.Analysis.Detection
     /// <param name="operationSlot"></param>
     void RaiseIncoherentTotalCycles (IOperationSlot operationSlot)
     {
-      string message = $"The number of total cycles in operation slot {operationSlot.Id} is incoherent with the read operation cycles";
+      var message = $"The number of total cycles in operation slot {operationSlot.Id} is incoherent with the read operation cycles";
       log.Error ($"RaiseIncoherentTotalCycles: {message} => log it");
       IDetectionAnalysisLog detectionAnalysisLog =
         ModelDAOHelper.ModelFactory
@@ -1092,12 +1097,10 @@ namespace Lemoine.Analysis.Detection
     /// <param name="newQuantity"></param>
     void RaiseQuantityChange (IOperationCycle operationCycle, int? newQuantity)
     {
-      string message = string.Format ("At {0} the quantity of the full operation cycle is changed " +
-                                      "from {1} to {2}",
-                                      operationCycle.End, operationCycle.Quantity, newQuantity);
-      log.WarnFormat ("RaiseQuantityChange: {0} " +
-                      "=> log it",
-                      message);
+      var message = string.Format ("At {0} the quantity of the full operation cycle is changed " +
+                                   "from {1} to {2}",
+                                   operationCycle.End, operationCycle.Quantity, newQuantity);
+      log.Warn ($"RaiseQuantityChange: {message} => log it");
       IDetectionAnalysisLog detectionAnalysisLog =
         ModelDAOHelper.ModelFactory
         .CreateDetectionAnalysisLog (LogLevel.WARN,
