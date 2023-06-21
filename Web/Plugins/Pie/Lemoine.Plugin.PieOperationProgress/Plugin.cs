@@ -21,40 +21,21 @@ namespace Lemoine.Plugin.PieOperationProgress
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "PieOperationProgress"; } }
+    public override string Name => "PieOperationProgress";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Consider the operationprogresspie for all the single machines";
-      }
-    }
+    public override string Description => "Consider the operationprogresspie for all the single machines";
 
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Web;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Web;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

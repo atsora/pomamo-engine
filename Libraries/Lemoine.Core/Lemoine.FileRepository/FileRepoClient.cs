@@ -155,9 +155,7 @@ namespace Lemoine.FileRepository
     public static ICollection<string> ListFilesInDirectory (string distantDirectory)
     {
       if (null == Instance.m_implementation) {
-        log.ErrorFormat ("ListFilesInDirectory: " +
-                         "no implementation was set " +
-                         "=> return an empty list");
+        log.Error ("ListFilesInDirectory: no implementation was set => return an empty list");
         return new List<string> ();
       }
 

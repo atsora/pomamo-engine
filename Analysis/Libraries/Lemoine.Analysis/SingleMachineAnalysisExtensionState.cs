@@ -29,10 +29,6 @@ namespace Lemoine.Analysis
     readonly ISingleMachineAnalysisExtension m_extension;
     readonly string m_pluginName;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -54,7 +50,5 @@ namespace Lemoine.Analysis
     {
       m_extension.RunOnce (cancellationToken);
     }
-    #endregion // Constructors
-
   }
 }

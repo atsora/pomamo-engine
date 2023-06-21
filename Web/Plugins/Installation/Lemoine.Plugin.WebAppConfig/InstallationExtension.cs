@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Lemoine.Conversion;
@@ -23,7 +24,9 @@ namespace Lemoine.Plugin.WebAppConfig
     readonly ILog log = LogManager.GetLogger (typeof (InstallationExtension).FullName);
 
     readonly string WWWROOT_KEY = "wwwroot";
-    readonly string WWWROOT_DEFAULT = @"C:\inetpub\wwwroot";
+
+    readonly string WWWROOT_DEFAULT_WIN = @"C:\inetpub\wwwroot";
+    readonly string WWWROOT_DEFAULT_LINUX = "/var/www";
 
     Configuration m_configuration;
     Regex m_includeRegex;
@@ -163,7 +166,7 @@ namespace Lemoine.Plugin.WebAppConfig
     IEnumerable<string> GetRootDirectories ()
     {
       var wwwroot = Lemoine.Info.ConfigSet
-        .LoadAndGet (WWWROOT_KEY, WWWROOT_DEFAULT);
+        .LoadAndGet (WWWROOT_KEY, RuntimeInformation.IsOSPlatform (OSPlatform.Linux) ? WWWROOT_DEFAULT_LINUX : WWWROOT_DEFAULT_WIN);
       var directories = Directory.GetDirectories (wwwroot);
       foreach (var directory in directories) {
         var directoryInfo = new DirectoryInfo (directory);

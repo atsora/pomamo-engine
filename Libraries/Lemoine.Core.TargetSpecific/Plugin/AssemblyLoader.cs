@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Lemoine.Core.Log;
 
 namespace Lemoine.Core.Plugin.TargetSpecific
@@ -19,10 +20,11 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     : IAssemblyLoader
   {
     static readonly string PLUGINS_FILE_REPO_PATH_KEY = "AssemblyLoader.PluginsFileRepoPath";
+    static readonly string PLUGINS_FILE_REPO_PATH_DEFAULT_CORE = "plugins_core";
     static readonly string PLUGINS_FILE_REPO_PATH_DEFAULT =
     // For the moment same directory, they are compiled in .NET Standard
 #if NETCOREAPP
-      "plugins_core";
+      PLUGINS_FILE_REPO_PATH_DEFAULT_CORE;
 #else // !NETCOREAPP
       "plugins_synchronized";
 #endif // !NETCOREAPP
@@ -302,7 +304,7 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     public string GetPluginsFileRepoPath ()
     {
       return Lemoine.Info.ConfigSet
-        .LoadAndGet (PLUGINS_FILE_REPO_PATH_KEY, PLUGINS_FILE_REPO_PATH_DEFAULT);
+        .LoadAndGet (PLUGINS_FILE_REPO_PATH_KEY, RuntimeInformation.IsOSPlatform (OSPlatform.Linux) ? PLUGINS_FILE_REPO_PATH_DEFAULT_CORE :PLUGINS_FILE_REPO_PATH_DEFAULT);
     }
   }
 }

@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.PieOperationProgress
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Score
     /// </summary>
@@ -26,20 +25,7 @@ namespace Lemoine.Plugin.PieOperationProgress
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public Configuration ()
-    {
-    }
-    #endregion // Constructors
-
-    protected override bool IsMachineFilterRequired ()
-    {
-      return false;
-    }
+    protected override bool IsMachineFilterRequired () => false;
   }
 }

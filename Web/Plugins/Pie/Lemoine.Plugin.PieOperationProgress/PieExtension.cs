@@ -60,14 +60,14 @@ namespace Lemoine.Plugin.PieOperationProgress
             .FindById (m_configuration.MachineFilterId);
           if (null == machineFilter) {
             if (log.IsErrorEnabled) {
-              log.ErrorFormat ("Initialize: machine filter with id {0} does not exist", m_configuration.MachineFilterId);
+              log.Error ($"Initialize: machine filter with id {m_configuration.MachineFilterId} does not exist");
             }
             return false;
           }
           var machine = group.GetMachines ().First ();
           if (!machineFilter.IsMatch (machine)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Initialize: no match between machine id={0} and machine filter id={1}", machine.Id, machineFilter.Id);
+              log.Debug ($"Initialize: no match between machine id={m_configuration.MachineFilterId} and machine filter id={machineFilter.Id}");
             }
             return false;
           }

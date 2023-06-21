@@ -67,7 +67,7 @@ namespace Pulse.Web.Machine
       }
 
       var pieExtensionsRequest = new Lemoine.Business.Extension
-        .GroupExtensions<IPieExtension> (group, (ext, m) => ext.Initialize (m));
+        .GroupExtensions<IPieExtension> (group, (ext, g) => ext.Initialize (g));
       var pieExtensions = ServiceProvider.Get (pieExtensionsRequest)
         .OrderByDescending (ext => ext.Score);
       var first = pieExtensions.FirstOrDefault ();
