@@ -42,7 +42,7 @@ namespace Lemoine.Plugin.GroupZoomPartOperation
         return false;
       }
 
-      var componentId = this.ExtractIdAfterPrefix (parentGroupId, m_configuration.PartPrefix);
+      var componentId = this.ExtractIdAfterPrefix (m_configuration.PartPrefix, parentGroupId);
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         var part = ModelDAOHelper.DAOFactory.PartDAO
           .FindById (componentId);
@@ -70,7 +70,7 @@ namespace Lemoine.Plugin.GroupZoomPartOperation
         return false;
       }
 
-      var operationId = this.ExtractIdAfterPrefix (childGroupId, m_configuration.PartPrefix);
+      var operationId = this.ExtractIdAfterPrefix (m_configuration.PartPrefix, childGroupId);
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         var operation = ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (operationId);
