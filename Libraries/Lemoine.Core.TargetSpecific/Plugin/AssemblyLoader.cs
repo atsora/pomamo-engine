@@ -303,8 +303,13 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     /// <returns></returns>
     public string GetPluginsFileRepoPath ()
     {
+#if NET40
+      return Lemoine.Info.ConfigSet
+        .LoadAndGet (PLUGINS_FILE_REPO_PATH_KEY, PLUGINS_FILE_REPO_PATH_DEFAULT);
+#else // !NET40
       return Lemoine.Info.ConfigSet
         .LoadAndGet (PLUGINS_FILE_REPO_PATH_KEY, RuntimeInformation.IsOSPlatform (OSPlatform.Linux) ? PLUGINS_FILE_REPO_PATH_DEFAULT_CORE :PLUGINS_FILE_REPO_PATH_DEFAULT);
+#endif // !NET40
     }
   }
 }
