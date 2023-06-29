@@ -23,15 +23,8 @@ namespace Lemoine.Info.ConfigReader
     : ExternalAssemblyConfigReader
     , IGenericConfigReader
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (RegistryConfigReader).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor considering the default key HKLM\SOFTWARE\Lemoine\PULSE
     /// </summary>
@@ -39,6 +32,5 @@ namespace Lemoine.Info.ConfigReader
       : base ("Lemoine.Core.TargetSpecific", "Lemoine.Info.ConfigReader.TargetSpecific.RegistryConfigReader", new object[] { lazy })
     {
     }
-    #endregion // Constructors
   }
 }

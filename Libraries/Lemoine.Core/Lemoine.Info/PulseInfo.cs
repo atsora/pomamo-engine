@@ -20,7 +20,7 @@ namespace Lemoine.Info
     static readonly string WEB_SERVICE_URL_KEY = "WebServiceUrl";
     static readonly string WEB_SERVICE_URL_DEFAULT = "";
 
-    static readonly string MAIN_WEB_SERVICE_URL_KEY = "MainWebServiceUrl";
+    static readonly string MAIN_WEB_SERVICE_URL_KEY = "MainWebServiceUrl"; // For secondary web servers
     static readonly string MAIN_WEB_SERVICE_URL_DEFAULT = "";
 
     static readonly string FILE_REPOSITORY_CLIENT_KEY = "FileRepoClient"; // web / corba / directory
@@ -33,8 +33,7 @@ namespace Lemoine.Info
     static readonly string SHARED_DIRECTORY_PATH_KEY = "SharedDirectoryPath";
     static readonly string SHARED_DIRECTORY_PATH_DEFAULT = "";
 
-    static readonly string INSTALLATION_DIR_KEY = "InstallDir";
-    static readonly string POMAMO_SERVER_INSTALL_DIR_KEY = "PomamoServerInstallDir";
+    static readonly string POMAMO_SERVER_INSTALL_DIR_KEY = "MainServerInstallDir";
     static readonly string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
 
 #if ATSORA
@@ -63,58 +62,28 @@ namespace Lemoine.Info
     static readonly ILog log = LogManager.GetLogger (typeof (PulseInfo).FullName);
 
     /// <summary>
-    /// Installation directory
-    /// 
-    /// This corresponds to config key "InstallDir"
-    /// 
-    /// It may not be defined in the future and null returned instead
-    /// </summary>
-    public static string InstallationDir
-    {
-      get {
-        try {
-          var result = Lemoine.Info.ConfigSet.Get<string> (INSTALLATION_DIR_KEY);
-          if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
-            log.Error ("InstallationDir: not defined");
-          }
-          return result;
-        }
-        catch (ConfigKeyNotFoundException ex) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"InstallationDir: config key {INSTALLATION_DIR_KEY} was not defined => return null", ex);
-          }
-          return null;
-        }
-        catch (KeyNotFoundException ex) {
-          log.Fatal ($"InstallationDir: (with deprecated KeyNotFoundException) config key {INSTALLATION_DIR_KEY} was not defined => return null", ex);
-          return null;
-        }
-      }
-    }
-
-    /// <summary>
     /// Installation directory of the Server
     /// 
-    /// This corresponds to config key "PulseServerInstallDir"
+    /// This corresponds to config key "MainServerInstallDir"
     /// 
     /// Return null if it was not defined
     /// </summary>
-    public static string PulseServerInstallationDirectory
+    public static string MainServerInstallationDirectory
     {
       get {
         try {
           var result = Lemoine.Info.ConfigSet.Get<string> (POMAMO_SERVER_INSTALL_DIR_KEY);
           if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
-            log.ErrorFormat ("PulseServerInstallationDirectory: not defined");
+            log.ErrorFormat ("MainServerInstallationDirectory: not defined");
           }
           return result;
         }
         catch (ConfigKeyNotFoundException ex) {
-          log.Error ($"PulseServerInstallationDirectory: config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
+          log.Error ($"MainServerInstallationDirectory: config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
           return null;
         }
         catch (KeyNotFoundException ex) {
-          log.Fatal ($"PulseServerInstallationDirectory: (with deprecated KeyNotFoundException) config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
+          log.Fatal ($"MainServerInstallationDirectory: (with deprecated KeyNotFoundException) config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
           return null;
         }
       }
@@ -392,7 +361,7 @@ namespace Lemoine.Info
     }
 
     /// <summary>
-    /// URL of the web service
+    /// URL of the main web service in case the server is a secondary web server
     /// </summary>
     public static string MainWebServiceUrl
     {

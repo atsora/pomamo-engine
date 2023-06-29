@@ -307,7 +307,7 @@ namespace Lemoine.Extensions
 
     void GetAndLoadPluginDlls (IEnumerable<string> directories, IPluginFilter pluginFilter)
     {
-      string pulseServerDirectory = Lemoine.Info.PulseInfo.PulseServerInstallationDirectory;
+      string pulseServerDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
       foreach (var directory in directories.Distinct ()) {
         SearchOption searchOption;
         if ((null != pulseServerDirectory) && Path.Equals (pulseServerDirectory, directory)) {
@@ -323,7 +323,7 @@ namespace Lemoine.Extensions
 
     async System.Threading.Tasks.Task GetAndLoadPluginDllsAsync (IEnumerable<string> directories, IPluginFilter pluginFilter)
     {
-      string pulseServerDirectory = Lemoine.Info.PulseInfo.PulseServerInstallationDirectory;
+      string pulseServerDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
       // TODO: get and load the plugin dlls in parallel
       foreach (var directory in directories.Distinct ()) {
         SearchOption searchOption;

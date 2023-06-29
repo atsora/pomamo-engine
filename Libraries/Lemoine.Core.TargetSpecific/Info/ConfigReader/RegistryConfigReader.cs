@@ -22,14 +22,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   /// </summary>
   public class RegistryConfigReader : IGenericConfigReader, IPersistentConfigWriter
   {
-    #region Members
     readonly bool m_lazy = false;
     readonly bool m_supportedPlatform = false;
     readonly RegistryKey m_root;
     readonly string m_key;
     readonly IDictionary<string, object> m_keyValue = new ConcurrentDictionary<string, object> ();
     readonly IDictionary<string, byte> m_notFoundKeys = new ConcurrentDictionary<string, byte> (); // Because there is no concurrent set
-    #endregion // Members
 
     static readonly string REGISTRY_KEY =
 #if ATSORA
@@ -42,7 +40,6 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 
     static readonly ILog log = LogManager.GetLogger (typeof (RegistryConfigReader).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor considering the default key REGISTRY_KEY
     /// </summary>
@@ -94,7 +91,6 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       }
 #endif // NETSTANDARD
     }
-    #endregion // Constructors
 
 #if NET5_0_OR_GREATER
     [SupportedOSPlatform ("windows")]

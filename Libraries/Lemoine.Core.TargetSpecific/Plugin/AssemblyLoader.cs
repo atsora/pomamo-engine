@@ -20,7 +20,9 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     : IAssemblyLoader
   {
     static readonly string PLUGINS_FILE_REPO_PATH_KEY = "AssemblyLoader.PluginsFileRepoPath";
+#if !NET40
     static readonly string PLUGINS_FILE_REPO_PATH_DEFAULT_CORE = "plugins_core";
+#endif // !NET40
     static readonly string PLUGINS_FILE_REPO_PATH_DEFAULT =
     // For the moment same directory, they are compiled in .NET Standard
 #if NETCOREAPP
@@ -174,21 +176,11 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     {
       IList<string> topOnlyDirectories = new List<string> ();
       if (!topDirectoryOnly) {
-        var pulseServerDirectory = Lemoine.Info.PulseInfo.PulseServerInstallationDirectory;
+        var pulseServerDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
         if (!string.IsNullOrEmpty (pulseServerDirectory)) {
           topOnlyDirectories.Add (pulseServerDirectory);
           // TODO: remove the sub-directory core in the future
           var coreDirectory = Path.Combine (pulseServerDirectory, "core");
-          if (Directory.Exists (coreDirectory)) {
-            topOnlyDirectories.Add (coreDirectory);
-          }
-        }
-        var installationDirectory = Lemoine.Info.PulseInfo.InstallationDir;
-        if (!string.IsNullOrEmpty (installationDirectory)
-          && !string.Equals (pulseServerDirectory, installationDirectory)) {
-          topOnlyDirectories.Add (installationDirectory);
-          // TODO: remove the sub-directory core in the future
-          var coreDirectory = Path.Combine (installationDirectory, "core");
           if (Directory.Exists (coreDirectory)) {
             topOnlyDirectories.Add (coreDirectory);
           }

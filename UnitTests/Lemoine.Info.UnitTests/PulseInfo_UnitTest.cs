@@ -23,10 +23,10 @@ namespace Lemoine.Info.UnitTests
     [Test]
     public void TestInstallationDirectoryFromEnvironmentVariable ()
     {
-      System.Environment.SetEnvironmentVariable ("InstallDir",
+      System.Environment.SetEnvironmentVariable ("MainServerInstallDir",
                                                  "Test");
-      Assert.AreEqual ("Test", Lemoine.Info.PulseInfo.InstallationDir);
-      System.Environment.SetEnvironmentVariable ("InstallDir",
+      Assert.AreEqual ("Test", Lemoine.Info.PulseInfo.MainServerInstallationDirectory);
+      System.Environment.SetEnvironmentVariable ("MainServerInstallDir",
                                                  "");
     }
   }

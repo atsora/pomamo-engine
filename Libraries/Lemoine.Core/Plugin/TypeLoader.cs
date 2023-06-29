@@ -262,13 +262,7 @@ namespace Lemoine.Core.Plugin
         var parentProgramDirectory = (null != programDirectory)
           ? System.IO.Directory.GetParent (programDirectory)?.FullName
           : null;
-        var installationDirectory = Lemoine.Info.PulseInfo.InstallationDir;
-        if (!string.IsNullOrEmpty (installationDirectory)) { // deprecated
-          directories = new string[] { ".", Lemoine.Info.ProgramInfo.AbsoluteDirectory, "..", parentProgramDirectory, installationDirectory };
-        }
-        else {
-          directories = new string[] { ".", Lemoine.Info.ProgramInfo.AbsoluteDirectory, "..", parentProgramDirectory };
-        }
+        directories = new string[] { ".", Lemoine.Info.ProgramInfo.AbsoluteDirectory, "..", parentProgramDirectory };
         var assembly = m_assemblyLoader.LoadFromName (assemblyName, true, directories);
         return GetTypeFromAssembly (assembly, typeFullName);
       }

@@ -219,77 +219,7 @@ namespace Lemoine.DataRepository
       catch (System.Collections.Generic.KeyNotFoundException ex) {
         log.Fatal ($"ResolveUri: (with deprecated KeyNotFoundException) config key {XML_SCHEMAS_DIRECTORY_KEY} is not defined", ex);
       }
-      // Deprecated: please use XmlSchemasDirectory instead from now to set where the XML schemas are stored
-      // PulseInfo.InstallationDir will be removed one day
-      string installationDir = PulseInfo.InstallationDir;
-      if (!string.IsNullOrEmpty (installationDir) && Path.IsPathRooted (installationDir)) {
-        // 4a. "installation path"/xmlschemas
-        testBaseUri = new Uri (installationDir +
-                               "\\xmlschemas\\");
-        result = base.ResolveUri (testBaseUri,
-                                  relativeUri);
-        if (result != null) {
-          if (result.IsFile && !File.Exists (result.LocalPath)) {
-            log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                             "resulted URI is {2} with installation/share/xmlschemas " +
-                             "but the file does not exist, " +
-                             "try another baseUri",
-                             baseUri, relativeUri, result);
-          }
-          else {
-            log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                            "consider base path is " +
-                            "installation/share/xmlschemas {2}, " +
-                            "result is {3}",
-                            baseUri, relativeUri, testBaseUri, result);
-            return result;
-          }
-        }
-        // 4b. "installation path"/xmlschemas
-        testBaseUri = new Uri (installationDir +
-                               "\\xmlschemas\\");
-        result = base.ResolveUri (testBaseUri,
-                                  relativeUri);
-        if (result != null) {
-          if (result.IsFile && !File.Exists (result.LocalPath)) {
-            log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                             "resulted URI is {2} with installation/xmlschemas " +
-                             "but the file does not exist, " +
-                             "try another baseUri",
-                             baseUri, relativeUri, result);
-          }
-          else {
-            log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                            "consider base path is " +
-                            "installation/xmlschemas {2}, " +
-                            "result is {3}",
-                            baseUri, relativeUri, testBaseUri, result);
-            return result;
-          }
-        }
-        // 4c. "installation path"
-        testBaseUri = new Uri (installationDir);
-        result = base.ResolveUri (testBaseUri,
-                                  relativeUri);
-        if (result != null) {
-          if (result.IsFile && !File.Exists (result.LocalPath)) {
-            log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                             "resulted URI is {2} with installation " +
-                             "but the file does not exist, " +
-                             "try another baseUri",
-                             baseUri, relativeUri, result);
-          }
-          else {
-            log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                            "consider base path is " +
-                            "installation {2}, " +
-                            "result is {3}",
-                            baseUri, relativeUri, testBaseUri, result);
-            return result;
-          }
-        }
-      }
-      // 5. "Application path"
+      // 4. "Application path"
       string programPath = ProgramInfo.AbsoluteDirectory;
       if (null == programPath) {
         log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
@@ -318,7 +248,7 @@ namespace Lemoine.DataRepository
           }
         }
       }
-      // 6. "Assembly path"
+      // 5. "Assembly path"
       testBaseUri = new Uri (Lemoine.Info.AssemblyInfo.AbsoluteDirectory);
       result = base.ResolveUri (testBaseUri,
                                 relativeUri);
@@ -339,7 +269,7 @@ namespace Lemoine.DataRepository
           return result;
         }
       }
-      // 8. Fallback to the default method
+      // 6. Fallback to the default method
       result = base.ResolveUri (baseUri, relativeUri);
       log.WarnFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
                       "no valid URI was found, use the default one {2}",

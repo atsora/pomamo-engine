@@ -16,24 +16,13 @@ namespace Lemoine.Info.TargetSpecific
   /// </summary>
   public sealed class PulseVersions
   {
-    #region Members
-    string m_registryVersion = "";
     IDictionary<string, string> m_versions = new Dictionary<string, string> (); // map[stringName] = stringValue
 
     bool m_valid = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (PulseVersions).FullName);
 
     #region Getters / Setters
-    /// <summary>
-    /// Version as set in registry
-    /// </summary>
-    public static string RegistryVersion
-    {
-      get { return Instance.m_registryVersion; }
-    }
-
     /// <summary>
     /// Get the versions of the different software
     /// </summary>
@@ -93,10 +82,6 @@ namespace Lemoine.Info.TargetSpecific
 #if NET48 || NETCOREAPP
         if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
           m_versions.Clear ();
-          m_registryVersion = Lemoine.Info.ProgramInfo.Version;
-          if (log.IsDebugEnabled) {
-            log.Debug ($"Load: not a windows platform, get version {m_registryVersion} from assembly {Lemoine.Info.ProgramInfo.Name}");
-          }
         }
         else {
 #else // !(NET48 || NETCOREAPP)
@@ -129,9 +114,6 @@ namespace Lemoine.Info.TargetSpecific
         }
 
         this.m_valid = true;
-        if (log.IsInfoEnabled) {
-          log.Info ($"Load: registry version={m_registryVersion}");
-        }
       }
       catch (Exception ex) {
         this.m_valid = false;
@@ -152,9 +134,18 @@ namespace Lemoine.Info.TargetSpecific
 
       try {
         using (var baseKey = Microsoft.Win32.RegistryKey.OpenBaseKey (Microsoft.Win32.RegistryHive.LocalMachine, registryView)) {
-          using (var pulseKey = baseKey.OpenSubKey ("SOFTWARE\\Lemoine\\PULSE")) {
+          var registryKey =
+#if ATSORA
+            @"SOFTWARE\Atsora\Tracking"
+#elif LEMOINE
+            @"SOFTWARE\Lemoine\PULSE"
+#else
+            @"SOFTWARE\Pomamo"
+#endif
+          ;
+          using (var pulseKey = baseKey.OpenSubKey (registryKey)) {
             if (null == pulseKey) {
-              log.Info ($"ReadRegistry: key HKLM/SOFTWARE/Lemoine/PULSE does not exist in view {registryView}, skip this view");
+              log.Info ($"ReadRegistry: key HKLM/{registryKey} does not exist in view {registryView}, skip this view");
             }
             else {
               string[] names = pulseKey.GetValueNames ();
@@ -163,10 +154,6 @@ namespace Lemoine.Info.TargetSpecific
                 var v = (string)pulseKey.GetValue (name);
                 this.m_versions.Add (name, v);
               }
-            }
-
-            if (string.IsNullOrEmpty (m_registryVersion)) {
-              this.m_registryVersion = (string)pulseKey.GetValue ("PulseVersion");
             }
           }
         }

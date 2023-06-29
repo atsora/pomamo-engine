@@ -71,7 +71,7 @@ namespace Lem_AspService.Services
             var computerNames = Lemoine.Info.ComputerInfo.GetNames ();
             if (ipAddresses.Any (i => mainWebServiceUrl.Contains (i))
               || computerNames.Any (c => mainWebServiceUrl.Contains (c))) {
-              log.ErrorFormat ("InitializeFileRepoClient: the main web service url {0} points to the local computer, which is not correct, it should not be defined", mainWebServiceUrl);
+              log.Error ($"InitializeFileRepoClient: the main web service url {mainWebServiceUrl} points to the local computer, which is not correct, it should not be defined");
             }
             else {
               if (log.IsDebugEnabled) {

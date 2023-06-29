@@ -20,7 +20,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   {
     const string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
     static readonly string LINUX_CONF_DIRECTORY = $"/etc/{PulseInfo.LinuxPackageName}"; // COMON_CONFIG_DIRECTORY_KEY
-    // Windows: %CSIDL_COMMON_APPDATA%\Lemoine\PULSE
+    // Windows: %CSIDL_COMMON_APPDATA%\{Company}\{Product} for example %CSIDL_COMMON_APPDATA%\Atsora\Tracking
 
     const string LOGS_DIRECTORY_KEY = "LogDirectory";
     static readonly string LINUX_LOG_DIRECTORY = $"/var/log/{PulseInfo.LinuxPackageName}";
@@ -28,11 +28,11 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 
     const string PFR_DATA_DIRECTORY_KEY = "PfrDataDirectory";
     static readonly string LINUX_PFR_DATA_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/pfrdata"; // PFR_DATA_DIRECTORY_KEY
-    // Windows: 'PulseServerInstallDir'\l_ctr\pfrdata
+    // Windows: 'MainServerInstallDir'\l_ctr\pfrdata
 
     const string SQL_REQUESTS_DIRECTORY_KEY = "SqlRequestsDirectory";
     static readonly string LINUX_SQL_REQUESTS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/sql"; // SQL_REQUESTS_DIRECTORY_KEY
-    // Windows: 'PulseServerInstallDir'\sql
+    // Windows: 'MainServerInstallDir'\sql
 
     const string XML_SCHEMAS_DIRECTORY_KEY = "XmlSchemasDirectory";
     static readonly string LINUX_XML_SCHEMAS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/xmlschemas";
@@ -116,7 +116,14 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     {
       string path;
       if (m_isWindows) {
-        path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData), "Lemoine", "PULSE");
+        path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData),
+#if ATSORA
+      "Atsora", "Tracking");
+#elif LEMOINE
+      "Lemoine", "PULSE)";
+#else
+      "Pomamo");
+#endif
       }
       else {
         path = LINUX_CONF_DIRECTORY;
@@ -145,12 +152,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     string GetPfrDataDirectory ()
     {
       if (m_isWindows) {
-        var pulseServerInstallationDirectory = Lemoine.Info.PulseInfo.PulseServerInstallationDirectory;
-        if (null == pulseServerInstallationDirectory) {
+        var mainServerInstallationDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
+        if (null == mainServerInstallationDirectory) {
           log.Error ($"GetPfrDataDirectory: Pulse server installation directory was not defined");
           throw new ConfigKeyNotFoundException (PFR_DATA_DIRECTORY_KEY);
         }
-        return Path.Combine (pulseServerInstallationDirectory, "pfrdata");
+        return Path.Combine (mainServerInstallationDirectory, "pfrdata");
       }
       else {
         return LINUX_PFR_DATA_DIRECTORY;
@@ -160,12 +167,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     string GetSqlRequestsDirectory ()
     {
       if (m_isWindows) {
-        var pulseServerInstallationDirectory = Lemoine.Info.PulseInfo.PulseServerInstallationDirectory;
-        if (null == pulseServerInstallationDirectory) {
+        var mainServerInstallationDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
+        if (null == mainServerInstallationDirectory) {
           log.Error ($"GetPfrDataDirectory: Pulse server installation directory was not defined");
           throw new ConfigKeyNotFoundException (SQL_REQUESTS_DIRECTORY_KEY);
         }
-        return Path.Combine (pulseServerInstallationDirectory, "sql");
+        return Path.Combine (mainServerInstallationDirectory, "sql");
       }
       else {
         return LINUX_SQL_REQUESTS_DIRECTORY;
