@@ -20,10 +20,6 @@ namespace Lemoine.Core.Performance
     readonly string m_key;
     readonly DateTime m_dateTime = DateTime.UtcNow;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -40,7 +36,5 @@ namespace Lemoine.Core.Performance
       var duration = DateTime.UtcNow.Subtract (m_dateTime);
       PerfManager.Record (m_key, duration);
     }
-    #endregion // Constructors
-
   }
 }

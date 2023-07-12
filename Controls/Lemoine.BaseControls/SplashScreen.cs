@@ -7,9 +7,22 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 using Lemoine.Core.Log;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lemoine.BaseControls
 {
+  /// <summary>
+  /// Factory interface to create the main form
+  /// </summary>
+  public interface IFormFactory
+  {
+    /// <summary>
+    /// Get the main form
+    /// </summary>
+    /// <returns></returns>
+    Form GetMainForm ();
+  }
+
   /// <summary>
   /// Splash screen options
   /// </summary>
@@ -62,20 +75,26 @@ namespace Lemoine.BaseControls
 
     #region Members
     readonly IGuiInitializer m_guiInitializer;
-    CancellationToken m_cancellationToken;
+    readonly CancellationToken m_cancellationToken;
     SplashScreenOptions m_options;
-    Func<object, Form> m_createForm;
+    readonly Func<object, Form> m_createForm;
     bool m_buttonGoClicked = false;
     int m_workingWorkers = 0;
-    bool m_loginRequired = false;
-    bool m_rememberActive = false;
+    readonly bool m_loginRequired = false;
+    readonly bool m_rememberActive = false;
     #endregion // Members
 
-    #region Properties
-
-    #endregion // Properties
-
     #region Constructors
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <param name="options"></param>
+    public SplashScreen (IServiceProvider serviceProvider, SplashScreenOptions? options)
+      : this ((o) => serviceProvider.GetService<IFormFactory> ().GetMainForm (), serviceProvider.GetService<IGuiInitializer> () ?? new BasicGuiInitializer (null), options ?? serviceProvider.GetService<SplashScreenOptions> ())
+    { 
+    }
+
     /// <summary>
     /// Default constructor
     /// </summary>

@@ -14,12 +14,8 @@ namespace Lemoine.Extensions.Package
   /// </summary>
   public class PackageDescription
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (PackageDescription).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Identifier (unique)
     /// </summary>
@@ -56,18 +52,12 @@ namespace Lemoine.Extensions.Package
     /// Associated plugins
     /// </summary>
     public IList<PluginDescription> Plugins { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public PackageDescription ()
     {
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }
