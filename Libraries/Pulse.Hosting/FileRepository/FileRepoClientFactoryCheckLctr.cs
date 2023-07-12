@@ -48,12 +48,7 @@ namespace Pulse.Hosting.FileRepository
             var fileRepoDefaultMethod = m_lctrChecker.IsLctr ()
               ? DefaultFileRepoClientMethod.PfrDataDir
               : DefaultFileRepoClientMethod.Multi;
-            m_fileRepoClientFactory =
-#if NETCOREAPP
-        new FileRepoClientFactoryNoCorba (fileRepoDefaultMethod);
-#else // !NETCOREAPP
-        new Lemoine.FileRepository.Corba.FileRepoClientFactoryWithCorba (fileRepoDefaultMethod);
-#endif
+            m_fileRepoClientFactory = new FileRepoClientFactoryNoCorba (fileRepoDefaultMethod);
           }
         }
         cancellationToken.ThrowIfCancellationRequested ();

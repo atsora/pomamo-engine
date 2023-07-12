@@ -61,11 +61,7 @@ namespace Pulse.Hosting
     /// <returns></returns>
     public static IServiceCollection ConfigureFileRepoClientFactoryDefault (this IServiceCollection services)
     {
-#if NETCOREAPP
       services.AddSingleton<IFileRepoClientFactory, FileRepoClientFactoryNoCorba> ();
-#else // !NETCOREAPP
-      services.AddSingleton<IFileRepoClientFactory> ((IServiceProvider sp) => new Lemoine.FileRepository.Corba.FileRepoClientFactoryWithCorba (DefaultFileRepoClientMethod.Multi));
-#endif // !NETCOREAPP
 
       return services;
     }
@@ -89,12 +85,7 @@ namespace Pulse.Hosting
     public static IServiceCollection ConfigureFileRepoClientFactoryLctr (this IServiceCollection services)
     {
       return services
-        .AddSingleton<IFileRepoClientFactory> ((IServiceProvider sp) =>
-#if NETCOREAPP
-        new FileRepoClientFactoryNoCorba (DefaultFileRepoClientMethod.PfrDataDir)
-#else // !NETCOREAPP
-        new Lemoine.FileRepository.Corba.FileRepoClientFactoryWithCorba (DefaultFileRepoClientMethod.PfrDataDir)
-#endif
+        .AddSingleton<IFileRepoClientFactory> ((IServiceProvider sp) => new FileRepoClientFactoryNoCorba (DefaultFileRepoClientMethod.PfrDataDir)
       );
     }
 

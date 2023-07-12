@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <ProjectReference Include="..\Lemoine.FileRepository.Corba\Lemoine.FileRepository.Corba.csproj" />
     <ProjectReference Include="..\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net48" />
   </ItemGroup>
 
