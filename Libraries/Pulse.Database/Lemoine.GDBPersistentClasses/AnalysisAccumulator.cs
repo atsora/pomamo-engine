@@ -109,8 +109,7 @@ namespace Lemoine.GDBPersistentClasses
     void PushMessage (ISession session, string message)
     {
       if (null == session) {
-        log.ErrorFormat ("GetMessages: " +
-                         "null session");
+        log.Error ("GetMessages: null session");
         throw new ArgumentNullException ("session");
       }
 
@@ -302,10 +301,10 @@ namespace Lemoine.GDBPersistentClasses
       return Instance.m_messageExtensions;
     }
 
-    static async System.Threading.Tasks.Task SendMessageAsync (string message, IMessageExtension messageExtension)
+    static void SendMessage (string message, IMessageExtension messageExtension)
     {
       try {
-        await messageExtension.ProcessMessageAsync (message);
+        messageExtension.ProcessMessage (message);
         if (log.IsDebugEnabled) {
           log.Debug ($"SendMessage: message {message} was successfully processed by {messageExtension}");
         }
@@ -321,7 +320,7 @@ namespace Lemoine.GDBPersistentClasses
     /// No exception is thrown here
     /// </summary>
     /// <param name="message"></param>
-    public static async System.Threading.Tasks.Task SendMessageAsync (string message)
+    public static void SendMessage (string message)
     {
       try {
         var messageExtensions = GetMessageExtensions ();
@@ -329,19 +328,19 @@ namespace Lemoine.GDBPersistentClasses
           return;
         }
 
-        var tasks = messageExtensions
-          .Select (ext => SendMessageAsync (message, ext));
-        await System.Threading.Tasks.Task.WhenAll (tasks);
+        foreach (var messageExtension in messageExtensions) {
+          SendMessage (message, messageExtension);
+        }
       }
       catch (Exception ex) {
-        log.Error ($"SendMessageAsync: unexpected exception, but do not throw it", ex);
+        log.Error ($"SendMessage: unexpected exception, but do not throw it", ex);
       }
     }
 
     /// <summary>
     /// Send the delayed messages to the web service
     /// </summary>
-    public async System.Threading.Tasks.Task SendMessagesAsync (ISession session)
+    public void SendMessages (ISession session)
     {
       if (log.IsDebugEnabled) {
         log.Debug ("SendMessages");
@@ -376,7 +375,7 @@ namespace Lemoine.GDBPersistentClasses
             if (log.IsDebugEnabled) {
               log.Debug ($"SendMessages: about to send {message} extension {messageExtension}");
             }
-            await SendMessageAsync (message, messageExtension);
+            SendMessage (message, messageExtension);
           }
           catch (Exception ex) {
             log.Error ($"SendMessages: exception in SendMessage of {message}, but continue", ex);
@@ -393,6 +392,107 @@ namespace Lemoine.GDBPersistentClasses
 
       if (log.IsDebugEnabled) {
         log.Debug ($"SendMessages: completed");
+      }
+    }
+
+    static async System.Threading.Tasks.Task SendMessageAsync (string message, IMessageExtension messageExtension)
+    {
+      try {
+        await messageExtension.ProcessMessageAsync (message);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SendMessageAsync: message {message} was successfully processed by {messageExtension}");
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"SendMessageAsync: message {message} could not be processed by {messageExtension}", ex);
+      }
+    }
+
+    /// <summary>
+    /// Send a specific message (after the transaction is committed) asynchronously
+    /// 
+    /// No exception is thrown here
+    /// </summary>
+    /// <param name="message"></param>
+    public static async System.Threading.Tasks.Task SendMessageAsync (string message)
+    {
+      try {
+        var messageExtensions = GetMessageExtensions ();
+        if (!messageExtensions.Any ()) {
+          return;
+        }
+
+        var tasks = messageExtensions
+          .Select (ext => SendMessageAsync (message, ext));
+        await System.Threading.Tasks.Task.WhenAll (tasks);
+      }
+      catch (Exception ex) {
+        log.Error ($"SendMessageAsync: unexpected exception, but do not throw it", ex);
+      }
+    }
+
+    async System.Threading.Tasks.Task TrySendMessageAsync (string message, IMessageExtension messageExtension)
+    {
+      try {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"TrySendMessageAsync: about to send {message} extension {messageExtension}");
+        }
+        await SendMessageAsync (message, messageExtension);
+      }
+      catch (Exception ex) {
+        log.Error ($"TrySendMessageAsync: exception in SendMessage of {message}, but continue", ex);
+      }
+    }
+
+    /// <summary>
+    /// Send the delayed messages to the web service
+    /// </summary>
+    public async System.Threading.Tasks.Task SendMessagesAsync (ISession session)
+    {
+      if (log.IsDebugEnabled) {
+        log.Debug ("SendMessagesAsync");
+      }
+
+      var messageExtensions = GetMessageExtensions ();
+      if (!messageExtensions.Any ()) {
+        log.Debug ("SendMessagesAsync: no message extension");
+        return;
+      }
+      if (log.IsDebugEnabled) {
+        log.Debug ($"SendMessagesAsync: {messageExtensions.Count ()} message extensions");
+      }
+
+      var messages = GetMessages (session);
+      if (!messages.Any ()) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SendMessagesAsync: no message in session");
+        }
+        return;
+      }
+      if (log.IsDebugEnabled) {
+        log.Debug ($"SendMessagesAsync: {messages.Count ()} messages");
+      }
+
+      var taskParams = messages
+        .SelectMany (x => messageExtensions.Select (y => (x, y)));
+      if (log.IsTraceEnabled) {
+        foreach (var (message, messageExtension) in taskParams) {
+          log.Trace ($"SendMessagesAsync: about to send {message} extension {messageExtension}");
+        }
+      }
+      var tasks = taskParams
+        .Select (xy => TrySendMessageAsync (xy.x, xy.y));
+      await System.Threading.Tasks.Task.WhenAll (tasks);
+
+      try {
+        RemoveMessages (session);
+      }
+      catch (Exception ex) {
+        log.Error ($"SendMessagesAsync: exception in RemoveMessages", ex);
+      }
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"SendMessagesAsync: completed");
       }
     }
 

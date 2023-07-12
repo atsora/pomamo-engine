@@ -18,21 +18,37 @@ namespace Lemoine.Plugin.AnalysisMessagesToLocalCache
     : Lemoine.Extensions.NotConfigurableExtension
     , IMessageExtension
   {
-    readonly Regex REGEX = new Regex (@"Cache/ClearDomain/([A-Za-z]+)(\?Broadcast=true)?$");
+    static readonly string PREFIX = "Cache/ClearDomain/";
+    readonly Regex REGEX = new Regex ($@"{PREFIX}([A-Za-z]+)(\?Broadcast=true)?$");
 
     readonly ILog log = LogManager.GetLogger (typeof (MessageExtensionGlobal).FullName);
 
+    public void ProcessMessage (string message)
+    {
+      if (message.StartsWith (PREFIX)) {
+        var match = REGEX.Match (message);
+        if (match.Success) {
+          var domain = match.Groups[1].Value;
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessMessage: clear domain {domain}");
+          }
+          Lemoine.Core.Cache.CacheManager.CacheClient.ClearDomain (domain);
+        }
+      }
+    }
+
     public async System.Threading.Tasks.Task ProcessMessageAsync (string message)
     {
-      var match = REGEX.Match (message);
-      if (match.Success) {
-        var domain = match.Groups[1].Value;
-        if (log.IsDebugEnabled) {
-          log.Debug ($"ProcessMessageAsync: clear domain {domain}");
+      if (message.StartsWith (PREFIX)) {
+        var match = REGEX.Match (message);
+        if (match.Success) {
+          var domain = match.Groups[1].Value;
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessMessageAsync: clear domain {domain}");
+          }
+          await Lemoine.Core.Cache.CacheManager.CacheClient.ClearDomainAsync (domain);
         }
-        await Lemoine.Core.Cache.CacheManager.CacheClient.ClearDomainAsync (domain);
       }
-      await System.Threading.Tasks.Task.Delay (0);
     }
   }
 }

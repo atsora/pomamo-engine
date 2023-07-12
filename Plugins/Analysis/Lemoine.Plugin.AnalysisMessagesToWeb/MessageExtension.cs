@@ -25,6 +25,17 @@ namespace Lemoine.Plugin.AnalysisMessagesToWeb
       m_webQuery.Timeout = TimeSpan.FromSeconds (5);
     }
 
+    public void ProcessMessage (string message)
+    {
+      DateTime requestStart = DateTime.UtcNow;
+      try {
+        m_webQuery.Execute (message);
+      }
+      catch (Exception ex) {
+        log.Error ($"ProcessMessage: exception for {message} (timeout={m_webQuery.Timeout} reached, requestStart={requestStart}?)", ex);
+      }
+    }
+
     public async System.Threading.Tasks.Task ProcessMessageAsync (string message)
     {
       DateTime requestStart = DateTime.UtcNow;
@@ -32,7 +43,7 @@ namespace Lemoine.Plugin.AnalysisMessagesToWeb
         await m_webQuery.ExecuteAsync (message);
       }
       catch (Exception ex) {
-        log.Error ($"ProcessMessageAsync: exception for {message} (timeout={m_webQuery.Timeout} reached, requestStart={requestStart} ?)", ex);
+        log.Error ($"ProcessMessageAsync: exception for {message} (timeout={m_webQuery.Timeout} reached, requestStart={requestStart}?)", ex);
       }
     }
   }

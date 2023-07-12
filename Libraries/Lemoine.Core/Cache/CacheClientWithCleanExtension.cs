@@ -582,8 +582,8 @@ namespace Lemoine.Core.Cache
     public void CleanCache ()
     {
       using (new PerfTracker ("Cache.WithClean.CleanCache")) {
-        if (m_cacheClient is ICacheClientWithCleanExtension) {
-          ((ICacheClientWithCleanExtension)m_cacheClient).CleanCache ();
+        if (m_cacheClient is ICacheClientWithCleanExtension cacheClientWithCleanExtension) {
+          cacheClientWithCleanExtension.CleanCache ();
         }
 
         var keys = new HashSet<string> ();

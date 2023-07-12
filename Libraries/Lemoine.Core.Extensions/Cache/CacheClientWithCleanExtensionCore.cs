@@ -12,6 +12,7 @@ using System.Threading;
 using Lemoine.Core.Cache;
 using Lemoine.Core.Log;
 using Lemoine.Core.Performance;
+using Lemoine.Threading;
 
 namespace Lemoine.Core.Extensions.Cache
 {
@@ -26,6 +27,7 @@ namespace Lemoine.Core.Extensions.Cache
     readonly ConcurrentDictionary<string, DateTime> m_keyExpiration = new ConcurrentDictionary<string, DateTime> ();
     readonly ConcurrentDictionary<DateTime, ConcurrentDictionary<string, byte>> m_expirationKeys = new ConcurrentDictionary<DateTime, ConcurrentDictionary<string, byte>> ();
 
+    readonly SemaphoreSlim m_cleanCacheSemaphore = new SemaphoreSlim (1, 1);
     volatile int m_batchUpdateLevel = 0;
 #if NETCOREAPP && !NETCOREAPP1_1 && !NETCOREAPP1_0
     readonly
@@ -582,6 +584,26 @@ namespace Lemoine.Core.Extensions.Cache
     /// </summary>
     public void CleanCache ()
     {
+      if (0 == m_cleanCacheSemaphore.CurrentCount) {
+        log.Warn ($"CleanCache: there is an active CleanCache process in another thread, return at once");
+        return;
+      }
+
+      try {
+        using (Lemoine.Threading.SemaphoreSlimHolder.Create (m_cleanCacheSemaphore, TimeSpan.FromSeconds (0))) {
+          ForceCleanCache ();
+        }
+      }
+      catch (SemaphoreSlimTimeoutException ex) {
+        log.Warn ("CleanCache: the semaphore slim is hold by another thread => return at once", ex);
+      }
+    }
+
+    /// <summary>
+    /// Clean the cache even if the semaporeSlim is not available
+    /// </summary>
+    void ForceCleanCache ()
+    {
       using (new PerfTracker ("Cache.WithCleanCore.CleanCache")) {
         var keys = new HashSet<string> ();
         IList<DateTime> dateTimes = new List<DateTime> ();
@@ -593,12 +615,12 @@ namespace Lemoine.Core.Extensions.Cache
           }
           foreach (string key in keyValue.Value.Keys) {
             if (!m_keyExpiration.TryGetValue (key, out DateTime keyExpiresAt)) {
-              log.Warn ($"CleanCache: because of some concurrent case (this should be very rare), key {key} is not in in m_keyExpiration");
+              log.Warn ($"ForceCleanCache: because of some concurrent case (this should be very rare), key {key} is not in in m_keyExpiration");
               continue;
             }
             if (object.Equals (keyExpiresAt, expiration)) {
               if (log.IsDebugEnabled) {
-                log.Debug ($"CleanCache: clean key {key}");
+                log.Debug ($"ForceCleanCache: clean key {key}");
               }
               keys.Add (key);
             }
@@ -618,7 +640,7 @@ namespace Lemoine.Core.Extensions.Cache
           var v = m_cacheClient.Get<object?> (validKey);
           if (v is null) {
             if (log.IsDebugEnabled) {
-              log.Debug ($"CleanCache: remove key {validKey} that is not in cache any more");
+              log.Debug ($"ForceCleanCache: remove key {validKey} that is not in cache any more");
             }
             RemoveInternalKey (validKey);
           }

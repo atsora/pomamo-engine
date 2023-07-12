@@ -178,7 +178,7 @@ namespace Lemoine.Database.Persistent
       this.Commit ();
 
       // Create a new transaction
-      if (false == m_session.InitializeTransaction (m_name)) {
+      if (false == m_session.InitializeTransaction (m_name, readOnly: false)) {
         log.Warn ("CommitNew: the old transaction was still active after the Commit statement, no new transaction was initialized");
       }
 

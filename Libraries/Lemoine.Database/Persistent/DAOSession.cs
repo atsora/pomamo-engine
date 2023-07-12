@@ -11,6 +11,7 @@ using Lemoine.Core.Log;
 using NHibernate;
 using NHibernate.Context;
 using System.Linq;
+using System.Threading;
 
 namespace Lemoine.Database.Persistent
 {
@@ -21,6 +22,9 @@ namespace Lemoine.Database.Persistent
   {
     const string CHECK_NO_TEMP_VIEW_KEY = "Database.Session.CheckNoTempView";
     const bool CHECK_NO_TEMP_VIEW_DEFAULT = false;
+
+    const string SEND_MESSAGES_METHOD_KEY = "Database.Session.SendMessagesMethod";
+    const string SEND_MESSAGES_METHOD_DEFAULT = ""; // "pool" or "thread" or "async" (previous default but could drive to a deadlock) or "nowait" or default ("sync" / "")
 
     #region Members
     static volatile ISession s_uniqueSession = null;
@@ -63,25 +67,21 @@ namespace Lemoine.Database.Persistent
       }
 
       if (CurrentSessionContext.HasBind (sessionFactory)) {
-        log.Debug ("DAOSession: " +
-                   "re-use an existing session");
+        log.Debug ("DAOSession: re-use an existing session");
         m_session = NHibernateHelper.GetCurrentSession ();
         if (!m_session.IsConnected) {
-          log.Warn ("DAOSession: " +
-                    "existing session was not connected");
+          log.Warn ("DAOSession: existing session was not connected");
         }
       }
       else { // No session bound to the current context
-        log.Debug ("DAOSession: " +
-                   "open a new session");
+        log.Debug ("DAOSession: open a new session");
         m_session = NHibernateHelper.OpenSession ();
         CurrentSessionContext.Bind (m_session);
         m_sessionCreated = true;
       }
 
       if (null == m_session) {
-        log.Fatal ("DAOSession: " +
-                   "m_session is null");
+        log.Fatal ("DAOSession: m_session is null");
         throw new NullReferenceException ("m_session");
       }
     }
@@ -103,25 +103,21 @@ namespace Lemoine.Database.Persistent
       }
 
       if (CurrentSessionContext.HasBind (sessionFactory)) {
-        log.Debug ("DAOSession: " +
-                   "re-use an existing session");
+        log.Debug ("DAOSession: re-use an existing session");
         m_session = sessionFactory.GetCurrentSession ();
         if (!m_session.IsConnected) {
-          log.Warn ("DAOSession: " +
-                    "existing session was not connected");
+          log.Warn ("DAOSession: existing session was not connected");
         }
       }
       else { // No session bound to the current context
-        log.Info ("DAOSession: " +
-                  "open a new session");
+        log.Info ("DAOSession: open a new session");
         m_session = sessionFactory.OpenSession ();
         CurrentSessionContext.Bind (m_session);
         m_sessionCreated = true;
       }
 
       if (null == m_session) {
-        log.Fatal ("DAOSession: " +
-                   "m_session is null");
+        log.Fatal ("DAOSession: m_session is null");
         throw new NullReferenceException ("m_session");
       }
     }
@@ -180,7 +176,7 @@ namespace Lemoine.Database.Persistent
     /// </summary>
     /// <param name="transactionName"></param>
     /// <returns>a new transaction was created</returns>
-    internal bool InitializeTransaction (string transactionName)
+    internal bool InitializeTransaction (string transactionName, bool readOnly = false)
     {
       Debug.Assert (null != m_session);
       Debug.Assert (m_valid);
@@ -227,8 +223,10 @@ namespace Lemoine.Database.Persistent
         m_transactionCreationDateTime = DateTime.UtcNow;
         m_rolledBack = false;
 
-        foreach (var transactionExtension in GetTransactionExtensions ()) {
-          transactionExtension.BeginTransaction (transactionName);
+        if (!readOnly) {
+          foreach (var transactionExtension in GetTransactionExtensions ()) {
+            transactionExtension.BeginTransaction (transactionName);
+          }
         }
       }
       catch (Exception ex) {
@@ -244,13 +242,18 @@ namespace Lemoine.Database.Persistent
     /// </summary>
     public IDAOTransaction BeginTransaction (string name = "", TransactionLevel transactionLevel = TransactionLevel.Default, bool transactionLevelOptional = false, IEnumerable<ILockTableToPartition> lockedTables = null, bool notTop = false)
     {
+      return BeginTransaction (name, transactionLevel, transactionLevelOptional, lockedTables, notTop, readOnly: false);
+    }
+
+    IDAOTransaction BeginTransaction (string name = "", TransactionLevel transactionLevel = TransactionLevel.Default, bool transactionLevelOptional = false, IEnumerable<ILockTableToPartition> lockedTables = null, bool notTop = false, bool readOnly = false)
+    {
       try {
         Debug.Assert (m_valid);
         if (!m_valid) {
           log.Fatal ($"BeginTransaction: name={name} try to initialize a transaction in a not valid session");
         }
 
-        if (false == InitializeTransaction (name)) {
+        if (false == InitializeTransaction (name, readOnly)) {
           if (log.IsWarnEnabled && !transactionLevel.Equals (TransactionLevel.Default)) {
             if (!transactionLevelOptional) {
               log.Warn ($"BeginTransaction: name={name} change the transactionLevel on a transaction that is not a top transaction. \n{System.Environment.StackTrace}");
@@ -307,7 +310,7 @@ namespace Lemoine.Database.Persistent
     /// <returns></returns>
     public IDAOTransaction BeginReadOnlyTransaction (string name = "", TransactionLevel transactionLevel = TransactionLevel.Default, bool transactionLevelOptional = false, IEnumerable<ILockTableToPartition> lockedTables = null)
     {
-      var transaction = BeginTransaction (name, transactionLevel, transactionLevelOptional, lockedTables);
+      var transaction = BeginTransaction (name, transactionLevel, transactionLevelOptional, lockedTables, readOnly: true);
       transaction.ReadOnly = true;
       return transaction;
     }
@@ -322,7 +325,7 @@ namespace Lemoine.Database.Persistent
     /// <returns></returns>
     public IDAOTransaction BeginReadOnlyDeferrableTransaction (string name = "", TransactionLevel transactionLevel = TransactionLevel.Default, bool transactionLevelOptional = false, IEnumerable<ILockTableToPartition> lockedTables = null)
     {
-      var transaction = BeginTransaction (name, transactionLevel, transactionLevelOptional, lockedTables);
+      var transaction = BeginTransaction (name, transactionLevel, transactionLevelOptional, lockedTables, readOnly: true);
       transaction.ReadOnly = true;
       transaction.Deferrable = true;
       return transaction;
@@ -449,19 +452,16 @@ WHERE table_type='LOCAL TEMPORARY'
 
         TimeSpan transactionDuration = DateTime.UtcNow.Subtract (m_transactionCreationDateTime);
         if (m_rolledBack) {
-          log.ErrorFormat ("CommitTransaction: " +
-                           "the current transaction has already been rolled back after {0}" +
-                           "\n{1}",
-                           transactionDuration,
-                           System.Environment.StackTrace);
-          transactionLog.ErrorFormat ("Commit - already rolled back - duration={0}",
-                                      transactionDuration);
+          log.Error ($"CommitTransaction: the current transaction has already been rolled back after {transactionDuration}\n{System.Environment.StackTrace}");
+          transactionLog.Error ($"Commit - already rolled back - duration={transactionDuration}");
           foreach (var sessionAccumulator in NHibernateHelper.SessionAccumulators) {
             sessionAccumulator.Clear (m_session);
           }
           var exn = new InvalidOperationException ("CommitTransaction with an already rolled back transaction");
-          foreach (var transactionExtension in GetTransactionExtensions ()) {
-            transactionExtension.CommitFailure (transactionName, exn);
+          if (!readOnly) {
+            foreach (var transactionExtension in GetTransactionExtensions ()) {
+              transactionExtension.CommitFailure (transactionName, exn);
+            }
           }
           throw exn;
         }
@@ -469,21 +469,17 @@ WHERE table_type='LOCAL TEMPORARY'
         // m_session should not be null
         Debug.Assert (null != m_session);
         if (null == m_session) {
-          log.FatalFormat ("CommitTransaction: " +
-                           "current session is null after {0}" +
-                           "=> can't commit any transaction." +
-                           "\n{1}",
-                           transactionDuration,
-                           System.Environment.StackTrace);
-          transactionLog.FatalFormat ("Commit - null session - duration={0}",
-                                      transactionDuration);
+          log.Fatal ($"CommitTransaction: current session is null after {transactionDuration} => can't commit any transaction. \n{System.Environment.StackTrace}");
+          transactionLog.Fatal ($"Commit - null session - duration={transactionDuration}");
           m_valid = false;
           foreach (var sessionAccumulator in NHibernateHelper.SessionAccumulators) {
             sessionAccumulator.Clear (m_session);
           }
           var exn = new InvalidOperationException ("CommitTransaction with a null internal session");
-          foreach (var transactionExtension in GetTransactionExtensions ()) {
-            transactionExtension.CommitFailure (transactionName, exn);
+          if (!readOnly) {
+            foreach (var transactionExtension in GetTransactionExtensions ()) {
+              transactionExtension.CommitFailure (transactionName, exn);
+            }
           }
           throw exn;
         }
@@ -491,33 +487,31 @@ WHERE table_type='LOCAL TEMPORARY'
         ITransaction transaction = m_session.GetCurrentTransaction ();
         if (transaction is null) {
           log.Fatal ($"CommitTransaction: the transaction associated to session {m_session} is null after {transactionDuration} => can't commit the transaction");
-          transactionLog.FatalFormat ("Commit - null transaction - duration={0}");
+          transactionLog.FatalFormat ($"Commit - null transaction - duration={transactionDuration}");
           m_valid = false;
           foreach (var sessionAccumulator in NHibernateHelper.SessionAccumulators) {
             sessionAccumulator.Clear (m_session);
           }
           var exn = new InvalidOperationException ("CommitTransaction with a null internal transaction");
-          foreach (var transactionExtension in GetTransactionExtensions ()) {
-            transactionExtension.CommitFailure (transactionName, exn);
+          if (!readOnly) {
+            foreach (var transactionExtension in GetTransactionExtensions ()) {
+              transactionExtension.CommitFailure (transactionName, exn);
+            }
           }
           throw exn;
         }
         if (!transaction.IsActive) {
-          log.FatalFormat ("CommitTransaction: " +
-                           "try to commit a transaction while it is not active any more after {0}. " +
-                           "Has it already been rolled back and no exception raised ? " +
-                           "\n{1}",
-                           transactionDuration,
-                           System.Environment.StackTrace);
-          transactionLog.FatalFormat ("Commit - inactive transaction - duration={0}",
-                                      transactionDuration);
+          log.Fatal ($"CommitTransaction: try to commit a transaction while it is not active any more after {transactionDuration}. Has it already been rolled back and no exception raised?\n{System.Environment.StackTrace}");
+          transactionLog.Fatal ($"Commit - inactive transaction - duration={transactionDuration}");
           m_valid = false;
           foreach (var sessionAccumulator in NHibernateHelper.SessionAccumulators) {
             sessionAccumulator.Clear (m_session);
           }
           var exn = new InvalidOperationException ("CommitTransaction with an inactive transaction");
-          foreach (var transactionExtension in GetTransactionExtensions ()) {
-            transactionExtension.CommitFailure (transactionName, exn);
+          if (!readOnly) {
+            foreach (var transactionExtension in GetTransactionExtensions ()) {
+              transactionExtension.CommitFailure (transactionName, exn);
+            }
           }
           throw exn;
         }
@@ -558,25 +552,22 @@ WHERE table_type='LOCAL TEMPORARY'
         }
         if (!transaction.IsActive) {
           transactionDuration = DateTime.UtcNow.Subtract (m_transactionCreationDateTime);
-          log.FatalFormat ("CommitTransaction: " +
-                           "try to commit a transaction while it is not active any more. " +
-                           "Has it already been rolled back and no exception raised ? " +
-                           "Transaction duration: {0}" +
-                           "\n{1}",
-                           transactionDuration,
-                           System.Environment.StackTrace);
-          transactionLog.FatalFormat ("Commit - inactive transaction 2 - duration={0}",
-                                      transactionDuration);
+          log.Fatal ($"CommitTransaction: try to commit a transaction while it is not active any more. Has it already been rolled back and no exception raised? Transaction duration: {transactionDuration}\n{System.Environment.StackTrace}");
+          transactionLog.Fatal ($"Commit - inactive transaction 2 - duration={transactionDuration}");
           m_valid = false;
           var exn = new InvalidOperationException ("CommitTransaction with an inactive transaction");
-          foreach (var transactionExtension in GetTransactionExtensions ()) {
-            transactionExtension.CommitFailure (transactionName, exn);
+          if (!readOnly) {
+            foreach (var transactionExtension in GetTransactionExtensions ()) {
+              transactionExtension.CommitFailure (transactionName, exn);
+            }
           }
           throw exn;
         }
 
-        foreach (var transactionExtension in GetTransactionExtensions ()) {
-          transactionExtension.BeforeCommit (transactionName);
+        if (!readOnly) {
+          foreach (var transactionExtension in GetTransactionExtensions ()) {
+            transactionExtension.BeforeCommit (transactionName);
+          }
         }
 
         transaction.Commit ();
@@ -586,22 +577,88 @@ WHERE table_type='LOCAL TEMPORARY'
           log.Debug ($"CommitTransaction: transaction committed. Transaction duration: {transactionDuration}");
         }
         transactionLog.Info ($"Commit - Success - duration={transactionDuration}");
-        // Messages
-        SendAccumulatorMessagesAsync ().Wait ();
-        if (log.IsDebugEnabled) {
-          log.Debug ($"CommitTransactions: messages were sent");
+        if (!readOnly) {
+          // Messages
+          var sendMessagesMethod = Lemoine.Info.ConfigSet
+            .LoadAndGet (SEND_MESSAGES_METHOD_KEY, SEND_MESSAGES_METHOD_DEFAULT);
+          switch (sendMessagesMethod) {
+            case "pool":
+              SendAccumulatorMessagesInPool ();
+              break;
+            case "thread":
+              SendAccumulatorMessagesInThread ();
+              break;
+            case "async":
+              SendAccumulatorMessagesAsync ().Wait ();
+              break;
+            case "nowait":
+              var _ = SendAccumulatorMessagesAsync ();
+              break;
+            case "":
+            case "sync":
+            default:
+              SendAccumulatorMessages ();
+              break;
+          }
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CommitTransactions: messages were sent");
+          }
         }
         // Extensions
-        foreach (var transactionExtension in GetTransactionExtensions ()) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"CommitTransactions: about to commit success in {transactionExtension} for transation {transactionName}");
+        if (!readOnly) {
+          foreach (var transactionExtension in GetTransactionExtensions ()) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"CommitTransactions: about to commit success in {transactionExtension} for transation {transactionName}");
+            }
+            transactionExtension.CommitSuccess (transactionName);
           }
-          transactionExtension.CommitSuccess (transactionName);
         }
         if (log.IsDebugEnabled) {
           log.Debug ($"CommitTransactions: Commit transaction completed");
         }
       } // m_transactionCreated
+    }
+
+    bool SendAccumulatorMessagesInPool ()
+    {
+      void waitCallback (object x) => SendAccumulatorMessagesThreadVersion (x);
+      if (!ThreadPool.QueueUserWorkItem (new WaitCallback (waitCallback))) {
+        log.Error ($"SendAccumulatorMessagesInPool: task was not queued in the thread pool");
+        return false;
+      }
+      else { // A thread was queued
+        return true;
+      }
+
+    }
+
+    void SendAccumulatorMessagesInThread ()
+    {
+      var thread = new System.Threading.Thread (new System.Threading.ParameterizedThreadStart (SendAccumulatorMessagesThreadVersion));
+      thread.Start ();
+    }
+
+    void SendAccumulatorMessagesThreadVersion (object _)
+    {
+      try {
+        SendAccumulatorMessages ();
+      }
+      catch (Exception ex) {
+        log.Error ("SendAccumulatorMessagesThreadVersion: exception", ex);
+        throw;
+      }
+    }
+
+    void SendAccumulatorMessages ()
+    {
+      foreach (var sessionAccumulator in NHibernateHelper.SessionAccumulators) {
+        SendAccumulatorMessages (sessionAccumulator);
+      }
+    }
+
+    void SendAccumulatorMessages (ISessionAccumulator sessionAccumulator)
+    {
+      sessionAccumulator.SendMessages (m_session);
     }
 
     async System.Threading.Tasks.Task SendAccumulatorMessagesAsync ()
@@ -648,14 +705,12 @@ WHERE table_type='LOCAL TEMPORARY'
 
       if (m_rolledBack) {
         if (implicitRollback) {
-          log.InfoFormat ("RollbackTransaction: " +
-                          "(implicit) the transaction has already been rolled back");
+          log.Info ("RollbackTransaction: (implicit) the transaction has already been rolled back");
           transactionLog.InfoFormat ("Rollback - (implicit) already rolled back - duration={0}",
                                      transactionDuration);
         }
         else {
-          log.WarnFormat ("RollbackTransaction: " +
-                          "(not implicit) the transaction has already been rolled back");
+          log.Warn ("RollbackTransaction: (not implicit) the transaction has already been rolled back");
           transactionLog.WarnFormat ("Rollback - (not implicit) already rolled back - duration={0}",
                                      transactionDuration);
         }
@@ -680,8 +735,10 @@ WHERE table_type='LOCAL TEMPORARY'
         transactionLog.ErrorFormat ("Rollback - null session - duration={0}",
                                     transactionDuration);
         var exn = new InvalidOperationException ("RollbackTransaction with a null internal session");
-        foreach (var transactionExtension in GetTransactionExtensions ()) {
-          transactionExtension.RollbackFailure (transactionName, exn);
+        if (!readOnly) {
+          foreach (var transactionExtension in GetTransactionExtensions ()) {
+            transactionExtension.RollbackFailure (transactionName, exn);
+          }
         }
         throw exn;
       }
@@ -711,46 +768,47 @@ WHERE table_type='LOCAL TEMPORARY'
                            "=> do not try to roll it back once again" +
                            "\n{0}",
                            System.Environment.StackTrace);
-          transactionLog.FatalFormat ("Rollback - inactive transaction - duration={0}",
-                                      transactionDuration);
+          transactionLog.Fatal ($"Rollback - inactive transaction - duration={transactionDuration}");
         }
       }
       else {
         try {
           transaction.Rollback ();
-          transactionLog.InfoFormat ("Rollback - Success - duration={0}",
-                                     transactionDuration);
+          transactionLog.Info ($"Rollback - Success - duration={transactionDuration}");
         }
         catch (NHibernate.TransactionException ex) { // NullReferenceException in Npgsql 2.x
           // To remove once Npgsql version >= 4.x is used
           if (IsNpgsqlNullReferenceException (ex)) {
-            log.FatalFormat ("RollbackTransaction: bug in NHibernate / Npgsql 2.x => consider it is as a broken connection");
-            transactionLog.FatalFormat ("Rollback - Failure - duration={0}",
-                                        transactionDuration);
+            log.Fatal ("RollbackTransaction: bug in NHibernate / Npgsql 2.x => consider it is as a broken connection");
+            transactionLog.Fatal ($"Rollback - Failure - duration={transactionDuration}");
           }
           else {
             log.Fatal ("RollbackTransaction: Rollback failed", ex);
-            transactionLog.FatalFormat ("Rollback - Failure - duration={0}",
-                                        transactionDuration);
+            transactionLog.Fatal ($"Rollback - Failure - duration={transactionDuration}");
           }
-          foreach (var transactionExtension in GetTransactionExtensions ()) {
-            transactionExtension.RollbackFailure (transactionName, ex);
+          if (!readOnly) {
+            foreach (var transactionExtension in GetTransactionExtensions ()) {
+              transactionExtension.RollbackFailure (transactionName, ex);
+            }
           }
           m_valid = false;
           throw;
         }
         catch (Exception ex) {
           log.Fatal ("RollbackTransaction: Rollback failed", ex);
-          transactionLog.FatalFormat ("Rollback - Failure - duration={0}",
-                                      transactionDuration);
-          foreach (var transactionExtension in GetTransactionExtensions ()) {
-            transactionExtension.RollbackFailure (transactionName, ex);
+          transactionLog.Fatal ($"Rollback - Failure - duration={transactionDuration}");
+          if (!readOnly) {
+            foreach (var transactionExtension in GetTransactionExtensions ()) {
+              transactionExtension.RollbackFailure (transactionName, ex);
+            }
           }
           m_valid = false;
           throw;
         }
-        foreach (var transactionExtension in GetTransactionExtensions ()) {
-          transactionExtension.RollbackSuccess (transactionName, implicitRollback);
+        if (!readOnly) {
+          foreach (var transactionExtension in GetTransactionExtensions ()) {
+            transactionExtension.RollbackSuccess (transactionName, implicitRollback);
+          }
         }
         m_rolledBack = true;
       }
@@ -761,9 +819,7 @@ WHERE table_type='LOCAL TEMPORARY'
       // disconnect from the database
       if (implicitRollback) {
         m_valid = false;
-        log.InfoFormat ("RollbackTransaction: " +
-                        "implicit rollback, disconnect. " +
-                        "Consider it as an additional protection");
+        log.Info ("RollbackTransaction: implicit rollback, disconnect. Consider it as an additional protection");
         try {
           m_session.Disconnect ();
         }

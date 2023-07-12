@@ -36,6 +36,13 @@ namespace Lemoine.Database.Persistent
     void Store (ISession session, string transactionName);
 
     /// <summary>
+    /// Send the messages
+    /// </summary>
+    /// <param name="session"></param>
+    /// <returns></returns>
+    void SendMessages (ISession session);
+
+    /// <summary>
     /// Send the messages asynchronously
     /// </summary>
     /// <param name="session"></param>

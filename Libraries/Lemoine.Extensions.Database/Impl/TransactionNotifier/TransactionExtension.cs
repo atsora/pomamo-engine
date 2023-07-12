@@ -13,25 +13,14 @@ namespace Lemoine.Extensions.Database.Impl.TransactionNotifier
   /// </summary>
   public class TransactionExtension: Lemoine.Extensions.Database.ITransactionExtension
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (TransactionExtension).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public TransactionExtension ()
     {
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region ITransactionExtension implementation
     /// <summary>

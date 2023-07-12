@@ -16,6 +16,12 @@ namespace Lemoine.Extensions.Database
     /// Process the message
     /// </summary>
     /// <param name="message"></param>
+    void ProcessMessage (string message);
+
+    /// <summary>
+    /// Process the message asynchronously
+    /// </summary>
+    /// <param name="message"></param>
     System.Threading.Tasks.Task ProcessMessageAsync (string message);
   }
 }

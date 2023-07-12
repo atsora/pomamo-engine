@@ -18,31 +18,57 @@ namespace Lemoine.Plugin.AnalysisMessagesToLocalCache
     : Lemoine.Extensions.NotConfigurableExtension
     , IMessageExtension
   {
-    readonly Regex REGEX = new Regex (@"Cache/ClearDomainByMachine/([A-Za-z]+)/([0-9]+)(\?Broadcast=true)?$");
+    static readonly string PREFIX = "Cache/ClearDomainByMachine/";
+    readonly Regex REGEX = new Regex ($@"{PREFIX}([A-Za-z]+)/([0-9]+)(\?Broadcast=true)?$");
 
     readonly ILog log = LogManager.GetLogger (typeof (MessageExtensionByMachine).FullName);
 
-    public async System.Threading.Tasks.Task ProcessMessageAsync (string message)
+    public void ProcessMessage (string message)
     {
-      var match = REGEX.Match (message);
-      if (match.Success) {
-        var domain = match.Groups[1].Value;
-        var id = int.Parse (match.Groups[2].Value);
-        if (log.IsDebugEnabled) {
-          log.Debug ($"ProcessMessageAsync: clear domain {domain} id {id}");
-        }
-        try {
-          var result = await Lemoine.Core.Cache.CacheManager.CacheClient.ClearDomainByMachineAsync (domain, id);
+      if (message.StartsWith (PREFIX)) {
+        var match = REGEX.Match (message);
+        if (match.Success) {
+          var domain = match.Groups[1].Value;
+          var id = int.Parse (match.Groups[2].Value);
           if (log.IsDebugEnabled) {
-            log.Debug ($"ProcessMessageAsync: completed with resul={result}");
+            log.Debug ($"ProcessMessage: clear domain {domain} id {id}");
+          }
+          try {
+            var result = Lemoine.Core.Cache.CacheManager.CacheClient.ClearDomainByMachine (domain, id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ProcessMessage: completed with resul={result}");
+            }
+          }
+          catch (Exception ex) {
+            log.Exception (ex, "ProcessMessage");
+            throw;
           }
         }
-        catch (Exception ex) {
-          log.Exception (ex, "ProcessMessageAsync");
-          throw;
+      }
+    }
+
+    public async System.Threading.Tasks.Task ProcessMessageAsync (string message)
+    {
+      if (message.StartsWith (PREFIX)) {
+        var match = REGEX.Match (message);
+        if (match.Success) {
+          var domain = match.Groups[1].Value;
+          var id = int.Parse (match.Groups[2].Value);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessMessageAsync: clear domain {domain} id {id}");
+          }
+          try {
+            var result = await Lemoine.Core.Cache.CacheManager.CacheClient.ClearDomainByMachineAsync (domain, id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ProcessMessageAsync: completed with resul={result}");
+            }
+          }
+          catch (Exception ex) {
+            log.Exception (ex, "ProcessMessageAsync");
+            throw;
+          }
         }
       }
-      await System.Threading.Tasks.Task.Delay (0);
     }
   }
 }
