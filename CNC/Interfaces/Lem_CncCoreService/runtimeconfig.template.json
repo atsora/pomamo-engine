@@ -1,6 +1,6 @@
 ﻿{
   "additionalProbingPaths": [
-    "./netcoreapp3.1/",
+    "./net6.0/",
     "./l_ctr/pfrdata/plugins_synchronized/"
   ]
 }
