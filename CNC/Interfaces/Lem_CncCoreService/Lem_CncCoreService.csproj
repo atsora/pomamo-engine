@@ -58,6 +58,7 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.CncAlarm\Lemoine.Cnc.CncAlarm.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.DataRepository\Lemoine.Cnc.DataRepository.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.Data\Lemoine.Cnc.Data.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.SQLiteQueue\Lemoine.Cnc.SQLiteQueue.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(PlatformTarget)' == 'x86' ">
@@ -83,7 +84,6 @@
     <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Lemoine.Cnc.Engine\Lemoine.Cnc.Engine.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.SQLiteQueue\Lemoine.Cnc.SQLiteQueue.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup>

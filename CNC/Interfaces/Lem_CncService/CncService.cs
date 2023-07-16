@@ -80,15 +80,7 @@ namespace Lem_CncService
     public CncService ()
     {
       m_fileRepoClientFactory =
-#if NETSTANDARD || NET48 || NETCOREAPP
-#if NETCOREAPP
         new FileRepoClientFactoryNoCorba (DefaultFileRepoClientMethod.Multi);
-#else // !NETCOREAPP
-        new Lemoine.FileRepository.Corba.FileRepoClientFactoryWithCorba (DefaultFileRepoClientMethod.Multi);
-#endif // !NETCOREAPP
-#else // !(NETSTANDARD || NET48 || NETCOREAPP)
-        new FileRepoClientFactoryNoCorba (DefaultFileRepoClientMethod.Multi);
-#endif // !(NETSTANDARD || NET48 || NETCOREAPP)
 
       m_assemblyLoader = new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader ();
 
