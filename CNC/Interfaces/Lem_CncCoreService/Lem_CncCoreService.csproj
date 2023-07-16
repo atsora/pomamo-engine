@@ -12,8 +12,8 @@
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
   </PropertyGroup>
 
+  <!-- Because of log4net --><!-- TODO: check it is still required -->
   <ItemGroup>
-    <!-- Because of log4net -->
     <PackageReference Include="System.Diagnostics.Debug" VersionOverride="4.3.0" />
     <PackageReference Include="System.IO.FileSystem" VersionOverride="4.3.0" />
     <PackageReference Include="System.Net.NameResolution" VersionOverride="4.3.0" />
