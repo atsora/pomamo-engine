@@ -43,7 +43,7 @@ namespace Lemoine.Extensions.Package
     /// <summary>
     /// Package description
     /// </summary>
-    public PackageDescription PackageDescription { get; }
+    public PackageDefinition PackageDefinition { get; }
 
     /// <summary>
     /// Associated package if installed (active or not)
@@ -55,7 +55,7 @@ namespace Lemoine.Extensions.Package
       get {
         if (!m_packageSet) {
           using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-            m_package = ModelDAOHelper.DAOFactory.PackageDAO.FindByIdentifyingName (this.PackageDescription.Identifier);
+            m_package = ModelDAOHelper.DAOFactory.PackageDAO.FindByIdentifyingName (this.PackageDefinition.Identifier);
           }
           m_packageSet = true;
         }
@@ -81,7 +81,7 @@ namespace Lemoine.Extensions.Package
     {
       this.Path = path;
       var text = File.ReadAllText (path);
-      this.PackageDescription = JsonConvert.DeserializeObject<PackageDescription> (text, s_jsonSettings);
+      this.PackageDefinition = JsonConvert.DeserializeObject<PackageDefinition> (text, s_jsonSettings);
     }
     #endregion // Constructors
 
@@ -96,23 +96,23 @@ namespace Lemoine.Extensions.Package
       IPackage package;
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (IDAOTransaction transaction = session.BeginTransaction ("PackageFile.InstallOrUpgrade")) {
-          package = ModelDAOHelper.DAOFactory.PackageDAO.FindByIdentifyingName (this.PackageDescription.Identifier);
+          package = ModelDAOHelper.DAOFactory.PackageDAO.FindByIdentifyingName (this.PackageDefinition.Identifier);
           if (null == package) {
-            package = ModelDAOHelper.ModelFactory.CreatePackage (this.PackageDescription.Identifier);
+            package = ModelDAOHelper.ModelFactory.CreatePackage (this.PackageDefinition.Identifier);
           }
-          package.Name = this.PackageDescription.Name;
-          package.Description = this.PackageDescription.Description;
-          if (null != this.PackageDescription.Tags) {
-            package.SetTags (this.PackageDescription.Tags);
+          package.Name = this.PackageDefinition.Name;
+          package.Description = this.PackageDefinition.Description;
+          if (null != this.PackageDefinition.Tags) {
+            package.SetTags (this.PackageDefinition.Tags);
           }
-          package.NumVersion = this.PackageDescription.Version;
+          package.NumVersion = this.PackageDefinition.Version;
           package.Activated = active;
           ModelDAOHelper.DAOFactory.PackageDAO.MakePersistent (package);
 
           var packageAssociations = ModelDAOHelper.DAOFactory.PackagePluginAssociationDAO
             .FindByPackage (package);
 
-          foreach (var pluginDescription in this.PackageDescription.Plugins) {
+          foreach (var pluginDescription in this.PackageDefinition.Plugins) {
             IPlugin plugin = ModelDAOHelper.DAOFactory.PluginDAO.FindByName (pluginDescription.Name);
             if (null == plugin) {
               plugin = ModelDAOHelper.ModelFactory.CreatePlugin (pluginDescription.Name);
@@ -144,7 +144,7 @@ namespace Lemoine.Extensions.Package
             RemoveDeprecatedInstances (associations, pluginDescription.Instances);
           }
 
-          RemoveDeprecatedPlugins (packageAssociations, this.PackageDescription.Plugins);
+          RemoveDeprecatedPlugins (packageAssociations, this.PackageDefinition.Plugins);
 
           transaction.Commit ();
         }
@@ -204,7 +204,7 @@ namespace Lemoine.Extensions.Package
     /// <returns>package</returns>
     public static IPackage InstallOrUpgradeJsonString (string text, bool overwriteParameters, bool active)
     {
-      var packageDescription = JsonConvert.DeserializeObject<PackageDescription> (text, s_jsonSettings);
+      var packageDescription = JsonConvert.DeserializeObject<PackageDefinition> (text, s_jsonSettings);
 
       IPackage package;
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {

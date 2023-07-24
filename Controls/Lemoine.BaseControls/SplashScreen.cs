@@ -131,7 +131,7 @@ namespace Lemoine.BaseControls
         textLogin.Text = login;
         textPassword.Text = options.DefaultPassword;
         checkRememberMe.Checked = (login != "");
-        if (m_loginRequired) {
+        if (m_loginRequired && string.IsNullOrEmpty (textLogin.Text)) {
           buttonGo.Enabled = false;
         }
       }

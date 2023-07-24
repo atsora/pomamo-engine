@@ -12,9 +12,9 @@ namespace Lemoine.Extensions.Package
   /// <summary>
   /// Description of a package
   /// </summary>
-  public class PackageDescription
+  public class PackageDefinition
   {
-    static readonly ILog log = LogManager.GetLogger (typeof (PackageDescription).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (PackageDefinition).FullName);
 
     /// <summary>
     /// Identifier (unique)
@@ -32,7 +32,7 @@ namespace Lemoine.Extensions.Package
     public string Description { get; set; }
 
     /// <summary>
-    /// Associated tags
+    /// Associated tags (nullable)
     /// </summary>
     public IList<string> Tags { get; set; }
 
@@ -56,7 +56,7 @@ namespace Lemoine.Extensions.Package
     /// <summary>
     /// Description of the constructor
     /// </summary>
-    public PackageDescription ()
+    public PackageDefinition ()
     {
     }
   }
