@@ -85,9 +85,6 @@
       class="Lemoine.GDBPersistentClasses.Stamp, Pulse.Database"
       usage="read-write" />
     <class-cache
-      class="Lemoine.GDBPersistentClasses.SuperGroup, Pulse.Database"
-      usage="read-only" />
-    <class-cache
       class="Lemoine.GDBPersistentClasses.Translation, Pulse.Database"
       usage="read-only" />
     <class-cache
