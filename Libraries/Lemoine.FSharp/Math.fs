@@ -83,3 +83,6 @@ let mmOfInch (x: float<inch>) = x * mmPerInch
 
 let mmOfFloat (x: float) : float<mm> = LanguagePrimitives.FloatWithMeasure x
 let inchOfFloat (x: float) : float<inch> = LanguagePrimitives.FloatWithMeasure x
+
+let floatOfInch (x: float<inch>): float = float x
+let floatOfMm (x: float<mm>): float = float x
