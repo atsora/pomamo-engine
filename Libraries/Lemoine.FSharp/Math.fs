@@ -75,6 +75,7 @@ let inline computeAngleDegrees a b =
 
 [<Measure>] type mm
 [<Measure>] type inch
+[<Measure>] type min
 
 let mmPerInch = 25.4<mm/inch>
 
@@ -86,3 +87,9 @@ let inchOfFloat (x: float) : float<inch> = LanguagePrimitives.FloatWithMeasure x
 
 let floatOfInch (x: float<inch>): float = float x
 let floatOfMm (x: float<mm>): float = float x
+
+let mmPerMinOfFloat (x: float) : float<mm/min> = LanguagePrimitives.FloatWithMeasure x
+let ipmOfFloat (x: float) : float<inch/min> = LanguagePrimitives.FloatWithMeasure x
+
+let mmPerMinOfIpm (x: float<inch/min>) = x * mmPerInch
+let ipmOfMmPerMin (x: float<mm/min>) = x / mmPerInch
