@@ -10,6 +10,28 @@ open Lemoine.Core.Log
 
 let log = LogManager.GetLogger ("Lemoine.FSharp.Math")
 
+/// Generic integer number of different possible precisions
+type Number =
+  | Int of int | Byte of byte | Short of int16 | Long of int64
+  
+  static member op_Explicit (source: Number) : int =
+    match source with
+    | Int x -> int x
+    | Byte x -> int x
+    | Short x -> int x
+    | Long x -> int x
+
+  static member op_Implicit (source: int) = Int(source)
+
+  static member op_Implicit (source: byte) = Byte(source)
+
+  static member op_Implicit (source: int16) = Short(source)
+
+  static member op_Implicit (source: int64) = Long(source)
+
+/// Get if the bit is on or off
+let getBit (bitNumber: int) (b: Number) = ((int b) &&& (1 <<< bitNumber)) <> 0
+
 /// Compute a distance from a list of axis positions
 let inline computeDistanceFromPositions l =
   let rec computeSquareDistance l d =

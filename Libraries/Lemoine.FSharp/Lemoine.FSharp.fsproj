@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Patterns.fs" />
     <Compile Include="Math.fs" />
     <Compile Include="Model\Bound.fs" />
     <Compile Include="Model\Range.fs" />
