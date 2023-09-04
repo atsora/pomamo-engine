@@ -1696,7 +1696,7 @@ namespace Atsora.Fwlib
     /// <param name="modal"></param>
     /// <returns></returns>
     [DllImport ("FWLIB32.dll", EntryPoint = "cnc_modal")]
-    public static extern Int16 modal (UInt16 handle,
+    public static extern Int16 modal1 (UInt16 handle,
                                        Int16 type, Int16 block,
                                        out ODBMDL_1 modal);
     /// <summary>
@@ -1710,7 +1710,7 @@ namespace Atsora.Fwlib
     /// <param name="modal"></param>
     /// <returns></returns>
     [DllImport ("FWLIB32.dll", EntryPoint = "cnc_modal")]
-    public static extern Int16 modal (UInt16 handle,
+    public static extern Int16 modal2 (UInt16 handle,
                                        Int16 type, Int16 block,
                                        out ODBMDL_2 modal);
     /// <summary>
@@ -1724,7 +1724,7 @@ namespace Atsora.Fwlib
     /// <param name="modal"></param>
     /// <returns></returns>
     [DllImport ("FWLIB32.dll", EntryPoint = "cnc_modal")]
-    public static extern Int16 modal (UInt16 handle,
+    public static extern Int16 modal3 (UInt16 handle,
                                        Int16 type, Int16 block,
                                        out ODBMDL_3 modal);
     /// <summary>
@@ -1738,7 +1738,7 @@ namespace Atsora.Fwlib
     /// <param name="modal"></param>
     /// <returns></returns>
     [DllImport ("FWLIB32.dll", EntryPoint = "cnc_modal")]
-    public static extern Int16 modal (UInt16 handle,
+    public static extern Int16 modal4 (UInt16 handle,
                                        Int16 type, Int16 block,
                                        out ODBMDL_4 modal);
     /// <summary>
@@ -1752,7 +1752,7 @@ namespace Atsora.Fwlib
     /// <param name="modal"></param>
     /// <returns></returns>
     [DllImport ("FWLIB32.dll", EntryPoint = "cnc_modal")]
-    public static extern Int16 modal (UInt16 handle,
+    public static extern Int16 modal5 (UInt16 handle,
                                        Int16 type, Int16 block,
                                        out ODBMDL_5 modal);
 

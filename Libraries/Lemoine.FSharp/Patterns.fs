@@ -11,3 +11,9 @@ let (|Split2|_|) (sep:string) (s:string) =
   match s.Split (separators, 2) with
   | [| a; b |] -> Some(a, b)
   | _ -> None
+
+let (|SingleChar|_|) (s:string) =
+  if s.Length = 1 then
+    Some(s[0])
+  else
+    None
