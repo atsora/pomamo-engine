@@ -32,6 +32,12 @@ type Number =
 /// Get if the bit is on or off
 let getBit (bitNumber: int) (b: Number) = ((int b) &&& (1 <<< bitNumber)) <> 0
 
+/// Decimal exponent
+let exp exponent x = x * (10.0 ** exponent)
+
+/// Decimal exponent
+let (-**-) x exponent = x |> exp exponent
+
 /// Compute a distance from a list of axis positions
 let inline computeDistanceFromPositions l =
   let rec computeSquareDistance l d =
