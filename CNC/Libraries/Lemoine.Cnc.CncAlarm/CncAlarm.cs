@@ -92,11 +92,18 @@ namespace Lemoine.Cnc
     /// <param name="alarmType"></param>
     /// <param name="number"></param>
     public CncAlarm (string cncInfo, string cncSubInfo, string alarmType, string number)
+      : this (cncInfo, alarmType, number)
     {
-      CncInfo = String.IsNullOrEmpty (cncInfo) ? "unknown" : cncInfo;
       CncSubInfo = String.IsNullOrEmpty (cncSubInfo) ? "unknown" : cncSubInfo;
-      Type = String.IsNullOrEmpty (alarmType) ? "unknown" : alarmType;
-      Number = String.IsNullOrEmpty (number) ? "unknown" : number;
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public CncAlarm (string cncInfo, string cncSubInfo, string alarmType, string number, string message)
+      : this (cncInfo, cncSubInfo, alarmType, number)
+    {
+      Message = message;
     }
 
     /// <summary>
