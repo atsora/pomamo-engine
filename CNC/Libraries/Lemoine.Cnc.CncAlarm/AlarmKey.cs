@@ -4,17 +4,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lemoine.Cnc
 {
   /// <summary>
   /// Description of AlarmKey.
   /// </summary>
-  public class AlarmKey
+  public class AlarmKey: IEquatable<AlarmKey>
   {
     #region Members
-    readonly int m_hashCode = 0;
-
     // Some properties may change constantly but we still want to merge the alarms
     // In that case, the first occurrence of the property will be taken into account
     static readonly string[] EXCLUDED_PROPERTIES = new string[] {
@@ -68,8 +67,6 @@ namespace Lemoine.Cnc
       foreach (var key in properties.Keys) {
         Properties[key] = (properties[key] == null ? null : properties[key].ToString());
       }
-
-      m_hashCode = ComputeHashCode();
     }
     
     /// <summary>
@@ -83,7 +80,6 @@ namespace Lemoine.Cnc
       Type = alarm.Type;
       Number = alarm.Number;
       Properties = alarm.Properties;
-      m_hashCode = ComputeHashCode();
     }
     #endregion // Constructors
     
@@ -96,8 +92,12 @@ namespace Lemoine.Cnc
       return string.Format("[AlarmKey CncInfo={0}, CncSubInfo={1}, Type={2}, Number={3}, Properties number={4}]",
                            CncInfo, CncSubInfo, Type, Number, Properties.Count);
     }
-    
+
     #region Equals and GetHashCode implementation
+    bool IsKeyProperty (string k) {
+      return !EXCLUDED_PROPERTIES.Contains (k);
+    }
+
     /// <summary>
     /// Equals
     /// </summary>
@@ -110,27 +110,44 @@ namespace Lemoine.Cnc
         return false;
       }
 
-      return this.m_hashCode == other.m_hashCode;
+      if (false == object.Equals (this.CncInfo, other.CncInfo)
+        && object.Equals (this.CncSubInfo, other.CncSubInfo)
+        && object.Equals (this.Type, other.Type)
+        && object.Equals (this.Number, other.Number)) {
+        return false;
+      }
+
+      // Properties
+      var a = this.Properties.Where (kv => IsKeyProperty (kv.Key));
+      var b = this.Properties.Where (kv => IsKeyProperty (kv.Key));
+      if (a.Count () != b.Count ()) {
+        return false;
+      }
+      return object.Equals (a.ToDictionary (kv => kv.Key), a.ToDictionary (kv => kv.Key));
     }
     
-    int ComputeHashCode()
+    /// <summary>
+    /// GetHashCode
+    /// </summary>
+    /// <returns></returns>
+    public override int GetHashCode()
     {
       int hashCode = 0;
       unchecked {
         if (CncInfo != null) {
-          hashCode += 1000000007 * CncInfo.GetHashCode();
+          hashCode += 1000000007 * CncInfo.GetHashCode ();
         }
 
         if (CncSubInfo != null) {
-          hashCode += 1000000093 * CncSubInfo.GetHashCode();
+          hashCode += 1000000093 * CncSubInfo.GetHashCode ();
         }
 
         if (Type != null) {
-          hashCode += 1000000009 * Type.GetHashCode();
+          hashCode += 1000000009 * Type.GetHashCode ();
         }
 
         if (Number != null) {
-          hashCode += 1000000021 * Number.GetHashCode();
+          hashCode += 1000000021 * Number.GetHashCode ();
         }
 
         if (Properties != null) {
@@ -142,19 +159,20 @@ namespace Lemoine.Cnc
             }
           }
 
-          hashCode += 1000000033 * concat.GetHashCode();
+          hashCode += 1000000033 * concat.GetHashCode ();
         }
       }
       return hashCode;
     }
 
     /// <summary>
-    /// GetHashCode
+    /// <see cref="IEquatable{T}"/>
     /// </summary>
+    /// <param name="other"></param>
     /// <returns></returns>
-    public override int GetHashCode()
+    public bool Equals (AlarmKey other)
     {
-      return m_hashCode;
+      return Equals (other);
     }
 
     /// <summary>
