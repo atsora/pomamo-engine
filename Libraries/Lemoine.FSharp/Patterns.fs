@@ -1,5 +1,7 @@
 ﻿module Lemoine.Patterns
 
+open System.Text.RegularExpressions
+
 let (|Prefix|_|) (p:string) (s:string) =
   if s.StartsWith (p) then
     Some(s.Substring(p.Length))
@@ -17,3 +19,11 @@ let (|SingleChar|_|) (s:string) =
     Some(s[0])
   else
     None
+
+let (|RegexGroup|_|) ((regex,group):Regex * string) (s:string) =
+  match regex.Match s with
+  | m when m.Success ->
+    match m.Groups[group] with
+    | g when g.Success -> Some(g.Value)
+    | _ -> None
+  | _ -> None
