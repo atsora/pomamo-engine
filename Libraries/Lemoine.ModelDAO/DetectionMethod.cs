@@ -23,11 +23,11 @@ namespace Lemoine.Model
     /// </summary>
     StartCycleStamp = 1,
     /// <summary>
-    /// Strictly positive
+    /// Strictly positive (deprecated)
     /// </summary>
     StartCycleStrictlyPositive = 2, // 1 << 1
     /// <summary>
-    /// Operation code
+    /// Operation code (deprecated)
     /// </summary>
     StartCycleOperationCode = 4, // 1 << 2
     /// <summary>
@@ -35,54 +35,57 @@ namespace Lemoine.Model
     /// </summary>
     EndCycleStamp = 8, // 1 << 3
     /// <summary>
-    /// Strictly positive
+    /// Strictly positive (deprecated)
     /// </summary>
     EndCycleStrictlyPositive = 16, // 1 << 4
     /// <summary>
-    /// Operation code
+    /// Operation code (deprecated)
     /// </summary>
     EndCycleOperationCode = 32, // 1 << 5
     /// <summary>
-    /// A null value corresponds to a cycle end
+    /// A null value corresponds to a cycle end (deprecated)
     /// </summary>
     EndCycleZero = 64, // 1 << 6
     /// <summary>
+    ///  (deprecated)
     /// <item>Between 1 and 9, it corresponds to a cycle end with the specified quantity</item>
     /// <item>If &gt; 10, it corresponds to a stamp</item>
     /// </summary>
     EndCycleQuantityOrStamp = 128, // 1 << 7
     /// <summary>
+    ///  (deprecated)
     /// 10 * stamp + quantity
     /// 
     /// If the quantity is strictly positive, it corresponds to a cycle end with the specified quantity
     /// </summary>
     EndCycleStampQuantity = 256, // 1 << 8
     /// <summary>
+    ///  (deprecated)
     /// 10 * stamp + operation code
     /// 
     /// If the quantity is strictly positive, it corresponds to a cycle end with the specified quantity
     /// </summary>
     EndCycleOperationCodeQuantity = 512, // 1 << 9
     /// <summary>
-    /// Sequence stamp
+    /// Sequence stamp (deprecated)
     /// </summary>
     SequenceStamp = 1024, // 1 << 10
     /// <summary>
-    /// A variable change means a cycle starts
+    /// A variable change means a cycle starts (deprecated)
     /// </summary>
     ChangeIsStartCycle = 2048, // 1 << 11
     /// <summary>
-    /// A variable change means a cycle ends
+    /// A variable change means a cycle ends (deprecated)
     /// </summary>
-    ChangeIsStopCycle = 4096, // 1 << 12
+    ChangeIsStopCycle = 4096, // 1 << 12 (deprecated)
     /// <summary>
     /// Contains a sequence milestone
     /// </summary>
-    SequenceMilestone = 8192, // 1 << 13
+    SequenceMilestone = 8192, // 1 << 13 (deprecated)
     /// <summary>
     /// The sequence milestone is set added to the sequence stamp variable as a decimal part
     /// </summary>
-    SequenceMilestoneWithStamp = 16384, // 1 << 14
+    SequenceMilestoneWithStamp = 16384, // 1 << 14 (deprecated)
     /// <summary>
     /// Use the cnc variable set directly to get the stamps from the machine and not individual values
     /// </summary>
@@ -113,7 +116,7 @@ namespace Lemoine.Model
   }
   
   /// <summary>
-  /// Start cycle detection method
+  /// Start cycle detection method (deprecated)
   /// 
   /// Deprecated. Use plugins instead now
   /// </summary>
@@ -142,7 +145,7 @@ namespace Lemoine.Model
   }
 
   /// <summary>
-  /// End cycle detection method
+  /// End cycle detection method (deprecated)
   /// 
   /// Deprecated: use plugins instead now
   /// </summary>
@@ -192,7 +195,7 @@ namespace Lemoine.Model
   }
   
   /// <summary>
-  /// Sequence detection method
+  /// Sequence detection method (deprecated)
   /// 
   /// Deprecated: use plugins instead now
   /// </summary>

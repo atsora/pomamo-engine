@@ -662,10 +662,6 @@ namespace Lemoine.Cnc.DataRepository
               ReplaceValueOrDefault (attribute,
                                      machineModule.ConfigPrefix + "StartCycleVariable",
                                      machineModule.StartCycleVariable);
-              // {...DefaultDetectionMethod}
-              ReplaceValue (attribute,
-                            machineModule.ConfigPrefix + "DefaultDetectionMethod",
-                            ((int)defaultDetectionMethod).ToString ());
               // {..CncVariableKeys}
               ReplaceValue (attribute,
                             machineModule.ConfigPrefix + "CncVariableKeys",
