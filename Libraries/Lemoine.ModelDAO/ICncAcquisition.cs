@@ -8,6 +8,26 @@ using System.Collections.Generic;
 namespace Lemoine.Model
 {
   /// <summary>
+  /// Cnc module license
+  /// </summary>
+  [Flags]
+  public enum CncModuleLicense
+  {
+    /// <summary>
+    /// No specific license
+    /// </summary>
+    None = 0,
+    /// <summary>
+    /// Gpl
+    /// </summary>
+    Gpl = 1,
+    /// <summary>
+    /// Proprietary
+    /// </summary>
+    Proprietary = 2,
+  }
+
+  /// <summary>
   /// Cnc acquisition module
   /// 
   /// Such a cnc acquisition module may drive the data acquisition
@@ -97,5 +117,10 @@ namespace Lemoine.Model
     /// Computer on which the acquisition is made
     /// </summary>
     IComputer Computer { get; set; }
+
+    /// <summary>
+    /// License that is associated to a cnc acquisition
+    /// </summary>
+    CncModuleLicense License { get; set; }
   }
 }

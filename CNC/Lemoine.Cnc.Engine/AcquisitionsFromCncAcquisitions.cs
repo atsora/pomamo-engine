@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Lemoine.Cnc.Engine;
 using Lemoine.Core.Log;
 using Lemoine.Core.Plugin;
 using Lemoine.Extensions.Interfaces;
@@ -27,6 +28,7 @@ namespace Lemoine.CncEngine
   {
     readonly ILog log = LogManager.GetLogger (typeof (AcquisitionsFromCncAcquisitions).FullName);
 
+    readonly ICncEngineConfig m_cncEngineConfig;
     readonly IExtensionsLoader m_extensionsLoader;
     readonly ICncAcquisitionInitializer m_cncAcquisitionInitializer;
     readonly IAssemblyLoader m_assemblyLoader;
@@ -34,18 +36,20 @@ namespace Lemoine.CncEngine
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1);
     volatile IList<Acquisition> m_acquisitions = null;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="cncEngineConfig">not null</param>
     /// <param name="extensionsLoader">not null</param>
     /// <param name="cncAcquisitionInitializer"></param>
     /// <param name="assemblyLoader">nullable</param>
     /// <param name="fileRepoClientFactory">nullable</param>
-    public AcquisitionsFromCncAcquisitions (IExtensionsLoader extensionsLoader, ICncAcquisitionInitializer cncAcquisitionInitializer, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
+    public AcquisitionsFromCncAcquisitions (ICncEngineConfig cncEngineConfig, IExtensionsLoader extensionsLoader, ICncAcquisitionInitializer cncAcquisitionInitializer, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
     {
+      Debug.Assert (null != cncEngineConfig);
       Debug.Assert (null != extensionsLoader);
 
+      m_cncEngineConfig = cncEngineConfig;
       m_extensionsLoader = extensionsLoader;
       m_cncAcquisitionInitializer = cncAcquisitionInitializer;
       m_assemblyLoader = assemblyLoader;
@@ -77,7 +81,7 @@ namespace Lemoine.CncEngine
         m_acquisitions = new List<Acquisition> ();
         foreach (var cncAcquisition in cncAcquisitions) {
           try {
-            var acquisition = new Acquisition (m_extensionsLoader, cncAcquisition, m_assemblyLoader, m_fileRepoClientFactory);
+            var acquisition = new Acquisition (m_cncEngineConfig, m_extensionsLoader, cncAcquisition, m_assemblyLoader, m_fileRepoClientFactory);
             m_acquisitions.Add (acquisition);
           }
           catch (Exception ex) {
@@ -87,8 +91,6 @@ namespace Lemoine.CncEngine
         return m_acquisitions;
       }
     }
-    #endregion // Constructors
-
   }
 }
 

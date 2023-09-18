@@ -33,6 +33,7 @@ using Pulse.Database.ConnectionInitializer;
 using Lemoine.Cnc.Engine;
 using Pulse.Hosting;
 using Lemoine.Hosting.AsyncInitialization;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Lem_CncCoreService
 {
@@ -64,16 +65,19 @@ namespace Lem_CncCoreService
       services
         .ConfigureFileRepoClientFactoryDefault ()
         .ConfigureDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
+      services.AddSingleton<ICncEngineConfig> (new CncEngineConfig (true, true) {
+        ConsoleProgramName = "",
+      });
 
       if (string.IsNullOrEmpty (localCncConfiguration)) {
         services.AddTransient<IEnumerable<IAdditionalChecker>> ((IServiceProvider sp) => new IAdditionalChecker[] { new ConfigUpdateCheckerWithAvailableFileRepository (), new FileRepoChecker () });
-        services.AddSingleton<ICncAcquisitionInitializer> ((IServiceProvider sp) => new LpostCncAcquisitionInitializer (true));
+        services.AddSingleton<ICncAcquisitionInitializer, LpostCncAcquisitionInitializer> ();
         services.AddSingleton<IAcquisitionSet, AcquisitionsFromCncAcquisitions> ();
         services.AddSingleton<IAcquisitionFinder, AcquisitionFinderById> (); // TODO: use another one later ?
       }
       else {
         services.AddTransient<IEnumerable<IAdditionalChecker>> ((IServiceProvider sp) => new IAdditionalChecker[] { });
-        services.AddSingleton<IAcquisitionSet> ((IServiceProvider sp) => new AcquisitionsFromLocalFile (localCncConfiguration, sp.GetService<IAssemblyLoader> (), sp.GetService<IFileRepoClientFactory> ()));
+        services.AddSingleton<IAcquisitionSet> ((IServiceProvider sp) => new AcquisitionsFromLocalFile (sp.GetRequiredService<ICncEngineConfig> (), localCncConfiguration, sp.GetService<IAssemblyLoader> (), sp.GetService<IFileRepoClientFactory> ()));
         services.AddSingleton<IAcquisitionFinder, AcquisitionFinderUnique> ();
       }
 

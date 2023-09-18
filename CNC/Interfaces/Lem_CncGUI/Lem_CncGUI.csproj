@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFrameworks>net48;net6.0-windows</TargetFrameworks>
     <OutputType>WinExe</OutputType>
     <Platforms>x86;x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
@@ -50,7 +50,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj" />
     <ProjectReference Include="..\..\..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
@@ -63,6 +62,10 @@
     <ProjectReference Include="..\..\Lemoine.Cnc.ICncModule\Lemoine.Cnc.ICncModule.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.DataRepository\Lemoine.Cnc.DataRepository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />    
   </ItemGroup>
 
   <ItemGroup>

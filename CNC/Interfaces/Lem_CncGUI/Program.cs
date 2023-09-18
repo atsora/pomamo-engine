@@ -54,6 +54,7 @@ namespace Lem_CncGUI
     static IServiceCollection CreateServices (this IServiceCollection services)
     {
       return services
+        .AddSingleton<ICncEngineConfig, CncEngineConfig> ()
         .AddSingleton<IApplicationNameProvider, ApplicationNameProviderFromProgramInfo> ()
         .CreateGuiServicesDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ())
         .SetApplicationInitializer<ApplicationInitializerCncAcquisition> ()

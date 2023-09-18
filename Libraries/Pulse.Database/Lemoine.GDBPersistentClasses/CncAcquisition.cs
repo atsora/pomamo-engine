@@ -255,7 +255,13 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Computer as Computer; }
       set { this.Computer = value; }
     }
-    
+
+    /// <summary>
+    /// <see cref="ICncAcquisition"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual CncModuleLicense License { get; set; }
+
     /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
@@ -263,7 +269,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual string SelectionText {
       get { return string.Format ("{0}: {1}",
                                   this.Id, this.Name); }
-    }    
+    }
     #endregion // Getters / Setters
     
     #region Add methods

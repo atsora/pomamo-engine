@@ -34,12 +34,14 @@
     <property name="SleepBeforeRestart" column="cncacquisitionsleepbeforerestart"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               not-null="true" />
-      <set name="MachineModules"
-           access="nosetter.camelcase-m-underscore"
-           collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IMachineModule, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
-           inverse="true" lazy="true" cascade="none">
-        <key column="cncacquisitionid" />
-        <one-to-many class="MachineModule" />
-      </set>
+    <set name="MachineModules"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IMachineModule, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         inverse="true" lazy="true" cascade="none">
+      <key column="cncacquisitionid" />
+      <one-to-many class="MachineModule" />
+    </set>
+    <property name="License" column="cncacquisitionlicense"
+              not-null="true" />
   </class>
 </hibernate-mapping>

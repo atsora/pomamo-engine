@@ -82,6 +82,9 @@ namespace Lem_CncConsole
       return services
         .ConfigureFileRepoClientFactoryDefault ()
         .AddSingleton<IApplicationNameProvider> ((IServiceProvider sp) => new ApplicationNameProviderFromString (applicationName))
+        .AddSingleton<ICncEngineConfig> ((IServiceProvider sp) => new CncEngineConfig (false, true) {
+          ConsoleProgramName = "",
+        })
         .ConfigureDatabaseWithNoNHibernateExtension<ApplicationInitializerCncAcquisition> (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true)
         .AddSingleton<IConsoleRunner<Options>, ConsoleRunner> ();
     }

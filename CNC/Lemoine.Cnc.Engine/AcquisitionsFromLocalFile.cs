@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Lemoine.Cnc.Engine;
 using Lemoine.CncEngine;
 using Lemoine.Core.Log;
 using Lemoine.Core.Plugin;
@@ -24,6 +25,7 @@ namespace Lemoine.CncEngine
   {
     readonly ILog log = LogManager.GetLogger (typeof (AcquisitionsFromLocalFile).FullName);
 
+    readonly ICncEngineConfig m_cncEngineConfig;
     readonly string m_localFilePath;
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
@@ -37,11 +39,15 @@ namespace Lemoine.CncEngine
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="cncEngineConfig">not null</param>
     /// <param name="localFilePath">Absolute or relative to the program</param>
     /// <param name="assemblyLoader">not null</param>
     /// <param name="fileRepoClientFactory">not null</param>
-    public AcquisitionsFromLocalFile (string localFilePath, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
+    public AcquisitionsFromLocalFile (ICncEngineConfig cncEngineConfig, string localFilePath, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
     {
+      Debug.Assert (null != cncEngineConfig);
+
+      m_cncEngineConfig = cncEngineConfig;
       if (Path.IsPathRooted (localFilePath)) {
         m_localFilePath = localFilePath;
       }
@@ -66,7 +72,7 @@ namespace Lemoine.CncEngine
               return new List<Acquisition> ();
             }
 
-            m_acquisition = new Acquisition (m_localFilePath, m_assemblyLoader, m_fileRepoClientFactory);
+            m_acquisition = new Acquisition (m_cncEngineConfig, m_localFilePath, m_assemblyLoader, m_fileRepoClientFactory);
           }
         }
       }

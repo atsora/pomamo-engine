@@ -57,7 +57,6 @@
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.FileRepository.Corba\Lemoine.FileRepository.Corba.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.WebDataAccess\Lemoine.WebDataAccess.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />

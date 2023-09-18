@@ -25,6 +25,8 @@ using Lemoine.Core.Plugin.TargetSpecific;
 using Lemoine.Core.Plugin;
 using Lemoine.Cnc;
 using Lemoine.FileRepository;
+using Lemoine.Model;
+using System.Xml.Linq;
 
 namespace Lemoine.CncEngine
 {
@@ -94,11 +96,11 @@ namespace Lemoine.CncEngine
 
     static readonly string CNC_MODULES_DISTANT_DIRECTORY = "CncModules";
 
-#region Members
+    #region Members
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
-    int m_cncAcquisitionId = 0;
-    string m_cncAcquisitionName;
+    readonly int m_cncAcquisitionId = 0;
+    readonly string m_cncAcquisitionName;
 
     // Run parameters
     TimeSpan m_every = DEFAULT_EVERY; // run ProcessTasks every 2 s by default
@@ -117,29 +119,21 @@ namespace Lemoine.CncEngine
     bool m_disposed = false;
 
     DateTime m_lastGarbageCollection = DateTime.UtcNow;
-#endregion
+    #endregion
 
     readonly ILog log = LogManager.GetLogger (typeof (CncDataHandler).FullName);
     ILog dataLog = LogManager.GetLogger (DATA_LOG);
 
-#region Getters / Setters
+    #region Getters / Setters
     /// <summary>
-    /// Machine ID
+    /// Cnc Acquisition ID
     /// </summary>
-    public int CncAcquisitionId
-    {
-      get { return m_cncAcquisitionId; }
-      set { m_cncAcquisitionId = value; }
-    }
+    public int CncAcquisitionId => m_cncAcquisitionId;
 
     /// <summary>
     /// Machine name
     /// </summary>
-    public string CncAcquisitionName
-    {
-      get { return m_cncAcquisitionName; }
-      set { m_cncAcquisitionName = value; }
-    }
+    public string CncAcquisitionName => m_cncAcquisitionName;
 
     /// <summary>
     /// Frequency when ProcessTasks is run
@@ -176,9 +170,9 @@ namespace Lemoine.CncEngine
     {
       get { return m_finalData; }
     }
-#endregion
+    #endregion
 
-#region Constructors
+    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// 
@@ -218,7 +212,7 @@ namespace Lemoine.CncEngine
         var cncAcquisitionIdAttributeValue = this.m_configuration
           .GetData ("/cnc:cnc/@cncacquisitionid", xmlnsManager, false, cancellationToken);
         if (!string.IsNullOrEmpty (cncAcquisitionIdAttributeValue)) {
-          this.m_cncAcquisitionId = Int32.Parse (cncAcquisitionIdAttributeValue);
+          m_cncAcquisitionId = Int32.Parse (cncAcquisitionIdAttributeValue);
         }
         else if (log.IsInfoEnabled) {
           log.Info ($"CncDataHandler: no attribute cncacquisitionid");
@@ -237,7 +231,7 @@ namespace Lemoine.CncEngine
       SetActive ();
 
       try {
-        this.m_cncAcquisitionName = this.m_configuration.GetData ("/cnc:cnc/@cncacquisitionname", xmlnsManager, false, cancellationToken) ?? "";
+        m_cncAcquisitionName = this.m_configuration.GetData ("/cnc:cnc/@cncacquisitionname", xmlnsManager, false, cancellationToken) ?? "";
       }
       catch (Exception ex) {
         log.Error ("CncDataHandler: cnc acquisition name could not be read", ex);
@@ -414,7 +408,50 @@ namespace Lemoine.CncEngine
           }
         }
       }
+
+      CheckCncModuleLicense ();
       log.Debug ("CncDataHandler: constructor completed");
+    }
+
+    void CheckCncModuleLicense ()
+    {
+#if !NET40
+      // Check the license value is correct
+      var license = m_moduleObjects.Values
+        .Select (x => this.GetCncModuleLicense (x.CncModule))
+        .Aggregate (CncModuleLicense.None, (x, y) => x | y);
+      bool configReload = false;
+      try {
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          using (var transaction = session.BeginTransaction ("Cnc.License")) {
+            var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
+              .FindById (m_cncAcquisitionId);
+            if (cncAcquisition is null) {
+              log.Fatal ($"CheckCncModuleLicense: no cnc acquisition row with id={m_cncAcquisitionId}");
+              throw new InvalidOperationException ("Unexpected behavior");
+            }
+            else if (cncAcquisition.License != license) {
+              cncAcquisition.License = license;
+              ModelDAOHelper.DAOFactory.CncAcquisitionDAO.MakePersistent (cncAcquisition);
+              transaction.Commit ();
+              configReload = true;
+            }
+            else {
+              transaction.Rollback ();
+            }
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"CncDataHandler: error while updating the license of cnc acquisition id {m_cncAcquisitionId} to {license}", ex);
+      }
+      if (configReload) {
+        if (log.IsDebugEnabled) {
+          log.Debug ("CncDataHandler: configuration was updated, reload the configuration");
+        }
+        throw new ConfigReloadRequired ();
+      }
+#endif // !NET40
     }
 
     ICncModule LoadModule (string typeQualifiedName)
@@ -552,6 +589,49 @@ namespace Lemoine.CncEngine
       return true;
     }
 
+#if !NET40
+    CncModuleLicense GetCncModuleLicense (ICncModule module)
+    {
+      return GetLicenseInfo (module) switch {
+        CncModuleLicenseInfo.None => CncModuleLicense.None,
+        CncModuleLicenseInfo.Gpl => CncModuleLicense.Gpl,
+        CncModuleLicenseInfo.Propriatory => CncModuleLicense.Proprietary,
+        _ => throw new NotImplementedException ()
+      };
+    }
+
+    CncModuleLicenseInfo GetLicenseInfo (ICncModule module)
+    {
+      try {
+        var moduleType = module.GetType ();
+        var propertyInfo = moduleType.GetProperty ("LicenseInfo");
+        if (propertyInfo is null) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetLicenseInfo: no license info for module={module}");
+          }
+          // If the name starts with Lemoine., then consider it is in GPL
+          if (moduleType.Namespace.StartsWith ("Lemoine.Cnc")) {
+            return CncModuleLicenseInfo.Gpl;
+          }
+          else {
+            return CncModuleLicenseInfo.None;
+          }
+        }
+        else {
+          var licenseInfo = (CncModuleLicenseInfo)propertyInfo.GetValue (module);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetLicenseInfo: {licenseInfo} for {module}");
+          }
+          return licenseInfo;
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"GetLicenseInfo: exception for module={module}", ex);
+        return CncModuleLicenseInfo.None;
+      }
+    }
+#endif
+
     bool IsLicenseOk (ICncModule module)
     {
       try {
@@ -666,7 +746,7 @@ namespace Lemoine.CncEngine
         }
       }
     }
-#endregion
+    #endregion
 
     /// <summary>
     /// Get a module that is associated to specific reference

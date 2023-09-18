@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Lemoine.Cnc.Engine;
 using Lemoine.CncEngine;
 using Lemoine.Core.Hosting;
 using Lemoine.Core.Log;
@@ -29,6 +30,7 @@ namespace Lem_CncConsole
 
     static readonly TimeSpan DEFAULT_EVERY = TimeSpan.FromSeconds (2);
 
+    readonly ICncEngineConfig m_cncEngineConfig;
     readonly IApplicationInitializer m_applicationInitializer;
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
@@ -40,8 +42,11 @@ namespace Lem_CncConsole
     bool m_stamp = false;
     int m_parentProcessId = 0;
 
-    public ConsoleRunner (IApplicationInitializer applicationInitializer, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, IExtensionsLoader extensionsLoader)
+    public ConsoleRunner (ICncEngineConfig cncEngineConfig, IApplicationInitializer applicationInitializer, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, IExtensionsLoader extensionsLoader)
     {
+      Debug.Assert (null != cncEngineConfig);
+
+      m_cncEngineConfig = cncEngineConfig;
       m_applicationInitializer = applicationInitializer;
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
@@ -90,10 +95,10 @@ namespace Lem_CncConsole
       // - Run !
       Acquisition acquisition;
       if (!string.IsNullOrEmpty (m_configurationFilePath)) {
-        acquisition = new Acquisition (m_configurationFilePath, m_assemblyLoader, m_fileRepoClientFactory);
+        acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_assemblyLoader, m_fileRepoClientFactory);
       }
       else if (int.MinValue != m_cncAcquisitionId) {
-        acquisition = new Acquisition (m_extensionsLoader, m_cncAcquisitionId, m_every, m_assemblyLoader, m_fileRepoClientFactory, m_staThread);
+        acquisition = new Acquisition (m_cncEngineConfig, m_extensionsLoader, m_cncAcquisitionId, m_every, m_assemblyLoader, m_fileRepoClientFactory, m_staThread);
       }
       else {
         log.Error ($"Main: no configuration file path {m_configurationFilePath} and not a valid cnc acquisition id {m_cncAcquisitionId} => nothing to do");

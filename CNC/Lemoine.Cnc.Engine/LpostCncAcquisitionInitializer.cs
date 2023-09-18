@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using Lemoine.Cnc.Engine;
 using Lemoine.Core.Log;
 using Lemoine.DataRepository;
 using Lemoine.Info;
@@ -27,22 +28,20 @@ namespace Lemoine.CncEngine
   {
     readonly ILog log = LogManager.GetLogger (typeof (LpostCncAcquisitionInitializer).FullName);
 
-    static readonly string CNC_ACQUISITION_LIST_XML = "CncAcquisitionList.xml";
+    readonly ICncEngineConfig m_cncEngineConfig;
+    readonly string m_repositoryCacheFileName;
 
-    readonly bool m_useCoreService;
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
-    public LpostCncAcquisitionInitializer (bool useCoreService)
+    /// <param name="cncEngineConfig">not null</param>
+    public LpostCncAcquisitionInitializer (ICncEngineConfig cncEngineConfig)
     {
-      m_useCoreService = useCoreService;
+      Debug.Assert (null != cncEngineConfig);
+
+      m_cncEngineConfig = cncEngineConfig;
+      m_repositoryCacheFileName = cncEngineConfig.RepositoryCacheFileName ?? "CncAcquisitionList.xml";
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Copy the distant cnc resources
@@ -90,13 +89,13 @@ namespace Lemoine.CncEngine
     {
       // - Get the list of cncAcquisitions
       log.DebugFormat ("GetRegisteredCncAcquisitions: initialize the cnc acquisitions repository");
-      string cncAcquisitionListPath = CNC_ACQUISITION_LIST_XML;
+      string cncAcquisitionListPath = m_repositoryCacheFileName;
       string cncDirectory = Path.Combine (PulseInfo.LocalConfigurationDirectory, "Cnc");
       if (Directory.Exists (cncDirectory)) {
-        cncAcquisitionListPath = Path.Combine (cncDirectory, CNC_ACQUISITION_LIST_XML);
+        cncAcquisitionListPath = Path.Combine (cncDirectory, m_repositoryCacheFileName);
       }
       else {
-        cncAcquisitionListPath = Path.Combine (PulseInfo.LocalConfigurationDirectory, CNC_ACQUISITION_LIST_XML);
+        cncAcquisitionListPath = Path.Combine (PulseInfo.LocalConfigurationDirectory, m_repositoryCacheFileName);
       }
       var cncAcquisitionsMainFactory = new ListFactory<Lemoine.GDBPersistentClasses.MachineModule> (
         new ListMaker<Lemoine.GDBPersistentClasses.MachineModule> (() => GetMachineModules (cancellationToken)));
@@ -128,7 +127,7 @@ namespace Lemoine.CncEngine
         }
       }
 
-      return cncAcquisitions.Where (a => a.UseCoreService == m_useCoreService);
+      return cncAcquisitions.Where (a => m_cncEngineConfig.FilterCncAcquisition (a));
     }
 
     IComputer GetLPost ()
@@ -175,6 +174,7 @@ namespace Lemoine.CncEngine
           IList<ICncAcquisition> cncAcquisitions =
             ModelDAOHelper.DAOFactory.CncAcquisitionDAO
             .FindAllForComputer (lpost);
+          // TODO: license restriction...
           if (log.IsDebugEnabled) {
             log.DebugFormat ("GetMachineModules: got {0} cnc acquisitions for lpost {1}", cncAcquisitions.Count, lpost.Id);
           }

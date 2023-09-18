@@ -30,6 +30,7 @@ using Lemoine.GDBMigration;
 using Lemoine.Core.Hosting.LctrChecker;
 using Lemoine.ModelDAO.LctrChecker;
 using Lemoine.Info.ConfigReader;
+using Lemoine.Cnc.Engine;
 #endif // !NET40
 
 namespace Lem_CncService
@@ -130,6 +131,13 @@ namespace Lem_CncService
 #endif // NETSTANDARD || NET48 || NETCOREAPP
         var linkedToken = linkedCancellationTokenSource.Token;
 
+#if NET40
+        var cncEngineConfig = new CncEngineConfig40 ();
+#else // !NET40
+        var cncEngineConfig = new Lemoine.Cnc.Engine.CncEngineConfig (false, true) {
+          ConsoleProgramName = "Lem_CncConsole",
+        };
+#endif // !NET40
 #if NETSTANDARD || NET48 || NETCOREAPP
         var applicationName = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Name;
         var migrationHelper = new MigrationHelper ();
@@ -228,7 +236,7 @@ namespace Lem_CncService
         IAcquisitionFinder acquisitionFinder;
 #if NETSTANDARD || NET48 || NETCOREAPP
         if (string.IsNullOrEmpty (m_localCncConfiguration)) {
-          var cncAcquisitionInitializer = new Lemoine.CncEngine.LpostCncAcquisitionInitializer (false);
+          var cncAcquisitionInitializer = new Lemoine.CncEngine.LpostCncAcquisitionInitializer (cncEngineConfig);
 
           // TODO: really manage the distant resources ?
           cncAcquisitionInitializer.CopyDistantResources (linkedToken);
@@ -244,7 +252,7 @@ namespace Lem_CncService
           }
 
           // - Get the list of cncAcquisitions
-          acquisitionListBuilder = new AcquisitionsFromCncAcquisitions (extensionsLoader, cncAcquisitionInitializer, m_assemblyLoader, m_fileRepoClientFactory);
+          acquisitionListBuilder = new AcquisitionsFromCncAcquisitions (cncEngineConfig, extensionsLoader, cncAcquisitionInitializer, m_assemblyLoader, m_fileRepoClientFactory);
           // Note: ToList () to initialize first all the threads before starting them,
           //       else there are some CORBA problems
           //       while trying to download the configuration files
@@ -252,12 +260,12 @@ namespace Lem_CncService
           acquisitionFinder = new AcquisitionFinderById ();
         }
         else {
-          acquisitionListBuilder = new AcquisitionsFromLocalFile (m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory);
+          acquisitionListBuilder = new AcquisitionsFromLocalFile (cncEngineConfig, m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory);
 
           acquisitionFinder = new AcquisitionFinderUnique ();
         }
 #else // !(NETSTANDARD || NET48 || NETCOREAPP)
-        acquisitionListBuilder = new AcquisitionsFromLocalFile (m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory);
+        acquisitionListBuilder = new AcquisitionsFromLocalFile (cncEngineConfig, m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory);
         acquisitionFinder = new AcquisitionFinderUnique ();
 #endif // !(NETSTANDARD || NET48 || NETCOREAPP)
 

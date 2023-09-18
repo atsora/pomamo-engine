@@ -15,6 +15,8 @@ using Lemoine.Core.Log;
 using Lemoine.FileRepository;
 using Lemoine.Extensions.Interfaces;
 using Lemoine.Core.Plugin;
+using Lemoine.Cnc.Engine;
+using System.Diagnostics;
 
 namespace Lem_CncGUI
 {
@@ -24,6 +26,7 @@ namespace Lem_CncGUI
   public partial class MainForm : Form
   {
     #region Members
+    readonly ICncEngineConfig m_cncEngineConfig;
     readonly IExtensionsLoader m_extensionsLoader;
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
@@ -32,19 +35,20 @@ namespace Lem_CncGUI
 
     static readonly ILog log = LogManager.GetLogger(typeof (MainForm).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
-    public MainForm(IExtensionsLoader extensionsLoader, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
+    public MainForm(ICncEngineConfig cncEngineConfig, IExtensionsLoader extensionsLoader, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
     {
+      Debug.Assert (null != cncEngineConfig);
+
+      m_cncEngineConfig = cncEngineConfig;
       m_extensionsLoader = extensionsLoader;
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
 
       InitializeComponent ();
     }
-    #endregion
 
     void OpenButtonClick(object sender, EventArgs e)
     {
@@ -66,7 +70,7 @@ namespace Lem_CncGUI
       if (DialogResult.OK == dialog.ShowDialog ()) {
         ICncAcquisition cncAcquisition = dialog.SelectedValue;
         fileLabel.Text = cncAcquisition.SelectionText + " (" + cncAcquisition.ConfigFile + ")";
-        Lemoine.CncEngine.Acquisition acquisition = new Lemoine.CncEngine.Acquisition (m_extensionsLoader, cncAcquisition, m_assemblyLoader, m_fileRepoClientFactory);
+        Lemoine.CncEngine.Acquisition acquisition = new Lemoine.CncEngine.Acquisition (m_cncEngineConfig, m_extensionsLoader, cncAcquisition, m_assemblyLoader, m_fileRepoClientFactory);
         acquisition.InitDataHandler (CancellationToken.None);
         m_dataHandler = acquisition.CncDataHandler;
         timer.Interval = (int) m_dataHandler.Every.TotalMilliseconds;
@@ -103,7 +107,7 @@ namespace Lem_CncGUI
         XMLFactory copyFactory = new XMLFactory (XmlSourceType.URI, localConfigurationFile);
         XMLBuilder copyBuilder = new XMLBuilder (localConfigurationFile);
         Repository repository = new Repository (factory, copyBuilder, copyFactory);
-        var acquisition = new Lemoine.CncEngine.Acquisition (cncAcquisition.Id, repository, m_assemblyLoader, m_fileRepoClientFactory);
+        var acquisition = new Lemoine.CncEngine.Acquisition (m_cncEngineConfig, cncAcquisition.Id, repository, m_assemblyLoader, m_fileRepoClientFactory);
         acquisition.InitDataHandler (CancellationToken.None);
         m_dataHandler = acquisition.CncDataHandler;
         timer.Interval = (int) m_dataHandler.Every.TotalMilliseconds;

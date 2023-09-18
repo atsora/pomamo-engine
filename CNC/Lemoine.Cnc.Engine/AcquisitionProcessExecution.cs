@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Lemoine.Cnc.Engine;
 using Lemoine.Core.Log;
 using Lemoine.Threading;
 
@@ -16,8 +17,6 @@ namespace Lemoine.CncEngine
   /// </summary>
   public class AcquisitionProcessExecution : ProcessClassExecution
   {
-    static readonly string CNC_CONSOLE = "Lem_CncConsole";
-
     #region Getters / Setters
     /// <summary>
     /// Associated Lemoine.Cnc.Acquisition
@@ -28,8 +27,17 @@ namespace Lemoine.CncEngine
     /// <summary>
     /// Constructor
     /// </summary>
-    public AcquisitionProcessExecution (Acquisition acquisition)
-      : base (CNC_CONSOLE, acquisition)
+    public AcquisitionProcessExecution (Acquisition acquisition, string programName)
+      : base (programName, acquisition)
+    {
+      this.Acquisition = acquisition;
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public AcquisitionProcessExecution (ICncEngineConfig cncEngineConfig, Acquisition acquisition)
+      : base (cncEngineConfig.ConsoleProgramName, acquisition)
     {
       this.Acquisition = acquisition;
     }

@@ -17,9 +17,6 @@ namespace Lemoine.CncEngine
   {
     readonly ILog log = LogManager.GetLogger (typeof (AcquisitionFinderUnique).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
