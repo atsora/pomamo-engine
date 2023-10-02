@@ -129,9 +129,6 @@ namespace LemoineServiceMonitoring
         "Lem_AutoReasonService", // [Optional] Lemoine Auto-reason Service
         "Lem_SynchronizationService", // [Optional] Lemoine Synchronization
         "Lem_AspService", // Lemoine Asp Service
-        "Lem_PFR", // Pulse File Repository
-        "MSG_Svc", // Messenging
-        "pulse_shm_svc", // System Health Monitor
         "Lem_StampingService" // Lemoine Stamping Service
       };
       AddAdditionalServices (lctrServices, ADDITIONAL_LCTR_KEY);
@@ -140,6 +137,8 @@ namespace LemoineServiceMonitoring
       var lpostServices = new List<string> {
         "Lem_CncService", // New Cnc Service
         "Lem_CncCoreService", // New Cnc Service
+        "AtrackingCncService", // Atracking Cnc Service
+        "AtrackingCncCoreService", // Atracking Cnc Core Service
         "Lem_CncDataService", // New Cnc Data Service
         "MTConnect Agent", // MTConnect agent on LPost
         "MTConnect Agent 1", // MTConnect agent on LPost
