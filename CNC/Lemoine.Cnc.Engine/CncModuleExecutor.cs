@@ -23,12 +23,12 @@ namespace Lemoine.CncEngine
     readonly ILog log = LogManager.GetLogger (typeof (CncModuleExecutor).FullName);
     static readonly ILog slog = LogManager.GetLogger (typeof (CncModuleExecutor).FullName);
 
-    readonly ICncModule m_cncModule;
+    readonly Pomamo.CncModule.ICncModule m_cncModule;
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1);
 
     #region Getters / Setters
     /// <summary>
-    /// <see cref="ICncModule"/>
+    /// <see cref="Pomamo.CncModule.ICncModule"/>
     /// </summary>
     public int CncAcquisitionId
     {
@@ -36,7 +36,7 @@ namespace Lemoine.CncEngine
     }
 
     /// <summary>
-    /// <see cref="ICncModule"/>
+    /// <see cref="Pomamo.CncModule.ICncModule"/>
     /// </summary>
     public string CncAcquisitionName
     {
@@ -51,7 +51,7 @@ namespace Lemoine.CncEngine
     /// <summary>
     /// Associated Cnc Module
     /// </summary>
-    public ICncModule CncModule => m_cncModule;
+    public Pomamo.CncModule.ICncModule CncModule => m_cncModule;
 
     /// <summary>
     /// In case this is true, skip the instructions after the start (get/set/finish)
@@ -64,7 +64,7 @@ namespace Lemoine.CncEngine
     /// Constructor
     /// </summary>
     /// <param name="cncModule">not null</param>
-    public CncModuleExecutor (ICncModule cncModule)
+    public CncModuleExecutor (Pomamo.CncModule.ICncModule cncModule)
     {
       Debug.Assert (null != cncModule);
 
@@ -91,7 +91,9 @@ namespace Lemoine.CncEngine
     /// </summary>
     public void PauseCheck ()
     {
-      m_cncModule.PauseCheck ();
+      if (m_cncModule is IChecked checkedModule) {
+        checkedModule.PauseCheck ();
+      }
     }
 
     /// <summary>
@@ -99,7 +101,9 @@ namespace Lemoine.CncEngine
     /// </summary>
     public void ResumeCheck ()
     {
-      m_cncModule.ResumeCheck ();
+      if (m_cncModule is IChecked checkedModule) {
+        checkedModule.ResumeCheck ();
+      }
     }
 
     /// <summary>
@@ -107,7 +111,9 @@ namespace Lemoine.CncEngine
     /// </summary>
     public void SetActive ()
     {
-      m_cncModule.SetActive ();
+      if (m_cncModule is IChecked checkedModule) {
+        checkedModule.SetActive ();
+      }
     }
 
     /// <summary>
@@ -116,7 +122,9 @@ namespace Lemoine.CncEngine
     /// <param name="dataHandler"></param>
     public void SetDataHandler (IChecked dataHandler)
     {
-      m_cncModule.SetDataHandler (dataHandler);
+      if (m_cncModule is Lemoine.Cnc.ICncModule lemoineModule) {
+        lemoineModule.SetDataHandler (dataHandler);
+      }
     }
 
     /// <summary>

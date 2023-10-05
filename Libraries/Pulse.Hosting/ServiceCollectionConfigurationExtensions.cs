@@ -55,15 +55,32 @@ namespace Pulse.Hosting
     static readonly string DATA_ACCESS_DEFAULT = DATA_ACCESS_WEB;
 
     /// <summary>
+    /// Configure lightly an application with:
+    /// <item>no database connection</item>
+    /// <item>dummy FileRepoClient</item>
+    /// <item>dummy extensions loader</item>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureApplicationLight<T> (this IServiceCollection services)
+      where T: class, IApplicationInitializer
+    {
+      return services
+        .AddSingleton<IAssemblyLoader, Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader> ()
+        .AddSingleton<IExtensionsLoader, ExtensionsLoaderDummy> ()
+        .AddSingleton<IFileRepoClientFactory, FileRepoClientFactoryDummy> ()
+        .AddSingleton<IApplicationInitializer, T> ();
+    }
+
+    /// <summary>
     /// Configure a default <see cref="IFileRepoClientFactory"/>
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
     public static IServiceCollection ConfigureFileRepoClientFactoryDefault (this IServiceCollection services)
     {
-      services.AddSingleton<IFileRepoClientFactory, FileRepoClientFactoryNoCorba> ();
-
-      return services;
+      return services.AddSingleton<IFileRepoClientFactory, FileRepoClientFactoryNoCorba> ();
     }
 
     /// <summary>

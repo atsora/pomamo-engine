@@ -15,6 +15,10 @@ using Lemoine.Core.Hosting;
 using Lemoine.ModelDAO.Interfaces;
 using Lemoine.Info.ApplicationNameProvider;
 using Lemoine.Info;
+using Lemoine.Core.Plugin;
+using Lemoine.Extensions.Interfaces;
+using Lemoine.Extensions;
+using Lemoine.FileRepository;
 
 namespace Lem_CncConsole
 {
@@ -68,7 +72,7 @@ namespace Lem_CncConsole
       }
 
       var applicationName = "Lem_CncConsole-" + options.CncAcquisitionId;
-      var builder = Pulse.Hosting.HostBuilder.CreatePulseConsoleHostBuilder (args, options, services => CreateServices (services, applicationName));
+      var builder = Pulse.Hosting.HostBuilder.CreatePulseConsoleHostBuilder (args, options, services => CreateServices (services, applicationName, options));
       var host = builder.Build ();
 
       var serviceProvider = host.Services;
@@ -77,16 +81,25 @@ namespace Lem_CncConsole
       await consoleRunner.RunConsoleAsync ();
     }
 
-    static IServiceCollection CreateServices (IServiceCollection services, string applicationName)
+    static IServiceCollection CreateServices (IServiceCollection services, string applicationName, Options options)
     {
-      return services
-        .ConfigureFileRepoClientFactoryDefault ()
+      var result = services
         .AddSingleton<IApplicationNameProvider> ((IServiceProvider sp) => new ApplicationNameProviderFromString (applicationName))
         .AddSingleton<ICncEngineConfig> ((IServiceProvider sp) => new CncEngineConfig (false, true) {
           ConsoleProgramName = "",
-        })
-        .ConfigureDatabaseWithNoNHibernateExtension<ApplicationInitializerCncAcquisition> (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true)
+        });
+      if (options.Light) {
+        result = result
+          .ConfigureFileRepoClientFactoryDefault ()
+          .ConfigureApplicationLight<ApplicationInitializerCncNoDatabase> ();
+      }
+      else {
+        result = result
+          .ConfigureDatabaseWithNoNHibernateExtension<ApplicationInitializerCncAcquisition> (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
+      }
+      return result
         .AddSingleton<IConsoleRunner<Options>, ConsoleRunner> ();
     }
+
   }
 }

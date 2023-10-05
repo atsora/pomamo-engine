@@ -361,6 +361,15 @@
     </layout>
   </appender>
 
+  <appender name="cncDataFileAp" type="log4net.Appender.FileAppender">
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/%property{ApplicationName}.CncData.txt" />
+    <appendToFile value="false" />
+
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%message%newline" />
+    </layout>
+  </appender>
+
   <root>
     <level value="DEBUG" />
     <!--appender-ref ref="dbgviewAp" /-->
@@ -399,6 +408,7 @@
   <logger name="Lemoine.Cnc.Data">
     <level value="INFO" />
     <appender-ref ref="dbgviewAp" />
+    <!--appender-ref ref="cncDataFileAp" /-->
   </logger>
 
   <!--logger name="Lemoine.Cnc.Data.XX">

@@ -32,10 +32,6 @@ namespace Lemoine.CncEngine
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1);
     volatile Acquisition m_acquisition = null;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -79,7 +75,6 @@ namespace Lemoine.CncEngine
 
       return new List<Acquisition> { m_acquisition };
     }
-    #endregion // Constructors
 
   }
 }

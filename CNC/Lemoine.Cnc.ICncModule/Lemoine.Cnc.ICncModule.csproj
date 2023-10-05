@@ -17,5 +17,9 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
     <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=net40" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\Pomamo.CncModule\Pomamo.CncModule.csproj" />
+  </ItemGroup>
 
 </Project>

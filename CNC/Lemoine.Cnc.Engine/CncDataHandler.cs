@@ -454,7 +454,7 @@ namespace Lemoine.CncEngine
 #endif // !NET40
     }
 
-    ICncModule LoadModule (string typeQualifiedName)
+    Pomamo.CncModule.ICncModule LoadModule (string typeQualifiedName)
     {
       TypeLoader typeLoader;
       if (null != m_fileRepoClientFactory) {
@@ -463,7 +463,7 @@ namespace Lemoine.CncEngine
       else {
         typeLoader = new TypeLoader (m_assemblyLoader, Lemoine.FileRepository.FileRepoClient.Implementation, CNC_MODULES_DISTANT_DIRECTORY);
       }
-      return typeLoader.Load<ICncModule> (typeQualifiedName);
+      return typeLoader.Load<Pomamo.CncModule.ICncModule> (typeQualifiedName);
     }
 
     void LoadModule (XmlElement moduleElement)
@@ -477,7 +477,7 @@ namespace Lemoine.CncEngine
 
       string typeName = moduleElement.GetAttribute ("type");
       log.DebugFormat ("LoadModule: about to load module of type {0}", typeName);
-      ICncModule module = LoadModule (typeName);
+      var module = LoadModule (typeName);
 
       // Check if a license is required
       if (!IsLicenseOk (module)) {
@@ -506,7 +506,9 @@ namespace Lemoine.CncEngine
         }
         var cncModuleExecutor = new CncModuleExecutor (module);
         m_moduleObjects[moduleElement] = cncModuleExecutor;
-        module.SetDataHandler (this);
+        if (module is Lemoine.Cnc.ICncModule lemoineModule) {
+          lemoineModule.SetDataHandler (this);
+        }
         m_moduleElements.Add (moduleElement);
         if (moduleElement.HasAttribute ("ref")) {
           var refLabel = moduleElement.GetAttribute ("ref");
@@ -590,7 +592,7 @@ namespace Lemoine.CncEngine
     }
 
 #if !NET40
-    CncModuleLicense GetCncModuleLicense (ICncModule module)
+    CncModuleLicense GetCncModuleLicense (Pomamo.CncModule.ICncModule module)
     {
       return GetLicenseInfo (module) switch {
         CncModuleLicenseInfo.None => CncModuleLicense.None,
@@ -600,7 +602,7 @@ namespace Lemoine.CncEngine
       };
     }
 
-    CncModuleLicenseInfo GetLicenseInfo (ICncModule module)
+    CncModuleLicenseInfo GetLicenseInfo (Pomamo.CncModule.ICncModule module)
     {
       try {
         var moduleType = module.GetType ();
@@ -632,7 +634,7 @@ namespace Lemoine.CncEngine
     }
 #endif
 
-    bool IsLicenseOk (ICncModule module)
+    bool IsLicenseOk (Pomamo.CncModule.ICncModule module)
     {
       try {
         PropertyInfo propertyInfo =
@@ -670,7 +672,7 @@ namespace Lemoine.CncEngine
     /// <param name="module"></param>
     /// <param name="name"></param>
     /// <param name="value"></param>
-    void SetProperty (ICncModule module, string name, string value)
+    void SetProperty (Pomamo.CncModule.ICncModule module, string name, string value)
     {
       PropertyInfo propertyInfo = module.GetType ().GetProperty (name);
       if (propertyInfo == null) {
@@ -740,9 +742,7 @@ namespace Lemoine.CncEngine
                                  null);
         }
         else {
-          log.ErrorFormat ("SetProperty: " +
-                           "type {0} is not supported yet",
-                           propertyInfo.PropertyType);
+          log.Error ($"SetProperty: type {propertyInfo.PropertyType} is not supported yet");
         }
       }
     }
@@ -1126,7 +1126,7 @@ namespace Lemoine.CncEngine
       }
     }
 
-    void ProcessReset (ICncModule module, XmlElement instructionElement, IDictionary<string, object> data)
+    void ProcessReset (Pomamo.CncModule.ICncModule module, XmlElement instructionElement, IDictionary<string, object> data)
     {
       Debug.Assert (null != data);
 

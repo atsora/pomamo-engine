@@ -48,6 +48,9 @@ namespace Lem_CncConsole
     [Option ('a', "stathread", HelpText = "Use a STA thread instead of a MTA thread")]
     public bool StaThread { get; set; } = false;
 
+    [Option ('l', "light", HelpText = "Light application initialization: no database connection, no file repo")]
+    public bool Light { get; set; } = false;
+
     /// <summary>
     /// Additional microsoft parameters
     /// 
