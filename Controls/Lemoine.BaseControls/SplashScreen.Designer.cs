@@ -33,7 +33,7 @@ namespace Lemoine.BaseControls
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.logoPictureBox = new System.Windows.Forms.PictureBox();
       this.panel1 = new System.Windows.Forms.Panel();
       this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
       this.buttonGo = new System.Windows.Forms.Button();
@@ -45,22 +45,22 @@ namespace Lemoine.BaseControls
       this.textPassword = new System.Windows.Forms.MaskedTextBox();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.labelMiddle = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
       this.panel1.SuspendLayout();
       this.baseLayout.SuspendLayout();
       this.tableIdentification.SuspendLayout();
       this.SuspendLayout();
       // 
-      // pictureBox1
+      // logoPictureBox
       // 
-      this.baseLayout.SetColumnSpan(this.pictureBox1, 3);
-      this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.pictureBox1.Location = new System.Drawing.Point(8, 8);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(272, 60);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-      this.pictureBox1.TabIndex = 0;
-      this.pictureBox1.TabStop = false;
+      this.baseLayout.SetColumnSpan(this.logoPictureBox, 3);
+      this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.logoPictureBox.Location = new System.Drawing.Point(8, 8);
+      this.logoPictureBox.Name = "logoPictureBox";
+      this.logoPictureBox.Size = new System.Drawing.Size(272, 60);
+      this.logoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+      this.logoPictureBox.TabIndex = 0;
+      this.logoPictureBox.TabStop = false;
       // 
       // panel1
       // 
@@ -82,7 +82,7 @@ namespace Lemoine.BaseControls
       this.baseLayout.Controls.Add(this.buttonGo, 2, 3);
       this.baseLayout.Controls.Add(this.tableIdentification, 0, 2);
       this.baseLayout.Controls.Add(this.buttonCancel, 0, 3);
-      this.baseLayout.Controls.Add(this.pictureBox1, 0, 0);
+      this.baseLayout.Controls.Add(this.logoPictureBox, 0, 0);
       this.baseLayout.Controls.Add(this.labelMiddle, 0, 1);
       this.baseLayout.Dock = System.Windows.Forms.DockStyle.Fill;
       this.baseLayout.Location = new System.Drawing.Point(0, 0);
@@ -224,7 +224,7 @@ namespace Lemoine.BaseControls
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Lemoine Settings";
       this.Load += new System.EventHandler(this.SplashScreen_Load);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).EndInit();
       this.panel1.ResumeLayout(false);
       this.baseLayout.ResumeLayout(false);
       this.tableIdentification.ResumeLayout(false);
@@ -243,6 +243,6 @@ namespace Lemoine.BaseControls
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.TableLayoutPanel tableIdentification;
     private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.PictureBox pictureBox1;
+    private System.Windows.Forms.PictureBox logoPictureBox;
   }
 }

@@ -11,6 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\..\images\logo-300x300.png" Link="logo.png" />
+    <None Include="..\..\..\images\logo-text-225x60.png" Link="logo-text.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always"   />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Resources.Extensions" />
     <PackageReference Include="System.Drawing.Common" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />

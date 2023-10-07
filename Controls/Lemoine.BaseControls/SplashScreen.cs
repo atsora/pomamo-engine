@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Lemoine.Core.Log;
@@ -279,6 +280,13 @@ namespace Lemoine.BaseControls
     private void SplashScreen_Load (object sender, EventArgs e)
     {
       checkRememberMe.Visible = m_rememberActive;
+      try {
+        var bitmap = new Bitmap ("logo-text.png");
+        logoPictureBox.Image = bitmap;
+      }
+      catch (Exception ex) { 
+        log.Warn ($"SplashScreen_Load: exception for logo, but continue", ex);
+      }
     }
   }
 }
