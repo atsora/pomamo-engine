@@ -24,7 +24,7 @@ namespace Lemoine.ServiceTools.ServicesProviders
     /// Constructor
     /// </summary>
     public PomamoServicesProviderOnLinux ()
-      : base ($"{PulseInfo.LinuxPackageName}-alert", $"{PulseInfo.LinuxPackageName}-analysis", $"{PulseInfo.LinuxPackageName}-autoreason", $"{PulseInfo.LinuxPackageName}-asp", $"{PulseInfo.LinuxPackageName}-cnccore", $"{PulseInfo.LinuxPackageName}-ocnccore", $"{PulseInfo.LinuxPackageName}-cncdata", $"{PulseInfo.LinuxPackageName}-mtconnectadapter")
+      : base ($"{PulseInfo.LinuxPackageName}-alert", $"{PulseInfo.LinuxPackageName}-analysis", $"{PulseInfo.LinuxPackageName}-autoreason", $"{PulseInfo.LinuxPackageName}-asp", $"{PulseInfo.LinuxPackageName}-cnccore", $"{PulseInfo.LinuxPackageName}-ocnccore", $"{PulseInfo.LinuxPackageName}-cncdata", $"{PulseInfo.LinuxPackageName}-mtconnectadapter", $"{PulseInfo.LinuxPackageName}-stamping", $"{PulseInfo.LinuxPackageName}-stampfilewatch")
     {
     }
   }

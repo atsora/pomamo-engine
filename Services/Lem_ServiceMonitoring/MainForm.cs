@@ -173,7 +173,13 @@ namespace LemoineServiceMonitoring
         "Lem_AspService" // Lemoine Asp Service
       };
 
-      // 1.d) Controls
+      // 1.d) Stamping
+      var stampingServices = new List<string> {
+        "Lem_StampFileWatchService",
+        "Lem_StampingService"
+      };
+
+      // 1.e) Controls
       var controlServices = new List<string> {
         "Lem_Control", // Control des services
         "Lem_SiemensToCorbaService", // Lemoine SiemensToCorba Service
@@ -181,7 +187,7 @@ namespace LemoineServiceMonitoring
         "Lem_FanucToCorbaService"
       };
 
-      // 1.e) Extras
+      // 1.f) Extras
       var otherServices = new List<string> {
         "TAO_NT_Naming_Service", // TAO
         "omninames" // Omni name service
@@ -216,6 +222,9 @@ namespace LemoineServiceMonitoring
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
       foreach (var serviceName in lpostServices) {
+        addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
+      }
+      foreach (var serviceName in stampingServices) {
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
       foreach (var serviceName in controlServices) {

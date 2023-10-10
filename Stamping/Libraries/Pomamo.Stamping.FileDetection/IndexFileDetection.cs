@@ -8,6 +8,8 @@ using System.Threading;
 using Lemoine.Threading;
 using Lemoine.Core.Log;
 using Lemoine.Core.TargetSpecific.FileRepository;
+using System.Collections.Generic;
+using Lemoine.Collections;
 
 namespace Pomamo.Stamping.FileDetection
 {
@@ -16,6 +18,12 @@ namespace Pomamo.Stamping.FileDetection
   /// </summary>
   public class IndexFileDetection : ThreadClass, IThreadClass
   {
+    /// <summary>
+    /// Config set to be used when a list of directories is targeted
+    /// </summary>
+    static readonly string INDEX_FILES_DIRECTORIES_KEY = "StampFileWatch.IndexFilesDirectories";
+    static readonly string INDEX_FILES_DIRECTORIES_DEFAULT = "";
+
     static readonly string INDEX_FILES_DIRECTORY_KEY = "StampFileWatch.IndexFilesDirectory";
     static readonly string INDEX_FILES_DIRECTORY_DEFAULT = "C:\\Users\\Public\\AppData\\Lemoine\\Pulse";
 
@@ -28,7 +36,7 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string DELAY_BEFORE_STAMPING_KEY = "StampFileWatch.DelayBeforeStamping";
     static readonly int DELAY_BEFORE_STAMPING_DEFAULT = 0;  // seconds    
 
-    readonly string m_indexFilesDirectory;
+    readonly IEnumerable<string> m_indexFilesDirectories;
     readonly bool m_useCurrentUser = false;
     readonly int m_daxDelayForISOFileCreation;
     readonly int m_delayBeforeStamping;
@@ -41,7 +49,15 @@ namespace Pomamo.Stamping.FileDetection
     /// </summary>
     public IndexFileDetection ()
     {
-      m_indexFilesDirectory = Lemoine.Info.ConfigSet.LoadAndGet<string> (INDEX_FILES_DIRECTORY_KEY, INDEX_FILES_DIRECTORY_DEFAULT);
+      var indexFilesDirectoriesConfig = Lemoine.Info.ConfigSet
+        .LoadAndGet<string> (INDEX_FILES_DIRECTORIES_KEY, INDEX_FILES_DIRECTORIES_DEFAULT);
+      if (!string.IsNullOrWhiteSpace (indexFilesDirectoriesConfig)) {
+        m_indexFilesDirectories = EnumerableString.ParseListString (indexFilesDirectoriesConfig);
+      }
+      else {
+        var indexFilesDirectory = Lemoine.Info.ConfigSet.LoadAndGet<string> (INDEX_FILES_DIRECTORY_KEY, INDEX_FILES_DIRECTORY_DEFAULT);
+        m_indexFilesDirectories = new string[] { indexFilesDirectory };
+      }
       m_useCurrentUser = Lemoine.Info.ConfigSet.LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
       m_daxDelayForISOFileCreation = Lemoine.Info.ConfigSet.LoadAndGet<int> (MAX_DELAY_FOR_ISO_FILE_CREATION_KEY, MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT);
       m_delayBeforeStamping = Lemoine.Info.ConfigSet.LoadAndGet<int> (DELAY_BEFORE_STAMPING_KEY, DELAY_BEFORE_STAMPING_DEFAULT);
@@ -61,35 +77,44 @@ namespace Pomamo.Stamping.FileDetection
     /// </summary>
     protected override void Run (CancellationToken cancellationToken)
     {
-      log.Info ($"Run: watching {m_indexFilesDirectory}");
-      // check directory exists
-      if (!Directory.Exists (m_indexFilesDirectory)) {
-        log.Info ($"Run: Directory {m_indexFilesDirectory} does not exists, try to create it");
+      foreach (var indexFilesDirectory in m_indexFilesDirectories) {
+        log.Info ($"Run: initializing {indexFilesDirectory}");
+        // check directory exists
+        if (!Directory.Exists (indexFilesDirectory)) {
+          log.Info ($"Run: Directory {indexFilesDirectory} does not exists, try to create it");
+          try {
+            log.Info ($"Run: create folder {indexFilesDirectory}");
+            Directory.CreateDirectory (indexFilesDirectory);
+            log.Info ($"Run: Directory {indexFilesDirectory} created");
+          }
+          catch (Exception ex) {
+            log.Fatal ($"Run: unable to create folder {indexFilesDirectory}", ex);
+            log.Fatal ($"Run: Directory {indexFilesDirectory} does not exists, exiting");
+            this.SetExitRequested ();
+            return;
+          }
+        }
+
+        // create directory watcher
         try {
-          log.Info ($"Run: create folder {m_indexFilesDirectory}");
-          Directory.CreateDirectory (m_indexFilesDirectory);
-          log.Info ($"Run: Directory {m_indexFilesDirectory} created");
+          var directoryWatcher = new FileSystemWatcher (indexFilesDirectory);
+
+          directoryWatcher.Changed += OnChanged;
+          directoryWatcher.Created += OnCreated;
+          directoryWatcher.Renamed += OnRenamed;
+          directoryWatcher.Deleted += OnDeleted;
+
+          // start monitoring directory
+          directoryWatcher.EnableRaisingEvents = true;
         }
         catch (Exception ex) {
-          log.Fatal ($"Run: unable to create folder {m_indexFilesDirectory}", ex);
-          log.Fatal ($"Run: Directory {m_indexFilesDirectory} does not exists, exiting");
+          log.Error ("Run: exception", ex);
           this.SetExitRequested ();
           return;
         }
       }
-    
-      // create directory watcher
+
       try {
-        var directoryWatcher = new FileSystemWatcher (m_indexFilesDirectory);
-        
-        directoryWatcher.Changed += OnChanged;
-        directoryWatcher.Created += OnCreated;
-        directoryWatcher.Renamed += OnRenamed;
-        directoryWatcher.Deleted += OnDeleted;
-
-        // start monitoring directory
-        directoryWatcher.EnableRaisingEvents = true;
-
         // to keep thread alive
         while (!cancellationToken.IsCancellationRequested && !this.ExitRequested) {
           SetActive ();

@@ -14,11 +14,8 @@ namespace Lemoine.Cnc
   [Serializable]
   public class CncAlarm
   {
-    #region Members
     string m_message = "";
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Alarm Cnc info
     /// Identify the CNC module that has created the alarm
@@ -61,9 +58,7 @@ namespace Lemoine.Cnc
     /// Warning: using Dictionary with string / object will create a parsing bug in LemDataService (Fifo) 
     /// </summary>
     public IDictionary<string, string> Properties { get; private set; } = new Dictionary<string, string> ();
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Default constructor for serialization
     /// </summary>
@@ -114,9 +109,7 @@ namespace Lemoine.Cnc
     {
       ParseString (objectStr);
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get a copy of this object
     /// </summary>
@@ -250,6 +243,5 @@ namespace Lemoine.Cnc
         }
       }
     }
-    #endregion // Methods
   }
 }
