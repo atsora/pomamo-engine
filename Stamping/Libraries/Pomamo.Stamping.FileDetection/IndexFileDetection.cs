@@ -10,6 +10,8 @@ using Lemoine.Core.Log;
 using Lemoine.Core.TargetSpecific.FileRepository;
 using System.Collections.Generic;
 using Lemoine.Collections;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Pomamo.Stamping.FileDetection
 {
@@ -31,15 +33,17 @@ namespace Pomamo.Stamping.FileDetection
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;
 
     static readonly string MAX_DELAY_FOR_ISO_FILE_CREATION_KEY = "StampFileWatch.MaxDelayForFileCreation";
-    static readonly int MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = 5;  // seconds
+    static readonly double MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = 5;  // seconds
 
     static readonly string DELAY_BEFORE_STAMPING_KEY = "StampFileWatch.DelayBeforeStamping";
-    static readonly int DELAY_BEFORE_STAMPING_DEFAULT = 0;  // seconds    
+    static readonly double DELAY_BEFORE_STAMPING_DEFAULT = 0;  // seconds    
 
     readonly IEnumerable<string> m_indexFilesDirectories;
     readonly bool m_useCurrentUser = false;
-    readonly int m_daxDelayForISOFileCreation;
-    readonly int m_delayBeforeStamping;
+    readonly TimeSpan m_daxDelayForISOFileCreation;
+    readonly TimeSpan m_delayBeforeStamping;
+    readonly ConcurrentDictionary<string, bool> m_processingPaths = new ConcurrentDictionary<string, bool> ();
+    CancellationToken m_cancellationToken = CancellationToken.None;
     DateTime m_lastReadTime = DateTime.MinValue;
 
     static readonly ILog log = LogManager.GetLogger (typeof (IndexFileDetection).FullName);
@@ -59,8 +63,10 @@ namespace Pomamo.Stamping.FileDetection
         m_indexFilesDirectories = new string[] { indexFilesDirectory };
       }
       m_useCurrentUser = Lemoine.Info.ConfigSet.LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
-      m_daxDelayForISOFileCreation = Lemoine.Info.ConfigSet.LoadAndGet<int> (MAX_DELAY_FOR_ISO_FILE_CREATION_KEY, MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT);
-      m_delayBeforeStamping = Lemoine.Info.ConfigSet.LoadAndGet<int> (DELAY_BEFORE_STAMPING_KEY, DELAY_BEFORE_STAMPING_DEFAULT);
+      m_daxDelayForISOFileCreation = TimeSpan.FromSeconds (Lemoine.Info.ConfigSet
+        .LoadAndGet (MAX_DELAY_FOR_ISO_FILE_CREATION_KEY, MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT));
+      m_delayBeforeStamping = TimeSpan.FromSeconds (Lemoine.Info.ConfigSet
+        .LoadAndGet (DELAY_BEFORE_STAMPING_KEY, DELAY_BEFORE_STAMPING_DEFAULT));
     }
 
     /// <summary>
@@ -75,8 +81,10 @@ namespace Pomamo.Stamping.FileDetection
     /// <summary>
     /// Run the directory monitoring
     /// </summary>
-    protected override void Run (CancellationToken cancellationToken)
+    protected override async void Run (CancellationToken cancellationToken)
     {
+      m_cancellationToken = cancellationToken;
+
       foreach (var indexFilesDirectory in m_indexFilesDirectories) {
         log.Info ($"Run: initializing {indexFilesDirectory}");
         // check directory exists
@@ -106,6 +114,11 @@ namespace Pomamo.Stamping.FileDetection
 
           // start monitoring directory
           directoryWatcher.EnableRaisingEvents = true;
+
+          // Parse the existing files
+          foreach (var indexFilePath in Directory.GetFiles (indexFilesDirectory)) {
+            await ProcessIndexFileAsync (indexFilePath);
+          }
         }
         catch (Exception ex) {
           log.Error ("Run: exception", ex);
@@ -131,32 +144,31 @@ namespace Pomamo.Stamping.FileDetection
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       if (m_useCurrentUser) {
         using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          ProcessOnChanged (sender, fileSystemEventArgs);
+          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
         }
       }
       else {
-        ProcessOnChanged (sender, fileSystemEventArgs);
-        ;
+        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
       }
     }
 
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       log.Info ($"OnCreated {fileSystemEventArgs.FullPath}");
       if (m_useCurrentUser) {
         using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          ProcessOnChanged (sender, fileSystemEventArgs);
+          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
         }
       }
       else {
-        ProcessOnChanged (sender, fileSystemEventArgs);
+        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
       }
     }
 
@@ -184,71 +196,95 @@ namespace Pomamo.Stamping.FileDetection
       log.Info ($"OnRenamed {fileSystemEventArgs.FullPath}");
     }
 
-
-
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    void ProcessOnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async Task ProcessOnChangedAsync (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
-      // wait to ensure file is created properly after OnCreated event.
-      Thread.Sleep (500);
       var watcherChangeType = fileSystemEventArgs.ChangeType;
-      string fileChangedFullPath = fileSystemEventArgs.FullPath;
-      // ignore duplicate event and event where file no longer exists
-      try {
-        if (File.Exists (fileChangedFullPath)) {
-          DateTime lastWriteTime = File.GetLastWriteTime (fileChangedFullPath);
-          log.Info ($"ProcessOnChanged: info: File={fileChangedFullPath}, {watcherChangeType}, {lastWriteTime}");
-          if (lastWriteTime != m_lastReadTime) {
-            m_lastReadTime = lastWriteTime;
-            var isoFilePath = GetIsoFilePathFromIndexFile (fileChangedFullPath);
+      var indexFilePath = fileSystemEventArgs.FullPath;
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ProcessOnChangedAsync: File={indexFilePath}, {watcherChangeType}");
+      }
+      await ProcessIndexFileAsync (indexFilePath);
+    }
 
-            // test file exists. ISO file may be generated AFTER index file. Wait for it.
-            bool isoFileExists = false;
-            int fileExistsCheckRetries = 0;
-            while (!isoFileExists && fileExistsCheckRetries <= m_daxDelayForISOFileCreation) {
-              isoFileExists = File.Exists (isoFilePath);
-              if (!isoFileExists) {
-                log.Info ($"ProcessOnChanged: info: wait for file {isoFilePath}");
-                Thread.Sleep (1000);
-                fileExistsCheckRetries++;
-              }
-            }
+    async Task ProcessIndexFileAsync (string indexFilePath)
+    {
+      var token = m_cancellationToken;
 
-            if (isoFileExists) {
-              if (fileExistsCheckRetries > 0) {
-                log.Info ($"ProcessOnChanged: ISO file {isoFilePath} created after {fileExistsCheckRetries}s");
-              }
-              // wait before stamping
-              if (m_delayBeforeStamping > 0) {
-                log.Info ($"ProcessOnChanged: info: wait {m_delayBeforeStamping} seconds before stamping");
-                Thread.Sleep (1000 * m_delayBeforeStamping);
-              }
-              try {
-                var fileManager = new PprFileStamper (isoFilePath);
-                fileManager.RunDirectly ();
-              }
-              finally {
-                // remove index file
-                log.Info ($"ProcessOnChanged: info: delete file {fileChangedFullPath}");
-                TryRemoveFile (fileChangedFullPath);
-              }
-            }
-            else {
-              log.Error ($"ProcessOnChanged: ISO file {isoFilePath} does not exist");
-            }
-          }
-          else {
-            log.Info ($"ProcessOnChanged: info: ignore duplicate event File={fileChangedFullPath}");
-          }
+      // wait to ensure file is created properly after OnCreated event.
+      this.Sleep (TimeSpan.FromSeconds (0.5), token);
+      if (token.IsCancellationRequested) {
+        log.Warn ($"ProcessIndexFileAsync: cancellation requested for index path={indexFilePath}");
+        return;
+      }
+
+      if (!File.Exists (indexFilePath)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessIndexFileAsync: index file {indexFilePath} does not exist any more or is not a valid file, skip it");
         }
-        else {
-          log.Info ($"ProcessOnChanged: info: ignore duplicate event File={fileChangedFullPath} no longer exists");
+        return;
+      }
+
+      try {
+        if (!m_processingPaths.TryAdd (indexFilePath, true)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessIndexFileAsync: {indexFilePath} already processing");
+          }
+          return;
         }
       }
       catch (Exception ex) {
-        log.Error ("ProcessOnChanged: exception", ex);
+        log.Error ($"ProcessOnChanged: exception in TryAdd", ex);
+        throw;
+      }
+
+      // ignore duplicate event and event where file no longer exists
+      try {
+        var ncProgramPath = GetIsoFilePathFromIndexFile (indexFilePath);
+
+        this.Sleep (m_daxDelayForISOFileCreation, token, () => File.Exists (ncProgramPath), TimeSpan.FromSeconds (1));
+        if (token.IsCancellationRequested) {
+          log.Warn ($"ProcessIndexFileAsync: cancellation requested for index path={indexFilePath}");
+          return;
+        }
+
+        if (!File.Exists (ncProgramPath)) {
+          log.Error ($"ProcessIndexFileAsync: NC program {ncProgramPath} still does not exist after {m_daxDelayForISOFileCreation}");
+        }
+        else { // File.Exists (ncProgramPath)
+          if (log.IsDebugEnabled && 0 < m_delayBeforeStamping.Ticks) {
+            log.Debug ($"ProcessIndexFileAsync: wait {m_delayBeforeStamping} before stamping for {ncProgramPath}");
+          }
+          this.Sleep (m_delayBeforeStamping, token);
+          if (token.IsCancellationRequested) {
+            log.Warn ($"ProcessIndexFileAsync: cancellation requested for index path={indexFilePath}");
+            return;
+          }
+
+          try {
+            var fileManager = new PprFileStamper (ncProgramPath);
+            await fileManager.RunAsync (token);
+          }
+          finally {
+            // remove index file
+            log.Info ($"ProcessIndexFileAsync: delete index file {indexFilePath}");
+            TryRemoveFile (indexFilePath);
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Error ("ProcessIndexFileAsync: exception", ex);
+      }
+      finally {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessIndexFileAsync: stamping for index {indexFilePath} completed");
+          this.Sleep (TimeSpan.FromSeconds (2), token);
+          if (!m_processingPaths.TryRemove (indexFilePath, out var _)) {
+            log.Error ($"ProcessIndexFileAsync: TryRemove returned false for index path={indexFilePath}");
+          }
+        }
       }
 
       SetActive ();
@@ -288,4 +324,4 @@ namespace Pomamo.Stamping.FileDetection
       }
     }
   }
-} 
+}

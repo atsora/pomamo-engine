@@ -18,13 +18,22 @@ namespace Pomamo.Stamping.FileDetection
   /// </summary>
   public class PprFileStamper : ThreadClass, IThreadClass
   {
-    static readonly string STAMPER_PROCESS_NAME_KEY = "Stamping.FileWatch.StamperProcess";
+    static readonly string STAMPER_PROCESS_NAME_KEY = "Stamping.PprFileStamper.StamperProcess";
     static readonly string STAMPER_PROCESS_NAME_DEFAULT = "Lem_Stamper.Console.exe"; // relative to the program directory, or $@"C:\Program Files\{PulseInfo.ProductFolderName}\Lem_Stamper.Console.exe";
 
     static readonly string COPY_BEFORE_KEY = "Stamping.PprFileStamper.CopyBefore";
     static readonly bool COPY_BEFORE_DEFAULT = true;
 
+    static readonly string DEFAULT_OUT_DIRECTORY_KEY = "Stamping.PprFileStamper.OutDirectory";
+    static readonly string DEFAULT_OUT_DIRECTORY_DEFAULT = ""; // Empty means in place
+
     static readonly string PPR_TAG_PREFIX_KEY = "StampFileWatch.PPR.";
+
+    /// <summary>
+    /// Max lines to check to find the PPR
+    /// </summary>
+    static readonly string MAX_LINES_PPR_KEY = "Stamping.PprFileStamper.MaxLinesPpr";
+    static readonly int MAX_LINES_PPR_DEFAULT = 100;
 
     static readonly ILog log = LogManager.GetLogger (typeof (PprFileStamper).FullName);
 
@@ -45,7 +54,7 @@ namespace Pomamo.Stamping.FileDetection
     public PprFileStamper (string isoFileFullPath)
     {
       m_isoFileFullPath = isoFileFullPath;
-      m_tempFolder = Path.Combine (Path.GetTempPath (), "StampFileWatch");
+      m_tempFolder = Path.Combine (Path.GetTempPath (), "PprFileStamper");
       
       if (log.IsDebugEnabled) {
         log.Debug ($"PprFileStamper: path={m_isoFileFullPath}, temp folder={m_tempFolder}");
@@ -275,15 +284,15 @@ namespace Pomamo.Stamping.FileDetection
     /// </summary>
     private string GetPprFromIsoFile (string programFile)
     {
-      int MAX_LINES = 100;
+      int maxLines = Lemoine.Info.ConfigSet.LoadAndGet (MAX_LINES_PPR_KEY, MAX_LINES_PPR_DEFAULT);
       int lineCount = 1;
 
       log.Info ($"GetPprFromIsoFile: info: file={programFile}");
 
       try {
         using (StreamReader reader = new StreamReader (programFile)) {
-          while (!reader.EndOfStream && lineCount < MAX_LINES) {
-            string line = reader.ReadLine ();
+          while (!reader.EndOfStream && lineCount < maxLines) {
+            var line = reader.ReadLine ();
             if (line.Contains (PPR_TAG_KEYWORD)) {
               log.Info ($"GetPprFromIsoFile: info: line found: {line}");
               var match = PPR_TAG_REGEX.Match (line);
@@ -320,8 +329,9 @@ namespace Pomamo.Stamping.FileDetection
     private string GetDestinationFromPPR (string programPpr)
     {
       log.Info ($"GetDestinationFromPPR: info: programPpr={programPpr}");
-      string programPPRKey = programPpr.Replace (' ', '_');
-      string destination = Lemoine.Info.ConfigSet.LoadAndGet<string> (PPR_TAG_PREFIX_KEY + programPPRKey, "");
+      var programPPRKey = programPpr.Replace (' ', '_');
+      var defaultOutDirectory = Lemoine.Info.ConfigSet.LoadAndGet (DEFAULT_OUT_DIRECTORY_KEY, DEFAULT_OUT_DIRECTORY_DEFAULT);
+      var destination = Lemoine.Info.ConfigSet.LoadAndGet (PPR_TAG_PREFIX_KEY + programPPRKey, defaultOutDirectory);
       log.Info ($"GetDestinationFromPPR: info: destination={destination}");
       return destination.Trim ();
     }

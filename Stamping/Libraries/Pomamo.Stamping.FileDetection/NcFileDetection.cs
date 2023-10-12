@@ -9,6 +9,8 @@ using Lemoine.Core.TargetSpecific.FileRepository;
 using System.Collections.Generic;
 using Lemoine.Collections;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Pomamo.Stamping.FileDetection
 {
@@ -20,26 +22,31 @@ namespace Pomamo.Stamping.FileDetection
     /// <summary>
     /// Config set to be used when a list of directories is targeted
     /// </summary>
-    static readonly string NC_DIRECTORIES_KEY = "NcFileDetection.Directories";
+    static readonly string NC_DIRECTORIES_KEY = "Stamping.NcFileDetection.Directories";
     static readonly string NC_DIRECTORIES_DEFAULT = "";
 
-    static readonly string NC_DIRECTORY_KEY = "NcFileDetection.Directory";
+    static readonly string NC_DIRECTORY_KEY = "Stamping.NcFileDetection.Directory";
     static readonly string NC_DIRECTORY_DEFAULT = "";
 
-    static readonly string SERVICE_USE_CURRENT_USER_KEY = "NcFileDetection.ServiceUseCurrentUser";
+    static readonly string NC_EXTENSIONS_KEY = "Stamping.NcFileDetection.Extensions";
+    static readonly string NC_EXTENSIONS_DEFAULT = "";
+
+    static readonly string SERVICE_USE_CURRENT_USER_KEY = "Stamping.NcFileDetection.ServiceUseCurrentUser";
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;
 
-    static readonly string MAX_DELAY_FOR_ISO_FILE_CREATION_KEY = "NcFileDetection.MaxDelayForFileCreation";
+    static readonly string MAX_DELAY_FOR_ISO_FILE_CREATION_KEY = "Stamping.NcFileDetection.MaxDelayForFileCreation";
     static readonly TimeSpan MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = TimeSpan.FromMinutes (1);
 
-    static readonly string DELAY_BEFORE_STAMPING_KEY = "NcFileDetection.DelayBeforeStamping";
+    static readonly string DELAY_BEFORE_STAMPING_KEY = "Stamping.NcFileDetection.DelayBeforeStamping";
     static readonly TimeSpan DELAY_BEFORE_STAMPING_DEFAULT = TimeSpan.FromSeconds (0.5);
 
-    readonly IEnumerable<string> m_indexFilesDirectories;
+    readonly IEnumerable<string> m_directories;
+    readonly IEnumerable<string> m_ncExtensions;
     readonly bool m_useCurrentUser = false;
     readonly TimeSpan m_daxDelayForIsoFileCreation;
     readonly TimeSpan m_delayBeforeStamping;
     readonly ConcurrentDictionary<string, DateTime> m_processingPaths = new ConcurrentDictionary<string, DateTime> ();
+    CancellationToken m_cancellationToken = CancellationToken.None;
 
     static readonly ILog log = LogManager.GetLogger (typeof (NcFileDetection).FullName);
 
@@ -48,14 +55,22 @@ namespace Pomamo.Stamping.FileDetection
     /// </summary>
     public NcFileDetection ()
     {
-      var indexFilesDirectoriesConfig = Lemoine.Info.ConfigSet
+      var directoriesConfig = Lemoine.Info.ConfigSet
         .LoadAndGet<string> (NC_DIRECTORIES_KEY, NC_DIRECTORIES_DEFAULT);
-      if (!string.IsNullOrWhiteSpace (indexFilesDirectoriesConfig)) {
-        m_indexFilesDirectories = EnumerableString.ParseListString (indexFilesDirectoriesConfig);
+      if (!string.IsNullOrWhiteSpace (directoriesConfig)) {
+        m_directories = EnumerableString.ParseListString (directoriesConfig);
       }
       else {
         var indexFilesDirectory = Lemoine.Info.ConfigSet.LoadAndGet<string> (NC_DIRECTORY_KEY, NC_DIRECTORY_DEFAULT);
-        m_indexFilesDirectories = new string[] { indexFilesDirectory };
+        m_directories = new string[] { indexFilesDirectory };
+      }
+      var ncExtensionsConfig = Lemoine.Info.ConfigSet
+        .LoadAndGet (NC_EXTENSIONS_KEY, NC_EXTENSIONS_DEFAULT);
+      if (string.IsNullOrEmpty (ncExtensionsConfig)) {
+        m_ncExtensions = new string[] { };
+      }
+      else {
+        m_ncExtensions = EnumerableString.ParseListString (ncExtensionsConfig);
       }
       m_useCurrentUser = Lemoine.Info.ConfigSet
         .LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
@@ -77,21 +92,23 @@ namespace Pomamo.Stamping.FileDetection
     /// <summary>
     /// Run the directory monitoring
     /// </summary>
-    protected override void Run (CancellationToken cancellationToken)
+    protected override async void Run (CancellationToken cancellationToken)
     {
-      foreach (var indexFilesDirectory in m_indexFilesDirectories) {
-        log.Info ($"Run: initializing {indexFilesDirectory}");
+      m_cancellationToken = cancellationToken;
+
+      foreach (var directory in m_directories) {
+        log.Info ($"Run: initializing {directory}");
         // check directory exists
-        if (!Directory.Exists (indexFilesDirectory)) {
-          log.Info ($"Run: Directory {indexFilesDirectory} does not exists, try to create it");
+        if (!Directory.Exists (directory)) {
+          log.Info ($"Run: Directory {directory} does not exists, try to create it");
           try {
-            log.Info ($"Run: create folder {indexFilesDirectory}");
-            Directory.CreateDirectory (indexFilesDirectory);
-            log.Info ($"Run: Directory {indexFilesDirectory} created");
+            log.Info ($"Run: create folder {directory}");
+            Directory.CreateDirectory (directory);
+            log.Info ($"Run: Directory {directory} created");
           }
           catch (Exception ex) {
-            log.Fatal ($"Run: unable to create folder {indexFilesDirectory}", ex);
-            log.Fatal ($"Run: Directory {indexFilesDirectory} does not exists, exiting");
+            log.Fatal ($"Run: unable to create folder {directory}", ex);
+            log.Fatal ($"Run: Directory {directory} does not exists, exiting");
             this.SetExitRequested ();
             return;
           }
@@ -99,7 +116,7 @@ namespace Pomamo.Stamping.FileDetection
 
         // create directory watcher
         try {
-          var directoryWatcher = new FileSystemWatcher (indexFilesDirectory);
+          var directoryWatcher = new FileSystemWatcher (directory);
 
           directoryWatcher.Changed += OnChanged;
           directoryWatcher.Created += OnCreated;
@@ -108,6 +125,11 @@ namespace Pomamo.Stamping.FileDetection
 
           // start monitoring directory
           directoryWatcher.EnableRaisingEvents = true;
+
+          // Parse the existing files
+          foreach (var filePath in Directory.GetFiles (directory)) {
+            await ProcessFileAsync (filePath);
+          }
         }
         catch (Exception ex) {
           log.Error ("Run: exception", ex);
@@ -133,31 +155,31 @@ namespace Pomamo.Stamping.FileDetection
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       if (m_useCurrentUser) {
         using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          ProcessOnChanged (sender, fileSystemEventArgs);
+          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
         }
       }
       else {
-        ProcessOnChanged (sender, fileSystemEventArgs);
+        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
       }
     }
 
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       log.Info ($"OnCreated {fileSystemEventArgs.FullPath}");
       if (m_useCurrentUser) {
         using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          ProcessOnChanged (sender, fileSystemEventArgs);
+          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
         }
       }
       else {
-        ProcessOnChanged (sender, fileSystemEventArgs);
+        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
       }
     }
 
@@ -188,15 +210,38 @@ namespace Pomamo.Stamping.FileDetection
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    void ProcessOnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async Task ProcessOnChangedAsync (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       var path = fileSystemEventArgs.FullPath;
+      await ProcessFileAsync (path);
+    }
+
+    async Task ProcessFileAsync (string path)
+    {
+      if (!File.Exists (path)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessFileAsync: file {path} does not exist any more or is not a valid file, skip it");
+        }
+        return;
+      }
+
+      if (m_ncExtensions.Any ()) {
+        var fileExtension = Path.GetExtension (path);
+        if (!m_ncExtensions.Any (x => fileExtension.Equals (x, StringComparison.InvariantCultureIgnoreCase))) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessFileAsync: file {path} with extension {fileExtension} is not accepted, allowed extensions are {m_ncExtensions}");
+          }
+          return;
+        }
+      }
+        
       var detectionDateTime = DateTime.UtcNow;
+      var token = m_cancellationToken;
 
       try {
         if (!m_processingPaths.TryAdd (path, detectionDateTime)) {
           if (log.IsDebugEnabled) {
-            log.Debug ($"ProcessOnChanged: {path} already processing");
+            log.Debug ($"ProcessFileAsync: {path} already processing");
           }
           m_processingPaths.AddOrUpdate (path, detectionDateTime, (s, d) => d < detectionDateTime ? detectionDateTime : d);
           return;
@@ -215,27 +260,36 @@ namespace Pomamo.Stamping.FileDetection
           previousLength = new FileInfo (path).Length;
         }
         catch (Exception ex) {
-          log.Debug ($"ProcessOnChanged: exception for FileInfo.Length", ex);
+          log.Debug ($"ProcessFileAsync: exception for FileInfo.Length", ex);
         }
 
         while (DateTime.UtcNow <= detectionDateTime.Add (m_daxDelayForIsoFileCreation)) {
-          Thread.Sleep (1000);
+          if (token.IsCancellationRequested) {
+            log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
+            return;
+          }
+          SetActive ();
+          this.Sleep (TimeSpan.FromSeconds (10), token);
+          if (token.IsCancellationRequested) {
+            log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
+            return;
+          }
 
           var oldDetectionDateTime = detectionDateTime;
           if (!m_processingPaths.TryGetValue (path, out detectionDateTime)) {
-            log.Fatal ($"ProcessOnChanged: {path} not found in processing paths, unexpected");
+            log.Fatal ($"ProcessFileAsync: {path} not found in processing paths, unexpected");
           }
           else if (oldDetectionDateTime < detectionDateTime) {
             if (log.IsDebugEnabled) {
-              log.Debug ($"ProcessOnChanged: new detectionDateTime {oldDetectionDateTime}=>{detectionDateTime} => continue");
+              log.Debug ($"ProcessFileAsync: new detectionDateTime {oldDetectionDateTime}=>{detectionDateTime} => continue");
             }
             continue;
           }
           else if (oldDetectionDateTime > detectionDateTime) {
-            log.Fatal ($"ProcessOnChanged: wrong detectionDateTime old={oldDetectionDateTime} > {detectionDateTime}");
+            log.Fatal ($"ProcessFileAsync: wrong detectionDateTime old={oldDetectionDateTime} > {detectionDateTime}");
           }
           else if (log.IsDebugEnabled) {
-            log.Debug ($"ProcessOnChanged: unchanged detectionDateTime {oldDetectionDateTime} => {detectionDateTime}");
+            log.Debug ($"ProcessFileAsync: unchanged detectionDateTime {oldDetectionDateTime} => {detectionDateTime}");
           }
 
           var lastWriteTime = File.GetLastWriteTime (path);
@@ -244,7 +298,7 @@ namespace Pomamo.Stamping.FileDetection
               var length = new FileInfo (path).Length;
               if (length == previousLength) {
                 if (log.IsDebugEnabled) {
-                  log.Debug ($"ProcessOnChanged: no writetime change and no length change");
+                  log.Debug ($"ProcessFileAsync: no writetime change and no length change");
                 }
                 break;
               }
@@ -253,10 +307,10 @@ namespace Pomamo.Stamping.FileDetection
               }
             }
             catch (Exception ex) {
-              log.Debug ($"ProcessOnChanged: exception for FileInfo.Length", ex);
+              log.Debug ($"ProcessFileAsync: exception for FileInfo.Length", ex);
               if (!previousLength.HasValue) {
                 if (log.IsDebugEnabled) {
-                  log.Debug ($"ProcessOnChanged: exception for FileInfo.Length, but it was unknown before", ex);
+                  log.Debug ($"ProcessFileAsync: exception for FileInfo.Length, but it was unknown before", ex);
                 }
                 break;
               }
@@ -267,25 +321,29 @@ namespace Pomamo.Stamping.FileDetection
           }
         }
 
-        Thread.Sleep (m_delayBeforeStamping);
+        this.Sleep (m_delayBeforeStamping, token);
+        if (token.IsCancellationRequested) {
+          log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
+          return;
+        }
 
         try {
           var fileStamper = new PprFileStamper (path);
-          fileStamper.RunDirectly ();
+          await fileStamper.RunAsync (token);
         }
         catch (Exception ex) {
-          log.Error ($"ProcessOnChanged: exception in PprFileStamper", ex);
+          log.Error ($"ProcessFileAsync: exception in PprFileStamper", ex);
         }
       }
       catch (Exception ex) {
-        log.Error ($"ProcessOnChanged: exception", ex);
-        throw;
+        log.Error ($"ProcessFileAsync: exception in PprFileStamper", ex);
       }
       finally {
         if (log.IsDebugEnabled) {
-          log.Debug ($"ProcessOnChanged: stamping of {path} completed");
+          log.Debug ($"ProcessFileAsync: stamping of {path} completed");
+          this.Sleep (TimeSpan.FromSeconds (2), token);
           if (!m_processingPaths.TryRemove (path, out var _)) {
-            log.Error ($"ProcessOnChanged: TryRemove returned false for path={path}");
+            log.Error ($"ProcessFileAsync: TryRemove returned false for path={path}");
           }
         }
       }

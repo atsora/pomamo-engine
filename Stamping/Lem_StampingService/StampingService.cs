@@ -19,7 +19,7 @@ namespace Lemoine.Stamping.Lem_StampingService
 
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     bool m_disposed = false;
-    IndexFileDetection m_indexFileDetection;
+    NcFileDetection m_ncFileDetection;
     readonly CheckThreadsAndProcesses m_check = new CheckThreadsAndProcesses ();
 
     static readonly ILog log = LogManager.GetLogger (typeof (StampingService).FullName);
@@ -54,20 +54,20 @@ namespace Lemoine.Stamping.Lem_StampingService
         var linkedToken = linkedCancellationTokenSource.Token;
 
         // thread to monitor the index files directory
-        m_indexFileDetection = new IndexFileDetection ();
-        m_indexFileDetection.Start (linkedToken);
+        m_ncFileDetection = new NcFileDetection ();
+        m_ncFileDetection.Start (linkedToken);
 
         // - Create the thread that checks the other threads
-        m_check.AddThread (m_indexFileDetection);
+        m_check.AddThread (m_ncFileDetection);
         m_check.NotRespondingTimeout = Lemoine.Info.ConfigSet
           .LoadAndGet<TimeSpan> (NOT_RESPONDING_TIMEOUT_KEY, NOT_RESPONDING_TIMEOUT_DEFAULT);
         m_check.Start (linkedToken);
 
         // - Check no 'exit' was requested
-        while (!m_indexFileDetection.ExitRequested && !m_check.ExitRequested) {
+        while (!m_ncFileDetection.ExitRequested && !m_check.ExitRequested) {
           await System.Threading.Tasks.Task.Delay (100, linkedToken);
           if (linkedToken.IsCancellationRequested
-            && !m_indexFileDetection.ExitRequested && !m_check.ExitRequested) {
+            && !m_ncFileDetection.ExitRequested && !m_check.ExitRequested) {
             // OnStop was called, return
             LogManager.SetApplicationStopping ();
             log.Info ($"InitializeThreadsAsync: cancellation requested (OnStop called), return");
@@ -81,7 +81,7 @@ namespace Lemoine.Stamping.Lem_StampingService
       try {
         m_check.Abort ();
         log.Fatal ("InitializeThreadsAsync: checkThreads aborted because Exit was requested");
-        m_indexFileDetection.Abort ();
+        m_ncFileDetection.Abort ();
         log.Fatal ("InitializeThreadsAsync: m_directoryManager aborted because Exit was requested");
       }
       finally {
@@ -99,7 +99,7 @@ namespace Lemoine.Stamping.Lem_StampingService
       m_cancellationTokenSource?.Cancel ();
 
       m_check?.Abort ();
-      m_indexFileDetection?.Abort ();
+      m_ncFileDetection?.Abort ();
     }
 
     #region IDisposable implementation
