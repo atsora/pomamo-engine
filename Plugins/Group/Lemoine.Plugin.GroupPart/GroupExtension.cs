@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
 using Lemoine.Core.Log;
 using Lemoine.Extensions.Business.Group;
 using Lemoine.Extensions.Business.Group.Impl;
@@ -47,13 +45,12 @@ namespace Lemoine.Plugin.GroupPart
             var effectiveOperationCurrentShift = Lemoine.Business.ServiceProvider
               .Get (businessRequest);
             part = effectiveOperationCurrentShift.Component?.Part;
+            if (part is not null) {
+              parts.Add (part);
+            }
           }
           catch (Exception ex) {
             log.Error ($"Groups.get: error when trying to get the operation of the current shift for machine {monitoredMachine.Id}", ex);
-            throw;
-          }
-          if (part is not null) {
-            parts.Add (part);
           }
         }
 
@@ -72,8 +69,8 @@ namespace Lemoine.Plugin.GroupPart
 
     public IGroup GetGroup (string groupId)
     {
-      var projectId = ExtractProjectId (groupId);
-      return GetGroup (groupId, projectId);
+      var componentId = ExtractComponentId (groupId);
+      return GetGroup (groupId, componentId);
     }
 
     IGroup GetGroup (string groupId, int componentId)
@@ -97,7 +94,7 @@ namespace Lemoine.Plugin.GroupPart
       }
     }
 
-    int ExtractProjectId (string groupId) => this.ExtractIdAfterPrefix (m_configuration.GroupCategoryPrefix, groupId);
+    int ExtractComponentId (string groupId) => this.ExtractIdAfterPrefix (m_configuration.GroupCategoryPrefix, groupId);
 
     public bool Initialize ()
     {
@@ -109,20 +106,26 @@ namespace Lemoine.Plugin.GroupPart
       return result;
     }
 
-    IGroup CreateGroup (IPart Part)
+    IGroup CreateGroup (IPart part)
     {
-      Debug.Assert (Part is not null);
+      Debug.Assert (part is not null);
 
-      var groupId = m_configuration.GroupCategoryPrefix + Part.ProjectId;
-      var groupName = Part.Display;
-      return DynamicGroup.Create (groupId,
-        groupName,
-        m_configuration.GroupCategoryReference,
-        () => GetMachines (Part.ProjectId),
-        machines => GetMachines (Part.ProjectId, machines),
-        null,
-        false,
-        zoomInMachineSelection: m_configuration.ZoomInMachineSelection);
+      try {
+        var groupId = m_configuration.GroupCategoryPrefix + part.ComponentId;
+        var groupName = part.Display;
+        return DynamicGroup.Create (groupId,
+          groupName,
+          m_configuration.GroupCategoryReference,
+          () => GetMachines (part.ComponentId),
+          machines => GetMachines (part.ComponentId, machines),
+          null,
+          false,
+          zoomInMachineSelection: m_configuration.ZoomInMachineSelection);
+      }
+      catch (Exception ex) {
+        log.Error ($"CreateGroup: exception for part componentId={part?.ComponentId}", ex);
+        throw;
+      }
     }
 
     IEnumerable<IMachine> GetMachines (int componentId)
@@ -139,15 +142,14 @@ namespace Lemoine.Plugin.GroupPart
     {
       foreach (var machine in machines) {
         var businessRequest = new Lemoine.Business.Operation.EffectiveOperationCurrentShift (machine);
-        IPart part;
+        IPart part = null;
         try {
           var effectiveOperationCurrentShift = Lemoine.Business.ServiceProvider
             .Get (businessRequest);
           part = effectiveOperationCurrentShift.Component?.Part;
         }
         catch (Exception ex) {
-          log.Error ($"GetMachines: error when trying to get the operation of the current shift for machine {machine.Id}", ex);
-          throw;
+          log.Error ($"GetMachines: error when trying to get the operation of the current shift for machine {machine.Id} but continue", ex);
         }
         if (part is not null && (part.ComponentId == componentId)) {
           yield return machine;

@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
 using Lemoine.Core.Log;
 using Lemoine.Extensions.Business.Group;
 using Lemoine.Extensions.Business.Group.Impl;

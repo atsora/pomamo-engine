@@ -22,7 +22,8 @@ namespace Lem_AnalysisService
     : Lemoine.Threading.IThreadServiceAsync, IDisposable
   {
     const string NOT_RESPONDING_TIMEOUT_KEY = "Analysis.CheckThreads.Timeout";
-    static readonly TimeSpan NOT_RESPONDING_TIMEOUT_DEFAULT = TimeSpan.FromMinutes (5);
+    static readonly TimeSpan NOT_RESPONDING_TIMEOUT_DEFAULT = TimeSpan.FromHours (1);
+    // Note: in some cases, 5 minutes is too short. There must be processes when SetActive is not set as often as it should
 
     readonly IApplicationInitializer m_applicationInitializer;
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();

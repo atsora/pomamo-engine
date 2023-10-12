@@ -81,7 +81,8 @@ namespace Lemoine.Analysis
     /// Not responding timeout in CheckThreads
     /// </summary>
     static readonly string NOT_RESPONDING_TIMEOUT_KEY = "Analysis.Activity.NotRespondingTimeout";
-    static readonly TimeSpan NOT_RESPONDING_TIMEOUT_DEFAULT = TimeSpan.FromMinutes (7);
+    static readonly TimeSpan NOT_RESPONDING_TIMEOUT_DEFAULT = TimeSpan.FromHours (1);
+    // Note: in some cases, 7 minutes is too short. There must be processes when SetActive is not set as often as it should
 
     static readonly string FILL_ANALYSIS_STATUS_IN_THREAD_POOL_KEY = "Analysis.FillAnalysisStatus.InThreadPool";
     static readonly bool FILL_ANALYSIS_STATUS_IN_THREAD_POOL_DEFAULT = true;
