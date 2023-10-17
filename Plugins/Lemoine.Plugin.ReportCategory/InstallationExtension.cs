@@ -20,6 +20,9 @@ namespace Lemoine.Plugin.ReportCategory
   {
     readonly ILog log = LogManager.GetLogger (typeof (InstallationExtension).FullName);
 
+    static readonly string REPORTS_DIRECTORY_KEY = "ReportsDirectory";
+    static readonly string REPORTS_DIRECTORY_DEFAULT = "";
+
     Configuration m_configuration;
     string m_configurationFilePath;
 
@@ -32,13 +35,18 @@ namespace Lemoine.Plugin.ReportCategory
         }
       }
 
-      var pfrDataDirectory = Lemoine.Info.PulseInfo.PfrDataDir;
-      if (!Directory.Exists (pfrDataDirectory)) {
-        log.Error ($"Initialize: directory {pfrDataDirectory} does not exist => return false");
-        return false;
+      var reportsDirectory = Lemoine.Info.ConfigSet
+        .LoadAndGet (REPORTS_DIRECTORY_KEY, REPORTS_DIRECTORY_DEFAULT);
+      if (string.IsNullOrEmpty (reportsDirectory)) {
+        var pfrDataDirectory = Lemoine.Info.PulseInfo.PfrDataDir;
+        if (!Directory.Exists (pfrDataDirectory)) {
+          log.Error ($"Initialize: directory {pfrDataDirectory} does not exist => return false");
+          return false;
+        }
+        reportsDirectory = Path.Combine (pfrDataDirectory, "report_templates");
       }
 
-      m_configurationFilePath = Path.Combine (pfrDataDirectory, "report_templates", m_configuration.ReportCategoriesFileName);
+      m_configurationFilePath = Path.Combine (reportsDirectory, m_configuration.ReportCategoriesFileName);
 
       return true;
     }
