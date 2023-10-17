@@ -74,7 +74,6 @@ namespace Lem_CncService
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncService).FullName);
 
-#region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -95,7 +94,6 @@ namespace Lem_CncService
       }
 #endif // NETSTANDARD || NET48 || NETCOREAPP
     }
-#endregion
 
 #region Service methods
     /// <summary>

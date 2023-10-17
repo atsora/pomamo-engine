@@ -344,7 +344,7 @@
   </appender>
 
  <appender name="simLogAp-XX" type="log4net.Appender.RollingFileAppender">
-    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/Lem_CncService-XX.in.simlog" />
+    <file type="log4net.Util.PatternString" value="%property{LogDirectory}/Lem_CncCoreService-XX.in.simlog" />
     <appendToFile value="true" />
     <rollingStyle value="Size" />
     <maximumFileSize value="4MB" />
