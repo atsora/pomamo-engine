@@ -172,7 +172,7 @@ namespace Lemoine.Cnc
     /// <returns></returns>
     public bool Equals (AlarmKey other)
     {
-      return Equals (other);
+      return Equals ((object)other);
     }
 
     /// <summary>
