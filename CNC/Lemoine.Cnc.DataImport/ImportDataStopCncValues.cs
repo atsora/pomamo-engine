@@ -89,10 +89,10 @@ namespace Lemoine.Cnc.DataImport
     #region Private methods
     void ImportStopCncValue (string key, DateTime dateTime)
     {
-      log.DebugFormat ("ImportStopCncValue /B " +
-                       "machineModuleId={0} key={1} dateTime={2}",
-                       m_machineModule.Id, key, dateTime);
-      
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ImportStopCncValue /B machineModuleId={m_machineModule.Id} key={key} dateTime={dateTime}");
+      }
+
       IField field = null;
       try {
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession())
@@ -101,10 +101,7 @@ namespace Lemoine.Cnc.DataImport
           
           field = daoFactory.FieldDAO.FindByCode(key);
           if (field == null) {
-            log.ErrorFormat ("ImportStopCncValue: " +
-                             "field code={0} is unknown " +
-                             "=> skip the record",
-                             key);
+            log.Error ($"ImportStopCncValue: field code={key} is unknown => skip the record");
             return;
           }
           
@@ -171,14 +168,10 @@ namespace Lemoine.Cnc.DataImport
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ImportStopCncValue: " +
-                         "exception {0} " +
-                         "=> try to reload m_cncValues",
-                         ex);
+        log.Error ($"ImportStopCncValue: exception => try to reload m_cncValues", ex);
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
-          log.FatalFormat ("ImportStopCncValue: " +
-                           "the session is still active before reloading m_cncValues");
+          log.Fatal ("ImportStopCncValue: the session is still active before reloading m_cncValues");
         }
         if (null != field) {
           m_cache.ReloadCncValue(field.Id);
