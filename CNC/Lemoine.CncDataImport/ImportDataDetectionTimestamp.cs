@@ -11,7 +11,7 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Threading;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// Description of ImportDataDetectionTimestamp.

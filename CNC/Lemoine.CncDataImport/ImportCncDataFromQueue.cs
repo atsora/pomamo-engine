@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Lemoine.Cnc.Data;
-using Lemoine.Cnc.DataImport.Cache;
+using Lemoine.CncDataImport.Cache;
 using Lemoine.Collections;
 using Lemoine.Core.ExceptionManagement;
 using Lemoine.Info;
@@ -19,7 +20,7 @@ using Lemoine.Core.Log;
 using System.Data;
 using System.Linq;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// Description of ImportCncDataFromQueue.
@@ -145,9 +146,7 @@ namespace Lemoine.Cnc.DataImport
         base.ParentProcessId = Process.GetCurrentProcess ().Id;
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ImportCncDataFromQueue: " +
-                        "error {0} while getting the parent process Id",
-                        ex);
+        log.Error ($"ImportCncDataFromQueue: error while getting the parent process Id", ex);
       }
 
       // Data import
@@ -208,25 +207,16 @@ namespace Lemoine.Cnc.DataImport
               log.Fatal ("Run: OutOfMemoryException, give up");
               throw new OutOfMemoryException ("OutOfMemoryException in ImportAllInQueue", ex);
             }
-            catch (System.Data.SQLite.SQLiteException ex) {
-              if (ex.ResultCode == System.Data.SQLite.SQLiteErrorCode.NoMem) {
-                log.Fatal ($"Run: NoMem SQLite error => exit", ex);
-                Lemoine.Core.Environment.LogAndForceExit (ex, log);
-                throw new Exception ("NoMem SQLiteException requires to exit", ex);
-              }
-              else if (ex.ErrorCode.Equals (System.Data.SQLite.SQLiteErrorCode.ReadOnly)) {
-                log.Fatal ($"Run: read-only SQLite database, you may not run the program with the sufficient priviledge => exit", ex);
-                throw new Exception ("Read-only SQLite database", ex);
-              }
-              else {
-                log.Error ($"Run: SQLite exception => try again", ex);
-              }
-            }
             catch (Exception ex) {
               if (ExceptionTest.RequiresExit (ex, log)) {
                 log.Fatal ($"Run: exception inner {ex.InnerException} requires to exit", ex);
                 Lemoine.Core.Environment.LogAndForceExit (ex, log);
                 throw new Exception ("Exception requires to exit", ex);
+              }
+              else if (ExceptionTest.IsUnauthorized (ex, log)) {
+                log.Fatal ($"Run: read-only SQLite database, you may not run the program with the sufficient priviledge => exit", ex);
+                Lemoine.Core.Environment.LogAndForceExit (ex, log);
+                throw new Exception ("Read-only SQLite database", ex);
               }
               else if (ExceptionTest.IsTemporaryWithDelay (ex, log)) {
                 var temporaryWithDelayExceptionSleepTime = Lemoine.Info.ConfigSet

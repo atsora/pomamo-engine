@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-using Lemoine.Cnc.DataImport;
+using Lemoine.CncDataImport;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Threading;

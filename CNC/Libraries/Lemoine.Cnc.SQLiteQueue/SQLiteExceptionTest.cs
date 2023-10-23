@@ -126,7 +126,21 @@ namespace Lemoine.Cnc.SQLiteQueue
     /// <returns></returns>
     public bool IsUnauthorized (Exception ex, ILog logger)
     {
-      // Not related to the database today
+      if (ex is System.Data.SQLite.SQLiteException) {
+        System.Data.SQLite.SQLiteException sqliteException = ex as System.Data.SQLite.SQLiteException;
+        if (sqliteException.ErrorCode.Equals (SQLiteErrorCode.ReadOnly)) {
+          if (logger != null) {
+            logger.Fatal ("IsUnauthorized: exception with error code ReadOnly in SQLite", sqliteException);
+          }
+          return true;
+        }
+        else {
+          if (logger != null) {
+            logger.Info ("IsUnauthorized: not a SQLite ReadOnly exception", sqliteException);
+          }
+        }
+      }
+
       return false;
     }
     #endregion

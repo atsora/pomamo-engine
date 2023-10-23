@@ -12,7 +12,7 @@ using Lemoine.Core.Log;
 using System.Linq;
 using System.Threading;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// Description of ImportDataSequenceMilestone.

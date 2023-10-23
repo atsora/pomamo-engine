@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -11,11 +12,11 @@ using Lemoine.Extensions;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
-using Lemoine.Cnc.DataImport.Cache;
+using Lemoine.CncDataImport.Cache;
 using System.Threading;
 // using Lemoine.Conversion;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// Description of ImportDataCncValues.
@@ -241,9 +242,7 @@ namespace Lemoine.Cnc.DataImport
 
             switch (field.CncDataAggregationType) {
               case CncDataAggregationType.None:
-                log.WarnFormat ("ImportCncValue: " +
-                                "aggregation type is None, " +
-                                "=> skip the record");
+                log.Warn ("ImportCncValue: aggregation type is None, => skip the record");
                 transaction.Commit (); // Although there is nothing to do
                 return;
               case CncDataAggregationType.NewValue: {
@@ -273,7 +272,7 @@ namespace Lemoine.Cnc.DataImport
                     }
                   }
                   catch (Exception ex) {
-                    log.Warn ($"ImportCncValue: Convert field: field={field.Id}, exception={ex} ");
+                    log.Warn ($"ImportCncValue: Convert field: field={field.Id}, exception={ex}", ex);
                     v = datas[0].Value;
                   }
                   */
@@ -290,9 +289,9 @@ namespace Lemoine.Cnc.DataImport
                           newCncValues[range] = v;
                         }
                       }
-                      catch (InvalidCastException) { // New value can't be converted correctly
+                      catch (InvalidCastException ex) { // New value can't be converted correctly
                         // => skip it
-                        log.ErrorFormat ("ImportCncValue: InvalidCastException, skip it");
+                        log.Error ("ImportCncValue: InvalidCastException, skip it", ex);
                       }
                       beginDateTime = data.DateTime;
                       endDateTime = data.DateTime;
@@ -305,9 +304,9 @@ namespace Lemoine.Cnc.DataImport
                       newCncValues[range] = v;
                     }
                   }
-                  catch (InvalidCastException) { // New value can't be converted correctly
+                  catch (InvalidCastException ex) { // New value can't be converted correctly
                                                  // => skip it
-                    log.ErrorFormat ("ImportCncValue: InvalidCastException, skip it");
+                    log.Error ("ImportCncValue: InvalidCastException, skip it", ex);
                   }
                 }
                 break;
@@ -354,10 +353,7 @@ namespace Lemoine.Cnc.DataImport
         } // OpenSession
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ImportCncValue: " +
-                         "exception {0} " +
-                         "=> try to reload m_cncValues",
-                         ex);
+        log.Error ("ImportCncValue: exception => try to reload m_cncValues", ex);
         /* // This assert does not work with the unit tests. TODO: find an alternative
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         */
@@ -434,8 +430,8 @@ namespace Lemoine.Cnc.DataImport
         try {
           newCncValue.Value = v;
         }
-        catch (InvalidCastException) {
-          log.ErrorFormat ("ProcessCncValueNew: InvalidCastException for field {0} and value {1}", field.Id, v);
+        catch (InvalidCastException ex) {
+          log.Error ($"ProcessCncValueNew: InvalidCastException for field {field.Id} and value {v}", ex);
           // Invalid the cache
           if ((null != cncValue) && !cncValue.Stopped) {
             cncValue.End = beginDateTime;
@@ -548,9 +544,7 @@ namespace Lemoine.Cnc.DataImport
       Debug.Assert (cncValue == null || cncValue.End <= dateTime);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("ProcessCncValueAverage: /B " +
-                         "new value={0} at {1} for field={2} and machineModule={3}",
-                         v, dateTime, field, m_machineModule);
+        log.Debug ($"ProcessCncValueAverage: /B new value={v} at {dateTime} for field={field} and machineModule={m_machineModule}");
       }
 
       // cncValue (-) / previousAverageValue (x) / currentAverageValue (+)
@@ -559,7 +553,7 @@ namespace Lemoine.Cnc.DataImport
 
       // Get or create previousAverageValue
       ICncValue previousAverageValue = m_cache.GetPreviousValue (field);
-      if (null == previousAverageValue) {
+      if (previousAverageValue is null) {
         if (null != cncValue) {
           previousAverageValue =
             ModelDAOHelper.ModelFactory.CreateCncValue (m_machineModule, field, cncValue.Begin);
@@ -576,15 +570,11 @@ namespace Lemoine.Cnc.DataImport
         }
         m_cache.SetPreviousValue (field, previousAverageValue);
       }
-      Debug.Assert (null == cncValue || cncValue.Begin.Second.Equals (previousAverageValue.Begin.Second));
-      // Note: the number of ms may not be the same between cncValue and previousAverageValue
-      // because cncValue may be drawn from the database which does not keep the number of ms
 
       // Get or create currentAverageValue and update it
       ICncValue currentAverageValue = m_cache.GetCurrentValue (field);
       if (null == currentAverageValue) { // No current average value, set a new one
         if (null != cncValue) {
-          Debug.Assert (cncValue.Begin.Equals (previousAverageValue.Begin));
           Debug.Assert (cncValue.End >= previousAverageValue.End);
           DateTime currentAverageValueBegin;
           if (cncValue.Stopped) {
@@ -604,7 +594,7 @@ namespace Lemoine.Cnc.DataImport
         currentAverageValue.Deviation = 0.0;
         Debug.Assert (!currentAverageValue.Stopped);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ProcessCncValueAverage: " +
+          log.DebugFormat ($"ProcessCncValueAverage: " +
                            "initialize currentAverageValue with " +
                            "{0}-{1} avg={2} dev={3}",
                            currentAverageValue.Begin, currentAverageValue.End,
@@ -620,7 +610,7 @@ namespace Lemoine.Cnc.DataImport
           SetActive ();
         }
       }
-      else { // update it
+      else { // currentAverageValue is not null, update it
         Debug.Assert (currentAverageValue.End <= dateTime);
         Debug.Assert (null != previousAverageValue);
         Debug.Assert (previousAverageValue.End <= currentAverageValue.Begin);
@@ -658,10 +648,7 @@ namespace Lemoine.Cnc.DataImport
         // Take the decision if it should be the start of a new CncValue
         // or if the data must be combined
         if (null == cncValue) { // No previous CncValue => this should not happen, else length is 0
-          log.FatalFormat ("ProcessCncValueAverage: " +
-                           "current average length {0} > 0 and no previous cncValue " +
-                           "(this should not happen)",
-                           currentAverageValue.Length);
+          log.Fatal ($"ProcessCncValueAverage: current average length {currentAverageValue.Length} > 0 and no previous cncValue (this should not happen)");
           throw new Exception ("Code error");
         }
         Debug.Assert (null != cncValue);
@@ -669,14 +656,24 @@ namespace Lemoine.Cnc.DataImport
           // First time the minimum duration has been reached
           // current becomes the previous one
           // => start a new CncValue
-          log.InfoFormat ("ProcessCncValueAverage: " +
-                          "first time with minimum duration " +
-                          "=> current becomes previous");
+          log.Info ("ProcessCncValueAverage: first time with minimum duration => current becomes previous");
           Debug.Assert (previousAverageValue.Begin.Equals (currentAverageValue.Begin));
           cncValue.Stopped = false;
           cncValue.End = currentAverageValue.End;
           cncValue.Double = currentAverageValue.Double;
           cncValue.Deviation = currentAverageValue.Deviation;
+          m_cache.SaveOrUpdateCncValue (cncValue);
+        }
+        else if (previousAverageValue.Stopped) {
+          log.Info ($"ProcessCncValueAverage: previous average value was stopped => start a new cnc value (should probably not happen) => start a new cnc value");
+          cncValue.Stopped = previousAverageValue.Stopped;
+          cncValue.End = previousAverageValue.End;
+          cncValue.Double = previousAverageValue.Double;
+          cncValue.Deviation = previousAverageValue.Deviation;
+          m_cache.SaveOrUpdateCncValue (cncValue);
+
+          cncValue = currentAverageValue;
+          m_cache.SetCncValue (field, cncValue);
           m_cache.SaveOrUpdateCncValue (cncValue);
         }
         else if (((previousAverageValue.Double + field.LimitDeviation) < currentAverageValue.Double)
@@ -709,6 +706,7 @@ namespace Lemoine.Cnc.DataImport
           m_cache.SaveOrUpdateCncValue (cncValue);
         }
 
+        // Update of previous / current
         previousAverageValue = ModelDAOHelper.ModelFactory.CreateCncValue (m_machineModule, field, cncValue.Begin);
         previousAverageValue.Stopped = cncValue.Stopped;
         previousAverageValue.End = cncValue.End;
@@ -734,6 +732,7 @@ namespace Lemoine.Cnc.DataImport
           CombineAverageCncValues (ref cncValue, previousAverageValue, currentAverageValue);
           cncValue.Stopped = false;
           m_cache.SaveOrUpdateCncValue (cncValue);
+          // Leave previous and current unchanged
         }
       }
     }
@@ -852,7 +851,7 @@ namespace Lemoine.Cnc.DataImport
       Debug.Assert (v1.Field.Id.Equals (v2.Field.Id));
       Debug.Assert (v1.End <= v2.Begin);
 
-      if (null == v) {
+      if (v is null) {
         v = ModelDAOHelper.ModelFactory.CreateCncValue (v1.MachineModule, v1.Field, v1.Begin);
       }
 

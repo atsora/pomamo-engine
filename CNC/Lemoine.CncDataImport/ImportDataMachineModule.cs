@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -11,7 +12,7 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Threading;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// Description of ImportDataMachineModule.
@@ -26,7 +27,6 @@ namespace Lemoine.Cnc.DataImport
     IMachineModuleActivity m_machineModuleActivity = null;
     #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
@@ -37,9 +37,7 @@ namespace Lemoine.Cnc.DataImport
     /// Maximum duration of a gap
     /// </summary>
     TimeSpan MaxMachineModuleActivityGap { get; set; }
-    #endregion // Getters / Setters
     
-    #region Constructors
     /// <summary>
     /// Constructors
     /// </summary>
@@ -57,7 +55,6 @@ namespace Lemoine.Cnc.DataImport
       MaxMachineModuleActivityGap = Info.ConfigSet.LoadAndGet<TimeSpan>(
         "MaxMachineModuleActivityGap", DEFAULT_MAX_MACHINE_MODULE_ACTIVITY_GAP);
     }
-    #endregion // Constructors
     
     #region IImportData implementation
     /// <summary>
@@ -129,9 +126,9 @@ namespace Lemoine.Cnc.DataImport
             log.Info ("ImportMachineModuleActivity: " +
                       "initialize m_machineModuleActivity");
             m_machineModuleActivity = daoFactory.MachineModuleActivityDAO.GetLast (m_machineModule);
-            log.DebugFormat ("ImportMachineModuleActivity: " +
-                             "initialize m_machineModuleActivity with {0}",
-                             m_machineModuleActivity);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ImportMachineModuleActivity: initialize m_machineModuleActivity with {m_machineModuleActivity}");
+            }
           }
           if (null != m_machineModuleActivity) {
             if (beginDateTime < m_machineModuleActivity.End) {
@@ -161,41 +158,47 @@ namespace Lemoine.Cnc.DataImport
             "CncData.ImportMachineModuleActivity.Insert", TransactionLevel.ReadCommitted))
           {
             if (null != m_machineModuleActivity && machineMode.Id == m_machineModuleActivity.MachineMode.Id) {
-              log.DebugFormat ("ImportMachineModuleActivity: " +
-                               "same machine mode => make the activity longer " +
-                               "if the gap is not too big");
+              log.Debug ("ImportMachineModuleActivity: same machine mode => make the activity longer if the gap is not too big");
               Debug.Assert (m_machineModuleActivity.End <= beginDateTime); // Condition check made above
               if (beginDateTime.Subtract (m_machineModuleActivity.End) <= MaxMachineModuleActivityGap) { // => make the activity longer
-                log.DebugFormat ("ImportMachineModuleActivity: " +
-                                 "the gap {0}-{1} is short => make the activity longer",
-                                 m_machineModuleActivity.End, beginDateTime);
+                if (log.IsDebugEnabled) {
+                  log.DebugFormat ("ImportMachineModuleActivity: " +
+                                   "the gap {0}-{1} is short => make the activity longer",
+                                   m_machineModuleActivity.End, beginDateTime);
+                }
                 if (0 != m_machineModuleActivity.Id) { // Re-associate the activity
                   daoFactory.MachineModuleActivityDAO.UpgradeLock (m_machineModuleActivity); // Ok, beause read-committed transaction
                 }
                 m_machineModuleActivity.End = endDateTime;
                 if (!m_machineModuleActivity.Begin.Equals(m_machineModuleActivity.End) &&
                     TimeSpan.FromSeconds (1) <= m_machineModuleActivity.Length) { // Only if the length of the activity is long enough to be stored in the database
-                  log.DebugFormat ("ImportMachineModuleActivity: " +
-                                   "the activity {0} {1}-{2} is long enough to be stored",
-                                   m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                  if (log.IsDebugEnabled) {
+                    log.DebugFormat ("ImportMachineModuleActivity: " +
+                                     "the activity {0} {1}-{2} is long enough to be stored",
+                                     m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                  }
                   Debug.Assert (m_machineModuleActivity.Begin < m_machineModuleActivity.End);
                   daoFactory.MachineModuleActivityDAO.MakePersistent (m_machineModuleActivity);
                 }
               }
               else { // m_maxFactGap < dateTime - m_machineModuleActivity.End => create a gap
-                log.DebugFormat ("ImportMachineModuleActivity: " +
-                                 "dateTime {0} long after activity.End {1} " +
-                                 "=> create a gap",
-                                 beginDateTime, m_machineModuleActivity.End);
+                if (log.IsDebugEnabled) {
+                  log.DebugFormat ("ImportMachineModuleActivity: " +
+                                   "dateTime {0} long after activity.End {1} " +
+                                   "=> create a gap",
+                                   beginDateTime, m_machineModuleActivity.End);
+                }
                 m_machineModuleActivity = ModelDAOHelper.ModelFactory.CreateMachineModuleActivity(
                   m_machineModule, beginDateTime, endDateTime, machineMode);
                 
                 // record it right now, only if it has a not null length
                 if (!m_machineModuleActivity.Begin.Equals (m_machineModuleActivity.End) &&
                     TimeSpan.FromSeconds (1) <= m_machineModuleActivity.Length) { // Only if the length of the activity is long enough to be stored in the database
-                  log.DebugFormat ("ImportMachineModuleActivity: " +
-                                   "the activity {0} {1}-{2} is long enough to be stored",
-                                   m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                  if (log.IsDebugEnabled) {
+                    log.DebugFormat ("ImportMachineModuleActivity: " +
+                                     "the activity {0} {1}-{2} is long enough to be stored",
+                                     m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                  }
                   Debug.Assert (m_machineModuleActivity.Begin < m_machineModuleActivity.End);
                   daoFactory.MachineModuleActivityDAO.MakePersistent (m_machineModuleActivity);
                 }
@@ -205,10 +208,12 @@ namespace Lemoine.Cnc.DataImport
               // - Make the previous activity longer in case there is no gap
               if (null != m_machineModuleActivity &&
                   beginDateTime.Subtract (m_machineModuleActivity.End) <= MaxMachineModuleActivityGap) {
-                log.DebugFormat ("ImportMachineModuleActivity: " +
-                                 "new machine mode and the the gap {0}-{1} is short " +
-                                 "=> make the previous activity longer",
-                                 m_machineModuleActivity.End, beginDateTime);
+                if (log.IsDebugEnabled) {
+                  log.DebugFormat ("ImportMachineModuleActivity: " +
+                                   "new machine mode and the the gap {0}-{1} is short " +
+                                   "=> make the previous activity longer",
+                                   m_machineModuleActivity.End, beginDateTime);
+                }
                 if (0 != m_machineModuleActivity.Id) { // Re-associate the fact
                   daoFactory.MachineModuleActivityDAO.UpgradeLock (m_machineModuleActivity); // Ok, because read-committed transaction
                 }
@@ -227,9 +232,11 @@ namespace Lemoine.Cnc.DataImport
               // record it right now, only if it has a not null length
               if (!m_machineModuleActivity.Begin.Equals (m_machineModuleActivity.End) &&
                   TimeSpan.FromSeconds (1) <= m_machineModuleActivity.Length) { // Only if the length of the activity is long enough to be stored in the database
-                log.DebugFormat ("ImportMachineModuleActivity: " +
-                                 "the activity {0} {1}-{2} is long enough to be stored",
-                                 m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                if (log.IsDebugEnabled) {
+                  log.DebugFormat ("ImportMachineModuleActivity: " +
+                                   "the activity {0} {1}-{2} is long enough to be stored",
+                                   m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                }
                 Debug.Assert (m_machineModuleActivity.Begin < m_machineModuleActivity.End);
                 daoFactory.MachineModuleActivityDAO.MakePersistent (m_machineModuleActivity);
               }
@@ -240,10 +247,7 @@ namespace Lemoine.Cnc.DataImport
         }
       }
       catch (Exception ex) { // Reload m_machineModuleActivity
-        log.ErrorFormat ("ImportMachineModuleActivity: " +
-                         "exception {0} " +
-                         "=> try to reload m_machineModuleActivity {1}",
-                         ex, m_machineModuleActivity);
+        log.Error ($"ImportMachineModuleActivity: exception => try to reload m_machineModuleActivity {m_machineModuleActivity}", ex);
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.FatalFormat ("ImportMachineModuleActivity: " +
@@ -311,10 +315,7 @@ namespace Lemoine.Cnc.DataImport
           }
         }
         catch (Exception ex) {
-          log.ErrorFormat ("ImportMachineModuleActivity: " +
-                           "reloading activity {0} failed with {1} " +
-                           "=> set it to null",
-                           m_machineModuleActivity, ex);
+          log.Error ($"ImportMachineModuleActivity: reloading activity {m_machineModuleActivity} failed => set it to null", ex);
           m_machineModuleActivity = null;
         }
       }

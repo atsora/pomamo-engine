@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,7 +16,7 @@ using Lemoine.Extensions.Cnc;
 using Lemoine.Extensions;
 using System.Threading;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// This class import cnc variables in tables: cncvariable and optionally some others from extensions
@@ -117,7 +118,7 @@ namespace Lemoine.Cnc.DataImport
         return ImportSingleCncVariable (key, v, startDateTime);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("TryImportSingleCncVariable: {0}", ex);
+        log.Error ("TryImportSingleCncVariable: exception in ImportSingleCncVariable", ex);
         if (ex.Message.ToLowerInvariant ().Contains ("serializ")) {
           // This is unexpected... but not blocking... just skip the data
           log.FatalFormat ("TryImportSingleCncVariable: serialization failure of {0} for key {1} at {2}, but continue",

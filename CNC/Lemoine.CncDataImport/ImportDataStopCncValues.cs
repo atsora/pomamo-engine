@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,7 +13,7 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Threading;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// Description of ImportDataStopCncValue.
@@ -123,11 +124,9 @@ namespace Lemoine.Cnc.DataImport
           ICncValue cncValue = m_cache.GetStoredCncValue(field, dateTime);
           if (cncValue == null) {
             // Note: if null == cncvalue, we do not take care of it
-            log.DebugFormat ("ImportStopCncValue: " +
-                             "key={0} " +
-                             "stored cncValue is already null " +
-                             "=> do nothing",
-                             key);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ImportStopCncValue: key={key} stored cncValue is already null => do nothing");
+            }
           }
           else { // null != cncValue
             if (dateTime < cncValue.End) {
@@ -145,9 +144,9 @@ namespace Lemoine.Cnc.DataImport
             using (IDAOTransaction transaction = session.BeginTransaction(
               "CncData.ImportStopCncValue", TransactionLevel.ReadCommitted))
             {
-              log.DebugFormat ("ImportStopCncValue: " +
-                               "stop cncValue {0} for key={1}",
-                               cncValue, key);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"ImportStopCncValue: stop cncValue {cncValue} for key={key}");
+              }
               cncValue.Stopped = true;
               ModelDAOHelper.DAOFactory.CncValueDAO.MakePersistent (cncValue);
               transaction.Commit ();

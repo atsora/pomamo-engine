@@ -70,7 +70,7 @@
     <ProjectReference Include="..\..\Libraries\Pulse.Database\Pulse.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\Lemoine.Cnc.DataImport\Lemoine.Cnc.DataImport.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Lemoine.CncDataImport\Lemoine.CncDataImport.csproj" />
     <ProjectReference Include="..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 

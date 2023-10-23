@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -10,10 +11,11 @@ using Lemoine.Info;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
-using Lemoine.Cnc.DataImport.Cache;
+using Lemoine.CncDataImport.Cache;
 using System.Threading;
+using Lemoine.Cnc;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// This class translates cnc alarms coming from machines to slots in the database
@@ -158,7 +160,8 @@ namespace Lemoine.Cnc.DataImport
       if (list == null || list.Count == 0) {
         // Currently no alarms, the cache is cleared
         m_cache.Clear (null);
-      } else {
+      }
+      else {
         // Import alarms
         ImportAlarms (list, startDatetime, endDatetime);
       }
@@ -243,10 +246,12 @@ namespace Lemoine.Cnc.DataImport
           else {
             // Check the gap and possibly clear the cache for this alarm
             if (startDatetime.Subtract (cachedCncAlarm.DateTimeRange.Upper.Value) > MaxAlarmGap) {
-              log.DebugFormat ("ImportCncAlarm: there is a gap {0}-{1}, " +
-                               "discontinue the CncAlarm {2}",
-                               cachedCncAlarm.DateTimeRange.Upper.Value, startDatetime,
-                               cachedCncAlarm);
+              if (log.IsDebugEnabled) {
+                log.DebugFormat ("ImportCncAlarm: there is a gap {0}-{1}, " +
+                                 "discontinue the CncAlarm {2}",
+                                 cachedCncAlarm.DateTimeRange.Upper.Value, startDatetime,
+                                 cachedCncAlarm);
+              }
               m_cache.ResetCncAlarm (alarmKey);
             }
           }
@@ -264,9 +269,8 @@ namespace Lemoine.Cnc.DataImport
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (IDAOTransaction transaction = session.BeginTransaction (
             "CncData.ImportCncAlarm", TransactionLevel.ReadCommitted)) {
-            foreach (var key in keyAlarms.Keys) {
-              currentAlarmKey = key;
-              ProcessCncAlarm (key, keyAlarms[key], startDatetime, endDatetime);
+            foreach (var keyAlarm in keyAlarms) {
+              ProcessCncAlarm (keyAlarm.Key, keyAlarm.Value, startDatetime, endDatetime);
             }
             transaction.Commit ();
           }
@@ -274,7 +278,7 @@ namespace Lemoine.Cnc.DataImport
       }
       catch (Exception ex) {
         // Report
-        log.ErrorFormat ("ImportAlarms: exception {0} => try to reload m_cncAlarms", ex);
+        log.Error ($"ImportAlarms: exception => try to reload m_cncAlarms", ex);
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.FatalFormat ("ImportAlarms: the session is still active before reloading m_cncAlarms");

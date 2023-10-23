@@ -9,8 +9,9 @@ using System.Linq;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
+using Lemoine.Cnc;
 
-namespace Lemoine.Cnc.DataImport.Cache
+namespace Lemoine.CncDataImport.Cache
 {
   /// <summary>
   /// Description of CacheAlarm.
@@ -148,8 +149,7 @@ namespace Lemoine.Cnc.DataImport.Cache
             }
           }
           catch (Exception ex) {
-            log.ErrorFormat ("ReloadCncAlarm: reloading cncalarm {0} failed with {1} => reset it",
-                             cncAlarm, ex);
+            log.Error ($"ReloadCncAlarm: reloading cncalarm {cncAlarm} failed => reset it", ex);
             ResetCncAlarm(alarmKey);
           }
         }

@@ -4,7 +4,7 @@
 
 using System;
 using System.Threading;
-using Lemoine.Cnc.DataImport;
+using Lemoine.CncDataImport;
 using Lemoine.GDBPersistentClasses;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
@@ -120,6 +120,9 @@ namespace Lem_CncDataConsole
     public void Run (CancellationToken cancellationToken)
     {
       Lemoine.GDBPersistentClasses.DaySlotCache.Activate ();
+
+      Lemoine.Core.ExceptionManagement.ExceptionTest
+        .AddTest (new Lemoine.Cnc.SQLiteQueue.SQLiteExceptionTest ());
 
       IMachineModule machineModule;
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {

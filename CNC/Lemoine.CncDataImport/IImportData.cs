@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Lemoine.Cnc.Data;
 
-namespace Lemoine.Cnc.DataImport
+namespace Lemoine.CncDataImport
 {
   /// <summary>
   /// Description of IImportData.

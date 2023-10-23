@@ -11,7 +11,7 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Linq;
 
-namespace Lemoine.Cnc.DataImport.Cache
+namespace Lemoine.CncDataImport.Cache
 {
   /// <summary>
   /// Description of CacheCncValue.
@@ -32,10 +32,6 @@ namespace Lemoine.Cnc.DataImport.Cache
 
     static readonly ILog log = LogManager.GetLogger(typeof (CacheCncValue).FullName);
 
-    #region Members
-    #endregion // Members
-    
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -50,7 +46,6 @@ namespace Lemoine.Cnc.DataImport.Cache
         .Where (extension => extension.Initialize (m_machineModule))
         .ToList ();
     }
-    #endregion // Constructors
     
     #region Methods
     /// <summary>
@@ -230,10 +225,7 @@ namespace Lemoine.Cnc.DataImport.Cache
             }
           }
           catch (Exception ex) {
-            log.ErrorFormat ("ReloadCncValue: " +
-                             "reloading cncvalue {0} failed with {1} " +
-                             "=> reset it",
-                             cncValue, ex);
+            log.Error ($"ReloadCncValue: reloading cncvalue {cncValue} failed => reset it", ex);
             ResetCncValue(fieldId);
           }
           // Reset some previous and average values, because we are not sure they are still accurate
