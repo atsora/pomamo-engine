@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -33,7 +34,7 @@ namespace LemoineServiceMonitoring
     static void Main (string[] args)
     {
 #if NET6_0_OR_GREATER
-      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader ());
+      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader (mixed6432: true));
       LogManager.AddLog4net ();
 
       Application.EnableVisualStyles ();

@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
+﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies
 // Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
@@ -20,11 +20,11 @@ using Microsoft.Extensions.Hosting;
 namespace Lemoine.Service
 {
   /// <summary>
-  /// BackgroundService worker for a IThreadService
+  /// BackgroundService worker for a IThreadService for a mixed 64/32-bit system
   /// 
   /// <see cref="IThreadService"/>
   /// </summary>
-  public class AsyncThreadServiceWorker : BackgroundService
+  public class AsyncThreadServiceWorker6432 : BackgroundService
   {
     readonly ILog log = LogManager.GetLogger (typeof (AsyncThreadServiceWorker).FullName);
 
@@ -33,9 +33,9 @@ namespace Lemoine.Service
     /// <summary>
     /// Constructor
     /// </summary>
-    public AsyncThreadServiceWorker (IConfiguration configuration, IThreadServiceAsync service)
+    public AsyncThreadServiceWorker6432 (IConfiguration configuration, IThreadServiceAsync service)
     {
-      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader (configuration));
+      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader (configuration, mixed6432: true));
       m_service = service;
     }
 

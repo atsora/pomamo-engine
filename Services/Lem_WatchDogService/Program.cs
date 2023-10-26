@@ -75,7 +75,7 @@ namespace Lem_WatchDogService
           return;
         }
 
-        var builder = Lemoine.Core.Extensions.Hosting.HostBuilder.CreateLemoineServiceHostBuilder<WatchDogService> (args, options, services => services.CreateServices ());
+        var builder = Lemoine.Core.Extensions.Hosting.HostBuilder.CreateLemoineServiceHostBuilder6432<WatchDogService> (args, options, services => services.CreateServices ());
         if (options.Interactive) {
           await builder.RunConsoleAsync ();
         }

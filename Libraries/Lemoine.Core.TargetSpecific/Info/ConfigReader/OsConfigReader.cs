@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,7 +16,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   /// <summary>
   /// OsConfigReader
   /// </summary>
-  public sealed class OsConfigReader: IOsConfigReader
+  public sealed class OsConfigReader : IOsConfigReader
   {
     readonly ILog log = LogManager.GetLogger (typeof (OsConfigReader).FullName);
 
@@ -28,8 +29,10 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     /// <summary>
     /// Constructor
     /// </summary>
-    public OsConfigReader ()
+    /// <param name="mixed6432">Consider a mixed system 64/32 bits, meaning the configuration keys are checked in both the 64 bits and 32 bits parts</param>
+    public OsConfigReader (bool mixed6432 = false)
     {
+      var defaultOsConfigReader = new DefaultOsConfigReader ();
 #if NETSTANDARD || NET48 || NETCOREAPP
       m_isWindows = RuntimeInformation.IsOSPlatform (OSPlatform.Windows);
       m_isLinux = RuntimeInformation.IsOSPlatform (OSPlatform.Linux);
@@ -45,10 +48,21 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       m_multiConfigReader.Add (new EnvironmentConfigReader ());
       m_multiConfigReader.Add (new EnvironmentRawConfigReader ());
       if (m_isWindows) {
-        var registryConfigReader = new RegistryConfigReader ();
-        m_multiConfigReader.Add (registryConfigReader);
-        var commonApplicationData = System.Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
-        var commonConfigDirectory = Path.Combine (commonApplicationData, "Lemoine", "PULSE");
+        if (mixed6432
+#if NET5_0_OR_GREATER
+        && OperatingSystem.IsWindows ()
+#endif // NET5_0_OR_GREATER
+          ) {
+          var registryConfigReader64 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry64);
+          m_multiConfigReader.Add (registryConfigReader64);
+          var registryConfigReader32 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry32);
+          m_multiConfigReader.Add (registryConfigReader32);
+        }
+        else {
+          var registryConfigReader = new RegistryConfigReader ();
+          m_multiConfigReader.Add (registryConfigReader);
+        }
+        var commonConfigDirectory = defaultOsConfigReader.GetCommonConfigDirectory ();
         var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (commonConfigDirectory, $"{PulseInfo.LinuxPackageName}.options.d"));
         m_multiConfigReader.Add (directoryConfigReader);
         m_multiConfigReader.Add (new OdbcConfigReader ());
@@ -66,7 +80,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 #if NETCOREAPP
       m_multiConfigReader.Add (new DefaultCoreConfigReader ());
 #endif // NETCOREAPP
-      m_multiConfigReader.Add (new DefaultOsConfigReader ());
+      m_multiConfigReader.Add (defaultOsConfigReader);
     }
 
 #if NETSTANDARD || NET48 || NETCOREAPP
@@ -74,8 +88,9 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     /// Os specific configuration using Microsoft.Extensions.IConfiguration
     /// </summary>
     /// <param name="configuration"></param>
-    public OsConfigReader (Microsoft.Extensions.Configuration.IConfiguration configuration)
+    public OsConfigReader (Microsoft.Extensions.Configuration.IConfiguration configuration, bool mixed6432 = false)
     {
+      var defaultOsConfigReader = new DefaultOsConfigReader ();
 #if NETSTANDARD || NET48 || NETCOREAPP
       m_isWindows = RuntimeInformation.IsOSPlatform (OSPlatform.Windows);
       m_isLinux = RuntimeInformation.IsOSPlatform (OSPlatform.Linux);
@@ -87,10 +102,21 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       m_multiConfigReader.Add (new EnvironmentConfigReader ()); // Is it necessary since CoreConfigReader already supports some kind of environment variables ?
       m_multiConfigReader.Add (new EnvironmentRawConfigReader ());
       if (m_isWindows) {
-        var registryConfigReader = new RegistryConfigReader ();
-        m_multiConfigReader.Add (registryConfigReader);
-        var commonApplicationData = System.Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
-        var commonConfigDirectory = Path.Combine (commonApplicationData, "Lemoine", "PULSE");
+        if (mixed6432
+#if NET5_0_OR_GREATER
+        && OperatingSystem.IsWindows ()
+#endif // NET5_0_OR_GREATER
+          ) {
+          var registryConfigReader64 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry64);
+          m_multiConfigReader.Add (registryConfigReader64);
+          var registryConfigReader32 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry32);
+          m_multiConfigReader.Add (registryConfigReader32);
+        }
+        else {
+          var registryConfigReader = new RegistryConfigReader ();
+          m_multiConfigReader.Add (registryConfigReader);
+        }
+        var commonConfigDirectory = defaultOsConfigReader.GetCommonConfigDirectory ();
         var directoryConfigReader = new OptionsDirectoryConfigReader (Path.Combine (commonConfigDirectory, $"{PulseInfo.LinuxPackageName}.options.d"));
         m_multiConfigReader.Add (directoryConfigReader);
         m_multiConfigReader.Add (new OdbcConfigReader ());
@@ -108,7 +134,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 #if NETCOREAPP
       m_multiConfigReader.Add (new DefaultCoreConfigReader ());
 #endif // NETCOREAPP
-      m_multiConfigReader.Add (new DefaultOsConfigReader ());
+      m_multiConfigReader.Add (defaultOsConfigReader);
     }
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 
@@ -122,7 +148,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     {
       return m_multiConfigReader.Get<T> (key);
     }
-#endregion // Constructors
+    #endregion // Constructors
 
     /// <summary>
     /// <see cref="IPersistentConfigWriter"/>

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,7 +25,8 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   {
     readonly bool m_lazy = false;
     readonly bool m_supportedPlatform = false;
-    readonly RegistryKey m_root;
+    readonly RegistryHive m_root;
+    readonly RegistryView m_view;
     readonly string m_key;
     readonly IDictionary<string, object> m_keyValue = new ConcurrentDictionary<string, object> ();
     readonly IDictionary<string, byte> m_notFoundKeys = new ConcurrentDictionary<string, byte> (); // Because there is no concurrent set
@@ -44,8 +46,18 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     /// Constructor considering the default key REGISTRY_KEY
     /// </summary>
     public RegistryConfigReader (bool lazy = false)
-      : this (REGISTRY_KEY, lazy)
+      : this (REGISTRY_KEY, lazy: lazy)
     {
+    }
+
+    /// <summary>
+    /// Constructor considering the default key REGISTRY_KEY
+    /// </summary>
+    /// <param name="registryView"></param>
+    /// <param name="lazy"></param>
+    public RegistryConfigReader (RegistryView registryView, bool lazy = false)
+      : this (REGISTRY_KEY, registryView, lazy)
+    { 
     }
 
     /// <summary>
@@ -54,7 +66,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     /// <param name="key"></param>
     /// <param name="lazy"></param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-    RegistryConfigReader (string key, bool lazy = false)
+    RegistryConfigReader (string key, RegistryView registryView = default, bool lazy = false)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
 #if NETSTANDARD
@@ -62,6 +74,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       m_supportedPlatform = false;
       m_root = null;
       m_key = null;
+      m_view = null;
       throw new ConfigKeyNotFoundException (key, "Not supported compilation", new NotSupportedException ("Net Standard"));
 #else // !NETSTANDARD
       m_supportedPlatform =
@@ -76,15 +89,14 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 #endif // NET5_0_OR_GREATER
         ) {
         m_lazy = lazy;
-        if (null != Registry.LocalMachine) {
-          m_root = Registry.LocalMachine;
-        }
-        else { // null == Registry.LocalMachine
+        if (Registry.LocalMachine is null) {
           Debug.Assert (false);
           log.Fatal ("RegistryConfigReader: root is null, it must be compiled for .NET core or .NET Framework");
           throw new NotSupportedException ();
         }
+        m_root = RegistryHive.LocalMachine;
         m_key = key;
+        m_view = registryView;
         if (!m_lazy) {
           Load ();
         }
@@ -98,19 +110,21 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     void Load ()
     {
       try {
-        using (RegistryKey odbcKey = m_root.OpenSubKey (m_key)) {
-          if (null == odbcKey) {
-            log.Error ($"Load: key {m_key} does not exist");
-          }
-          else { // null != odbcKey
-            string[] names = odbcKey.GetValueNames ();
-            foreach (string name in names) {
-              var v = odbcKey.GetValue (name);
-              if (v is null) {
-                m_notFoundKeys[name] = new byte ();
-              }
-              else {
-                m_keyValue[name] = v;
+        using (var rootKey = RegistryKey.OpenBaseKey (m_root, m_view)) {
+          using (RegistryKey odbcKey = rootKey.OpenSubKey (m_key)) {
+            if (null == odbcKey) {
+              log.Error ($"Load: key {m_key} does not exist");
+            }
+            else { // null != odbcKey
+              string[] names = odbcKey.GetValueNames ();
+              foreach (string name in names) {
+                var v = odbcKey.GetValue (name);
+                if (v is null) {
+                  m_notFoundKeys[name] = new byte ();
+                }
+                else {
+                  m_keyValue[name] = v;
+                }
               }
             }
           }
@@ -127,20 +141,22 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     object ReadKey (string key)
     {
       try {
-        using (RegistryKey odbcKey = m_root.OpenSubKey (m_key)) {
-          if (odbcKey is null) {
-            log.Warn ($"RegistryConfigReader: key {m_key} does not exist");
-            m_notFoundKeys[key] = new byte ();
-            throw new ConfigKeyNotFoundException (key);
-          }
-          var v = odbcKey.GetValue (key);
-          if (v is null) {
-            m_notFoundKeys[key] = new byte ();
-            throw new ConfigKeyNotFoundException (key);
-          }
-          else {
-            m_keyValue[key] = v;
-            return v;
+        using (var rootKey = RegistryKey.OpenBaseKey (m_root, m_view)) {
+          using (RegistryKey odbcKey = rootKey.OpenSubKey (m_key)) {
+            if (odbcKey is null) {
+              log.Warn ($"RegistryConfigReader: key {m_key} does not exist");
+              m_notFoundKeys[key] = new byte ();
+              throw new ConfigKeyNotFoundException (key);
+            }
+            var v = odbcKey.GetValue (key);
+            if (v is null) {
+              m_notFoundKeys[key] = new byte ();
+              throw new ConfigKeyNotFoundException (key);
+            }
+            else {
+              m_keyValue[key] = v;
+              return v;
+            }
           }
         }
       }
@@ -157,20 +173,22 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     bool WriteKey (string name, object v, bool overwrite)
     {
       try {
-        using (RegistryKey odbcKey = m_root.OpenSubKey (m_key, true)) {
-          if (!overwrite) {
-            var existingValue = odbcKey.GetValue (name);
-            if (null != existingValue) {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"WriteKey: {name}={existingValue} already in registry and overwrite={overwrite} => return false");
+        using (var rootKey = RegistryKey.OpenBaseKey (m_root, m_view)) {
+          using (RegistryKey odbcKey = rootKey.OpenSubKey (m_key, true)) {
+            if (!overwrite) {
+              var existingValue = odbcKey.GetValue (name);
+              if (null != existingValue) {
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"WriteKey: {name}={existingValue} already in registry and overwrite={overwrite} => return false");
+                }
+                return false;
               }
-              return false;
             }
+            odbcKey.SetValue (name, v);
+            m_keyValue[name] = v;
+            m_notFoundKeys.Remove (name);
+            return true;
           }
-          odbcKey.SetValue (name, v);
-          m_keyValue[name] = v;
-          m_notFoundKeys.Remove (name);
-          return true;
         }
       }
       catch (System.Security.SecurityException ex) {
@@ -189,10 +207,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     void RemoveKey (string name)
     {
       try {
-        using (RegistryKey odbcKey = m_root.OpenSubKey (m_key, true)) {
-          odbcKey.DeleteValue (name);
-          m_keyValue.Remove (name);
-          m_notFoundKeys[name] = new byte ();
+        using (var rootKey = RegistryKey.OpenBaseKey (m_root, m_view)) {
+          using (RegistryKey odbcKey = rootKey.OpenSubKey (m_key, true)) {
+            odbcKey.DeleteValue (name);
+            m_keyValue.Remove (name);
+            m_notFoundKeys[name] = new byte ();
+          }
         }
       }
       catch (Exception ex) {

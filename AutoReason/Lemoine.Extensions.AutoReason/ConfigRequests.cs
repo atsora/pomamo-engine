@@ -81,7 +81,7 @@ namespace Lemoine.Extensions.AutoReason
           var reason = ModelDAOHelper.DAOFactory.ReasonDAO
         .FindAll ()
         .FirstOrDefault (r => string.Equals (translationKey, r.TranslationKey, StringComparison.InvariantCultureIgnoreCase));
-          if (null == reason) {
+          if (reason is null) {
             Debug.Assert (null != translationValue);
             var reasonGroup = ModelDAO.ModelDAOHelper.DAOFactory.ReasonGroupDAO.FindById ((int)ReasonGroupId.Auto);
             AddTranslation (translationKey, translationValue);

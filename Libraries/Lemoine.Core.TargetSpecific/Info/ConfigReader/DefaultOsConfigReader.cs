@@ -28,7 +28,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 
     const string PFR_DATA_DIRECTORY_KEY = "PfrDataDirectory";
     static readonly string LINUX_PFR_DATA_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/pfrdata"; // PFR_DATA_DIRECTORY_KEY
-    // Windows: 'MainServerInstallDir'\l_ctr\pfrdata
+    // Windows: 'MainServerInstallDir'\pfrdata
 
     const string SQL_REQUESTS_DIRECTORY_KEY = "SqlRequestsDirectory";
     static readonly string LINUX_SQL_REQUESTS_DIRECTORY = $"/usr/share/{PulseInfo.LinuxPackageName}/sql"; // SQL_REQUESTS_DIRECTORY_KEY
@@ -112,7 +112,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       return path;
     }
 
-    string GetCommonConfigDirectory ()
+    public string GetCommonConfigDirectory ()
     {
       string path;
       if (m_isWindows) {
