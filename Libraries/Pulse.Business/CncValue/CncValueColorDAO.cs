@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -96,7 +97,6 @@ namespace Lemoine.Business.CncValue
         if (left.DateTimeRange.IsAdjacentTo (right.DateTimeRange)) {
           if (!left.DateTimeRange.IsStrictlyLeftOf (right.DateTimeRange)) {
             log.Fatal ($"IsMergeable: adjacent but {left} is not strictly left of {right}");
-            Debug.Assert (left.DateTimeRange.IsStrictlyLeftOf (right.DateTimeRange));
             return false;
           }
           return true;
@@ -110,7 +110,6 @@ namespace Lemoine.Business.CncValue
         else { // Check the gap between them
           if (!left.DateTimeRange.IsStrictlyLeftOf (right.DateTimeRange)) {
             log.Fatal ($"IsMergeable: {left} is not strictly left of {right}");
-            Debug.Assert (left.DateTimeRange.IsStrictlyLeftOf (right.DateTimeRange));
             return false;
           }
           Debug.Assert (right.DateTimeRange.Lower.HasValue);

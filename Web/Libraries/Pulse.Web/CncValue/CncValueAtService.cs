@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -23,19 +24,16 @@ namespace Pulse.Web.CncValue
   public class CncValueAtService
     : GenericCachedService<CncValueAtRequestDTO>
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (CncValueColorService).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (CncValueColorService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
     public CncValueAtService ()
-      : base(Lemoine.Core.Cache.CacheTimeOut.PastLong)
+      : base (Lemoine.Core.Cache.CacheTimeOut.PastLong)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -46,7 +44,7 @@ namespace Pulse.Web.CncValue
     {
       try {
         var at = ConvertDTO.IsoStringToDateTimeUtc (requestDTO.At).Value;
-        
+
         TimeSpan cacheTimeSpan;
         if (at < DateTime.UtcNow) { // Old / Past
           cacheTimeSpan = CacheTimeOut.PastLong.GetTimeSpan ();
@@ -54,16 +52,13 @@ namespace Pulse.Web.CncValue
         else { // Current or future
           cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
         }
-        log.DebugFormat ("GetCacheTimeOut: " +
-                         "cacheTimeSpan is {0} for url={1}",
-                         cacheTimeSpan, url);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
+        }
         return cacheTimeSpan;
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetCacheTimeOut: " +
-                         "exception {0} " +
-                         "=> fallback: {1}",
-                         ex, CacheTimeOut.PastLong);
+        log.Error ($"GetCacheTimeOut: exception => fallback: {CacheTimeOut.PastLong}", ex);
         return CacheTimeOut.PastLong.GetTimeSpan ();
       }
     }
@@ -73,88 +68,89 @@ namespace Pulse.Web.CncValue
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public override object GetWithoutCache(CncValueAtRequestDTO request)
+    public override object GetWithoutCache (CncValueAtRequestDTO request)
     {
-      CncValueAtResponseDTO response = new CncValueAtResponseDTO (request.At);
-      
-      DateTime at = ConvertDTO.IsoStringToDateTimeUtc (request.At).Value;
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        int machineId = request.MachineId;
-        IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
-          .FindByIdWithMainMachineModulePerformanceFieldUnit (machineId);
-        if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
-          return new ErrorDTO ("No monitored machine with the specified ID",
-                               ErrorStatus.WrongRequestParameter);
-        }
-        
-        var mainMachineModule = machine.MainMachineModule;
-        if (null == mainMachineModule) {
-          log.InfoFormat ("GetWithoutCache: " +
-                          "no main machine module for monitored machine with ID {0}",
-                          machineId);
-        }
-        
-        var performanceField = machine.PerformanceField;
-        if (null == performanceField) {
-          log.InfoFormat ("GetWithoutCache: " +
-                          "no performance field for monitored machine with ID {0}",
-                          machine.Id);
-        }
-        
-        IEnumerable<IMachineModule> machineModules = machine.MachineModules
-          .OrderBy (machineModule => IsMainMachineModule (machineModule, mainMachineModule) ? 0 : 1);
-        
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.CncValueAt"))
-        {
-          foreach (var machineModule in machineModules) {
-            var cncValues = ModelDAOHelper.DAOFactory.CncValueDAO.FindAtWithFieldUnit (machineModule, at)
-              .OrderBy (cncValue => cncValue.Field.Display)
-              .OrderBy (cncValue => IsPerformanceField (cncValue.Field, performanceField) ? 0 : 1);
-            if (cncValues.Any ()) {
-              var byMachineModule =
-                new CncValueAtByMachineModuleDTO (machineModule,
-                                                  IsMainMachineModule (machineModule, mainMachineModule));
-              response.ByMachineModule.Add (byMachineModule);
-              foreach (var cncValue in cncValues) {
-                var byField =
-                  new CncValueAtByMachineModuleFieldDTO (cncValue.Field,
-                                                         IsPerformanceField (cncValue.Field, performanceField));
-                if (cncValue.Field.Id.Equals ((int)FieldId.StackLight)) {
-                  byField.Value = new StackLightDTO ((StackLight)cncValue.Value);
+      try {
+        var response = new CncValueAtResponseDTO (request.At);
+
+        var at = ConvertDTO.IsoStringToDateTimeUtc (request.At).Value;
+
+        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          var machineId = request.MachineId;
+          var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindByIdWithMainMachineModulePerformanceFieldUnit (machineId);
+          if (machine is null) {
+            log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}");
+            return new ErrorDTO ("No monitored machine with the specified ID",
+                                 ErrorStatus.WrongRequestParameter);
+          }
+
+          var mainMachineModule = machine.MainMachineModule;
+          if (mainMachineModule is null) {
+            log.Info ($"GetWithoutCache: no main machine module for monitored machine with ID {machineId}");
+          }
+
+          var performanceField = machine.PerformanceField;
+          if (performanceField is null) {
+            log.Info ($"GetWithoutCache: no performance field for monitored machine with ID {machine.Id}");
+          }
+
+          IEnumerable<IMachineModule> machineModules = machine.MachineModules
+            .OrderBy (machineModule => IsMainMachineModule (machineModule, mainMachineModule) ? 0 : 1);
+          if (log.IsErrorEnabled && !machineModules.Any ()) {
+            log.Error ($"GetWithoutCache: machine id={machineId} with no machine module");
+          }
+
+          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.CncValueAt")) {
+            foreach (var machineModule in machineModules) {
+              var cncValues = ModelDAOHelper.DAOFactory.CncValueDAO.FindAtWithFieldUnit (machineModule, at)
+                .OrderBy (cncValue => cncValue.Field.Display)
+                .OrderBy (cncValue => IsPerformanceField (cncValue.Field, performanceField) ? 0 : 1);
+              if (cncValues.Any ()) {
+                var byMachineModule =
+                  new CncValueAtByMachineModuleDTO (machineModule, IsMainMachineModule (machineModule, mainMachineModule));
+                response.ByMachineModule.Add (byMachineModule);
+                foreach (var cncValue in cncValues) {
+                  var byField =
+                    new CncValueAtByMachineModuleFieldDTO (cncValue.Field, IsPerformanceField (cncValue.Field, performanceField));
+                  if (cncValue.Field.Id.Equals ((int)FieldId.StackLight)) {
+                    byField.Value = new StackLightDTO ((StackLight)cncValue.Value);
+                  }
+                  else {
+                    byField.Value = cncValue.Value;
+                  }
+                  byField.Color = Lemoine.Business.ServiceProvider
+                    .Get (new Lemoine.Business.Field.FieldValueColor (cncValue)); ;
+                  byMachineModule.ByField.Add (byField);
                 }
-                else {
-                  byField.Value = cncValue.Value;
-                }
-                byField.Color = Lemoine.Business.ServiceProvider
-                  .Get (new Lemoine.Business.Field.FieldValueColor (cncValue));;
-                byMachineModule.ByField.Add (byField);
+              }
+              else if (log.IsDebugEnabled) {
+                log.Debug ($"GetWithoutCache: no cnc value for machineModule id={machineModule.Id} at {at}");
               }
             }
           }
         }
+
+        return response;
       }
-      
-      return response;
+      catch (Exception ex) {
+        log.Error ($"GetWithoutCache: exception", ex);
+        throw;
+      }
     }
-    
+
     bool IsMainMachineModule (IMachineModule machineModule, IMachineModule mainMachineModule)
     {
       Debug.Assert (null != machineModule);
-      
-      return (null != mainMachineModule) && machineModule.Id.Equals (mainMachineModule.Id);
+
+      return (null != mainMachineModule) && (machineModule.Id == mainMachineModule.Id);
     }
-    
+
     bool IsPerformanceField (IField field, IField performanceField)
     {
       Debug.Assert (null != field);
-      
-      return (null != field) && (null != performanceField) && field.Id.Equals (performanceField.Id);
+
+      return (null != field) && (null != performanceField) && (field.Id == performanceField.Id);
     }
-    #endregion // Methods
   }
 }

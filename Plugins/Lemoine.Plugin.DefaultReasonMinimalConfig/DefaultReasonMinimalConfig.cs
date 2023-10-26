@@ -64,7 +64,6 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
 
     ILog log = LogManager.GetLogger (typeof (DefaultReasonMinimalConfig).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -72,9 +71,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
     {
       m_logActive = Lemoine.Info.ConfigSet.LoadAndGet (LOG_ACTIVE_KEY, LOG_ACTIVE_DEFAULT);
     }
-    #endregion // Constructors
 
-    #region Methods
     void ResetCache ()
     {
       m_cacheRange = new UtcDateTimeRange ();
@@ -87,7 +84,6 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
       return m_batch && m_cacheIsShort.HasValue
         && m_cacheRange.ContainsRange (range);
     }
-    #endregion // Methods
 
     #region IReasonExtension implementation
     /// <summary>
@@ -176,16 +172,19 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
           .FindById ((int)MachineModeId.Active);
         if (m_activeMachineMode is null) {
           log.Error ($"Initialize: no active machine mode with id={MachineModeId.Active} => return false");
+          return false;
         }
         m_unknownMachineMode = ModelDAOHelper.DAOFactory.MachineModeDAO
           .FindById ((int)MachineModeId.Unknown);
         if (m_unknownMachineMode is null) {
           log.Error ($"Initialize: no unknown machine mode with id={MachineModeId.Unknown} => return false");
+          return false;
         }
         m_inactiveMachineMode = ModelDAOHelper.DAOFactory.MachineModeDAO
           .FindById ((int)MachineModeId.Inactive);
         if (m_inactiveMachineMode is null) {
           log.Error ($"Initialize: no inactive machine mode with id={MachineModeId.Inactive} => return false");
+          return false;
         }
       }
       m_maximumShortDuration = m_configuration.MaximumShortDuration;
@@ -988,7 +987,12 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
         }
         // Note: normally not required because of the early fetch of the reason and reason group in FindWithReasonGroup
         foreach (var reason in reasons) {
-          ModelDAOHelper.DAOFactory.Initialize (reason.ReasonGroup);
+          if (reason is null) {
+            log.Error ($"GetUsedReasons: a reason is null");
+          }
+          else {
+            ModelDAOHelper.DAOFactory.Initialize (reason.ReasonGroup);
+          }
         }
         return reasons;
       }

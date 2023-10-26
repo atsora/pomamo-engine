@@ -28,7 +28,6 @@ namespace Pulse.Web.Reason
   {
     static readonly ILog log = LogManager.GetLogger (typeof (ReasonGroupLegendService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -36,9 +35,7 @@ namespace Pulse.Web.Reason
       : base (Lemoine.Core.Cache.CacheTimeOut.Config)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -116,6 +113,5 @@ namespace Pulse.Web.Reason
         throw;
       }
     }
-    #endregion // Methods
   }
 }

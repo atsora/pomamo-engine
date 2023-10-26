@@ -66,18 +66,26 @@ namespace Lemoine.WebMiddleware
 
       var contentType = context.GetResponseContentType ();
 
-      if (!policies.Any ()) {
-        policies.Add ("default");
-      }
-      foreach (var policy in policies) {
-        var authorizationResult =
-            await authorizationService.AuthorizeAsync (context.User, null, policy);
-        if (!authorizationResult.Succeeded) {
-          log.Error ($"InvokeAsync: policy={policy} not authorized");
-          var errorDto = new ErrorDTO ($"Not authorized, policy={policy}", ErrorStatus.AuthorizationError);
-          await m_responseWriter.WriteToBodyAsync (context, errorDto, contentType);
-          return;
+      try {
+        if (!policies.Any ()) {
+          policies.Add ("default");
         }
+        foreach (var policy in policies) { // TODO: to check why policies is updated 
+          if (log.IsDebugEnabled) {
+            log.Debug ($"InvokeAsync: checking policy={policy}");
+          }
+          var authorizationResult =
+              await authorizationService.AuthorizeAsync (context.User, null, policy);
+          if (!authorizationResult.Succeeded) {
+            log.Error ($"InvokeAsync: policy={policy} not authorized");
+            var errorDto = new ErrorDTO ($"Not authorized, policy={policy}", ErrorStatus.AuthorizationError);
+            await m_responseWriter.WriteToBodyAsync (context, errorDto, contentType);
+            return;
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Fatal ($"InvokeAsync: exception while checking policies of size = {policies.Count}, but continue", ex);
       }
 
       if (handler is IHttpContextSupport httpContextSupport) {

@@ -36,7 +36,7 @@ namespace Lemoine.GDBPersistentClasses
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .UniqueResult<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find by Id with an eager fetch of the machine modules
     /// </summary>
@@ -51,7 +51,7 @@ namespace Lemoine.GDBPersistentClasses
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .UniqueResult<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find by Id with an eager fetch of:
     /// <item>the main machine module</item>
@@ -71,7 +71,7 @@ namespace Lemoine.GDBPersistentClasses
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .UniqueResult<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find all IMonitoredMachine
     /// 
@@ -128,11 +128,11 @@ namespace Lemoine.GDBPersistentClasses
         .Fetch (SelectMode.Fetch, "MachineModules")
         .Fetch (SelectMode.Fetch, "MonitoringType")
         // Note: without the following line, some rows are duplicated.Add Is it a bug ?
-        .SetResultTransformer(NHibernate.Transform.Transformers.DistinctRootEntity)
+        .SetResultTransformer (NHibernate.Transform.Transformers.DistinctRootEntity)
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .List<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find all IMonitoredMachine, but get also all its Cnc Acquisition child elements
     /// </summary>
@@ -148,7 +148,7 @@ namespace Lemoine.GDBPersistentClasses
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .List<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find all IMonitoredMachine to configure them.
     /// 
@@ -171,7 +171,7 @@ namespace Lemoine.GDBPersistentClasses
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .List<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find the IMonitoredMachine corresponding to a machine name
     /// 
@@ -179,7 +179,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="machineName"></param>
     /// <returns></returns>
-    public IMonitoredMachine FindByName(string machineName)
+    public IMonitoredMachine FindByName (string machineName)
     {
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<MonitoredMachine> ()
@@ -188,22 +188,22 @@ namespace Lemoine.GDBPersistentClasses
         .SetCacheable (true)
         .UniqueResult<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find the IMonitoredMachine corresponding to a machine
     /// Note: this is registered to be cacheable
     /// </summary>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public IMonitoredMachine FindByMachine(IMachine machine)
+    public IMonitoredMachine FindByMachine (IMachine machine)
     {
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<MonitoredMachine> ()
-        .Add (Restrictions.Eq ("Id", machine.Id))
+        .Add (Restrictions.IdEq (machine.Id))
         .SetCacheable (true)
         .UniqueResult<IMonitoredMachine> ();
     }
-    
+
     /// <summary>
     /// Find all IMonitoredMachine ordered by name
     /// 
@@ -215,7 +215,7 @@ namespace Lemoine.GDBPersistentClasses
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<MonitoredMachine> ()
         .Add (Restrictions.Eq ("MonitoringType.Id", (int)MachineMonitoringTypeId.Monitored))
-        .AddOrder(Order.Asc("Name"))
+        .AddOrder (Order.Asc ("Name"))
         .SetCacheable (true)
         .List<IMonitoredMachine> ();
     }

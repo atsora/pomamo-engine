@@ -159,6 +159,7 @@ namespace Lemoine.Plugin.ReportingConfig
 
     IEnumerable<string> GetRootDirectories ()
     {
+      // TODO: alternative directories
       var serverInstallDir = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
       if (serverInstallDir is null) {
         log.Error ("GetRootDirectories: Pulse Server installation directory is not set => return an empty list");
