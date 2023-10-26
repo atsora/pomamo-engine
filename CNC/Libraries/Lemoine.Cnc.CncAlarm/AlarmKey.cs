@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -11,44 +12,39 @@ namespace Lemoine.Cnc
   /// <summary>
   /// Description of AlarmKey.
   /// </summary>
-  public class AlarmKey: IEquatable<AlarmKey>
+  public class AlarmKey : IEquatable<AlarmKey>
   {
-    #region Members
     // Some properties may change constantly but we still want to merge the alarms
     // In that case, the first occurrence of the property will be taken into account
     static readonly string[] EXCLUDED_PROPERTIES = new string[] {
       "Execution block" // MML3
     };
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// CncInfo
     /// </summary>
     public string CncInfo { get; private set; }
-    
+
     /// <summary>
     /// CncInfo
     /// </summary>
     public string CncSubInfo { get; private set; }
-    
+
     /// <summary>
     /// Type
     /// </summary>
     public string Type { get; private set; }
-    
+
     /// <summary>
     /// Number
     /// </summary>
     public string Number { get; private set; }
-    
+
     /// <summary>
     /// Properties
     /// </summary>
     public IDictionary<string, string> Properties { get; private set; }
-    #endregion // Getters / Setters
-    
-    #region Constructors
+
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -57,23 +53,23 @@ namespace Lemoine.Cnc
     /// <param name="type"></param>
     /// <param name="number"></param>
     /// <param name="properties"></param>
-    public AlarmKey(string cncInfo, string cncSubInfo, string type, string number, IDictionary<string, object> properties)
+    public AlarmKey (string cncInfo, string cncSubInfo, string type, string number, IDictionary<string, object> properties)
     {
-      CncInfo = cncInfo;
-      CncSubInfo = cncSubInfo;
-      Type = type;
-      Number = number;
-      Properties = new Dictionary<string, string>();
-      foreach (var key in properties.Keys) {
-        Properties[key] = (properties[key] == null ? null : properties[key].ToString());
+      this.CncInfo = cncInfo;
+      this.CncSubInfo = cncSubInfo;
+      this.Type = type;
+      this.Number = number;
+      this.Properties = new Dictionary<string, string> ();
+      foreach (var kv in properties) {
+        this.Properties[kv.Key] = kv.Value?.ToString ();
       }
     }
-    
+
     /// <summary>
     /// Constructor based on a cnc alarm
     /// </summary>
     /// <param name="alarm"></param>
-    public AlarmKey(CncAlarm alarm)
+    public AlarmKey (CncAlarm alarm)
     {
       CncInfo = alarm.CncInfo;
       CncSubInfo = alarm.CncSubInfo;
@@ -81,29 +77,22 @@ namespace Lemoine.Cnc
       Number = alarm.Number;
       Properties = alarm.Properties;
     }
-    #endregion // Constructors
-    
+
     /// <summary>
     /// ToString override
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-      return string.Format("[AlarmKey CncInfo={0}, CncSubInfo={1}, Type={2}, Number={3}, Properties number={4}]",
-                           CncInfo, CncSubInfo, Type, Number, Properties.Count);
-    }
+    public override string ToString () => $"[AlarmKey CncInfo={this.CncInfo}, CncSubInfo={this.CncSubInfo}, Type={this.Type}, Number={this.Number}, Properties number={this.Properties.Count}]";
 
     #region Equals and GetHashCode implementation
-    bool IsKeyProperty (string k) {
-      return !EXCLUDED_PROPERTIES.Contains (k);
-    }
+    bool IsKeyProperty (string k) => !EXCLUDED_PROPERTIES.Contains (k);
 
     /// <summary>
     /// Equals
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public override bool Equals(object obj)
+    public override bool Equals (object obj)
     {
       var other = obj as AlarmKey;
       if (other == null) {
@@ -119,43 +108,43 @@ namespace Lemoine.Cnc
 
       // Properties
       var a = this.Properties.Where (kv => IsKeyProperty (kv.Key));
-      var b = this.Properties.Where (kv => IsKeyProperty (kv.Key));
+      var b = other.Properties.Where (kv => IsKeyProperty (kv.Key));
       if (a.Count () != b.Count ()) {
         return false;
       }
-      return object.Equals (a.ToDictionary (kv => kv.Key), a.ToDictionary (kv => kv.Key));
+      return !a.Except (b).Any ();
     }
-    
+
     /// <summary>
     /// GetHashCode
     /// </summary>
     /// <returns></returns>
-    public override int GetHashCode()
+    public override int GetHashCode ()
     {
       int hashCode = 0;
       unchecked {
-        if (CncInfo != null) {
+        if (this.CncInfo != null) {
           hashCode += 1000000007 * CncInfo.GetHashCode ();
         }
 
-        if (CncSubInfo != null) {
+        if (this.CncSubInfo != null) {
           hashCode += 1000000093 * CncSubInfo.GetHashCode ();
         }
 
-        if (Type != null) {
+        if (this.Type != null) {
           hashCode += 1000000009 * Type.GetHashCode ();
         }
 
-        if (Number != null) {
+        if (this.Number != null) {
           hashCode += 1000000021 * Number.GetHashCode ();
         }
 
-        if (Properties != null) {
+        if (this.Properties != null) {
           // Concat keys and values
           string concat = "";
-          foreach (var key in Properties.Keys) {
-            if (Array.IndexOf (EXCLUDED_PROPERTIES, key) == -1) { // The key must not be excluded
-              concat += key + "|" + Properties[key] + "|";
+          foreach (var kv in this.Properties.OrderBy (kv => kv.Key)) {
+            if (Array.IndexOf (EXCLUDED_PROPERTIES, kv.Key) == -1) { // The key must not be excluded
+              concat += kv.Key + "|" + kv.Value + "|";
             }
           }
 
@@ -172,7 +161,7 @@ namespace Lemoine.Cnc
     /// <returns></returns>
     public bool Equals (AlarmKey other)
     {
-      return Equals ((object)other);
+      return this.Equals ((object)other);
     }
 
     /// <summary>
@@ -181,16 +170,17 @@ namespace Lemoine.Cnc
     /// <param name="lhs"></param>
     /// <param name="rhs"></param>
     /// <returns></returns>
-    public static bool operator ==(AlarmKey lhs, AlarmKey rhs) {
-      if (ReferenceEquals(lhs, rhs)) {
+    public static bool operator == (AlarmKey lhs, AlarmKey rhs)
+    {
+      if (ReferenceEquals (lhs, rhs)) {
         return true;
       }
 
-      if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null)) {
+      if (ReferenceEquals (lhs, null) || ReferenceEquals (rhs, null)) {
         return false;
       }
 
-      return lhs.Equals(rhs);
+      return lhs.Equals (rhs);
     }
 
     /// <summary>
@@ -199,7 +189,8 @@ namespace Lemoine.Cnc
     /// <param name="lhs"></param>
     /// <param name="rhs"></param>
     /// <returns></returns>
-    public static bool operator !=(AlarmKey lhs, AlarmKey rhs) {
+    public static bool operator != (AlarmKey lhs, AlarmKey rhs)
+    {
       return !(lhs == rhs);
     }
     #endregion // Equals and GetHashCode implementation
