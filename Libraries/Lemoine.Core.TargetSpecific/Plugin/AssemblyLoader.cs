@@ -184,6 +184,10 @@ namespace Lemoine.Core.Plugin.TargetSpecific
           if (Directory.Exists (coreDirectory)) {
             topOnlyDirectories.Add (coreDirectory);
           }
+          var netframeworkDirectory = Path.Combine (pulseServerDirectory, "netframework");
+          if (Directory.Exists (netframeworkDirectory)) {
+            topOnlyDirectories.Add (netframeworkDirectory);
+          }
         }
       }
       foreach (var directory in directories) {

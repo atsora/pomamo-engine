@@ -39,7 +39,7 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\Lemoine.CncDataImport\Lemoine.CncDataImport.csproj" />
+    <ProjectReference Include="..\Lemoine.CncDataImport\Lemoine.CncDataImport.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
   
