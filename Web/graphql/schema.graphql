@@ -19,6 +19,10 @@ type Query {
   operationRevision(id: ID!): OperationRevision!
   operationModel(id: ID!): OperationModel!
   sequences(operationModel: ID!, pathNumber: Int): [Sequence!]!
+  cncConfigs: [CncConfig!]!
+  cncConfig(name: String!): CncConfig!
+  cncAcquisitions: [CncAcquisition!]!
+  cncAcquisition(id: ID!): CncAcquisition!
 }
 
 type Mutation {
@@ -40,12 +44,17 @@ type Mutation {
   createComponentIntermediateWorkPiece(componentIntermediateWorkPiece: NewComponentIntermediateWorkPiece!): ComponentIntermediateWorkPiece!
   createOperation(operation: NewOperation!): Operation!
   updateOperation(operation: UpdateOperation!): Operation!
+  createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisition!
+  updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisition!
+  removeCncAcquisition(cncAcquisitionId: ID!): Boolean
 }
 
 scalar Color
 scalar Picture
 scalar UtcDateTime
 scalar UtcDateTimeRange
+scalar CncConfigUnit # metric / inches / other
+scalar CncConfigParamType # ip / url / path / host / string / int / integer / double / list / bool / boolean / file
 
 interface IDisplayable {
   display: String!
@@ -271,7 +280,7 @@ input UpdateComponent {
 
 input NewProjectComponent {
   projectId: ID!
-  compononentId: ID!
+  componentId: ID!
 }
 
 type Part implements IWorkInfo & IDisplayable {
@@ -537,4 +546,65 @@ type OperationTool {
   toolName: String
   toolDiameter: Float
   toolRadius: Float
+}
+
+type CncConfig {
+  name: String!
+  description: String
+  supportedMachines: [CncConfigMachine!]
+  supportedControls: [CncConfigControl!]
+  supportedProtocols: [CncConfigProtocol!]
+  unit: Unit
+  parameters: [CncConfigParam!]
+}
+
+type CncConfigMachine {
+  text: String!
+  model: String
+}
+
+type CncConfigControl {
+  text: String!
+  version: String
+}
+
+type CncConfigProtocol {
+  text: String!
+  version: String
+}
+
+type CncConfigParam {
+  name: String! # currently ParamX
+  description: String
+  type: CncConfigParamType
+  optional: Boolean
+  min: Int # if type=int or integer
+  max: Int # if type=int or integer
+  default: String
+  advanced: Boolean
+  values: [String!] # if type=list or file
+  decimal: Int # if type=double
+  regex: String
+}
+
+type CncConfigParamValue {
+  name: String!
+  value: String
+}
+
+type CncAcquisition {
+  id: ID!
+  cncConfig: CncConfig!
+  parameters: [CncConfigParamValue!]!
+}
+
+input NewCncAcquisition {
+  cncConfigName: String!
+  parameters: [CncConfigParamValue!]!   
+}
+
+input UpdateCncAcquisition {
+  id: ID!
+  cncConfigName: String!
+  parameters: [CncConfigParamValue!]! 
 }

@@ -1,0 +1,81 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  cncConfigs: [CncConfig!]!
+  cncConfig(name: String!): CncConfig!
+  cncAcquisitions: [CncAcquisition!]!
+  cncAcquisition(id: ID!): CncAcquisition!
+}
+
+type Mutation {
+  createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisition!
+  updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisition!
+  removeCncAcquisition(cncAcquisitionId: ID!): Boolean
+}
+
+scalar CncConfigUnit # metric / inches / other
+scalar CncConfigParamType # ip / url / path / host / string / int / integer / double / list / bool / boolean / file
+
+type CncConfig {
+  name: String!
+  description: String
+  supportedMachines: [CncConfigMachine!]
+  supportedControls: [CncConfigControl!]
+  supportedProtocols: [CncConfigProtocol!]
+  unit: Unit
+  parameters: [CncConfigParam!]
+}
+
+type CncConfigMachine {
+  text: String!
+  model: String
+}
+
+type CncConfigControl {
+  text: String!
+  version: String
+}
+
+type CncConfigProtocol {
+  text: String!
+  version: String
+}
+
+type CncConfigParam {
+  name: String! # currently ParamX
+  description: String
+  type: CncConfigParamType
+  optional: Boolean
+  min: Int # if type=int or integer
+  max: Int # if type=int or integer
+  default: String
+  advanced: Boolean
+  values: [String!] # if type=list or file
+  decimal: Int # if type=double
+  regex: String
+}
+
+type CncConfigParamValue {
+  name: String!
+  value: String
+}
+
+type CncAcquisition {
+  id: ID!
+  cncConfig: CncConfig!
+  parameters: [CncConfigParamValue!]!
+}
+
+input NewCncAcquisition {
+  cncConfigName: String!
+  parameters: [CncConfigParamValue!]!   
+}
+
+input UpdateCncAcquisition {
+  id: ID!
+  cncConfigName: String!
+  parameters: [CncConfigParamValue!]! 
+}
