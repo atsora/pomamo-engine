@@ -20,7 +20,7 @@ using Lemoine.ModelDAO.Interfaces;
 using Pulse.Extensions;
 using Pulse.Hosting;
 
-namespace Lemoine.Cnc.Engine
+namespace Lemoine.CncEngine
 {
   /// <summary>
   /// ApplicationInitializer for cnc acquisition

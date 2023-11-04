@@ -19,33 +19,17 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "Acquisition error event"; } }
+    public override string Name => "Acquisition delay event";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Create an event that can be used to send e-mail in case of acquisition error (acquisition error / no data / unavailable)";
-      }
-    }
+    public override string Description => "Create an event that can be used to send e-mail in case of acquisition delay";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Event | PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Event | PluginFlag.Analysis;
 
     /// <summary>
     /// Multiple configurations
@@ -55,12 +39,8 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
-
-    #region Methods
-    #endregion // Methods
   }
 }

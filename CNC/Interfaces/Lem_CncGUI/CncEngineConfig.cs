@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2023 Atsora Solutions
 
-using Lemoine.Cnc.Engine;
+using Lemoine.CncEngine;
 using Lemoine.Core.Log;
 using Lemoine.Model;
 using System;

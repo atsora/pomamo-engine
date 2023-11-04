@@ -11,7 +11,7 @@ using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 
-namespace Lemoine.Extensions.Cnc.Implementation
+namespace Pulse.CncExtensionImpl
 {
   /// <summary>
   /// To be inherited in a plugin:

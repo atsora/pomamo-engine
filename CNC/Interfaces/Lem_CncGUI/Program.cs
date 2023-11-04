@@ -3,12 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
-using Lemoine.Cnc.Engine;
+using Lemoine.CncEngine;
 using Lemoine.Core.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.DataControls;
+using Lemoine.Extensions;
 using Lemoine.Info;
 using Lemoine.Info.ApplicationNameProvider;
 using Lemoine.Info.ConfigReader.TargetSpecific;
@@ -56,9 +59,11 @@ namespace Lem_CncGUI
       return services
         .AddSingleton<ICncEngineConfig, CncEngineConfig> ()
         .AddSingleton<IApplicationNameProvider, ApplicationNameProviderFromProgramInfo> ()
-        .CreateGuiServicesDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ())
+        .CreateGuiServicesDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, GetInterfaceProviders ())
         .SetApplicationInitializer<ApplicationInitializerCncAcquisition> ()
         .AddTransient<MainForm> ();
     }
+
+    static IEnumerable<IExtensionInterfaceProvider> GetInterfaceProviders () => Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ().Union (new List<IExtensionInterfaceProvider> { new Pulse.Extensions.Database.ExtensionInterfaceProvider () });
   }
 }

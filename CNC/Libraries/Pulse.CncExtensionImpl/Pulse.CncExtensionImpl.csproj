@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyOriginatorKeyFile>..\..\..\..\pomamo-compilation\PomamoKeyFileV2.snk</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
+    <ProjectReference Include="..\..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
+  </ItemGroup>
+
+</Project>

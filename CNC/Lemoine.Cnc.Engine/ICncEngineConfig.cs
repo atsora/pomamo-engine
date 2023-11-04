@@ -4,7 +4,7 @@ using Lemoine.Model;
 using System;
 using System.Collections.Generic;
 
-namespace Lemoine.Cnc.Engine
+namespace Lemoine.CncEngine
 {
   /// <summary>
   /// Configuration of Cnc Engine

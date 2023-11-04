@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Lemoine.Cnc.Engine;
 using Lemoine.Core.Log;
 using Lemoine.Threading;
 

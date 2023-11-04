@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Lemoine.Cnc.Engine;
 using Lemoine.Core.Log;
 using Lemoine.Core.Plugin;
 using Lemoine.Extensions.Interfaces;

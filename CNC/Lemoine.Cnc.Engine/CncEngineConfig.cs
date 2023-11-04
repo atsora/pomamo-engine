@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Lemoine.Cnc.Engine
+namespace Lemoine.CncEngine
 {
   /// <summary>
   /// Implementation of ICncEngineConfig

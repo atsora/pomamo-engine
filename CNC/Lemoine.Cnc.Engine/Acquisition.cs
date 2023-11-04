@@ -22,7 +22,6 @@ using Lemoine.Extensions.Interfaces;
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 using Lemoine.Core.Plugin;
 using Lemoine.FileRepository;
-using Lemoine.Cnc.Engine;
 
 namespace Lemoine.CncEngine
 {

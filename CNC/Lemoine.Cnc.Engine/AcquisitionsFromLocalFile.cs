@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Lemoine.Cnc.Engine;
 using Lemoine.CncEngine;
 using Lemoine.Core.Log;
 using Lemoine.Core.Plugin;

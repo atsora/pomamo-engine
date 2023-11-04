@@ -30,7 +30,6 @@ using Lemoine.GDBMigration;
 using Lemoine.Core.Hosting.LctrChecker;
 using Lemoine.ModelDAO.LctrChecker;
 using Lemoine.Info.ConfigReader;
-using Lemoine.Cnc.Engine;
 #endif // !NET40
 
 namespace Lem_CncService
@@ -132,7 +131,7 @@ namespace Lem_CncService
 #if NET40
         var cncEngineConfig = new CncEngineConfig40 ();
 #else // !NET40
-        var cncEngineConfig = new Lemoine.Cnc.Engine.CncEngineConfig (false, true) {
+        var cncEngineConfig = new Lemoine.CncEngine.CncEngineConfig (false, true) {
           ConsoleProgramName = "Lem_CncConsole",
         };
 #endif // !NET40
@@ -145,7 +144,7 @@ namespace Lem_CncService
         var pluginFilter = new PluginFilterFromFlag (PluginFlag.Cnc);
         var pluginsLoader = new PluginsLoader (m_assemblyLoader);
         var nhibernatePluginsLoader = new DummyPluginsLoader ();
-        var extensionsProvider = new ExtensionsProvider (connectionInitializer, pluginFilter, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), pluginsLoader, nhibernatePluginsLoader);
+        var extensionsProvider = new ExtensionsProvider (connectionInitializer, pluginFilter, GetInterfaceProviders (), pluginsLoader, nhibernatePluginsLoader);
         Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
         Lemoine.Core.Plugin.AssemblyLoaderProvider.AssemblyLoader = m_assemblyLoader; // For MultiConfigurableCncDataQueue
         var lctrChecker = new CheckDatabaseLctrChecker (new DatabaseLctrChecker (), connectionInitializer);
@@ -234,7 +233,7 @@ namespace Lem_CncService
         IAcquisitionFinder acquisitionFinder;
 #if NETSTANDARD || NET48 || NETCOREAPP
         if (string.IsNullOrEmpty (m_localCncConfiguration)) {
-          var cncAcquisitionInitializer = new Lemoine.CncEngine.LpostCncAcquisitionInitializer (cncEngineConfig);
+          var cncAcquisitionInitializer = new Lemoine.CncEngine.LpostCncAcquisitionInitializer<Lemoine.GDBPersistentClasses.MachineModule> (cncEngineConfig);
 
           // TODO: really manage the distant resources ?
           cncAcquisitionInitializer.CopyDistantResources (linkedToken);
@@ -308,6 +307,10 @@ namespace Lem_CncService
         }
       }
     }
+
+#if NETSTANDARD || NET48 || NETCOREAPP
+    static IEnumerable<IExtensionInterfaceProvider> GetInterfaceProviders () => Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ().Union (new List<IExtensionInterfaceProvider> { new Pulse.Extensions.Database.ExtensionInterfaceProvider () });
+#endif 
 
     void CreateWcfServices (IAcquisitionSet acquisitionSet, IAcquisitionFinder acquisitionFinder)
     {

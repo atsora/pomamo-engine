@@ -23,17 +23,11 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
   {
     static readonly string RANGE = "range";
 
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (EventAcquisitionDelay).FullName);
 
     #region Getters / Setters
     [XmlIgnore]
-    public virtual UtcDateTimeRange Range
-    {
-      get { return new UtcDateTimeRange (this.SqlRange); }
-    }
+    public virtual UtcDateTimeRange Range => new UtcDateTimeRange (this.SqlRange);
 
     [XmlIgnore]
     public virtual LocalDateTimeRange LocalRange

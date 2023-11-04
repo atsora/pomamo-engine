@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Lemoine.Cnc.Engine;
 using Lemoine.CncEngine;
 using Lemoine.Core.Hosting;
 using Lemoine.Core.Log;

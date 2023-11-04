@@ -45,7 +45,6 @@ namespace Lemoine.Extensions.Cnc
       return new List<IExtensionInterfaceProvider> {
         new Lemoine.Extensions.Business.ExtensionInterfaceProvider (), // Includes Lemoine.Extensions.Database
         new Lemoine.Extensions.Database.ExtensionInterfaceProvider (),
-        new Pulse.Extensions.Database.ExtensionInterfaceProvider (),
         new ExtensionInterfaceProvider (),
       };
     }

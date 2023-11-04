@@ -9,7 +9,6 @@ using Lemoine.Info.ConfigReader.TargetSpecific;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Pulse.Hosting;
-using Lemoine.Cnc.Engine;
 using Microsoft.Extensions.DependencyInjection;
 using Lemoine.Core.Hosting;
 using Lemoine.ModelDAO.Interfaces;
@@ -19,6 +18,9 @@ using Lemoine.Core.Plugin;
 using Lemoine.Extensions.Interfaces;
 using Lemoine.Extensions;
 using Lemoine.FileRepository;
+using System.Collections.Generic;
+using System.Linq;
+using Lemoine.CncEngine;
 
 namespace Lem_CncConsole
 {
@@ -95,11 +97,12 @@ namespace Lem_CncConsole
       }
       else {
         result = result
-          .ConfigureDatabaseWithNoNHibernateExtension<ApplicationInitializerCncAcquisition> (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
+          .ConfigureDatabaseWithNoNHibernateExtension<ApplicationInitializerCncAcquisition> (Lemoine.Model.PluginFlag.Cnc, GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
       }
       return result
         .AddSingleton<IConsoleRunner<Options>, ConsoleRunner> ();
     }
 
+    static IEnumerable<IExtensionInterfaceProvider> GetInterfaceProviders () => Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ().Union (new List<IExtensionInterfaceProvider> { new Pulse.Extensions.Database.ExtensionInterfaceProvider () });
   }
 }

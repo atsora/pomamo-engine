@@ -14,7 +14,7 @@ using Lemoine.Core.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.FileRepository;
 
-namespace Lemoine.Cnc.Engine
+namespace Lemoine.CncEngine
 {
   /// <summary>
   /// ApplicationInitializer for cnc acquisition with no database connection and a dummy file repo

@@ -15,8 +15,8 @@ using Lemoine.Core.Log;
 using Lemoine.FileRepository;
 using Lemoine.Extensions.Interfaces;
 using Lemoine.Core.Plugin;
-using Lemoine.Cnc.Engine;
 using System.Diagnostics;
+using Lemoine.CncEngine;
 
 namespace Lem_CncGUI
 {
@@ -33,12 +33,12 @@ namespace Lem_CncGUI
     Lemoine.CncEngine.CncDataHandler m_dataHandler = null;
     #endregion
 
-    static readonly ILog log = LogManager.GetLogger(typeof (MainForm).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
     /// <summary>
     /// Description of the constructor
     /// </summary>
-    public MainForm(ICncEngineConfig cncEngineConfig, IExtensionsLoader extensionsLoader, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
+    public MainForm (ICncEngineConfig cncEngineConfig, IExtensionsLoader extensionsLoader, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
     {
       Debug.Assert (null != cncEngineConfig);
 
@@ -50,7 +50,7 @@ namespace Lem_CncGUI
       InitializeComponent ();
     }
 
-    void OpenButtonClick(object sender, EventArgs e)
+    void OpenButtonClick (object sender, EventArgs e)
     {
       DialogResult result = openFileDialog.ShowDialog ();
       if (result == DialogResult.OK) {
@@ -61,8 +61,8 @@ namespace Lem_CncGUI
         timer.Interval = (int)m_dataHandler.Every.TotalMilliseconds;
       }
     }
-    
-    void SelectButtonClick(object sender, EventArgs e)
+
+    void SelectButtonClick (object sender, EventArgs e)
     {
       CncAcquisitionDialog dialog = new CncAcquisitionDialog ();
       dialog.Nullable = false;
@@ -73,30 +73,30 @@ namespace Lem_CncGUI
         Lemoine.CncEngine.Acquisition acquisition = new Lemoine.CncEngine.Acquisition (m_cncEngineConfig, m_extensionsLoader, cncAcquisition, m_assemblyLoader, m_fileRepoClientFactory);
         acquisition.InitDataHandler (CancellationToken.None);
         m_dataHandler = acquisition.CncDataHandler;
-        timer.Interval = (int) m_dataHandler.Every.TotalMilliseconds;
+        timer.Interval = (int)m_dataHandler.Every.TotalMilliseconds;
       }
     }
 
-    void TimerTick(object sender, EventArgs e)
+    void TimerTick (object sender, EventArgs e)
     {
       if (null != m_dataHandler) {
         m_dataHandler.ProcessTasks (cancellationToken: CancellationToken.None);
         dataGridView.Rows.Clear ();
         foreach (KeyValuePair<string, object> data in m_dataHandler.Data) {
-          dataGridView.Rows.Add (new object [] { data.Key, m_dataHandler.GetStringFromKeyValueItem (data) });
+          dataGridView.Rows.Add (new object[] { data.Key, m_dataHandler.GetStringFromKeyValueItem (data) });
         }
       }
     }
-    
-    void MainFormFormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
+
+    void MainFormFormClosed (object sender, System.Windows.Forms.FormClosedEventArgs e)
     {
       if (null != m_dataHandler) {
         m_dataHandler.Dispose ();
       }
       Application.Exit ();
     }
-    
-    void ConfigParamButtonClick(object sender, EventArgs e)
+
+    void ConfigParamButtonClick (object sender, EventArgs e)
     {
       ConfigParamDialog dialog = new ConfigParamDialog ();
       if (DialogResult.OK == dialog.ShowDialog ()) {
@@ -110,7 +110,7 @@ namespace Lem_CncGUI
         var acquisition = new Lemoine.CncEngine.Acquisition (m_cncEngineConfig, cncAcquisition.Id, repository, m_assemblyLoader, m_fileRepoClientFactory);
         acquisition.InitDataHandler (CancellationToken.None);
         m_dataHandler = acquisition.CncDataHandler;
-        timer.Interval = (int) m_dataHandler.Every.TotalMilliseconds;
+        timer.Interval = (int)m_dataHandler.Every.TotalMilliseconds;
       }
     }
   }

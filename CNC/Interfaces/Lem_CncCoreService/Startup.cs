@@ -30,7 +30,6 @@ using Lemoine.Threading;
 using Pulse.Extensions;
 using Lemoine.Extensions.ExtensionsProvider;
 using Pulse.Database.ConnectionInitializer;
-using Lemoine.Cnc.Engine;
 using Pulse.Hosting;
 using Lemoine.Hosting.AsyncInitialization;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -64,14 +63,14 @@ namespace Lem_CncCoreService
       var applicationName = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Name;
       services
         .ConfigureFileRepoClientFactoryDefault ()
-        .ConfigureDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
+        .ConfigureDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
       services.AddSingleton<ICncEngineConfig> (new CncEngineConfig (true, true) {
         ConsoleProgramName = "",
       });
 
       if (string.IsNullOrEmpty (localCncConfiguration)) {
         services.AddTransient<IEnumerable<IAdditionalChecker>> ((IServiceProvider sp) => new IAdditionalChecker[] { new ConfigUpdateCheckerWithAvailableFileRepository (), new FileRepoChecker () });
-        services.AddSingleton<ICncAcquisitionInitializer, LpostCncAcquisitionInitializer> ();
+        services.AddSingleton<ICncAcquisitionInitializer, LpostCncAcquisitionInitializer<Lemoine.GDBPersistentClasses.MachineModule>> ();
         services.AddSingleton<IAcquisitionSet, AcquisitionsFromCncAcquisitions> ();
         services.AddSingleton<IAcquisitionFinder, AcquisitionFinderById> (); // TODO: use another one later ?
       }
@@ -99,6 +98,8 @@ namespace Lem_CncCoreService
         services.AddAsyncInitializer<EarlyAssemblyLoader> ();
       }
     }
+
+    static IEnumerable<IExtensionInterfaceProvider> GetInterfaceProviders () => Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ().Union (new List<IExtensionInterfaceProvider> { new Pulse.Extensions.Database.ExtensionInterfaceProvider () });
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure (IApplicationBuilder app, IWebHostEnvironment env)

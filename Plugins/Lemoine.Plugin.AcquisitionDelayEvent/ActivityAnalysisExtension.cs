@@ -38,8 +38,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
     {
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.WarnFormat ("Initialize: " +
-                        "the configuration is not valid");
+        log.Warn ("Initialize: the configuration is not valid");
         return false;
       }
 
@@ -51,9 +50,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
           m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
             .FindById (machineFilterId);
           if (null == m_machineFilter) {
-            log.ErrorFormat ("Initialize: " +
-                             "machine filter id {0} does not exist",
-                             machineFilterId);
+            log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
             return false;
           }
         }
@@ -63,9 +60,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
         m_eventLevel = ModelDAOHelper.DAOFactory.EventLevelDAO
           .FindById (eventLevelId);
         if (null == m_eventLevel) {
-          log.ErrorFormat ("Initialize: " +
-                           "event level {0} could not be loaded",
-                           eventLevelId);
+          log.Error ($"Initialize: event level {eventLevelId} could not be loaded");
           return false;
         }
 
@@ -125,8 +120,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ("Plugin.AcquisitionDelayEvent.CreateEvent", TransactionLevel.ReadCommitted)) {
-          log.InfoFormat ("CreateEvent: period {0} detected for {2}",
-            range);
+          log.InfoFormat ($"CreateEvent: period {range} detected");
           var eventLevel = m_eventLevel;
           var eventAcquisitionDelay = new EventAcquisitionDelay (eventLevel, DateTime.UtcNow, m_machine, range);
           new EventAcquisitionDelayDAO ().MakePersistent (eventAcquisitionDelay);

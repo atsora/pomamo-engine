@@ -15,8 +15,4 @@
     <ProjectReference Include="..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Include="..\..\Packages\Alert\cnc_alarm_alert.json" CopyToOutputDirectory="Never" Link="cnc_alarm_alert.json" />
-  </ItemGroup>
-  
 </Project>

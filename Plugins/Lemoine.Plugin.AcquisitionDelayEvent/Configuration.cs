@@ -26,7 +26,6 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
 
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Max duration
     /// </summary>
@@ -46,9 +45,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -57,9 +54,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
       this.MaxDuration = MAX_DURATION_DEFAULT;
       this.EventLevelId = EVENT_LEVEL_ID_DEFAULT;
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -92,6 +87,5 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
     {
       return false;
     }
-    #endregion // Methods
   }
 }

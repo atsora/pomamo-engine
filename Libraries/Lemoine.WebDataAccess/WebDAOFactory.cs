@@ -38,6 +38,7 @@ namespace Lemoine.WebDataAccess
     {
       WebServiceHelper.Execute (new Lemoine.WebClient.RequestUrl ("/Test"));
     }
+
     public IDAOSession OpenSession ()
     {
       return new WebDAOSession ();
@@ -112,11 +113,6 @@ namespace Lemoine.WebDataAccess
     }
 
     public void Initialize (object proxy)
-    {
-      throw new NotImplementedException ();
-    }
-
-    public long KillOrphanedConnections ()
     {
       throw new NotImplementedException ();
     }

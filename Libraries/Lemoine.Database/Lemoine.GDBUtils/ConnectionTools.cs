@@ -294,12 +294,12 @@ select count(*) from terminated
     {
       try {
         if (!await IsPostgreSQLVersionGreaterOrEqualAsync (connectionString, 90200)) {
-          log.FatalFormat ("KillOrphanedConnections: PostgreSQL version is < 9.2 => not supported");
+          log.FatalFormat ("KillOrphanedConnectionsAsync: PostgreSQL version is < 9.2 => not supported");
           return -1;
         }
       }
       catch (Exception ex) {
-        log.Error ("KillOrphanedConnections: could not check the version of PostgreSQL, give up", ex);
+        log.Error ("KillOrphanedConnectionsAsync: could not check the version of PostgreSQL, give up", ex);
         throw;
       }
 
@@ -322,10 +322,10 @@ select count(*) from terminated
       long requestResult = await ExecuteScalarAsync<long> (connectionString, query);
 
       if (0 < requestResult) {
-        log.FatalFormat ("KillOrphanedConnections: {0} orphaned connections were killed", requestResult);
+        log.FatalFormat ("KillOrphanedConnectionsAsync: {0} orphaned connections were killed", requestResult);
       }
       else {
-        log.Debug ("KillOrphanedConnections: no killed connection");
+        log.Debug ("KillOrphanedConnectionsAsync: no killed connection");
       }
       return requestResult;
     }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2023 Nicolas Relange
 
 #if NET40
-using Lemoine.Cnc.Engine;
+using Lemoine.CncEngine;
 using Lemoine.Core.Log;
 using System;
 using System.Collections.Generic;

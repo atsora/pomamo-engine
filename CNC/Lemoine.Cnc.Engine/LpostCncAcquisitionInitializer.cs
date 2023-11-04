@@ -12,7 +12,6 @@ using System.Linq;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
-using Lemoine.Cnc.Engine;
 using Lemoine.Core.Log;
 using Lemoine.DataRepository;
 using Lemoine.Info;
@@ -24,9 +23,10 @@ namespace Lemoine.CncEngine
   /// <summary>
   /// Class to get all the <see cref="ICncAcquisition"/> that must be loaded in the lpost
   /// </summary>
-  public class LpostCncAcquisitionInitializer: ICncAcquisitionInitializer
+  public class LpostCncAcquisitionInitializer<TMachineModule>: ICncAcquisitionInitializer
+    where TMachineModule: IMachineModule
   {
-    readonly ILog log = LogManager.GetLogger (typeof (LpostCncAcquisitionInitializer).FullName);
+    readonly ILog log = LogManager.GetLogger (typeof (LpostCncAcquisitionInitializer<TMachineModule>).FullName);
 
     readonly ICncEngineConfig m_cncEngineConfig;
     readonly string m_repositoryCacheFileName;
@@ -97,8 +97,8 @@ namespace Lemoine.CncEngine
       else {
         cncAcquisitionListPath = Path.Combine (PulseInfo.LocalConfigurationDirectory, m_repositoryCacheFileName);
       }
-      var cncAcquisitionsMainFactory = new ListFactory<Lemoine.GDBPersistentClasses.MachineModule> (
-        new ListMaker<Lemoine.GDBPersistentClasses.MachineModule> (() => GetMachineModules (cancellationToken)));
+      var cncAcquisitionsMainFactory = new ListFactory<TMachineModule> (
+        new ListMaker<TMachineModule> (() => GetMachineModules (cancellationToken)));
       var cncAcquisitionsCopyFactory = new XMLFactory (XmlSourceType.URI, cncAcquisitionListPath);
       var cncAcquisitionsCopyBuilder = new XMLBuilder (cncAcquisitionListPath);
       var cncAcquisitionsRepository = new Repository (
@@ -152,7 +152,7 @@ namespace Lemoine.CncEngine
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    ICollection<Lemoine.GDBPersistentClasses.MachineModule> GetMachineModules (CancellationToken cancellationToken)
+    ICollection<TMachineModule> GetMachineModules (CancellationToken cancellationToken)
     {
       // Note: check a basic connection so that an exception is returned faster
       //       in case the database is down
@@ -163,7 +163,7 @@ namespace Lemoine.CncEngine
           var lpost = GetLPost ();
           if (null == lpost) {
             log.Error ("GetMachineModules: no lpost was found, return an empty list");
-            return new List<Lemoine.GDBPersistentClasses.MachineModule> ();
+            return new List<TMachineModule> ();
           }
 
           // 3. Get all the CncAcquisition for this lpost
@@ -180,15 +180,15 @@ namespace Lemoine.CncEngine
           }
 
           // 4. Get all the modules
-          ICollection<Lemoine.GDBPersistentClasses.MachineModule> machineModules =
-            new HashSet<Lemoine.GDBPersistentClasses.MachineModule> ();
+          ICollection<TMachineModule> machineModules =
+            new HashSet<TMachineModule> ();
           foreach (ICncAcquisition cncAcquisition in cncAcquisitions) {
             foreach (IMachineModule machineModule in cncAcquisition.MachineModules) {
               cancellationToken.ThrowIfCancellationRequested ();
               if (log.IsDebugEnabled) {
                 log.DebugFormat ("GetMachineModules: add machine module of id {0}", machineModule.Id);
               }
-              machineModules.Add ((Lemoine.GDBPersistentClasses.MachineModule)machineModule);
+              machineModules.Add ((TMachineModule)machineModule);
             }
           }
 

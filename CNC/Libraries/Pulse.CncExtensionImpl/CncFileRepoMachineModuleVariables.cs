@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using Lemoine.Extensions.Configuration;
 using Pulse.Extensions.Configuration.Implementation;
 
-namespace Lemoine.Extensions.Cnc.Implementation
+namespace Pulse.CncExtensionImpl
 {
   /// <summary>
   /// Abstract class to use when the CNC variables keys are drawn from the machinemodule table
