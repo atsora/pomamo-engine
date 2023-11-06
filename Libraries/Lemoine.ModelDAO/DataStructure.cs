@@ -20,17 +20,17 @@ namespace Lemoine.Model
     /// <summary>
     /// Work order + Project = Job ?
     /// </summary>
-    public bool WorkOrderProjectIsJob => Lemoine.Info.ConfigSet.Get<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.WorkOrderProjectIsJob));
+    public bool WorkOrderProjectIsJob => Lemoine.Info.ConfigSet.LoadAndGet<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.WorkOrderProjectIsJob), false);
 
     /// <summary>
     /// Project + Component = Part ?
     /// </summary>
-    public bool ProjectComponentIsPart => Lemoine.Info.ConfigSet.Get<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.ProjectComponentIsPart));
+    public bool ProjectComponentIsPart => Lemoine.Info.ConfigSet.LoadAndGet<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.ProjectComponentIsPart), true);
 
     /// <summary>
     /// IntermediateWorkPiece + Operation = Simple operation ?
     /// </summary>
-    public bool IntermediateWorkPieceOperationIsSimpleOperation => Lemoine.Info.ConfigSet.Get<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.IntermediateWorkPieceOperationIsSimpleOperation));
+    public bool IntermediateWorkPieceOperationIsSimpleOperation => Lemoine.Info.ConfigSet.LoadAndGet<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.IntermediateWorkPieceOperationIsSimpleOperation), true);
 
     /// <summary>
     /// Should the work order be considered as the entry level ? Default is false

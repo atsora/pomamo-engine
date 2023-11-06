@@ -174,9 +174,7 @@ namespace Lemoine.FileRepository
     public static ICollection<string> ListDirectoriesInDirectory (string distantDirectory)
     {
       if (null == Instance.m_implementation) {
-        log.ErrorFormat ("ListDirectoriesInDirectory: " +
-                         "no implementation was set " +
-                         "=> return an empty list");
+        log.Error ("ListDirectoriesInDirectory: no implementation was set => return an empty list");
         return new List<string> ();
       }
 
@@ -197,9 +195,7 @@ namespace Lemoine.FileRepository
     public static void GetFile (string distantDirectory, string distantFileName, string localPath)
     {
       if (null == Instance.m_implementation) {
-        log.ErrorFormat ("GetFile: " +
-                         "no implementation was set " +
-                         "=> return an exception");
+        log.Error ("GetFile: no implementation was set => return an exception");
         throw new NotImplementedException ("Implementation not set");
       }
 
@@ -297,9 +293,7 @@ namespace Lemoine.FileRepository
     public static string GetString (string distantDirectory, string distantFileName, bool optional = false)
     {
       if (null == Instance.m_implementation) {
-        log.ErrorFormat ("GetFile: " +
-                         "no implementation was set " +
-                         "=> return an exception");
+        log.Error ("GetString: no implementation was set => return an exception");
         throw new NotImplementedException ("Implementation not set");
       }
 
@@ -317,9 +311,7 @@ namespace Lemoine.FileRepository
     public static byte[] GetBinary (string distantDirectory, string distantFileName)
     {
       if (null == Instance.m_implementation) {
-        log.ErrorFormat ("GetBinary: " +
-                         "no implementation was set " +
-                         "=> return an exception");
+        log.Error ("GetBinary: no implementation was set => return an exception");
         throw new NotImplementedException ("Implementation not set");
       }
 
@@ -336,15 +328,12 @@ namespace Lemoine.FileRepository
     public static DateTime GetLastModifiedDate (string nspace, string path)
     {
       if (null == Instance.m_implementation) {
-        log.ErrorFormat ("GetLastModifiedDate: " +
-                         "no implementation was set " +
-                         "=> return an error");
+        log.Error ("GetLastModifiedDate: no implementation was set => return an error");
         throw new NotImplementedException ("Implementation not set");
       }
 
       var result = Instance.m_implementation.GetLastModifiedDate (nspace, path);
-      log.InfoFormat ("GetLastModifiedDate: last modified date of {0}/{1} is {2}",
-        nspace, path, result);
+      log.Info ($"GetLastModifiedDate: last modified date of {nspace}/{path} is {result}");
       return result;
     }
 
@@ -371,8 +360,7 @@ namespace Lemoine.FileRepository
             srcFiles = ListFilesInDirectory (distantDirectory);
           }
           catch (Exception ex) {
-            log.ErrorFormat ("SynchronizeFilesOnly: files could not be listed in remote directory {0}, {1}",
-              distantDirectory, ex);
+            log.Error ($"SynchronizeFilesOnly: files could not be listed in remote directory {distantDirectory}", ex);
             errors.Add ("Files could not be listed in remote directory " + distantDirectory);
             result |= SynchronizationAdvancedStatus.Error;
             return result;
@@ -397,7 +385,7 @@ namespace Lemoine.FileRepository
             .Select (f => new FileInfo (f).Name);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("SynchronizeFilesOnly: couldn't list files in local directory {0}, {1}", localDirectory, ex);
+          log.Error ($"SynchronizeFilesOnly: couldn't list files in local directory {localDirectory}", ex);
           errors.Add ("Files could not be listed in local directory " + localDirectory);
           result |= SynchronizationAdvancedStatus.Error;
           return result;
@@ -412,12 +400,11 @@ namespace Lemoine.FileRepository
             var localPath = Path.Combine (localDirectory, extraFile);
             File.Delete (localPath);
             synchronizerFile.SetDate (localPath, null);
-            log.InfoFormat ("File {0} deleted", localPath);
+            log.Info ($"SynchronizeFilesOnly: file {localPath} deleted");
             result |= SynchronizationAdvancedStatus.DeletedExtra;
           }
           catch (Exception ex) {
-            log.ErrorFormat ("SynchronizeFilesOnly: extra file {0} could not be removed in directory {1}, {2}",
-              extraFile, localDirectory, ex);
+            log.Error ($"SynchronizeFilesOnly: extra file {extraFile} could not be removed in directory {localDirectory}", ex);
             warnings.Add ("File " + localDirectory + "/" + extraFile + " could not be deleted");
             result |= SynchronizationAdvancedStatus.Warning;
           }
@@ -433,12 +420,11 @@ namespace Lemoine.FileRepository
             GetFile (distantDirectory, missingFile, localPath);
             synchronizerFile.SetDate (localPath,
               GetLastModifiedDate (distantDirectory, missingFile));
-            log.InfoFormat ("SynchronizeFilesOnly: File {0} downloaded", localPath);
+            log.Info ($"SynchronizeFilesOnly: File {localPath} downloaded");
             result |= SynchronizationAdvancedStatus.NewFiles;
           }
           catch (Exception ex) {
-            log.ErrorFormat ("SynchronizeFilesOnly: missing file {0} in directory {1} could not be downloaded, {2}",
-              missingFile, distantDirectory, ex);
+            log.Error ($"SynchronizeFilesOnly: missing file {missingFile} in directory {distantDirectory} could not be downloaded", ex);
             errors.Add ("File " + distantDirectory + "/" + missingFile + " could not be downloaded");
             result |= SynchronizationAdvancedStatus.NotValid;
             result |= SynchronizationAdvancedStatus.Error;
@@ -453,7 +439,9 @@ namespace Lemoine.FileRepository
         foreach (var toUpdateFile in toUpdateFiles) {
           token.ThrowIfCancellationRequested ();
           try {
-            log.DebugFormat ("SynchronizeFilesOnly: update {0} in local directory {1}", toUpdateFile, localDirectory);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"SynchronizeFilesOnly: update {toUpdateFile} in local directory {localDirectory}");
+            }
             var localPath = Path.Combine (localDirectory, toUpdateFile);
             var backupPath = localPath + ".synchroBackup";
             if (File.Exists (backupPath)) {
@@ -466,8 +454,7 @@ namespace Lemoine.FileRepository
               downloadOk = true;
             }
             catch (Exception ex) {
-              log.ErrorFormat ("SynchronizeFilesOnly: file {0} in directory {1} could not be downloaded, {2}",
-                toUpdateFile, localDirectory, ex);
+              log.Error ($"SynchronizeFilesOnly: file {toUpdateFile} in directory {localDirectory} could not be downloaded", ex);
               warnings.Add ("File " + distantDirectory + "/" + toUpdateFile + " could not be downloaded, keep the previous one");
               if (File.Exists (localPath)) {
                 File.Delete (localPath);
@@ -478,7 +465,7 @@ namespace Lemoine.FileRepository
             if (downloadOk) {
               synchronizerFile.SetDate (localPath, GetLastModifiedDate (distantDirectory, toUpdateFile));
               File.Delete (backupPath);
-              log.InfoFormat ("SynchronizeFilesOnly: File {0} updated", localPath);
+              log.Info ($"SynchronizeFilesOnly: File {localPath} updated");
               result |= SynchronizationAdvancedStatus.UpdatedFiles;
             }
             else if (File.Exists (backupPath)) {
@@ -486,8 +473,7 @@ namespace Lemoine.FileRepository
             }
           }
           catch (Exception ex) {
-            log.ErrorFormat ("SynchronizeFilesOnly: file {0} in directory {1} could not be updated, {2}",
-              toUpdateFile, localDirectory, ex);
+            log.Error ($"SynchronizeFilesOnly: file {toUpdateFile} in directory {localDirectory} could not be updated", ex);
             errors.Add ("File " + distantDirectory + "/" + toUpdateFile + " could not be updated");
             result |= SynchronizationAdvancedStatus.NotValid;
             result |= SynchronizationAdvancedStatus.Error;
@@ -520,8 +506,7 @@ namespace Lemoine.FileRepository
         srcDirectories = ListDirectoriesInDirectory (distantDirectory);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("SynchronizeDirectoriesOnly: directories could not be listed in remote directory {0}, {1}",
-          distantDirectory, ex);
+        log.Error ($"SynchronizeDirectoriesOnly: directories could not be listed in remote directory {distantDirectory}", ex);
         errors.Add ("Directories could not be listed in remote directory " + distantDirectory);
         result |= SynchronizationAdvancedStatus.Error;
         return result;
@@ -535,7 +520,7 @@ namespace Lemoine.FileRepository
           .Select (d => new DirectoryInfo (d).Name);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("SynchronizeDirectoriesOnly: couldn't list directories in local directory {0}, {1}", localDirectory, ex);
+        log.Error ($"SynchronizeDirectoriesOnly: couldn't list directories in local directory {localDirectory}", ex);
         errors.Add ("Directories could not be listed in local directory " + localDirectory);
         result |= SynchronizationAdvancedStatus.Error;
         return result;
@@ -548,7 +533,7 @@ namespace Lemoine.FileRepository
       foreach (var extraDirectory in extraDirectories) {
         try {
           var localPath = Path.Combine (localDirectory, extraDirectory);
-          log.InfoFormat ("Clean directory {0}", localPath);
+          log.Info ($"SynchronizeDirectoriesOnly: clean directory {localPath}");
           IList<string> cleanDirectoryErrors = new List<string> ();
           CleanDirectory (localPath, ref cleanDirectoryErrors);
           if (cleanDirectoryErrors.Any ()) {
@@ -560,8 +545,7 @@ namespace Lemoine.FileRepository
           result |= SynchronizationAdvancedStatus.DeletedExtra;
         }
         catch (Exception ex) {
-          log.ErrorFormat ("SynchronizeDirectoriesOnly: extra directory {0} could not be removed in directory {1}, {2}",
-            extraDirectory, localDirectory, ex);
+          log.Error ($"SynchronizeDirectoriesOnly: extra directory {extraDirectory} could not be removed in directory {localDirectory}", ex);
           warnings.Add ("Directory " + localDirectory + "/" + extraDirectory + " could not be deleted");
           result |= SynchronizationAdvancedStatus.Warning;
         }
@@ -577,14 +561,13 @@ namespace Lemoine.FileRepository
           var localDirectoryPath = Path.Combine (localDirectory, toSynchronizeDirectory);
           if (!Directory.Exists (localDirectoryPath)) {
             Directory.CreateDirectory (localDirectoryPath);
-            log.InfoFormat ("Directory {0} created", localDirectoryPath);
+            log.Info ($"SynchronizeDirectoriesOnly: directory {localDirectoryPath} created");
           }
           var distantDirectoryPath = FileRepoPath.Combine (distantDirectory, toSynchronizeDirectory);
           result |= SynchronizeDirectory (distantDirectoryPath, localDirectoryPath, filter, ref errors, ref warnings);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("SynchronizeDirectoriesOnly: directory {0} could not be synchronized in directory {1}, {2}",
-            toSynchronizeDirectory, localDirectory, ex);
+          log.Error ($"SynchronizeDirectoriesOnly: directory {toSynchronizeDirectory} could not be synchronized in directory {localDirectory}", ex);
           errors.Add ("Directory " + localDirectory + "/" + toSynchronizeDirectory + " could not be synchronized");
           result |= SynchronizationAdvancedStatus.Error;
           result |= SynchronizationAdvancedStatus.NotValid;
@@ -607,12 +590,13 @@ namespace Lemoine.FileRepository
     /// <returns></returns>
     static SynchronizationAdvancedStatus SynchronizeDirectory (string distantDirectory, string localDirectory, Func<IEnumerable<string>, string, bool> filter, ref IList<string> errors, ref IList<string> warnings, CancellationToken? cancellationToken = null)
     {
-      log.InfoFormat ("SynchronizeDirectory: synchronization of distantDirectory={0} to localDirectory={1}",
-                     distantDirectory, localDirectory);
+      log.Info ($"SynchronizeDirectory: synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}");
       SynchronizationAdvancedStatus result = SynchronizationAdvancedStatus.None;
 
       if (!Directory.Exists (localDirectory)) {
-        log.DebugFormat ("SynchronizeDirectory: create directory {0}", localDirectory);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SynchronizeDirectory: create directory {localDirectory}");
+        }
         Directory.CreateDirectory (localDirectory);
       }
 
@@ -650,14 +634,11 @@ namespace Lemoine.FileRepository
       var token = cancellationToken ?? CancellationToken.None;
 
       if (null == Instance.m_implementation) {
-        log.ErrorFormat ("TrySynchronize: " +
-                         "no implementation was set " +
-                         "=> return FAILURE");
+        log.Error ("TrySynchronize: no implementation was set => return FAILURE");
         return SynchronizationAdvancedStatus.NoImplementation | SynchronizationAdvancedStatus.Error;
       }
 
-      log.InfoFormat ("TrySynchronize: synchronization of distantDirectory={0} to localDirectory={1}",
-                     distantDirectory, localDirectory);
+      log.Info ($"TrySynchronize: synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}");
       IList<string> errors = new List<string> ();
       IList<string> warnings = new List<string> ();
 
@@ -669,7 +650,7 @@ namespace Lemoine.FileRepository
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("TrySynchronize: completion file {0} could not be removed, {1}", completionFilePath, ex);
+        log.Error ($"TrySynchronize: completion file {completionFilePath} could not be removed", ex);
       }
       token.ThrowIfCancellationRequested ();
       string warnFilePath = null;
@@ -678,7 +659,7 @@ namespace Lemoine.FileRepository
         File.Delete (warnFilePath);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("TrySynchronize: warn file {0} could not be removed, {1}", warnFilePath, ex);
+        log.Error ($"TrySynchronize: warn file {warnFilePath} could not be removed", ex);
       }
       token.ThrowIfCancellationRequested ();
       string errorFilePath = null;
@@ -687,7 +668,7 @@ namespace Lemoine.FileRepository
         File.Delete (errorFilePath);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("TrySynchronize: error file {0} could not be removed, {1}", errorFilePath, ex);
+        log.Error ($"TrySynchronize: error file {errorFilePath} could not be removed", ex);
       }
 
       token.ThrowIfCancellationRequested ();
@@ -701,27 +682,25 @@ namespace Lemoine.FileRepository
           File.WriteAllText (completionFilePath, "");
         }
         catch (Exception ex) {
-          log.ErrorFormat ("TrySynchronize: completion file {0} could not be written, {1}", completionFilePath, ex);
+          log.Error ($"TrySynchronize: completion file {completionFilePath} could not be written", ex);
         }
       }
       if (warnings.Any ()) {
-        log.WarnFormat ("TrySynchronize: there is at least one warning in the synchronization of distantDirectory={0} to localDirectory={1}",
-          distantDirectory, localDirectory);
+        log.Warn ($"TrySynchronize: there is at least one warning in the synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}");
         try {
           File.WriteAllLines (warnFilePath, warnings.ToArray ());
         }
         catch (Exception ex) {
-          log.ErrorFormat ("TrySynchronize: warn file {0} could not be written, {1}", warnFilePath, ex);
+          log.Error ($"TrySynchronize: warn file {warnFilePath} could not be written", ex);
         }
       }
       if (errors.Any ()) {
-        log.ErrorFormat ("TrySynchronize: there is at least one error in the synchronization of distantDirectory={0} to localDirectory={1}, return SYNCHRONIZATION_FAILED",
-          distantDirectory, localDirectory);
+        log.Error ($"TrySynchronize: there is at least one error in the synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}, return SYNCHRONIZATION_FAILED");
         try {
           File.WriteAllLines (errorFilePath, errors.ToArray ());
         }
         catch (Exception ex) {
-          log.ErrorFormat ("TrySynchronize: error file {0} could not be written, {1}", errorFilePath, ex);
+          log.Error ($"TrySynchronize: error file {errorFilePath} could not be written", ex);
         }
         return advancedStatus;
       }
@@ -767,7 +746,7 @@ namespace Lemoine.FileRepository
         }
         var advancedStatus = TrySynchronize (distantDirectory, localDirectory, filter);
         if (advancedStatus.HasFlag (SynchronizationAdvancedStatus.NoImplementation)) {
-          log.FatalFormat ("ForceSynchronize: no FileRepo implementation was set => give up");
+          log.Fatal ("ForceSynchronize: no FileRepo implementation was set => give up");
 #if NETSTANDARD
           Debug.Assert (false);
 #endif // NETSTANDARD
@@ -779,8 +758,7 @@ namespace Lemoine.FileRepository
           }
           else if (advancedStatus.HasFlag (SynchronizationAdvancedStatus.UpdatedFiles)
             || advancedStatus.HasFlag (SynchronizationAdvancedStatus.NewFiles)) {
-            log.InfoFormat ("ForceSynchronize: in the synchronization of distantDirectory={0} to localDirectory={1} at least one file was updated or created",
-          distantDirectory, localDirectory);
+            log.Info ($"ForceSynchronize: in the synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory} at least one file was updated or created");
             return SynchronizationStatus.SYNCHRONIZATION_DONE;
           }
           else {
@@ -792,7 +770,7 @@ namespace Lemoine.FileRepository
             log.Fatal ("ForceSynchronize: please check the FileRepo is accessible");
             fatalLogSet = true;
           }
-          log.ErrorFormat ("ForceSynchronize: synchronization could not get a possibly valid directory, retry in 1s");
+          log.Error ("ForceSynchronize: synchronization could not get a possibly valid directory, retry in 1s");
           if (null != checkedThread) {
             checkedThread.SetActive ();
           }
@@ -811,8 +789,7 @@ namespace Lemoine.FileRepository
         files = Directory.GetFiles (targetDirectory);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("CleanDirectory: files could not be listed in local directory {0}, {1}",
-          targetDirectory, ex);
+        log.Error ($"CleanDirectory: files could not be listed in local directory {targetDirectory}", ex);
         errors.Add ("Files could not be listed in local directory " + targetDirectory + " to remove");
         files = null;
       }
@@ -823,8 +800,7 @@ namespace Lemoine.FileRepository
             File.Delete (file);
           }
           catch (Exception ex) {
-            log.ErrorFormat ("CleanDirectory: file {0} could not be remove in local directory {1}, {2}",
-              file, targetDirectory, ex);
+            log.Error ($"CleanDirectory: file {file} could not be remove in local directory {targetDirectory}", ex);
             errors.Add ("File " + file + " could not be removed in local directory " + targetDirectory);
           }
         }
@@ -835,8 +811,7 @@ namespace Lemoine.FileRepository
         subDirectories = Directory.GetDirectories (targetDirectory);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("CleanDirectory: sub-directories could not be listed in local directory {0}, {1}",
-          targetDirectory, ex);
+        log.Error ($"CleanDirectory: sub-directories could not be listed in local directory {targetDirectory}", ex);
         errors.Add ("Sub-directories could not be listed in local directory " + targetDirectory + " to remove");
         subDirectories = null;
       }
@@ -846,8 +821,7 @@ namespace Lemoine.FileRepository
             CleanDirectory (subDirectory, ref errors);
           }
           catch (Exception ex) {
-            log.ErrorFormat ("CleanDirectory: sub-directory {0} could not be remove in local directory {1}, {2}",
-              subDirectory, targetDirectory, ex);
+            log.Error ($"CleanDirectory: sub-directory {subDirectory} could not be remove in local directory {targetDirectory}", ex);
             errors.Add ("Sub-directory " + subDirectory + " could not be removed in local directory " + targetDirectory);
           }
         }

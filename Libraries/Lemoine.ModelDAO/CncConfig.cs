@@ -341,24 +341,24 @@ namespace Lemoine.Model
       foreach (XmlElement supportedMachineElement in xmlDocument.GetElementsByTagName ("supported-machine")) {
         var cncConfigMachine = new CncConfigMachine (supportedMachineElement.InnerText);
         cncConfigMachine.Model = supportedMachineElement.GetAttribute ("model");
-        this.SupportedMachines.Add (cncConfigMachine);
+        m_supportedMachines.Add (cncConfigMachine);
       }
       foreach (XmlElement supportedControlElement in xmlDocument.GetElementsByTagName ("supported-control")) {
         var cncConfigControl = new CncConfigControl (supportedControlElement.InnerText);
         cncConfigControl.Version = supportedControlElement.GetAttribute ("version");
-        this.SupportedControls.Add (cncConfigControl);
+        m_supportedControls.Add (cncConfigControl);
       }
       foreach (XmlElement supportedProtocolElement in xmlDocument.GetElementsByTagName ("supported-protocol")) {
         var cncConfigProtocol = new CncConfigProtocol (supportedProtocolElement.InnerText);
         cncConfigProtocol.Version = supportedProtocolElement.GetAttribute ("version");
-        this.SupportedProtocols.Add (cncConfigProtocol);
+        m_supportedProtocols.Add (cncConfigProtocol);
       }
       foreach (XmlElement unitElement in xmlDocument.GetElementsByTagName ("unit")) {
         m_unit = unitElement.InnerText.Trim ();
       }
       foreach (XmlElement parameterElement in xmlDocument.GetElementsByTagName ("parameter")) {
         var cncConfigParam = new CncConfigParam (parameterElement.GetAttribute ("name"));
-        cncConfigParam.Description = parameterElement.GetAttribute ("description");
+        cncConfigParam.Description = parameterElement.InnerText;
         cncConfigParam.Type = parameterElement.GetAttribute ("type");
         var min = parameterElement.GetAttribute ("min");
         if (!string.IsNullOrEmpty (min)) {
@@ -397,7 +397,7 @@ namespace Lemoine.Model
         cncConfigParam.Regex = parameterElement.GetAttribute ("regex");
         cncConfigParam.Hidden = parameterElement.GetBoolAttribute ("hidden");
         if (!cncConfigParam.Type.Equals ("null", StringComparison.InvariantCultureIgnoreCase)) {
-          this.Parameters.Add (cncConfigParam);
+          m_parameters.Add (cncConfigParam);
         }
         else if (log.IsDebugEnabled) {
           log.Debug ($"Parse: omit param {cncConfigParam.Name} since its type is {cncConfigParam.Type}");

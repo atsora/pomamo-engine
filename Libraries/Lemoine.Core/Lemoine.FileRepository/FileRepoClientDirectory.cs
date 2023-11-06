@@ -174,7 +174,8 @@ namespace Lemoine.FileRepository
     public string GetString (string nspace, string path, bool optional = false)
     {
       try {
-        return File.ReadAllText (GetOsPath (nspace, path));
+        var ospath = GetOsPath (nspace, path);
+        return File.ReadAllText (ospath);
       }
       catch (FileNotFoundException ex) {
         if (optional) {
