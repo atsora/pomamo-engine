@@ -20,9 +20,6 @@
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\Lemoine.Database\Lemoine.Database.csproj" />
-    <ProjectReference Include="..\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
-    <ProjectReference Include="..\Pulse.Database\Pulse.Database.csproj" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">

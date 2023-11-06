@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -73,67 +74,6 @@ namespace Lemoine.DataRepository
 
     static readonly ILog log = LogManager.GetLogger (typeof (ODBCFactory).FullName);
 
-    #region Exceptions
-    /// <summary>
-    /// Raised when an error was found in the schema
-    /// </summary>
-    public class SchemaException : RepositoryException
-    {
-      /// <summary>
-      /// <see cref="RepositoryException"/>
-      /// </summary>
-      /// <param name="message">The message that describes the error.</param>
-      public SchemaException (string message)
-        : base (message)
-      {
-      }
-
-      /// <summary>
-      /// <see cref="RepositoryException"/>
-      /// </summary>
-      /// <param name="message">The message that describes the error.</param>
-      /// <param name="innerException"></param>
-      public SchemaException (string message, Exception innerException)
-        : base (message, innerException)
-      {
-      }
-    }
-
-    /// <summary>
-    /// Database or ODBC exception
-    /// </summary>
-    public class DatabaseException : RepositoryException
-    {
-      /// <summary>
-      /// <see cref="RepositoryException"/>
-      /// </summary>
-      /// <param name="message"></param>
-      /// <param name="innerException"></param>
-      public DatabaseException (string message, Exception innerException)
-        : base (message, innerException)
-      {
-      }
-    }
-
-    /// <summary>
-    /// XPath evaluation exception
-    /// </summary>
-    public class XPathException : RepositoryException
-    {
-      /// <summary>
-      /// RepositoryException in case of an XPath evaluation problem
-      /// 
-      /// <see cref="RepositoryException"/>
-      /// </summary>
-      /// <param name="message"></param>
-      /// <param name="innerException"></param>
-      public XPathException (string message, Exception innerException)
-        : base (message, innerException)
-      {
-      }
-    }
-    #endregion
-
     #region Members
     OdbcConnection m_connection = null;
     readonly IConnectionParameters m_connectionParameters = null;
@@ -171,20 +111,20 @@ namespace Lemoine.DataRepository
       XmlReader xmlReader = null;
       XmlReaderSettings settings = new XmlReaderSettings ();
       switch (source) {
-      case XmlSourceType.STRING:
-        settings.XmlResolver = new PulseResolver ();
-        settings.ValidationType = ValidationType.None;
-        xmlReader = XmlReader.Create (new StringReader (data), settings);
-        break;
-      case XmlSourceType.URI:
-        settings.XmlResolver = new PulseResolver ();
-        settings.ValidationType = ValidationType.Schema;
-        settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
-        settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
-        settings.ValidationEventHandler +=
-          new ValidationEventHandler (validationHandler.EventHandler);
-        xmlReader = XmlReader.Create (data, settings);
-        break;
+        case XmlSourceType.STRING:
+          settings.XmlResolver = new PulseResolver ();
+          settings.ValidationType = ValidationType.None;
+          xmlReader = XmlReader.Create (new StringReader (data), settings);
+          break;
+        case XmlSourceType.URI:
+          settings.XmlResolver = new PulseResolver ();
+          settings.ValidationType = ValidationType.Schema;
+          settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
+          settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+          settings.ValidationEventHandler +=
+            new ValidationEventHandler (validationHandler.EventHandler);
+          xmlReader = XmlReader.Create (data, settings);
+          break;
       }
 
       // Load the XML

@@ -10,15 +10,14 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="System.Data.Odbc" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Lemoine.DataRepository\Lemoine.DataRepository.csproj" />
     <ProjectReference Include="..\Lemoine.Extensions\Lemoine.Extensions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
 </Project>

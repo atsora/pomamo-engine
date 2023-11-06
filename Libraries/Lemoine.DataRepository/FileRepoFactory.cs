@@ -44,7 +44,6 @@ namespace Lemoine.DataRepository
     public string Path { get; set; }
     #endregion
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -55,9 +54,7 @@ namespace Lemoine.DataRepository
       NameSpace = nameSpace;
       Path = path;
     }
-    #endregion
 
-    #region Methods
     /// <summary>
     /// Specialized method to build the DOMDocument
     /// </summary>
@@ -122,6 +119,5 @@ namespace Lemoine.DataRepository
       // Do nothing special for the moment
       return;
     }
-    #endregion
   }
 }

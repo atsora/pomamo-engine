@@ -30,6 +30,7 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.DataRepository\Lemoine.DataRepository.csproj" AdditionalProperties="TargetFramework=net6.0" />
     <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
   </ItemGroup>
 
   <ItemGroup>

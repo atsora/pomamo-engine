@@ -21,54 +21,56 @@ namespace Lemoine.DataReferenceControls
     string m_path = "";
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (FileRepositorySelection).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (FileRepositorySelection).FullName);
 
     #region Getters / Setters
     /// <summary>
     /// FileRepository namespace
     /// </summary>
-    [Category("Configuration"), Browsable(true), Description("FileRepository namespace")]
-    public string NSpace {
+    [Category ("Configuration"), Browsable (true), Description ("FileRepository namespace")]
+    public string NSpace
+    {
       get { return m_nspace; }
       set { m_nspace = value; }
     }
-    
+
     /// <summary>
     /// FileRepository path
     /// </summary>
-    [Category("Configuration"), Browsable(true), DefaultValue(""), Description("FileRepository path")]
-    public string Path {
+    [Category ("Configuration"), Browsable (true), DefaultValue (""), Description ("FileRepository path")]
+    public string Path
+    {
       get { return m_path; }
       set { m_path = value; }
     }
-    
+
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
-    [Category("Configuration"), Browsable(true), DefaultValue(false), Description("Allow multi-selection")]
-    public bool MultiSelect {
+    [Category ("Configuration"), Browsable (true), DefaultValue (false), Description ("Allow multi-selection")]
+    public bool MultiSelect
+    {
       get { return (listBox.SelectionMode != SelectionMode.One); }
-      set
-      {
+      set {
         listBox.SelectionMode =
           value ? SelectionMode.MultiExtended : SelectionMode.One;
       }
     }
-    
+
     /// <summary>
     /// Is a null String a valid value ?
     /// </summary>
-    [Category("Configuration"), Browsable(true), DefaultValue(false), Description("Is a null value valid ?")]
-    public bool Nullable {
+    [Category ("Configuration"), Browsable (true), DefaultValue (false), Description ("Is a null value valid ?")]
+    public bool Nullable
+    {
       get { return nullCheckBox.Visible; }
-      set
-      {
+      set {
         if (value) {
-          tableLayoutPanel1.RowStyles [1].Height = 30;
+          tableLayoutPanel1.RowStyles[1].Height = 30;
           nullCheckBox.Visible = true;
         }
         else {
-          tableLayoutPanel1.RowStyles [1].Height = 0;
+          tableLayoutPanel1.RowStyles[1].Height = 0;
           nullCheckBox.Visible = false;
         }
       }
@@ -79,9 +81,9 @@ namespace Lemoine.DataReferenceControls
     /// 
     /// The returned list is not null, but may be empty or contain only one null element
     /// </summary>
-    public IList<string> SelectedFiles {
-      get
-      {
+    public IList<string> SelectedFiles
+    {
+      get {
         IList<string> list =
           new List<string> ();
         if (!nullCheckBox.Checked) {
@@ -95,12 +97,12 @@ namespace Lemoine.DataReferenceControls
       }
     }
     #endregion // Getters / Setters
-    
+
     #region Events
     /// <summary>
     /// Selection changed
     /// </summary>
-    [Category("Behavior"), Description("Raised after a selection")]
+    [Category ("Behavior"), Description ("Raised after a selection")]
     public event EventHandler AfterSelect;
     #endregion // Events
 
@@ -108,15 +110,15 @@ namespace Lemoine.DataReferenceControls
     /// <summary>
     /// Description of the constructor
     /// </summary>
-    public FileRepositorySelection()
+    public FileRepositorySelection ()
     {
       //
       // The InitializeComponent() call is required for Windows Forms designer support.
       //
-      InitializeComponent();
-      
+      InitializeComponent ();
+
       nullCheckBox.Text = PulseCatalog.GetString ("FileRepositoryNull");
-      
+
       this.Nullable = false;
     }
     #endregion // Constructors
@@ -133,13 +135,14 @@ namespace Lemoine.DataReferenceControls
       }
     }
     #endregion // Methods
-    
-    void FileRepositorySelectionLoad(object sender, EventArgs e)
+
+    void FileRepositorySelectionLoad (object sender, EventArgs e)
     {
       ICollection<string> files;
       try {
-        files = FileRepository.FileRepoClient.ListFilesInDirectory (System.IO.Path.Combine(m_nspace, m_path));
-      } catch (Exception) {
+        files = FileRepository.FileRepoClient.ListFilesInDirectory (System.IO.Path.Combine (m_nspace, m_path));
+      }
+      catch (Exception) {
         // to allow use in designer
         return;
       }
@@ -148,8 +151,8 @@ namespace Lemoine.DataReferenceControls
         listBox.Items.Add (file);
       }
     }
-    
-    void NullCheckBoxCheckedChanged(object sender, EventArgs e)
+
+    void NullCheckBoxCheckedChanged (object sender, EventArgs e)
     {
       if (nullCheckBox.Checked) {
         listBox.Enabled = false;
@@ -157,11 +160,11 @@ namespace Lemoine.DataReferenceControls
       else {
         listBox.Enabled = true;
       }
-      
+
       OnAfterSelect (new EventArgs ());
     }
-    
-    void ListBoxSelectedIndexChanged(object sender, EventArgs e)
+
+    void ListBoxSelectedIndexChanged (object sender, EventArgs e)
     {
       OnAfterSelect (new EventArgs ());
     }

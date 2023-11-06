@@ -95,8 +95,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("CncAcquisitionConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("CncAcquisitionConfigLoad: no DAO factory is defined");
         return;
       }
       

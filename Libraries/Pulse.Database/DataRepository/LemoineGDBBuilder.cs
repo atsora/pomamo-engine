@@ -197,14 +197,10 @@ namespace Lemoine.DataRepository
 
     static readonly ILog log = LogManager.GetLogger (typeof (LemoineGDBBuilder).FullName);
 
-    #region Constructors
     /// <summary>
-    /// Description of the constructor
+    /// Constructor
     /// </summary>
-    public LemoineGDBBuilder ()
-    {
-    }
-    #endregion // Constructors
+    public LemoineGDBBuilder () { }
 
     #region Methods
     /// <summary>

@@ -12,7 +12,6 @@ using System.IO;
 using System.Xml;
 
 using Lemoine.GDBPersistentClasses;
-using Lemoine.GDBUtils;
 using Lemoine.Info;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
@@ -44,7 +43,7 @@ namespace Lemoine.DataRepository.UnitTests
                                new ClassicConnectionParameters());
       
       // With an invalid XML file with an empty root element
-      Assert.Throws<ODBCFactory.SchemaException>
+      Assert.Throws<Lemoine.DataRepository.SchemaException>
         (delegate { new ODBCFactory (XmlSourceType.URI,
                                      System.IO.Path.Combine (m_unitTestsIn, "testODBCFactory-Invalid1.xml"),
                                         new ClassicConnectionParameters()); },
@@ -97,7 +96,7 @@ namespace Lemoine.DataRepository.UnitTests
          "string with no root element");
       
       // With an invalid XML string with no connection parameters
-      Assert.Throws<ODBCFactory.SchemaException>
+      Assert.Throws<Lemoine.DataRepository.SchemaException>
         (delegate { new ODBCFactory (XmlSourceType.STRING,
                                         "<root />",
                                         new ClassicConnectionParameters()); },

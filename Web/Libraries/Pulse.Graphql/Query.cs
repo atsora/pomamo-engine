@@ -81,6 +81,11 @@ namespace Pulse.Graphql
         .Argument<NonNullGraphType<IdGraphType>> ("operationModelId")
         .Argument<IntGraphType> ("pathNumber")
         .Resolve (ctx => GetSequences (ctx.GetArgument<int> ("operationModelId"), ctx.GetArgument<int?> ("pathNumber")));
+      Field<NonNullGraphType<ListGraphType<NonNullGraphType<CncConfigGraphType>>>, IEnumerable<CncConfig>> ("cncConfigs")
+        .Resolve (ctx => GetCncConfigs ());
+      Field<NonNullGraphType<CncConfigGraphType>, CncConfig> ("cncConfig")
+        .Argument<NonNullGraphType<StringGraphType>> ("name")
+        .Resolve (ctx => GetCncConfig (ctx.GetArgument<string> ("name")));
     }
 
     IMachine GetMachine (int machineId)
@@ -208,5 +213,12 @@ namespace Pulse.Graphql
       }
     }
 
+    IEnumerable<CncConfig> GetCncConfigs ()
+    {
+      return Lemoine.FileRepository.FileRepoClient.ListFilesInDirectory ("cncconfigs")
+        .Select (x => new CncConfig (x));
+    }
+
+    CncConfig GetCncConfig (string name) => new CncConfig (name + ".xml");
   }
 }

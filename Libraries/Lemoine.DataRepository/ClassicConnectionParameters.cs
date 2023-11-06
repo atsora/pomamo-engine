@@ -58,7 +58,7 @@ namespace Lemoine.DataRepository
       string dsnName =
         doc.DocumentElement.GetAttribute ("dsnname", PulseResolver.PULSE_ODBC_NAMESPACE);
       if (0 == dsnName.Length) {
-        throw new ODBCFactory.SchemaException ("No connection parameter root/@pulse:dsnname");
+        throw new SchemaException ("No connection parameter root/@pulse:dsnname");
       }
       m_connectionParameters.DsnName = dsnName;
 
