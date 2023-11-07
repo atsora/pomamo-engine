@@ -48,7 +48,35 @@ namespace Pulse.Graphql
       Field<NonNullGraphType<JobGraphType>, IJob> ("updateJob")
         .Argument<NonNullGraphType<UpdateJobInputType>> ("job")
         .Resolve (ctx => ctx.GetArgument<UpdateJob> ("job").Update ());
+      Field<NonNullGraphType<CncAcquisitionGraphType>, ICncAcquisition> ("createCncAcquisition")
+        .Argument<NonNullGraphType<NewCncAcquisitionInputType>> ("cncAcquisition")
+        .Resolve (ctx => ctx.GetArgument<NewCncAcquisition> ("cncAcquisition").CreateCncAcquisition ());
+      Field<NonNullGraphType<CncAcquisitionGraphType>, ICncAcquisition> ("updateCncAcquisition")
+        .Argument<NonNullGraphType<UpdateCncAcquisitionInputType>> ("cncAcquisition")
+        .Resolve (ctx => ctx.GetArgument<UpdateCncAcquisition> ("cncAcquisition").Update ());
+      Field<NonNullGraphType<BooleanGraphType>> ("removeCncAcquisition")
+        .Argument<NonNullGraphType<IdGraphType>> ("cncAcquisitionId")
+        .Resolve (ctx => RemoveCncAcquisition (ctx.GetArgument<int> ("cncAcquisitionId")));
     }
 
+    bool RemoveCncAcquisition (int id)
+    {
+      try {
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          using (var transaction = session.BeginTransaction ("RemoveCncAcquisition")) {
+            var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
+              .FindById (id);
+            ModelDAOHelper.DAOFactory.CncAcquisitionDAO.MakeTransient (cncAcquisition);
+            transaction.Commit ();
+          }
+        }
+        return true;
+      }
+      catch (Exception ex) {
+        log.Error ($"RemoveCncAcquisition: exception", ex);
+        return false;
+      }
+
+    }
   }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using GraphQL;
+using GraphQL.Instrumentation;
 using GraphQL.Types;
 using Lemoine.Core.Log;
 using Lemoine.Model;
@@ -86,6 +87,11 @@ namespace Pulse.Graphql
       Field<NonNullGraphType<CncConfigGraphType>, CncConfig> ("cncConfig")
         .Argument<NonNullGraphType<StringGraphType>> ("name")
         .Resolve (ctx => GetCncConfig (ctx.GetArgument<string> ("name")));
+      Field<NonNullGraphType<ListGraphType<NonNullGraphType<CncAcquisitionGraphType>>>, IEnumerable<ICncAcquisition>> ("cncAcquisitions")
+        .Resolve (ctx => GetCncAcquisitions ());
+      Field<NonNullGraphType<CncAcquisitionGraphType>, ICncAcquisition> ("cncAcquisition")
+        .Argument<NonNullGraphType<IdGraphType>> ("id")
+        .Resolve (ctx => GetCncAcquisition (ctx.GetArgument<int> ("id")));
     }
 
     IMachine GetMachine (int machineId)
@@ -213,12 +219,30 @@ namespace Pulse.Graphql
       }
     }
 
-    IEnumerable<CncConfig> GetCncConfigs ()
-    {
-      return Lemoine.FileRepository.FileRepoClient.ListFilesInDirectory ("cncconfigs")
+    IEnumerable<CncConfig> GetCncConfigs () => Lemoine.FileRepository.FileRepoClient.ListFilesInDirectory ("cncconfigs")
         .Select (x => new CncConfig (x));
-    }
 
     CncConfig GetCncConfig (string name) => new CncConfig (name + ".xml");
+
+    IEnumerable<ICncAcquisition> GetCncAcquisitions ()
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        return ModelDAOHelper.DAOFactory.CncAcquisitionDAO
+          .FindAll ();
+      }
+    }
+
+    ICncAcquisition GetCncAcquisition (int cncAcquisitionId)
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
+          .FindById (cncAcquisitionId);
+        if (cncAcquisition is null) {
+          log.Error ($"GetCncAcquisition: no cnc acquisition with id {cncAcquisitionId}");
+          throw new DataProcessingException ("No cncAcquisition with the specified id", Lemoine.Extensions.Web.Responses.ErrorStatus.WrongRequestParameter);
+        }
+        return cncAcquisition;
+      }
+    }
   }
 }

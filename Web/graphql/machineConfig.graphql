@@ -13,7 +13,7 @@ type Query {
 type Mutation {
   createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisition!
   updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisition!
-  removeCncAcquisition(cncAcquisitionId: ID!): Boolean
+  removeCncAcquisition(cncAcquisitionId: ID!): Boolean!
 }
 
 scalar CncConfigUnit # metric / inches / other
@@ -69,13 +69,18 @@ type CncAcquisition {
   parameters: [CncConfigParamValue!]!
 }
 
+input CncConfigParamValueInput {
+  name: String!
+  value: String
+}
+
 input NewCncAcquisition {
   cncConfigName: String!
-  parameters: [CncConfigParamValue!]!   
+  parameters: [CncConfigParamValueInput!]!   
 }
 
 input UpdateCncAcquisition {
   id: ID!
-  cncConfigName: String!
-  parameters: [CncConfigParamValue!]! 
+  cncConfigName: String
+  parameters: [CncConfigParamValueInput!]
 }

@@ -13,11 +13,11 @@ using Lemoine.Model;
 namespace Pulse.Graphql.Type
 {
   /// <summary>
-  /// Graphql type for <see cref="IComponent"/>
+  /// Graphql type for <see cref="CncConfigParam"/>
   /// </summary>
   public class CncConfigParamGraphType : ObjectGraphType<CncConfigParam>
   {
-    readonly ILog log = LogManager.GetLogger (typeof (CncConfigGraphType).FullName);
+    readonly ILog log = LogManager.GetLogger (typeof (CncConfigParamGraphType).FullName);
 
     /// <summary>
     /// Constructor

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2023 Atsora Solutions
 
+using Lemoine.Collections;
 using Lemoine.Core.Log;
 using Lemoine.I18N;
 using System;
@@ -405,6 +406,69 @@ namespace Lemoine.Model
       }
       foreach (XmlElement deprecatedElement in xmlDocument.GetElementsByTagName ("deprecated")) {
         m_deprecated = true;
+      }
+    }
+  }
+
+  /// <summary>
+  /// Cnc config parameter value
+  /// </summary>
+  public class CncConfigParamValue
+  {
+    static readonly ILog log = LogManager.GetLogger (typeof (CncConfigParamValue));
+
+    /// <summary>
+    /// Name
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Value
+    /// </summary>
+    public string Value { get; set; }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    public CncConfigParamValue (string name, string value)
+    {
+      this.Name = name;
+      this.Value = value;
+    }
+
+    public static string GetParametersString (IList<CncConfigParamValue> parameters)
+    {
+      var a = new string[10];
+      int maxParamNumber = 0;
+      foreach (var paramValue in parameters) {
+        if (paramValue.Name.StartsWith ("Param", StringComparison.CurrentCultureIgnoreCase)) {
+          if (int.TryParse (paramValue.Name.Substring ("Param".Length), out var paramNumber)) {
+            if (a.Length < paramNumber) {
+              log.Error ($"GetParametersString: param number {paramNumber} for name {paramValue.Name} is not supported yet");
+            }
+            else {
+              a[paramNumber - 1] = paramValue.Value;
+              if (maxParamNumber < paramNumber) {
+                maxParamNumber = paramNumber;
+              }
+            }
+          }
+          else {
+            log.Error ($"GetParametersString: parameter name {paramValue.Name} does not contain the param number");
+          }
+        }
+        else {
+          log.Error ($"GetParametersString: skip the parameter of name {paramValue.Name}");
+        }
+      }
+      if (0 < maxParamNumber) {
+        return a.Take (maxParamNumber).ToListString ();
+      }
+      else {
+        log.Warn ($"GetParametersString: no parameter found => return an empty string");
+        return "";
       }
     }
   }
