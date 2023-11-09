@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -33,6 +34,7 @@ namespace LemoineServiceMonitoring
   {
     static readonly string ADDITIONAL_LCTR_KEY = "AdditionalServices.Lctr";
     static readonly string ADDITIONAL_LPOST_KEY = "AdditionalServices.Lpost";
+    static readonly string ADDITIONAL_CONNECTOR_KEY = "AdditionalServices.Connector";
     static readonly string ADDITIONAL_OTHERS_KEY = "AdditionalServices.Others";
     static readonly string ADDITIONAL_DEFAULT = ""; // List string, first character is the separator
 
@@ -69,7 +71,7 @@ namespace LemoineServiceMonitoring
 
     #region Constructors
     /// <summary>
-    /// Main form of the Lemoine Service Monitoring application
+    /// Main form of the Atsora Service Monitoring application
     /// </summary>
     public MainForm ()
     {
@@ -119,17 +121,17 @@ namespace LemoineServiceMonitoring
 
       // Common service to L_Post, L_Ctr, ...
       var commonServices = new List<string> {
-        "Lem_WatchDogService" // Lemoine WatchDog Service
+        "Lem_WatchDogService" // WatchDog Service
       };
 
       // 1.a) LCTR
       var lctrServices = new List<string> {
-        "Lem_AnalysisService", // Lemoine Analysis Service
-        "Lem_AlertService", // [Optional] Lemoine Alert Service
-        "Lem_AutoReasonService", // [Optional] Lemoine Auto-reason Service
-        "Lem_SynchronizationService", // [Optional] Lemoine Synchronization
-        "Lem_AspService", // Lemoine Asp Service
-        "Lem_StampingService" // Lemoine Stamping Service
+        "Lem_AnalysisService", // Analysis Service
+        "Lem_AlertService", // [Optional] Alert Service
+        "Lem_AutoReasonService", // [Optional] Auto-reason Service
+        "Lem_SynchronizationService", // [Optional] Synchronization
+        "Lem_AspService", // Asp Service
+        "Lem_StampingService" // Stamping Service
       };
       AddAdditionalServices (lctrServices, ADDITIONAL_LCTR_KEY);
 
@@ -153,24 +155,33 @@ namespace LemoineServiceMonitoring
       };
       AddAdditionalServices (lpostServices, ADDITIONAL_LPOST_KEY);
 
+      // Connector services
+      var connectorServices = new List<string> {
+        "AconnectorCncService",
+        "AconnectorCncCoreService",
+        "AconnectorOpenCncService",
+        "AconnectorOpenCncCoreService"
+      };
+      AddAdditionalServices (connectorServices, ADDITIONAL_CONNECTOR_KEY);
+
       // Alert
       var alertServices = new List<string> {
-        "Lem_AlertService" // Lemoine Alert Service
+        "Lem_AlertService" // Alert Service
       };
 
       // AutoReason
       var autoReasonServices = new List<string> {
-        "Lem_AutoReasonService" // Lemoine Auto-reason Service
+        "Lem_AutoReasonService" // Auto-reason Service
       };
 
       // Synchronization
       var synchronizationServices = new List<string> {
-        "Lem_SynchronizationService" // Lemoine Synchronization
+        "Lem_SynchronizationService" // Synchronization
       };
 
       // 1.c) web
       var webServices = new List<string> {
-        "Lem_AspService" // Lemoine Asp Service
+        "Lem_AspService" // Asp Service
       };
 
       // 1.d) Stamping
@@ -182,8 +193,7 @@ namespace LemoineServiceMonitoring
       // 1.e) Controls
       var controlServices = new List<string> {
         "Lem_Control", // Control des services
-        "Lem_SiemensToCorbaService", // Lemoine SiemensToCorba Service
-        "Lem_SiemensToCorba", // Old Lemoine SiemensToCorba Service name
+        "Lem_SiemensToCorbaService", // SiemensToCorba Service
         "Lem_FanucToCorbaService"
       };
 
@@ -198,13 +208,11 @@ namespace LemoineServiceMonitoring
           otherServices.Add (psqlService);
         }
       }
-      otherServices.Add ("postgresql-x64-9.6"); // because the 64bits programs are not in the same registry key
-      otherServices.Add ("Tomcat7");
       otherServices.Add ("Tomcat8");
       otherServices.Add ("Tomcat9");
       otherServices.Add ("nscp"); // NSClient++ for Nagios
-      otherServices.Add ("Lemoine Loop"); // For tests
       otherServices.Add ("MTConnectAdapterService");
+      otherServices.Add ("mosquitto");
       AddAdditionalServices (otherServices, ADDITIONAL_OTHERS_KEY);
 
       // 2. Add the services
@@ -213,15 +221,18 @@ namespace LemoineServiceMonitoring
 
       IList<Task> addServiceTasks = new List<Task> ();
 
-      // Lemoine services on this computer
+      // Atsora services on this computer
       groupIndex++;
-      var lemoineGroup = new ListViewGroup ("This computer: Lemoine services");
-      lemoineGroup.Name = "LemoineGroup";
-      listView.Groups.Insert (groupIndex, lemoineGroup);
+      var atsoraGroup = new ListViewGroup ("This computer: Atsora services");
+      atsoraGroup.Name = "AtsoraGroup";
+      listView.Groups.Insert (groupIndex, atsoraGroup);
       foreach (var serviceName in lctrServices) {
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
       foreach (var serviceName in lpostServices) {
+        addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
+      }
+      foreach (var serviceName in connectorServices) {
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
       foreach (var serviceName in stampingServices) {
@@ -256,9 +267,9 @@ namespace LemoineServiceMonitoring
 
         if ((null != lctr) && !lctr.IsLocal ()) {
           groupIndex++;
-          ListViewGroup lctrLemoineGroup =
-            new ListViewGroup ($"LCtr {lctr.Name} ({lctr.Address}): Lemoine services");
-          listView.Groups.Insert (groupIndex, lctrLemoineGroup);
+          ListViewGroup serverAtsoraGroup =
+            new ListViewGroup ($"Main server {lctr.Name} ({lctr.Address}): Atsora services");
+          listView.Groups.Insert (groupIndex, serverAtsoraGroup);
           foreach (var serviceName in lctrServices) {
             addServiceTasks.Add (AddServiceAsync (serviceName, lctr.Address, groupIndex));
           }
@@ -267,7 +278,7 @@ namespace LemoineServiceMonitoring
           }
           groupIndex++;
           ListViewGroup lctrOthersGroup =
-            new ListViewGroup ($"LCtr {lctr.Name} ({lctr.Address}): other services");
+            new ListViewGroup ($"Main server {lctr.Name} ({lctr.Address}): other services");
           listView.Groups.Insert (groupIndex, lctrOthersGroup);
           foreach (String ServiceName in otherServices) {
             addServiceTasks.Add (AddServiceAsync (ServiceName, lctr.Address, groupIndex));
@@ -286,7 +297,7 @@ namespace LemoineServiceMonitoring
         foreach (IComputer lpost in lposts.Where (x => !x.IsLocal ())) {
           groupIndex++;
           ListViewGroup lpostGroup =
-            new ListViewGroup ($"LPost: {lpost.Name} ({lpost.Address})");
+            new ListViewGroup ($"Acquisition server: {lpost.Name} ({lpost.Address})");
           listView.Groups.Insert (groupIndex, lpostGroup);
           foreach (var serviceName in lpostServices) {
             addServiceTasks.Add (AddServiceAsync (serviceName, lpost.Address, groupIndex));
@@ -454,7 +465,7 @@ namespace LemoineServiceMonitoring
         log.Error ($"StopServiceWithProgressAsync: {listViewItem.Text} could not be stopped", ex);
         // raise a message
         MessageBox.Show ($"The service {listViewItem.Text} could not be stopped. Did you run the program with the Administrator privilege ?",
-                        "Lemoine Service Monitoring",
+                        "Atsora Service Monitoring",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
       }
@@ -536,7 +547,7 @@ namespace LemoineServiceMonitoring
         log.Error ($"StartServiceWithProgressAsync: {listViewItem.Text} could not be started", ex);
         // raise a message
         MessageBox.Show ($"The service {listViewItem.Text} could not be started. Did you run the program with the Administrator privilege ?",
-                        "Lemoine Service Monitoring",
+                        "Atsora Service Monitoring",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
       }
@@ -847,7 +858,7 @@ namespace LemoineServiceMonitoring
         case ServiceControllerStatus.Running:
           // List status value
           int PID = 0;
-          if (object.Equals (listViewItem.Group.Name, "LemoineGroup")) {
+          if (object.Equals (listViewItem.Group.Name, "AtsoraGroup")) {
             PID = sc.GetServicePID ();
           }
           InvokeSetStatus (listViewItem, GetTranslation ("Started"), startupType: sc.StartMode, pid: PID);
@@ -884,15 +895,15 @@ namespace LemoineServiceMonitoring
       //   restart it
       bool allAutoServicesRunning = true;
       foreach (ListViewItem i in listView.Items) {
-        if (!object.Equals (i.Group.Name, "LemoineGroup")) {
-          // Consider only the services in the Lemoine group here
+        if (!object.Equals (i.Group.Name, "AtsoraGroup")) {
+          // Consider only the services in the Atsora group here
           continue;
         }
         if (i.Text.Equals ("Lem_WatchDogService")
-          || i.Text.Contains ("Lemoine WatchDog Service")
+          || i.Text.Contains ("WatchDog Service")
           || i.Text.Equals ("Lem_Control")
-          || i.Text.Contains ("Lemoine Watchdog Service")
-          || i.Text.Contains ("Lemoine Watching Service")) {
+          || i.Text.Contains ("Watchdog Service")
+          || i.Text.Contains ("Watching Service")) {
           // Skip the watching service
           continue;
         }
@@ -968,7 +979,7 @@ namespace LemoineServiceMonitoring
           // raise a message
           MessageBox.Show ("The startup type of the service could not be updated. " +
                           "Did you run the program with the Administrator privilege ?",
-                          "Lemoine Service Monitoring",
+                          "Atsora Service Monitoring",
                           MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         await UpdateStatusAsync (i, sc);
@@ -989,7 +1000,7 @@ namespace LemoineServiceMonitoring
           // raise a message
           MessageBox.Show ("The startup type of the service could not be updated. " +
                           "Did you run the program with the Administrator privilege ?",
-                          "Lemoine Service Monitoring",
+                          "Atsora Service Monitoring",
                           MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         await UpdateStatusAsync (i, sc);
@@ -1010,7 +1021,7 @@ namespace LemoineServiceMonitoring
           // raise a message
           MessageBox.Show ("The startup type of the service could not be updated. " +
                           "Did you run the program with the Administrator privilege ?",
-                          "Lemoine Service Monitoring",
+                          "Atsora Service Monitoring",
                           MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         await UpdateStatusAsync (i, sc);
@@ -1039,11 +1050,11 @@ namespace LemoineServiceMonitoring
 
     async void ButtonStopAllClick (object sender, EventArgs e)
     {
-      // Consider only the services in the Lemoine group here
+      // Consider only the services in the Atsora group here
       var listViewItems = new List<ListViewItem> ();
       foreach (ListViewItem i in listView.Items) {
-        if (!object.Equals (i.Group.Name, "LemoineGroup")) {
-          // Consider only the services in the Lemoine group here
+        if (!object.Equals (i.Group.Name, "AtsoraGroup")) {
+          // Consider only the services in the Atsora group here
           continue;
         }
         if (i.Text.Equals ("Lem_WatchDogService")
@@ -1097,11 +1108,11 @@ namespace LemoineServiceMonitoring
 
     async void ButtonStartAllClick (object sender, EventArgs e)
     {
-      // Consider only the services in the Lemoine group here
+      // Consider only the services in the Atsora group here
       var listViewItems = new List<ListViewItem> ();
       foreach (ListViewItem i in listView.Items) {
-        if (!object.Equals (i.Group.Name, "LemoineGroup")) {
-          // Consider only the services in the Lemoine group here
+        if (!object.Equals (i.Group.Name, "AtsoraGroup")) {
+          // Consider only the services in the Atsora group here
           continue;
         }
         if (i.Text.Equals ("Lem_WatchDogService")

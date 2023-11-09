@@ -49,8 +49,8 @@ type CncConfigParam {
   description: String
   type: CncConfigParamType
   optional: Boolean
-  min: Int # if type=int or integer
-  max: Int # if type=int or integer
+  min: Int # if type=int or integer or double
+  max: Int # if type=int or integer or double
   default: String
   advanced: Boolean
   values: [String!] # if type=list or file

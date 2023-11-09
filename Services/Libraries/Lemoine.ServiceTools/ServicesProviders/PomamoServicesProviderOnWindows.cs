@@ -12,7 +12,7 @@ using Lemoine.Core.Log;
 namespace Lemoine.ServiceTools.ServicesProviders
 {
   /// <summary>
-  /// Return the Lemoine services that are in Auto mode
+  /// Return the Atsora and Pomamo services that are in Auto mode
   /// </summary>
   [SupportedOSPlatform ("windows")]
   public class PomamoServicesProviderOnWindows : AutoServicesProviderOnWindows, IServiceControllersProvider
