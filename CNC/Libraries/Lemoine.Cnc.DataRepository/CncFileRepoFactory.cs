@@ -27,6 +27,10 @@ namespace Lemoine.Cnc.DataRepository
   /// </summary>
   public class CncFileRepoFactory : FileRepoFactory
   {
+    static readonly string GET_CONFIG_METHOD_KEY = "Cnc.FileRepo.GetConfigMethod";
+    static readonly string GET_CONFIG_METHOD_DEFAULT = ""; // Default is use Lemoine.Info.ConfigSet
+    static readonly string GET_CONFIG_METHOD_DATABASEONLY = "DatabaseOnly"; // DatabaseOnly: check in the database only
+
     /// <summary>
     /// Database exception
     /// </summary>
@@ -498,10 +502,13 @@ namespace Lemoine.Cnc.DataRepository
               string configKey = attribute.Value
                 .Substring (index + 1 + configPrefix.Length);
               configKey = configKey.Substring (0, configKey.IndexOf ('}'));
-              object configValue = GetConfig (configKey);
-              if (null == configValue) {
-                log.Debug ($"ReplaceKeywords: configValue is null for key {configKey} => replace it by an empty string");
+              var configValue = GetConfig (configKey)?.ToString () ?? "";
+              if (configValue is null) {
+                log.Error ($"ReplaceKeywords: configValue is null for key {configKey} => replace it by an empty string");
                 configValue = "";
+              }
+              else if (log.IsDebugEnabled && string.IsNullOrEmpty (configValue)) {
+                log.Debug ($"ReplaceKeywords: configValue is empty for key {configKey}");
               }
               attribute.Value = attribute.Value.Replace ("{" + configPrefix + configKey + "}",
                                                          configValue.ToString ());
@@ -833,25 +840,36 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
-    object GetConfig (string key)
+    /// <summary>
+    /// Get the config for a specific key. If not found, an empty string is returned
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    /// <exception cref="DatabaseException"></exception>
+    string GetConfig (string key)
     {
-      IConfig config;
-      try {
-        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          config = ModelDAOHelper.DAOFactory.ConfigDAO
-            .GetConfig (key);
+      if (Lemoine.Info.ConfigSet.LoadAndGet (GET_CONFIG_METHOD_KEY, GET_CONFIG_METHOD_DEFAULT).Equals (GET_CONFIG_METHOD_DATABASEONLY, StringComparison.InvariantCultureIgnoreCase)) {
+        IConfig config;
+        try {
+          using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+            config = ModelDAOHelper.DAOFactory.ConfigDAO
+              .GetConfig (key);
+          }
+        }
+        catch (Exception ex) {
+          log.Error ($"GetConfig: config key {key} could not be read", ex);
+          throw new DatabaseException ("Config read problem", ex);
+        }
+        if (null == config) {
+          log.WarnFormat ($"GetConfig: config key {key} does not exist");
+          return "";
+        }
+        else {
+          return config.Value?.ToString () ?? "";
         }
       }
-      catch (Exception ex) {
-        log.Error ($"GetConfig: config key {key} could not be read", ex);
-        throw new DatabaseException ("Config read problem", ex);
-      }
-      if (null == config) {
-        log.WarnFormat ($"GetConfig: config key {key} does not exist");
-        return null;
-      }
-      else {
-        return config.Value;
+      else { // Else use by default Lemoine.Info.ConfigSet
+        return Lemoine.Info.ConfigSet.LoadAndGet (key, "");
       }
     }
 

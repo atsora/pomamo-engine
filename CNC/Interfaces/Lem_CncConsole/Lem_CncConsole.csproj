@@ -33,6 +33,7 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="System.IO.Ports" /><!--indirect dependency for Lemoine.Cnc.Serial -->
     <PackageReference Include="System.Data.SQLite.Core" /><!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
+    <PackageReference Include="System.Text.Json" />
 
     <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
