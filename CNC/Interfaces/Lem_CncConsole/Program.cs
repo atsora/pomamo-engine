@@ -92,11 +92,11 @@ namespace Lem_CncConsole
         });
       if (options.Light) {
         result = result
-          .ConfigureFileRepoClientFactoryDefault ()
           .ConfigureApplicationLight<ApplicationInitializerCncNoDatabase> ();
       }
       else {
         result = result
+          .ConfigureFileRepoClientFactoryDefault ()
           .ConfigureDatabaseWithNoNHibernateExtension<ApplicationInitializerCncAcquisition> (Lemoine.Model.PluginFlag.Cnc, GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
       }
       return result

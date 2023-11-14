@@ -263,6 +263,17 @@ namespace Lemoine.GDBPersistentClasses
     public virtual CncModuleLicense License { get; set; }
 
     /// <summary>
+    /// License for XML serialization
+    /// </summary>
+    [XmlAttribute("License")]
+    public virtual int XmlLicense {
+      get => (int)this.License;
+      set {
+        this.License = (CncModuleLicense)value;
+      }
+    }
+
+    /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]

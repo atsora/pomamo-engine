@@ -11,6 +11,13 @@
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <!-- CNC Module and plugin dependencies -->
+    <Reference Include="IIOPChannel">
+      <HintPath>..\..\..\..\pomamo-extern\IIOP.NET\IIOPChannel.dll</HintPath>
+    </Reference>
+    <Reference Include="Lemoine.Corba.Fidia">
+      <HintPath>..\..\..\..\pomamo-cnc-extern\Fidia\Lemoine.Corba.Fidia.dll</HintPath>
+    </Reference>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.CorbaHelper\Lemoine.CorbaHelper.csproj" />
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />

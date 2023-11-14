@@ -121,7 +121,7 @@ namespace LemoineServiceMonitoring
 
       // Common service to L_Post, L_Ctr, ...
       var commonServices = new List<string> {
-        "Lem_WatchDogService" // WatchDog Service
+        "Lem_WatchDogService", // WatchDog Service
       };
 
       // 1.a) LCTR
@@ -142,6 +142,7 @@ namespace LemoineServiceMonitoring
         "AtrackingCncService", // Atracking Cnc Service
         "AtrackingCncCoreService", // Atracking Cnc Core Service
         "Lem_CncDataService", // New Cnc Data Service
+        "Lem_WatchDog32Service", // WatchDog32 Service
         "MTConnect Agent", // MTConnect agent on LPost
         "MTConnect Agent 1", // MTConnect agent on LPost
         "MTConnect Agent 2", // MTConnect agent on LPost
@@ -606,6 +607,36 @@ namespace LemoineServiceMonitoring
       }
     }
 
+    /// <summary>
+    /// Stop the watch dog 32 service and returns true if it was running,
+    /// else return false
+    /// </summary>
+    /// <returns></returns>
+    async Task<bool> StopWatchDog32ServiceAsync ()
+    {
+      var controlSC = new WindowsServiceController ("Lem_WatchDog32Service");
+      try {
+        await controlSC.StopServiceAsync ();
+        return true;
+      }
+      catch (Exception ex) {
+        log.Error ($"StopWatchDog32Service: the watch dog 32 service is probably not installed, give up", ex);
+        return false;
+      }
+    }
+
+    async Task StartWatchDog32ServiceAsync ()
+    {
+      var controlSC = new WindowsServiceController ("Lem_WatchDog32Service");
+      try {
+        await controlSC.StartServiceAsync ();
+      }
+      catch (Exception ex) {
+        log.Error ("StartWatchingService: the watch dog 32 service is probably not installed, => give up ", ex);
+        return;
+      }
+    }
+
     private async Task AddServiceAsync (string serviceName, int iGroup)
     {
       await AddServiceAsync (serviceName, "", iGroup);
@@ -900,9 +931,9 @@ namespace LemoineServiceMonitoring
           continue;
         }
         if (i.Text.Equals ("Lem_WatchDogService")
-          || i.Text.Contains ("WatchDog Service")
           || i.Text.Equals ("Lem_Control")
           || i.Text.Contains ("Watchdog Service")
+          || i.Text.Contains ("WatchDog")
           || i.Text.Contains ("Watching Service")) {
           // Skip the watching service
           continue;
@@ -922,6 +953,7 @@ namespace LemoineServiceMonitoring
       }
       if (allAutoServicesRunning) {
         await StartWatchingServiceAsync ();
+        await StartWatchDog32ServiceAsync ();
         progressBar.Value = progressBar.Maximum;
         await RefreshAllStatusAsync ();
       }
@@ -951,6 +983,7 @@ namespace LemoineServiceMonitoring
 
       // 1. Begin to stop Lem_WatchDogService if needed
       bool restartWatchingService = await StopWatchingServiceAsync ();
+      bool restartWatchDog32Service = await StopWatchDog32ServiceAsync ();
       this.Invoke (new MethodInvoker (progressBar.PerformStep));
 
       await StopSelectedServicesAsync (listView);
@@ -959,6 +992,9 @@ namespace LemoineServiceMonitoring
       // 3. Restart Lem_WatchDogService if needed
       if (restartWatchingService == true) {
         await StartWatchingServiceAsync ();
+      }
+      if (restartWatchDog32Service) {
+        await StartWatchDog32ServiceAsync ();
       }
       progressBar.Value = progressBar.Maximum;
 
@@ -1116,7 +1152,8 @@ namespace LemoineServiceMonitoring
           continue;
         }
         if (i.Text.Equals ("Lem_WatchDogService")
-          || i.Text.Equals ("Lem_Control")) {
+          || i.Text.Equals ("Lem_Control")
+          || i.Text.Contains ("WatchDog")) {
           // Skip the watching service for the moment,
           // it will be started only once all the services are started
           continue;
@@ -1131,6 +1168,7 @@ namespace LemoineServiceMonitoring
       await StartServicesAsync (listViewItems, autoOnly: true);
 
       await StartWatchingServiceAsync ();
+      await StartWatchDog32ServiceAsync ();
 
       progressBar.Value = progressBar.Maximum;
       await RefreshAllStatusAsync ();
