@@ -35,7 +35,7 @@ namespace Lemoine.Service
     /// </summary>
     public AsyncThreadServiceWorker6432 (IConfiguration configuration, IThreadServiceAsync service)
     {
-      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader (configuration, mixed6432: true));
+      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader (configuration, true));
       m_service = service;
     }
 

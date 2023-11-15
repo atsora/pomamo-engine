@@ -44,7 +44,7 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
-    <ProjectReference Include="..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net6.0;TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" />
     <ProjectReference Include="..\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
     <ProjectReference Include="..\Libraries\Lemoine.Alert.GDBListeners\Lemoine.Alert.GDBListeners.csproj" />

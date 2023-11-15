@@ -27,7 +27,6 @@
     <ProjectReference Include="..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Web\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\Libraries\Lemoine.Cnc.SQLiteQueue\Lemoine.Cnc.SQLiteQueue.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\Libraries\Lemoine.Cnc.SystemQueue\Lemoine.Cnc.SystemQueue.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,13 +46,14 @@
     <PackageReference Include="CommandLineParser" />
   </ItemGroup>
 
+  <ItemGroup Condition="('($(PlatformTarget)' != 'x64') and ('$(TargetFramework)' == 'net48')">
+    <ProjectReference Include="..\Libraries\Lemoine.Cnc.SystemQueue\Lemoine.Cnc.SystemQueue.csproj" />
+  </ItemGroup>
+  
   <ItemGroup>
     <None Include="Lem_CncDataConsole.nh.cfg.xml" CopyToOutputDirectory="Always" />
     <None Include="..\..\ApplicationTemplate.exe.log4net" Link="$(ProjectName).dll.log4net" CopyToOutputDirectory="Always" Visible="false" />
     <!--None Include="Lem_CncDataConsole.dll.options" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" /-->
-  </ItemGroup>
-
-  <ItemGroup>
   </ItemGroup>
   
 </Project>

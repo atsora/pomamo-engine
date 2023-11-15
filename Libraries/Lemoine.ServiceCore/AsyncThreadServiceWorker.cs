@@ -35,7 +35,7 @@ namespace Lemoine.Service
     /// </summary>
     public AsyncThreadServiceWorker (IConfiguration configuration, IThreadServiceAsync service)
     {
-      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader (configuration));
+      Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader (configuration, false));
       m_service = service;
     }
 

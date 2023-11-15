@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+<!-- Directory.Build.props is imported very early in Microsoft.Common.props, and properties defined later are unavailable to it. 
+     So, avoid referring to properties that are not yet defined (and will evaluate to empty). 
+     More info in https://docs.microsoft.com/fr-fr/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
+    
+  <PropertyGroup>
+    <Configurations>Debug;Release;VS</Configurations>
+    <OutputPath>bin\$(ProductDir)\$(Configuration)\$(Platform)</OutputPath>
+    <IntermediateOutputPath>obj\$(ProductDir)\$(Configuration)\$(Platform)</IntermediateOutputPath>
+  </PropertyGroup>
+
+</Project>

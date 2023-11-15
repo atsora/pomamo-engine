@@ -77,12 +77,13 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.DataRepository\Lemoine.Cnc.DataRepository.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(PlatformTarget)' == 'x86'">
+  <!--ItemGroup Condition="'$(PlatformTarget)' == 'x86'">
     <None Include="bin\$(ProductDir)\$(Configuration)\$(TargetFramework)\x86\SQLite.Interop.dll" CopyToPublishDirectory="Always" Link="SQLite.Interop.dll" />
   </ItemGroup>
   <ItemGroup Condition="'$(PlatformTarget)' == 'x64'">
     <None Include="bin\$(ProductDir)\$(Configuration)\$(TargetFramework)\x64\SQLite.Interop.dll" CopyToPublishDirectory="Always" Link="SQLite.Interop.dll" />
-  </ItemGroup>
+  </ItemGroup-->
+  <!-- TODO: do not publish in case of a global compilation -->
   <ItemGroup>
     <None Remove="bin\VS\net48\x86\SQLite.Interop.dll" />
   </ItemGroup>

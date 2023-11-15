@@ -28,11 +28,11 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <ProjectReference Include="..\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net48" />
+    <ProjectReference Include="..\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net48;TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
-    <ProjectReference Include="..\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" />
+    <ProjectReference Include="..\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net6.0;TargetPlatform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
