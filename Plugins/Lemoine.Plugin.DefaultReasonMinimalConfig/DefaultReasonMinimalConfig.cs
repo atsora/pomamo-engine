@@ -12,6 +12,7 @@ using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using Pulse.Extensions.Database;
+using System.Runtime.CompilerServices;
 
 namespace Lemoine.Plugin.DefaultReasonMinimalConfig
 {
@@ -110,6 +111,11 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
       m_machine = machine;
       log = LogManager.GetLogger (typeof (DefaultReasonMinimalConfig).FullName + "." + machine.Id);
 
+      return Initialize (configurations);
+    }
+
+    bool Initialize (IEnumerable<Configuration> configurations)
+    {
       if (!configurations.Any ()) {
         log.Error ("Initialize: LoadConfiguration returned no configuration");
         return false;
@@ -155,6 +161,10 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
         if (0 == m_configuration.InactiveLongReasonId) {
           m_inactiveLongReason = Lemoine.Extensions.AutoReason.ConfigRequests
             .AddReason (m_configuration.InactiveLongDefaultReasonTranslationKey, m_configuration.InactiveLongDefaultReasonTranslationValue);
+          if (m_inactiveLongReason is null) {
+            log.Error ($"Initialize: setting the inactive long reason with translation key ={m_configuration.InactiveLongDefaultReasonTranslationKey} failed");
+            return false;
+          }
         }
         else {
           m_inactiveLongReason = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (m_configuration.InactiveLongReasonId);
@@ -972,15 +982,39 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
     /// <see cref="IReasonLegendExtension"/>
     /// </summary>
     /// <returns></returns>
+    public bool Initialize ()
+    {
+      var configurations = LoadConfigurations ();
+      return Initialize (configurations);
+    }
+
+    /// <summary>
+    /// <see cref="IReasonLegendExtension"/>
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<IReason> GetUsedReasons ()
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        var reasons = new List<IReason> {
-          m_activeReason,
-          m_inactiveLongReason
-        };
+        var reasons = new List<IReason> ();
+        if (m_activeReason is null) {
+          log.Error ($"GetUsedReasons: active reason is null");
+        }
+        else {
+          reasons.Add (m_activeReason);
+        }
+        if (m_inactiveLongReason is null) {
+          log.Error ($"GetUsedReasons: inactive long reason is null");
+        }
+        else {
+          reasons.Add (m_inactiveLongReason);
+        }
         if (!m_unknownIsInactive) {
-          reasons.Add (m_unknownReason);
+          if (m_unknownReason is null) {
+            log.Error ($"GetUsedReasons: unknown reason is null");
+          }
+          else {
+            reasons.Add (m_unknownReason);
+          }
         }
         if (null != m_inactiveShortReason) {
           reasons.Add (m_inactiveShortReason);
@@ -994,7 +1028,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
             ModelDAOHelper.DAOFactory.Initialize (reason.ReasonGroup);
           }
         }
-        return reasons;
+        return reasons.Where (x => null != x);
       }
     }
     #endregion // IReasonLegendExtension implementation

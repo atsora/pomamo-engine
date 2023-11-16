@@ -132,8 +132,7 @@ namespace Pulse.Web.CncValue
             if (log.IsDebugEnabled) {
               log.Debug ($"GetWithoutCache: consider performance field {performanceField?.Id}");
             }
-            var fieldList = new List<IField> ();
-            fieldList.Add (performanceField);
+            var fieldList = new List<IField> { performanceField };
             fields = fieldList;
           }
         }

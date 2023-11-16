@@ -615,6 +615,15 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     /// <see cref="IReasonLegendExtension"/>
     /// </summary>
     /// <returns></returns>
+    public bool Initialize ()
+    {
+      return true;
+    }
+
+    /// <summary>
+    /// <see cref="IReasonLegendExtension"/>
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<IReason> GetUsedReasons ()
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {

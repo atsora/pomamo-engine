@@ -153,9 +153,9 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
         else {
           var reason = ModelDAOHelper.DAOFactory.ReasonDAO
             .FindById (reasonId);
-          if (null == reason) {
+          if (reason is null) {
             string message = $"invalid reason id {reasonId}: unknown reason";
-            log.Error ($"IsValid: {message}");
+            log.Error ($"ValidateReason: {message}");
             errorList.Add (message);
           }
         }

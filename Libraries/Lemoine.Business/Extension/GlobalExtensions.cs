@@ -28,9 +28,6 @@ namespace Lemoine.Business.Extension
 
     static readonly ILog log = LogManager.GetLogger (typeof (GlobalExtensions<T>).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -52,9 +49,6 @@ namespace Lemoine.Business.Extension
       m_filter = filter;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

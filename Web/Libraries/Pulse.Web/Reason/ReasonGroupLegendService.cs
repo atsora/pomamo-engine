@@ -52,7 +52,7 @@ namespace Pulse.Web.Reason
           ReasonGroupLegendResponseDTO response = new ReasonGroupLegendResponseDTO ();
           response.Items = new List<ReasonGroupLegendItemDTO> ();
 
-          var reasonLegendExtensionsRequest = new Lemoine.Business.Extension.GlobalExtensions<IReasonLegendExtension> ();
+          var reasonLegendExtensionsRequest = new Lemoine.Business.Extension.GlobalExtensions<IReasonLegendExtension> (x => x.Initialize ());
           var reasons = new HashSet<IReason> ();
           var reasonLegendExtensions = await Lemoine.Business.ServiceProvider
             .GetAsync (reasonLegendExtensionsRequest);
@@ -61,7 +61,7 @@ namespace Pulse.Web.Reason
               if (log.IsDebugEnabled) {
                 log.Debug ($"Get: consider extension {reasonLegendExtension}");
               }
-              var newReasons = reasonLegendExtension.GetUsedReasons ();
+              var newReasons = reasonLegendExtension.GetUsedReasons ().Where (x => null != x);
               if (log.IsDebugEnabled) {
                 log.Debug ($"Get: {newReasons.Count ()} reasons for extension {reasonLegendExtension}");
               }

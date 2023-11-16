@@ -14,6 +14,12 @@ namespace Pulse.Extensions.Database
   public interface IReasonLegendExtension : Lemoine.Extensions.IExtension
   {
     /// <summary>
+    /// Initialize the extension
+    /// </summary>
+    /// <returns></returns>
+    bool Initialize ();
+
+    /// <summary>
     /// Get all the reasons that may be set on a machine
     /// with an initialized reason group
     /// </summary>

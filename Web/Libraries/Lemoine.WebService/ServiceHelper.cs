@@ -254,7 +254,6 @@ namespace Lemoine.WebService
                                                     machineId), ErrorStatus.PERMANENT_NO_CONFIG);
     }
 
-    
     /// <summary>
     /// "No last operation slot" error DTO
     /// </summary>

@@ -1203,6 +1203,25 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
     /// <see cref="IReasonLegendExtension"/>
     /// </summary>
     /// <returns></returns>
+    public bool Initialize ()
+    {
+      var configurations = LoadConfigurations ();
+      if (!configurations.Any ()) {
+        log.Warn ("Initialize: LoadConfiguration returned no configuration but continue here");
+      }
+      if (configurations.Any (x => x.TurnOff)) {
+        log.Info ($"Initialize: one configuration is set with the TurnOff parameter => omit the plugin");
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+
+    /// <summary>
+    /// <see cref="IReasonLegendExtension"/>
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<IReason> GetUsedReasons ()
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
