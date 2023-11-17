@@ -91,6 +91,11 @@ namespace Lemoine.Model
     public string Name { get; private set; }
 
     /// <summary>
+    /// Optional label
+    /// </summary>
+    public string Label { get; set; }
+
+    /// <summary>
     /// Description
     /// </summary>
     public string Description { get; set; }
@@ -359,6 +364,7 @@ namespace Lemoine.Model
       }
       foreach (XmlElement parameterElement in xmlDocument.GetElementsByTagName ("parameter")) {
         var cncConfigParam = new CncConfigParam (parameterElement.GetAttribute ("name"));
+        cncConfigParam.Label = parameterElement.GetAttribute ("label");
         cncConfigParam.Description = parameterElement.InnerText;
         cncConfigParam.Type = parameterElement.GetAttribute ("type");
         var min = parameterElement.GetAttribute ("min");

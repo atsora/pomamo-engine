@@ -61,6 +61,7 @@ namespace Pulse.Graphql
 
     bool RemoveCncAcquisition (int id)
     {
+      bool error = false;
       try {
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (var transaction = session.BeginTransaction ("RemoveCncAcquisition")) {
@@ -74,9 +75,14 @@ namespace Pulse.Graphql
       }
       catch (Exception ex) {
         log.Error ($"RemoveCncAcquisition: exception", ex);
+        error = true;
         return false;
       }
-
+      finally {
+        if (!error) {
+          ConfigUpdater.Notify ();
+        }
+      }
     }
   }
 }

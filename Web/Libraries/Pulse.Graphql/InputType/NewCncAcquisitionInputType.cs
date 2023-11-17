@@ -18,6 +18,8 @@ namespace Pulse.Graphql.InputType
 {
   /// <summary>
   /// Class to create a <see cref="ICncAcquisition"/>
+  /// 
+  /// TODO: specify the name of the machine
   /// </summary>
   public class NewCncAcquisition
   {
@@ -46,17 +48,42 @@ namespace Pulse.Graphql.InputType
     /// <returns></returns>
     public ICncAcquisition CreateCncAcquisition ()
     {
-      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (var transaction = session.BeginTransaction ("CreateCncAcquisition")) {
-          var cncAcquisition = ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
-          cncAcquisition.ConfigFile = this.CncConfigName + ".xml";
-          cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
-          IComputer computer = ModelDAOHelper.DAOFactory.ComputerDAO
-            .GetOrCreateLocal ();
-          cncAcquisition.Computer = computer;
-          ModelDAOHelper.DAOFactory.CncAcquisitionDAO.MakePersistent (cncAcquisition);
-          transaction.Commit ();
-          return cncAcquisition;
+      bool error = false;
+      try {
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          using (var transaction = session.BeginTransaction ("CreateCncAcquisition")) {
+            var cncAcquisition = ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
+            cncAcquisition.ConfigFile = this.CncConfigName + ".xml";
+            cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
+            IComputer computer = ModelDAOHelper.DAOFactory.ComputerDAO
+              .GetOrCreateLocal ();
+            cncAcquisition.Computer = computer;
+            if (!computer.IsLpst) {
+              computer.IsLpst = true;
+              ModelDAOHelper.DAOFactory.ComputerDAO.MakePersistent (computer);
+            }
+            ModelDAOHelper.DAOFactory.CncAcquisitionDAO.MakePersistent (cncAcquisition);
+            var monitoredMachine = ModelDAOHelper.ModelFactory.CreateMonitoredMachine ();
+            monitoredMachine.Name = $"CncAcquisition{cncAcquisition.Id}";
+            monitoredMachine.MonitoringType = ModelDAOHelper.DAOFactory.MachineMonitoringTypeDAO
+              .FindById ((int)MachineMonitoringTypeId.Monitored);
+            ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (monitoredMachine);
+            var machineModule = ModelDAOHelper.ModelFactory.CreateMachineModuleFromName (monitoredMachine, $"CncAcquisition{cncAcquisition.Id}");
+            machineModule.CncAcquisition = cncAcquisition;
+            ModelDAOHelper.DAOFactory.MachineModuleDAO.MakePersistent (machineModule);
+            transaction.Commit ();
+            return cncAcquisition;
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"CreateCncAcquisition: exception", ex);
+        error = true;
+        throw;
+      }
+      finally {
+        if (!error) {
+          ConfigUpdater.Notify ();
         }
       }
     }

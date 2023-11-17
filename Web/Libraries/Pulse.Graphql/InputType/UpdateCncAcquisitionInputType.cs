@@ -70,18 +70,31 @@ namespace Pulse.Graphql.InputType
     /// <returns></returns>
     public ICncAcquisition Update ()
     {
-      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (var transaction = session.BeginTransaction ("CreateCncAcquisition")) {
-          var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
-            .FindById (this.Id);
-          if (m_cncConfigNameSet) {
-            cncAcquisition.ConfigFile = m_cncConfigName + ".xml";
+      bool error = false;
+      try {
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          using (var transaction = session.BeginTransaction ("UpdateCncAcquisition")) {
+            var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
+              .FindById (this.Id);
+            if (m_cncConfigNameSet) {
+              cncAcquisition.ConfigFile = m_cncConfigName + ".xml";
+            }
+            if (m_parametersSet) {
+              cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
+            }
+            transaction.Commit ();
+            return cncAcquisition;
           }
-          if (m_parametersSet) {
-            cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
-          }
-          transaction.Commit ();
-          return cncAcquisition;
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"Update: exception", ex);
+        error = true;
+        throw;
+      }
+      finally {
+        if (!error) {
+          ConfigUpdater.Notify ();
         }
       }
     }

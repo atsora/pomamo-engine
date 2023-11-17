@@ -26,6 +26,7 @@ namespace Pulse.Graphql.Type
     {
       Name = "CncConfigParam";
       Field<NonNullGraphType<StringGraphType>> ("name");
+      Field<string> ("label", nullable: true);
       Field<string> ("description", nullable: true);
       Field<string> ("type", nullable: true);
       Field<bool> ("optional", nullable: true);
