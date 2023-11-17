@@ -20,6 +20,9 @@ namespace Lem_AspService
   /// </summary>
   public class FlushCacheWorker : BackgroundServiceWorker
   {
+    static readonly string CONFIG_UPDATE_CHECKER_KEY = "WebService.ConfigUpdateChecker";
+    static readonly string CONFIG_UPDATE_CHECKER_DEFAULT = "";
+
     static readonly string COLLECT_MAX_MEMORY_KEY = "WebService.Memory.Collect.MaxMemory";
     static readonly long COLLECT_MAX_MEMORY_DEFAULT = 1024 * 1024 * 1000; // 1000 MB
 
@@ -65,7 +68,7 @@ namespace Lem_AspService
     readonly ILog log = LogManager.GetLogger<FlushCacheWorker> ();
 
     #region Members
-    readonly ConfigUpdateChecker m_configUpdateChecker = new ConfigUpdateChecker ();
+    readonly IConfigUpdateChecker m_configUpdateChecker = new ConfigUpdateChecker ();
     ICacheClientWithCleanExtension m_cacheClient;
     DateTime m_lastCollect = DateTime.UtcNow;
     TimeSpan m_cacheCleanFrequency = CACHE_CLEAN_FREQUENCY_DEFAULT;
@@ -75,7 +78,6 @@ namespace Lem_AspService
     TimeSpan m_daySlotCacheClearFrequency = DAY_SLOT_CACHE_CLEAR_FREQUENCY_DEFAULT;
     #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -84,8 +86,12 @@ namespace Lem_AspService
     public FlushCacheWorker (ICacheClientWithCleanExtension cacheClient)
     {
       m_cacheClient = cacheClient;
+      // TODO: use dependency injection instead
+      m_configUpdateChecker = Lemoine.Info.ConfigSet.LoadAndGet (CONFIG_UPDATE_CHECKER_KEY, CONFIG_UPDATE_CHECKER_DEFAULT).ToLowerInvariant () switch { 
+        "dummy" => new DummyConfigUpdateChecker (),
+        _ => new ConfigUpdateChecker ()
+      };
     }
-    #endregion // Constructors
 
     /// <summary>
     /// 

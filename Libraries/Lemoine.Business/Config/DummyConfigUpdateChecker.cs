@@ -18,17 +18,12 @@ namespace Lemoine.Business.Config
   {
     readonly ILog log = LogManager.GetLogger (typeof (DummyConfigUpdateChecker).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public DummyConfigUpdateChecker ()
     {
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="IAdditionalChecker"/>
