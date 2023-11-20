@@ -224,7 +224,7 @@ namespace Lemoine.ServiceTools
         }
       }
     }
-    
+
     /// <summary>
     /// Description of the service
     /// </summary>
@@ -493,61 +493,61 @@ namespace Lemoine.ServiceTools
         cancellationToken.ThrowIfCancellationRequested ();
 
         switch (this.Status) {
-        case ServiceControllerStatus.Running:
-          break;
-        case ServiceControllerStatus.StartPending:
-        case ServiceControllerStatus.ContinuePending:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: starting (status={this.Status})");
-          }
-          while (this.Status != ServiceControllerStatus.Running) {
-            await Task.Delay (CHECK_DELAY, cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested ();
-            this.Refresh ();
-          }
-          break;
-        case ServiceControllerStatus.StopPending:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: stop pending, wait it is stopped first");
-          }
-          while (this.Status != ServiceControllerStatus.Stopped) {
-            await Task.Delay (CHECK_DELAY, cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested ();
-            this.Refresh ();
-          }
-          goto case ServiceControllerStatus.Stopped;
-        case ServiceControllerStatus.Stopped:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: stopped, start it");
-          }
-          await CheckExistingAndStartAsync (cancellationToken);
-          while (this.Status != ServiceControllerStatus.Running) {
-            await Task.Delay (CHECK_DELAY, cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested ();
-            Refresh ();
-          }
-          break;
-        case ServiceControllerStatus.Paused:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: paused, start it");
-          }
-          Continue ();
-          while (this.Status != ServiceControllerStatus.Running) {
-            await Task.Delay (CHECK_DELAY, cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested ();
-            Refresh ();
-          }
-          break;
-        case ServiceControllerStatus.PausePending:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: pause pending, wait it is stopped first");
-          }
-          while (this.Status != ServiceControllerStatus.Paused) {
-            await Task.Delay (CHECK_DELAY, cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested ();
-            Refresh ();
-          }
-          goto case ServiceControllerStatus.Paused;
+          case ServiceControllerStatus.Running:
+            break;
+          case ServiceControllerStatus.StartPending:
+          case ServiceControllerStatus.ContinuePending:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: starting (status={this.Status})");
+            }
+            while (this.Status != ServiceControllerStatus.Running) {
+              await Task.Delay (CHECK_DELAY, cancellationToken);
+              cancellationToken.ThrowIfCancellationRequested ();
+              this.Refresh ();
+            }
+            break;
+          case ServiceControllerStatus.StopPending:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: stop pending, wait it is stopped first");
+            }
+            while (this.Status != ServiceControllerStatus.Stopped) {
+              await Task.Delay (CHECK_DELAY, cancellationToken);
+              cancellationToken.ThrowIfCancellationRequested ();
+              this.Refresh ();
+            }
+            goto case ServiceControllerStatus.Stopped;
+          case ServiceControllerStatus.Stopped:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: stopped, start it");
+            }
+            await CheckExistingAndStartAsync (cancellationToken);
+            while (this.Status != ServiceControllerStatus.Running) {
+              await Task.Delay (CHECK_DELAY, cancellationToken);
+              cancellationToken.ThrowIfCancellationRequested ();
+              Refresh ();
+            }
+            break;
+          case ServiceControllerStatus.Paused:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: paused, start it");
+            }
+            Continue ();
+            while (this.Status != ServiceControllerStatus.Running) {
+              await Task.Delay (CHECK_DELAY, cancellationToken);
+              cancellationToken.ThrowIfCancellationRequested ();
+              Refresh ();
+            }
+            break;
+          case ServiceControllerStatus.PausePending:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: pause pending, wait it is stopped first");
+            }
+            while (this.Status != ServiceControllerStatus.Paused) {
+              await Task.Delay (CHECK_DELAY, cancellationToken);
+              cancellationToken.ThrowIfCancellationRequested ();
+              Refresh ();
+            }
+            goto case ServiceControllerStatus.Paused;
         }
       }
       catch (OperationCanceledException ex) {
@@ -567,43 +567,43 @@ namespace Lemoine.ServiceTools
     {
       try {
         switch (this.Status) {
-        case ServiceControllerStatus.Stopped:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: stopped, start it");
-          }
-          await this.CheckExistingAndStartAsync ();
-          while (this.Status != ServiceControllerStatus.Running) {
-            await Task.Delay (CHECK_DELAY);
-            this.Refresh ();
-          }
-          return;
-        case ServiceControllerStatus.StopPending:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: stop pending, wait it is stopped first");
-          }
-          while (this.Status != ServiceControllerStatus.Stopped) {
-            await Task.Delay (CHECK_DELAY);
-            this.Refresh ();
-          }
-          goto case ServiceControllerStatus.Stopped;
-        case ServiceControllerStatus.Running:
-          return;
-        case ServiceControllerStatus.StartPending:
-        case ServiceControllerStatus.ContinuePending:
-          if (log.IsDebugEnabled) {
-            log.Debug ($"StartServiceAsync: starting (status={this.Status})");
-          }
-          while (this.Status != ServiceControllerStatus.Running) {
-            await Task.Delay (CHECK_DELAY);
-            this.Refresh ();
-          }
-          return;
-        case ServiceControllerStatus.PausePending:
-          // TODO: ...
-          break;
-        case ServiceControllerStatus.Paused:
-          this.Continue ();
-          return;
+          case ServiceControllerStatus.Stopped:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: stopped, start it");
+            }
+            await this.CheckExistingAndStartAsync ();
+            while (this.Status != ServiceControllerStatus.Running) {
+              await Task.Delay (CHECK_DELAY);
+              this.Refresh ();
+            }
+            return;
+          case ServiceControllerStatus.StopPending:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: stop pending, wait it is stopped first");
+            }
+            while (this.Status != ServiceControllerStatus.Stopped) {
+              await Task.Delay (CHECK_DELAY);
+              this.Refresh ();
+            }
+            goto case ServiceControllerStatus.Stopped;
+          case ServiceControllerStatus.Running:
+            return;
+          case ServiceControllerStatus.StartPending:
+          case ServiceControllerStatus.ContinuePending:
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartServiceAsync: starting (status={this.Status})");
+            }
+            while (this.Status != ServiceControllerStatus.Running) {
+              await Task.Delay (CHECK_DELAY);
+              this.Refresh ();
+            }
+            return;
+          case ServiceControllerStatus.PausePending:
+            // TODO: ...
+            break;
+          case ServiceControllerStatus.Paused:
+            this.Continue ();
+            return;
         }
       }
       catch (Exception ex) {
@@ -678,7 +678,15 @@ namespace Lemoine.ServiceTools
         return false;
       }
       else {
-        if (!(await KillProcessAsync (pid, cancellationToken))) {
+        bool result;
+        try {
+          result = await KillProcessAsync (pid, cancellationToken);
+        }
+        catch (Exception ex) {
+          log.Error ($"KillExistingProcessAsync: exception in KillProcessAsync", ex);
+          throw;
+        }
+        if (!result) {
           log.Error ($"KillExistingProcessAsync: process with pid={pid} could not be stopped");
           throw new Exception ("Service still alive");
         }
@@ -732,24 +740,34 @@ namespace Lemoine.ServiceTools
         var delayedCancellation = new CancellationTokenSource (TimeSpan.FromSeconds (5));
         using (var linkedCancellationTokenSource = CancellationTokenSource
           .CreateLinkedTokenSource (delayedCancellation.Token, cancellationToken)) {
-          await process.WaitForExitAsync (linkedCancellationTokenSource.Token);
+          try {
+            await process.WaitForExitAsync (linkedCancellationTokenSource.Token);
+          }
+          catch (OperationCanceledException ex2) {
+            if (delayedCancellation.IsCancellationRequested) {
+              slog.Info ($"KillProcessAsync: WaitForExitAsync was canceled because the 5s timeout was reached => kill the process", ex2);
+            }
+            else {
+              slog.Error ($"KillProcessAsync: WaitForExitAsync was interrupted for another reason that the timeout", ex2);
+            }
+            throw;
+          }
+          catch (Exception ex2) {
+            slog.Error ($"KillProcessAsync: another exception in WaitForExitAsync", ex2);
+            throw;
+          }
           cancellationToken.ThrowIfCancellationRequested ();
           if (delayedCancellation.IsCancellationRequested) {
-            slog.Info ("KillProcessAsync: Process is still running after 5s !");
-            // Kill the process
+            slog.Info ("KillProcessAsync: the process probably does not exist any more but the timeout was reached, check once again if the process still exists later");
           }
           else {
-            slog.Info ("KillProcessAsync: Nice, the process does not exist any more");
+            slog.Info ("KillProcessAsync: nice, the process does not exist any more => return true");
             return true;
           }
         }
       }
-      catch (OperationCanceledException ex1) {
-        slog.Info ($"KillProcessAsync: operation canceled", ex1);
-        throw;
-      }
-      catch (Exception ex1) {
-        slog.Info ("KillProcessAsync: WaitForExit returned an exception check if the process still exists", ex1);
+      catch (Exception ex1) { // Including OperationCanceledException
+        slog.Info ("KillProcessAsync: WaitForExit raised an uncaught exception, check if the process still exists, else kill it", ex1);
         cancellationToken.ThrowIfCancellationRequested ();
         try {
           process = Process.GetProcessById (pid);
@@ -889,8 +907,12 @@ namespace Lemoine.ServiceTools
             await Task.Delay (1000);
             await StopAsync ();
           }
-          else if (win32exception is not null && win32exception.NativeErrorCode == 0x00000888) { // The service has not been started..
-            log.Info ($"StopAsync: The service has not been started", ex);
+          else if (win32exception is not null && win32exception.NativeErrorCode == 0x00000888) { // NERR_ServiceNotInstalled: The service has not been started.
+            log.Info ($"StopAsync: NERR_ServiceNotInstalled, The service has not been started", ex);
+            return;
+          }
+          else if (win32exception is not null && win32exception.NativeErrorCode == 0x00000426) { // ERROR_SERVICE_NOT_ACTIVE: The service has not been started.
+            log.Info ($"StopAsync: ERROR_SERVICE_NOT_ACTIVE, The service has not been started", ex);
             return;
           }
           else {
@@ -905,8 +927,12 @@ namespace Lemoine.ServiceTools
           await Task.Delay (1000);
           await StopAsync ();
         }
-        else if (win32exception.NativeErrorCode == 0x00000888) { // The service has not been started..
-          log.Info ($"StopAsync: The service has not been started", win32exception);
+        else if (win32exception is not null && win32exception.NativeErrorCode == 0x00000888) { // NERR_ServiceNotInstalled: The service has not been started.
+          log.Info ($"StopAsync: NERR_ServiceNotInstalled, The service has not been started", win32exception);
+          return;
+        }
+        else if (win32exception is not null && win32exception.NativeErrorCode == 0x00000426) { // ERROR_SERVICE_NOT_ACTIVE: The service has not been started.
+          log.Info ($"StopAsync: ERROR_SERVICE_NOT_ACTIVE, The service has not been started", win32exception);
           return;
         }
         else {

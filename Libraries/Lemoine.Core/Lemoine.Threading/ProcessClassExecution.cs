@@ -148,9 +148,7 @@ namespace Lemoine.Threading
       Process[] processes = Process.GetProcessesByName (processName);
       foreach (Process process in processes) {
         if (!KillProcess (process.Id, log)) {
-          log.ErrorFormat ("Start: " +
-                           "Previous process {0} could not be stopped",
-                           processName);
+          log.Error ($"Start: previous process {processName} could not be stopped");
           return;
         }
         System.Threading.Thread.Sleep (this.SleepBeforeRestart);
