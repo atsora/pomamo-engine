@@ -162,14 +162,14 @@ namespace Lemoine.Core.Plugin
     {
       IList<string> topOnlyDirectories = new List<string> ();
       if (!topDirectoryOnly) {
-        var pulseServerDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
-        if (!string.IsNullOrEmpty (pulseServerDirectory)) {
-          topOnlyDirectories.Add (pulseServerDirectory);
-          var coreDirectory = Path.Combine (pulseServerDirectory, "core");
+        var mainServerInstallDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
+        if (!string.IsNullOrEmpty (mainServerInstallDirectory)) {
+          topOnlyDirectories.Add (mainServerInstallDirectory);
+          var coreDirectory = Path.Combine (mainServerInstallDirectory, "core");
           if (Directory.Exists (coreDirectory)) {
             topOnlyDirectories.Add (coreDirectory);
           }
-          var netframeworkDirectory = Path.Combine (pulseServerDirectory, "netframework");
+          var netframeworkDirectory = Path.Combine (mainServerInstallDirectory, "netframework");
           if (Directory.Exists (netframeworkDirectory)) {
             topOnlyDirectories.Add (netframeworkDirectory);
           }

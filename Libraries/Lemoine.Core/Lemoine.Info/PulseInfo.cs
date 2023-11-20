@@ -33,7 +33,7 @@ namespace Lemoine.Info
     static readonly string SHARED_DIRECTORY_PATH_KEY = "SharedDirectoryPath";
     static readonly string SHARED_DIRECTORY_PATH_DEFAULT = "";
 
-    static readonly string POMAMO_SERVER_INSTALL_DIR_KEY = "MainServerInstallDir";
+    static readonly string MAIN_SERVER_INSTALL_DIR_KEY = "MainServerInstallDir";
     static readonly string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
 
 #if ATSORA
@@ -72,18 +72,19 @@ namespace Lemoine.Info
     {
       get {
         try {
-          var result = Lemoine.Info.ConfigSet.Get<string> (POMAMO_SERVER_INSTALL_DIR_KEY);
+          var result = Lemoine.Info.ConfigSet.Get<string> (MAIN_SERVER_INSTALL_DIR_KEY);
           if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
-            log.ErrorFormat ("MainServerInstallationDirectory: not defined");
+            log.Error ("MainServerInstallationDirectory: not defined");
           }
+          result = result.Replace (" (x86)", ""); // To replace "Program Files (x86)" by "Program Files" in case the registry key is badly set
           return result;
         }
         catch (ConfigKeyNotFoundException ex) {
-          log.Error ($"MainServerInstallationDirectory: config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
+          log.Error ($"MainServerInstallationDirectory: config key {MAIN_SERVER_INSTALL_DIR_KEY} was not defined", ex);
           return null;
         }
         catch (KeyNotFoundException ex) {
-          log.Fatal ($"MainServerInstallationDirectory: (with deprecated KeyNotFoundException) config key {POMAMO_SERVER_INSTALL_DIR_KEY} was not defined", ex);
+          log.Fatal ($"MainServerInstallationDirectory: (with deprecated KeyNotFoundException) config key {MAIN_SERVER_INSTALL_DIR_KEY} was not defined", ex);
           return null;
         }
       }

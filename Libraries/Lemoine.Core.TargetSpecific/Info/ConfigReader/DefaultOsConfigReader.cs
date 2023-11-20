@@ -153,7 +153,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     {
       if (m_isWindows) {
         var mainServerInstallationDirectory = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
-        if (null == mainServerInstallationDirectory) {
+        if (mainServerInstallationDirectory is null) {
           log.Info ($"GetPfrDataDirectory: Pulse server installation directory was not defined, probably because it is not the main server");
           throw new ConfigKeyNotFoundException (PFR_DATA_DIRECTORY_KEY);
         }
