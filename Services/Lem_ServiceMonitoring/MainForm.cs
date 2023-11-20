@@ -601,8 +601,12 @@ namespace LemoineServiceMonitoring
       try {
         await controlSC.StartServiceAsync ();
       }
+      catch (InvalidOperationException ex) {
+        log.Error ("StartWatchingServiceAsync: the watching service is probably not installed, => give up ", ex);
+        return;
+      }
       catch (Exception ex) {
-        log.Error ("StartWatchingService: the watching service is probably not installed, => give up ", ex);
+        log.Error ("StartWatchingServiceAsync: the watching service is probably not installed, => give up ", ex);
         return;
       }
     }
@@ -620,7 +624,7 @@ namespace LemoineServiceMonitoring
         return true;
       }
       catch (Exception ex) {
-        log.Error ($"StopWatchDog32Service: the watch dog 32 service is probably not installed, give up", ex);
+        log.Error ($"StopWatchDog32ServiceAsync: the watch dog 32 service is probably not installed, give up", ex);
         return false;
       }
     }
@@ -631,8 +635,12 @@ namespace LemoineServiceMonitoring
       try {
         await controlSC.StartServiceAsync ();
       }
+      catch (InvalidOperationException ex) {
+        log.Debug ("StartWatchDog32ServiceAsync: the watch dog 32 service is probably not installed, => give up", ex);
+        return;
+      }
       catch (Exception ex) {
-        log.Error ("StartWatchingService: the watch dog 32 service is probably not installed, => give up ", ex);
+        log.Error ("StartWatchDog32ServiceAsync: exception", ex);
         return;
       }
     }

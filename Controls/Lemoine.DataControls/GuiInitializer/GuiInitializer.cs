@@ -52,7 +52,7 @@ namespace Lemoine.DataControls.GuiInitializer
         ConfigSet.AddConfigReader (new ApplicationStateConfigReader ("user.", true));
       }
       catch (Exception ex) {
-        log.Error ($"InitializeGui: AddConfigReader ApplicationStateConfigReader with prefix configset failed", ex);
+        log.Warn ($"InitializeGui: AddConfigReader ApplicationStateConfigReader with prefix configset failed but continue", ex);
       }
 
       if (null != m_fileRepoClientFactory) {
