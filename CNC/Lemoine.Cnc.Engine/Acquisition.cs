@@ -231,6 +231,28 @@ namespace Lemoine.CncEngine
       m_useProcess = useProcess;
     }
 
+    /// <summary>
+    /// Acquisition using a local file and parameters
+    /// </summary>
+    /// <param name="cncEngineConfig"></param>
+    /// <param name="localFilePath"></param>
+    /// <param name="numParameters"></param>
+    /// <param name="useProcess"></param>
+    /// <param name="assemblyLoader"></param>
+    /// <param name="fileRepoClientFactory"></param>
+    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, string numParameters, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useProcess = false)
+    {
+      Debug.Assert (null != cncEngineConfig);
+
+      m_cncEngineConfig = cncEngineConfig;
+      m_cncAcquisitionId = 0;
+      m_repository = CreateRepositoryFromLocalFile (localFilePath);
+      // TODO: ...
+      m_assemblyLoader = assemblyLoader;
+      m_fileRepoClientFactory = fileRepoClientFactory;
+      m_useProcess = useProcess;
+    }
+
 #if NETSTANDARD || NET48 || NETCOREAPP
     /// <summary>
     /// Acquisition using a <see cref="Repository"/>
@@ -333,6 +355,19 @@ namespace Lemoine.CncEngine
       return new Repository (factory);
     }
 
+#if NETSTANDARD || NET48 || NETCOREAPP
+    Repository CreateRepositoryFromLocalFileParameters (string localFilePath, string parameters)
+    {
+      var name = Path.GetFileNameWithoutExtension (localFilePath);
+      var cncAcquisition = ModelDAO.ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
+      cncAcquisition.Name = name;
+      cncAcquisition.ConfigFile = localFilePath;
+      cncAcquisition.ConfigParameters = parameters;
+      var factory = new CncFileRepoFactory (m_extensionsLoader, cncAcquisition, checkedThread: null);
+      return new Repository (factory);
+    }
+#endif // NETSTANDARD || NET48 || NETCOREAPP
+
     /// <summary>
     /// Initialize the CNC data handler
     /// 
@@ -361,7 +396,7 @@ namespace Lemoine.CncEngine
       }
       return true;
     }
-    #endregion // Methods
+#endregion // Methods
 
     #region Implementation of ProcessOrThreadClass
     /// <summary>

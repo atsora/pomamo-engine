@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Lemoine.CncEngine;
@@ -38,6 +40,8 @@ namespace Lem_CncConsole
     bool m_staThread = false;
     int m_cncAcquisitionId = int.MinValue;
     string m_configurationFilePath = "";
+    string m_numParameters = "";
+    IDictionary<string, object> m_jsonParameters = new Dictionary<string, object> ();
     bool m_stamp = false;
     int m_parentProcessId = 0;
 
@@ -52,10 +56,27 @@ namespace Lem_CncConsole
       m_extensionsLoader = extensionsLoader;
     }
 
+    IDictionary<string, object> ParseJson (string s)
+    {
+      var options = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+      options.Converters.Add (new JsonStringEnumConverter ());
+      return JsonSerializer.Deserialize<IDictionary<string, object>> (s, options);
+    }
+
     public void SetOptions (Options options)
     {
       m_cncAcquisitionId = options.CncAcquisitionId;
       m_configurationFilePath = options.File;
+      m_numParameters = options.NumParameters;
+      if (!string.IsNullOrEmpty (options.JsonParameters)) {
+        try {
+          m_jsonParameters = ParseJson (options.JsonParameters);
+        }
+        catch (Exception ex) {
+          log.Error ($"SetOptions: JsonParameters is not a valid Json", ex);
+          throw;
+        }
+      }
       m_stamp = options.Stamp;
       m_parentProcessId = options.ParentProcessId;
       try {

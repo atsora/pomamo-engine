@@ -13,6 +13,18 @@
     <AssemblyName>Lem_CncGUI</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="VisualStudio\**" />
+    <EmbeddedResource Remove="VisualStudio\**" />
+    <None Remove="VisualStudio\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  
   <!-- CNC Module dependencies -->
   <ItemGroup>
     <PackageReference Include="FSharp.Core" />

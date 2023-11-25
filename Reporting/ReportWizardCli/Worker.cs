@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -100,7 +101,7 @@ namespace ReportWizardCli
           if (from.Equals (DEFAULT_SENDER)) {
             log.Error ($"StartAsync: net.mail.from is unknown, => use {DEFAULT_SENDER} by default");
           }
-          var sender = new MailboxAddress ("Lemoine Pulse", from);
+          var sender = new MailboxAddress ("Atsora Tracking", from);
 
           MimeMessage message;
           try {
@@ -129,7 +130,7 @@ namespace ReportWizardCli
             }
           }
 
-          message.Subject = $"Pulse Report {reportTitle}";
+          message.Subject = $"Atsora Report {reportTitle}";
 
           var bodyString = $"""
 Please find attached the report your requested.

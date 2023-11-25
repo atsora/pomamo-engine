@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -34,17 +35,28 @@ namespace Lemoine.Info
     static readonly string SHARED_DIRECTORY_PATH_DEFAULT = "";
 
     static readonly string MAIN_SERVER_INSTALL_DIR_KEY = "MainServerInstallDir";
+    static readonly string COMPANY_CONFIG_DIRECTORY_KEY = "CompanyConfigDirectory";
     static readonly string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
 
 #if ATSORA
     static readonly string LINUX_PACKAGE_NAME = "atracking";
     static readonly string WIN_PRODUCT_FOLDER_NAME = "atracking";
+    static readonly string COMPANY_NAME = "Atsora";
+//#if CONNECTOR
+//    static readonly string PRODUCT_NAME = "Connector";
+//else // !CONNECTOR
+    static readonly string PRODUCT_NAME = "Tracking";
+//#endif // CONNECTOR
 #elif LEMOINE
     static readonly string LINUX_PACKAGE_NAME = "lpulse";
     static readonly string WIN_PRODUCT_FOLDER_NAME = "PULSE";
+    static readonly string COMPANY_NAME = "Lemoine";
+    static readonly string PRODUCT_NAME = "Pulse"
 #else
     static readonly string LINUX_PACKAGE_NAME = "pomamo";
     static readonly string WIN_PRODUCT_FOLDER_NAME = "pomamo";
+    static readonly string COMPANY_NAME = "Pomamo";
+    static readonly string PRODUCT_NAME = "Pomamo";
 #endif
 
     static readonly string LINUX_CONF_DIRECTORY = $"/etc/{LINUX_PACKAGE_NAME}";
@@ -91,6 +103,66 @@ namespace Lemoine.Info
     }
 
     /// <summary>
+    /// Directory where the common data to all Atsora product is stored
+    /// 
+    /// If the directory does not exist, create it
+    /// </summary>
+    public static string CompanyConfigurationDirectory
+    {
+      get {
+        try {
+          var companyConfigDirectory = Lemoine.Info.ConfigSet.Get<string> (COMPANY_CONFIG_DIRECTORY_KEY);
+          if (!string.IsNullOrEmpty (companyConfigDirectory)) {
+            if (!Directory.Exists (companyConfigDirectory)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"CompanyConfigurationDirectory: create {companyConfigDirectory}");
+              }
+              Directory.CreateDirectory (companyConfigDirectory);
+            }
+            return companyConfigDirectory;
+          }
+          else {
+            log.Error ($"CompanyConfigurationDirectory: config key {COMPANY_CONFIG_DIRECTORY_KEY} returned an empty value {companyConfigDirectory}");
+          }
+        }
+        catch (ConfigKeyNotFoundException ex) {
+          log.Error ($"CompanyConfigurationDirectory: config key {COMPANY_CONFIG_DIRECTORY_KEY} was not defined", ex);
+        }
+        catch (KeyNotFoundException ex) {
+          log.Fatal ($"CompanyConfigurationDirectory: (with deprecated KeyNotFoundException) config key {COMPANY_CONFIG_DIRECTORY_KEY} was not defined", ex);
+        }
+#if !NETSTANDARD
+        if (true) {
+#else // NETSTANDARD
+        if (RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
+#endif // NETSTANDARD
+          var path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData), COMPANY_NAME);
+          log.Warn ($"CompanyConfigurationDirectory: consider default windows folder {path}");
+          if (!Directory.Exists (path)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"CompanyConfigurationDirectory: create {path} (standard Windows path)");
+            }
+            Directory.CreateDirectory (path);
+          }
+          return path;
+        }
+#if NETSTANDARD
+        else {
+          var path = LINUX_CONF_DIRECTORY;
+          log.Warn ($"CompanyConfigurationDirectory: consider default linux folder {path}");
+          if (!Directory.Exists (path)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"CompanyConfigurationDirectory: create {path} (standard Linux path)");
+            }
+            Directory.CreateDirectory (path);
+          }
+          return path;
+        }
+#endif // NETSTANDARD
+      }
+    }
+
+    /// <summary>
     /// Directory where the common (to all the users) configurations are stored
     /// 
     /// If the directory does not exist, create it
@@ -124,7 +196,7 @@ namespace Lemoine.Info
 #else // NETSTANDARD
         if (RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
 #endif // NETSTANDARD
-          var path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData), "Lemoine", "PULSE");
+          var path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData), COMPANY_NAME, PRODUCT_NAME);
           log.Warn ($"CommonConfigurationDirectory: consider default windows folder {path}");
           if (!Directory.Exists (path)) {
             if (log.IsDebugEnabled) {
