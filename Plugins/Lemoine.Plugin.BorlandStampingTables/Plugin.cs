@@ -78,7 +78,7 @@ namespace Lemoine.Plugin.BorlandStampingTables
       case 1: // First installation
         break;
       case 2:
-        Install2 (); // Remove the tables
+        // Do not the remove tables yet (later....)
         break;
       default:
         throw new InvalidOperationException ();
@@ -86,12 +86,6 @@ namespace Lemoine.Plugin.BorlandStampingTables
     }
 
     #region Migration
-    void Install2 ()
-    {
-      Database.RemoveTable (TableName.SFK_CAMSYSTEM);
-      Database.RemoveTable (TableName.SFK_MACHTYPE);
-    }
-
     /// <summary>
     /// Uninstall the plugin
     /// (delete tables if necessary, ...)

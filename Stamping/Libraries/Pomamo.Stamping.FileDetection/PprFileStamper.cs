@@ -10,6 +10,7 @@ using System.Threading;
 using Lemoine.Threading;
 using Lemoine.Core.Log;
 using Lemoine.Info;
+using System.Runtime.InteropServices;
 
 namespace Pomamo.Stamping.FileDetection
 {
@@ -24,8 +25,17 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string COPY_BEFORE_KEY = "Stamping.PprFileStamper.CopyBefore";
     static readonly bool COPY_BEFORE_DEFAULT = true;
 
+    /// <summary>
+    /// Default output directory
+    /// </summary>
     static readonly string DEFAULT_OUT_DIRECTORY_KEY = "Stamping.PprFileStamper.OutDirectory";
     static readonly string DEFAULT_OUT_DIRECTORY_DEFAULT = ""; // Empty means in place
+
+    /// <summary>
+    /// Source directory to consider to keep the sub-directory structure
+    /// </summary>
+    static readonly string SOURCE_DIRECTORY_KEY = "Stamping.PprFileStamper.SourceDirectory";
+    static readonly string SOURCE_DIRECTORY_DEFAULT = ""; // Empty means: do not consider it
 
     static readonly string PPR_TAG_PREFIX_KEY = "StampFileWatch.PPR.";
 
@@ -55,7 +65,7 @@ namespace Pomamo.Stamping.FileDetection
     {
       m_isoFileFullPath = isoFileFullPath;
       m_tempFolder = Path.Combine (Path.GetTempPath (), "PprFileStamper");
-      
+
       if (log.IsDebugEnabled) {
         log.Debug ($"PprFileStamper: path={m_isoFileFullPath}, temp folder={m_tempFolder}");
       }
@@ -127,37 +137,11 @@ namespace Pomamo.Stamping.FileDetection
 
         // get PPR from ISO file
         var programPpr = GetPprFromIsoFile (inputFile);
+        finalDestinationFullPath = GetFinalDestinationFullPath (isoFileName, programPpr);
+
         if (string.IsNullOrEmpty (programPpr)) { // Empty if not found
           log.Error ($"ProcessIsoFile: PPR not found in {inputFile} => abort");
-          File.Move (renamedIsoFileFullPath, m_isoFileFullPath);
-          if (copyBefore) {
-            File.Delete (inputFile);
-          }
-          return;
-        }
-
-        // get destination from PPR. Default to orginal path
-        var finalDestinationFolder = GetDestinationFromPPR (programPpr);
-        if (!string.IsNullOrEmpty (finalDestinationFolder)) {
-          if (log.IsInfoEnabled) {
-            log.Info ($"ProcessIsoFile: finalDestinationFolder={finalDestinationFolder} from programPPR={programPpr}");
-          }
-          try {
-            if (!Directory.Exists (finalDestinationFolder)) {
-              Directory.CreateDirectory (finalDestinationFolder);
-            }
-            finalDestinationFullPath = Path.Combine (finalDestinationFolder, isoFileName);
-          }
-          catch (Exception ex) {
-            log.Error ($"ProcessIsoFile: error while creating destination folder {finalDestinationFolder} => use the original destination path {m_isoFileFullPath}", ex);
-            finalDestinationFullPath = m_isoFileFullPath;
-          }
-        }
-        else {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"ProcessIsoFile: no final destination recorded for programPpr={programPpr} => use {m_isoFileFullPath}");
-          }
-          finalDestinationFullPath = m_isoFileFullPath;
+          throw new Exception ("No PPR found");
         }
 
         int stampingResult;
@@ -216,7 +200,7 @@ namespace Pomamo.Stamping.FileDetection
             log.Debug ($"ProcessIsoFile: remove temporary files {inputFile} and {tempStampedFilePath}");
           }
           if (File.Exists (renamedIsoFileFullPath)) {
-            log.Error ($"ProcessIsoFile: {renamedIsoFileFullPath} still exists, which is unexpected");
+            log.Error ($"ProcessIsoFile: {renamedIsoFileFullPath} still exists, which is unexpected (it may be because a file already exists in the destination directory): add the .error suffix");
             File.Move (renamedIsoFileFullPath, m_isoFileFullPath + ".error");
           }
           if (copyBefore) {
@@ -245,7 +229,7 @@ namespace Pomamo.Stamping.FileDetection
 
         var stampingProcess = Lemoine.Info.ConfigSet.LoadAndGet<string> (STAMPER_PROCESS_NAME_KEY, STAMPER_PROCESS_NAME_DEFAULT);
         if (!Path.IsPathRooted (stampingProcess)) {
-          stampingProcess = Path.Combine (ProgramInfo.AbsolutePath, stampingProcess);
+          stampingProcess = Path.Combine (ProgramInfo.AbsoluteDirectory, stampingProcess);
         }
         if (log.IsInfoEnabled) {
           log.Info ($"RunStampingProcess: stamping process is {stampingProcess}");
@@ -334,6 +318,78 @@ namespace Pomamo.Stamping.FileDetection
       var destination = Lemoine.Info.ConfigSet.LoadAndGet (PPR_TAG_PREFIX_KEY + programPPRKey, defaultOutDirectory);
       log.Info ($"GetDestinationFromPPR: info: destination={destination}");
       return destination.Trim ();
+    }
+
+    string GetFinalDestinationFolder (string programPpr)
+    {
+      string initialDestinationFolder;
+      if (string.IsNullOrEmpty (programPpr)) {
+        initialDestinationFolder = Lemoine.Info.ConfigSet.LoadAndGet (DEFAULT_OUT_DIRECTORY_KEY, DEFAULT_OUT_DIRECTORY_DEFAULT).Trim ();
+      }
+      else {
+        initialDestinationFolder = GetDestinationFromPPR (programPpr);
+      }
+      var sourceDirectory = Lemoine.Info.ConfigSet.LoadAndGet (SOURCE_DIRECTORY_KEY, SOURCE_DIRECTORY_DEFAULT);
+      if (string.IsNullOrEmpty (sourceDirectory)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetFinalDestinationFolder: no source directory, return {initialDestinationFolder}");
+        }
+        return initialDestinationFolder;
+      }
+      else { // Check sub-directories
+        var sourceDirectoryNames = sourceDirectory.Split (Path.DirectorySeparatorChar);
+        var fullPathDirectoryNames = m_isoFileFullPath.Split (Path.DirectorySeparatorChar);
+        if (fullPathDirectoryNames.Length <= sourceDirectoryNames.Length) {
+          log.Error ($"GetFinalDestinationFolder: invalid source directory {sourceDirectory} for path {fullPathDirectoryNames}, omit it and return {initialDestinationFolder}");
+          return initialDestinationFolder;
+        }
+        var caseSensitivePath = !(RuntimeInformation.IsOSPlatform (OSPlatform.Windows) || RuntimeInformation.IsOSPlatform (OSPlatform.OSX));
+        var finalDestinationFolder = initialDestinationFolder;
+        for (int i = 0; i < fullPathDirectoryNames.Length - 1; ++i) {
+          if (sourceDirectoryNames.Length <= i) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetFinalDestinationFolder: sub-directory {fullPathDirectoryNames[i]} detected, add it");
+            }
+            finalDestinationFolder = Path.Combine (finalDestinationFolder, fullPathDirectoryNames[i]);
+          }
+          else if (string.Equals (fullPathDirectoryNames[i], sourceDirectoryNames[i], caseSensitivePath ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetFinalDestinationFolder: common directory {fullPathDirectoryNames[i]} detected");
+            }
+          }
+          else {
+            log.Error ($"GetFinalDestinationFolder: sub-directory mismatch between {sourceDirectory} and {m_isoFileFullPath} => return {initialDestinationFolder}");
+            return initialDestinationFolder;
+          }
+        }
+        return finalDestinationFolder;
+      }
+    }
+
+    string GetFinalDestinationFullPath (string isoFileName, string programPpr)
+    {
+      var finalDestinationFolder = GetFinalDestinationFolder (programPpr);
+      if (!string.IsNullOrEmpty (finalDestinationFolder)) {
+        if (log.IsInfoEnabled) {
+          log.Info ($"GetFinalDestinationFullPath: finalDestinationFolder={finalDestinationFolder} from programPPR={programPpr}");
+        }
+        try {
+          if (!Directory.Exists (finalDestinationFolder)) {
+            Directory.CreateDirectory (finalDestinationFolder);
+          }
+          return Path.Combine (finalDestinationFolder, isoFileName);
+        }
+        catch (Exception ex) {
+          log.Error ($"GetFinalDestinationFullPath: error while creating destination folder {finalDestinationFolder} => use the original destination path {m_isoFileFullPath}", ex);
+          return m_isoFileFullPath;
+        }
+      }
+      else {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetFinalDestinationFullPath: no final destination recorded for programPpr={programPpr} => use {m_isoFileFullPath}");
+        }
+        return m_isoFileFullPath;
+      }
     }
   }
 }

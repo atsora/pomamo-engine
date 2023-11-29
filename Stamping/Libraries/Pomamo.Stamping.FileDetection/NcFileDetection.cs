@@ -28,8 +28,23 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string NC_DIRECTORY_KEY = "Stamping.NcFileDetection.Directory";
     static readonly string NC_DIRECTORY_DEFAULT = "";
 
+    /// <summary>
+    /// NC program extensions to keep. If empty, consider all the extensions
+    /// </summary>
     static readonly string NC_EXTENSIONS_KEY = "Stamping.NcFileDetection.Extensions";
     static readonly string NC_EXTENSIONS_DEFAULT = "";
+
+    /// <summary>
+    /// File extensions to exclude from the search. If empty, do not exclude any specific file
+    /// </summary>
+    static readonly string EXCLUDE_EXTENSIONS_KEY = "Stamping.NcFileDetection.ExcludeExtensions";
+    static readonly string EXCLUDE_EXTENSIONS_DEFAULT = ",.mce,.mcc,.stamp_in_progress,.error";
+
+    /// <summary>
+    /// Search recursively in the sub-directories
+    /// </summary>
+    static readonly string RECURSIVE_KEY = "Stamping.NcFileDetection.Recursive";
+    static readonly string RECURSIVE_DEFAULT = ""; // Boolean: empty string means keep the default
 
     static readonly string SERVICE_USE_CURRENT_USER_KEY = "Stamping.NcFileDetection.ServiceUseCurrentUser";
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;
@@ -41,7 +56,9 @@ namespace Pomamo.Stamping.FileDetection
     static readonly TimeSpan DELAY_BEFORE_STAMPING_DEFAULT = TimeSpan.FromSeconds (0.5);
 
     readonly IEnumerable<string> m_directories;
+    readonly bool m_recursive = true; // Recursive search
     readonly IEnumerable<string> m_ncExtensions;
+    readonly IEnumerable<string> m_excludeExtensions;
     readonly bool m_useCurrentUser = false;
     readonly TimeSpan m_daxDelayForIsoFileCreation;
     readonly TimeSpan m_delayBeforeStamping;
@@ -71,6 +88,20 @@ namespace Pomamo.Stamping.FileDetection
       }
       else {
         m_ncExtensions = EnumerableString.ParseListString (ncExtensionsConfig);
+      }
+      var excludeExtensionsConfig = Lemoine.Info.ConfigSet
+        .LoadAndGet (EXCLUDE_EXTENSIONS_KEY, EXCLUDE_EXTENSIONS_DEFAULT);
+      if (string.IsNullOrEmpty (excludeExtensionsConfig)) {
+        m_excludeExtensions = new string[] { };
+      }
+      else {
+        m_excludeExtensions = EnumerableString.ParseListString (excludeExtensionsConfig);
+      }
+      var recursiveConfiguration = Lemoine.Info.ConfigSet.LoadAndGet<string> (RECURSIVE_KEY, RECURSIVE_DEFAULT);
+      if (!string.IsNullOrEmpty (recursiveConfiguration)) {
+        if (bool.TryParse (recursiveConfiguration, out var recursive)) {
+          m_recursive = recursive;
+        }
       }
       m_useCurrentUser = Lemoine.Info.ConfigSet
         .LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
@@ -116,7 +147,9 @@ namespace Pomamo.Stamping.FileDetection
 
         // create directory watcher
         try {
-          var directoryWatcher = new FileSystemWatcher (directory);
+          var directoryWatcher = new FileSystemWatcher (directory) {
+            IncludeSubdirectories = m_recursive
+          };
 
           directoryWatcher.Changed += OnChanged;
           directoryWatcher.Created += OnCreated;
@@ -127,7 +160,7 @@ namespace Pomamo.Stamping.FileDetection
           directoryWatcher.EnableRaisingEvents = true;
 
           // Parse the existing files
-          foreach (var filePath in Directory.GetFiles (directory)) {
+          foreach (var filePath in Directory.GetFiles (directory, "*", m_recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)) {
             await ProcessFileAsync (filePath);
           }
         }
@@ -234,7 +267,16 @@ namespace Pomamo.Stamping.FileDetection
           return;
         }
       }
-        
+      if (m_excludeExtensions.Any ()) {
+        var fileExtension = Path.GetExtension (path);
+        if (m_excludeExtensions.Any (x => fileExtension.Equals (x, StringComparison.InvariantCultureIgnoreCase))) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessFileAsync: file {path} with extension {fileExtension} is not excluded, exclude extensions are {m_excludeExtensions}");
+          }
+          return;
+        }
+      }
+
       var detectionDateTime = DateTime.UtcNow;
       var token = m_cancellationToken;
 

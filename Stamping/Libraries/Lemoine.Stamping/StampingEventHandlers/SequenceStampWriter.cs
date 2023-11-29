@@ -146,7 +146,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
     {
       if (edit && (0 == level)) {
         if (endOfFile) {
-          log.Warn ($"EndProgram: end of file reached, do not write the stamp");
+          log.Debug ($"EndProgram: end of file reached, do not write the stamp");
         }
         else { // !endOfFile
           if (m_milestoneStampLineCreator is not null) {
@@ -157,7 +157,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
           }
           var line = m_stampLineCreator.CreateSequenceStampLine (0);
           if (string.IsNullOrEmpty (line)) {
-            log.Error ($"StopProgram: line is empty");
+            log.Error ($"EndProgram: line is empty");
           }
           else {
             this.Stamper.AddLine (line);
