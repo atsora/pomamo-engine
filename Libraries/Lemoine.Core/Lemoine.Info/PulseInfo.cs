@@ -42,11 +42,11 @@ namespace Lemoine.Info
     static readonly string LINUX_PACKAGE_NAME = "atracking";
     static readonly string WIN_PRODUCT_FOLDER_NAME = "atracking";
     static readonly string COMPANY_NAME = "Atsora";
-//#if CONNECTOR
-//    static readonly string PRODUCT_NAME = "Connector";
-//else // !CONNECTOR
+#if CONNECTOR
+    static readonly string PRODUCT_NAME = "Connector";
+#else // !CONNECTOR
     static readonly string PRODUCT_NAME = "Tracking";
-//#endif // CONNECTOR
+#endif // CONNECTOR
 #elif LEMOINE
     static readonly string LINUX_PACKAGE_NAME = "lpulse";
     static readonly string WIN_PRODUCT_FOLDER_NAME = "PULSE";

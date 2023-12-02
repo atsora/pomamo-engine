@@ -146,14 +146,7 @@ namespace Pomamo.Stamping.FileDetection
     /// </summary>
     async void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
-      if (m_useCurrentUser) {
-        using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-        }
-      }
-      else {
-        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-      }
+      await ProcessOnChangedAsync (sender, fileSystemEventArgs);
     }
 
     /// <summary>
@@ -162,14 +155,7 @@ namespace Pomamo.Stamping.FileDetection
     async void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       log.Info ($"OnCreated {fileSystemEventArgs.FullPath}");
-      if (m_useCurrentUser) {
-        using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-        }
-      }
-      else {
-        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-      }
+      await ProcessOnChangedAsync (sender, fileSystemEventArgs);
     }
 
     /// <summary>
@@ -206,7 +192,17 @@ namespace Pomamo.Stamping.FileDetection
       if (log.IsDebugEnabled) {
         log.Debug ($"ProcessOnChangedAsync: File={indexFilePath}, {watcherChangeType}");
       }
-      await ProcessIndexFileAsync (indexFilePath);
+      await ProcessIndexFileImpersonatedAsync (indexFilePath);
+    }
+
+    async Task ProcessIndexFileImpersonatedAsync (string indexFilePath)
+    {
+      if (m_useCurrentUser) {
+        await Lemoine.Core.Security.Identity.RunImpersonatedAsExplorerUserAsync (async () => await ProcessIndexFileAsync (indexFilePath));
+      }
+      else {
+        await ProcessIndexFileAsync (indexFilePath);
+      }
     }
 
     async Task ProcessIndexFileAsync (string indexFilePath)
@@ -299,7 +295,7 @@ namespace Pomamo.Stamping.FileDetection
       log.Info ($"GetIsoFilePathFromIndexFile: index File={indexFile}");
       try {
         using (StreamReader reader = new StreamReader (indexFile)) {
-          return reader.ReadLine ().Trim ();
+          return reader.ReadLine ()?.Trim () ?? "";
         }
       }
       catch (Exception ex) {

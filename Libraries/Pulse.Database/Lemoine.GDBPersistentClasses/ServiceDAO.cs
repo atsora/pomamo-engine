@@ -21,7 +21,7 @@ namespace Lemoine.GDBPersistentClasses
     : VersionableNHibernateDAO<Service, IService, int>
     , IServiceDAO
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (ServiceDAO).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (ServiceDAO).FullName);
 
     /// <summary>
     /// Try to get a local service from its name
@@ -34,12 +34,10 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns>null if the service does not exist in database</returns>
     public IService GetLocalServiceByName (string name)
     {
-      IComputer localComputer = ModelDAOHelper.DAOFactory.ComputerDAO.GetLocal();
-      
+      IComputer localComputer = ModelDAOHelper.DAOFactory.ComputerDAO.GetLocal ();
+
       if (null == localComputer) {
-        log.DebugFormat ("GetLocalServiceByName: " +
-                         "localComputer is not in database " +
-                         "=> return null");
+        log.Debug ("GetLocalServiceByName: localComputer is not in database => return null");
         return null;
       }
       return NHibernateHelper.GetCurrentSession ()
@@ -49,7 +47,7 @@ namespace Lemoine.GDBPersistentClasses
         .SetCacheable (true)
         .UniqueResult<Service> ();
     }
-    
+
     /// <summary>
     /// Try to get a local service from its program name
     /// 
@@ -61,21 +59,19 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns>null if the service does not exist in database</returns>
     public IService GetLocalServiceByProgram (string program)
     {
-      IComputer localComputer = ModelDAOHelper.DAOFactory.ComputerDAO.GetLocal();
+      IComputer localComputer = ModelDAOHelper.DAOFactory.ComputerDAO.GetLocal ();
       if (null == localComputer) {
-        log.DebugFormat ("GetLocalServiceByName: " +
-                         "localComputer is not in database " +
-                         "=> return null");
+        log.Debug ("GetLocalServiceByName: localComputer is not in database => return null");
         return null;
       }
-      return NHibernateHelper.GetCurrentSession()
+      return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<Service> ()
         .Add (Restrictions.Eq ("Computer", localComputer))
         .Add (Restrictions.Eq ("Program", program))
         .SetCacheable (true)
         .UniqueResult<Service> ();
     }
-    
+
     /// <summary>
     /// Try to get a local service from its name and program name
     /// 
@@ -91,28 +87,25 @@ namespace Lemoine.GDBPersistentClasses
                                              string program,
                                              bool lemoine)
     {
-      if ( (null == name) || (null == program)) {
-        log.ErrorFormat ("GetOrCreateLocalService: " +
-                         "name or program are null");
+      if ((null == name) || (null == program)) {
+        log.Error ("GetOrCreateLocalService: name or program are null");
         throw new ArgumentException ();
       }
 
-      IComputer localComputer = ModelDAOHelper.DAOFactory.ComputerDAO.GetOrCreateLocal();
-      
+      IComputer localComputer = ModelDAOHelper.DAOFactory.ComputerDAO.GetOrCreateLocal ();
+
       Debug.Assert (null != localComputer);
       IService service =
-        NHibernateHelper.GetCurrentSession()
+        NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<Service> ()
         .Add (Restrictions.Eq ("Lemoine", lemoine))
         .Add (Restrictions.Eq ("Name", name))
         .Add (Restrictions.Eq ("Program", program))
         .UniqueResult<Service> ();
-      
+
       if (null == service) { // create it
-        log.DebugFormat ("GetOrCreateLocalService: " +
-                         "service name={0} unknown, create it",
-                         name);
-        
+        log.Debug ($"GetOrCreateLocalService: service name={name} unknown, create it");
+
         service = new Service ();
         service.Computer = localComputer;
         service.Name = name;
@@ -120,7 +113,7 @@ namespace Lemoine.GDBPersistentClasses
         service.Lemoine = lemoine;
         NHibernateHelper.GetCurrentSession ().Save (service);
       }
-      
+
       return service;
     }
   }

@@ -17,12 +17,13 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
   /// 
   /// Code from this page:
   /// http://stackoverflow.com/questions/3891260/impersonation-the-current-user-using-windowsimpersonationcontext-to-access-netwo
+  ///
+  /// Deprecated: use the code of Lemoine.Core.Security.Identity instead (in Lemoine.Core.TargetSpecific.dll)
   /// </summary>
   public static class ImpersonationUtils
   {
     static readonly ILog log = LogManager.GetLogger (typeof (ImpersonationUtils).FullName);
 
-#if NET45
     private const int SW_HIDE = 0;
     private const int SW_SHOW = 5;
     private const int TOKEN_QUERY = 0x0008;
@@ -147,6 +148,7 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
     private static extern bool CloseHandle (
       IntPtr hObject);
 
+#if NET45
     private static void LaunchProcessAsUser (string cmdLine, IntPtr token, IntPtr envBlock, int sessionId)
     {
       var pi = new PROCESS_INFORMATION ();
@@ -189,9 +191,15 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
 #endif // NET45
     }
 
-#if NET45
-    private static IntPtr GetPrimaryToken (Process process)
+    public static IntPtr GetPrimaryToken (Process process)
     {
+#if !NET40
+      if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
+        log.Error ("GetPrimaryToken: not supported platform");
+        throw new PlatformNotSupportedException ();
+      }
+#endif // !NET40
+
       var token = IntPtr.Zero;
       var primaryToken = IntPtr.Zero;
 
@@ -206,18 +214,21 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
           (int)SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation,
           (int)TOKEN_TYPE.TokenPrimary,
           ref primaryToken)) {
+          log.Error ($"GetPrimaryToken: DuplicateTokenEx failed with error {Marshal.GetLastWin32Error ()}");
           throw new Win32Exception (Marshal.GetLastWin32Error (), "DuplicateTokenEx failed");
         }
 
         CloseHandle (token);
       }
       else {
+        log.Error ($"GetPrimaryToken: OpenProcessToken failed with error {Marshal.GetLastWin32Error ()}");
         throw new Win32Exception (Marshal.GetLastWin32Error (), "OpenProcessToken failed");
       }
 
       return primaryToken;
     }
 
+#if NET45
     private static IntPtr GetEnvironmentBlock (IntPtr token)
     {
       var envBlock = IntPtr.Zero;

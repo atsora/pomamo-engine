@@ -193,7 +193,7 @@ namespace Lemoine.GDBMigration
         #region LCtr services
         Database.ExecuteNonQuery ("INSERT INTO Service " +
                                   "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'postgresql-9.0 - PostgreSQL Server 9.0', 'postgresql-9.0', FALSE, computerid " +
+                                  "SELECT 'postgresql-15.0 - PostgreSQL Server 15.0', 'postgresql-15.0', FALSE, computerid " +
                                   "FROM computer " +
                                   "WHERE ComputerIsLctr=TRUE");
         Database.ExecuteNonQuery ("INSERT INTO Service " +
@@ -208,57 +208,12 @@ namespace Lemoine.GDBMigration
                                   "WHERE ComputerIsLctr=TRUE");
         Database.ExecuteNonQuery ("INSERT INTO Service " +
                                   "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Messenging and Time Service', 'MSG_Svc', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Shift Service', 'Lem_ShiftService', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Database Compactor Service', 'compactsrv', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Control Center', 'L_Ctr', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Pulse Health Monitor Service', 'pulse_shm_svc', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Alarming Service', 'Lem_Alarm', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Auto-WhyYellow Service', 'Lem_AutoWY', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine File Repository Service', 'Lem_PFR', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
                                   "SELECT 'Lemoine Stamping Service', 'Lem_StampingService', TRUE, computerid " +
                                   "FROM computer " +
                                   "WHERE ComputerIsLctr=TRUE");
         Database.ExecuteNonQuery ("INSERT INTO Service " +
                                   "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
                                   "SELECT 'Lemoine Job Synchronisation Service', 'JobSynchrService', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLctr=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Watching Service', 'Lem_Control', TRUE, computerid " +
                                   "FROM computer " +
                                   "WHERE ComputerIsLctr=TRUE");
         #endregion
@@ -278,11 +233,6 @@ namespace Lemoine.GDBMigration
                                   "SELECT 'Lemoine Cnc Service', 'Lem_CncService', TRUE, computerid " +
                                   "FROM computer " +
                                   "WHERE ComputerIsLpst=TRUE");
-        Database.ExecuteNonQuery ("INSERT INTO Service " +
-                                  "(ServiceName, ServiceProgram, ServiceLemoine, ComputerId) " +
-                                  "SELECT 'Lemoine Watching Service', 'Lem_Control', TRUE, computerid " +
-                                  "FROM computer " +
-                                  "WHERE ComputerIsLpst=TRUE AND ComputerIsLctr=FALSE");
         #endregion
         #region Cnc services
         Database.ExecuteNonQuery ("INSERT INTO Service " +

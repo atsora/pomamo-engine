@@ -131,7 +131,6 @@ namespace LemoineServiceMonitoring
         "Lem_AutoReasonService", // [Optional] Auto-reason Service
         "Lem_SynchronizationService", // [Optional] Synchronization
         "Lem_AspService", // Asp Service
-        "Lem_StampingService" // Stamping Service
       };
       AddAdditionalServices (lctrServices, ADDITIONAL_LCTR_KEY);
 

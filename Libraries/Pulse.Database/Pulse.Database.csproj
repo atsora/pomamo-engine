@@ -6,6 +6,7 @@
     <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <AssemblyVersion>16.3.1.0</AssemblyVersion>
+    <LangVersion>preview</LangVersion>
     <NoWarn>0649</NoWarn>
   </PropertyGroup>
 

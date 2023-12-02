@@ -277,7 +277,10 @@ namespace Pomamo.Stamping.FileDetection
         using (StreamReader reader = new StreamReader (programFile)) {
           while (!reader.EndOfStream && lineCount < maxLines) {
             var line = reader.ReadLine ();
-            if (line.Contains (PPR_TAG_KEYWORD)) {
+            if (line is null) {
+              log.Fatal ($"GetPprFromIsoFile: unexpected end of stream reached");
+            }
+            else if (line.Contains (PPR_TAG_KEYWORD)) {
               log.Info ($"GetPprFromIsoFile: info: line found: {line}");
               var match = PPR_TAG_REGEX.Match (line);
               if (!match.Success) {
@@ -301,7 +304,7 @@ namespace Pomamo.Stamping.FileDetection
         return "";
       }
       catch (Exception ex) {
-        log.Error ($"GetPprFromIsoFile: failed to read file: {programFile}, {ex}");
+        log.Error ($"GetPprFromIsoFile: failed to read file: {programFile}", ex);
         throw;
       }
     }

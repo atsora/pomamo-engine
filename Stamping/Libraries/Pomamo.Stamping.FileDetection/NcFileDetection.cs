@@ -17,8 +17,10 @@ namespace Pomamo.Stamping.FileDetection
   /// <summary>
   /// Class to manage the folder containing index files
   /// </summary>
-  public class NcFileDetection : ThreadClass, IThreadClass
+  public sealed class NcFileDetection : ThreadClass, IThreadClass, IDisposable
   {
+    static readonly int MAX_RESET_ATTEMPT = 20;
+
     /// <summary>
     /// Config set to be used when a list of directories is targeted
     /// </summary>
@@ -49,6 +51,12 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string SERVICE_USE_CURRENT_USER_KEY = "Stamping.NcFileDetection.ServiceUseCurrentUser";
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;
 
+    /// <summary>
+    /// Try to run the stamper as the owner of the file (only works with a domain user)
+    /// </summary>
+    static readonly string TRY_FILE_OWNER_KEY = "Stamping.NcFileDetection.TryFileOwner";
+    static readonly bool TRY_FILE_OWNER_DEFAULT = false;
+
     static readonly string MAX_DELAY_FOR_ISO_FILE_CREATION_KEY = "Stamping.NcFileDetection.MaxDelayForFileCreation";
     static readonly TimeSpan MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = TimeSpan.FromMinutes (1);
 
@@ -60,10 +68,13 @@ namespace Pomamo.Stamping.FileDetection
     readonly IEnumerable<string> m_ncExtensions;
     readonly IEnumerable<string> m_excludeExtensions;
     readonly bool m_useCurrentUser = false;
+    readonly bool m_tryFileOwner = false;
     readonly TimeSpan m_daxDelayForIsoFileCreation;
     readonly TimeSpan m_delayBeforeStamping;
     readonly ConcurrentDictionary<string, DateTime> m_processingPaths = new ConcurrentDictionary<string, DateTime> ();
+    readonly ConcurrentDictionary<string, FileSystemWatcher> m_watchers = new ConcurrentDictionary<string, FileSystemWatcher> ();
     CancellationToken m_cancellationToken = CancellationToken.None;
+    bool m_disposed = false;
 
     static readonly ILog log = LogManager.GetLogger (typeof (NcFileDetection).FullName);
 
@@ -105,6 +116,8 @@ namespace Pomamo.Stamping.FileDetection
       }
       m_useCurrentUser = Lemoine.Info.ConfigSet
         .LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
+      m_tryFileOwner = Lemoine.Info.ConfigSet
+        .LoadAndGet (TRY_FILE_OWNER_KEY, TRY_FILE_OWNER_DEFAULT);
       m_daxDelayForIsoFileCreation = Lemoine.Info.ConfigSet
         .LoadAndGet (MAX_DELAY_FOR_ISO_FILE_CREATION_KEY, MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT);
       m_delayBeforeStamping = Lemoine.Info.ConfigSet
@@ -127,51 +140,13 @@ namespace Pomamo.Stamping.FileDetection
     {
       m_cancellationToken = cancellationToken;
 
-      foreach (var directory in m_directories) {
-        log.Info ($"Run: initializing {directory}");
-        // check directory exists
-        if (!Directory.Exists (directory)) {
-          log.Info ($"Run: Directory {directory} does not exists, try to create it");
-          try {
-            log.Info ($"Run: create folder {directory}");
-            Directory.CreateDirectory (directory);
-            log.Info ($"Run: Directory {directory} created");
-          }
-          catch (Exception ex) {
-            log.Fatal ($"Run: unable to create folder {directory}", ex);
-            log.Fatal ($"Run: Directory {directory} does not exists, exiting");
-            this.SetExitRequested ();
-            return;
-          }
-        }
-
-        // create directory watcher
-        try {
-          var directoryWatcher = new FileSystemWatcher (directory) {
-            IncludeSubdirectories = m_recursive
-          };
-
-          directoryWatcher.Changed += OnChanged;
-          directoryWatcher.Created += OnCreated;
-          directoryWatcher.Renamed += OnRenamed;
-          directoryWatcher.Deleted += OnDeleted;
-
-          // start monitoring directory
-          directoryWatcher.EnableRaisingEvents = true;
-
-          // Parse the existing files
-          foreach (var filePath in Directory.GetFiles (directory, "*", m_recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)) {
-            await ProcessFileAsync (filePath);
-          }
-        }
-        catch (Exception ex) {
-          log.Error ("Run: exception", ex);
-          this.SetExitRequested ();
-          return;
-        }
-      }
-
       try {
+        foreach (var directory in m_directories.Distinct ()) {
+          log.Info ($"Run: initializing {directory}");
+          cancellationToken.ThrowIfCancellationRequested ();
+          await StartWatchDirectoryAsync (directory, cancellationToken);
+        }
+
         // to keep thread alive
         while (!cancellationToken.IsCancellationRequested && !this.ExitRequested) {
           SetActive ();
@@ -185,19 +160,78 @@ namespace Pomamo.Stamping.FileDetection
       }
     }
 
+    async Task StartWatchDirectoryAsync (string directory, CancellationToken cancellationToken)
+    {
+      // check directory exists
+      if (!Directory.Exists (directory)) {
+        log.Info ($"StartWatchDirectoryAsync: Directory {directory} does not exists, try to create it");
+        try {
+          log.Info ($"StartWatchDirectoryAsync: create folder {directory}");
+          Directory.CreateDirectory (directory);
+          log.Info ($"StartWatchDirectoryAsync: Directory {directory} created");
+        }
+        catch (Exception ex) {
+          log.Fatal ($"StartWatchDirectoryAsync: unable to create folder {directory}", ex);
+          log.Fatal ($"StartWatchDirectoryAsync: Directory {directory} does not exists, exiting");
+          this.SetExitRequested ();
+          throw;
+        }
+      }
+      cancellationToken.ThrowIfCancellationRequested ();
+
+      // create directory watcher
+      try {
+        CreateWatcher (directory, cancellationToken);
+
+        // Parse the existing files
+        await VisitDirectoryAsync (directory, cancellationToken);
+      }
+      catch (Exception ex) {
+        log.Error ("StartWatchDirectoryAsync: exception", ex);
+        this.SetExitRequested ();
+        throw;
+      }
+    }
+
+    async Task VisitDirectoryAsync (string directory, CancellationToken cancellationToken)
+    {
+      foreach (var filePath in Directory.GetFiles (directory, "*", m_recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)) {
+        cancellationToken.ThrowIfCancellationRequested ();
+        await ProcessFileImpersonatedAsync (filePath, cancellationToken);
+      }
+    }
+
+    void CreateWatcher (string directory, CancellationToken cancellationToken)
+    {
+      var watcher = new FileSystemWatcher (directory) {
+        IncludeSubdirectories = m_recursive,
+        InternalBufferSize = 32768, // 32 KB instead of default 8 KB (Max is 64 KB)
+        NotifyFilter = NotifyFilters.CreationTime
+      | NotifyFilters.FileName
+      | NotifyFilters.LastWrite
+      | NotifyFilters.Size
+      };
+
+      watcher.Changed += OnChanged;
+      watcher.Created += OnCreated;
+      watcher.Renamed += OnRenamed;
+      watcher.Deleted += OnDeleted;
+      watcher.Error += OnError;
+
+      // start monitoring directory
+      while (!m_watchers.TryAdd (directory, watcher) && !cancellationToken.IsCancellationRequested) {
+        log.Error ($"CreateWatcher: try add watcher for {directory} in dictionary failed");
+        this.Sleep (TimeSpan.FromSeconds (2), cancellationToken);
+      }
+      watcher.EnableRaisingEvents = true;
+    }
+
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
     async void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
-      if (m_useCurrentUser) {
-        using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-        }
-      }
-      else {
-        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-      }
+      await ProcessOnChangedAsync (sender, fileSystemEventArgs);
     }
 
     /// <summary>
@@ -206,14 +240,7 @@ namespace Pomamo.Stamping.FileDetection
     async void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       log.Info ($"OnCreated {fileSystemEventArgs.FullPath}");
-      if (m_useCurrentUser) {
-        using (ImpersonationUtils.ImpersonateCurrentUser ()) {
-          await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-        }
-      }
-      else {
-        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
-      }
+      await ProcessOnChangedAsync (sender, fileSystemEventArgs);
     }
 
     /// <summary>
@@ -227,17 +254,54 @@ namespace Pomamo.Stamping.FileDetection
     /// <summary>
     /// Directory monitoring change event watcher
     /// </summary>
-    void OnError (object sender, FileSystemEventArgs fileSystemEventArgs)
-    {
-      log.Info ($"OnError {fileSystemEventArgs.FullPath}");
-    }
-
-    /// <summary>
-    /// Directory monitoring change event watcher
-    /// </summary>
     void OnRenamed (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       log.Info ($"OnRenamed {fileSystemEventArgs.FullPath}");
+    }
+
+    /// <summary>
+    /// Directory monitoring error event watcher
+    /// </summary>
+    async void OnError (object sender, ErrorEventArgs e)
+    {
+      log.Error ($"OnError: exception", e.GetException ());
+      try {
+        var watcher = (FileSystemWatcher)sender;
+        var path = watcher.Path;
+        await ResetWatcherAsync (path);
+      }
+      catch (Exception ex) {
+        log.Error ($"OnError: ResetWatcher failed", ex);
+      }
+    }
+
+    async Task ResetWatcherAsync (string path, int attempt = 0)
+    {
+      if (attempt > MAX_RESET_ATTEMPT) {
+        log.Error ($"ResetWatcherAsync: max attempt for reset reached for {path}");
+        this.SetExitRequested ();
+        throw new Exception ("Max attempt for reset reached");
+      }
+
+      try {
+        if (m_watchers.TryGetValue (path, out var oldWatcher)) {
+          oldWatcher.EnableRaisingEvents = false;
+          while (!m_watchers.TryRemove (path, out _)) {
+            log.Error ($"ResetWatcher: TryRemove failed");
+            this.Sleep (TimeSpan.FromSeconds (2));
+          }
+          oldWatcher.Dispose ();
+        }
+        CreateWatcher (path, CancellationToken.None);
+      }
+      catch (Exception ex) {
+        log.Error ($"ResetWatcher: exception => try again in 2 seconds", ex);
+        this.Sleep (TimeSpan.FromSeconds (2));
+        await ResetWatcherAsync (path, attempt++);
+        return;
+      }
+
+      await VisitDirectoryAsync (path, CancellationToken.None);
     }
 
     /// <summary>
@@ -246,10 +310,30 @@ namespace Pomamo.Stamping.FileDetection
     async Task ProcessOnChangedAsync (object sender, FileSystemEventArgs fileSystemEventArgs)
     {
       var path = fileSystemEventArgs.FullPath;
-      await ProcessFileAsync (path);
+      await ProcessFileImpersonatedAsync (path, m_cancellationToken);
     }
 
-    async Task ProcessFileAsync (string path)
+    async Task ProcessFileImpersonatedAsync (string path, CancellationToken cancellationToken)
+    {
+      if (m_tryFileOwner) {
+        try {
+          await Lemoine.Core.Security.Identity.RunImpersonatedAsFileOwnerAsync (path, async () => await ProcessFileAsync (path, cancellationToken));
+          return;
+        }
+        catch (Exception ex) {
+          log.Debug ($"ProcessFileImpersonatedAsync: with file owner, exception", ex);
+        }
+      }
+
+      if (m_useCurrentUser) {
+        await Lemoine.Core.Security.Identity.RunImpersonatedAsExplorerUserAsync (async () => await ProcessFileAsync (path, cancellationToken));
+      }
+      else {
+        await ProcessFileAsync (path, cancellationToken);
+      }
+    }
+
+    async Task ProcessFileAsync (string path, CancellationToken cancellationToken)
     {
       if (!File.Exists (path)) {
         if (log.IsDebugEnabled) {
@@ -257,6 +341,7 @@ namespace Pomamo.Stamping.FileDetection
         }
         return;
       }
+      cancellationToken.ThrowIfCancellationRequested ();
 
       if (m_ncExtensions.Any ()) {
         var fileExtension = Path.GetExtension (path);
@@ -276,9 +361,9 @@ namespace Pomamo.Stamping.FileDetection
           return;
         }
       }
+      cancellationToken.ThrowIfCancellationRequested ();
 
       var detectionDateTime = DateTime.UtcNow;
-      var token = m_cancellationToken;
 
       try {
         if (!m_processingPaths.TryAdd (path, detectionDateTime)) {
@@ -293,6 +378,7 @@ namespace Pomamo.Stamping.FileDetection
         log.Error ($"ProcessOnChanged: exception in TryAdd", ex);
         throw;
       }
+      cancellationToken.ThrowIfCancellationRequested ();
 
       try {
         // Check the file is not being written
@@ -306,13 +392,13 @@ namespace Pomamo.Stamping.FileDetection
         }
 
         while (DateTime.UtcNow <= detectionDateTime.Add (m_daxDelayForIsoFileCreation)) {
-          if (token.IsCancellationRequested) {
+          if (cancellationToken.IsCancellationRequested) {
             log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
             return;
           }
           SetActive ();
-          this.Sleep (TimeSpan.FromSeconds (10), token);
-          if (token.IsCancellationRequested) {
+          this.Sleep (TimeSpan.FromSeconds (10), cancellationToken);
+          if (cancellationToken.IsCancellationRequested) {
             log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
             return;
           }
@@ -363,15 +449,15 @@ namespace Pomamo.Stamping.FileDetection
           }
         }
 
-        this.Sleep (m_delayBeforeStamping, token);
-        if (token.IsCancellationRequested) {
+        this.Sleep (m_delayBeforeStamping, cancellationToken);
+        if (cancellationToken.IsCancellationRequested) {
           log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
           return;
         }
 
         try {
           var fileStamper = new PprFileStamper (path);
-          await fileStamper.RunAsync (token);
+          await fileStamper.RunAsync (cancellationToken);
         }
         catch (Exception ex) {
           log.Error ($"ProcessFileAsync: exception in PprFileStamper", ex);
@@ -383,13 +469,33 @@ namespace Pomamo.Stamping.FileDetection
       finally {
         if (log.IsDebugEnabled) {
           log.Debug ($"ProcessFileAsync: stamping of {path} completed");
-          this.Sleep (TimeSpan.FromSeconds (2), token);
+          this.Sleep (TimeSpan.FromSeconds (2), cancellationToken);
           if (!m_processingPaths.TryRemove (path, out var _)) {
             log.Error ($"ProcessFileAsync: TryRemove returned false for path={path}");
           }
         }
       }
 
+    }
+
+    protected override void Dispose (bool disposing)
+    {
+      if (!m_disposed) {
+        if (disposing) {
+          foreach (var watcher in m_watchers.Values) {
+            try {
+              watcher.EnableRaisingEvents = false;
+            }
+            finally {
+              watcher.Dispose ();
+            }
+          }
+        }
+
+        m_disposed = true;
+      }
+
+      base.Dispose (disposing);
     }
   }
 }
