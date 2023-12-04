@@ -46,7 +46,7 @@ namespace Pomamo.Stamping.FileDetection
     /// Search recursively in the sub-directories
     /// </summary>
     static readonly string RECURSIVE_KEY = "Stamping.NcFileDetection.Recursive";
-    static readonly string RECURSIVE_DEFAULT = ""; // Boolean: empty string means keep the default
+    static readonly string RECURSIVE_DEFAULT = ""; // Boolean: empty string means keep the default (true by default)
 
     static readonly string SERVICE_USE_CURRENT_USER_KEY = "Stamping.NcFileDetection.ServiceUseCurrentUser";
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;

@@ -21,7 +21,7 @@ namespace Lemoine.Stamping.Lem_NcFileWatchStamper
 
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     bool m_disposed = false;
-    NcFileDetection m_ncFileDetection;
+    NcFileDetection? m_ncFileDetection;
     readonly CheckThreadsAndProcesses m_check = new CheckThreadsAndProcesses ();
 
     static readonly ILog log = LogManager.GetLogger (typeof (NcFileWatchStamper).FullName);
@@ -49,7 +49,7 @@ namespace Lemoine.Stamping.Lem_NcFileWatchStamper
       await InitializeThreadsAsync (cancellationToken);
     }
 
-    async System.Threading.Tasks.Task InitializeThreadsAsync (CancellationToken cancellationToken)
+    System.Threading.Tasks.Task InitializeThreadsAsync (CancellationToken cancellationToken)
     {
       using (var linkedCancellationTokenSource = CancellationTokenSource
         .CreateLinkedTokenSource (m_cancellationTokenSource.Token, cancellationToken)) {
@@ -64,31 +64,8 @@ namespace Lemoine.Stamping.Lem_NcFileWatchStamper
         m_check.NotRespondingTimeout = Lemoine.Info.ConfigSet
           .LoadAndGet<TimeSpan> (NOT_RESPONDING_TIMEOUT_KEY, NOT_RESPONDING_TIMEOUT_DEFAULT);
         m_check.Start (linkedToken);
-
-        // - Check no 'exit' was requested
-        while (!m_ncFileDetection.ExitRequested && !m_check.ExitRequested) {
-          await System.Threading.Tasks.Task.Delay (100, linkedToken);
-          if (linkedToken.IsCancellationRequested
-            && !m_ncFileDetection.ExitRequested && !m_check.ExitRequested) {
-            // OnStop was called, return
-            LogManager.SetApplicationStopping ();
-            log.Info ($"InitializeThreadsAsync: cancellation requested (OnStop called), return");
-            return;
-          }
-        }
       }
-
-      LogManager.SetApplicationStopping ();
-      log.Fatal ("InitializeThreadsAsync: exit was requested");
-      try {
-        m_check.Abort ();
-        log.Fatal ("InitializeThreadsAsync: checkThreads aborted because Exit was requested");
-        m_ncFileDetection.Abort ();
-        log.Fatal ("InitializeThreadsAsync: m_directoryManager aborted because Exit was requested");
-      }
-      finally {
-        Lemoine.Core.Environment.LogAndForceExit (log);
-      }
+      return System.Threading.Tasks.Task.CompletedTask;
     }
 
     /// <summary>

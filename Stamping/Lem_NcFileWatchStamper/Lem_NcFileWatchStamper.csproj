@@ -3,10 +3,15 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
     <Platforms>x64</Platforms>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <UseWindowsForms>true</UseWindowsForms>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <ApplicationIcon>NcFileWatchStamper.ico</ApplicationIcon>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   
   <ItemGroup>
@@ -21,6 +26,12 @@
     <None Include="$(ProjectName).dll.options" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
     <None Include="$(ProjectName).dll.defaultoptions" CopyToOutputDirectory="Always" />
     <None Include="..\..\ApplicationTemplate.exe.log4net" Link="$(ProjectName).dll.log4net" CopyToOutputDirectory="Always" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NcFileWatchStamper.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   
 </Project>

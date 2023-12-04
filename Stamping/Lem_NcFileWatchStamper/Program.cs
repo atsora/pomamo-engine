@@ -8,6 +8,8 @@ using Lemoine.Info.ConfigReader.TargetSpecific;
 using CommandLine;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Windows.Forms;
+using Lem_NcFileWatchStamper;
 
 namespace Lemoine.Stamping.Lem_NcFileWatchStamper
 {
@@ -30,9 +32,10 @@ namespace Lemoine.Stamping.Lem_NcFileWatchStamper
         Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader ());
 
         LogManager.AddLog4net ();
-
+ 
         var stamper = new NcFileWatchStamper ();
         await stamper.InitializeAsync (CancellationToken.None);
+        Application.Run (new MyApplicationContext (stamper));
       }
 
       catch (Exception) {
