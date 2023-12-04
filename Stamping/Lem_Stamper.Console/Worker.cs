@@ -27,6 +27,9 @@ namespace Lem_Stamper.Console
   {
     readonly ILog log = LogManager.GetLogger (typeof (Worker).FullName);
 
+    static readonly string USE_SESSION_USER_KEY = "Stamping.Lem_Stamper.UseSessionUser";
+    static readonly bool USE_SESSION_USER_DEFAULT = false;
+
     readonly IApplicationInitializer m_applicationInitializer;
     readonly IStampingEventHandlersProvider m_stampingConfig;
     readonly TypeLoader m_typeLoader;
@@ -65,7 +68,14 @@ namespace Lem_Stamper.Console
         using (var scope = m_serviceProvider.CreateScope ()) {
           var provider = scope.ServiceProvider;
           var fullStampingProcess = provider.GetRequiredService<FullStampingProcess> ();
-          await fullStampingProcess.StampAsync (cancellationToken);
+
+          var useSessionUser = Lemoine.Info.ConfigSet.LoadAndGet (USE_SESSION_USER_KEY, USE_SESSION_USER_DEFAULT);
+          if (useSessionUser) {
+            await Lemoine.Core.Security.Identity.RunImpersonatedAsExplorerUserAsync (async () => await fullStampingProcess.StampAsync (cancellationToken));
+          }
+          else {
+            await fullStampingProcess.StampAsync (cancellationToken);
+          }
         }
       }
       catch (Exception ex) {

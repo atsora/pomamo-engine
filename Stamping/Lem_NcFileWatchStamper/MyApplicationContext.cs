@@ -18,6 +18,9 @@ namespace Lem_NcFileWatchStamper
   {
     readonly ILog log = LogManager.GetLogger (typeof (MyApplicationContext).FullName);
 
+    static readonly string ALLOW_EXIT_KEY = "NcFileWatchStamper.AllowExit";
+    static readonly bool ALLOW_EXIT_DEFAULT = false;
+
     NotifyIcon m_trayIcon;
     readonly NcFileWatchStamper m_stamper;
 
@@ -27,11 +30,15 @@ namespace Lem_NcFileWatchStamper
 
       m_trayIcon = new NotifyIcon () {
         Icon = new System.Drawing.Icon ("NcFileWatchStamper.ico"),
-        ContextMenuStrip = new ContextMenuStrip () {
-          Items = { new ToolStripMenuItem ("Exit", null, Exit) }
-        },
+        Text = "Atsora NC File Watch Stamper",
         Visible = true
       };
+
+      if (Lemoine.Info.ConfigSet.LoadAndGet (ALLOW_EXIT_KEY, ALLOW_EXIT_DEFAULT)) {
+        m_trayIcon.ContextMenuStrip = new ContextMenuStrip () {
+          Items = { new ToolStripMenuItem ("Exit", null, Exit) }
+        };
+      }
     }
 
     void Exit (object? sender, EventArgs e)

@@ -22,6 +22,12 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string STAMPER_PROCESS_NAME_KEY = "Stamping.PprFileStamper.StamperProcess";
     static readonly string STAMPER_PROCESS_NAME_DEFAULT = "Lem_Stamper.Console.exe"; // relative to the program directory, or $@"C:\Program Files\{PulseInfo.ProductFolderName}\Lem_Stamper.Console.exe";
 
+    /// <summary>
+    /// Additional options to set to Lem_Stamper.Console.exe
+    /// </summary>
+    static readonly string STAMPER_OPTIONS_KEY = "Stamping.PprFileStamper.StamperOptions";
+    static readonly string STAMPER_OPTIONS_DEFAULT = "";
+
     static readonly string COPY_BEFORE_KEY = "Stamping.PprFileStamper.CopyBefore";
     static readonly bool COPY_BEFORE_DEFAULT = true;
 
@@ -52,6 +58,9 @@ namespace Pomamo.Stamping.FileDetection
 
     static readonly string ISO_FILE_PROGRESS_EXTENSION = ".stamp_in_progress";
 
+    static readonly string TEMP_PATH_KEY = "Stamping.PprFileStamper.TempPath";
+    static readonly string TEMP_PATH_DEFAULT = Path.GetTempPath ();
+
     static readonly string TEMP_STAMPED_FOLDER_NAME = "stamped";
 
     static readonly string PPR_TAG_KEYWORD = "[PPR]";
@@ -64,7 +73,8 @@ namespace Pomamo.Stamping.FileDetection
     public PprFileStamper (string isoFileFullPath)
     {
       m_isoFileFullPath = isoFileFullPath;
-      m_tempFolder = Path.Combine (Path.GetTempPath (), "PprFileStamper");
+      var tempPath = Lemoine.Info.ConfigSet.LoadAndGet (TEMP_PATH_KEY, TEMP_PATH_DEFAULT);
+      m_tempFolder = Path.Combine (tempPath, "PprFileStamper");
 
       if (log.IsDebugEnabled) {
         log.Debug ($"PprFileStamper: path={m_isoFileFullPath}, temp folder={m_tempFolder}");
@@ -242,7 +252,15 @@ namespace Pomamo.Stamping.FileDetection
         process.StartInfo.RedirectStandardError = false;
         process.StartInfo.RedirectStandardOutput = false;
         process.StartInfo.CreateNoWindow = true;
-        process.StartInfo.Arguments = $"-i \"{inputFile}\" -o \"{outputFolder}\" -n \"{programPpr}\"";
+        var arguments = $"-i \"{inputFile}\" -o \"{outputFolder}\" -n \"{programPpr}\"";
+        var additionalOptions = Lemoine.Info.ConfigSet.LoadAndGet (STAMPER_OPTIONS_KEY, STAMPER_OPTIONS_DEFAULT);
+        if (!string.IsNullOrEmpty (additionalOptions)) {
+          arguments += " " + additionalOptions;
+        }
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RunStampingProcess: arguments are {arguments}");
+        }
+        process.StartInfo.Arguments = arguments;
 
         log.Info ($"RunStampingProcess: starting {stampingProcess} {process.StartInfo.Arguments} in {process.StartInfo.WorkingDirectory}");
         process.Start ();
