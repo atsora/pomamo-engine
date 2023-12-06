@@ -43,6 +43,12 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string SOURCE_DIRECTORY_KEY = "Stamping.PprFileStamper.SourceDirectory";
     static readonly string SOURCE_DIRECTORY_DEFAULT = ""; // Empty means: do not consider it
 
+    /// <summary>
+    /// Remove any existing destination file
+    /// </summary>
+    static readonly string REMOVE_EXISTING_DESTINATION_FILE_KEY = "Stamping.PprFileStamper.RemoveExistingDestinationFile";
+    static readonly bool REMOVE_EXISTING_DESTINATION_FILE_DEFAULT = true;
+
     static readonly string PPR_TAG_PREFIX_KEY = "StampFileWatch.PPR.";
 
     /// <summary>
@@ -177,6 +183,11 @@ namespace Pomamo.Stamping.FileDetection
         // copy stamped file to destination
         if (log.IsDebugEnabled) {
           log.Debug ($"ProcessIsoFile: move final file {tempStampedFilePath} into {finalDestinationFullPath}");
+        }
+        if (File.Exists (finalDestinationFullPath)
+          && Lemoine.Info.ConfigSet.LoadAndGet (REMOVE_EXISTING_DESTINATION_FILE_KEY, REMOVE_EXISTING_DESTINATION_FILE_DEFAULT)) {
+          log.Warn ($"ProcessIsoFile: a file exists in the final destination path {finalDestinationFullPath}, remove it");
+          File.Delete (finalDestinationFullPath);
         }
         File.Move (tempStampedFilePath, finalDestinationFullPath);
         if (File.Exists (renamedIsoFileFullPath)) {

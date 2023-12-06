@@ -99,6 +99,10 @@ namespace Lemoine.Info.ConfigReader
       catch (KeyNotFoundException ex) {
         throw new ConfigKeyNotFoundException (key, ex);
       }
+      catch (InvalidCastException ex) {
+        log.Error ($"Get: cast exception for key={key} and value={m_dictionary[key]}", ex);
+        throw;
+      }
     }
     #endregion
   }

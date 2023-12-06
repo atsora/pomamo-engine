@@ -94,7 +94,7 @@ namespace Lemoine.Stamping.StampingParsers
         await ParseLineAsync (line.Substring (1), false, true, stamper, stampingEventHandler, cancellationToken);
         break;
       case ' ':
-        await ParseLineAsync (line.Substring (1), withLeadingNorO, false, stamper, stampingEventHandler, cancellationToken);
+        await ParseLineAsync (line.Substring (1), withLeadingNorO, withLeadingNumber && withLeadingNorO, stamper, stampingEventHandler, cancellationToken);
         break;
       case ';' or '(':
         stampVariable = ParseComment (line, stampingEventHandler);

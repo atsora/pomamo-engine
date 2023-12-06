@@ -58,7 +58,7 @@ namespace Pomamo.Stamping.FileDetection
     static readonly bool TRY_FILE_OWNER_DEFAULT = false;
 
     static readonly string MAX_DELAY_FOR_ISO_FILE_CREATION_KEY = "Stamping.NcFileDetection.MaxDelayForFileCreation";
-    static readonly TimeSpan MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = TimeSpan.FromMinutes (1);
+    static readonly TimeSpan MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT = TimeSpan.FromSeconds (12);
 
     static readonly string DELAY_BEFORE_STAMPING_KEY = "Stamping.NcFileDetection.DelayBeforeStamping";
     static readonly TimeSpan DELAY_BEFORE_STAMPING_DEFAULT = TimeSpan.FromSeconds (0.5);
@@ -69,7 +69,7 @@ namespace Pomamo.Stamping.FileDetection
     readonly IEnumerable<string> m_excludeExtensions;
     readonly bool m_useCurrentUser = false;
     readonly bool m_tryFileOwner = false;
-    readonly TimeSpan m_daxDelayForIsoFileCreation;
+    readonly TimeSpan m_maxDelayForIsoFileCreation;
     readonly TimeSpan m_delayBeforeStamping;
     readonly ConcurrentDictionary<string, DateTime> m_processingPaths = new ConcurrentDictionary<string, DateTime> ();
     readonly ConcurrentDictionary<string, FileSystemWatcher> m_watchers = new ConcurrentDictionary<string, FileSystemWatcher> ();
@@ -118,7 +118,7 @@ namespace Pomamo.Stamping.FileDetection
         .LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
       m_tryFileOwner = Lemoine.Info.ConfigSet
         .LoadAndGet (TRY_FILE_OWNER_KEY, TRY_FILE_OWNER_DEFAULT);
-      m_daxDelayForIsoFileCreation = Lemoine.Info.ConfigSet
+      m_maxDelayForIsoFileCreation = Lemoine.Info.ConfigSet
         .LoadAndGet (MAX_DELAY_FOR_ISO_FILE_CREATION_KEY, MAX_DELAY_FOR_ISO_FILE_CREATION_DEFAULT);
       m_delayBeforeStamping = Lemoine.Info.ConfigSet
         .LoadAndGet (DELAY_BEFORE_STAMPING_KEY, DELAY_BEFORE_STAMPING_DEFAULT);
@@ -391,13 +391,13 @@ namespace Pomamo.Stamping.FileDetection
           log.Debug ($"ProcessFileAsync: exception for FileInfo.Length", ex);
         }
 
-        while (DateTime.UtcNow <= detectionDateTime.Add (m_daxDelayForIsoFileCreation)) {
+        while (DateTime.UtcNow <= detectionDateTime.Add (m_maxDelayForIsoFileCreation)) {
           if (cancellationToken.IsCancellationRequested) {
             log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
             return;
           }
           SetActive ();
-          this.Sleep (TimeSpan.FromSeconds (10), cancellationToken);
+          this.Sleep (TimeSpan.FromSeconds (1), cancellationToken);
           if (cancellationToken.IsCancellationRequested) {
             log.Warn ($"ProcessFileAsync: cancellation requested for path={path}");
             return;
