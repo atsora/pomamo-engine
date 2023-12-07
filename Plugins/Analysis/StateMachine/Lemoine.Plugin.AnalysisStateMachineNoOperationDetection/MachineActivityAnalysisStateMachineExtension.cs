@@ -27,8 +27,6 @@ namespace Lemoine.Plugin.AnalysisStateMachineNoOperationDetection
 
     public IState<IMachineActivityAnalysis> InitialState => m_initializationState;
 
-    IState<IMachineActivityAnalysis> IMachineActivityAnalysisStateMachineExtension.InitialState => throw new NotImplementedException ();
-
     public bool Initialize(IMachineActivityAnalysis context)
     {
       Debug.Assert (null != context);
