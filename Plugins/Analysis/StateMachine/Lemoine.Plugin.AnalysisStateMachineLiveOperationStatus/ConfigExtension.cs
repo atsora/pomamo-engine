@@ -54,7 +54,7 @@ namespace Lemoine.Plugin.AnalysisStateMachineLiveOperationStatus
         return t;
       }
       else {
-        log.Error ($"Get: invalid type for {v} VS {typeof (T)}");
+        log.Error ($"Get: invalid type for {key}: {v} VS {typeof (T)}");
         throw new InvalidCastException ();
       }
     }

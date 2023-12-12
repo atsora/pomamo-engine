@@ -68,9 +68,9 @@ namespace Lemoine.Info.ConfigReader
         throw;
       }
       catch (Exception ex) {
-        log.Error ($"Get: try to read it from persistent cache instead", ex);
+        log.Error ($"Get: try to read it from persistent cache instead for {key}", ex);
         if (!File.Exists (m_path)) {
-          log.Error ($"Get: {m_path} does not exist, throw the exception", ex);
+          log.Error ($"Get: {m_path} does not exist for {key}, throw the exception", ex);
           throw;
         }
         try {
@@ -80,7 +80,7 @@ namespace Lemoine.Info.ConfigReader
           throw;
         }
         catch (Exception ex1) {
-          log.Error ($"Get: error in persistent config reader", ex1);
+          log.Error ($"Get: error in persistent config reader for {key}", ex1);
           throw;
         }
       }

@@ -42,7 +42,7 @@ namespace Lemoine.Plugin.AnalysisStateMachineNoOperationDetection
       case "Analysis.AutoModificationPriority":
         return m_configuration.AutoModificationPriority;
       case "Analysis.OperationSlotSplitOption":
-        return Lemoine.Model.OperationSlotSplitOption.None;
+        return (int)Lemoine.Model.OperationSlotSplitOption.None;
       case "Analysis.OperationSlotRunTime":
       case "Analysis.OperationSlotProductionDuration":
         return false;
@@ -58,7 +58,7 @@ namespace Lemoine.Plugin.AnalysisStateMachineNoOperationDetection
         return t;
       }
       else {
-        log.Error ($"Get: invalid type for {v} VS {typeof (T)}");
+        log.Error ($"Get: invalid type for {key}: {v} VS {typeof (T)}");
         throw new InvalidCastException ();
       }
     }
