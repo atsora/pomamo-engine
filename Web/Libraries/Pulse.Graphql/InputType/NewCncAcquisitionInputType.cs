@@ -53,6 +53,10 @@ namespace Pulse.Graphql.InputType
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (var transaction = session.BeginTransaction ("CreateCncAcquisition")) {
             var cncAcquisition = ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
+            if (log.IsDebugEnabled) {
+              log.Debug ($"CreateCncAcquisition: configName={this.CncConfigName} parameters={this.Parameters}");
+            }
+            // TODO: check the file exists first
             cncAcquisition.ConfigFile = this.CncConfigName + ".xml";
             cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
             IComputer computer = ModelDAOHelper.DAOFactory.ComputerDAO
