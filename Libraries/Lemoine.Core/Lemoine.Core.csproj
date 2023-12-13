@@ -25,6 +25,7 @@
     <PackageReference Include="System.DirectoryServices" />
     <PackageReference Include="System.Drawing.Common" /><!-- Implicit dependency of System.Configuration.ConfigurationManager, to force the version -->
     <PackageReference Include="System.Numerics.Vectors" /><!-- Implicit dependency of System.Configuration.ConfigurationManager and Microsoft.Win32.Registry -->
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">

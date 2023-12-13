@@ -2,10 +2,91 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Lemoine.Model
 {
+  /// <summary>
+  /// Stack light structure for Json serialization
+  /// </summary>
+  public struct StackLightJson
+  {
+    /// <summary>
+    /// Red color: null / "Off" / "On" / "Flashing"
+    /// </summary>
+    [JsonInclude]
+    [JsonIgnore (Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string Red;
+
+    /// <summary>
+    /// Yellow color: null / "Off" / "On" / "Flashing"
+    /// </summary>
+    [JsonInclude]
+    [JsonIgnore (Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string Yellow;
+
+    /// <summary>
+    /// Red color: null / "Off" / "On" / "Flashing"
+    /// </summary>
+    [JsonInclude]
+    [JsonIgnore (Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string Green;
+
+    /// <summary>
+    /// Blue color: null / "Off" / "On" / "Flashing"
+    /// </summary>
+    [JsonInclude]
+    [JsonIgnore (Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string Blue;
+
+    /// <summary>
+    /// White color: null / "Off" / "On" / "Flashing"
+    /// </summary>
+    [JsonInclude]
+    [JsonIgnore (Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string White;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public StackLightJson ()
+      : this (StackLight.None)
+    {
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="stackLight"></param>
+    public StackLightJson (StackLight stackLight)
+    {
+      this.Red = stackLight.GetStatus (StackLightColor.Red).ToStringIfAcquired ();
+      this.Yellow = stackLight.GetStatus (StackLightColor.Yellow).ToStringIfAcquired ();
+      this.Green = stackLight.GetStatus (StackLightColor.Green).ToStringIfAcquired ();
+      this.Blue = stackLight.GetStatus (StackLightColor.Blue).ToStringIfAcquired ();
+      this.White = stackLight.GetStatus (StackLightColor.White).ToStringIfAcquired ();
+    }
+
+    /// <summary>
+    /// Convert a <see cref="StackLightJson"/> to <see cref="StackLight" />
+    /// </summary>
+    /// <returns></returns>
+    public StackLight ConvertToStackLight ()
+    {
+      return new StackLight ()
+        .Set (StackLightColor.Red, (StackLightStatus)Enum.Parse (typeof (StackLightStatus), this.Red ?? "NotAcquired"))
+        .Set (StackLightColor.Yellow, (StackLightStatus)Enum.Parse (typeof (StackLightStatus), this.Yellow ?? "NotAcquired"))
+        .Set (StackLightColor.Green, (StackLightStatus)Enum.Parse (typeof (StackLightStatus), this.Green ?? "NotAcquired"))
+        .Set (StackLightColor.Blue, (StackLightStatus)Enum.Parse (typeof (StackLightStatus), this.Blue ?? "NotAcquired"))
+        .Set (StackLightColor.White, (StackLightStatus)Enum.Parse (typeof (StackLightStatus), this.White ?? "NotAcquired"))
+        ;
+    }
+  }
+
   /// <summary>
   /// Stack light status
   /// </summary>
@@ -61,6 +142,7 @@ namespace Lemoine.Model
   /// Stack light
   /// </summary>
   [Flags]
+  [System.Text.Json.Serialization.JsonConverter (typeof (StackLightJsonConverter))]
   public enum StackLight
   {
     /// <summary>
@@ -130,6 +212,39 @@ namespace Lemoine.Model
   }
 
   /// <summary>
+  /// Associated json converter
+  /// </summary>
+  public class StackLightJsonConverter : JsonConverter<StackLight>
+  {
+    /// <summary>
+    /// <see cref="JsonConverter{T}"/>
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="typeToConvert"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public override StackLight Read (ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+      var stackLightJson = System.Text.Json.JsonSerializer.Deserialize<StackLightJson> (ref reader, options);
+      return stackLightJson.ConvertToStackLight ();
+    }
+
+    /// <summary>
+    /// <see cref="JsonConverter{T}"/>
+    /// </summary>
+    /// <param name="writer"></param>
+    /// <param name="value"></param>
+    /// <param name="options"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    public override void Write (Utf8JsonWriter writer, StackLight value, JsonSerializerOptions options)
+    {
+      var stackLightJson = new StackLightJson (value);
+      System.Text.Json.JsonSerializer.Serialize (writer, stackLightJson, options);
+    }
+  }
+
+  /// <summary>
   /// Extensions to StackLight
   /// </summary>
   public static class StackLightExtensions
@@ -177,7 +292,7 @@ namespace Lemoine.Model
     public static StackLightStatus GetStatus (this StackLight t, StackLightColor color)
     {
       var colorFilter = (int)t & (3 << (int)color);
-      return (StackLightStatus) (colorFilter >> (int)color);
+      return (StackLightStatus)(colorFilter >> (int)color);
     }
 
     /// <summary>
@@ -206,7 +321,7 @@ namespace Lemoine.Model
     }
 
     /// <summary>
-    /// Is the color on the stack light on or flashing ?
+    /// Is the color on the stack light on or flashing?
     /// If the color is not acquired, an exception is returned
     /// </summary>
     /// <param name="t"></param>
@@ -215,18 +330,15 @@ namespace Lemoine.Model
     /// <exception cref="Exception">the color is not acquired</exception>
     public static bool IsOnOrFlashing (this StackLight t, StackLightColor color)
     {
-      switch (t.GetStatus (color)) {
-        case StackLightStatus.NotAcquired:
-          throw new Exception ("Color not acquired");
-        case StackLightStatus.Off:
-          return false;
-        default:
-          return true;
-      }
+      return t.GetStatus (color) switch {
+        StackLightStatus.NotAcquired => throw new Exception ("Color not acquired"),
+        StackLightStatus.Off => false,
+        _ => true,
+      };
     }
 
     /// <summary>
-    /// Is the color on the stack light on or flashing ?
+    /// Is the color on the stack light on or flashing?
     /// If the color is not acquired, false is returned
     /// </summary>
     /// <param name="t"></param>
@@ -234,13 +346,10 @@ namespace Lemoine.Model
     /// <returns></returns>
     public static bool IsOnOrFlashingIfAcquired (this StackLight t, StackLightColor color)
     {
-      switch (t.GetStatus (color)) {
-        case StackLightStatus.NotAcquired:
-        case StackLightStatus.Off:
-          return false;
-        default:
-          return true;
-      }
+      return t.GetStatus (color) switch {
+        StackLightStatus.NotAcquired or StackLightStatus.Off => false,
+        _ => true,
+      };
     }
 
     /// <summary>
@@ -295,6 +404,25 @@ namespace Lemoine.Model
         default:
           return "";
       }
+    }
+  }
+
+  /// <summary>
+  /// Extensions to StackLight
+  /// </summary>
+  public static class StackLightStatusExtensions
+  {
+    /// <summary>
+    /// Return an empty string it NotAcquired
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public static string ToStringIfAcquired (this StackLightStatus t)
+    {
+      return t switch {
+        StackLightStatus.NotAcquired => null,
+        _ => t.ToString ()
+      };
     }
   }
 }
