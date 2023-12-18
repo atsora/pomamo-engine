@@ -1,6 +1,6 @@
 {
   "additionalProbingPaths": [
     "./net6.0/",
-    "./l_ctr/pfrdata/plugins_core/"
+    "./pfrdata/plugins_core/"
   ]
 }

@@ -41,6 +41,7 @@ namespace Lem_CncGUI
         cncAcquisition.ConfigFile = fileRepositorySelection1.SelectedFiles [0];
         cncAcquisition.ConfigPrefix = prefixTextBox.Text;
         cncAcquisition.ConfigParameters = parametersTextBox.Text;
+        // TODO: cncAcquisition.ConfigKeyParams
         if (null != m_machineModule1) {
           m_machineModule1.ConfigPrefix = prefixTextBox1.Text;
           m_machineModule1.ConfigParameters = parametersTextBox1.Text;

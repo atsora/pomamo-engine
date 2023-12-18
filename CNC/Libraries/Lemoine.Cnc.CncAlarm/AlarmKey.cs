@@ -99,10 +99,10 @@ namespace Lemoine.Cnc
         return false;
       }
 
-      if (false == object.Equals (this.CncInfo, other.CncInfo)
-        && object.Equals (this.CncSubInfo, other.CncSubInfo)
-        && object.Equals (this.Type, other.Type)
-        && object.Equals (this.Number, other.Number)) {
+      if (!object.Equals (this.CncInfo, other.CncInfo)
+        || !object.Equals (this.CncSubInfo, other.CncSubInfo)
+        || !object.Equals (this.Type, other.Type)
+        || !object.Equals (this.Number, other.Number)) {
         return false;
       }
 

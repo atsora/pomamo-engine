@@ -68,6 +68,11 @@ namespace Lemoine.Model
     /// The first character in this string is the separator to use to separate the different parameters
     /// </summary>
     string ConfigParameters { get; set; }
+
+    /// <summary>
+    /// Parameters used in XML configuration file, set as a parameter dictioanary
+    /// </summary>
+    IDictionary<string, object> ConfigKeyParams { get; set; }
     
     /// <summary>
     /// Use a process instead of a thread

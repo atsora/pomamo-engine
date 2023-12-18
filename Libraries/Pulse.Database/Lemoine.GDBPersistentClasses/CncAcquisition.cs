@@ -130,7 +130,24 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_configParameters; }
       set { m_configParameters = value; }
     }
-    
+
+    /// <summary>
+    /// <see cref="ICncAcquisition"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual IDictionary<string, object> ConfigKeyParams { get; set; } = new Dictionary<string, object> ();
+
+    /// <summary>
+    /// ConfigKeyParams for Xml Serialization
+    /// </summary>
+    [XmlAttribute("ConfigKeyParams")]
+    public virtual string ConfigKeyParamsJson {
+      get => System.Text.Json.JsonSerializer.Serialize (this.ConfigKeyParams);
+      set {
+        this.ConfigKeyParams = System.Text.Json.JsonSerializer.Deserialize<IDictionary<string, object>> (value);
+      }
+    }
+
     /// <summary>
     /// Use a process instead of a thread
     /// 

@@ -12,6 +12,7 @@ using System.Threading;
 #if NETSTANDARD || NET48 || NETCOREAPP
 using Lemoine.Cnc.DataRepository;
 #endif // NETSTANDARD || NET48 || NETCOREAPP
+using Lemoine.Collections;
 using Lemoine.DataRepository;
 using Lemoine.Info;
 using Lemoine.Model;
@@ -22,6 +23,8 @@ using Lemoine.Extensions.Interfaces;
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 using Lemoine.Core.Plugin;
 using Lemoine.FileRepository;
+using System.Linq;
+using System.Globalization;
 
 namespace Lemoine.CncEngine
 {
@@ -47,6 +50,7 @@ namespace Lemoine.CncEngine
     #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (Acquisition).FullName);
+    static readonly ILog slog = LogManager.GetLogger<Acquisition> ();
 
     #region Getters / Setters
     /// <summary>
@@ -231,6 +235,7 @@ namespace Lemoine.CncEngine
       m_useProcess = useProcess;
     }
 
+#if NETSTANDARD || NET48 || NETCOREAPP
     /// <summary>
     /// Acquisition using a local file and parameters
     /// </summary>
@@ -246,14 +251,26 @@ namespace Lemoine.CncEngine
 
       m_cncEngineConfig = cncEngineConfig;
       m_cncAcquisitionId = 0;
-      m_repository = CreateRepositoryFromLocalFile (localFilePath);
-      // TODO: ...
+      m_repository = CreateRepositoryFromLocalFileParameters (localFilePath, numParameters);
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
       m_useProcess = useProcess;
     }
 
-#if NETSTANDARD || NET48 || NETCOREAPP
+    /// <summary>
+    /// Acquisition using a local file and parameters
+    /// </summary>
+    /// <param name="cncEngineConfig"></param>
+    /// <param name="localFilePath"></param>
+    /// <param name="numParameters"></param>
+    /// <param name="useProcess"></param>
+    /// <param name="assemblyLoader"></param>
+    /// <param name="fileRepoClientFactory"></param>
+    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, IDictionary<string, object> jsonParameters, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useProcess = false)
+      : this (cncEngineConfig, localFilePath, GetParametersString (jsonParameters), assemblyLoader, fileRepoClientFactory, useProcess)
+    {
+    }
+
     /// <summary>
     /// Acquisition using a <see cref="Repository"/>
     /// </summary>
@@ -277,6 +294,50 @@ namespace Lemoine.CncEngine
     #endregion // Constructors
 
     #region Methods
+    /// <summary>
+    /// Build a parameters string from a dictionary
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <returns></returns>
+    public static string GetParametersString (IDictionary<string, object> parameters)
+    {
+      var a = new string[10];
+      int maxParamNumber = 0;
+      foreach (var kv in parameters) {
+        var k = kv.Key;
+        var v = kv.Value;
+        if (k.StartsWith ("Param", StringComparison.CurrentCultureIgnoreCase)) {
+          if (int.TryParse (k.Substring ("Param".Length), out var paramNumber)) {
+            if (a.Length < paramNumber) {
+              slog.Error ($"GetParametersString: param number {paramNumber} for name {k} is not supported yet");
+            }
+            else {
+              var vs = v switch {
+                double d => d.ToString (CultureInfo.InvariantCulture),
+                _ => v.ToString ()
+              };
+              a[paramNumber - 1] = vs;
+              if (maxParamNumber < paramNumber) {
+                maxParamNumber = paramNumber;
+              }
+            }
+          }
+          else {
+            slog.Error ($"GetParametersString: parameter name {k} does not contain the param number");
+          }
+        }
+        else {
+          slog.Error ($"GetParametersString: skip the parameter of name {k}");
+        }
+      }
+      if (0 < maxParamNumber) {
+        return a.Take (maxParamNumber).ToListString ();
+      }
+      else {
+        slog.Warn ($"GetParametersString: no parameter found => return an empty string");
+        return "";
+      }
+    }
 
     /// <summary>
     /// Get a module that is associated to specific reference
@@ -396,7 +457,7 @@ namespace Lemoine.CncEngine
       }
       return true;
     }
-#endregion // Methods
+    #endregion // Methods
 
     #region Implementation of ProcessOrThreadClass
     /// <summary>

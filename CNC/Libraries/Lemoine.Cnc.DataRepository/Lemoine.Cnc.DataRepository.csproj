@@ -5,6 +5,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

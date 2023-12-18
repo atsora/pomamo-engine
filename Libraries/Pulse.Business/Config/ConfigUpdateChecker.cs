@@ -100,7 +100,7 @@ namespace Lemoine.Business.Config
     /// <returns></returns>
     public bool CheckNoConfigUpdate ()
     {
-      return CheckNoConfigUpdate (out var lastConfigUpdate);
+      return CheckNoConfigUpdate (out var _);
     }
 
     /// <summary>

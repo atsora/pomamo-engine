@@ -17,6 +17,7 @@ using Lemoine.Extensions.Interfaces;
 using Lemoine.Core.Log;
 using System.Linq;
 using NHibernate.Util;
+using System.Globalization;
 
 namespace Lemoine.Cnc.DataRepository
 {
@@ -164,10 +165,10 @@ namespace Lemoine.Cnc.DataRepository
     /// <returns>The DOMDocument</returns>
     public override XmlDocument GetData (System.Threading.CancellationToken cancellationToken, bool optional = false)
     {
-      return GetData (null, cancellationToken, optional);
+      return GetData (null, null, cancellationToken, optional);
     }
 
-    void InsertPath (XmlDocument xmlDocument, XmlElement includeElement, IList<string> xmlParameters, string subConfigPath, CancellationToken cancellationToken)
+    void InsertPath (XmlDocument xmlDocument, XmlElement includeElement, IList<string> xmlParameters, IDictionary<string, object> keyParams, string subConfigPath, CancellationToken cancellationToken)
     {
       if (log.IsDebugEnabled) {
         log.Debug ($"InsertPath: about to add sub config {subConfigPath}");
@@ -180,7 +181,7 @@ namespace Lemoine.Cnc.DataRepository
       subRepoFactory.Local = this.Local;
       XmlDocument subXmlDocument;
       try {
-        subXmlDocument = subRepoFactory.GetData (xmlParameters, cancellationToken, optional);
+        subXmlDocument = subRepoFactory.GetData (xmlParameters, keyParams, cancellationToken, optional);
       }
       catch (Exception ex) {
         if (optional) {
@@ -222,7 +223,7 @@ namespace Lemoine.Cnc.DataRepository
       subRepoFactory.Local = this.Local;
       XmlDocument configXml;
       try {
-        configXml = subRepoFactory.GetData (null, cancellationToken);
+        configXml = subRepoFactory.GetData (null, null, cancellationToken);
       }
       catch (Exception ex) {
         log.Error ($"InsertXml: {xmlTemplatePath} could not be loaded and it is required", ex);
@@ -254,7 +255,7 @@ namespace Lemoine.Cnc.DataRepository
     /// <param name="cancellationToken"></param>
     /// <param name="optional"></param>
     /// <returns>The DOMDocument</returns>
-    XmlDocument GetData (IList<string> xmlParameters, CancellationToken cancellationToken, bool optional = false)
+    XmlDocument GetData (IList<string> xmlParameters, IDictionary<string, object> keyParams, CancellationToken cancellationToken, bool optional = false)
     {
       Debug.Assert (0 != m_cncAcquisitionId || null != m_cncAcquisition);
 
@@ -316,8 +317,11 @@ namespace Lemoine.Cnc.DataRepository
         }
       }
 
-      if (xmlParameters == null) {
+      if (xmlParameters is null) {
         xmlParameters = GetParameters (xmlDocument);
+      }
+      if (keyParams is null) {
+        keyParams = GetKeyParams (xmlDocument);
       }
       SetActive ();
       cancellationToken.ThrowIfCancellationRequested ();
@@ -331,19 +335,19 @@ namespace Lemoine.Cnc.DataRepository
           cncFileRepoExtensions.Count (), queueConfigurationFullExtensions.Count ());
       }
 
-      ProcessIncludeElements (xmlDocument, xmlParameters, cancellationToken);
+      ProcessIncludeElements (xmlDocument, xmlParameters, keyParams, cancellationToken);
       if (log.IsDebugEnabled) {
         log.DebugFormat ("GetData: ProcessIncludeElements done");
       }
       SetActive ();
       cancellationToken.ThrowIfCancellationRequested ();
-      ProcessExtensionElements (xmlDocument, xmlParameters, cancellationToken);
+      ProcessExtensionElements (xmlDocument, xmlParameters, keyParams, cancellationToken);
       if (log.IsDebugEnabled) {
         log.DebugFormat ("GetData: ProcessExtensionElements done");
       }
       SetActive ();
       cancellationToken.ThrowIfCancellationRequested ();
-      ReplaceKeywords (xmlDocument, xmlParameters);
+      ReplaceKeywords (xmlDocument, xmlParameters, keyParams);
       if (log.IsDebugEnabled) {
         log.DebugFormat ("GetData: ReplaceKeywords done, end");
       }
@@ -400,7 +404,7 @@ namespace Lemoine.Cnc.DataRepository
       return result;
     }
 
-    void ProcessIncludeElements (XmlDocument xmlDocument, IList<string> xmlParameters, CancellationToken cancellationToken)
+    void ProcessIncludeElements (XmlDocument xmlDocument, IList<string> xmlParameters, IDictionary<string, object> keyParams, CancellationToken cancellationToken)
     {
       // - Process the include directive
       var includeElements = new List<XmlElement> ();
@@ -410,7 +414,7 @@ namespace Lemoine.Cnc.DataRepository
         includeElements.Add (includeElement);
         string subConfigPath = includeElement.GetAttribute ("name");
         if (!string.IsNullOrEmpty (subConfigPath)) {
-          InsertPath (xmlDocument, includeElement, xmlParameters, subConfigPath, cancellationToken);
+          InsertPath (xmlDocument, includeElement, xmlParameters, keyParams, subConfigPath, cancellationToken);
         }
         else {
           log.Error ($"ProcessIncludeElements: no name for the include element {includeElement}");
@@ -428,7 +432,7 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
-    void ProcessExtensionElements (XmlDocument xmlDocument, IList<string> xmlParameters, CancellationToken cancellationToken)
+    void ProcessExtensionElements (XmlDocument xmlDocument, IList<string> xmlParameters, IDictionary<string, object> keyParams, CancellationToken cancellationToken)
     {
       // - Process the extension directive
       var extensionElements = new List<XmlElement> ();
@@ -466,7 +470,7 @@ namespace Lemoine.Cnc.DataRepository
             foreach (var path in subConfigPaths) {
               log.DebugFormat ($"ProcessExtensionElements: insert {path} for extension {extensionName}");
               cancellationToken.ThrowIfCancellationRequested ();
-              InsertPath (xmlDocument, extensionElement, xmlParameters, path, cancellationToken);
+              InsertPath (xmlDocument, extensionElement, xmlParameters, keyParams, path, cancellationToken);
             }
           }
         }
@@ -482,7 +486,7 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
-    void ReplaceKeywords (XmlDocument xmlDocument, IList<string> xmlParameters)
+    void ReplaceKeywords (XmlDocument xmlDocument, IList<string> xmlParameters, IDictionary<string, object> keyParams)
     {
       // - Replace the keywords in {}
       foreach (XmlElement element in xmlDocument.GetElementsByTagName ("*")) {
@@ -610,6 +614,22 @@ namespace Lemoine.Cnc.DataRepository
                               xmlParameters[i]);
               }
             }
+            if (keyParams?.Any () ?? false) {
+              // {..param:key}
+              foreach (var kv in keyParams) {
+                var k = kv.Key;
+                var v = kv.Value;
+                var vs = v switch {
+                  double d => d.ToString (CultureInfo.InvariantCulture),
+                  _ => v.ToString ()
+                };
+                ReplaceValue (attribute, $"{m_cncAcquisition.ConfigPrefix}param:{k}", vs);
+                if (k.StartsWith ("Param", StringComparison.InvariantCultureIgnoreCase)
+                  && int.TryParse (k.Substring ("Param".Length), out var paramNumber)) {
+                  ReplaceValue (attribute, $"{m_cncAcquisition.ConfigPrefix}Param{paramNumber}", vs);
+                }
+              }
+            }
             foreach (IMachineModule machineModule in m_cncAcquisition.MachineModules) {
               var defaultDetectionMethod = GetDefaultDetectionMethod (machineModule);
               // {..MachineParami}
@@ -677,6 +697,10 @@ namespace Lemoine.Cnc.DataRepository
               ReplaceValue (attribute,
                 machineModule.ConfigPrefix + "QueueConfiguration",
                 GetQueueConfiguration (machineModule.MonitoredMachine, machineModule));
+              // ??
+              if (attribute.Value.Contains ("??")) {
+                ProcessAlternativeValue (attribute);
+              }
             }
           }
         }
@@ -840,6 +864,27 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
+    void ProcessAlternativeValue (XmlAttribute attribute)
+    {
+      if (attribute.Value.Contains ("??")) {
+        var a = attribute.Value.Split (new string[] { "??" }, 2, StringSplitOptions.None);
+        if (a.Length != 2) {
+          log.Fatal ($"ProcessAlternativeValue: unexpected length of a: {a.Length}");
+        }
+        else {
+          var a0 = a[0].Trim ();
+          if (string.IsNullOrEmpty (a0)) {
+            attribute.Value = a0;
+          }
+          else {
+            var a1 = a[1].Trim ();
+            attribute.Value = a1;
+            ProcessAlternativeValue (attribute);
+          }
+        }
+      }
+    }
+
     /// <summary>
     /// Get the config for a specific key. If not found, an empty string is returned
     /// </summary>
@@ -946,6 +991,45 @@ namespace Lemoine.Cnc.DataRepository
       GetPathsInFileRepo (xmlDocument, parameters);
 
       return parameters;
+    }
+
+    IDictionary<string, object> GetKeyParams (XmlDocument xmlDocument)
+    {
+      var keyParams = m_cncAcquisition.ConfigKeyParams
+        .ToDictionary (kv => kv.Key, kv => kv.Value); // Clone it
+
+      // Find all default parameters that are not optional
+      // Because if optional, an empty value should not be replaced
+      foreach (XmlElement element in xmlDocument.GetElementsByTagName ("parameter")) {
+        var name = element.GetAttribute ("name");
+        if (!keyParams.ContainsKey (name)) {
+          var optional = element.GetAttribute ("optional");
+          if (new string[] { "true", "1" }.Contains (optional.ToLower ())) { // Optional
+            keyParams[name] = "";
+          }
+          else {
+            keyParams[name] = element.GetAttribute ("default");
+          }
+        }
+
+        // Complete the path for the type "file" if the path is not absolute
+        if (element.GetAttribute ("type").Equals ("path")) {
+          var v = keyParams[name];
+          if (v is string path && !path.Equals ("")) {
+            if (!File.Exists (path)) {
+              keyParams[name] = GetPathInFileRepo (path);
+            }
+            else if (log.IsDebugEnabled) {
+              log.Debug ($"GetKeyParams: {path} already exists");
+            }
+          }
+          else {
+            log.Warn ($"GetKeyParams: path parameter {v} is not a not empty string");
+          }
+        }
+      }
+
+      return keyParams;
     }
 
     void GetPathsInFileRepo (XmlDocument xmlDocument, IList<string> parameters)
@@ -1093,6 +1177,91 @@ namespace Lemoine.Cnc.DataRepository
       }
       parameters[position] = localPath;
     }
+
+    string GetPathInFileRepo (string p)
+    {
+      // Local path
+      // Make it depend on the CNC Acquisition ID to avoid any conflict between threads
+      var localPath = System.IO.Path.Combine (Lemoine.Info.PulseInfo.LocalConfigurationDirectory,
+        "cnc_resources",
+        $"acquisition-{this.m_cncAcquisitionId}",
+        p);
+
+      // Prepare the directories
+      try {
+        var localDirectory = System.IO.Path.GetDirectoryName (localPath);
+        if (string.IsNullOrEmpty (localDirectory)) {
+          log.Fatal ($"GetPathInFileRepo: no directory for path {localPath}");
+          throw new InvalidOperationException ();
+        }
+        if (!Directory.Exists (localDirectory)) {
+          Directory.CreateDirectory (localDirectory);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetPathInFileRepo: successfully created directory {localDirectory}");
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"GetPathInFileRepo: couldn't create directory of {localPath}", ex);
+      }
+
+      string backupFileName = null;
+      if (File.Exists (localPath)) {
+        try {
+          backupFileName = System.IO.Path.GetTempFileName ();
+          File.Copy (localPath, backupFileName, true);
+        }
+        catch (Exception ex) {
+          log.Error ($"GetPathInFileRepo: error backing up {localPath} to {backupFileName}", ex);
+          backupFileName = null;
+        }
+      }
+
+      // Synchronize the file
+      try {
+        Lemoine.FileRepository.FileRepoClient.SynchronizeFile ("cnc_resources", p, localPath);
+      }
+      catch (Exception ex) {
+        log.Error ($"GetPathInFileRepo: couldn't synchronize file {p} of cnc_resources with {localPath}", ex);
+        if (File.Exists (localPath)) {
+          log.Error ($"GetPathInFileRepo: {localPath} exists although SynchronizeFile failed, continue", ex);
+        }
+        else { // Try to restore the backup file
+          if (null != backupFileName) {
+            log.Info ($"GetPathInFileRepo: try to restore {backupFileName} into {localPath}");
+            try {
+              File.Move (backupFileName, localPath);
+              log.Info ($"GetPathInFileRepo: old resource file successfully restored");
+            }
+            catch (Exception ex1) {
+              log.Error ($"GetPathInFileRepo: restore of {backupFileName} into {localPath} failed => throw an exception", ex1);
+              throw new FileRepoException ("cnc_resources synchronization error", ex);
+            }
+          }
+          else {
+            throw new FileRepoException ("cnc_resources synchronization error", ex);
+          }
+        }
+      }
+      if ((null != backupFileName) && File.Exists (backupFileName)) {
+        try {
+          File.Delete (backupFileName);
+        }
+        catch (Exception ex) {
+          log.Error ($"GetPathInFileRepo: delete of backup file {backupFileName} failed", ex);
+        }
+      }
+      if (!File.Exists (localPath)) {
+        log.Fatal ($"GetPathInFileRepo: file {localPath} not found after synchronization");
+      }
+
+      // Update the parameter
+      if (log.IsInfoEnabled) {
+        log.Info ($"GetPathInFileRepo: relative path {p} becomes {localPath}");
+      }
+      return localPath;
+    }
+
     #endregion
   }
 }

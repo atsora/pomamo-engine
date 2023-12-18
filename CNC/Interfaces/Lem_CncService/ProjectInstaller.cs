@@ -25,9 +25,6 @@ namespace Lem_CncService
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProjectInstaller).FullName);
 
-    #region Getters / Setters
-    #endregion
-
     #region Constructors
     /// <summary>
     /// Constructor
