@@ -14,7 +14,7 @@ namespace Lemoine.Core.Extensions.Logging
   /// <summary>
   /// The logger class.
   /// </summary>
-  public class Logger : ILogger
+  public class Logger : Microsoft.Extensions.Logging.ILogger
   {
     readonly string m_name;
     readonly ILog m_log;

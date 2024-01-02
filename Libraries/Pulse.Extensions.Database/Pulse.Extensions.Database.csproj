@@ -16,9 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\Lemoine.Extensions\Lemoine.Extensions.csproj" />
     <ProjectReference Include="..\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
-    <ProjectReference Include="..\Pulse.Extensions\Pulse.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

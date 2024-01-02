@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />
+    <ProjectReference Include="..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
+  </ItemGroup>
+
+</Project>

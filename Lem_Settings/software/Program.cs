@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using CommandLine;
 using CommandLine.Text;
 using Lemoine.BaseControls;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.DataControls;
 using Lemoine.Extensions;

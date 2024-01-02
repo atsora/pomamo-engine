@@ -35,7 +35,7 @@ namespace Lemoine.Extensions.ExtensionsProvider
     #region IExtensionsProvider
     public bool Loaded => true;
 
-    public IEnumerable<PluginDllLoader> LoadErrorPlugins => new List<PluginDllLoader> ();
+    public IEnumerable<IPluginDllLoader> LoadErrorPlugins => new List<IPluginDllLoader> ();
 
     public void Activate (bool pluginUserDirectoryActive = true)
     {

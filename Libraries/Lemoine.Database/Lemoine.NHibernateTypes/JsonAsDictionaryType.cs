@@ -70,11 +70,8 @@ namespace Lemoine.NHibernateTypes
         return Deserialize (v.ToString ());
       }
       catch (Exception ex) {
-        string message = string.Format ("Data {0} is not a Json",
-                                        v);
-        log.ErrorFormat ("Get: " +
-                         "{0}. Exception: {1}",
-                         message, ex);
+        string message = $"Data {v} is not a Json";
+        log.Error ($"Get: exception, {message}", ex);
         throw new FormatException (message, ex);
       }
     }

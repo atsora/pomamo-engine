@@ -21,6 +21,7 @@ using Lemoine.FileRepository;
 using System.Collections.Generic;
 using System.Linq;
 using Lemoine.CncEngine;
+using Lemoine.Core.TargetSpecific.Hosting;
 
 namespace Lem_CncConsole
 {
@@ -67,14 +68,19 @@ namespace Lem_CncConsole
         });
       }
       catch (Exception ex) {
-        log.Error ("Parse: exception raised", ex);
+        log.Error ("Main: exception raised in arguments parsing", ex);
         System.Console.Error.WriteLine ($"Exception {ex} raised");
         Environment.Exit (1);
         return;
       }
 
+      if (options is null) {
+        log.Fatal ("Main: unexpected null options");
+        throw new NullReferenceException ();
+      }
+
       var applicationName = "Lem_CncConsole-" + options.CncAcquisitionId;
-      var builder = Pulse.Hosting.HostBuilder.CreatePulseConsoleHostBuilder (args, options, services => CreateServices (services, applicationName, options));
+      var builder = Lemoine.Core.TargetSpecific.Hosting.HostBuilder.CreateConsoleHostBuilder (args, options, services => CreateServices (services, applicationName, options));
       var host = builder.Build ();
 
       var serviceProvider = host.Services;

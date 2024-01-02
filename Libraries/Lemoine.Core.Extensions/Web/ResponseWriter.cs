@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+#if NETCOREAPP
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,6 +56,11 @@ namespace Lemoine.Core.Extensions.Web
         ? defaultContentType
         : contentType;
 
+      if (effectiveContentType is null) {
+        log.Error ($"WriteToBodyAsync: null defaultContentType");
+        throw new ArgumentNullException (nameof(defaultContentType));
+      }
+
       //context.Response.Headers["Content-Type"] = contentType;
       context.Response.ContentType = effectiveContentType;
 
@@ -101,3 +108,5 @@ namespace Lemoine.Core.Extensions.Web
 
   }
 }
+
+#endif // NETCOREAPP

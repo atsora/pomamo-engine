@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
     <ProjectReference Include="..\..\..\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
+    <ProjectReference Include="..\..\..\..\Libraries\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
     <ProjectReference Include="..\..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />

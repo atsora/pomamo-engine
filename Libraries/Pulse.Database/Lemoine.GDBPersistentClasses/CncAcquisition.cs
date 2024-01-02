@@ -135,7 +135,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <see cref="ICncAcquisition"/>
     /// </summary>
     [XmlIgnore]
-    public virtual IDictionary<string, object> ConfigKeyParams { get; set; } = new Dictionary<string, object> ();
+    public virtual IDictionary<string, string> ConfigKeyParams { get; set; } = new Dictionary<string, string> ();
 
     /// <summary>
     /// ConfigKeyParams for Xml Serialization
@@ -144,7 +144,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual string ConfigKeyParamsJson {
       get => System.Text.Json.JsonSerializer.Serialize (this.ConfigKeyParams);
       set {
-        this.ConfigKeyParams = System.Text.Json.JsonSerializer.Deserialize<IDictionary<string, object>> (value);
+        this.ConfigKeyParams = System.Text.Json.JsonSerializer.Deserialize<IDictionary<string, string>> (value);
       }
     }
 

@@ -8,7 +8,6 @@ using System.IO;
 using System.Reflection;
 using Lemoine.Core.Log;
 using System.Diagnostics;
-using Lemoine.Model;
 using System.Threading.Tasks;
 using Lemoine.Core.Plugin;
 using System.Linq;
@@ -18,40 +17,9 @@ using Lemoine.Extensions.Interfaces;
 namespace Lemoine.Extensions.Plugin
 {
   /// <summary>
-  /// Plugin load status
-  /// </summary>
-  public enum PluginLoadStatus
-  {
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    Unknown,
-    /// <summary>
-    /// Plugin successfully loaded
-    /// </summary>
-    Success,
-    /// <summary>
-    /// The flags don't match and the plugin was not loaded
-    /// </summary>
-    NotMatchingFlags,
-    /// <summary>
-    /// The IPluginDll class is missing
-    /// </summary>
-    MissingPluginClass,
-    /// <summary>
-    /// The assembly was not found
-    /// </summary>
-    AssemblyNotFound,
-    /// <summary>
-    /// The assembly could not be loaded
-    /// </summary>
-    AssemblyLoadException,
-  }
-
-  /// <summary>
   /// Description of ExtensionLoader.
   /// </summary>
-  public class PluginDllLoader
+  public class PluginDllLoader: IPluginDllLoader
   {
     const string ASSEMBLY_LOAD_KEY = "Plugin.AssemblyLoad";
     const string ASSEMLBY_LOAD_DEFAULT = ""; // load, from, file, memory, default: load or from or file
@@ -333,14 +301,9 @@ namespace Lemoine.Extensions.Plugin
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("LoadDll: " +
-                         "error while loading {0}, {1}",
-                         dllPath,
-                         ex);
+        log.Error ($"LoadDll: error while loading {dllPath}", ex);
         if (Lemoine.Core.ExceptionManagement.ExceptionTest.RequiresExit (ex)) {
-          log.ErrorFormat ("LoadDll: " +
-                           "exception {0} requres to exit, throw it",
-                           ex);
+          log.Error ($"LoadDll: exception requires to exit, throw it", ex);
           throw;
         }
         var pluginName = Path.GetFileNameWithoutExtension (dllPath).Replace ("Lemoine.Plugin.", "");
@@ -395,14 +358,9 @@ namespace Lemoine.Extensions.Plugin
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("LoadDll: " +
-                         "error while loading {0}, {1}",
-                         dllPath,
-                         ex);
+        log.Error ($"LoadDll: error while loading {dllPath}", ex);
         if (Lemoine.Core.ExceptionManagement.ExceptionTest.RequiresExit (ex)) {
-          log.ErrorFormat ("LoadDll: " +
-                           "exception {0} requres to exit, throw it",
-                           ex);
+          log.Error ("LoadDll: exception requires to exit, throw it", ex);
           throw;
         }
         var pluginName = Path.GetFileNameWithoutExtension (dllPath).Replace ("Lemoine.Plugin.", "");

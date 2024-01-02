@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.Hosting.AsyncInitialization;
 using Lemoine.Info.ConfigReader.TargetSpecific;
@@ -62,10 +63,7 @@ namespace Lem_CncCoreService
       }
 
       return defaultBuilder
-        .ConfigureAppConfiguration ((hostingContext, config) => {
-          config.AddCommandLine (options.MicrosoftParameters.ToArray ());
-          config.AddEnvironmentVariables ("LPOMAMO_");
-        })
+        .ConfigureServiceAppConfiguration (options)
         .ConfigureWebHostDefaults (webBuilder => {
           var urls = Lemoine.Info.ConfigSet.LoadAndGet (URLS_KEY, URLS_DEFAULT);
           if (!string.IsNullOrEmpty (urls)) {

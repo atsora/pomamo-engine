@@ -8,7 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
 using Lemoine.CncEngine;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.DataControls;
 using Lemoine.Extensions;

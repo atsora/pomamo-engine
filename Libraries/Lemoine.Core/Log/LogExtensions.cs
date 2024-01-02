@@ -2,20 +2,79 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-using Lemoine.Core.Log;
-using log4net.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lemoine.Core.Log.Aaa
+namespace Lemoine.Core.Log
 {
   /// <summary>
   /// Extensions to log4net
   /// </summary>
   public static class LogExtensions
   {
+    /// <summary>
+    /// Log an exception guessing the log level from the exception severity
+    /// </summary>
+    public static void Exception (this ILog logger, Exception ex, string message = null)
+    {
+      if (Lemoine.Core.ExceptionManagement.ExceptionTest.RequiresExit (ex)) { // Fatal
+        if (logger.IsFatalEnabled) {
+          if (string.IsNullOrEmpty (message)) {
+            logger.Fatal ("the exception requires to exit", ex);
+          }
+          else {
+            logger.Fatal ($"{message}: the exception requires to exit", ex);
+          }
+        }
+      }
+      else if (Lemoine.Core.ExceptionManagement.ExceptionTest.IsTransactionSerializationFailure (ex)
+        || Lemoine.Core.ExceptionManagement.ExceptionTest.IsTransactionAborted (ex)) {
+        if (logger.IsInfoEnabled) {
+          if (string.IsNullOrEmpty (message)) {
+            logger.Info ("aborted transaction (serialization failure or not)", ex);
+          }
+          else {
+            logger.Info ($"{message}: aborted transaction (serialization failure or not)", ex);
+          }
+        }
+      }
+      else if (Lemoine.Core.ExceptionManagement.ExceptionTest.IsTemporary (ex)
+        || Lemoine.Core.ExceptionManagement.ExceptionTest.IsTemporaryWithDelay (ex)
+        || Lemoine.Core.ExceptionManagement.ExceptionTest.IsStale (ex)
+        || Lemoine.Core.ExceptionManagement.ExceptionTest.IsTimeoutFailure (ex)) { // Warn
+        if (logger.IsWarnEnabled) {
+          if (string.IsNullOrEmpty (message)) {
+            logger.Warn ("temporary / stale / timeout error", ex);
+          }
+          else {
+            logger.Warn ($"{message}: temporary", ex);
+          }
+        }
+      }
+      else if (Lemoine.Core.ExceptionManagement.ExceptionTest.IsNotError (ex)) { // Info
+        if (logger.IsInfoEnabled) {
+          if (string.IsNullOrEmpty (message)) {
+            logger.Info ("not  a real error", ex);
+          }
+          else {
+            logger.Info ($"{message}: not a real error", ex);
+          }
+        }
+      }
+      else { // Error
+        if (logger.IsErrorEnabled) {
+          if (string.IsNullOrEmpty (message)) {
+            logger.Error ("exception", ex);
+          }
+          else {
+            logger.Error (message, ex);
+          }
+        }
+      }
+    }
+
     /// <summary>
     /// Parse a log level
     /// </summary>

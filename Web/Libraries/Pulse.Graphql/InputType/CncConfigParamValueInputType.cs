@@ -41,7 +41,7 @@ namespace Pulse.Graphql.InputType
 
     public static string GetParametersString (IList<CncConfigParamValueInput> parameters)
     {
-      var a = new string[10];
+      var a = Enumerable.Repeat (String.Empty, 10).ToArray ();
       int maxParamNumber = 0;
       foreach (var paramValue in parameters) {
         if (paramValue.Name.StartsWith ("Param", StringComparison.CurrentCultureIgnoreCase)) {
@@ -72,6 +72,9 @@ namespace Pulse.Graphql.InputType
         return "";
       }
     }
+
+    public static IDictionary<string, string> GetKeyParams (IList<CncConfigParamValueInput> parameters)
+      => parameters.ToDictionary (x => x.Name, x => x.Value);
   }
 
   /// <summary>

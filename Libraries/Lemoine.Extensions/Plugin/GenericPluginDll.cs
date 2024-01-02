@@ -21,7 +21,7 @@ namespace Lemoine.Extensions.Plugin
     static readonly ILog log = LogManager.GetLogger (typeof (GenericPluginDll).FullName);
 
     #region Members
-    PluginContext m_pluginContext = null;
+    IPluginContext m_pluginContext = null;
     IEnumerable<Type> m_activeExtensionTypes;
     IList<IPluginInstance> m_instances = new List<IPluginInstance> ();
     #endregion // Members
@@ -79,7 +79,7 @@ namespace Lemoine.Extensions.Plugin
     /// Context of the plugin
     /// Set by the extension manager
     /// </summary>
-    public PluginContext Context
+    public IPluginContext Context
     {
       get
       {

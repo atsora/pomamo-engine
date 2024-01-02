@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Lemoine.Core.Log;
+using Lemoine.Extensions;
 using Lemoine.Extensions.Configuration;
 using Lemoine.Extensions.Configuration.GuiBuilder;
 using Lemoine.Extensions.Interfaces;

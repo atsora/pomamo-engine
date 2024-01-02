@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />

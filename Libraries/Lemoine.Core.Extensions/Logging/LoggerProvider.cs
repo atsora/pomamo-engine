@@ -47,8 +47,8 @@ namespace Lemoine.Core.Extensions.Logging
     /// Creates the logger.
     /// </summary>
     /// <param name="categoryName">The category name.</param>
-    /// <returns>An instance of the <see cref="ILogger"/>.</returns>
-    public ILogger CreateLogger (string categoryName)
+    /// <returns>An instance of the <see cref="Microsoft.Extensions.Logging.ILogger"/>.</returns>
+    public Microsoft.Extensions.Logging.ILogger CreateLogger (string categoryName)
         => this.loggers.GetOrAdd (categoryName, this.CreateLoggerImplementation);
 
     /// <summary>

@@ -21,6 +21,12 @@ namespace Pulse.Graphql.InputType
   /// </summary>
   public class UpdateCncAcquisition
   {
+    /// <summary>
+    /// Activate the new configuration key params
+    /// </summary>
+    static readonly string KEY_PARAMS_KEY = "Graphql.CncAcquisition.KeyParams";
+    static readonly bool KEY_PARAMS_DEFAULT = true;
+
     readonly ILog log = LogManager.GetLogger<UpdateCncAcquisition> ();
 
     string? m_cncConfigName = null;
@@ -80,7 +86,12 @@ namespace Pulse.Graphql.InputType
               cncAcquisition.ConfigFile = m_cncConfigName + ".xml";
             }
             if (m_parametersSet) {
-              cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
+              if (Lemoine.Info.ConfigSet.LoadAndGet (KEY_PARAMS_KEY, KEY_PARAMS_DEFAULT)) {
+                cncAcquisition.ConfigKeyParams = CncConfigParamValueInput.GetKeyParams (this.Parameters);
+              }
+              else {
+                cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
+              }
             }
             transaction.Commit ();
             return cncAcquisition;

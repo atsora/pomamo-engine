@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 #if NET6_0_OR_GREATER
 using Lemoine.Core.Extensions.Logging;
 #endif // NET6_0_OR_GREATER
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.Core.Options;
 using Lemoine.Service;
@@ -53,7 +54,7 @@ namespace Pulse.Hosting
 #endif // NETCOREAPP
 
       return defaultBuilder
-        .ConfigurePulseServiceAppConfiguration (options)
+        .ConfigureServiceAppConfiguration (options)
         .ConfigureServices ((hostContext, services) => {
           configureServices (services);
 #if NET6_0_OR_GREATER
@@ -79,7 +80,7 @@ namespace Pulse.Hosting
         .CreateDefaultBuilder (args);
 
       return defaultBuilder
-        .ConfigurePulseConsoleAppConfiguration (options)
+        .ConfigureConsoleAppConfiguration (options)
         .ConfigureServices ((hostContext, services) => {
 #if NET6_0_OR_GREATER
           services.AddLogging (loggingBuilder => {
@@ -102,7 +103,7 @@ namespace Pulse.Hosting
         .CreateDefaultBuilder (args);
 
       return defaultBuilder
-        .ConfigurePulseGuiAppConfiguration (options)
+        .ConfigureGuiAppConfiguration (options)
         .ConfigureServices ((hostContext, services) => {
 #if NET6_0_OR_GREATER
           services.AddLogging (loggingBuilder => {

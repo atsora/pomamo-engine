@@ -9,6 +9,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />

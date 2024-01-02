@@ -18,7 +18,7 @@ using Pulse.Extensions.Database;
 namespace Lemoine.Plugin.CncVariableSetDetection
 {
   public class DetectionAnalysisByMachineModuleExtension
-    : Pulse.Extensions.Analysis.Implementation.CncVariablesDetectionAnalysisByMachineModule<Configuration>
+    : Pulse.PluginImplementation.Analysis.CncVariablesDetectionAnalysisByMachineModule<Configuration>
     , IOperationDetectionStatusExtension
     , ICycleDetectionStatusExtension
     , IDetectionAnalysisByMachineModuleExtension

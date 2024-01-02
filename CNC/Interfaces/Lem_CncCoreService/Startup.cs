@@ -30,9 +30,9 @@ using Lemoine.Threading;
 using Pulse.Extensions;
 using Lemoine.Extensions.ExtensionsProvider;
 using Pulse.Database.ConnectionInitializer;
-using Pulse.Hosting;
 using Lemoine.Hosting.AsyncInitialization;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Pulse.Hosting;
 
 namespace Lem_CncCoreService
 {

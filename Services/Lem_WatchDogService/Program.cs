@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.Core.Performance;
 using Lemoine.I18N;
@@ -75,7 +75,7 @@ namespace Lem_WatchDogService
           return;
         }
 
-        var builder = Lemoine.Core.Extensions.Hosting.HostBuilder.CreateLemoineServiceHostBuilder6432<WatchDogService> (args, options, services => services.CreateServices ());
+        var builder = Lemoine.Service.HostBuilder.CreateLemoineServiceHostBuilder6432<WatchDogService> (args, options, services => services.CreateServices ());
         if (options.Interactive) {
           await builder.RunConsoleAsync ();
         }

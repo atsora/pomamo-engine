@@ -65,7 +65,7 @@ namespace Lem_TestSystemd.Console
     {
       var applicationName = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Name;
       return Host.CreateDefaultBuilder (args)
-        .ConfigureLemoineConsoleAppConfiguration (options)
+        .ConfigureConsoleAppConfiguration (options)
         .ConfigureServices ((_, services) => {
           services
           .AddHostedService<Worker> ((IServiceProvider sp) => new Worker (sp.GetRequiredService<IApplicationInitializer> (), sp.GetRequiredService<IHostApplicationLifetime> (), options.ServiceName, options.Start))

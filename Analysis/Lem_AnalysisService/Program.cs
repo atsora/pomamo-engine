@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Hosting;
 using Lemoine.Core.Hosting.LctrChecker;
 using Lemoine.Core.Log;

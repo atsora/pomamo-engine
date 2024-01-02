@@ -41,7 +41,7 @@ namespace Lemoine.Extensions
     /// <summary>
     /// Plugins in error
     /// </summary>
-    public static IEnumerable<PluginDllLoader> LoadErrorPlugins => Instance.m_extensionsProvider.LoadErrorPlugins;
+    public static IEnumerable<IPluginDllLoader> LoadErrorPlugins => Instance.m_extensionsProvider.LoadErrorPlugins;
 
     /// <summary>
     /// Associated IExtensionsProvider
@@ -58,14 +58,12 @@ namespace Lemoine.Extensions
     }
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class!)
     /// </summary>
     private ExtensionManager ()
     {
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>

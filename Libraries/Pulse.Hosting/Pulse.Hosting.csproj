@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Extensions\Lemoine.Extensions.csproj" />
     <ProjectReference Include="..\Lemoine.Hosting\Lemoine.Hosting.csproj" />

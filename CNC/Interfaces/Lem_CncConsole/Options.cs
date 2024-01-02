@@ -36,10 +36,10 @@ namespace Lem_CncConsole
     [Option ('f', "file", HelpText = "Path to a specific XML configuration file. Set -i 0 to use it", Required = false)]
     public string File { get; set; } = "";
 
-    [Option('n', "nparams", HelpText = "Numeric config parameters in a list string. For example #192.168.10.5#False for Param1=192.168.10.5 and Param2=False")]
+    [Option('n', "nparams", HelpText = "Numeric config parameters in a list string to be used with the -f option. For example #192.168.10.5#False for Param1=192.168.10.5 and Param2=False")]
     public string NumParameters { get; set; } = "";
 
-    [Option('j', "jparams", HelpText = "Condig parameters in a json dictionary. For example {\"Param1\": \"192.168.10.5\", \"Param2\": false}")]
+    [Option('j', "jparams", HelpText = "Config parameters in a json dictionary to be used with the -f option. For example {\"Param1\": \"192.168.10.5\", \"Param2\": false}")]
     public string JsonParameters { get; set; } = "";
 
     [Option ('s', "stamp", HelpText = "Use a stamp file to check the process is still running correctly")]

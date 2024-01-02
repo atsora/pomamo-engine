@@ -5,6 +5,7 @@
 using System;
 using CommandLine;
 using Lemoine.Core.Log;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;

@@ -31,7 +31,7 @@ namespace Lemoine.CncEngine
   /// <summary>
   /// Main acquisition class to be run in a thread or in a class
   /// </summary>
-  public class Acquisition : ProcessOrThreadClass, IThreadClass, IProcessClass
+  public class Acquisition : ProcessOrThreadClass, IThreadClass, IProcessClass, ILogged
   {
     #region Members
     readonly ICncEngineConfig m_cncEngineConfig;
@@ -245,30 +245,16 @@ namespace Lemoine.CncEngine
     /// <param name="useProcess"></param>
     /// <param name="assemblyLoader"></param>
     /// <param name="fileRepoClientFactory"></param>
-    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, string numParameters, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useProcess = false)
+    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, string numParameters, IDictionary<string, string> jsonParameters, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useProcess = false)
     {
       Debug.Assert (null != cncEngineConfig);
 
       m_cncEngineConfig = cncEngineConfig;
       m_cncAcquisitionId = 0;
-      m_repository = CreateRepositoryFromLocalFileParameters (localFilePath, numParameters);
+      m_repository = CreateRepositoryFromLocalFileParameters (localFilePath, numParameters, jsonParameters);
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
       m_useProcess = useProcess;
-    }
-
-    /// <summary>
-    /// Acquisition using a local file and parameters
-    /// </summary>
-    /// <param name="cncEngineConfig"></param>
-    /// <param name="localFilePath"></param>
-    /// <param name="numParameters"></param>
-    /// <param name="useProcess"></param>
-    /// <param name="assemblyLoader"></param>
-    /// <param name="fileRepoClientFactory"></param>
-    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, IDictionary<string, object> jsonParameters, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useProcess = false)
-      : this (cncEngineConfig, localFilePath, GetParametersString (jsonParameters), assemblyLoader, fileRepoClientFactory, useProcess)
-    {
     }
 
     /// <summary>
@@ -417,13 +403,14 @@ namespace Lemoine.CncEngine
     }
 
 #if NETSTANDARD || NET48 || NETCOREAPP
-    Repository CreateRepositoryFromLocalFileParameters (string localFilePath, string parameters)
+    Repository CreateRepositoryFromLocalFileParameters (string localFilePath, string parameters, IDictionary<string, string> keyParams)
     {
       var name = Path.GetFileNameWithoutExtension (localFilePath);
       var cncAcquisition = ModelDAO.ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
       cncAcquisition.Name = name;
       cncAcquisition.ConfigFile = localFilePath;
       cncAcquisition.ConfigParameters = parameters;
+      cncAcquisition.ConfigKeyParams = keyParams;
       var factory = new CncFileRepoFactory (m_extensionsLoader, cncAcquisition, checkedThread: null);
       return new Repository (factory);
     }

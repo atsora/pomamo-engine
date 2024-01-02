@@ -209,7 +209,7 @@ namespace Pulse.Extensions
     /// No automatic load here, it must be loaded first
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<PluginDllLoader> GetLoadErrorPlugins ()
+    public IEnumerable<IPluginDllLoader> GetLoadErrorPlugins ()
     {
       return m_loadErrorPlugins;
     }

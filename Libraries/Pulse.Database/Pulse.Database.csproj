@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lemoine.Business\Lemoine.Business.csproj" />
+    <ProjectReference Include="..\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Database\Lemoine.Database.csproj" />
     <ProjectReference Include="..\Lemoine.DataRepository\Lemoine.DataRepository.csproj" />

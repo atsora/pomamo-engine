@@ -3,14 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using CommandLine;
-using Lemoine.Core.Hosting;
-using Lemoine.Core.Hosting.ApplicationInitializer;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pulse.Hosting;
-using Pulse.Hosting.ApplicationInitializer;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -70,7 +68,7 @@ namespace ReportWizardCli
     {
       var applicationName = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Name;
       return Host.CreateDefaultBuilder (args)
-        .ConfigurePulseConsoleAppConfiguration (options)
+        .ConfigureConsoleAppConfiguration (options)
         .ConfigureServices ((_, services) =>
         {
           services

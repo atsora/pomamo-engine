@@ -62,7 +62,7 @@ namespace Lemoine.Extensions.ExtensionsProvider
     /// <summary>
     /// Plugins in error
     /// </summary>
-    public IEnumerable<PluginDllLoader> LoadErrorPlugins
+    public IEnumerable<IPluginDllLoader> LoadErrorPlugins
     {
       get
       {

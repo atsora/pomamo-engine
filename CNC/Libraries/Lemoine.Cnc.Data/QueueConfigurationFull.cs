@@ -12,6 +12,7 @@ using Lemoine.Core.Log;
 using Lemoine.FileRepository;
 using System.Diagnostics;
 using Lemoine.Core.Plugin;
+using Lemoine.Extensions.Interfaces;
 
 namespace Lemoine.Cnc.Data
 {
@@ -25,6 +26,7 @@ namespace Lemoine.Cnc.Data
     , IListConfigReader
   {
     #region Members
+    readonly IExtensionsProvider m_extensionsProvider;
     string m_rootType = null;
     readonly IDictionary<string, string> m_configurations = new Dictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
     readonly IList<QueueConfigurationFull> m_subQueues = new List<QueueConfigurationFull> ();
@@ -66,8 +68,9 @@ namespace Lemoine.Cnc.Data
     /// This constructor must be called for testing purposes only.
     /// Usually LoadXml will be called after it
     /// </summary>
-    internal protected QueueConfigurationFull ()
+    internal protected QueueConfigurationFull (IExtensionsProvider extensionsProvider)
     {
+      m_extensionsProvider = extensionsProvider;
       m_configurations[QUEUE_TYPE_KEY] = QUEUE_TYPE_DEFAULT;
     }
 
@@ -76,8 +79,9 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     /// <param name="configurationPath"></param>
     /// <exception cref="Exception">The configuration could not be loaded</exception>
-    public QueueConfigurationFull (string configurationPath)
+    public QueueConfigurationFull (IExtensionsProvider extensionsProvider, string configurationPath)
     {
+      m_extensionsProvider = extensionsProvider;
       m_configurations[QUEUE_TYPE_KEY] = QUEUE_TYPE_DEFAULT;
 
       if (string.IsNullOrEmpty (configurationPath)) {
@@ -97,8 +101,9 @@ namespace Lemoine.Cnc.Data
     /// <param name="createNewFile"></param>
     /// <param name="forceSynchronization"></param>
     /// <exception cref="Exception">The configuration could not be loaded</exception>
-    public QueueConfigurationFull (int machineId, int machineModuleId, string localSubDirectory, bool createNewFile, bool forceSynchronization)
+    public QueueConfigurationFull (IExtensionsProvider extensionsProvider, int machineId, int machineModuleId, string localSubDirectory, bool createNewFile, bool forceSynchronization)
     {
+      m_extensionsProvider = extensionsProvider;
       m_configurations[QUEUE_TYPE_KEY] = QUEUE_TYPE_DEFAULT;
 
       LoadMachineConfiguration (machineId, machineModuleId, localSubDirectory, createNewFile, forceSynchronization);
@@ -112,8 +117,9 @@ namespace Lemoine.Cnc.Data
     /// <param name="createNewFile"></param>
     /// <param name="forceSynchronization"></param>
     /// <exception cref="Exception">The configuration could not be loaded</exception>
-    public QueueConfigurationFull (string remoteQueueConfigurationPath, string localSubDirectory, bool createNewFile, bool forceSynchronization)
+    public QueueConfigurationFull (IExtensionsProvider extensionsProvider, string remoteQueueConfigurationPath, string localSubDirectory, bool createNewFile, bool forceSynchronization)
     {
+      m_extensionsProvider = extensionsProvider;
       m_configurations[QUEUE_TYPE_KEY] = QUEUE_TYPE_DEFAULT;
 
       if (string.IsNullOrEmpty (remoteQueueConfigurationPath)) {
@@ -129,8 +135,10 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     /// <param name="node"></param>
     /// <param name="nsmgr"></param>
-    QueueConfigurationFull (XmlNode node, XmlNamespaceManager nsmgr)
+    QueueConfigurationFull (IExtensionsProvider extensionsProvider, XmlNode node, XmlNamespaceManager nsmgr)
     {
+      m_extensionsProvider = extensionsProvider;
+
       // Process the sub queue configuration
       ProcessConfiguration (this, node, nsmgr);
     }
@@ -161,7 +169,7 @@ namespace Lemoine.Cnc.Data
 
     string GetRemoteQueueConfigurationPath (int machineId, int machineModuleId)
     {
-      var extensions = Lemoine.Extensions.ExtensionManager.GetExtensions<Lemoine.Extensions.Cnc.IQueueConfigurationFullExtension> ();
+      var extensions = m_extensionsProvider.GetExtensions<Lemoine.Extensions.Cnc.IQueueConfigurationFullExtension> ();
       foreach (var extension in extensions) {
         string distantDirectory = extension.GetDistantDirectory (machineId, machineModuleId);
         string distantFileName = extension.GetDistantFileName (machineId, machineModuleId);
@@ -358,7 +366,7 @@ namespace Lemoine.Cnc.Data
       var nodes = node.SelectNodes ("queueconfiguration:queues/queueconfiguration:queue", nsmgr);
       if (nodes != null) {
         foreach (XmlNode nodeTmp in nodes) {
-          var conf = new QueueConfigurationFull (nodeTmp, nsmgr);
+          var conf = new QueueConfigurationFull (m_extensionsProvider, nodeTmp, nsmgr);
           m_subQueues.Add (conf);
         }
       }

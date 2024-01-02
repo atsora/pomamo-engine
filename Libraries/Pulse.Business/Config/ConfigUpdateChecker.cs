@@ -57,7 +57,7 @@ namespace Lemoine.Business.Config
       }
       try {
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("ActivityAnalysis.ConfigUpdate.Init")) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.ConfigUpdate.Init")) {
           var applicationState = ModelDAOHelper.DAOFactory.ApplicationStateDAO
             .GetNoCache (ApplicationStateKey.ConfigUpdate.ToKey ());
           if (null == applicationState) {
@@ -144,7 +144,7 @@ namespace Lemoine.Business.Config
         }
       }
       catch (Exception ex) {
-        log.Error ("Check: exception => return true", ex);
+        log.Error ("CheckNoConfigUpdate: exception => return true", ex);
         lastConfigUpdate = m_configUpdate;
         return true;
       }

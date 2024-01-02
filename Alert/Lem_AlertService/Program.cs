@@ -4,6 +4,7 @@
 
 using Lemoine.Core.Hosting;
 using Lemoine.Core.Log;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.FileRepository;
 using Lemoine.I18N;
 using Lemoine.Info.ConfigReader.TargetSpecific;

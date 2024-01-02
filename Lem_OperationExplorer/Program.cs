@@ -1,11 +1,12 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.DataControls;
 using Lemoine.Extensions.Interfaces;

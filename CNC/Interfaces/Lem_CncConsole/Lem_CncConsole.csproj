@@ -48,6 +48,7 @@
     <ProjectReference Include="..\..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
+    <ProjectReference Include="..\..\..\Plugins\Pulse.PluginImplementation\Pulse.PluginImplementation.csproj" />
     <ProjectReference Include="..\..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Web\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Atsora.CncFSharp\Atsora.CncFSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />

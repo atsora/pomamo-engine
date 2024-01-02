@@ -15,7 +15,7 @@ namespace Lemoine.Threading
   /// <summary>
   /// Base <see cref="IThreadClass">IThreadClass</see> implementation
   /// </summary>
-  public abstract class ThreadClass : IThreadClass, IChecked, IThreadStatusSupport, IDisposable
+  public abstract class ThreadClass : ILoggedThreadClass, IChecked, IThreadStatusSupport, IDisposable
   {
     /// <summary>
     /// Thread status to be able to use the ThreadPool: Available, Requested, Running
@@ -621,10 +621,16 @@ namespace Lemoine.Threading
     /// </summary>
     public void ResetToAvailable ()
     {
-      var available = (Int32)ThreadStatus.Available;
-      var original = Interlocked.CompareExchange (ref m_threadStatus, available, m_threadStatus);
-      if (original != available) {
-        GetLogger ().Warn ($"ResetToAvailable: state {original} was reset to available");
+      try {
+        var available = (Int32)ThreadStatus.Available;
+        var original = Interlocked.CompareExchange (ref m_threadStatus, available, m_threadStatus);
+        if (original != available) {
+          GetLogger ().Warn ($"ResetToAvailable: state {original} was reset to available");
+        }
+      }
+      catch (Exception ex) {
+        GetLogger ().Fatal ($"ResetToAvailable: exception", ex);
+        throw;
       }
     }
 

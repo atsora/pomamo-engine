@@ -3,25 +3,30 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <Nullable>enable</Nullable>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <langVersion>preview</langVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
+  </ItemGroup>
+
   <ItemGroup>
+    <ProjectReference Include="..\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
-    <ProjectReference Include="..\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net6.0;TargetPlatform=AnyCPU" />
   </ItemGroup>
 
 </Project>

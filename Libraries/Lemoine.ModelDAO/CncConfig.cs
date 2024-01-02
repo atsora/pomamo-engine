@@ -101,6 +101,11 @@ namespace Lemoine.Model
     public string Description { get; set; }
 
     /// <summary>
+    /// Some specific help to set the parameter
+    /// </summary>
+    public string Help { get; set; }
+
+    /// <summary>
     /// Type: ip / url / path / host / string / int / integer / double / list / bool / boolean / file / null
     /// </summary>
     public string Type { get; set; }
@@ -366,6 +371,7 @@ namespace Lemoine.Model
         var cncConfigParam = new CncConfigParam (parameterElement.GetAttribute ("name"));
         cncConfigParam.Label = parameterElement.GetAttribute ("label");
         cncConfigParam.Description = parameterElement.InnerText;
+        cncConfigParam.Help = parameterElement.GetAttribute ("help");
         cncConfigParam.Type = parameterElement.GetAttribute ("type");
         var min = parameterElement.GetAttribute ("min");
         if (!string.IsNullOrEmpty (min)) {

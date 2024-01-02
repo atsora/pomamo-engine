@@ -12,8 +12,8 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using Lemoine.Core.ExceptionManagement;
 using Pulse.Extensions.Database;
-using Pulse.Extensions.Database.Impl.CycleDetectionStatus;
-using Pulse.Extensions.Database.Impl.OperationDetectionStatus;
+using Pulse.PluginImplementation.CycleDetectionStatus;
+using Pulse.PluginImplementation.OperationDetectionStatus;
 
 namespace Lemoine.Plugin.StampDetection
 {

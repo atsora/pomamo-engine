@@ -17,8 +17,6 @@ using Lemoine.FileRepository;
 using Lemoine.Info;
 using Lemoine.Info.ConfigReader;
 using Lemoine.ModelDAO.Interfaces;
-using Pulse.Extensions;
-using Pulse.Hosting;
 
 namespace Lemoine.CncEngine
 {

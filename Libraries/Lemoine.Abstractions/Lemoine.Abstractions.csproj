@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>7.0.0.0</AssemblyVersion>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Log\" />
+  </ItemGroup>
+    
+</Project>

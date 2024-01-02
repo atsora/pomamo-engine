@@ -41,13 +41,17 @@ namespace Lem_CncConsole
     int m_cncAcquisitionId = int.MinValue;
     string m_configurationFilePath = "";
     string m_numParameters = "";
-    IDictionary<string, object> m_jsonParameters = new Dictionary<string, object> ();
+    IDictionary<string, string> m_jsonParameters = new Dictionary<string, string> ();
     bool m_stamp = false;
     int m_parentProcessId = 0;
 
     public ConsoleRunner (ICncEngineConfig cncEngineConfig, IApplicationInitializer applicationInitializer, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, IExtensionsLoader extensionsLoader)
     {
       Debug.Assert (null != cncEngineConfig);
+      if (cncEngineConfig is null) {
+        log.Error ($"ConsoleError: null parameter cncEngineConfig");
+        throw new ArgumentNullException ("cncEngineConfig");
+      }
 
       m_cncEngineConfig = cncEngineConfig;
       m_applicationInitializer = applicationInitializer;
@@ -56,11 +60,16 @@ namespace Lem_CncConsole
       m_extensionsLoader = extensionsLoader;
     }
 
-    IDictionary<string, object> ParseJson (string s)
+    IDictionary<string, string> ParseJson (string s)
     {
       var options = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
       options.Converters.Add (new JsonStringEnumConverter ());
-      return JsonSerializer.Deserialize<IDictionary<string, object>> (s, options);
+      var result = JsonSerializer.Deserialize<IDictionary<string, string>> (s, options);
+      if (result is null) {
+        log.Error ($"ParseJson: deserialization of {s} returned a null object");
+        throw new NullReferenceException ();
+      }
+      return result;
     }
 
     public void SetOptions (Options options)
@@ -115,7 +124,12 @@ namespace Lem_CncConsole
       // - Run !
       Acquisition acquisition;
       if (!string.IsNullOrEmpty (m_configurationFilePath)) {
-        acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_assemblyLoader, m_fileRepoClientFactory);
+        if (string.IsNullOrEmpty (m_numParameters) && !m_jsonParameters.Any ()) {
+          acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_assemblyLoader, m_fileRepoClientFactory);
+        }
+        else {
+          acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_numParameters, m_jsonParameters, m_assemblyLoader, m_fileRepoClientFactory);
+        }
       }
       else if (int.MinValue != m_cncAcquisitionId) {
         acquisition = new Acquisition (m_cncEngineConfig, m_extensionsLoader, m_cncAcquisitionId, m_every, m_assemblyLoader, m_fileRepoClientFactory, m_staThread);

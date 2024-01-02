@@ -41,7 +41,7 @@ namespace Lemoine.Threading
     #region Members
     bool m_disposed = false;
     readonly IList<ProcessClassExecution> m_processClassExecutions = new List<ProcessClassExecution> ();
-    readonly IList<IThreadClass> m_threadClasses = new List<IThreadClass> ();
+    readonly IList<ILoggedThreadClass> m_threadClasses = new List<ILoggedThreadClass> ();
     readonly IList<Func<bool>> m_additionalChecks = new List<Func<bool>> ();
     readonly IList<IAdditionalChecker> m_additionalCheckers = new List<IAdditionalChecker> ();
     #endregion // Members
@@ -57,7 +57,7 @@ namespace Lemoine.Threading
     /// <summary>
     /// Thread classes to check
     /// </summary>
-    protected IList<IThreadClass> ThreadClasses => m_threadClasses;
+    protected IList<ILoggedThreadClass> ThreadClasses => m_threadClasses;
 
     /// <summary>
     /// Process classes to check
@@ -126,7 +126,7 @@ namespace Lemoine.Threading
     /// Add a <see cref="IThreadClass">Thread class</see> to check
     /// </summary>
     /// <param name="threadClass"></param>
-    public void AddThread (IThreadClass threadClass)
+    public void AddThread (ILoggedThreadClass threadClass)
     {
       m_threadClasses.Add (threadClass);
     }
@@ -288,7 +288,7 @@ namespace Lemoine.Threading
       if (GetLogger ().IsDebugEnabled) {
         GetLogger ().Debug ($"CheckAllThreads");
       }
-      foreach (IThreadClass threadClass in m_threadClasses) {
+      foreach (var threadClass in m_threadClasses) {
         if (cancellationToken.IsCancellationRequested) {
           if (GetLogger ().IsDebugEnabled) {
             GetLogger ().Debug ($"CheckAllThreads: cancellation requested");
@@ -309,7 +309,8 @@ namespace Lemoine.Threading
     /// </summary>
     /// <param name="threadClass"></param>
     /// <param name="cancellationToken"></param>
-    protected void CheckThread (IThreadClass threadClass, CancellationToken cancellationToken)
+    protected void CheckThread<T> (T threadClass, CancellationToken cancellationToken)
+      where T: IThreadClass, ILogged
     {
       try {
         if (threadClass.ExitRequested) {

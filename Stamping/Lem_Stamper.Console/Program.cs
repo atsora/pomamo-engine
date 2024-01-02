@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,6 +16,7 @@ using Lemoine.Stamping.Config;
 using Lemoine.Stamping.Impl;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Lemoine.Core.Log;
+using Lemoine.Core.Extensions.Hosting;
 using System.IO;
 using Lemoine.Core.Plugin;
 using Pulse.Hosting;
@@ -22,7 +24,6 @@ using Pulse.Hosting.ApplicationInitializer;
 using Lemoine.Conversion;
 using Lemoine.Model;
 using System.Collections.Generic;
-using Lemoine.Core.Hosting;
 
 namespace Lem_Stamper.Console
 {
@@ -148,7 +149,7 @@ namespace Lem_Stamper.Console
       var applicationName = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Name;
       var typeLoader = new TypeLoader (assemblyLoader);
       return Host.CreateDefaultBuilder (args)
-        .ConfigurePulseConsoleAppConfiguration (options)
+        .ConfigureConsoleAppConfiguration (options)
         .ConfigureServices ((_, services) => {
           services
           .AddHostedService<Worker> ()

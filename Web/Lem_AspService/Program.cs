@@ -12,9 +12,7 @@ using Lemoine.Hosting.AsyncInitialization;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Lemoine.Service;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Pulse.Hosting;
 
 namespace Lem_AspService
 {
@@ -61,7 +59,7 @@ namespace Lem_AspService
       }
 
       return defaultBuilder
-        .ConfigurePulseServiceAppConfiguration (options)
+        .ConfigureServiceAppConfiguration (options)
         .ConfigureWebHostDefaults (webBuilder =>
         {
           var urls = Lemoine.Info.ConfigSet.LoadAndGet (URLS_KEY, URLS_DEFAULT);

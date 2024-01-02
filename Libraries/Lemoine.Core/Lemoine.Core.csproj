@@ -20,6 +20,7 @@
       <HintPath>..\..\..\pomamo-extern\SharedMemory\netstandard2.0\SharedMemory.dll</HintPath>
     </Reference>
     <PackageReference Include="MailKit" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="Microsoft.Win32.Registry" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
     <PackageReference Include="System.DirectoryServices" />
@@ -35,7 +36,11 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lemoine.Abstractions\Lemoine.Abstractions.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="**\*.h" />
   </ItemGroup>
@@ -46,7 +51,5 @@
     <None Remove="**\bin\**" />
     <None Remove="UnitTests-out\**" />
   </ItemGroup>
-
-
 
 </Project>

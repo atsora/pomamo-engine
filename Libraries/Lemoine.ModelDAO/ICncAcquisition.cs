@@ -72,7 +72,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Parameters used in XML configuration file, set as a parameter dictioanary
     /// </summary>
-    IDictionary<string, object> ConfigKeyParams { get; set; }
+    IDictionary<string, string> ConfigKeyParams { get; set; }
     
     /// <summary>
     /// Use a process instead of a thread

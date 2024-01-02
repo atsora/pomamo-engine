@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -115,7 +116,7 @@ namespace Lemoine.CncEngine
           continue;
         }
         try {
-          XmlSerializer xmlSerializer = new XmlSerializer (typeof (Lemoine.GDBPersistentClasses.MachineModule));
+          var xmlSerializer = new XmlSerializer (typeof (TMachineModule));
           IMachineModule machineModule;
           using (TextReader reader = new StringReader (child.OuterXml)) {
             machineModule = (IMachineModule)xmlSerializer.Deserialize (reader);

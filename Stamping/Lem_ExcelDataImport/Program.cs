@@ -3,10 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using System.IO;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.DataControls;
 using Lemoine.Extensions.Interfaces;

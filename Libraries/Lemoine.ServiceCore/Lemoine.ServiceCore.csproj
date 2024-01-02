@@ -36,7 +36,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+    <ProjectReference Include="..\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">

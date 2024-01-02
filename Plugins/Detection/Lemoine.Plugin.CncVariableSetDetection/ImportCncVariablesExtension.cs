@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Lemoine.Model;
-using Pulse.CncExtensionImpl;
+using Pulse.PluginImplementation.Cnc;
 
 namespace Lemoine.Plugin.CncVariableSetDetection
 {

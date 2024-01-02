@@ -32,7 +32,7 @@ namespace Lemoine.Extensions.ExtensionsProvider
 
     public bool Loaded => m_extensionsProviders.All (x => x.Loaded);
 
-    public IEnumerable<PluginDllLoader> LoadErrorPlugins => m_extensionsProviders.SelectMany (x => x.LoadErrorPlugins);
+    public IEnumerable<IPluginDllLoader> LoadErrorPlugins => m_extensionsProviders.SelectMany (x => x.LoadErrorPlugins);
 
     /// <summary>
     /// Constructor

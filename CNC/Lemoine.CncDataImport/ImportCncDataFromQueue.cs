@@ -313,7 +313,7 @@ namespace Lemoine.CncDataImport
 
         try {
           var localSubDirectory = "CncData." + this.MachineModule.MonitoredMachine.Id + "." + this.MachineModule.Id;
-          var queueConfFull = new QueueConfigurationFull (this.MachineModule.MonitoredMachine.Id, this.MachineModule.Id, localSubDirectory, true, true);
+          var queueConfFull = new QueueConfigurationFull (Lemoine.Extensions.ExtensionManager.ExtensionsProvider, this.MachineModule.MonitoredMachine.Id, this.MachineModule.Id, localSubDirectory, true, true);
           m_cncDataQueue = queueConfFull.CreateQueue (this.MachineModule.MonitoredMachine.Id,
                                                       this.MachineModule.Id,
                                                       defaultConfigReader);

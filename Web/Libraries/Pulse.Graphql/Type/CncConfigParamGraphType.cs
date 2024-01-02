@@ -28,6 +28,7 @@ namespace Pulse.Graphql.Type
       Field<NonNullGraphType<StringGraphType>> ("name");
       Field<string> ("label", nullable: true);
       Field<string> ("description", nullable: true);
+      Field<string> ("help", nullable: true);
       Field<string> ("type", nullable: true);
       Field<bool> ("optional", nullable: true);
       Field<int> ("min", nullable: true);

@@ -14,7 +14,7 @@ using Lemoine.FileRepository;
 using System.Threading.Tasks;
 using Lemoine.DataControls.GuiInitializer;
 using Microsoft.Extensions.DependencyInjection;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.DataControls;
 using Pulse.Hosting.ApplicationInitializer;
 using Lemoine.Info;

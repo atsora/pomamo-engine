@@ -4,6 +4,7 @@
 
 using Lemoine.Core.Hosting;
 using Lemoine.Core.Log;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Lemoine.Service;
 using Microsoft.Extensions.DependencyInjection;

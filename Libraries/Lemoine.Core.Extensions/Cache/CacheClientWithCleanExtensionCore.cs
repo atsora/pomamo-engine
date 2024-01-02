@@ -34,7 +34,7 @@ namespace Lemoine.Core.Extensions.Cache
 #endif // NETCOREAPP
     ConcurrentBag<string> m_batchUpdatePendingRegexes = new ConcurrentBag<string> ();
 #if !NETCOREAPP || NETCOREAPP1_1 || NETCOREAPP1_0
-    readonliy SemaphoreSlim m_semaphore = new SemaphoreSlim (1, 1);
+    readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1, 1);
 #endif // !NETCOREAPP
     #endregion // Members
 
@@ -55,6 +55,10 @@ namespace Lemoine.Core.Extensions.Cache
     public CacheClientWithCleanExtensionCore (ICacheClient cacheClientImplementation)
     {
       Debug.Assert (null != cacheClientImplementation);
+      if (cacheClientImplementation is null) {
+        log.Error ($"CacheClientWithCleanExtensionCore: null cacheClientImplementation");
+        throw new ArgumentNullException ("cacheClientImplementation");
+      }
 
       m_cacheClient = cacheClientImplementation;
     }

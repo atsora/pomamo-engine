@@ -10,6 +10,7 @@ using Lemoine.DataReferenceControls;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
+using Lemoine.Collections;
 
 namespace Lem_CncGUI
 {
@@ -25,7 +26,7 @@ namespace Lem_CncGUI
     IMachineModule m_machineModule4 = null;
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (ConfigParamDialog).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (ConfigParamDialog).FullName);
 
     #region Getters / Setters
     /// <summary>
@@ -33,15 +34,14 @@ namespace Lem_CncGUI
     /// </summary>
     public ICncAcquisition CncAcquisition
     {
-      get
-      {
+      get {
         var name = nameTextBox.Text;
         ICncAcquisition cncAcquisition = ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
         cncAcquisition.Name = name;
-        cncAcquisition.ConfigFile = fileRepositorySelection1.SelectedFiles [0];
+        cncAcquisition.ConfigFile = fileRepositorySelection1.SelectedFiles[0];
         cncAcquisition.ConfigPrefix = prefixTextBox.Text;
         cncAcquisition.ConfigParameters = parametersTextBox.Text;
-        // TODO: cncAcquisition.ConfigKeyParams
+        cncAcquisition.ConfigKeyParams = EnumerableString.ParseDictionaryString (keyParamsTextBox.Text);
         if (null != m_machineModule1) {
           m_machineModule1.ConfigPrefix = prefixTextBox1.Text;
           m_machineModule1.ConfigParameters = parametersTextBox1.Text;
@@ -99,26 +99,27 @@ namespace Lem_CncGUI
     /// <summary>
     /// Description of the constructor
     /// </summary>
-    public ConfigParamDialog()
+    public ConfigParamDialog ()
     {
       //
       // The InitializeComponent() call is required for Windows Forms designer support.
       //
-      InitializeComponent();
+      InitializeComponent ();
+#if NETCOREAPP
+      parametersTextBox.PlaceholderText = ";Param1Value;Param2Value";
+      keyParamsTextBox.PlaceholderText = "=;Key1=Value1;Key2=Value2";
+#endif // NETCOREAPP
     }
 
     #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-    
-    void OkButtonClick(object sender, EventArgs e)
+    void OkButtonClick (object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
       this.Close ();
     }
-    
-    void MachineModuleLabel1Click(object sender, EventArgs e)
+
+    void MachineModuleLabel1Click (object sender, EventArgs e)
     {
       MachineModuleDialog dialog = new MachineModuleDialog ();
       dialog.DisplayedProperty = "SelectionText";
@@ -128,7 +129,7 @@ namespace Lem_CncGUI
       }
     }
 
-    void MachineModuleLabel2Click(object sender, EventArgs e)
+    void MachineModuleLabel2Click (object sender, EventArgs e)
     {
       MachineModuleDialog dialog = new MachineModuleDialog ();
       dialog.DisplayedProperty = "SelectionText";
@@ -138,7 +139,7 @@ namespace Lem_CncGUI
       }
     }
 
-    void MachineModuleLabel3Click(object sender, EventArgs e)
+    void MachineModuleLabel3Click (object sender, EventArgs e)
     {
       MachineModuleDialog dialog = new MachineModuleDialog ();
       dialog.DisplayedProperty = "SelectionText";
@@ -148,7 +149,7 @@ namespace Lem_CncGUI
       }
     }
 
-    void MachineModuleLabel4Click(object sender, EventArgs e)
+    void MachineModuleLabel4Click (object sender, EventArgs e)
     {
       MachineModuleDialog dialog = new MachineModuleDialog ();
       dialog.DisplayedProperty = "SelectionText";

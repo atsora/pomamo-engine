@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
 using Lemoine.Core.Log;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.DataControls;
 using Lemoine.I18N;
 using Lemoine.Info.ConfigReader.TargetSpecific;

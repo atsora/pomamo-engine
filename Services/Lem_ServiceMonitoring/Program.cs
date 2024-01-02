@@ -8,13 +8,12 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.DataControls;
 using Lemoine.I18N;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Microsoft.Extensions.DependencyInjection;
-using Pulse.Hosting;
 using Pulse.Hosting.ApplicationInitializer;
 
 namespace LemoineServiceMonitoring

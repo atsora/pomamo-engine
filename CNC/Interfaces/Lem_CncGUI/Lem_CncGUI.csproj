@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFrameworks>net48;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
     <OutputType>WinExe</OutputType>
     <Platforms>x86;x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
   
-  <!-- CNC Module dependencies -->
+  <!-- CNC Module and plugin dependencies -->
   <ItemGroup>
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.CSharp" />
@@ -44,6 +44,7 @@
     <ProjectReference Include="..\..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Plugins\Pulse.PluginImplementation\Pulse.PluginImplementation.csproj" />
     <ProjectReference Include="..\..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Web\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Atsora.CncFSharp\Atsora.CncFSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />

@@ -48,6 +48,7 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" />
@@ -58,6 +59,7 @@
     <ProjectReference Include="..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
     <ProjectReference Include="..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" />
     <ProjectReference Include="..\..\Libraries\Pulse.Hosting\Pulse.Hosting.csproj" />
+    <ProjectReference Include="..\..\Plugins\Pulse.PluginImplementation\Pulse.PluginImplementation.csproj" />
     <ProjectReference Include="..\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
     <ProjectReference Include="..\Libraries\Lemoine.Web.ProductionMachiningStatus\Lemoine.Web.ProductionMachiningStatus.csproj" />
     <ProjectReference Include="..\Libraries\Lemoine.WebMiddleware\Lemoine.WebMiddleware.csproj" />

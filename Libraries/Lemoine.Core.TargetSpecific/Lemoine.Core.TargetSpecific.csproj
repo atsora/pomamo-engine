@@ -16,12 +16,17 @@
   
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="System.IO.Pipelines" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+    <ProjectReference Include="..\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
     <ProjectReference Include="..\Lemoine.Extensions\Lemoine.Extensions.csproj" />
   </ItemGroup>
 

@@ -31,7 +31,9 @@ namespace Pulse.Graphql.Type
       Field<NonNullGraphType<CncConfigGraphType>> ("cncConfig")
         .Resolve (ctx => new CncConfig (ctx.Source.ConfigFile));
       Field<NonNullGraphType<ListGraphType<NonNullGraphType<CncConfigParamValueGraphType>>>> ("parameters")
-        .Resolve (ctx => ConvertConfigParameters (ctx.Source.ConfigParameters).ToList ());
+        .Resolve (ctx => ConvertConfigParameters (ctx.Source.ConfigParameters)
+          .Union (ctx.Source.ConfigKeyParams.Select (x => new CncConfigParamValue (x.Key, x.Value.ToString ())))
+          .ToList ());
     }
 
     IEnumerable<CncConfigParamValue> ConvertConfigParameters (string parameters)

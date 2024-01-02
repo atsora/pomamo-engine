@@ -10,354 +10,388 @@ namespace Lem_CncGUI
     /// Designer variable used to keep track of non-visual components.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
-    
+
     /// <summary>
     /// Disposes resources used by the form.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-    protected override void Dispose(bool disposing)
+    protected override void Dispose (bool disposing)
     {
       if (disposing) {
         if (components != null) {
-          components.Dispose();
+          components.Dispose ();
         }
       }
-      base.Dispose(disposing);
+      base.Dispose (disposing);
     }
-    
+
     /// <summary>
     /// This method is required for Windows Forms designer support.
     /// Do not change the method contents inside the source code editor. The Forms designer might
     /// not be able to load this method if it was changed manually.
     /// </summary>
-    private void InitializeComponent()
+    private void InitializeComponent ()
     {
-      this.cncAcquisitionGroupBox = new System.Windows.Forms.GroupBox();
-      this.fileRepositorySelection1 = new Lemoine.DataReferenceControls.FileRepositorySelection();
-      this.nameTextBox = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.parametersTextBox = new System.Windows.Forms.TextBox();
-      this.parametersLabel = new System.Windows.Forms.Label();
-      this.prefixTextBox = new System.Windows.Forms.TextBox();
-      this.prefixLabel = new System.Windows.Forms.Label();
-      this.okButton = new System.Windows.Forms.Button();
-      this.machineModulesGroupBox = new System.Windows.Forms.GroupBox();
-      this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
-      this.machineModuleLabel1 = new System.Windows.Forms.Label();
-      this.prefixTextBox1 = new System.Windows.Forms.TextBox();
-      this.parametersTextBox1 = new System.Windows.Forms.TextBox();
-      this.machineModuleLabel2 = new System.Windows.Forms.Label();
-      this.prefixTextBox2 = new System.Windows.Forms.TextBox();
-      this.parametersTextBox2 = new System.Windows.Forms.TextBox();
-      this.machineModuleLabel3 = new System.Windows.Forms.Label();
-      this.prefixTextBox3 = new System.Windows.Forms.TextBox();
-      this.parametersTextBox3 = new System.Windows.Forms.TextBox();
-      this.machineModuleLabel4 = new System.Windows.Forms.Label();
-      this.prefixTextBox4 = new System.Windows.Forms.TextBox();
-      this.parametersTextBox4 = new System.Windows.Forms.TextBox();
-      this.cncAcquisitionGroupBox.SuspendLayout();
-      this.machineModulesGroupBox.SuspendLayout();
-      this.tableLayoutPanel1.SuspendLayout();
-      this.SuspendLayout();
+      cncAcquisitionGroupBox = new System.Windows.Forms.GroupBox ();
+      keyParamsTextBox = new System.Windows.Forms.TextBox ();
+      fileRepositorySelection1 = new Lemoine.DataReferenceControls.FileRepositorySelection ();
+      nameTextBox = new System.Windows.Forms.TextBox ();
+      label1 = new System.Windows.Forms.Label ();
+      parametersTextBox = new System.Windows.Forms.TextBox ();
+      parametersLabel = new System.Windows.Forms.Label ();
+      prefixTextBox = new System.Windows.Forms.TextBox ();
+      prefixLabel = new System.Windows.Forms.Label ();
+      okButton = new System.Windows.Forms.Button ();
+      machineModulesGroupBox = new System.Windows.Forms.GroupBox ();
+      tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel ();
+      label2 = new System.Windows.Forms.Label ();
+      label3 = new System.Windows.Forms.Label ();
+      label4 = new System.Windows.Forms.Label ();
+      machineModuleLabel1 = new System.Windows.Forms.Label ();
+      prefixTextBox1 = new System.Windows.Forms.TextBox ();
+      parametersTextBox1 = new System.Windows.Forms.TextBox ();
+      machineModuleLabel2 = new System.Windows.Forms.Label ();
+      prefixTextBox2 = new System.Windows.Forms.TextBox ();
+      parametersTextBox2 = new System.Windows.Forms.TextBox ();
+      machineModuleLabel3 = new System.Windows.Forms.Label ();
+      prefixTextBox3 = new System.Windows.Forms.TextBox ();
+      parametersTextBox3 = new System.Windows.Forms.TextBox ();
+      machineModuleLabel4 = new System.Windows.Forms.Label ();
+      prefixTextBox4 = new System.Windows.Forms.TextBox ();
+      parametersTextBox4 = new System.Windows.Forms.TextBox ();
+      cncAcquisitionGroupBox.SuspendLayout ();
+      machineModulesGroupBox.SuspendLayout ();
+      tableLayoutPanel1.SuspendLayout ();
+      SuspendLayout ();
       // 
       // cncAcquisitionGroupBox
       // 
-      this.cncAcquisitionGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.cncAcquisitionGroupBox.Controls.Add(this.fileRepositorySelection1);
-      this.cncAcquisitionGroupBox.Controls.Add(this.nameTextBox);
-      this.cncAcquisitionGroupBox.Controls.Add(this.label1);
-      this.cncAcquisitionGroupBox.Controls.Add(this.parametersTextBox);
-      this.cncAcquisitionGroupBox.Controls.Add(this.parametersLabel);
-      this.cncAcquisitionGroupBox.Controls.Add(this.prefixTextBox);
-      this.cncAcquisitionGroupBox.Controls.Add(this.prefixLabel);
-      this.cncAcquisitionGroupBox.Location = new System.Drawing.Point(13, 13);
-      this.cncAcquisitionGroupBox.Name = "cncAcquisitionGroupBox";
-      this.cncAcquisitionGroupBox.Size = new System.Drawing.Size(351, 281);
-      this.cncAcquisitionGroupBox.TabIndex = 0;
-      this.cncAcquisitionGroupBox.TabStop = false;
-      this.cncAcquisitionGroupBox.Text = "Cnc Acquisition";
+      cncAcquisitionGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+      cncAcquisitionGroupBox.Controls.Add (keyParamsTextBox);
+      cncAcquisitionGroupBox.Controls.Add (fileRepositorySelection1);
+      cncAcquisitionGroupBox.Controls.Add (nameTextBox);
+      cncAcquisitionGroupBox.Controls.Add (label1);
+      cncAcquisitionGroupBox.Controls.Add (parametersTextBox);
+      cncAcquisitionGroupBox.Controls.Add (parametersLabel);
+      cncAcquisitionGroupBox.Controls.Add (prefixTextBox);
+      cncAcquisitionGroupBox.Controls.Add (prefixLabel);
+      cncAcquisitionGroupBox.Location = new System.Drawing.Point (15, 15);
+      cncAcquisitionGroupBox.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      cncAcquisitionGroupBox.Name = "cncAcquisitionGroupBox";
+      cncAcquisitionGroupBox.Padding = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      cncAcquisitionGroupBox.Size = new System.Drawing.Size (410, 349);
+      cncAcquisitionGroupBox.TabIndex = 0;
+      cncAcquisitionGroupBox.TabStop = false;
+      cncAcquisitionGroupBox.Text = "Cnc Acquisition";
+      // 
+      // keyParamsTextBox
+      // 
+      keyParamsTextBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+      keyParamsTextBox.Location = new System.Drawing.Point (8, 314);
+      keyParamsTextBox.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      keyParamsTextBox.Name = "keyParamsTextBox";
+      keyParamsTextBox.Size = new System.Drawing.Size (394, 23);
+      keyParamsTextBox.TabIndex = 9;
       // 
       // fileRepositorySelection1
       // 
-      this.fileRepositorySelection1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileRepositorySelection1.AutoScroll = true;
-      this.fileRepositorySelection1.Location = new System.Drawing.Point(7, 19);
-      this.fileRepositorySelection1.Name = "fileRepositorySelection1";
-      this.fileRepositorySelection1.NSpace = "cncconfigs";
-      this.fileRepositorySelection1.Size = new System.Drawing.Size(195, 230);
-      this.fileRepositorySelection1.TabIndex = 8;
+      fileRepositorySelection1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+      fileRepositorySelection1.AutoScroll = true;
+      fileRepositorySelection1.Location = new System.Drawing.Point (8, 22);
+      fileRepositorySelection1.Margin = new System.Windows.Forms.Padding (5, 3, 5, 3);
+      fileRepositorySelection1.Name = "fileRepositorySelection1";
+      fileRepositorySelection1.NSpace = "cncconfigs";
+      fileRepositorySelection1.Size = new System.Drawing.Size (227, 257);
+      fileRepositorySelection1.TabIndex = 8;
       // 
       // nameTextBox
       // 
-      this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.nameTextBox.Location = new System.Drawing.Point(208, 42);
-      this.nameTextBox.Name = "nameTextBox";
-      this.nameTextBox.Size = new System.Drawing.Size(137, 20);
-      this.nameTextBox.TabIndex = 7;
-      this.nameTextBox.Text = "Test";
+      nameTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+      nameTextBox.Location = new System.Drawing.Point (243, 48);
+      nameTextBox.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      nameTextBox.Name = "nameTextBox";
+      nameTextBox.Size = new System.Drawing.Size (159, 23);
+      nameTextBox.TabIndex = 7;
+      nameTextBox.Text = "Test";
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label1.Location = new System.Drawing.Point(208, 16);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(39, 23);
-      this.label1.TabIndex = 6;
-      this.label1.Text = "Name";
-      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      label1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+      label1.Location = new System.Drawing.Point (243, 18);
+      label1.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      label1.Name = "label1";
+      label1.Size = new System.Drawing.Size (46, 27);
+      label1.TabIndex = 6;
+      label1.Text = "Name";
+      label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersTextBox.Location = new System.Drawing.Point(7, 255);
-      this.parametersTextBox.Name = "parametersTextBox";
-      this.parametersTextBox.Size = new System.Drawing.Size(338, 20);
-      this.parametersTextBox.TabIndex = 5;
+      parametersTextBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+      parametersTextBox.Location = new System.Drawing.Point (9, 285);
+      parametersTextBox.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      parametersTextBox.Name = "parametersTextBox";
+      parametersTextBox.Size = new System.Drawing.Size (394, 23);
+      parametersTextBox.TabIndex = 5;
       // 
       // parametersLabel
       // 
-      this.parametersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersLabel.Location = new System.Drawing.Point(229, 230);
-      this.parametersLabel.Name = "parametersLabel";
-      this.parametersLabel.Size = new System.Drawing.Size(116, 22);
-      this.parametersLabel.TabIndex = 4;
-      this.parametersLabel.Text = "Parameters";
-      this.parametersLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      parametersLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+      parametersLabel.Location = new System.Drawing.Point (271, 254);
+      parametersLabel.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      parametersLabel.Name = "parametersLabel";
+      parametersLabel.Size = new System.Drawing.Size (135, 25);
+      parametersLabel.TabIndex = 4;
+      parametersLabel.Text = "Parameters";
+      parametersLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
       // prefixTextBox
       // 
-      this.prefixTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.prefixTextBox.Location = new System.Drawing.Point(208, 91);
-      this.prefixTextBox.Name = "prefixTextBox";
-      this.prefixTextBox.Size = new System.Drawing.Size(137, 20);
-      this.prefixTextBox.TabIndex = 1;
+      prefixTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+      prefixTextBox.Location = new System.Drawing.Point (243, 105);
+      prefixTextBox.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      prefixTextBox.Name = "prefixTextBox";
+      prefixTextBox.Size = new System.Drawing.Size (159, 23);
+      prefixTextBox.TabIndex = 1;
       // 
       // prefixLabel
       // 
-      this.prefixLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.prefixLabel.Location = new System.Drawing.Point(208, 65);
-      this.prefixLabel.Name = "prefixLabel";
-      this.prefixLabel.Size = new System.Drawing.Size(39, 23);
-      this.prefixLabel.TabIndex = 0;
-      this.prefixLabel.Text = "Prefix";
-      this.prefixLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      prefixLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+      prefixLabel.Location = new System.Drawing.Point (243, 75);
+      prefixLabel.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      prefixLabel.Name = "prefixLabel";
+      prefixLabel.Size = new System.Drawing.Size (46, 27);
+      prefixLabel.TabIndex = 0;
+      prefixLabel.Text = "Prefix";
+      prefixLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // okButton
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(289, 487);
-      this.okButton.Name = "okButton";
-      this.okButton.Size = new System.Drawing.Size(75, 23);
-      this.okButton.TabIndex = 1;
-      this.okButton.Text = "OK";
-      this.okButton.UseVisualStyleBackColor = true;
-      this.okButton.Click += new System.EventHandler(this.OkButtonClick);
+      okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+      okButton.Location = new System.Drawing.Point (337, 562);
+      okButton.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      okButton.Name = "okButton";
+      okButton.Size = new System.Drawing.Size (88, 27);
+      okButton.TabIndex = 1;
+      okButton.Text = "OK";
+      okButton.UseVisualStyleBackColor = true;
+      okButton.Click += OkButtonClick;
       // 
       // machineModulesGroupBox
       // 
-      this.machineModulesGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.machineModulesGroupBox.Controls.Add(this.tableLayoutPanel1);
-      this.machineModulesGroupBox.Location = new System.Drawing.Point(13, 300);
-      this.machineModulesGroupBox.Name = "machineModulesGroupBox";
-      this.machineModulesGroupBox.Size = new System.Drawing.Size(351, 181);
-      this.machineModulesGroupBox.TabIndex = 2;
-      this.machineModulesGroupBox.TabStop = false;
-      this.machineModulesGroupBox.Text = "Machine modules";
+      machineModulesGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+      machineModulesGroupBox.Controls.Add (tableLayoutPanel1);
+      machineModulesGroupBox.Location = new System.Drawing.Point (15, 370);
+      machineModulesGroupBox.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      machineModulesGroupBox.Name = "machineModulesGroupBox";
+      machineModulesGroupBox.Padding = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      machineModulesGroupBox.Size = new System.Drawing.Size (410, 185);
+      machineModulesGroupBox.TabIndex = 2;
+      machineModulesGroupBox.TabStop = false;
+      machineModulesGroupBox.Text = "Machine modules";
       // 
       // tableLayoutPanel1
       // 
-      this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-      this.tableLayoutPanel1.ColumnCount = 3;
-      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this.tableLayoutPanel1.Controls.Add(this.label2, 0, 0);
-      this.tableLayoutPanel1.Controls.Add(this.label3, 1, 0);
-      this.tableLayoutPanel1.Controls.Add(this.label4, 2, 0);
-      this.tableLayoutPanel1.Controls.Add(this.machineModuleLabel1, 0, 1);
-      this.tableLayoutPanel1.Controls.Add(this.prefixTextBox1, 1, 1);
-      this.tableLayoutPanel1.Controls.Add(this.parametersTextBox1, 2, 1);
-      this.tableLayoutPanel1.Controls.Add(this.machineModuleLabel2, 0, 2);
-      this.tableLayoutPanel1.Controls.Add(this.prefixTextBox2, 1, 2);
-      this.tableLayoutPanel1.Controls.Add(this.parametersTextBox2, 2, 2);
-      this.tableLayoutPanel1.Controls.Add(this.machineModuleLabel3, 0, 3);
-      this.tableLayoutPanel1.Controls.Add(this.prefixTextBox3, 1, 3);
-      this.tableLayoutPanel1.Controls.Add(this.parametersTextBox3, 2, 3);
-      this.tableLayoutPanel1.Controls.Add(this.machineModuleLabel4, 0, 4);
-      this.tableLayoutPanel1.Controls.Add(this.prefixTextBox4, 1, 4);
-      this.tableLayoutPanel1.Controls.Add(this.parametersTextBox4, 2, 4);
-      this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 16);
-      this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-      this.tableLayoutPanel1.RowCount = 5;
-      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-      this.tableLayoutPanel1.Size = new System.Drawing.Size(345, 162);
-      this.tableLayoutPanel1.TabIndex = 0;
+      tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+      tableLayoutPanel1.ColumnCount = 3;
+      tableLayoutPanel1.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Percent, 50F));
+      tableLayoutPanel1.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Absolute, 117F));
+      tableLayoutPanel1.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Percent, 50F));
+      tableLayoutPanel1.Controls.Add (label2, 0, 0);
+      tableLayoutPanel1.Controls.Add (label3, 1, 0);
+      tableLayoutPanel1.Controls.Add (label4, 2, 0);
+      tableLayoutPanel1.Controls.Add (machineModuleLabel1, 0, 1);
+      tableLayoutPanel1.Controls.Add (prefixTextBox1, 1, 1);
+      tableLayoutPanel1.Controls.Add (parametersTextBox1, 2, 1);
+      tableLayoutPanel1.Controls.Add (machineModuleLabel2, 0, 2);
+      tableLayoutPanel1.Controls.Add (prefixTextBox2, 1, 2);
+      tableLayoutPanel1.Controls.Add (parametersTextBox2, 2, 2);
+      tableLayoutPanel1.Controls.Add (machineModuleLabel3, 0, 3);
+      tableLayoutPanel1.Controls.Add (prefixTextBox3, 1, 3);
+      tableLayoutPanel1.Controls.Add (parametersTextBox3, 2, 3);
+      tableLayoutPanel1.Controls.Add (machineModuleLabel4, 0, 4);
+      tableLayoutPanel1.Controls.Add (prefixTextBox4, 1, 4);
+      tableLayoutPanel1.Controls.Add (parametersTextBox4, 2, 4);
+      tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+      tableLayoutPanel1.Location = new System.Drawing.Point (4, 19);
+      tableLayoutPanel1.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      tableLayoutPanel1.Name = "tableLayoutPanel1";
+      tableLayoutPanel1.RowCount = 5;
+      tableLayoutPanel1.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 20F));
+      tableLayoutPanel1.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 20F));
+      tableLayoutPanel1.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 20F));
+      tableLayoutPanel1.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 20F));
+      tableLayoutPanel1.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 20F));
+      tableLayoutPanel1.Size = new System.Drawing.Size (402, 163);
+      tableLayoutPanel1.TabIndex = 0;
       // 
       // label2
       // 
-      this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.label2.Location = new System.Drawing.Point(4, 1);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(114, 31);
-      this.label2.TabIndex = 0;
-      this.label2.Text = "Machine module";
-      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      label2.Dock = System.Windows.Forms.DockStyle.Fill;
+      label2.Location = new System.Drawing.Point (5, 1);
+      label2.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      label2.Name = "label2";
+      label2.Size = new System.Drawing.Size (132, 31);
+      label2.TabIndex = 0;
+      label2.Text = "Machine module";
+      label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // label3
       // 
-      this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.label3.Location = new System.Drawing.Point(125, 1);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(94, 31);
-      this.label3.TabIndex = 1;
-      this.label3.Text = "Prefix";
-      this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      label3.Dock = System.Windows.Forms.DockStyle.Fill;
+      label3.Location = new System.Drawing.Point (146, 1);
+      label3.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      label3.Name = "label3";
+      label3.Size = new System.Drawing.Size (109, 31);
+      label3.TabIndex = 1;
+      label3.Text = "Prefix";
+      label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // label4
       // 
-      this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.label4.Location = new System.Drawing.Point(226, 1);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(115, 31);
-      this.label4.TabIndex = 2;
-      this.label4.Text = "Parameters";
-      this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      label4.Dock = System.Windows.Forms.DockStyle.Fill;
+      label4.Location = new System.Drawing.Point (264, 1);
+      label4.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      label4.Name = "label4";
+      label4.Size = new System.Drawing.Size (133, 31);
+      label4.TabIndex = 2;
+      label4.Text = "Parameters";
+      label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // machineModuleLabel1
       // 
-      this.machineModuleLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.machineModuleLabel1.Location = new System.Drawing.Point(4, 33);
-      this.machineModuleLabel1.Name = "machineModuleLabel1";
-      this.machineModuleLabel1.Size = new System.Drawing.Size(114, 31);
-      this.machineModuleLabel1.TabIndex = 3;
-      this.machineModuleLabel1.Click += new System.EventHandler(this.MachineModuleLabel1Click);
+      machineModuleLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+      machineModuleLabel1.Location = new System.Drawing.Point (5, 33);
+      machineModuleLabel1.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      machineModuleLabel1.Name = "machineModuleLabel1";
+      machineModuleLabel1.Size = new System.Drawing.Size (132, 31);
+      machineModuleLabel1.TabIndex = 3;
+      machineModuleLabel1.Click += MachineModuleLabel1Click;
       // 
       // prefixTextBox1
       // 
-      this.prefixTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.prefixTextBox1.Location = new System.Drawing.Point(125, 36);
-      this.prefixTextBox1.Name = "prefixTextBox1";
-      this.prefixTextBox1.Size = new System.Drawing.Size(94, 20);
-      this.prefixTextBox1.TabIndex = 4;
+      prefixTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+      prefixTextBox1.Location = new System.Drawing.Point (146, 36);
+      prefixTextBox1.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      prefixTextBox1.Name = "prefixTextBox1";
+      prefixTextBox1.Size = new System.Drawing.Size (109, 23);
+      prefixTextBox1.TabIndex = 4;
       // 
       // parametersTextBox1
       // 
-      this.parametersTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.parametersTextBox1.Location = new System.Drawing.Point(226, 36);
-      this.parametersTextBox1.Name = "parametersTextBox1";
-      this.parametersTextBox1.Size = new System.Drawing.Size(115, 20);
-      this.parametersTextBox1.TabIndex = 5;
+      parametersTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+      parametersTextBox1.Location = new System.Drawing.Point (264, 36);
+      parametersTextBox1.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      parametersTextBox1.Name = "parametersTextBox1";
+      parametersTextBox1.Size = new System.Drawing.Size (133, 23);
+      parametersTextBox1.TabIndex = 5;
       // 
       // machineModuleLabel2
       // 
-      this.machineModuleLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.machineModuleLabel2.Location = new System.Drawing.Point(4, 65);
-      this.machineModuleLabel2.Name = "machineModuleLabel2";
-      this.machineModuleLabel2.Size = new System.Drawing.Size(114, 31);
-      this.machineModuleLabel2.TabIndex = 3;
-      this.machineModuleLabel2.Click += new System.EventHandler(this.MachineModuleLabel2Click);
+      machineModuleLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
+      machineModuleLabel2.Location = new System.Drawing.Point (5, 65);
+      machineModuleLabel2.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      machineModuleLabel2.Name = "machineModuleLabel2";
+      machineModuleLabel2.Size = new System.Drawing.Size (132, 31);
+      machineModuleLabel2.TabIndex = 3;
+      machineModuleLabel2.Click += MachineModuleLabel2Click;
       // 
       // prefixTextBox2
       // 
-      this.prefixTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.prefixTextBox2.Location = new System.Drawing.Point(125, 68);
-      this.prefixTextBox2.Name = "prefixTextBox2";
-      this.prefixTextBox2.Size = new System.Drawing.Size(94, 20);
-      this.prefixTextBox2.TabIndex = 4;
+      prefixTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+      prefixTextBox2.Location = new System.Drawing.Point (146, 68);
+      prefixTextBox2.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      prefixTextBox2.Name = "prefixTextBox2";
+      prefixTextBox2.Size = new System.Drawing.Size (109, 23);
+      prefixTextBox2.TabIndex = 4;
       // 
       // parametersTextBox2
       // 
-      this.parametersTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.parametersTextBox2.Location = new System.Drawing.Point(226, 68);
-      this.parametersTextBox2.Name = "parametersTextBox2";
-      this.parametersTextBox2.Size = new System.Drawing.Size(115, 20);
-      this.parametersTextBox2.TabIndex = 5;
+      parametersTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+      parametersTextBox2.Location = new System.Drawing.Point (264, 68);
+      parametersTextBox2.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      parametersTextBox2.Name = "parametersTextBox2";
+      parametersTextBox2.Size = new System.Drawing.Size (133, 23);
+      parametersTextBox2.TabIndex = 5;
       // 
       // machineModuleLabel3
       // 
-      this.machineModuleLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.machineModuleLabel3.Location = new System.Drawing.Point(4, 97);
-      this.machineModuleLabel3.Name = "machineModuleLabel3";
-      this.machineModuleLabel3.Size = new System.Drawing.Size(114, 31);
-      this.machineModuleLabel3.TabIndex = 3;
-      this.machineModuleLabel3.Click += new System.EventHandler(this.MachineModuleLabel3Click);
+      machineModuleLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
+      machineModuleLabel3.Location = new System.Drawing.Point (5, 97);
+      machineModuleLabel3.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      machineModuleLabel3.Name = "machineModuleLabel3";
+      machineModuleLabel3.Size = new System.Drawing.Size (132, 31);
+      machineModuleLabel3.TabIndex = 3;
+      machineModuleLabel3.Click += MachineModuleLabel3Click;
       // 
       // prefixTextBox3
       // 
-      this.prefixTextBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.prefixTextBox3.Location = new System.Drawing.Point(125, 100);
-      this.prefixTextBox3.Name = "prefixTextBox3";
-      this.prefixTextBox3.Size = new System.Drawing.Size(94, 20);
-      this.prefixTextBox3.TabIndex = 4;
+      prefixTextBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+      prefixTextBox3.Location = new System.Drawing.Point (146, 100);
+      prefixTextBox3.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      prefixTextBox3.Name = "prefixTextBox3";
+      prefixTextBox3.Size = new System.Drawing.Size (109, 23);
+      prefixTextBox3.TabIndex = 4;
       // 
       // parametersTextBox3
       // 
-      this.parametersTextBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.parametersTextBox3.Location = new System.Drawing.Point(226, 100);
-      this.parametersTextBox3.Name = "parametersTextBox3";
-      this.parametersTextBox3.Size = new System.Drawing.Size(115, 20);
-      this.parametersTextBox3.TabIndex = 5;
+      parametersTextBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+      parametersTextBox3.Location = new System.Drawing.Point (264, 100);
+      parametersTextBox3.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      parametersTextBox3.Name = "parametersTextBox3";
+      parametersTextBox3.Size = new System.Drawing.Size (133, 23);
+      parametersTextBox3.TabIndex = 5;
       // 
       // machineModuleLabel4
       // 
-      this.machineModuleLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.machineModuleLabel4.Location = new System.Drawing.Point(4, 129);
-      this.machineModuleLabel4.Name = "machineModuleLabel4";
-      this.machineModuleLabel4.Size = new System.Drawing.Size(114, 32);
-      this.machineModuleLabel4.TabIndex = 3;
-      this.machineModuleLabel4.Click += new System.EventHandler(this.MachineModuleLabel4Click);
+      machineModuleLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
+      machineModuleLabel4.Location = new System.Drawing.Point (5, 129);
+      machineModuleLabel4.Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      machineModuleLabel4.Name = "machineModuleLabel4";
+      machineModuleLabel4.Size = new System.Drawing.Size (132, 33);
+      machineModuleLabel4.TabIndex = 3;
+      machineModuleLabel4.Click += MachineModuleLabel4Click;
       // 
       // prefixTextBox4
       // 
-      this.prefixTextBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.prefixTextBox4.Location = new System.Drawing.Point(125, 132);
-      this.prefixTextBox4.Name = "prefixTextBox4";
-      this.prefixTextBox4.Size = new System.Drawing.Size(94, 20);
-      this.prefixTextBox4.TabIndex = 4;
+      prefixTextBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+      prefixTextBox4.Location = new System.Drawing.Point (146, 132);
+      prefixTextBox4.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      prefixTextBox4.Name = "prefixTextBox4";
+      prefixTextBox4.Size = new System.Drawing.Size (109, 23);
+      prefixTextBox4.TabIndex = 4;
       // 
       // parametersTextBox4
       // 
-      this.parametersTextBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.parametersTextBox4.Location = new System.Drawing.Point(226, 132);
-      this.parametersTextBox4.Name = "parametersTextBox4";
-      this.parametersTextBox4.Size = new System.Drawing.Size(115, 20);
-      this.parametersTextBox4.TabIndex = 5;
+      parametersTextBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+      parametersTextBox4.Location = new System.Drawing.Point (264, 132);
+      parametersTextBox4.Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      parametersTextBox4.Name = "parametersTextBox4";
+      parametersTextBox4.Size = new System.Drawing.Size (133, 23);
+      parametersTextBox4.TabIndex = 5;
       // 
       // ConfigParamDialog
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(376, 522);
-      this.Controls.Add(this.machineModulesGroupBox);
-      this.Controls.Add(this.okButton);
-      this.Controls.Add(this.cncAcquisitionGroupBox);
-      this.MaximizeBox = false;
-      this.MinimizeBox = false;
-      this.Name = "ConfigParamDialog";
-      this.ShowInTaskbar = false;
-      this.Text = "Cnc Config+Param";
-      this.cncAcquisitionGroupBox.ResumeLayout(false);
-      this.cncAcquisitionGroupBox.PerformLayout();
-      this.machineModulesGroupBox.ResumeLayout(false);
-      this.tableLayoutPanel1.ResumeLayout(false);
-      this.tableLayoutPanel1.PerformLayout();
-      this.ResumeLayout(false);
-
+      AutoScaleDimensions = new System.Drawing.SizeF (7F, 15F);
+      AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      ClientSize = new System.Drawing.Size (439, 602);
+      Controls.Add (machineModulesGroupBox);
+      Controls.Add (okButton);
+      Controls.Add (cncAcquisitionGroupBox);
+      Margin = new System.Windows.Forms.Padding (4, 3, 4, 3);
+      MaximizeBox = false;
+      MinimizeBox = false;
+      Name = "ConfigParamDialog";
+      ShowInTaskbar = false;
+      Text = "Cnc Config+Param";
+      cncAcquisitionGroupBox.ResumeLayout (false);
+      cncAcquisitionGroupBox.PerformLayout ();
+      machineModulesGroupBox.ResumeLayout (false);
+      tableLayoutPanel1.ResumeLayout (false);
+      tableLayoutPanel1.PerformLayout ();
+      ResumeLayout (false);
     }
+
     private System.Windows.Forms.TextBox parametersTextBox1;
     private System.Windows.Forms.TextBox prefixTextBox1;
     private System.Windows.Forms.Label machineModuleLabel1;
@@ -384,5 +418,6 @@ namespace Lem_CncGUI
     private System.Windows.Forms.TextBox prefixTextBox;
     private System.Windows.Forms.Label prefixLabel;
     private System.Windows.Forms.GroupBox cncAcquisitionGroupBox;
+    private System.Windows.Forms.TextBox keyParamsTextBox;
   }
 }

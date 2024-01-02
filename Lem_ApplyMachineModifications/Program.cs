@@ -10,7 +10,7 @@ using CommandLine;
 using Lemoine.I18N;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
-using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using CommandLine.Text;
 using System.Linq;

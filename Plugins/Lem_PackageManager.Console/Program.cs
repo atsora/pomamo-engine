@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Lemoine.Core.Plugin;
 using Lemoine.Extensions.Interfaces;
 using Lemoine.Core.Hosting;
+using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Extensions;
 using Lemoine.Core.Hosting.LctrChecker;
 using Microsoft.Extensions.DependencyInjection;

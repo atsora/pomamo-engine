@@ -13,9 +13,9 @@ using Lemoine.Info;
 namespace Lemoine.Threading
 {
   /// <summary>
-  /// Base <see cref="IProcessClass">IProcessClass</see> implementation
+  /// Base <see cref="ILoggedProcessClass">ILoggedProcessClass</see> implementation
   /// </summary>
-  public abstract class ProcessClass: IProcessClass, IChecked
+  public abstract class ProcessClass: ILoggedProcessClass, IChecked, ILogged
   {
     #region Members
     DateTime m_startDateTime = DateTime.UtcNow;
@@ -26,7 +26,7 @@ namespace Lemoine.Threading
     int m_parentProcessId = 0;
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (ThreadClass).FullName);
+    static readonly ILog log = LogManager.GetLogger(typeof (ProcessClass).FullName);
 
     #region Getters / Setters
     /// <summary>

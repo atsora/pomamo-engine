@@ -17,17 +17,12 @@ namespace Lemoine.Extensions.Business
   {
     readonly ILog log = LogManager.GetLogger (typeof (ExtensionInterfaceProvider).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public ExtensionInterfaceProvider ()
     {
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="IExtensionInterfaceProvider"/>

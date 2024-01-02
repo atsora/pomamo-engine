@@ -54,9 +54,9 @@ namespace Lemoine.Extensions.Plugin
     /// <see cref="IPluginsLoader"/>
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<PluginDllLoader> GetLoadErrorPlugins ()
+    public IEnumerable<IPluginDllLoader> GetLoadErrorPlugins ()
     {
-      return new List <PluginDllLoader> ();
+      return new List <IPluginDllLoader> ();
     }
 
     /// <summary>
