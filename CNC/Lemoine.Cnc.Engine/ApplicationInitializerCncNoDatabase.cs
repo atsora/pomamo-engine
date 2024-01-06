@@ -17,7 +17,7 @@ using Lemoine.FileRepository;
 namespace Lemoine.CncEngine
 {
   /// <summary>
-  /// ApplicationInitializer for cnc acquisition with no database connection and a dummy file repo
+  /// ApplicationInitializer for cnc acquisition with no database connection
   /// </summary>
   public class ApplicationInitializerCncNoDatabase : IApplicationInitializer
   {

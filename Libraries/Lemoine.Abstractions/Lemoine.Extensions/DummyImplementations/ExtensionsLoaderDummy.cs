@@ -24,7 +24,7 @@ namespace Lemoine.Extensions.DummyImplementations
     /// 
     /// <see cref="IExtensionsLoader"/>
     /// </summary>
-    public IExtensionsProvider ExtensionsProvider => null;
+    public IExtensionsProvider ExtensionsProvider => new ExtensionsProviderDummy ();
 
     #region Constructors
     /// <summary>
