@@ -118,8 +118,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       if (m_isWindows) {
         path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData),
 #if ATSORA
+#if CONNECTOR
+      "Atsora", "Connector");
+#else // !CONNECTOR
       "Atsora", "Tracking");
-#elif LEMOINE
+#endif // !CONNECTOR
+#elif LEMOINE        
       "Lemoine", "PULSE)";
 #else
       "Pomamo");

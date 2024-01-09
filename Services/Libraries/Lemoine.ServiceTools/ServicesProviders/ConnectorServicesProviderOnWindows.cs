@@ -23,7 +23,7 @@ namespace Lemoine.ServiceTools.ServicesProviders
     /// Constructor
     /// </summary>
     public ConnectorServicesProviderOnWindows ()
-      : base ("AconnectorCncService", "AconnectorCncCoreService", "AconnectorOpenCncService", "AconnectorOpenCncCoreService")
+      : base ("AconnectorCncService", "AconnectorOpenCncService", "AconnectorCncCoreService", "AconnectorOpenCncCoreService", "AconnectorAspService")
     {
     }
   }

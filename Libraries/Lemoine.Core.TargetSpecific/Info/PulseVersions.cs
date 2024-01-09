@@ -136,8 +136,12 @@ namespace Lemoine.Info.TargetSpecific
         using (var baseKey = Microsoft.Win32.RegistryKey.OpenBaseKey (Microsoft.Win32.RegistryHive.LocalMachine, registryView)) {
           var registryKey =
 #if ATSORA
+#if CONNECTOR
+            @"SOFTWARE\Atsora\Connector"
+#else // !CONNECTOR
             @"SOFTWARE\Atsora\Tracking"
-#elif LEMOINE
+#endif // !CONNECTOR
+#elif LEMOINE        
             @"SOFTWARE\Lemoine\PULSE"
 #else
             @"SOFTWARE\Pomamo"
@@ -164,9 +168,9 @@ namespace Lemoine.Info.TargetSpecific
     }
 #endif // !NETSTANDARD
 
-    #endregion // Methods
+#endregion // Methods
 
-    #region Instance
+          #region Instance
     static PulseVersions Instance
     {
       get { return Nested.instance; }

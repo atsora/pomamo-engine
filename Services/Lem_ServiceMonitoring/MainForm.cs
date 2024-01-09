@@ -161,7 +161,8 @@ namespace LemoineServiceMonitoring
         "AconnectorCncCoreService",
         "AconnectorOpenCncService",
         "AconnectorOpenCncCoreService",
-        "AconnectorAspService"
+        "AconnectorAspService",
+        "AconnectorWatchDogService"
       };
       AddAdditionalServices (connectorServices, ADDITIONAL_CONNECTOR_KEY);
 

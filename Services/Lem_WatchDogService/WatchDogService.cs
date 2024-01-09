@@ -86,8 +86,12 @@ namespace Lem_WatchDogService
 
           while (!linkedToken.IsCancellationRequested) {
             foreach (var serviceController in serviceControllers) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"InitializeAsync: check {serviceController.ServiceName}");
+              }
               try {
                 if (!serviceController.Running) {
+                  log.Info ($"InitializeAsync: start {serviceController.ServiceName}");
                   linkedToken.ThrowIfCancellationRequested ();
                   await serviceController.StartServiceAsync (linkedToken);
                 }

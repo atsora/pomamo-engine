@@ -26,6 +26,9 @@ namespace Lem_WatchDogService
     static readonly string LOG4NET_TRACE_ENABLED_KEY = "Log4net.TraceEnabled";
     static readonly bool LOG4NET_TRACE_ENABLED_DEFAULT = false;
 
+    const string SERVICE_SET_KEY = "WatchDog.ServiceSet";
+    const string SERVICE_SET_DEFAULT = "Default"; // "TrackingConnector: Both Atsora Tracking and Connector
+
     /// <summary>
     /// Service name
     /// </summary>
@@ -108,8 +111,21 @@ namespace Lem_WatchDogService
     static void AddWindowsServiceControllersProvider (IServiceCollection services)
     {
       services
-        .AddSingleton<IServiceControllersProvider> (sp => new MultiServicesProvider (new PomamoServicesProviderOnWindows (), new ConnectorServicesProviderOnWindows (), new ConfigServicesProviderOnWindows ()));
+        .AddSingleton<IServiceControllersProvider> (sp => GetServiceControllersProviderOnWindows ());
     }
+
+    [SupportedOSPlatform ("windows")]
+    static IServiceControllersProvider GetServiceControllersProviderOnWindows () =>
+      Lemoine.Info.ConfigSet.LoadAndGet (SERVICE_SET_KEY, SERVICE_SET_DEFAULT) switch {
+        SERVICE_SET_DEFAULT => new MultiServicesProvider (
+#if CONNECTOR
+          new ConnectorServicesProviderOnWindows (),
+#else // !CONNECTOR
+          new PomamoServicesProviderOnWindows (),
+#endif // !CONNECTOR
+          new ConfigServicesProviderOnWindows ()),
+        _ => new MultiServicesProvider (new PomamoServicesProviderOnWindows (), new ConnectorServicesProviderOnWindows (), new ConfigServicesProviderOnWindows ())
+      };
 
     [SupportedOSPlatform ("linux")]
     static void AddLinuxServiceControllersProvider (IServiceCollection services)

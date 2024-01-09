@@ -33,8 +33,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 
     static readonly string REGISTRY_KEY =
 #if ATSORA
+#if CONNECTOR
+      "SOFTWARE\\Atsora\\Connector";
+#else // !CONNECTOR
       "SOFTWARE\\Atsora\\Tracking";
-#elif LEMOINE
+#endif // !CONNECTOR
+#elif LEMOINE                        
       "SOFTWARE\\Lemoine\\PULSE";
 #else
       "SOFTWARE\\Pomamo";

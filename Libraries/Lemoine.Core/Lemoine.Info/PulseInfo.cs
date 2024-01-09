@@ -39,12 +39,14 @@ namespace Lemoine.Info
     static readonly string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
 
 #if ATSORA
-    static readonly string LINUX_PACKAGE_NAME = "atracking";
-    static readonly string WIN_PRODUCT_FOLDER_NAME = "atracking";
     static readonly string COMPANY_NAME = "Atsora";
 #if CONNECTOR
+    static readonly string LINUX_PACKAGE_NAME = "aconnector";
+    static readonly string WIN_PRODUCT_FOLDER_NAME = "aconnector";
     static readonly string PRODUCT_NAME = "Connector";
 #else // !CONNECTOR
+    static readonly string LINUX_PACKAGE_NAME = "atracking";
+    static readonly string WIN_PRODUCT_FOLDER_NAME = "atracking";
     static readonly string PRODUCT_NAME = "Tracking";
 #endif // CONNECTOR
 #elif LEMOINE

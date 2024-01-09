@@ -1,6 +1,6 @@
-﻿/* -*- c# -*- ******************************************************************
- * Copyright (c) Nicolas Relange. All Rights Reserved.
- */
+﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies
+//
+// SPDX-License-Identifier: Apache-2.0
 
 #if NETSTANDARD
 

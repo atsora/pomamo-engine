@@ -12,6 +12,17 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
+  <!-- For x86 compilation that is using the global .sln -->
+  <PropertyGroup Condition="$(Product.StartsWith('Atsora')) == 'true'">
+    <DefineConstants>$(DefineConstants);ATSORA</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Product)' == 'Atsora Connector'">
+    <DefineConstants>$(DefineConstants);CONNECTOR</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Product.StartsWith('Lemoine')) == 'true'">
+    <DefineConstants>$(DefineConstants);LEMOINE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
