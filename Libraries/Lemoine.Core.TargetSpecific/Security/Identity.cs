@@ -401,6 +401,38 @@ namespace Lemoine.Core.Security
       }
     }
 
+    /// <summary>
+    /// Make the owner of a file run a function
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="func"></param>
+    /// <returns></returns>
+    /// <exception cref="PlatformNotSupportedException"></exception>
+    /// <exception cref="Exception"></exception>
+    /// <exception cref="Win32Exception"></exception>
+    public static void RunImpersonated (string domainUser, Action func)
+    {
+      if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
+        log.Error ("RunImpersonated: not supported platform");
+        throw new PlatformNotSupportedException ();
+      }
+
+      try {
+        using (var windowsIdentity = new WindowsIdentity (domainUser)) { // This only works on domain users
+          if (log.IsDebugEnabled) {
+            log.Debug ($"RunImpersonated: before impersonation, user={WindowsIdentity.GetCurrent ().Name}");
+          }
+          using (var token = new SafeAccessTokenHandle (windowsIdentity.Token)) {
+            WindowsIdentity.RunImpersonated (token, func);
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Warn ($"RunImpersonated: exception", ex);
+        throw;
+      }
+    }
+
 #if NET6_0_OR_GREATER
     /// <summary>
     /// Make the owner of a file run a function asynchronously
@@ -478,6 +510,39 @@ namespace Lemoine.Core.Security
       }
       catch (Exception ex) {
         log.Warn ($"RunImpersonatedAsFileOwnerAsync: exception", ex);
+        throw;
+      }
+    }
+
+    /// <summary>
+    /// Make a specific user run a function asynchronously
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="domainUser">Domain user: name@domain</param>
+    /// <param name="func"></param>
+    /// <returns></returns>
+    /// <exception cref="PlatformNotSupportedException"></exception>
+    /// <exception cref="Exception"></exception>
+    /// <exception cref="Win32Exception"></exception>
+    public static async Task RunImpersonatedAsync (string domainUser, Func<Task> func)
+    {
+      if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
+        log.Error ("RunImpersonatedAsync: not supported platform");
+        throw new PlatformNotSupportedException ();
+      }
+
+      try {
+        using (var windowsIdentity = new WindowsIdentity (domainUser)) { // This only works on domain users
+          if (log.IsDebugEnabled) {
+            log.Debug ($"RunImpersonatedAsync: before impersonation, user={WindowsIdentity.GetCurrent ().Name}");
+          }
+          using (var token = new SafeAccessTokenHandle (windowsIdentity.Token)) {
+            await WindowsIdentity.RunImpersonatedAsync (token, func);
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Warn ($"RunImpersonatedAsync: exception", ex);
         throw;
       }
     }

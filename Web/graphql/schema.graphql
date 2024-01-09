@@ -576,6 +576,7 @@ type CncConfigProtocol {
 type CncConfigParam {
   name: String! # currently ParamX
   label: String
+  help: String
   description: String
   type: CncConfigParamType
   optional: Boolean

@@ -861,7 +861,7 @@ namespace Lemoine.Cnc.DataRepository
         }
         else {
           var a0 = a[0].Trim ();
-          if (string.IsNullOrEmpty (a0)) {
+          if (!string.IsNullOrEmpty (a0)) {
             attribute.Value = a0;
           }
           else {

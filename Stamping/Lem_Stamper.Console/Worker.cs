@@ -27,6 +27,9 @@ namespace Lem_Stamper.Console
   {
     readonly ILog log = LogManager.GetLogger (typeof (Worker).FullName);
 
+    static readonly string SPECIFIC_USER_KEY = "Stamping.Lem_Stamper.SpecificUser";
+    static readonly string SPECIFIC_USER_DEFAULT = ""; // user@domain
+
     static readonly string USE_SESSION_USER_KEY = "Stamping.Lem_Stamper.UseSessionUser";
     static readonly bool USE_SESSION_USER_DEFAULT = false;
 
@@ -69,12 +72,21 @@ namespace Lem_Stamper.Console
           var provider = scope.ServiceProvider;
           var fullStampingProcess = provider.GetRequiredService<FullStampingProcess> ();
 
-          var useSessionUser = Lemoine.Info.ConfigSet.LoadAndGet (USE_SESSION_USER_KEY, USE_SESSION_USER_DEFAULT);
-          if (useSessionUser) {
-            await Lemoine.Core.Security.Identity.RunImpersonatedAsExplorerUserAsync (async () => await fullStampingProcess.StampAsync (cancellationToken));
+          var specificUser = Lemoine.Info.ConfigSet.LoadAndGet (SPECIFIC_USER_KEY, SPECIFIC_USER_DEFAULT).Trim ();
+          if (!string.IsNullOrEmpty (specificUser)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartAsync: stamp as {specificUser}");
+            }
+            await Lemoine.Core.Security.Identity.RunImpersonatedAsync (specificUser, async () => await fullStampingProcess.StampAsync (cancellationToken));
           }
           else {
-            await fullStampingProcess.StampAsync (cancellationToken);
+            var useSessionUser = Lemoine.Info.ConfigSet.LoadAndGet (USE_SESSION_USER_KEY, USE_SESSION_USER_DEFAULT);
+            if (useSessionUser) {
+              await Lemoine.Core.Security.Identity.RunImpersonatedAsExplorerUserAsync (async () => await fullStampingProcess.StampAsync (cancellationToken));
+            }
+            else {
+              await fullStampingProcess.StampAsync (cancellationToken);
+            }
           }
         }
       }

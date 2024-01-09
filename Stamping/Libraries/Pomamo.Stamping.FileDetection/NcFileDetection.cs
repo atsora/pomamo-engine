@@ -48,6 +48,12 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string RECURSIVE_KEY = "Stamping.NcFileDetection.Recursive";
     static readonly string RECURSIVE_DEFAULT = ""; // Boolean: empty string means keep the default (true by default)
 
+    static readonly string SPECIFIC_USER_KEY = "Stamping.NcFileDetection.SpecificUser";
+    static readonly string SPECIFIC_USER_DEFAULT = ""; // user@domain
+
+    static readonly string FORCE_SPECIFIC_USER_KEY = "Stamping.NcFileDetection.ForceSpecificUser";
+    static readonly bool FORCE_SPECIFIC_USER_DEFAULT = true; // Else, just try it
+
     static readonly string SERVICE_USE_CURRENT_USER_KEY = "Stamping.NcFileDetection.ServiceUseCurrentUser";
     static readonly bool SERVICE_USE_CURRENT_USER_DEFAULT = false;
 
@@ -67,6 +73,8 @@ namespace Pomamo.Stamping.FileDetection
     readonly bool m_recursive = true; // Recursive search
     readonly IEnumerable<string> m_ncExtensions;
     readonly IEnumerable<string> m_excludeExtensions;
+    readonly string m_specificUser = "";
+    readonly bool m_forceSpecificUser = true;
     readonly bool m_useCurrentUser = false;
     readonly bool m_tryFileOwner = false;
     readonly TimeSpan m_maxDelayForIsoFileCreation;
@@ -114,6 +122,10 @@ namespace Pomamo.Stamping.FileDetection
           m_recursive = recursive;
         }
       }
+      m_specificUser = Lemoine.Info.ConfigSet
+        .LoadAndGet (SPECIFIC_USER_KEY, SPECIFIC_USER_DEFAULT).Trim ();
+      m_forceSpecificUser = Lemoine.Info.ConfigSet
+        .LoadAndGet (FORCE_SPECIFIC_USER_KEY, FORCE_SPECIFIC_USER_DEFAULT);
       m_useCurrentUser = Lemoine.Info.ConfigSet
         .LoadAndGet<bool> (SERVICE_USE_CURRENT_USER_KEY, SERVICE_USE_CURRENT_USER_DEFAULT);
       m_tryFileOwner = Lemoine.Info.ConfigSet
@@ -315,6 +327,25 @@ namespace Pomamo.Stamping.FileDetection
 
     async Task ProcessFileImpersonatedAsync (string path, CancellationToken cancellationToken)
     {
+      if (!string.IsNullOrEmpty (m_specificUser)) {
+        try {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessFileImpersonatedAsync: with user {m_specificUser}");
+          }
+          await Lemoine.Core.Security.Identity.RunImpersonatedAsync (m_specificUser, async () => await ProcessFileAsync (path, cancellationToken));
+          return;
+        }
+        catch (Exception ex) {
+          if (m_forceSpecificUser) {
+            log.Error ($"ProcessFileImpersonatedAsync: with user {m_specificUser}, exception", ex);
+            throw;
+          }
+          else {
+            log.Debug ($"ProcessFileImpersonatedAsync: with user {m_specificUser}, exception", ex);
+          }
+        }
+      }
+
       if (m_tryFileOwner) {
         try {
           await Lemoine.Core.Security.Identity.RunImpersonatedAsFileOwnerAsync (path, async () => await ProcessFileAsync (path, cancellationToken));
