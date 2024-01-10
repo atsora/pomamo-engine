@@ -129,7 +129,13 @@ namespace Lemoine.Alert
         if (f.Equals (DEFAULT_SENDER)) {
           log.Error ($"Execute: net.mail.from is unknown, => use {DEFAULT_SENDER} by default");
         }
-        sender = new MailboxAddress ("Lemoine Pulse", f);
+        sender = new MailboxAddress (
+#if ATSORA
+          "Atsora Tracking",
+#else
+          "Pomamo",
+#endif
+          f);
       }
 
       // - Create the message
@@ -189,7 +195,7 @@ namespace Lemoine.Alert
       if (body.Contains ("<html>")) {
         try {
           try { // Add logo
-            var logoFileName = Path.Combine (Lemoine.Info.AssemblyInfo.AbsoluteDirectory, "AlertEmailPulseLogo.png");
+            var logoFileName = Path.Combine (Lemoine.Info.AssemblyInfo.AbsoluteDirectory, "Logo.png");
             if (!File.Exists (logoFileName)) {
               log.Warn ($"Execute: logo file {logoFileName} does not exist");
               throw new Exception ("Logo file does not exist");
@@ -200,13 +206,13 @@ namespace Lemoine.Alert
               }
               var bodyBuilder = new BodyBuilder ();
               var image = bodyBuilder.LinkedResources.Add (logoFileName, new ContentType ("image", "png"));
-              image.ContentId = "pulse_logo";
+              image.ContentId = "logo";
               bodyBuilder.HtmlBody = body;
               message.Body = bodyBuilder.ToMessageBody ();
             }
           }
           catch (Exception ex) {
-            log.Error ("Execute: exception in adding the pulse logo process", ex);
+            log.Error ("Execute: exception in adding the logo process", ex);
             message.Body = new TextPart (MimeKit.Text.TextFormat.Html) {
               Text = body
             };
@@ -378,6 +384,6 @@ namespace Lemoine.Alert
 
       return true;
     }
-    #endregion // Methods
+#endregion // Methods
   }
 }

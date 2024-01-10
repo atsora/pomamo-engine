@@ -21,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="AlertEmailPulseLogo.png" CopyToOutputDirectory="Always" />
+    <None Update="Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

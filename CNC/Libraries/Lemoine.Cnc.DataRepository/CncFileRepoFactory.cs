@@ -618,6 +618,9 @@ namespace Lemoine.Cnc.DataRepository
                 }
               }
             }
+            // Remove {param:xxx}
+            RemovePrefixedInstruction (attribute, "param");
+            RemoveNumberedInstruction (attribute, "Param");
             foreach (IMachineModule machineModule in m_cncAcquisition.MachineModules) {
               var defaultDetectionMethod = GetDefaultDetectionMethod (machineModule);
               // {..MachineParami}
@@ -848,6 +851,54 @@ namespace Lemoine.Cnc.DataRepository
           string defaultValue = fullPattern
             .Substring (fullPrefix.Length, fullPattern.Length - fullPrefix.Length - 1);
           attribute.Value = attribute.Value.Replace (fullPattern, defaultValue);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Remove an instruction like {prefix:...}
+    /// </summary>
+    /// <param name="attribute"></param>
+    /// <param name="prefix"></param>
+    void RemovePrefixedInstruction (XmlAttribute attribute, string prefix)
+    {
+      var fullPrefix = $"{{{prefix}:";
+      if (attribute.Value.Contains (fullPrefix)) {
+        var index = attribute.Value.IndexOf (fullPrefix);
+        var fullPattern = attribute.Value.Substring (index);
+        fullPattern = fullPattern
+          .Substring (0, fullPattern.IndexOf ('}') + 1);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RemovePrefixedInstruction: remove {fullPattern}");
+        }
+        attribute.Value = attribute.Value.Replace (fullPattern, "");
+        RemovePrefixedInstruction (attribute, prefix); // There might be one more to process
+      }
+    }
+
+    /// <summary>
+    /// Remove any remaining {prefixi} instruction (default is {Parami})
+    /// </summary>
+    /// <param name="attribute"></param>
+    void RemoveNumberedInstruction (XmlAttribute attribute, string prefix = "Param")
+    {
+      var fullPrefix = $"{{{prefix}";
+      if (attribute.Value.Contains (fullPrefix)) {
+        var index = attribute.Value.IndexOf (fullPrefix);
+        var fullPattern = attribute.Value.Substring (index);
+        fullPattern = fullPattern
+          .Substring (0, fullPattern.IndexOf ('}') + 1);
+        var stringNumber = fullPattern
+          .Substring (fullPrefix.Length, fullPattern.Length - fullPrefix.Length - 1);
+        if (int.TryParse (stringNumber, out var _)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"RemoveNumberedInstruction: remove {fullPattern}");
+          }
+          attribute.Value = attribute.Value.Replace (fullPattern, "");
+          RemoveNumberedInstruction (attribute, prefix);
+        }
+        else if (log.IsWarnEnabled) {
+          log.Warn ($"RemoveNumberedInstruction: pattern {fullPattern} with prefix {prefix} not followed by a number");
         }
       }
     }
