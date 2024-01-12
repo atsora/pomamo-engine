@@ -93,6 +93,7 @@ namespace Pulse.Graphql.InputType
                 cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
               }
             }
+            ModelDAOHelper.DAOFactory.CncAcquisitionDAO.MakePersistent (cncAcquisition);
             transaction.Commit ();
             return cncAcquisition;
           }

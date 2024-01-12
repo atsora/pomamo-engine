@@ -205,6 +205,7 @@ namespace Pulse.Graphql.InputType
             }
             job.Status = status;
           }
+          ModelDAOHelper.DAOFactory.JobDAO.MakePersistent (job);
           transaction.Commit ();
           return job;
         }

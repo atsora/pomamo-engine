@@ -168,6 +168,7 @@ namespace Pulse.Graphql.InputType
               project.Customer = customer;
             }
           }
+          ModelDAOHelper.DAOFactory.ProjectDAO.MakePersistent (project);
           transaction.Commit ();
           return project;
         }

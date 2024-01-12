@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2023-2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -17,12 +18,12 @@ namespace Lemoine.GDBPersistentClasses
   /// Persistent class of table CncAcquisition
   /// </summary>
   [Serializable]
-  public class CncAcquisition: BaseData, ICncAcquisition, IVersionable
+  public class CncAcquisition : BaseData, ICncAcquisition, IVersionable
   {
     static readonly TimeSpan DEFAULT_EVERY = TimeSpan.FromSeconds (2);
     static readonly TimeSpan DEFAULT_NOT_RESPONDING_TIMEOUT = TimeSpan.FromMinutes (2);
     static readonly TimeSpan DEFAULT_SLEEP_BEFORE_RESTART = TimeSpan.FromSeconds (10);
-    
+
     #region Members
     int m_id = 0;
     int m_version = 0;
@@ -35,42 +36,36 @@ namespace Lemoine.GDBPersistentClasses
     TimeSpan m_every = DEFAULT_EVERY;
     TimeSpan m_notRespondingTimeout = DEFAULT_NOT_RESPONDING_TIMEOUT;
     TimeSpan m_sleepBeforeRestart = DEFAULT_SLEEP_BEFORE_RESTART;
-    ICollection <IMachineModule> m_machineModules = new InitialNullIdSet<IMachineModule, int> ();
+    ICollection<IMachineModule> m_machineModules = new InitialNullIdSet<IMachineModule, int> ();
     IComputer m_computer;
     bool m_staThread = false;
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (CncAcquisition).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (CncAcquisition).FullName);
 
     #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
     [XmlIgnore]
-    public override string[] Identifiers
-    {
-      get { return new string[] {"Id", "Name"}; }
-    }
+    public override string[] Identifiers => new string[] { "Id", "Name" };
 
     /// <summary>
     /// CncAcquisition Id
     /// </summary>
     [XmlIgnore]
-    public virtual int Id
-    {
-      get { return this.m_id; }
-    }
+    public virtual int Id => m_id;
 
     /// <summary>
     /// CncAcquisition Id for XML serialization
     /// </summary>
-    [XmlAttribute("Id")]
+    [XmlAttribute ("Id")]
     public virtual int XmlSerializationId
     {
       get { return this.Id; }
       set { m_id = value; }
     }
-    
+
     /// <summary>
     /// CncAcquisition Version
     /// </summary>
@@ -85,48 +80,49 @@ namespace Lemoine.GDBPersistentClasses
     /// 
     /// Note an empty string is converted to null.
     /// </summary>
-    [XmlAttribute("Name")]
+    [XmlAttribute ("Name")]
     public virtual string Name
     {
       get { return this.m_name; }
       set { this.m_name = value; }
     }
-    
+
     /// <summary>
     /// XML configuration file
     /// </summary>
-    [XmlAttribute("ConfigFile")]
-    public virtual string ConfigFile {
+    [XmlAttribute ("ConfigFile")]
+    public virtual string ConfigFile
+    {
       get { return m_configFile; }
       set { m_configFile = value; }
     }
-    
+
     /// <summary>
     /// Prefix used in the XML configuration file to reference some parameters
     /// 
     /// The default value is the empty string. It can't be null.
     /// </summary>
-    [XmlAttribute("ConfigPrefix")]
-    public virtual string ConfigPrefix {
+    [XmlAttribute ("ConfigPrefix")]
+    public virtual string ConfigPrefix
+    {
       get { return m_configPrefix; }
-      set
-      {
-        if (null == value) {
-          log.ErrorFormat ("ConfigPrefix.set: " +
-                           "null argument");
+      set {
+        if (value is null) {
+          log.Error ("ConfigPrefix.set: null argument");
           throw new ArgumentNullException ();
         }
         m_configPrefix = value;
       }
     }
-    
+
     /// <summary>
     /// Parameters used in XML configuration file.
     /// 
     /// The first character in this string is the separator to use to separate the different parameters
     /// </summary>
-    [XmlAttribute("ConfigParameters")]
-    public virtual string ConfigParameters {
+    [XmlAttribute ("ConfigParameters")]
+    public virtual string ConfigParameters
+    {
       get { return m_configParameters; }
       set { m_configParameters = value; }
     }
@@ -140,8 +136,9 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// ConfigKeyParams for Xml Serialization
     /// </summary>
-    [XmlAttribute("ConfigKeyParams")]
-    public virtual string ConfigKeyParamsJson {
+    [XmlAttribute ("ConfigKeyParams")]
+    public virtual string ConfigKeyParamsJson
+    {
       get => System.Text.Json.JsonSerializer.Serialize (this.ConfigKeyParams);
       set {
         this.ConfigKeyParams = System.Text.Json.JsonSerializer.Deserialize<IDictionary<string, string>> (value);
@@ -153,8 +150,9 @@ namespace Lemoine.GDBPersistentClasses
     /// 
     /// This may useful when the acquisition modules uses some unmanaged code
     /// </summary>
-    [XmlAttribute("UseProcess")]
-    public virtual bool UseProcess {
+    [XmlAttribute ("UseProcess")]
+    public virtual bool UseProcess
+    {
       get { return m_useProcess; }
       set { m_useProcess = value; }
     }
@@ -164,8 +162,9 @@ namespace Lemoine.GDBPersistentClasses
     /// 
     /// Default si false
     /// </summary>
-    [XmlAttribute("StaThread")]
-    public virtual bool StaThread {
+    [XmlAttribute ("StaThread")]
+    public virtual bool StaThread
+    {
       get { return m_staThread; }
       set { m_staThread = value; }
     }
@@ -186,16 +185,18 @@ namespace Lemoine.GDBPersistentClasses
     /// Default is every 2 seconds
     /// </summary>
     [XmlIgnore]
-    public virtual TimeSpan Every {
+    public virtual TimeSpan Every
+    {
       get { return m_every; }
       set { m_every = value; }
     }
-    
+
     /// <summary>
     /// Frequency when the data is acquired for XML serialization
     /// </summary>
-    [XmlAttribute("Every")]
-    public virtual string XmlSerializationEvery {
+    [XmlAttribute ("Every")]
+    public virtual string XmlSerializationEvery
+    {
       get { return this.Every.ToString (); }
       set { this.Every = TimeSpan.Parse (value); }
     }
@@ -206,21 +207,23 @@ namespace Lemoine.GDBPersistentClasses
     /// Default is 2 minutes.
     /// </summary>
     [XmlIgnore]
-    public virtual TimeSpan NotRespondingTimeout {
+    public virtual TimeSpan NotRespondingTimeout
+    {
       get { return m_notRespondingTimeout; }
       set { m_notRespondingTimeout = value; }
     }
-    
+
     /// <summary>
     /// Time after which the acquisition module is considered as not responding any more
     /// for XML serialization
     /// </summary>
-    [XmlAttribute("NotRespondingTimeout")]
-    public virtual string XmlSerializationNotRespondingTimeout {
+    [XmlAttribute ("NotRespondingTimeout")]
+    public virtual string XmlSerializationNotRespondingTimeout
+    {
       get { return this.NotRespondingTimeout.ToString (); }
       set { this.NotRespondingTimeout = TimeSpan.Parse (value); }
     }
-    
+
     /// <summary>
     /// In case the machine module acquisition was stopped (because it was considered as not responding any more),
     /// time after which the acquisition is restarted
@@ -228,11 +231,12 @@ namespace Lemoine.GDBPersistentClasses
     /// Default is 10 seconds
     /// </summary>
     [XmlIgnore]
-    public virtual TimeSpan SleepBeforeRestart {
+    public virtual TimeSpan SleepBeforeRestart
+    {
       get { return m_sleepBeforeRestart; }
       set { m_sleepBeforeRestart = value; }
     }
-    
+
     /// <summary>
     /// In case the machine module acquisition was stopped (because it was considered as not responding any more),
     /// time after which the acquisition is restarted
@@ -240,35 +244,39 @@ namespace Lemoine.GDBPersistentClasses
     /// 
     /// Default is 10 seconds
     /// </summary>
-    [XmlAttribute("SleepBeforeRestart")]
-    public virtual string XmlSerializationSleepBeforeRestart {
+    [XmlAttribute ("SleepBeforeRestart")]
+    public virtual string XmlSerializationSleepBeforeRestart
+    {
       get { return this.SleepBeforeRestart.ToString (); }
       set { this.SleepBeforeRestart = TimeSpan.Parse (value); }
     }
-    
+
     /// <summary>
     /// List of machine modules this Cnc Acquisition drives
     /// </summary>
     [XmlIgnore]
-    public virtual ICollection<IMachineModule> MachineModules {
+    public virtual ICollection<IMachineModule> MachineModules
+    {
       get { return m_machineModules; }
     }
-    
+
     /// <summary>
     /// Computer on which the acquisition is made
     /// </summary>
     [XmlIgnore]
-    public virtual IComputer Computer {
+    public virtual IComputer Computer
+    {
       get { return m_computer; }
       set { m_computer = value; }
     }
-    
+
     /// <summary>
     /// Computer on which the acquisition is made
     /// for XML serialization
     /// </summary>
-    [XmlElement("Computer")]
-    public virtual Computer XmlSerializationComputer {
+    [XmlElement ("Computer")]
+    public virtual Computer XmlSerializationComputer
+    {
       get { return this.Computer as Computer; }
       set { this.Computer = value; }
     }
@@ -282,8 +290,9 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// License for XML serialization
     /// </summary>
-    [XmlAttribute("License")]
-    public virtual int XmlLicense {
+    [XmlAttribute ("License")]
+    public virtual int XmlLicense
+    {
       get => (int)this.License;
       set {
         this.License = (CncModuleLicense)value;
@@ -294,12 +303,9 @@ namespace Lemoine.GDBPersistentClasses
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]
-    public virtual string SelectionText {
-      get { return string.Format ("{0}: {1}",
-                                  this.Id, this.Name); }
-    }
+    public virtual string SelectionText => $"{this.Id}: {this.Name}";
     #endregion // Getters / Setters
-    
+
     #region Add methods
     /// <summary>
     /// Add a machine module
@@ -310,7 +316,7 @@ namespace Lemoine.GDBPersistentClasses
       machineModule.CncAcquisition = this; // Everything is done in the setter
     }
     #endregion // Add methods
-    
+
     #region Methods
     /// <summary>
     /// Add a machine module in the member directly
@@ -322,7 +328,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       AddToProxyCollection<IMachineModule> (m_machineModules, machineModule);
     }
-    
+
     /// <summary>
     /// Remove a machine module in the member directly
     /// 
@@ -334,7 +340,7 @@ namespace Lemoine.GDBPersistentClasses
       RemoveFromProxyCollection<IMachineModule> (m_machineModules, machineModule);
     }
     #endregion // Methods    
-    
+
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
@@ -349,20 +355,20 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="other">An object to compare with this object</param>
     /// <returns>true if the current object is equal to the other parameter; otherwise, false</returns>
-    public virtual bool Equals(ICncAcquisition other)
+    public virtual bool Equals (ICncAcquisition other)
     {
-      return this.Equals ((object) other);
+      return this.Equals ((object)other);
     }
-    
+
     /// <summary>
     ///   Determines whether the specified Object
     ///   is equal to the current Object
     /// </summary>
     /// <param name="obj">The object to compare with the current object</param>
     /// <returns>true if the specified Object is equal to the current Object; otherwise, false</returns>
-    public override bool Equals(object obj)
+    public override bool Equals (object obj)
     {
-      if (object.ReferenceEquals(this,obj)) {
+      if (object.ReferenceEquals (this, obj)) {
         return true;
       }
 
@@ -386,12 +392,12 @@ namespace Lemoine.GDBPersistentClasses
     ///   Serves as a hash function for a particular type
     /// </summary>
     /// <returns>A hash code for the current Object</returns>
-    public override int GetHashCode()
+    public override int GetHashCode ()
     {
       if (0 != Id) {
         int hashCode = 0;
         unchecked {
-          hashCode += 1000000007 * Id.GetHashCode();
+          hashCode += 1000000007 * Id.GetHashCode ();
         }
         return hashCode;
       }

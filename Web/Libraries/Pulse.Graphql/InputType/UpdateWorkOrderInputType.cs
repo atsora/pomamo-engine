@@ -205,6 +205,7 @@ namespace Pulse.Graphql.InputType
             }
             workOrder.Status = status;
           }
+          ModelDAOHelper.DAOFactory.WorkOrderDAO.MakePersistent (workOrder);
           transaction.Commit ();
           return workOrder;
         }

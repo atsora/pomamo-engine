@@ -15,15 +15,20 @@ namespace Lemoine.CncEngine
   /// <summary>
   /// Implementation of <see cref="ICncAcquisitionInitializer"/> returning all the <see cref="Lemoine.Model.ICncAcquisition"/> items in database
   /// </summary>
-  public class CncAcquisitionInitializerAll: ICncAcquisitionInitializer
+  public class CncAcquisitionInitializerAll : ICncAcquisitionInitializer
   {
     readonly ILog log = LogManager.GetLogger (typeof (CncAcquisitionInitializerAll).FullName);
+
+    readonly ICncEngineConfig m_cncEngineConfig;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    public CncAcquisitionInitializerAll ()
+    public CncAcquisitionInitializerAll (ICncEngineConfig cncEngineConfig)
     {
+      Debug.Assert (null != cncEngineConfig);
+
+      m_cncEngineConfig = cncEngineConfig;
     }
 
     /// <summary>
@@ -44,7 +49,9 @@ namespace Lemoine.CncEngine
     {
       using (var session = Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.OpenSession ()) {
         return Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.CncAcquisitionDAO
-          .FindAll ();
+          .FindAll ()
+          .Where (m_cncEngineConfig.FilterCncAcquisition);
+        ;
       }
     }
   }
