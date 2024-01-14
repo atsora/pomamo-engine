@@ -2,8 +2,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lemoine.Model
 {
@@ -33,11 +35,11 @@ namespace Lemoine.Model
   /// Such a cnc acquisition module may drive the data acquisition
   /// of one or several machine modules
   /// </summary>
-  public interface ICncAcquisition: ISelectionable, IDataWithVersion, ISerializableModel
+  public interface ICncAcquisition : ISelectionable, IDataWithVersion, ISerializableModel
   {
     // Note: ICncAcquisition does not inherit from IVersionable
     //       else the corresponding properties can't be used in a DataGridView binding
-    
+
     /// <summary>
     /// ID
     /// </summary>
@@ -49,19 +51,19 @@ namespace Lemoine.Model
     /// Note an empty string is converted to null.
     /// </summary>
     string Name { get; set; }
-    
+
     /// <summary>
     /// XML configuration file
     /// </summary>
     string ConfigFile { get; set; }
-    
+
     /// <summary>
     /// Prefix used in the XML configuration file to reference some parameters
     /// 
     /// Default is Param
     /// </summary>
     string ConfigPrefix { get; set; }
-    
+
     /// <summary>
     /// Parameters used in XML configuration file.
     /// 
@@ -73,7 +75,12 @@ namespace Lemoine.Model
     /// Parameters used in XML configuration file, set as a parameter dictioanary
     /// </summary>
     IDictionary<string, string> ConfigKeyParams { get; set; }
-    
+
+    /// <summary>
+    /// Json format of <see cref="ConfigKeyParams"/>
+    /// </summary>
+    string ConfigKeyParamsJson { get; set; }
+
     /// <summary>
     /// Use a process instead of a thread
     /// 
@@ -104,7 +111,7 @@ namespace Lemoine.Model
     /// Default is 2 minutes
     /// </summary>
     TimeSpan NotRespondingTimeout { get; set; }
-    
+
     /// <summary>
     /// In case the machine module acquisition was stopped (because it was considered as not responding any more),
     /// time after which the acquisition is restarted
@@ -112,12 +119,12 @@ namespace Lemoine.Model
     /// Default is 10 seconds
     /// </summary>
     TimeSpan SleepBeforeRestart { get; set; }
-    
+
     /// <summary>
     /// List of machine modules this Cnc Acquisition drives
     /// </summary>
     ICollection<IMachineModule> MachineModules { get; }
-    
+
     /// <summary>
     /// Computer on which the acquisition is made
     /// </summary>
@@ -127,5 +134,28 @@ namespace Lemoine.Model
     /// License that is associated to a cnc acquisition
     /// </summary>
     CncModuleLicense License { get; set; }
+  }
+
+  /// <summary>
+  /// Extensions to <see cref="ICncAcquisition"/>
+  /// </summary>
+  public static class CncAcquisitionExtensions
+  {
+    /// <summary>
+    /// Get a Json for ConfigKeyParams
+    /// </summary>
+    /// <param name="cncAcquisition"></param>
+    /// <returns></returns>
+    public static string GetKeyParamsJson (this ICncAcquisition cncAcquisition) => System.Text.Json.JsonSerializer.Serialize (cncAcquisition.ConfigKeyParams);
+
+    /// <summary>
+    /// Set ConfigKeyParams from a Json
+    /// </summary>
+    /// <param name="cncAcquisition"></param>
+    /// <param name="json"></param>
+    public static void SetKeyParamsJson (this ICncAcquisition cncAcquisition, string json)
+    {
+      cncAcquisition.ConfigKeyParams = System.Text.Json.JsonSerializer.Deserialize<IDictionary<string, string>> (json);
+    }
   }
 }

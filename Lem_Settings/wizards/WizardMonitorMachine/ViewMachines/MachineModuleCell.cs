@@ -294,10 +294,10 @@ namespace WizardMonitorMachine
                 value = parameter.DefaultValue + " (default value)";
               }
             }
-            catch (Exception e) {
-              value = "error " + e.Message;
+            catch (Exception ex) {
+              value = "error " + ex.Message;
             }
-            paramList.Add (string.Format ("{0}: {1}", parameter.Description, value));
+            paramList.Add ($"{parameter.Description}: {value}");
           }
         }
       }

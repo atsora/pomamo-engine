@@ -16,6 +16,8 @@
     <property name="ConfigPrefix" column="cncacquisitionconfigprefix"
               not-null="true" />
     <property name="ConfigParameters" column="cncacquisitionconfigparameters" />
+    <property name="ConfigKeyParams" column="cncacquisitionconfigkeyparams"
+              type="Lemoine.NHibernateTypes.JsonAsStringStringMapType, Lemoine.Database" />
     <property name="UseProcess" column="cncacquisitionuseprocess"
               not-null="true" />
     <property name="StaThread" column="cncacquisitionstathread"

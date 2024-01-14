@@ -49,19 +49,19 @@ namespace Lemoine.ConfigControls
       this.dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
       this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                  this.idColumn,
-                  this.versionColumn,
-                  this.nameColumn,
-                  this.codeColumn,
-                  this.externalCodeColumn,
-                  this.displayPriorityColumn,
-                  this.machinesColumn});
+            this.idColumn,
+            this.versionColumn,
+            this.nameColumn,
+            this.codeColumn,
+            this.externalCodeColumn,
+            this.displayPriorityColumn,
+            this.machinesColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point(0, 0);
       this.dataGridView.Name = "dataGridView";
       this.dataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
       this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-      this.dataGridView.Size = new System.Drawing.Size(541, 245);
+      this.dataGridView.Size = new System.Drawing.Size(802, 285);
       this.dataGridView.TabIndex = 0;
       this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewCellValueChanged);
       this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.DataGridViewUserAddedRow);
@@ -132,11 +132,12 @@ namespace Lemoine.ConfigControls
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.dataGridView);
       this.Name = "CompanyConfig";
-      this.Size = new System.Drawing.Size(541, 245);
+      this.Size = new System.Drawing.Size(802, 285);
       this.Load += new System.EventHandler(this.CompanyConfigLoad);
       this.Validated += new System.EventHandler(this.CompanyConfigValidated);
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
       this.ResumeLayout(false);
+
     }
     private System.Windows.Forms.DataGridViewTextBoxColumn machinesColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn versionColumn;

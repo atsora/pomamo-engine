@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using Lemoine.Model;
 using Lemoine.Core.Log;
 using System.Xml;
+using Lemoine.Collections;
+using System.Linq;
+using Lemoine.GDBMigration;
 
 namespace WizardMonitorMachine
 {
@@ -189,7 +192,10 @@ namespace WizardMonitorMachine
     /// </summary>
     public string ErrorFound { get; private set; }
 
-    bool OldParameterConfiguration { get; set; }
+    /// <summary>
+    /// Old parameter (single parameter)
+    /// </summary>
+    public bool OldSingleParameterConfiguration { get; set; }
     #endregion // Getters / Setters
 
     #region Constructors
@@ -219,8 +225,8 @@ namespace WizardMonitorMachine
       try {
         Parse (xmlDoc);
       }
-      catch (Exception e) {
-        log.ErrorFormat ("Couldn't parse file {0}, got the exception {1}", fileName, e);
+      catch (Exception ex) {
+        log.Error ($"Couldn't parse file {fileName}", ex);
         IsValid = false;
       }
 
@@ -308,40 +314,20 @@ namespace WizardMonitorMachine
     /// Get a formated string suitable for the cncAcquisition table
     /// </summary>
     /// <returns></returns>
-    public string FormatParameters ()
+    public string GetConfigParameters ()
     {
-      string strRet = "";
-
-      if (OldParameterConfiguration) {
+      if (OldSingleParameterConfiguration) {
         // Only one parameter
         if (Parameters.Count != 1) {
           throw new Exception ("Wrong parameter number for an old configuration");
         }
 
-        strRet = Parameters[0].GetValue ();
+        return Parameters[0].GetValue ();
       }
       else {
         // Get the parameters and find a suitable separator
-        var parameters = new List<string> ();
-        bool slashTaken = false;
-        bool hashTaken = false;
-        bool percentTaken = false;
-        foreach (AbstractParameter parameter in Parameters) {
-          string str = parameter.GetValue ();
-          parameters.Add (str);
-          slashTaken |= str.Contains ("/");
-          hashTaken |= str.Contains ("#");
-          percentTaken |= str.Contains ("%");
-        }
-        char separator = slashTaken ? (hashTaken ? (percentTaken ? '~' : '%') : '#') : '/';
-
-        // Concatenate the parameters and return the result
-        foreach (string parameter in parameters) {
-          strRet += separator + parameter;
-        }
+        return EnumerableString.ToListString (Parameters.Where (x => x.IsParamX ()).Select (x => x.GetValue ()));
       }
-
-      return strRet;
     }
 
     /// <summary>
@@ -478,13 +464,13 @@ namespace WizardMonitorMachine
 
       // Parameters
       nodes = root.SelectNodes ("cnc:parameters/cnc:parameter", nsmgr);
-      OldParameterConfiguration = false;
+      OldSingleParameterConfiguration = false;
       if (nodes != null) {
         foreach (XmlNode nodeTmp in nodes) {
           AbstractParameter cncParameter = CncParameterFactory.GetCncParameter (nodeTmp);
           if (cncParameter != null) {
             Parameters.Add (cncParameter);
-            OldParameterConfiguration |= cncParameter.OldConfiguration;
+            OldSingleParameterConfiguration |= cncParameter.Name.Equals ("Parameter");
           }
           else {
             // We stop here: one parameter is wrong
@@ -493,7 +479,7 @@ namespace WizardMonitorMachine
         }
       }
 
-      if (OldParameterConfiguration && Parameters.Count > 1) {
+      if (OldSingleParameterConfiguration && Parameters.Count > 1) {
         throw new Exception ("use of \"Parameter\", but several parameters have been parsed");
       }
 
@@ -502,19 +488,19 @@ namespace WizardMonitorMachine
       if (nodes != null) {
         foreach (XmlNode nodeTmp in nodes) {
           switch (nodeTmp.InnerText) {
-          case "thread":
-            RunningModes.Add (RunningMode.USE_THREAD);
-            break;
-          case "sta_thread":
-            RunningModes.Add (RunningMode.USE_STA_THREAD);
-            break;
-          case "process":
-            RunningModes.Add (RunningMode.USE_PROCESS);
-            break;
-          default:
-            // One parameter is wrong, we log it
-            log.ErrorFormat ("unknown running-mode: {0}", nodeTmp.InnerText);
-            break;
+            case "thread":
+              RunningModes.Add (RunningMode.USE_THREAD);
+              break;
+            case "sta_thread":
+              RunningModes.Add (RunningMode.USE_STA_THREAD);
+              break;
+            case "process":
+              RunningModes.Add (RunningMode.USE_PROCESS);
+              break;
+            default:
+              // One parameter is wrong, we log it
+              log.ErrorFormat ("unknown running-mode: {0}", nodeTmp.InnerText);
+              break;
           }
         }
       }
@@ -662,45 +648,47 @@ namespace WizardMonitorMachine
         NotRespondingTimeout = cncAcquisition.NotRespondingTimeout.TotalSeconds;
         SleepBeforeRestart = cncAcquisition.SleepBeforeRestart.TotalSeconds;
 
-        // Load parameters
-        string parameterStr = cncAcquisition.ConfigParameters;
-        if (!string.IsNullOrEmpty (parameterStr)) {
-          // Split (or not) the parameters
-          string[] parameters;
-          if (Parameters.Count == 1 && parameterStr[0] != '/' && parameterStr[0] != '#' &&
-              parameterStr[0] != '%' && parameterStr[0] != '~') {
-            parameters = new[] { parameterStr };
+        var parameters = cncAcquisition.ConfigKeyParams ?? new Dictionary<string, string> ();
+        if (!string.IsNullOrEmpty (cncAcquisition.ConfigParameters)) {
+          if (!this.Parameters.Any () || (1 == this.Parameters.Count () && this.Parameters.First ().Name.Equals ("Parameter"))) {
+            parameters["Parameter"] = cncAcquisition.ConfigParameters;
           }
           else {
-            parameters = parameterStr.Remove (0, 1).Split (parameterStr[0]);
-          }
-
-          if (parameters.Length > Parameters.Count) {
-            for (int i = Parameters.Count; i < parameters.Length; i++) {
-              if (!string.IsNullOrEmpty (parameters[i]) &&
-                  (i != parameters.Length - 1 ||
-                   String.Compare (parameters[parameters.Length - 1], "UseProcess",
-                                  StringComparison.InvariantCultureIgnoreCase) != 0)) {
-                // Too many values and at least one being not null, still load modules
-                return LoadMachineModules (moma) ? LoadResult.TOO_MANY_PARAMETERS :
-                  LoadResult.TOO_MANY_PARAMETERS | LoadResult.DIFFERENT_MACHINE_MODULES;
-              }
+            var parray = EnumerableString.ParseListString (cncAcquisition.ConfigParameters);
+            for (int i = 0; i < parray.Length; ++i) {
+              parameters[$"Param{i + 1}"] = parray[i];
             }
           }
+        }
 
-          try {
-            for (int i = 0; i < Parameters.Count; i++) {
-              Parameters[i].SetCncAcquisitionId (cncAcquisition.Id);
-              Parameters[i].SetValue (i < parameters.Length ? parameters[i] : null);
+        if (Parameters.Select (x => x.Name).Any (x => !parameters.Keys.Contains (x))) {
+          log.Info ($"Load: missing parameters");
+        }
+        if (parameters.Keys.Any (x => !Parameters.Select (y => y.Name).Contains (x))) {
+          log.Info ($"Load: more parameters in database than parameters in configuration");
+          return LoadMachineModules (moma) ? LoadResult.TOO_MANY_PARAMETERS :
+            LoadResult.TOO_MANY_PARAMETERS | LoadResult.DIFFERENT_MACHINE_MODULES;
+        }
+
+        try {
+          foreach (var cncDocParameter in Parameters) {
+            cncDocParameter.SetCncAcquisitionId (cncAcquisition.Id);
+            if (parameters.TryGetValue (cncDocParameter.Name, out var parameterValue)) {
+              log.Debug ($"Load: parameter, set {cncDocParameter.Name}={parameterValue}");
+              cncDocParameter.SetValue (parameterValue);
+            }
+            else {
+              log.Debug ($"Load: missing parameter {cncDocParameter.Name}");
+              cncDocParameter.SetValue (null);
             }
           }
-          catch (Exception e) {
-            // Wrong parameters, still load modules
-            log.Error (e.ToString ());
-            ErrorFound = e.Message;
-            return LoadMachineModules (moma) ? LoadResult.WRONG_PARAMETERS :
-              LoadResult.WRONG_PARAMETERS | LoadResult.DIFFERENT_MACHINE_MODULES;
-          }
+        }
+        catch (Exception ex) {
+          // Wrong parameters, still load modules
+          log.Error ($"Load: exception for a parameter", ex);
+          ErrorFound = ex.Message;
+          return LoadMachineModules (moma) ? LoadResult.WRONG_PARAMETERS :
+            LoadResult.WRONG_PARAMETERS | LoadResult.DIFFERENT_MACHINE_MODULES;
         }
       }
       else {

@@ -37,6 +37,7 @@ namespace Lemoine.ConfigControls
       this.nameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.configFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.configPrefixColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.configKeyParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.configParametersColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.useProcessColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.computerColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -54,24 +55,25 @@ namespace Lemoine.ConfigControls
       this.dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
       this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                  this.idColumn,
-                  this.nameColumn,
-                  this.configFileColumn,
-                  this.configPrefixColumn,
-                  this.configParametersColumn,
-                  this.useProcessColumn,
-                  this.computerColumn,
-                  this.everyColumn,
-                  this.notRespondingTimeoutColumn,
-                  this.sleepBeforeRestartColumn,
-                  this.versionColumn,
-                  this.machineModulesColumn});
+            this.idColumn,
+            this.nameColumn,
+            this.configFileColumn,
+            this.configPrefixColumn,
+            this.configKeyParamsColumn,
+            this.configParametersColumn,
+            this.useProcessColumn,
+            this.computerColumn,
+            this.everyColumn,
+            this.notRespondingTimeoutColumn,
+            this.sleepBeforeRestartColumn,
+            this.versionColumn,
+            this.machineModulesColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point(0, 0);
       this.dataGridView.Name = "dataGridView";
       this.dataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
       this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-      this.dataGridView.Size = new System.Drawing.Size(912, 320);
+      this.dataGridView.Size = new System.Drawing.Size(1053, 397);
       this.dataGridView.TabIndex = 0;
       this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewCellValueChanged);
       this.dataGridView.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.DataGridViewUserAddedRow);
@@ -101,6 +103,12 @@ namespace Lemoine.ConfigControls
       this.configPrefixColumn.DataPropertyName = "ConfigPrefix";
       this.configPrefixColumn.HeaderText = "ConfigPrefix";
       this.configPrefixColumn.Name = "configPrefixColumn";
+      // 
+      // configKeyParamsColumn
+      // 
+      this.configKeyParamsColumn.DataPropertyName = "ConfigKeyParamsJson";
+      this.configKeyParamsColumn.HeaderText = "Key params";
+      this.configKeyParamsColumn.Name = "configKeyParamsColumn";
       // 
       // configParametersColumn
       // 
@@ -160,24 +168,26 @@ namespace Lemoine.ConfigControls
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.dataGridView);
       this.Name = "CncAcquisitionConfig";
-      this.Size = new System.Drawing.Size(912, 320);
+      this.Size = new System.Drawing.Size(1053, 397);
       this.Load += new System.EventHandler(this.CncAcquisitionConfigLoad);
       this.Validated += new System.EventHandler(this.CncAcquisitionConfigValidated);
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
       this.ResumeLayout(false);
+
     }
-    private System.Windows.Forms.DataGridViewTextBoxColumn machineModulesColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn computerColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn sleepBeforeRestartColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn notRespondingTimeoutColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn everyColumn;
-    private System.Windows.Forms.DataGridViewCheckBoxColumn useProcessColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn configParametersColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn configPrefixColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn configFileColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn versionColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn nameColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn idColumn;
     private Lemoine.BaseControls.SortableDataGridView dataGridView;
+    private System.Windows.Forms.DataGridViewTextBoxColumn idColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn nameColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn configFileColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn configPrefixColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn configKeyParamsColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn configParametersColumn;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn useProcessColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn computerColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn everyColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn notRespondingTimeoutColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn sleepBeforeRestartColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn versionColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn machineModulesColumn;
   }
 }

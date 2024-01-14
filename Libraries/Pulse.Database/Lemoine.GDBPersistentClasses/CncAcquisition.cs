@@ -139,9 +139,9 @@ namespace Lemoine.GDBPersistentClasses
     [XmlAttribute ("ConfigKeyParams")]
     public virtual string ConfigKeyParamsJson
     {
-      get => System.Text.Json.JsonSerializer.Serialize (this.ConfigKeyParams);
+      get => this.GetKeyParamsJson ();
       set {
-        this.ConfigKeyParams = System.Text.Json.JsonSerializer.Deserialize<IDictionary<string, string>> (value);
+        this.SetKeyParamsJson (value);
       }
     }
 

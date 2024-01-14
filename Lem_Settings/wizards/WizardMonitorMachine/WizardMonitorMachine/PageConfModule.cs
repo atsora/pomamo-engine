@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lemoine.Collections;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Settings;
@@ -28,9 +29,12 @@ namespace WizardMonitorMachine
     public string Help
     {
       get {
-        return "You can choose in this page all parameters " +
-"required to connect the new machine.\n\n" +
-"The old configuration, if any, is displayed on the bottom of the page.";
+        return """
+You can choose in this page all parameters 
+required to connect the new machine.
+
+The old configuration, if any, is displayed on the bottom of the page.
+""";
       }
     }
     #endregion // Getters / Setters
@@ -91,6 +95,7 @@ namespace WizardMonitorMachine
 
       // Try to find an old acquisition and display the old parameters as is
       string parameters = "";
+      IDictionary<string, string> keyParams = new Dictionary<string, string> ();
       string oldConf = "";
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ()) {
@@ -100,6 +105,7 @@ namespace WizardMonitorMachine
             foreach (var mamo in moma.MachineModules) {
               if (mamo.CncAcquisition != null) {
                 parameters = mamo.CncAcquisition.ConfigParameters;
+                keyParams = mamo.CncAcquisition.ConfigKeyParams;
                 oldConf = mamo.CncAcquisition.ConfigFile;
                 break;
               }
@@ -119,10 +125,6 @@ namespace WizardMonitorMachine
       }
       else {
         // Display the parameters
-        var separator = parameters[0];
-        parameters = parameters.Remove (0, 1);
-        var parametersArray = parameters.Split (separator);
-
         baseLayout.RowStyles[2].Height = 18;
         baseLayout.RowStyles[3].Height = 0;
         baseLayout.RowStyles[4].Height = 22;
@@ -130,7 +132,14 @@ namespace WizardMonitorMachine
         cncConfiguratorControlOld.Hide ();
         textOldParameters.Show ();
         labelOldConfiguration.Text = "Old configuration (" + oldConf + ")";
-        textOldParameters.Text = string.Join (" - ", parametersArray);
+        textOldParameters.Text = "";
+        if (parameters is not null) {
+          var parametersArray = EnumerableString.ParseListString (parameters);
+          textOldParameters.Text += string.Join (" - ", parametersArray);
+        }
+        if (keyParams is not null) {
+          textOldParameters.Text += " / " + string.Join (", ", keyParams.Select (x => $"{x.Key}: {x.Value}"));
+        }
       }
     }
 

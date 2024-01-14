@@ -16,6 +16,12 @@ namespace WizardMonitorMachine
   /// </summary>
   internal class Item : GenericItem, IWizard
   {
+    /// <summary>
+    /// Activate the new configuration key params
+    /// </summary>
+    static readonly string KEY_PARAMS_KEY = "Config.CncAcquisition.KeyParams";
+    static readonly bool KEY_PARAMS_DEFAULT = true;
+
     internal const string MACHINE = "machine";
     internal const string CONFIG_FILE = "xml_file";
     internal const string LOAD_PARAMETERS = "load_parameters";
@@ -247,7 +253,15 @@ namespace WizardMonitorMachine
 
       cncAcquisition.ConfigFile = data.Get<string> (CONFIG_FILE);
       CncDocument cncDoc = data.Get<Dictionary<string, CncDocument>> (XML_DATA)[cncAcquisition.ConfigFile];
-      cncAcquisition.ConfigParameters = cncDoc.FormatParameters ();
+      if (Lemoine.Info.ConfigSet.LoadAndGet (KEY_PARAMS_KEY, KEY_PARAMS_DEFAULT) || cncDoc.OldSingleParameterConfiguration) {
+        cncAcquisition.ConfigParameters = cncDoc.Parameters.FirstOrDefault (x => x.Name.Equals ("Parameter"))?.GetValue () ?? "";
+        cncAcquisition.ConfigKeyParams = cncDoc.Parameters.ToDictionary (p => p.Name, p => p.GetValue ());
+      }
+      else {
+        cncAcquisition.ConfigParameters = cncDoc.GetConfigParameters ();
+        cncAcquisition.ConfigKeyParams = cncDoc.Parameters.Where (x => !x.IsParamX ())
+          .ToDictionary (p => p.Name, p => p.GetValue ());
+      }
       if (!cncAcquisition.UseProcess) {
         cncAcquisition.UseProcess = cncDoc.UseProcess ();
       }
