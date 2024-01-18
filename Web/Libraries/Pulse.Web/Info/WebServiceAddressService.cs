@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -17,6 +18,9 @@ using Lemoine.Web.CommonRequestDTO;
 using Pulse.Web.CommonResponseDTO;
 using Lemoine.Extensions.Web.Responses;
 using Lemoine.Web;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Pulse.Web.Info
 {
@@ -42,14 +46,17 @@ namespace Pulse.Web.Info
 
     static readonly string MULTIPLIER_ATTEMPT_KEY = "WebServiceAddress.AttemptMultiplier";
     static readonly int MULTIPLIER_ATTEMPT_DEFAULT = 5;
-    
+
+    HttpClient m_httpClient;
+
     #region Constructors
     /// <summary>
     /// 
     /// </summary>
-    public WebServiceAddressService ()
+    public WebServiceAddressService (HttpClient httpClient)
       : base ()
     {
+      m_httpClient = httpClient;
     }
     #endregion // Constructors
 
@@ -59,7 +66,7 @@ namespace Pulse.Web.Info
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public override object GetWithoutCache(WebServiceAddressRequestDTO request)
+    public override async Task<object> Get(WebServiceAddressRequestDTO request)
     {
       using (var sesssion = ModelDAOHelper.DAOFactory.OpenSession ())
       {
@@ -77,13 +84,16 @@ namespace Pulse.Web.Info
               // Test if it responds
               try {
                 string testUrl = GetTestUrl (webServiceComputer);
-                var testRequest = WebRequest.Create (testUrl);
+
+                var testRequest = new HttpRequestMessage () {
+                  RequestUri = new Uri (testUrl),
+                  Method = HttpMethod.Get,
+                };
+                var token = CancellationToken.None;
                 string testJson;
-                using (WebResponse testResponse = testRequest.GetResponse ()) {
-                  Stream stream = testResponse.GetResponseStream ();
-                  using (StreamReader streamReader = new StreamReader (stream)) {
-                    testJson = streamReader.ReadToEnd ();
-                  }
+                using (var testResponse = await m_httpClient.SendAsync (testRequest, token)) {
+                  token.ThrowIfCancellationRequested ();
+                  testJson = await testResponse.Content.ReadAsStringAsync ();
                 }
                 if (testJson.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {
                   log.Warn ($"GetWithoutCache: error message {testJson} as response for address {address}");

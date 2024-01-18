@@ -35,57 +35,59 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       Component component = (Component) ModelDAOHelper.ModelFactory.CreateComponentFromName (null, "COMPONENT1", componentType);
       component.Type = null;
       component = component.FindPersistentClass<Component> ();
-      Assert.AreEqual (1, component.Id);
+      Assert.That (component.Id, Is.EqualTo (1));
       
       component = (Component) ModelDAOHelper.ModelFactory.CreateComponentFromName (null, "Unknown", componentType);
       component.Type = null;
       component = component.FindPersistentClass<Component> ();
-      Assert.Null (component);
+      Assert.That (component, Is.Null);
       
       component = (Component) ModelDAOHelper.ModelFactory.CreateComponentFromType (new Project (), componentType);
       component.Project.Name = "JOB1";
       component.Type = new ComponentType ();
       component.Type.Name = "CAVITY";
       component = component.FindPersistentClass<Component> ();
-      Assert.NotNull (component);
-      Assert.AreEqual (1, component.Id);
+      Assert.That (component, Is.Not.Null);
+      Assert.That (component.Id, Is.EqualTo (1));
 
       component = (Component) ModelDAOHelper.ModelFactory.CreateComponentFromType (new Project (), componentType);
       component.Project.Name = "JOB1";
       component.Type = new ComponentType ();
       component.Type.Name = "CAVITY";
       component = component.FindPersistentClass<Component> (new string[] {"Name", "Project", "Type.Name"});
-      Assert.NotNull (component);
-      Assert.AreEqual (1, component.Id);
+      Assert.That (component, Is.Not.Null);
+      Assert.That (component.Id, Is.EqualTo (1));
 
       component = (Component) ModelDAOHelper.ModelFactory.CreateComponentFromType (new Project (), componentType);
       component.Project.Name = "JOB1";
       component.Type = new ComponentType ();
       component.Type.Name = "Unknown";
       component = component.FindPersistentClass<Component> (new string[] {"Name", "Project", "Type.Name"});
-      Assert.Null (component);
+      Assert.That (component, Is.Null);
       
       component = (Component) ModelDAOHelper.ModelFactory.CreateComponentFromType (null, componentType);
       component.Type = new ComponentType ();
       component.Type.Name = "CAVITY";
       component = component.FindPersistentClass<Component> (new string[] {"Type"});
-      Assert.NotNull (component);
-      Assert.AreEqual (1, component.Id);
+      Assert.That (component, Is.Not.Null);
+      Assert.That (component.Id, Is.EqualTo (1));
       
       Computer computer = new Computer ();
       computer.IsLctr = true;
       computer = computer.FindPersistentClass<Computer> ();
-      Assert.NotNull (computer);
-      Assert.AreEqual (1, computer.Id);
+      Assert.That (computer, Is.Not.Null);
+      Assert.That (computer.Id, Is.EqualTo (1));
       
       IntermediateWorkPiece intermediateWorkPiece =
         new IntermediateWorkPiece (null);
       intermediateWorkPiece.Name = "SFKPROCESS2";
       intermediateWorkPiece = intermediateWorkPiece.FindPersistentClass<IntermediateWorkPiece> ();
-      Assert.NotNull (intermediateWorkPiece);
-      Assert.AreEqual (2, intermediateWorkPiece.Id);
-      Assert.AreEqual ("SFKPROCESS2", intermediateWorkPiece.Name);
-      
+      Assert.That (intermediateWorkPiece, Is.Not.Null);
+      Assert.Multiple (() => {
+        Assert.That (intermediateWorkPiece.Id, Is.EqualTo (2));
+        Assert.That (intermediateWorkPiece.Name, Is.EqualTo ("SFKPROCESS2"));
+      });
+
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       using (IDAOSession daoSession = daoFactory.OpenSession ())
       {
@@ -94,7 +96,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         ComponentIntermediateWorkPiece ciwp =
           new ComponentIntermediateWorkPiece (component, intermediateWorkPiece);
         ciwp = ciwp.FindPersistentClass<ComponentIntermediateWorkPiece> ();
-        Assert.NotNull (intermediateWorkPiece);
+        Assert.That (intermediateWorkPiece, Is.Not.Null);
       }
     }
     
@@ -110,9 +112,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       project.Name = "JOB1";
       WorkOrderProject workOrderProject = new WorkOrderProject (workOrder, project);
       workOrderProject = workOrderProject.FindPersistentClass<WorkOrderProject> ();
-      Assert.NotNull (workOrderProject);
-      Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)workOrderProject.WorkOrder).Id);
-      Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)workOrderProject.Project).Id);
+      Assert.That (workOrderProject, Is.Not.Null);
+      Assert.Multiple (() => {
+        Assert.That (((Lemoine.Collections.IDataWithId)workOrderProject.WorkOrder).Id, Is.EqualTo (1));
+        Assert.That (((Lemoine.Collections.IDataWithId)workOrderProject.Project).Id, Is.EqualTo (1));
+      });
     }
     
     [OneTimeSetUp]

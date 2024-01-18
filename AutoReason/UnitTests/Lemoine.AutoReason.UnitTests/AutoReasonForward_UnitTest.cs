@@ -44,24 +44,26 @@ namespace Lemoine.AutoReason.UnitTests
     void CheckAutoReasonState (IMonitoredMachine machine, string key, object v)
     {
       var autoReasonState = ModelDAOHelper.DAOFactory.AutoReasonStateDAO.GetAutoReasonState (machine, key);
-      Assert.AreEqual (v, autoReasonState.Value);
+      Assert.That (autoReasonState.Value, Is.EqualTo (v));
     }
 
     void CheckNoReasonMachineAssociation ()
     {
       var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
         .FindAll ();
-      Assert.AreEqual (0, reasonMachineAssociations.Count);
+      Assert.That (reasonMachineAssociations, Is.Empty);
     }
 
     void CheckReasonMachineAssociation (IReasonMachineAssociation reasonMachineAssociation, IMonitoredMachine machine, UtcDateTimeRange range, string translationKey, string details, double score)
     {
-      Assert.AreEqual (range, reasonMachineAssociation.Range);
-      Assert.AreEqual (ReasonSource.Auto, reasonMachineAssociation.ReasonSource);
-      Assert.AreEqual (machine, reasonMachineAssociation.Machine);
-      Assert.AreEqual (translationKey, reasonMachineAssociation.Reason.TranslationKey);
-      Assert.AreEqual (details, reasonMachineAssociation.ReasonDetails);
-      Assert.AreEqual (score, reasonMachineAssociation.ReasonScore);
+      Assert.Multiple (() => {
+        Assert.That (reasonMachineAssociation.Range, Is.EqualTo (range));
+        Assert.That (reasonMachineAssociation.ReasonSource, Is.EqualTo (ReasonSource.Auto));
+        Assert.That (reasonMachineAssociation.Machine, Is.EqualTo (machine));
+        Assert.That (reasonMachineAssociation.Reason.TranslationKey, Is.EqualTo (translationKey));
+        Assert.That (reasonMachineAssociation.ReasonDetails, Is.EqualTo (details));
+        Assert.That (reasonMachineAssociation.ReasonScore, Is.EqualTo (score));
+      });
     }
 
     /// <summary>
@@ -87,11 +89,11 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // References
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             var targetMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
-            Assert.NotNull (targetMachine);
+            Assert.That (targetMachine, Is.Not.Null);
             var coffee = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (28);
-            Assert.NotNull (coffee);
+            Assert.That (coffee, Is.Not.Null);
 
             // Plugin
             var plugin = new Lemoine.Plugin.AutoReasonForward.Plugin ();
@@ -128,11 +130,11 @@ namespace Lemoine.AutoReason.UnitTests
                 .FindAll ()
                 .Where (r => r.Machine.Id == targetMachine.Id)
                 .ToList ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 targetMachine, R (1, 2), null, "Details", 90.0);
-              Assert.AreEqual (coffee, reasonMachineAssociations[i].Reason);
+              Assert.That (reasonMachineAssociations[i].Reason, Is.EqualTo (coffee));
             }
 
           }

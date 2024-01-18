@@ -80,7 +80,7 @@ namespace Lemoine.Stamping.UnitTests
         }
         stamper.CloseAll ();
         // TODO: check why there is an extra line ending at the end
-        Assert.AreEqual (expectedOutput.ReplaceLineEndings (), stamper.Output.ReplaceLineEndings ());
+        Assert.That (stamper.Output.ReplaceLineEndings (), Is.EqualTo (expectedOutput.ReplaceLineEndings ()));
       }
     }
   }

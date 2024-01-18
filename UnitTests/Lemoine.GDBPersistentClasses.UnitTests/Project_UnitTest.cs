@@ -59,8 +59,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                   projectA,
                   ConflictResolution.Keep);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual ("A", merged.Name);
-        Assert.AreEqual (2, merged.Components.Count);
+        Assert.Multiple (() => {
+          Assert.That (merged.Name, Is.EqualTo ("A"));
+          Assert.That (merged.Components, Has.Count.EqualTo (2));
+        });
         transaction.Rollback ();
       }
     }
@@ -103,15 +105,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                   projectA,
                   ConflictResolution.Keep);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        
-        Assert.AreEqual ("A", merged.Name);
-        Assert.AreEqual (2, merged.Components.Count);
+
+        Assert.Multiple (() => {
+          Assert.That (merged.Name, Is.EqualTo ("A"));
+          Assert.That (merged.Components, Has.Count.EqualTo (2));
+        });
         foreach (IComponent component in merged.Components) {
           if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA2).Id) {
-            Assert.AreEqual ("A (1)", component.Name);
+            Assert.That (component.Name, Is.EqualTo ("A (1)"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA1).Id) {
-            Assert.AreEqual ("A", component.Name);
+            Assert.That (component.Name, Is.EqualTo ("A"));
           }
           else {
             Assert.Fail ("Bad component");
@@ -163,20 +167,22 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                   projectA,
                   ConflictResolution.Keep);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual ("A", merged.Name);
-        Assert.AreEqual (4, merged.Components.Count);
+        Assert.Multiple (() => {
+          Assert.That (merged.Name, Is.EqualTo ("A"));
+          Assert.That (merged.Components, Has.Count.EqualTo (4));
+        });
         foreach (IComponent component in merged.Components) {
           if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA2).Id) {
-            Assert.AreEqual ("A (3)", component.Name);
+            Assert.That (component.Name, Is.EqualTo ("A (3)"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA1).Id) {
-            Assert.AreEqual ("A", component.Name);
+            Assert.That (component.Name, Is.EqualTo ("A"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA3).Id) {
-            Assert.AreEqual ("A (1)", component.Name);
+            Assert.That (component.Name, Is.EqualTo ("A (1)"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA4).Id) {
-            Assert.AreEqual ("A (2)", component.Name);
+            Assert.That (component.Name, Is.EqualTo ("A (2)"));
           }
           else {
             Assert.Fail ("Bad component");
@@ -224,14 +230,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (projectB,
                   projectA,
                   ConflictResolution.Keep);
-        Assert.AreEqual ("A", merged.Code);
-        Assert.AreEqual (2, merged.Components.Count);
+        Assert.Multiple (() => {
+          Assert.That (merged.Code, Is.EqualTo ("A"));
+          Assert.That (merged.Components, Has.Count.EqualTo (2));
+        });
         foreach (IComponent component in merged.Components) {
           if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA2).Id) {
-            Assert.AreEqual ("A (1)", component.Code);
+            Assert.That (component.Code, Is.EqualTo ("A (1)"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA1).Id) {
-            Assert.AreEqual ("A", component.Code);
+            Assert.That (component.Code, Is.EqualTo ("A"));
           }
           else {
             Assert.Fail ("Bad component");
@@ -282,20 +290,22 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (projectB,
                   projectA,
                   ConflictResolution.Keep);
-        Assert.AreEqual ("A", merged.Code);
-        Assert.AreEqual (4, merged.Components.Count);
+        Assert.Multiple (() => {
+          Assert.That (merged.Code, Is.EqualTo ("A"));
+          Assert.That (merged.Components, Has.Count.EqualTo (4));
+        });
         foreach (IComponent component in merged.Components) {
           if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA2).Id) {
-            Assert.AreEqual ("A (3)", component.Code);
+            Assert.That (component.Code, Is.EqualTo ("A (3)"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA1).Id) {
-            Assert.AreEqual ("A", component.Code);
+            Assert.That (component.Code, Is.EqualTo ("A"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA3).Id) {
-            Assert.AreEqual ("A (1)", component.Code);
+            Assert.That (component.Code, Is.EqualTo ("A (1)"));
           }
           else if (((Lemoine.Collections.IDataWithId)component).Id == ((Lemoine.Collections.IDataWithId)componentA4).Id) {
-            Assert.AreEqual ("A (2)", component.Code);
+            Assert.That (component.Code, Is.EqualTo ("A (2)"));
           }
           else {
             Assert.Fail ("Bad component");
@@ -338,11 +348,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (projectB,
                   projectA,
                   ConflictResolution.Keep);
-        Assert.AreEqual ("A", merged.Name);
-        
-        Assert.AreEqual (1, projectB.WorkOrders.Count);
+        Assert.Multiple (() => {
+          Assert.That (merged.Name, Is.EqualTo ("A"));
+
+          Assert.That (projectB.WorkOrders, Has.Count.EqualTo (1));
+        });
         foreach (WorkOrder workOrderB in projectB.WorkOrders) {
-          Assert.AreEqual (workOrder, workOrderB);
+          Assert.That (workOrderB, Is.EqualTo (workOrder));
         }
         
         transaction.Rollback ();

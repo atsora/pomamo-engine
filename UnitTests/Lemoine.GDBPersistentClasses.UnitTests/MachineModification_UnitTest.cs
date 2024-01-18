@@ -52,7 +52,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
         ModelDAOHelper.DAOFactory.Flush ();
 
-        Assert.AreEqual (1000, association.StatusPriority);
+        Assert.That (association.StatusPriority, Is.EqualTo (1000));
         
         var statusPriorityRequest = $@"SELECT modificationstatuspriority 
 FROM machinemodificationstatus
@@ -61,7 +61,7 @@ WHERE modificationid={((IDataWithId<long>)association).Id}";
           .CreateSQLQuery (statusPriorityRequest)
           .AddScalar ("modificationstatuspriority", NHibernate.NHibernateUtil.Int32)
           .UniqueResult<int> ();
-        Assert.AreEqual (1000, statusPriority);
+        Assert.That (statusPriority, Is.EqualTo (1000));
 
         transaction.Rollback ();
       }
@@ -84,11 +84,11 @@ WHERE modificationid={((IDataWithId<long>)association).Id}";
 
         var reasonMachineAssociation = ModelDAOHelper.DAOFactory
           .ReasonMachineAssociationDAO.FindById (modificationId, machine);
-        Assert.AreEqual (1000, reasonMachineAssociation.StatusPriority);
+        Assert.That (reasonMachineAssociation.StatusPriority, Is.EqualTo (1000));
 
         var machineModification = ModelDAOHelper.DAOFactory
           .MachineModificationDAO.FindById (modificationId, machine);
-        Assert.AreEqual (1000, machineModification.StatusPriority);
+        Assert.That (machineModification.StatusPriority, Is.EqualTo (1000));
 
         // The code below works only if the table is partitioned
         /*
@@ -325,8 +325,10 @@ VALUES (1, 10829)";
         {
           long? maxModificationId = ModelDAOHelper.DAOFactory.MachineModificationDAO
             .GetMaxModificationId (machine);
-          Assert.That (maxModificationId.HasValue);
-          Assert.That (associationId == maxModificationId.Value);
+          Assert.Multiple (() => {
+            Assert.That (maxModificationId.HasValue);
+            Assert.That (associationId == maxModificationId.Value);
+          });
         }
         
         transaction.Rollback ();

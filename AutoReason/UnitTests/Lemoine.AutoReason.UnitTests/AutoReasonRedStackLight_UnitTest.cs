@@ -57,15 +57,15 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (2), reasonAssociation.Begin.Value, "wrong start for the first reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the first reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.AreEqual ("no alarms", reasonAssociation.ReasonDetails, "wrong detail for the first reason");
+              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("no alarms"), "wrong detail for the first reason");
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (9), reasonAssociation.Begin.Value, "wrong start for the second reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (9)), "wrong start for the second reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
-              Assert.AreEqual ("no alarms", reasonAssociation.ReasonDetails, "wrong detail for the second reason");
+              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("no alarms"), "wrong detail for the second reason");
             }
           } finally {
             transaction.Rollback ();
@@ -88,7 +88,7 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that no autoreasons appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ();
-              Assert.AreEqual (0, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Is.Empty, "wrong number of auto reason created");
             }
           } finally {
             transaction.Rollback ();
@@ -112,15 +112,15 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (2), reasonAssociation.Begin.Value, "wrong start for the first reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the first reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.AreEqual ("", reasonAssociation.ReasonDetails, "wrong detail for the first reason");
+              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo (""), "wrong detail for the first reason");
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (9), reasonAssociation.Begin.Value, "wrong start for the second reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (9)), "wrong start for the second reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
-              Assert.AreEqual ("", reasonAssociation.ReasonDetails, "wrong detail for the second reason");
+              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo (""), "wrong detail for the second reason");
             }
           }
           finally {
@@ -134,7 +134,7 @@ namespace Lemoine.AutoReason.UnitTests
     {
       // Machine
       var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-      Assert.NotNull (machine);
+      Assert.That (machine, Is.Not.Null);
 
       // Associated machine module
       IMachineModule mamo = null;
@@ -142,7 +142,7 @@ namespace Lemoine.AutoReason.UnitTests
         mamo = mamoTmp;
         break;
       }
-      Assert.NotNull (mamo);
+      Assert.That (mamo, Is.Not.Null);
 
       // Acquisition state for the alarm is after the period we are analyzing
       var acquisitionState = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (mamo, AcquisitionStateKey.Alarms);

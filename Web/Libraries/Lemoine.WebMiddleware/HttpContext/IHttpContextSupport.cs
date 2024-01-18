@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using Lemoine.Core.Log;
 
-namespace Lemoine.Extensions.Web.Interfaces
+namespace Lemoine.WebMiddleware.HttpContext
 {
   /// <summary>
   /// To specify a <see cref="Microsoft.AspNetCore.Http.HttpContext"/> supports a request body

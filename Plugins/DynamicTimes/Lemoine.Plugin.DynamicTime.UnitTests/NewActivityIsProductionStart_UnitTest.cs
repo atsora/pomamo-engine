@@ -64,43 +64,55 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 }
 ");
             var initializeResult = extension.Initialize (machine, "");
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             {
               var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
-              Assert.AreEqual (R (0), response.Hint);
-              Assert.IsFalse (response.Final.HasValue);
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (0)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
             }
 
             AddFact (machine, R (0, 1), inactive);
             {
               var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
-              Assert.AreEqual (R (1), response.Hint);
-              Assert.IsFalse (response.Final.HasValue);
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (1)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
             }
 
             AddFact (machine, R (1, 2), manualActive);
             {
               var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
-              Assert.IsTrue (response.Hint.Lower.HasValue);
-              Assert.AreEqual (T (2), response.Hint.Lower.Value);
-              Assert.IsFalse (response.Final.HasValue);
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
             }
             AddFact (machine, R (2, 3), machining);
             {
               var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
-              Assert.IsTrue (response.Final.HasValue);
-              Assert.AreEqual (T (2), response.Final.Value);
+              Assert.Multiple (() => {
+                Assert.That (response.Final.HasValue, Is.True);
+                Assert.That (response.Final.Value, Is.EqualTo (T (2)));
+              });
             }
             {
               var response = extension.Get (T (0), R (1), new UtcDateTimeRange ("(,)"));
-              Assert.IsTrue (response.Final.HasValue);
-              Assert.AreEqual (T (2), response.Final.Value);
+              Assert.Multiple (() => {
+                Assert.That (response.Final.HasValue, Is.True);
+                Assert.That (response.Final.Value, Is.EqualTo (T (2)));
+              });
             }
             {
               var response = extension.Get (T (0), R (2), new UtcDateTimeRange ("(,)"));
-              Assert.IsTrue (response.Final.HasValue);
-              Assert.AreEqual (T (2), response.Final.Value);
+              Assert.Multiple (() => {
+                Assert.That (response.Final.HasValue, Is.True);
+                Assert.That (response.Final.Value, Is.EqualTo (T (2)));
+              });
             }
             CheckNoData (extension, R (0, 2));
             CheckFinal (extension, T (2), R (0, 2, "[]"));
@@ -125,25 +137,31 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     void CheckNoData (IDynamicTimeExtension extension, UtcDateTimeRange limit)
     {
       var response = extension.Get (T (0), R (0), limit);
-      Assert.IsTrue (response.NoData || (response.Final.HasValue && !limit.ContainsElement (response.Final.Value)));
+      Assert.That (response.NoData || (response.Final.HasValue && !limit.ContainsElement (response.Final.Value)), Is.True);
     }
 
     void CheckFinal (IDynamicTimeExtension extension, DateTime final, UtcDateTimeRange limit)
     {
       {
         var response = extension.Get (T (0), R (0), limit);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
       if (T (1) < final) {
         var response = extension.Get (T (0), R (1), limit);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
       {
         var response = extension.Get (T (0), new UtcDateTimeRange (final), limit);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
     }
   }

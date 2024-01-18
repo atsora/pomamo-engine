@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>

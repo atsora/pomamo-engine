@@ -34,7 +34,7 @@ namespace Lemoine.Business.UnitTests.Time
       var at = new DateTime (2018, 05, 01, 23, 00, 00, DateTimeKind.Utc);
       var request = new Lemoine.Business.Time.DayAt (at);
       var response = Lemoine.Business.ServiceProvider.Get (request);
-      Assert.AreEqual (new DateTime (2018, 05, 02), response.Day);
+      Assert.That (response.Day, Is.EqualTo (new DateTime (2018, 05, 02)));
     }
   }
 }

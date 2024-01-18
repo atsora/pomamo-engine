@@ -86,7 +86,7 @@ namespace Lemoine.DataRepository.UnitTests
   </job>
 </root>";
       f = new ODBCFactory (XmlSourceType.STRING, xmlData, new ClassicConnectionParameters());
-      Assert.NotNull (f);
+      Assert.That (f, Is.Not.Null);
       
       // With an invalid XML string with no root element
       Assert.Throws<XmlException>
@@ -119,8 +119,7 @@ namespace Lemoine.DataRepository.UnitTests
 </root>";
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING,
                                        xmlData, new ClassicConnectionParameters());
-      Assert.AreEqual(f.ConnectionParameters.OdbcConnectionString(),
-                      $"DSN=LemoineUnitTests;UID={Constants.DEFAULT_DATABASE_USER};Pwd={Constants.DEFAULT_DATABASE_PASSWORD};");
+      Assert.That ($"DSN=LemoineUnitTests;UID={Constants.DEFAULT_DATABASE_USER};Pwd={Constants.DEFAULT_DATABASE_PASSWORD};", Is.EqualTo (f.ConnectionParameters.OdbcConnectionString()));
       /*
       Assert.AreEqual (f.ConnectionParameters.DsnName, "LemoineUnitTests");
       Assert.AreEqual (f.ConnectionParameters.Username, "DatabaseUser");
@@ -134,7 +133,7 @@ namespace Lemoine.DataRepository.UnitTests
 #if ENABLE_ODBCFACTORY_UNITTEST_VISUALSTUDIO
     [Test]
 #endif // ENABLE_ODBCFACTORY_UNITTEST_VISUALSTUDIO
-    public void TestGetData ()
+    private void TestGetData ()
     {
       // Initialization
       string xmlData =
@@ -166,40 +165,46 @@ $$"""
 """;
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING, xmlData, new ClassicConnectionParameters());
       XmlDocument doc = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
-      
+
       // Tests
-      Assert.IsNotNull (doc);
+      Assert.That (doc, Is.Not.Null);
       XmlElement root = doc.DocumentElement;
-      Assert.IsNotNull (root);
-      Assert.AreEqual ("root", root.Name);
-      
-      // job[1]
-      Assert.AreEqual (2, root.GetElementsByTagName ("job").Count);
+      Assert.That (root, Is.Not.Null);
+      Assert.Multiple (() => {
+        Assert.That (root.Name, Is.EqualTo ("root"));
+
+        // job[1]
+        Assert.That (root.GetElementsByTagName ("job"), Has.Count.EqualTo (2));
+      });
       XmlElement job1 = root.GetElementsByTagName ("job") [0] as XmlElement;
-      Assert.IsNotNull (job1);
-      Assert.AreEqual ("JOBNAME", job1.GetAttribute ("name"));
-      Assert.AreEqual ("1", job1.GetAttribute ("type"));
-      Assert.AreEqual ("", job1.GetAttribute ("status"));
-      Assert.AreEqual ("", job1.GetAttribute ("request", PulseResolver.PULSE_ODBC_NAMESPACE));
-      Assert.AreEqual ("anyotherattr", job1.GetAttribute ("attr"));
-      
-      // job[1]/component
-      Assert.AreEqual (2, job1.GetElementsByTagName ("component").Count);
+      Assert.That (job1, Is.Not.Null);
+      Assert.Multiple (() => {
+        Assert.That (job1.GetAttribute ("name"), Is.EqualTo ("JOBNAME"));
+        Assert.That (job1.GetAttribute ("type"), Is.EqualTo ("1"));
+        Assert.That (job1.GetAttribute ("status"), Is.EqualTo (""));
+        Assert.That (job1.GetAttribute ("request", PulseResolver.PULSE_ODBC_NAMESPACE), Is.EqualTo (""));
+        Assert.That (job1.GetAttribute ("attr"), Is.EqualTo ("anyotherattr"));
+
+        // job[1]/component
+        Assert.That (job1.GetElementsByTagName ("component"), Has.Count.EqualTo (2));
+      });
       // job[1]/component[1]
       XmlElement component = job1.GetElementsByTagName ("component") [0] as XmlElement;
-      Assert.IsNotNull (component);
-      Assert.AreEqual ("COMPNAME", component.GetAttribute ("name"));
-      Assert.AreEqual ("2007-07-01 00:00:00", component.GetAttribute ("starttime"));
-      Assert.AreEqual ("2007-07-02 00:00:00", component.GetAttribute ("endtime"));
-      Assert.AreEqual ("5.1", component.GetAttribute ("hours"));
-      Assert.AreEqual ("False", component.GetAttribute ("done")); // In the ODBC settings, Bools as char must be off
-      Assert.AreEqual ("7", component.GetAttribute ("id"));
-      Assert.AreEqual ("1", component.GetAttribute ("componenttype"));
-      
-      Assert.AreEqual (1, job1.GetElementsByTagName ("testif").Count);
-      
+      Assert.That (component, Is.Not.Null);
+      Assert.Multiple (() => {
+        Assert.That (component.GetAttribute ("name"), Is.EqualTo ("COMPNAME"));
+        Assert.That (component.GetAttribute ("starttime"), Is.EqualTo ("2007-07-01 00:00:00"));
+        Assert.That (component.GetAttribute ("endtime"), Is.EqualTo ("2007-07-02 00:00:00"));
+        Assert.That (component.GetAttribute ("hours"), Is.EqualTo ("5.1"));
+        Assert.That (component.GetAttribute ("done"), Is.EqualTo ("False")); // In the ODBC settings, Bools as char must be off
+        Assert.That (component.GetAttribute ("id"), Is.EqualTo ("7"));
+        Assert.That (component.GetAttribute ("componenttype"), Is.EqualTo ("1"));
+
+        Assert.That (job1.GetElementsByTagName ("testif"), Has.Count.EqualTo (1));
+      });
+
       XmlElement job2 = root.GetElementsByTagName ("job") [1] as XmlElement;
-      Assert.AreEqual (0, job2.GetElementsByTagName ("testif").Count);
+      Assert.That (job2.GetElementsByTagName ("testif"), Is.Empty);
     }
 
     /// <summary>
@@ -208,7 +213,7 @@ $$"""
 #if ENABLE_ODBCFACTORY_UNITTEST_VISUALSTUDIO
     [Test]
 #endif // ENABLE_ODBCFACTORY_UNITTEST_VISUALSTUDIO
-    public void TestGetData2 ()
+    private void TestGetData2 ()
     {
       // Initialization
       string xmlData =
@@ -233,18 +238,20 @@ $$"""
 """;
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING, xmlData, new ClassicConnectionParameters());
       XmlDocument doc = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
-      
+
       // Tests
-      Assert.IsNotNull (doc);
+      Assert.That (doc, Is.Not.Null);
       XmlElement root = doc.DocumentElement;
-      Assert.IsNotNull (root);
-      Assert.AreEqual ("root", root.Name);
-      
-      // Machine[1]
-      Assert.AreEqual (1, root.GetElementsByTagName ("Machine").Count);
+      Assert.That (root, Is.Not.Null);
+      Assert.Multiple (() => {
+        Assert.That (root.Name, Is.EqualTo ("root"));
+
+        // Machine[1]
+        Assert.That (root.GetElementsByTagName ("Machine"), Has.Count.EqualTo (1));
+      });
       XmlElement machine1 = root.GetElementsByTagName ("Machine") [0] as XmlElement;
-      Assert.IsNotNull (machine1);
-      Assert.AreEqual ("MACHINE_A17", machine1.GetAttribute ("Name"));
+      Assert.That (machine1, Is.Not.Null);
+      Assert.That (machine1.GetAttribute ("Name"), Is.EqualTo ("MACHINE_A17"));
     }
 
     /// <summary>
@@ -264,9 +271,9 @@ $$"""
 </root>";
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING, xmlData, new ClassicConnectionParameters());
       string result = f.GetConfigurationValue ("@confkey");
-      Assert.AreEqual ("confvalue", result);
+      Assert.That (result, Is.EqualTo ("confvalue"));
       result = f.GetConfigurationValue ("@unknown");
-      Assert.Null (result);
+      Assert.That (result, Is.Null);
     }
 
     /// <summary>
@@ -275,7 +282,7 @@ $$"""
 #if ENABLE_ODBCFACTORY_UNITTEST_VISUALSTUDIO
     [Test]
 #endif // ENABLE_ODBCFACTORY_UNITTEST_VISUALSTUDIO
-    public void TestFlagSynchronizationAsSuccess ()
+    private void TestFlagSynchronizationAsSuccess ()
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
         using (IDAOTransaction transaction = session.BeginTransaction ())
@@ -327,9 +334,9 @@ $$"""
 </root>";
       ODBCFactory f = new ODBCFactory (XmlSourceType.STRING, xmlData, new ClassicConnectionParameters());
       XmlDocument doc = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
-      Assert.IsNotNull (doc);
+      Assert.That (doc, Is.Not.Null);
       XmlElement root = doc.DocumentElement;
-      Assert.IsNotNull (root);
+      Assert.That (root, Is.Not.Null);
       f.FlagSynchronizationAsSuccess (doc);
       
       ConnectionParameters connectionParameters =
@@ -349,12 +356,14 @@ $$"""
         int nbRows = 0;
         while (reader.Read ()) {
           ++nbRows;
-          Assert.AreEqual (1, reader.FieldCount);
-          Assert.False (reader.IsDBNull (0), "status is DBNull");
-          Assert.LessOrEqual (1, (int) reader.GetValue (0));
+          Assert.Multiple (() => {
+            Assert.That (reader.FieldCount, Is.EqualTo (1));
+            Assert.That (reader.IsDBNull (0), Is.False, "status is DBNull");
+            Assert.That ((int)reader.GetValue (0), Is.GreaterThanOrEqualTo (1));
+          });
         }
         reader.Close ();
-        Assert.AreEqual (2, nbRows);
+        Assert.That (nbRows, Is.EqualTo (2));
         
         // Clean the database
         OdbcCommand update =
@@ -372,8 +381,8 @@ $$"""
       {
         Lemoine.Model.IApplicationState applicationState = ModelDAOHelper.DAOFactory.ApplicationStateDAO
           .GetApplicationState ("synchro.test");
-        Assert.IsNotNull (applicationState);
-        Assert.AreEqual ("3", applicationState.Value);
+        Assert.That (applicationState, Is.Not.Null);
+        Assert.That (applicationState.Value, Is.EqualTo ("3"));
         ModelDAOHelper.DAOFactory.ApplicationStateDAO.MakeTransient (applicationState);
         transaction.Commit ();
       }

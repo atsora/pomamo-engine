@@ -54,15 +54,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // Test the rights
           IList<IMachineStateTemplateRight> rights = ModelDAOHelper.DAOFactory.MachineStateTemplateRightDAO
             .FindAll ();
-          Assert.AreEqual (2, rights.Count);
+          Assert.That (rights, Has.Count.EqualTo (2));
         }
         
         { // Test them
           IList<IMachineStateTemplate> machineStateTemplates =
             ModelDAOHelper.DAOFactory.MachineStateTemplateRightDAO
             .GetGranted (operatorRole);
-          Assert.AreEqual (9, machineStateTemplates.Count);
-          Assert.IsFalse (machineStateTemplates.Contains (unattended));
+          Assert.That (machineStateTemplates, Has.Count.EqualTo (9));
+          Assert.That (machineStateTemplates.Contains (unattended), Is.False);
         }
         
         transaction.Rollback ();
@@ -104,15 +104,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // Test the rights
           IList<IMachineStateTemplateRight> rights = ModelDAOHelper.DAOFactory.MachineStateTemplateRightDAO
             .FindAll ();
-          Assert.AreEqual (3, rights.Count);
+          Assert.That (rights, Has.Count.EqualTo (3));
         }
         
         { // Test them
           IList<IMachineStateTemplate> machineStateTemplates =
             ModelDAOHelper.DAOFactory.MachineStateTemplateRightDAO
             .GetGranted (operatorRole);
-          Assert.AreEqual (1, machineStateTemplates.Count);
-          Assert.IsTrue (machineStateTemplates.Contains (attended));
+          Assert.That (machineStateTemplates, Has.Count.EqualTo (1));
+          Assert.That (machineStateTemplates.Contains (attended), Is.True);
         }
         
         transaction.Rollback ();

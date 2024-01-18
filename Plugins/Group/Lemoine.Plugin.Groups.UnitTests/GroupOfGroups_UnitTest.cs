@@ -97,7 +97,7 @@ namespace Lemoine.Plugin.Groups.UnitTests
           var group = Lemoine.Business.ServiceProvider.Get (request);
           Assert.IsFalse (group.Dynamic);
           var machines = group.GetMachines ();
-          Assert.AreEqual (2, machines.Count ());
+          Assert.That (machines.Count (), Is.EqualTo (2));
           Assert.IsTrue (machines.Any (m => m.Id == 1));
           Assert.IsTrue (machines.Any (m => m.Id == 2));
         }

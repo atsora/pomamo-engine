@@ -41,9 +41,9 @@ namespace Lemoine.Conversion.UnitTests
     {
       var x = new Class { Duration = TimeSpan.FromMinutes (2.5) };
       var json = System.Text.Json.JsonSerializer.Serialize (x);
-      Assert.AreEqual ("""
+      Assert.That (json, Is.EqualTo ("""
 {"Duration":"00:02:30"}
-""", json);
+"""));
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace Lemoine.Conversion.UnitTests
 {"Duration":"0:02:30"}
 """;
       var x = System.Text.Json.JsonSerializer.Deserialize<Class> (json);
-      Assert.AreEqual (TimeSpan.FromMinutes (2.5), x.Duration);
+      Assert.That (x.Duration, Is.EqualTo (TimeSpan.FromMinutes (2.5)));
     }
   }
 }

@@ -78,18 +78,18 @@ namespace Lemoine.Plugin.Groups.UnitTests
 
         var request = new Lemoine.Business.Machine.GroupFromId ("LP");
         var group = Lemoine.Business.ServiceProvider.Get (request);
-        Assert.IsNotNull (group, "Group not found");
+        Assert.That (group, Is.Not.Null, "Group not found");
 
         // Use a custom service provider to simulate a production
         using (new CustomServiceProvider (new GroupLateProduction_TestServiceProvider())) {
           try {
             // Get the number of machines
             var machines = group.GetMachines (initialMachines);
-            Assert.AreEqual (1, machines.Count ());
+            Assert.That (machines.Count (), Is.EqualTo (1));
 
             // Machine 1 is late
             foreach (var machine in machines) {
-              Assert.AreEqual (machine.Name, "unit test for late production - machine 1");
+              Assert.That (machine.Name, Is.EqualTo ("unit test for late production - machine 1"));
               break;
             }
           }

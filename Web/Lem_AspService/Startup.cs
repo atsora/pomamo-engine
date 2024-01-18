@@ -38,6 +38,7 @@ using Pulse.Database.ConnectionInitializer;
 using Lemoine.ModelDAO.LctrChecker;
 using Lemoine.Hosting.AsyncInitialization;
 using Lemoine.Core.Extensions.Logging;
+using System.Net.Http;
 
 namespace Lem_AspService
 {
@@ -93,6 +94,7 @@ namespace Lem_AspService
         , typeof (Lemoine.Web.ProductionMachiningStatus.CurrentMachineStateTemplateOperation.CurrentMachineStateTemplateOperationRequestDTO).Assembly
       };
       services.AddSingleton<IServiceAssembliesResolver> ((IServiceProvider sp) => new DefaultServiceAssemblies (serviceAssemblies, sp.GetService<IExtensionsLoader> ()));
+      services.AddSingleton<HttpClient> ();
 
       services.AddMemoryCache ();
       WebMiddlewareServices.ConfigureServices (services);

@@ -32,11 +32,11 @@ namespace Lemoine.Core.FileRepository.UnitTests
       var format = @"yyyy'/'MM'/'dd HH':'mm':'ss.fff";
       var dateTime = new DateTime (2021, 01, 02, 03, 04, 05);
       var s = dateTime.ToString (format);
-      Assert.AreEqual ("2021/01/02 03:04:05.000", s);
+      Assert.That (s, Is.EqualTo ("2021/01/02 03:04:05.000"));
       var s1 = dateTime.ToString (format, System.Globalization.CultureInfo.InvariantCulture);
-      Assert.AreEqual (s, s1);
+      Assert.That (s1, Is.EqualTo (s));
       var dateTime2 = DateTime.ParseExact (s, format, System.Globalization.CultureInfo.InvariantCulture);
-      Assert.AreEqual (dateTime, dateTime2);
+      Assert.That (dateTime2, Is.EqualTo (dateTime));
     }
   }
 }

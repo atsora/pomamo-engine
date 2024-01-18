@@ -44,7 +44,7 @@ namespace Pulse.Web.UnitTests.MachineMode
       request.MachineId = 2;
       var answer = m_service.GetWithoutCache (request) as ErrorDTO;
 
-      Assert.IsNotNull (answer);
+      Assert.That (answer, Is.Not.Null);
     }
 
     [Test]
@@ -54,7 +54,7 @@ namespace Pulse.Web.UnitTests.MachineMode
       request.MachineId = 1000;
       var answer = m_service.GetWithoutCache (request) as ErrorDTO;
 
-      Assert.IsNotNull (answer);
+      Assert.That (answer, Is.Not.Null);
     }
 
     [OneTimeSetUp]

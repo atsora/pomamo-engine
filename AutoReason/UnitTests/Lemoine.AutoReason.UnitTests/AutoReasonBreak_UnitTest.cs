@@ -42,24 +42,26 @@ namespace Lemoine.AutoReason.UnitTests
     void CheckAutoReasonState (IMonitoredMachine machine, string key, object v)
     {
       var autoReasonState = ModelDAOHelper.DAOFactory.AutoReasonStateDAO.GetAutoReasonState (machine, key);
-      Assert.AreEqual (v, autoReasonState.Value);
+      Assert.That (autoReasonState.Value, Is.EqualTo (v));
     }
 
     void CheckNoReasonMachineAssociation ()
     {
       var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
         .FindAll ();
-      Assert.AreEqual (0, reasonMachineAssociations.Count);
+      Assert.That (reasonMachineAssociations, Is.Empty);
     }
 
     void CheckReasonMachineAssociation (IReasonMachineAssociation reasonMachineAssociation, IMonitoredMachine machine, UtcDateTimeRange range, string translationKey, string details, double score)
     {
-      Assert.AreEqual (range, reasonMachineAssociation.Range);
-      Assert.AreEqual (ReasonSource.Auto, reasonMachineAssociation.ReasonSource);
-      Assert.AreEqual (machine, reasonMachineAssociation.Machine);
-      Assert.AreEqual (translationKey, reasonMachineAssociation.Reason.TranslationKey);
-      Assert.AreEqual (details, reasonMachineAssociation.ReasonDetails);
-      Assert.AreEqual (score, reasonMachineAssociation.ReasonScore);
+      Assert.Multiple (() => {
+        Assert.That (reasonMachineAssociation.Range, Is.EqualTo (range));
+        Assert.That (reasonMachineAssociation.ReasonSource, Is.EqualTo (ReasonSource.Auto));
+        Assert.That (reasonMachineAssociation.Machine, Is.EqualTo (machine));
+        Assert.That (reasonMachineAssociation.Reason.TranslationKey, Is.EqualTo (translationKey));
+        Assert.That (reasonMachineAssociation.ReasonDetails, Is.EqualTo (details));
+        Assert.That (reasonMachineAssociation.ReasonScore, Is.EqualTo (score));
+      });
     }
 
     /// <summary>
@@ -92,7 +94,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -249,7 +251,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -369,7 +371,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (3, 6), "ReasonBreak", "Break (auto)", 90.0);
@@ -414,7 +416,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -534,7 +536,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (7, 12), "ReasonBreak", "Break (auto)", 90.0);
@@ -582,7 +584,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -687,7 +689,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (7, 12), "ReasonBreak", "Break (auto)", 90.0);
@@ -732,7 +734,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
             var mdiNoMotion = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.MdiNoMotion);
@@ -845,7 +847,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (3, 9), "ReasonBreak", "Break (auto)", 90.0);
@@ -890,7 +892,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
             var mdiNoMotion = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.MdiNoMotion);
@@ -989,7 +991,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (2, 7), "ReasonBreak", "Break (auto)", 90.0);
@@ -1034,7 +1036,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
             var mdiNoMotion = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.MdiNoMotion);
@@ -1140,7 +1142,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (2, 7), "ReasonBreak", "Break (auto)", 90.0);
@@ -1184,7 +1186,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
             var mdiNoMotion = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.MdiNoMotion);
@@ -1326,7 +1328,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -1446,7 +1448,7 @@ namespace Lemoine.AutoReason.UnitTests
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (2));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (5, 12), "ReasonBreak", "Break (auto)", 90.0);
@@ -1496,7 +1498,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -1594,7 +1596,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (5, 12), "ReasonBreak", "Break (auto)", 90.0);
@@ -1638,7 +1640,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (2, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (2));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (5, 12), "ReasonBreak", "Break (auto)", 90.0);
@@ -1689,7 +1691,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -1787,7 +1789,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (7, 12), "ReasonBreak", "Break (auto)", 90.0);
@@ -1825,7 +1827,7 @@ namespace Lemoine.AutoReason.UnitTests
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
                 .FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
+              Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
               int i = 0;
               CheckReasonMachineAssociation (reasonMachineAssociations[i],
                 machine, R (7, 12), "ReasonBreak", "Break (auto)", 90.0);

@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <OutputType>WinExe</OutputType>
     <Platforms>x86;x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
@@ -36,6 +36,7 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="System.IO.Ports" /> <!--indirect dependency for Lemoine.Cnc.Serial -->
     <PackageReference Include="System.Data.SQLite.Core" /><!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
+    <PackageReference Include="System.Net.Primitives" />
     <PackageReference Include="System.Text.Json" />
 
     <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
@@ -61,7 +62,7 @@
   </ItemGroup-->
   <!-- TODO: do not publish in case of a global compilation -->
   <ItemGroup>
-    <None Remove="bin\VS\net6.0\runtimes\win-x86\native\SQLite.Interop.dll" />
+    <None Remove="bin\VS\net8.0\runtimes\win-x86\native\SQLite.Interop.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -102,7 +103,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="bin\VS\net6.0\runtimes\win-x86\native\" />
+    <Folder Include="bin\VS\net8.0\runtimes\win-x86\native\" />
   </ItemGroup>
   
 </Project>

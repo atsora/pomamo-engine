@@ -45,12 +45,12 @@ namespace Lemoine.I18N.UnitTests
       value = PulseCatalog.GetString ("Start");
       log.DebugFormat ("Translation of Start is {0}",
                        value);
-      Assert.AreEqual ("Start", value);
+      Assert.That (value, Is.EqualTo ("Start"));
       
       value = PulseCatalog.GetString ("UnknownForTest");
       log.DebugFormat ("Translation of UnknownForTest is {0}",
                        value);
-      Assert.AreEqual ("UnknownForTest", value);
+      Assert.That (value, Is.EqualTo ("UnknownForTest"));
 
       // Use some data written for the test
       LocaleSettings.SetLanguage ("xh-ZA");
@@ -58,17 +58,17 @@ namespace Lemoine.I18N.UnitTests
       value = PulseCatalog.GetString ("MaxN");
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       value = PulseCatalog.GetString ("UnknownTranslation");
       log.DebugFormat ("Translation of UnknownTranslation is {0}",
                        value);
-      Assert.AreEqual ("UnknownTranslation", value);
+      Assert.That (value, Is.EqualTo ("UnknownTranslation"));
 
       value = PulseCatalog.GetString ("MaxN");
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       // Reset the used culture
       LocaleSettings.SetLanguage (previousCultureInfo);
@@ -96,12 +96,12 @@ namespace Lemoine.I18N.UnitTests
       value = PulseCatalog.GetString ("Start");
       log.DebugFormat ("Translation of Start is {0}",
                        value);
-      Assert.AreEqual ("Start", value);
+      Assert.That (value, Is.EqualTo ("Start"));
       
       value = PulseCatalog.GetString ("UnknownForTest");
       log.DebugFormat ("Translation of UnknownForTest is {0}",
                        value);
-      Assert.AreEqual ("UnknownForTest", value);
+      Assert.That (value, Is.EqualTo ("UnknownForTest"));
       
       // Use some data written for the test
       PulseCatalog.CultureInfo = new CultureInfo ("xh-ZA");
@@ -109,17 +109,17 @@ namespace Lemoine.I18N.UnitTests
       value = PulseCatalog.GetString ("MaxN");
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       value = PulseCatalog.GetString ("UnknownTranslation");
       log.DebugFormat ("Translation of UnknownTranslation is {0}",
                        value);
-      Assert.AreEqual ("UnknownTranslation", value);
+      Assert.That (value, Is.EqualTo ("UnknownTranslation"));
 
       value = PulseCatalog.GetString ("MaxN");
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
     }
 
     /// <summary>
@@ -139,17 +139,17 @@ namespace Lemoine.I18N.UnitTests
       value = catalog.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       value = catalog.GetString ("UnknownTranslation", cultureInfo);
       log.DebugFormat ("Translation of UnknownTranslation is {0}",
                        value);
-      Assert.IsNull (value);
+      Assert.That (value, Is.Null);
 
       value = catalog.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
     }
 
     /// <summary>
@@ -171,32 +171,32 @@ namespace Lemoine.I18N.UnitTests
       value = catalog.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       value = catalog.GetString ("UnknownTranslation", cultureInfo);
       log.DebugFormat ("Translation of UnknownTranslation is {0}",
                        value);
-      Assert.IsNull (value);
+      Assert.That (value, Is.Null);
 
       value = catalog.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       value = storage.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       value = storage.GetString ("UnknownTranslation", cultureInfo);
       log.DebugFormat ("Translation of UnknownTranslation is {0}",
                        value);
-      Assert.IsNull (value);
+      Assert.That (value, Is.Null);
 
       value = storage.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
     }
 
     /// <summary>
@@ -215,17 +215,17 @@ namespace Lemoine.I18N.UnitTests
       value = catalog.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
 
       value = catalog.GetString ("UnknownTranslation", cultureInfo);
       log.DebugFormat ("Translation of UnknownTranslation is {0}",
                        value);
-      Assert.IsNull (value);
+      Assert.That (value, Is.Null);
 
       value = catalog.GetString ("MaxN", cultureInfo);
       log.DebugFormat ("Translation of Max N is {0}",
                        value);
-      Assert.AreEqual ("Max N", value);
+      Assert.That (value, Is.EqualTo ("Max N"));
     }
   }
 }

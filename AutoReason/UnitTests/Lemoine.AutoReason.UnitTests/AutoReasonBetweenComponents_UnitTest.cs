@@ -49,12 +49,12 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine, components
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             var component1 = ModelDAOHelper.DAOFactory.ComponentDAO.FindById (1);
-            Assert.NotNull (component1);
+            Assert.That (component1, Is.Not.Null);
             var component2 = ModelDAOHelper.DAOFactory.ComponentDAO.FindById (2);
-            Assert.NotNull (component2);
+            Assert.That (component2, Is.Not.Null);
 
             // Operation slots
             CreateOperationSlot (machine, 1, 4, component1);
@@ -72,15 +72,19 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that autoreasons appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO().FindAll ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
 
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (4), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (6), reasonAssociation.End.Value, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (4)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (6)), "wrong end 1");
+              });
 
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (7), reasonAssociation.Begin.Value, "wrong start 2");
-              Assert.AreEqual (T (9), reasonAssociation.End.Value, "wrong end 2");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start 2");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (9)), "wrong end 2");
+              });
             }
           }
           finally {
@@ -107,12 +111,12 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine, components
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             var component1 = ModelDAOHelper.DAOFactory.ComponentDAO.FindById (1);
-            Assert.NotNull (component1);
+            Assert.That (component1, Is.Not.Null);
             var component2 = ModelDAOHelper.DAOFactory.ComponentDAO.FindById (2);
-            Assert.NotNull (component2);
+            Assert.That (component2, Is.Not.Null);
 
             // Operation slots
             CreateOperationSlot (machine, 1, 4, component1);
@@ -130,7 +134,7 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that autoreasons appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO().FindAll ();
-              Assert.AreEqual (0, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Is.Empty, "wrong number of auto reason created");
             }
           }
           finally {

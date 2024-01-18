@@ -30,10 +30,10 @@ namespace Lemoine.Collections.UnitTests
     public void TestSame ()
     {
       var set1 = new List<string> { "test", "test", "test" };
-      Assert.IsTrue (set1.Same ());
+      Assert.That (set1.Same (), Is.True);
 
       var set2 = new List<string> { "test", "Test", "test" };
-      Assert.IsFalse (set2.Same ());
+      Assert.That (set2.Same (), Is.False);
     }
 
     /// <summary>
@@ -44,17 +44,17 @@ namespace Lemoine.Collections.UnitTests
     {
       {
         var set = new List<string> { "test", "test", "test" };
-        Assert.AreEqual ("test", set.UniqueOrDefault ());
+        Assert.That (set.UniqueOrDefault (), Is.EqualTo ("test"));
       }
 
       {
         var set = new List<string> { "test", "Test", "test" };
-        Assert.AreEqual (null, set.UniqueOrDefault ());
+        Assert.That (set.UniqueOrDefault (), Is.EqualTo (null));
       }
 
       {
         var set = new List<string> { };
-        Assert.AreEqual (null, set.UniqueOrDefault ());
+        Assert.That (set.UniqueOrDefault (), Is.EqualTo (null));
       }
     }
   }

@@ -41,7 +41,7 @@ namespace Lemoine.Alert.UnitTests
             stringWriter.NewLine = "\n";
             serializer.Serialize (stringWriter, action);
             var s = stringWriter.ToString ();
-            Assert.AreEqual ("""
+            Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
 <?xml version="1.0" encoding="utf-16"?>
 <XslEMailAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" To="Recipient &lt;recipient@company&gt;" CC="" Bcc="" WeekDays="5">
   <TimePeriod>00:00:00-00:00:00</TimePeriod>
@@ -55,8 +55,7 @@ namespace Lemoine.Alert.UnitTests
     <XslText />
   </UtcDateTime>
 </XslEMailAction>
-""".ReplaceLineEndings (),
-                             s.ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
           }
         }
       }
@@ -77,7 +76,7 @@ namespace Lemoine.Alert.UnitTests
         (IAction) serializer.Deserialize (textReader);
       Assert.IsTrue (action is BasicEMailAction);
       BasicEMailAction basicEMailAction = action as BasicEMailAction;
-      Assert.AreEqual ("Subject", basicEMailAction.Subject);
+      Assert.That (basicEMailAction.Subject, Is.EqualTo ("Subject"));
     }
   }
 }

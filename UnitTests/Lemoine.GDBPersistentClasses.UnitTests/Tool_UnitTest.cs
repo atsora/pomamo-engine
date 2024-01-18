@@ -31,7 +31,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         IList<ITool> tools = ModelDAOHelper.DAOFactory.ToolDAO
           .FindByName (".532 x .866 x15*  C'BORE");
-        Assert.AreEqual (1, tools.Count);
+        Assert.That (tools, Has.Count.EqualTo (1));
       }
     }
     

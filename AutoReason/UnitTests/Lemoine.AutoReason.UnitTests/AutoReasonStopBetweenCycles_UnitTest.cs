@@ -47,7 +47,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Plugin
             var autoReason = GetAutoReasonExtension (machine, 3);
@@ -68,27 +68,35 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Upper).OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (4, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (4), "wrong number of auto reason created");
 
               var reasonAssociation = reasonAssociations[0]; // Short
-              Assert.AreEqual (T (5), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (5).AddSeconds (3), reasonAssociation.End.Value, "wrong end 1");
-              Assert.AreEqual ("ReasonStopBetweenCycles", reasonAssociation.Reason.TranslationKey, "wrong reason 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (5)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (5).AddSeconds (3)), "wrong end 1");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo ("ReasonStopBetweenCycles"), "wrong reason 1");
+              });
 
               reasonAssociation = reasonAssociations[1]; // Long
-              Assert.AreEqual (T (5), reasonAssociation.Begin.Value, "wrong start 2");
-              Assert.AreEqual (T (5).AddDays (1), reasonAssociation.End.Value, "wrong end 2");
-              Assert.AreEqual ("ReasonStopBetweenCyclesExtended", reasonAssociation.Reason.TranslationKey, "wrong reason 2");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (5)), "wrong start 2");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (5).AddDays (1)), "wrong end 2");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo ("ReasonStopBetweenCyclesExtended"), "wrong reason 2");
+              });
 
               reasonAssociation = reasonAssociations[2]; // Short
-              Assert.AreEqual (T (20), reasonAssociation.Begin.Value, "wrong start 3");
-              Assert.AreEqual (T (20).AddSeconds (3), reasonAssociation.End.Value, "wrong end 3");
-              Assert.AreEqual ("ReasonStopBetweenCycles", reasonAssociation.Reason.TranslationKey, "wrong reason 3");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (20)), "wrong start 3");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (20).AddSeconds (3)), "wrong end 3");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo ("ReasonStopBetweenCycles"), "wrong reason 3");
+              });
 
               reasonAssociation = reasonAssociations[3]; // Long
-              Assert.AreEqual (T (20), reasonAssociation.Begin.Value, "wrong start 4");
-              Assert.AreEqual (T (20).AddDays (1), reasonAssociation.End.Value, "wrong end 4");
-              Assert.AreEqual ("ReasonStopBetweenCyclesExtended", reasonAssociation.Reason.TranslationKey, "wrong reason 4");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (20)), "wrong start 4");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (20).AddDays (1)), "wrong end 4");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo ("ReasonStopBetweenCyclesExtended"), "wrong reason 4");
+              });
             }
           } finally {
             transaction.Rollback ();

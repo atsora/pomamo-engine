@@ -48,7 +48,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Associated machine module
             IMachineModule mamo = null;
@@ -58,7 +58,7 @@ namespace Lemoine.AutoReason.UnitTests
               }
             }
 
-            Assert.NotNull (mamo);
+            Assert.That (mamo, Is.Not.Null);
 
             // Get an operation
             var operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (1);
@@ -80,12 +80,12 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (7), reasonAssociation.Begin.Value, "wrong start for the first reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start for the first reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (10), reasonAssociation.Begin.Value, "wrong start for the second reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (10)), "wrong start for the second reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
             }
           } finally {
@@ -112,7 +112,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Associated machine module
             IMachineModule mamo = null;
@@ -122,7 +122,7 @@ namespace Lemoine.AutoReason.UnitTests
               }
             }
 
-            Assert.NotNull (mamo);
+            Assert.That (mamo, Is.Not.Null);
 
             // Get an operation
             var operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (1);
@@ -134,7 +134,7 @@ namespace Lemoine.AutoReason.UnitTests
             CreateSequenceSlot (7, 8, mamo, SequenceKind.Stop, operation, "this");
             CreateSequenceSlot (9, 10, mamo, SequenceKind.Machining, operation, string.Format ("sequence-{0}-{1}", 9, 10));
             CreateSequenceSlot (10, 12, mamo, SequenceKind.Stop, operation, "that");
-            Assert.AreEqual (sequenceSlots.Count + 4,  ModelDAOHelper.DAOFactory.SequenceSlotDAO.FindAllEndFrom (mamo, dateTime).Count);
+            Assert.That (ModelDAOHelper.DAOFactory.SequenceSlotDAO.FindAllEndFrom (mamo, dateTime), Has.Count.EqualTo (sequenceSlots.Count + 4));
 
             // Plugin
             var autoReason = GetAutoReasonExtension (machine, "hi");
@@ -146,9 +146,9 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that autoreasons appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (7), reasonAssociation.Begin.Value, "wrong start for the first reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start for the first reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
             }
           } finally {

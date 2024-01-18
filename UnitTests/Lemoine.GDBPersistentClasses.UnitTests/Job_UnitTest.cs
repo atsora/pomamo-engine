@@ -45,12 +45,12 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         job2.Status = workOrderStatus;
 
         JobView job3 = (JobView) job2.FindPersistentClass ();
-        Assert.NotNull (job3);
-        Assert.AreEqual ("TestInsertJob", job3.Name);
+        Assert.That (job3, Is.Not.Null);
+        Assert.That (job3.Name, Is.EqualTo ("TestInsertJob"));
 
         JobView job4 = (JobView) job2.FindPersistentClass (new string[] {"Name"});
-        Assert.NotNull (job4);
-        Assert.AreEqual ("TestInsertJob", job4.Name);
+        Assert.That (job4, Is.Not.Null);
+        Assert.That (job4.Name, Is.EqualTo ("TestInsertJob"));
         
         transaction.Rollback ();
       }

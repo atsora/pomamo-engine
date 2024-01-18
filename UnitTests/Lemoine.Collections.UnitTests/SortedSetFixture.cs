@@ -26,7 +26,7 @@ namespace Lemoine.Collections.UnitTests
       int index = 0;
       foreach (object obj in _set)
       {
-        Assert.AreEqual(obj, expectedOrder[index], index.ToString() + " did not have same value");
+        Assert.That (expectedOrder[index], Is.EqualTo (obj), index.ToString() + " did not have same value");
         index++;
       }
     }

@@ -49,35 +49,43 @@ namespace Lemoine.Collections.UnitTests.InitialNullIdSet
       IdClass inst1 = new IdClass ();
       customSet.Add (inst1);
 
-      Assert.AreEqual (true, customSet.Contains (inst1));
+      Assert.That (customSet.Contains (inst1), Is.EqualTo (true));
 
       IdClass inst2 = new IdClass ();
       inst2.Id = 2;
       customSet.Add (inst2);
-      Assert.AreEqual (true, customSet.Contains (inst2));
+      Assert.That (customSet.Contains (inst2), Is.EqualTo (true));
 
       inst1.Id = 1;
-      Assert.AreEqual (true, customSet.Contains (inst1));
-      Assert.AreEqual (true, customSet.Contains (inst2));
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (inst1), Is.EqualTo (true));
+        Assert.That (customSet.Contains (inst2), Is.EqualTo (true));
+      });
 
       IdClass inst3 = new IdClass ();
       inst3.Id = 3;
-      Assert.AreEqual (false, customSet.Contains (inst3));
+      Assert.That (customSet.Contains (inst3), Is.EqualTo (false));
       customSet.Add (inst3);
-      Assert.AreEqual (true, customSet.Contains (inst3));
-      Assert.AreEqual (true, customSet.Contains (inst2));
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (inst3), Is.EqualTo (true));
+        Assert.That (customSet.Contains (inst2), Is.EqualTo (true));
+      });
       customSet.Remove (inst2);
-      Assert.AreEqual (true, customSet.Contains (inst3));
-      Assert.AreEqual (false, customSet.Contains (inst2));
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (inst3), Is.EqualTo (true));
+        Assert.That (customSet.Contains (inst2), Is.EqualTo (false));
+      });
 
       IdClass inst4 = new IdClass ();
       customSet.Add (inst4);
-      Assert.AreEqual (true, customSet.Contains (inst4));
+      Assert.That (customSet.Contains (inst4), Is.EqualTo (true));
       inst4.Id = 4;
-      Assert.AreEqual (true, customSet.Contains (inst4));
-      Assert.AreEqual (true, customSet.Contains (inst3));
-      Assert.AreEqual (false, customSet.Contains (inst2));
-      Assert.AreEqual (true, customSet.Contains (inst1));
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (inst4), Is.EqualTo (true));
+        Assert.That (customSet.Contains (inst3), Is.EqualTo (true));
+        Assert.That (customSet.Contains (inst2), Is.EqualTo (false));
+        Assert.That (customSet.Contains (inst1), Is.EqualTo (true));
+      });
 
       var classicSet = new HashSet<IdClass> ();
 
@@ -86,10 +94,10 @@ namespace Lemoine.Collections.UnitTests.InitialNullIdSet
       classicSet.Add (inst5);
       // !!
       customSet = classicSet;
-      Assert.AreEqual (true, customSet.Contains (inst5));
+      Assert.That (customSet.Contains (inst5), Is.EqualTo (true));
       inst5.Id = 5;
       // arg !
-      Assert.AreEqual (false, customSet.Contains (inst5));
+      Assert.That (customSet.Contains (inst5), Is.EqualTo (false));
 
       // while
       ISet<IdClass> otherCustomSet =
@@ -97,25 +105,25 @@ namespace Lemoine.Collections.UnitTests.InitialNullIdSet
       IdClass inst6 = new IdClass ();
       otherCustomSet.Add (inst6);
       customSet = otherCustomSet;
-      Assert.AreEqual (true, customSet.Contains (inst6));
+      Assert.That (customSet.Contains (inst6), Is.EqualTo (true));
       inst6.Id = 6;
       // OK here
-      Assert.AreEqual (true, customSet.Contains (inst6));
+      Assert.That (customSet.Contains (inst6), Is.EqualTo (true));
 
       // Same type of problem
       customSet = new InitialNullIdSet<IdClass, int> ();
       IdClass inst7 = new IdClass ();
       customSet.Add (inst7);
-      Assert.AreEqual (true, customSet.Contains (inst7));
+      Assert.That (customSet.Contains (inst7), Is.EqualTo (true));
       classicSet = new HashSet<IdClass> ();
       classicSet.Add (inst7);
-      Assert.AreEqual (true, classicSet.Contains (inst7));
+      Assert.That (classicSet.Contains (inst7), Is.EqualTo (true));
       // !!
       customSet = classicSet;
-      Assert.AreEqual (true, customSet.Contains (inst7));
+      Assert.That (customSet.Contains (inst7), Is.EqualTo (true));
       inst7.Id = 7;
       // arg
-      Assert.AreEqual (false, customSet.Contains (inst7));
+      Assert.That (customSet.Contains (inst7), Is.EqualTo (false));
     }
 
   }

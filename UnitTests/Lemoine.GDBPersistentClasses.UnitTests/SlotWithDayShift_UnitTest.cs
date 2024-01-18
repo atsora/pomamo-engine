@@ -78,23 +78,31 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       
       {
         IList<ISlotWithDayShift> combined = SlotWithDayShift.Combine (shifts, days);
-        Assert.AreEqual (4, combined.Count);
+        Assert.That (combined, Has.Count.EqualTo (4));
         int i = 0;
-        Assert.AreEqual (D(1), combined [i].Day);
-        Assert.AreEqual (shiftA, combined [i].Shift);
-        Assert.AreEqual (R(0, 1), combined [i].DateTimeRange);
+        Assert.Multiple (() => {
+          Assert.That (combined[i].Day, Is.EqualTo (D (1)));
+          Assert.That (combined[i].Shift, Is.EqualTo (shiftA));
+          Assert.That (combined[i].DateTimeRange, Is.EqualTo (R (0, 1)));
+        });
         ++i;
-        Assert.AreEqual (D(1), combined [i].Day);
-        Assert.AreEqual (shiftB, combined [i].Shift);
-        Assert.AreEqual (R(1, 12), combined [i].DateTimeRange);
+        Assert.Multiple (() => {
+          Assert.That (combined[i].Day, Is.EqualTo (D (1)));
+          Assert.That (combined[i].Shift, Is.EqualTo (shiftB));
+          Assert.That (combined[i].DateTimeRange, Is.EqualTo (R (1, 12)));
+        });
         ++i;
-        Assert.AreEqual (D(2), combined [i].Day);
-        Assert.AreEqual (shiftB, combined [i].Shift);
-        Assert.AreEqual (R(12, 15), combined [i].DateTimeRange);
+        Assert.Multiple (() => {
+          Assert.That (combined[i].Day, Is.EqualTo (D (2)));
+          Assert.That (combined[i].Shift, Is.EqualTo (shiftB));
+          Assert.That (combined[i].DateTimeRange, Is.EqualTo (R (12, 15)));
+        });
         ++i;
-        Assert.AreEqual (D(2), combined [i].Day);
-        Assert.AreEqual (shiftC, combined [i].Shift);
-        Assert.AreEqual (R(15, 20), combined [i].DateTimeRange);
+        Assert.Multiple (() => {
+          Assert.That (combined[i].Day, Is.EqualTo (D (2)));
+          Assert.That (combined[i].Shift, Is.EqualTo (shiftC));
+          Assert.That (combined[i].DateTimeRange, Is.EqualTo (R (15, 20)));
+        });
         ++i;
       }
     }

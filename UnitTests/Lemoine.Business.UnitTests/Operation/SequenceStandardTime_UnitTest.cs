@@ -41,11 +41,11 @@ namespace Lemoine.Business.UnitTests.Operation
         var request = new Lemoine.Business.Operation.SequenceStandardTime (sequence1);
         { // Without cache
           var standardTime = ServiceProvider.Get (request);
-          Assert.AreEqual (TimeSpan.FromHours (1), standardTime);
+          Assert.That (standardTime, Is.EqualTo (TimeSpan.FromHours (1)));
         }
         { // With cache
           var standardTime = ServiceProvider.Get (request);
-          Assert.AreEqual (TimeSpan.FromHours (1), standardTime);
+          Assert.That (standardTime, Is.EqualTo (TimeSpan.FromHours (1)));
         }
       }
 
@@ -53,11 +53,11 @@ namespace Lemoine.Business.UnitTests.Operation
         var request = new Lemoine.Business.Operation.SequenceStandardTime (sequence3);
         { // Without cache
           var standardTime = ServiceProvider.Get (request);
-          Assert.AreEqual (null, standardTime);
+          Assert.That (standardTime, Is.EqualTo (null));
         }
         { // With cache
           var standardTime = ServiceProvider.Get (request);
-          Assert.AreEqual (null, standardTime);
+          Assert.That (standardTime, Is.EqualTo (null));
         }
       }
     }

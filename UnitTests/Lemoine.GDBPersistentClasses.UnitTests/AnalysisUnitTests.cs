@@ -44,7 +44,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       IList<IMachineModificationLog> machineModificationLogs =
         ModelDAOHelper.DAOFactory.MachineModificationLogDAO
         .FindAll ();
-      Assert.AreEqual (expected, globalModificationLogs.Count + machineModificationLogs.Count);
+      Assert.That (globalModificationLogs.Count + machineModificationLogs.Count, Is.EqualTo (expected));
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         session.CreateCriteria<TModification> ()
         .AddOrder (Order.Asc ("DateTime"))
         .List<TModification> ();
-      Assert.AreEqual (1, modifications.Count, "Number of modifications");
-      Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+      Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+      Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
     }
 
     /// <summary>
@@ -75,9 +75,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         session.CreateCriteria<TModification> ()
         .AddOrder (Order.Asc ("DateTime"))
         .List<TModification> ();
-      Assert.AreEqual (expectedNumber, modifications.Count, "Number of modifications");
+      Assert.That (modifications, Has.Count.EqualTo (expectedNumber), "Number of modifications");
       foreach (TModification modification in modifications) {
-        Assert.AreEqual (AnalysisStatus.Done, modification.AnalysisStatus, "modification status");
+        Assert.That (modification.AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "modification status");
       }
     }
 

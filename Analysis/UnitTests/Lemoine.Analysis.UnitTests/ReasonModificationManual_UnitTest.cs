@@ -86,10 +86,12 @@ namespace Lemoine.Analysis.UnitTests
               ModelDAOHelper.DAOFactory.Flush ();
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (newReason, reasonSlot.Reason);
-              Assert.AreEqual (100, reasonSlot.ReasonScore);
-              Assert.AreEqual (R (1, 300), reasonSlot.DateTimeRange);
-              Assert.AreEqual ("details", reasonSlot.ReasonDetails);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (newReason));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (100));
+                Assert.That (reasonSlot.DateTimeRange, Is.EqualTo (R (1, 300)));
+                Assert.That (reasonSlot.ReasonDetails, Is.EqualTo ("details"));
+              });
             }
           }
           finally {
@@ -176,23 +178,31 @@ namespace Lemoine.Analysis.UnitTests
               ModelDAOHelper.DAOFactory.Flush ();
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (newReason1, reasonSlot.Reason);
-              Assert.AreEqual (100, reasonSlot.ReasonScore);
-              Assert.AreEqual (R (1, 300), reasonSlot.DateTimeRange);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (newReason1));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (100));
+                Assert.That (reasonSlot.DateTimeRange, Is.EqualTo (R (1, 300)));
+              });
               Assert.IsTrue (reasonSlot.Consolidated);
-              Assert.AreEqual ("details", reasonSlot.ReasonDetails);
+              Assert.That (reasonSlot.ReasonDetails, Is.EqualTo ("details"));
 
               var reasonSlot2 = ModelDAOHelper.DAOFactory.ReasonSlotDAO
                 .FindAt (machine, T (300));
-              Assert.AreEqual (T (300), reasonSlot2.DateTimeRange.Lower.Value);
-              Assert.AreEqual ((int)ReasonId.Processing, reasonSlot2.Reason.Id);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot2.DateTimeRange.Lower.Value, Is.EqualTo (T (300)));
+                Assert.That (reasonSlot2.Reason.Id, Is.EqualTo ((int)ReasonId.Processing));
+              });
               reasonExtension.TryResetReason (ref reasonSlot2);
-              Assert.AreEqual (newReason2, reasonSlot2.Reason);
-              Assert.AreEqual ("details", reasonSlot2.ReasonDetails);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot2.Reason, Is.EqualTo (newReason2));
+                Assert.That (reasonSlot2.ReasonDetails, Is.EqualTo ("details"));
+              });
               Assert.IsTrue (reasonSlot2.Consolidated);
               Assert.IsTrue (reasonSlot.Consolidated);
-              Assert.AreNotEqual (reasonSlot.Reason, reasonSlot2.Reason);
-              Assert.AreEqual ("details", reasonSlot.ReasonDetails);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot2.Reason, Is.Not.EqualTo (reasonSlot.Reason));
+                Assert.That (reasonSlot.ReasonDetails, Is.EqualTo ("details"));
+              });
               Assert.IsFalse (reasonSlot.ReferenceDataEquals (reasonSlot2));
             }
           }

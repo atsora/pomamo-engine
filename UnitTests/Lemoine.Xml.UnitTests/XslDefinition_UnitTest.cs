@@ -35,12 +35,12 @@ namespace Lemoine.Xml.UnitTests
             stringWriter.NewLine = "\n";
             serializer.Serialize (stringWriter, xslDefinition);
             var s = stringWriter.ToString ();
-            Assert.AreEqual ("""
+            Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
 <?xml version="1.0" encoding="utf-16"?>
 <XslDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="XslTextDefinition">
   <XslText>test</XslText>
 </XslDefinition>
-""".ReplaceLineEndings (), s.ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
           }
         }
       }
@@ -59,13 +59,15 @@ namespace Lemoine.Xml.UnitTests
       XmlSerializer serializer = new XmlSerializer (typeof (XslDefinition));
       XslDefinition xslDefinition = (XslDefinition)
         serializer.Deserialize (textReader);
-      Assert.IsInstanceOf (typeof (XslTextDefinition), xslDefinition);
-      Assert.AreEqual (@"<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+      Assert.Multiple (() => {
+        Assert.That (xslDefinition, Is.InstanceOf (typeof (XslTextDefinition)));
+        Assert.That (((XslTextDefinition)xslDefinition).XslFull, Is.EqualTo (@"<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
 <xsl:output method=""text"" omit-xml-declaration=""yes"" indent=""no"" />
 <xsl:template match=""/"">
   <xsl:text>Test</xsl:text>
 </xsl:template>
-</xsl:stylesheet>", ((XslTextDefinition)xslDefinition).XslFull);
+</xsl:stylesheet>"));
+      });
     }
   }
 }

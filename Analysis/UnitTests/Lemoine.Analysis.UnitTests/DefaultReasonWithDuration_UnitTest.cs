@@ -64,8 +64,10 @@ namespace Lemoine.Analysis.UnitTests
               reasonSlot.MachineObservationState = attended;
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (reasonMotion, reasonSlot.Reason);
-              Assert.AreEqual (90.0, reasonSlot.ReasonScore);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (reasonMotion));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (90.0));
+              });
             }
 
             { // AutoNullOverride / Long
@@ -74,8 +76,10 @@ namespace Lemoine.Analysis.UnitTests
               reasonSlot.MachineObservationState = attended;
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (reasonUnanswered, reasonSlot.Reason);
-              Assert.AreEqual (10.0, reasonSlot.ReasonScore);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (reasonUnanswered));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (10.0));
+              });
             }
 
             { // AutoNullOverride / Short
@@ -84,8 +88,10 @@ namespace Lemoine.Analysis.UnitTests
               reasonSlot.MachineObservationState = attended;
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (reasonShort, reasonSlot.Reason);
-              Assert.AreEqual (10.0, reasonSlot.ReasonScore);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (reasonShort));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (10.0));
+              });
             }
           }
           finally {

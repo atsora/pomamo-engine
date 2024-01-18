@@ -158,15 +158,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (30), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (30)));
+            });
           }
           // - AnalysisLogs
           AnalysisUnitTests.CheckNumberOfAnalysisLogs (session, 0); // Warning on reason slot motion

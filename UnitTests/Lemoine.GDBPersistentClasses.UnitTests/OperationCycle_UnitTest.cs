@@ -31,7 +31,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       {
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById (1);
-        Assert.IsTrue (machine is IMonitoredMachine);
+        Assert.That (machine is IMonitoredMachine, Is.True);
         using (IDAOTransaction transaction = session.BeginTransaction ())
         {
           {
@@ -54,7 +54,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO.FindAllInRange (machine as IMonitoredMachine,
                                                                           new UtcDateTimeRange (new DateTime (2012, 01, 01, 10, 50, 00, DateTimeKind.Utc)));
-            Assert.AreEqual (1, operationCycles.Count);
+            Assert.That (operationCycles, Has.Count.EqualTo (1));
           }
           transaction.Rollback ();
         }
@@ -70,7 +70,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       {
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById (1);
-        Assert.IsTrue (machine is IMonitoredMachine);
+        Assert.That (machine is IMonitoredMachine, Is.True);
         using (IDAOTransaction transaction = session.BeginTransaction ())
         {
           
@@ -115,10 +115,12 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           Assert.IsNotNull(operationCycleFind2, "op cycle find 2 should be not null");
           Assert.IsNotNull(operationCycleFind3, "op cycle find 3 should be not null");
 
-          Assert.AreEqual(operationCycle1, operationCycleFind1, "op cycles 1 should be equal");
-          Assert.AreEqual(operationCycle2, operationCycleFind2, "op cycles 2 should be equal");
-          Assert.AreEqual(operationCycle3, operationCycleFind3, "op cycles 3 should be equal");
-          
+          Assert.Multiple (() => {
+            Assert.That (operationCycleFind1, Is.EqualTo (operationCycle1), "op cycles 1 should be equal");
+            Assert.That (operationCycleFind2, Is.EqualTo (operationCycle2), "op cycles 2 should be equal");
+            Assert.That (operationCycleFind3, Is.EqualTo (operationCycle3), "op cycles 3 should be equal");
+          });
+
           transaction.Rollback ();
         }
       }

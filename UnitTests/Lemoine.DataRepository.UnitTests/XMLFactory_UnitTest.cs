@@ -62,27 +62,31 @@ namespace Lemoine.DataRepository.UnitTests
       f = new XMLFactory (XmlSourceType.STRING,
                           xmlStructure);
       d = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
-      Assert.AreNotEqual (d, null);
+      Assert.That (d, Is.Not.EqualTo (null));
       XmlElement root = d.DocumentElement;
-      Assert.AreNotEqual (root, null);
-      Assert.AreEqual (root.Name, "root");
-      Assert.AreEqual (root.GetElementsByTagName ("job").Count, 1);
+      Assert.That (root, Is.Not.EqualTo (null));
+      Assert.Multiple (() => {
+        Assert.That (root.Name, Is.EqualTo ("root"));
+        Assert.That (root.GetElementsByTagName ("job"), Has.Count.EqualTo (1));
+      });
       XmlElement job = root.GetElementsByTagName ("job") [0] as XmlElement;
-      Assert.AreNotEqual (job, null);
-      Assert.AreEqual (job.GetAttribute ("name"), "JOBNAME");
+      Assert.That (job, Is.Not.EqualTo (null));
+      Assert.That (job.GetAttribute ("name"), Is.EqualTo ("JOBNAME"));
       
       // With a valid XML file
       f = new XMLFactory (XmlSourceType.URI,
                           Path.Combine (m_unitTestsIn, "testXMLFactory-Valid.xml"));
       d = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
-      Assert.AreNotEqual (d, null);
+      Assert.That (d, Is.Not.EqualTo (null));
       root = d.DocumentElement;
-      Assert.AreNotEqual (root, null);
-      Assert.AreEqual (root.Name, "root");
-      Assert.AreEqual (root.GetElementsByTagName ("job").Count, 1);
+      Assert.That (root, Is.Not.EqualTo (null));
+      Assert.Multiple (() => {
+        Assert.That (root.Name, Is.EqualTo ("root"));
+        Assert.That (root.GetElementsByTagName ("job"), Has.Count.EqualTo (1));
+      });
       job = root.GetElementsByTagName ("job") [0] as XmlElement;
-      Assert.AreNotEqual (job, null);
-      Assert.AreEqual (job.GetAttribute ("name"), "JOBNAME");
+      Assert.That (job, Is.Not.EqualTo (null));
+      Assert.That (job.GetAttribute ("name"), Is.EqualTo ("JOBNAME"));
 
       // With an unknown XML file (but a valid directory)
       f = new XMLFactory (XmlSourceType.URI, "file:///C:\\Windows\\"  +
@@ -141,8 +145,8 @@ namespace Lemoine.DataRepository.UnitTests
                            ex, child.OuterXml);
         }
       }
-      
-      Assert.AreEqual (1, cncAcquisitions.Count);
+
+      Assert.That (cncAcquisitions, Has.Count.EqualTo (1));
     }
     
     [OneTimeSetUp]

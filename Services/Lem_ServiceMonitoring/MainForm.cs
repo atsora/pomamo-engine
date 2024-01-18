@@ -485,11 +485,11 @@ namespace LemoineServiceMonitoring
     async Task StopServiceAsync (ListViewItem listViewItem, WindowsServiceController sc)
     {
       switch (sc.Status) {
-      case ServiceControllerStatus.Running:
-        InvokeSetStatus (listViewItem, GetTranslation ("Stopping"), sc.StartMode);
-        break;
-      default:
-        break;
+        case ServiceControllerStatus.Running:
+          InvokeSetStatus (listViewItem, GetTranslation ("Stopping"), sc.StartMode);
+          break;
+        default:
+          break;
       }
       await sc.StopServiceAsync ();
       await UpdateStatusAsync (listViewItem, sc);
@@ -567,12 +567,12 @@ namespace LemoineServiceMonitoring
     async Task StartServiceAsync (ListViewItem listViewItem, WindowsServiceController sc)
     {
       switch (sc.Status) {
-      case ServiceControllerStatus.Stopped:
-      case ServiceControllerStatus.Paused:
-        InvokeSetStatus (listViewItem, GetTranslation ("Starting"), sc.StartMode);
-        break;
-      default:
-        break;
+        case ServiceControllerStatus.Stopped:
+        case ServiceControllerStatus.Paused:
+          InvokeSetStatus (listViewItem, GetTranslation ("Starting"), sc.StartMode);
+          break;
+        default:
+          break;
       }
       await sc.StartServiceAsync ();
       await UpdateStatusAsync (listViewItem, sc);
@@ -590,6 +590,12 @@ namespace LemoineServiceMonitoring
         await controlSC.StopServiceAsync ();
         return true;
       }
+      catch (InvalidOperationException ex) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"StopWatchingService: the watching service is probably not installed, give up", ex);
+        }
+        return false;
+      }
       catch (Exception ex) {
         log.Error ($"StopWatchingService: the watching service is probably not installed, give up", ex);
         return false;
@@ -603,7 +609,9 @@ namespace LemoineServiceMonitoring
         await controlSC.StartServiceAsync ();
       }
       catch (InvalidOperationException ex) {
-        log.Error ("StartWatchingServiceAsync: the watching service is probably not installed, => give up ", ex);
+        if (log.IsDebugEnabled) {
+          log.Debug ("StartWatchingServiceAsync: the watching service is probably not installed, => give up ", ex);
+        }
         return;
       }
       catch (Exception ex) {
@@ -624,6 +632,12 @@ namespace LemoineServiceMonitoring
         await controlSC.StopServiceAsync ();
         return true;
       }
+      catch (InvalidOperationException ex) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"StopWatchDog32ServiceAsync: the watch dog 32 service is probably not installed, give up", ex);
+        }
+        return false;
+      }
       catch (Exception ex) {
         log.Error ($"StopWatchDog32ServiceAsync: the watch dog 32 service is probably not installed, give up", ex);
         return false;
@@ -637,7 +651,9 @@ namespace LemoineServiceMonitoring
         await controlSC.StartServiceAsync ();
       }
       catch (InvalidOperationException ex) {
-        log.Debug ("StartWatchDog32ServiceAsync: the watch dog 32 service is probably not installed, => give up", ex);
+        if (log.IsDebugEnabled) {
+          log.Debug ("StartWatchDog32ServiceAsync: the watch dog 32 service is probably not installed, => give up", ex);
+        }
         return;
       }
       catch (Exception ex) {
@@ -680,20 +696,20 @@ namespace LemoineServiceMonitoring
             serviceStatus = sc.Status;
             status = "";
             switch (sc.Status) {
-            case ServiceControllerStatus.Running:
-              status = "Started";
-              try {
-                status = PulseCatalog.GetString ("Started");
-              }
-              catch (Exception) {
-              }
-              if (iGroup == 0) {
-                pid = sc.GetServicePID ();
-              }
+              case ServiceControllerStatus.Running:
+                status = "Started";
+                try {
+                  status = PulseCatalog.GetString ("Started");
+                }
+                catch (Exception) {
+                }
+                if (iGroup == 0) {
+                  pid = sc.GetServicePID ();
+                }
 
-              break;
-            default:
-              break;
+                break;
+              default:
+                break;
             }
           }
           catch (Exception ex) {
@@ -808,32 +824,32 @@ namespace LemoineServiceMonitoring
         if (sameStatus) {
           var sc = serviceControllers.First ();
           switch (sc.Status) {
-          case ServiceControllerStatus.Running:
-            buttonStart.Enabled = false;
-            buttonStop.Enabled = true;
-            buttonRestart.Enabled = true;
-            startToolStripMenuItem.Enabled = false;
-            stopToolStripMenuItem.Enabled = true;
-            restartToolStripMenuItem.Enabled = true;
-            break;
-          case ServiceControllerStatus.ContinuePending:
-          case ServiceControllerStatus.StartPending:
-            buttonStart.Enabled = false;
-            buttonStop.Enabled = false;
-            buttonRestart.Enabled = false;
-            startToolStripMenuItem.Enabled = false;
-            stopToolStripMenuItem.Enabled = false;
-            restartToolStripMenuItem.Enabled = false;
-            break;
-          case ServiceControllerStatus.Stopped:
-          default:
-            buttonStart.Enabled = true;
-            buttonStop.Enabled = false;
-            buttonRestart.Enabled = false;
-            startToolStripMenuItem.Enabled = true;
-            stopToolStripMenuItem.Enabled = false;
-            restartToolStripMenuItem.Enabled = false;
-            break;
+            case ServiceControllerStatus.Running:
+              buttonStart.Enabled = false;
+              buttonStop.Enabled = true;
+              buttonRestart.Enabled = true;
+              startToolStripMenuItem.Enabled = false;
+              stopToolStripMenuItem.Enabled = true;
+              restartToolStripMenuItem.Enabled = true;
+              break;
+            case ServiceControllerStatus.ContinuePending:
+            case ServiceControllerStatus.StartPending:
+              buttonStart.Enabled = false;
+              buttonStop.Enabled = false;
+              buttonRestart.Enabled = false;
+              startToolStripMenuItem.Enabled = false;
+              stopToolStripMenuItem.Enabled = false;
+              restartToolStripMenuItem.Enabled = false;
+              break;
+            case ServiceControllerStatus.Stopped:
+            default:
+              buttonStart.Enabled = true;
+              buttonStop.Enabled = false;
+              buttonRestart.Enabled = false;
+              startToolStripMenuItem.Enabled = true;
+              stopToolStripMenuItem.Enabled = false;
+              restartToolStripMenuItem.Enabled = false;
+              break;
           }
         }
         else { // !sameStatus 
@@ -895,26 +911,26 @@ namespace LemoineServiceMonitoring
         }
 
         switch (sc.Status) {
-        case ServiceControllerStatus.Running:
-          // List status value
-          int PID = 0;
-          if (object.Equals (listViewItem.Group.Name, "AtsoraGroup")) {
-            PID = sc.GetServicePID ();
-          }
-          InvokeSetStatus (listViewItem, GetTranslation ("Started"), startupType: sc.StartMode, pid: PID);
-          break;
-        case ServiceControllerStatus.ContinuePending:
-        case ServiceControllerStatus.StartPending:
-          InvokeSetStatus (listViewItem, GetTranslation ("Starting"), sc.StartMode);
-          break;
-        case ServiceControllerStatus.StopPending:
-        case ServiceControllerStatus.PausePending:
-          InvokeSetStatus (listViewItem, GetTranslation ("Stopping"), sc.StartMode);
-          break;
-        case ServiceControllerStatus.Stopped:
-        default:
-          InvokeSetStatus (listViewItem, "", sc.StartMode);
-          break;
+          case ServiceControllerStatus.Running:
+            // List status value
+            int PID = 0;
+            if (object.Equals (listViewItem.Group.Name, "AtsoraGroup")) {
+              PID = sc.GetServicePID ();
+            }
+            InvokeSetStatus (listViewItem, GetTranslation ("Started"), startupType: sc.StartMode, pid: PID);
+            break;
+          case ServiceControllerStatus.ContinuePending:
+          case ServiceControllerStatus.StartPending:
+            InvokeSetStatus (listViewItem, GetTranslation ("Starting"), sc.StartMode);
+            break;
+          case ServiceControllerStatus.StopPending:
+          case ServiceControllerStatus.PausePending:
+            InvokeSetStatus (listViewItem, GetTranslation ("Stopping"), sc.StartMode);
+            break;
+          case ServiceControllerStatus.Stopped:
+          default:
+            InvokeSetStatus (listViewItem, "", sc.StartMode);
+            break;
         }
       }
       catch (Exception ex) {
@@ -976,6 +992,7 @@ namespace LemoineServiceMonitoring
       progressBar.Maximum = numberServices + 1;
 
       await StopWatchingServiceAsync ();
+      await StopWatchDog32ServiceAsync ();
       this.Invoke (new MethodInvoker (progressBar.PerformStep));
 
       await StopSelectedServicesAsync (listView);
@@ -1116,6 +1133,7 @@ namespace LemoineServiceMonitoring
       progressBar.Maximum = numberServices;
 
       await StopWatchingServiceAsync ();
+      await StopWatchDog32ServiceAsync ();
 
       await StopServicesAsync (listViewItems);
 

@@ -65,8 +65,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (ISession session = NHibernateHelper.OpenSession ())
       {
         SimpleOperationView simpleOperation = session.Get<SimpleOperationView> (11008);
-        Assert.NotNull (simpleOperation);
-        Assert.AreEqual ("SIMPLEOPERATION1", simpleOperation.Name);
+        Assert.That (simpleOperation, Is.Not.Null);
+        Assert.That (simpleOperation.Name, Is.EqualTo ("SIMPLEOPERATION1"));
       }
     }
     
@@ -98,9 +98,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (oldOperation, newOperation,
                   ConflictResolution.Exception);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual (1, merged.OperationId);
-        Assert.AreEqual ("SFKPROCESS1", merged.Name);
-        
+        Assert.Multiple (() => {
+          Assert.That (merged.OperationId, Is.EqualTo (1));
+          Assert.That (merged.Name, Is.EqualTo ("SFKPROCESS1"));
+        });
+
         transaction.Rollback ();
       }
     }
@@ -142,11 +144,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (oldOperation, newOperation,
                   ConflictResolution.Exception);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual (1, merged.OperationId);
-        Assert.AreEqual ("SFKPROCESS1", merged.Name);
-        Assert.AreEqual (2, newOperation.ComponentIntermediateWorkPieces.Count);
+        Assert.Multiple (() => {
+          Assert.That (merged.OperationId, Is.EqualTo (1));
+          Assert.That (merged.Name, Is.EqualTo ("SFKPROCESS1"));
+          Assert.That (newOperation.ComponentIntermediateWorkPieces, Has.Count.EqualTo (2));
+        });
         foreach (IComponentIntermediateWorkPiece ciwp in newOperation.ComponentIntermediateWorkPieces) {
-          Assert.AreEqual (10, ciwp.Order.Value);
+          Assert.That (ciwp.Order.Value, Is.EqualTo (10));
         }
         
         transaction.Rollback ();
@@ -189,11 +193,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (oldOperation, newOperation,
                   ConflictResolution.Exception);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual (1, merged.OperationId);
-        Assert.AreEqual ("SFKPROCESS1", merged.Name);
-        Assert.AreEqual (1, newOperation.ComponentIntermediateWorkPieces.Count);
+        Assert.Multiple (() => {
+          Assert.That (merged.OperationId, Is.EqualTo (1));
+          Assert.That (merged.Name, Is.EqualTo ("SFKPROCESS1"));
+          Assert.That (newOperation.ComponentIntermediateWorkPieces, Has.Count.EqualTo (1));
+        });
         foreach (IComponentIntermediateWorkPiece ciwp in newOperation.ComponentIntermediateWorkPieces) {
-          Assert.AreEqual (10, ciwp.Order.Value);
+          Assert.That (ciwp.Order.Value, Is.EqualTo (10));
         }
         
         transaction.Rollback ();

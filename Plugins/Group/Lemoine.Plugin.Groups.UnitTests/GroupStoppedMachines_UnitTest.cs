@@ -104,15 +104,15 @@ namespace Lemoine.Plugin.Groups.UnitTests
           // Load the group
           var request = new Lemoine.Business.Machine.GroupFromId ("SM");
           var group = Lemoine.Business.ServiceProvider.Get (request);
-          Assert.IsNotNull (group, "Group not found");
+          Assert.That (group, Is.Not.Null, "Group not found");
 
           // Get stopped machines
           var machines = group.GetMachines (initialMachines);
-          Assert.AreEqual (1, machines.Count ());
+          Assert.That (machines.Count (), Is.EqualTo (1));
 
           // Machine 1 is stopped
           foreach (var machine in machines) {
-            Assert.AreEqual (machine.Name, "unit test for stopped machine group - machine 1");
+            Assert.That (machine.Name, Is.EqualTo ("unit test for stopped machine group - machine 1"));
             break;
           }
         }

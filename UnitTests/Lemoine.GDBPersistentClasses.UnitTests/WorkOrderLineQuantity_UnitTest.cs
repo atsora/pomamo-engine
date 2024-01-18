@@ -66,7 +66,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference to 1 WorkOrder
         IList<IWorkOrder> workOrders = workOrderDAO.FindAll();
-        Assert.GreaterOrEqual(workOrders.Count, 1, "not enough workorders in the database (at least 1)");
+        Assert.That (workOrders.Count, Is.GreaterThanOrEqualTo (1), "not enough workorders in the database (at least 1)");
         IWorkOrder workOrder1 = workOrders[0];
         
         // Creation of 2 WorkOrderLines
@@ -78,7 +78,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference of 4 IntermediateWorkPiece
         IList<IIntermediateWorkPiece> iwps = iwpDAO.FindAll();
-        Assert.GreaterOrEqual(iwps.Count, 1, "not enough intermediate work pieces in the database (at least 1)");
+        Assert.That (iwps.Count, Is.GreaterThanOrEqualTo (1), "not enough intermediate work pieces in the database (at least 1)");
         IIntermediateWorkPiece iwp1 = iwps[0];
         
         // Creation de 5 WorkOrderLineQuantities
@@ -90,8 +90,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // WorkOrderLine1
           IWorkOrderLine wol = ModelDAOHelper.DAOFactory.WorkOrderLineDAO
             .FindById (workOrderLine1.Id, line1);
-          Assert.IsTrue (wol.IntermediateWorkPieceQuantities.ContainsKey (((Lemoine.Collections.IDataWithId)iwp1).Id));
-          Assert.AreEqual (10, wol.IntermediateWorkPieceQuantities [((Lemoine.Collections.IDataWithId)iwp1).Id].Quantity);
+          Assert.Multiple (() => {
+            Assert.That (wol.IntermediateWorkPieceQuantities.ContainsKey (((Lemoine.Collections.IDataWithId)iwp1).Id), Is.True);
+            Assert.That (wol.IntermediateWorkPieceQuantities[((Lemoine.Collections.IDataWithId)iwp1).Id].Quantity, Is.EqualTo (10));
+          });
         }
         
         transaction.Rollback ();

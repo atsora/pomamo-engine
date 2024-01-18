@@ -129,7 +129,9 @@ namespace Lemoine.WebMiddleware.Contracts
         var converter = converters.GetConverter (property.PropertyType);
 
         var methodInfo = property.GetSetMethod () ?? throw new NullReferenceException ();
-        methodInfo.Invoke (contract, new[] { converter.Invoke (query.Value) });
+        var v = query.Value;
+        var s = v.ToString ();
+        methodInfo.Invoke (contract, new[] { converter.Invoke (s) });
       }
 
       //i dont want to do more work so here is a null so i can test!

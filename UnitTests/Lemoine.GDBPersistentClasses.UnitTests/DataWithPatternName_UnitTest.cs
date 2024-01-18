@@ -33,9 +33,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       {
         IComponent component = ModelDAOHelper.DAOFactory.ComponentDAO.FindById(1);
-        Assert.AreEqual ("COMPONENT1 <CAVITY>", component.Display);
+        Assert.That (component.Display, Is.EqualTo ("COMPONENT1 <CAVITY>"));
         component = ModelDAOHelper.DAOFactory.ComponentDAO.FindById(4);
-        Assert.AreEqual ("C3A02-2 <Undefined>", component.Display);
+        Assert.That (component.Display, Is.EqualTo ("C3A02-2 <Undefined>"));
       }
     }
     

@@ -85,22 +85,28 @@ namespace Lemoine.Collections.UnitTests
       }
       };
       var result = JsonConvert.DeserializeObject<A> (text, jsonSettings);
-      Assert.AreEqual (TimeSpan.FromSeconds (0), result.X);
-      Assert.AreEqual (0, result.Y);
-      Assert.AreEqual (0.0, result.Z);
-      Assert.AreEqual (TimeSpan.FromSeconds (0), result.X1);
-      Assert.AreEqual (0, result.Y1);
-      Assert.IsNull (result.W);
-      Assert.AreEqual (TimeSpan.FromSeconds (3), result.Xd);
-      Assert.AreEqual (3, result.Yd);
-      Assert.AreEqual (3.0, result.Zd);
-      Assert.Null (result.S1);
-      Assert.Null (result.T);
-      Assert.Null (result.S2);
-      Assert.AreEqual (0, result.V);
+      Assert.Multiple (() => {
+        Assert.That (result.X, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        Assert.That (result.Y, Is.EqualTo (0));
+        Assert.That (result.Z, Is.EqualTo (0.0));
+        Assert.That (result.X1, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        Assert.That (result.Y1, Is.EqualTo (0));
+      });
+      Assert.That (result.W, Is.Null);
+      Assert.Multiple (() => {
+        Assert.That (result.Xd, Is.EqualTo (TimeSpan.FromSeconds (3)));
+        Assert.That (result.Yd, Is.EqualTo (3));
+        Assert.That (result.Zd, Is.EqualTo (3.0));
+      });
+      Assert.Multiple (() => {
+        Assert.That (result.S1, Is.Null);
+        Assert.That (result.T, Is.Null);
+        Assert.That (result.S2, Is.Null);
+        Assert.That (result.V, Is.EqualTo (0));
+      });
 
       var a = new A ();
-      Assert.AreEqual (4, a.Yd); // DefaultValue attribute is not sufficient. It must be set in the constructor as well
+      Assert.That (a.Yd, Is.EqualTo (4)); // DefaultValue attribute is not sufficient. It must be set in the constructor as well
     }
 
     /// <summary>
@@ -124,18 +130,24 @@ namespace Lemoine.Collections.UnitTests
       }
       };
       var result = JsonConvert.DeserializeObject<A> (text, jsonSettings);
-      Assert.AreEqual (TimeSpan.FromSeconds (0), result.X);
-      Assert.AreEqual (0, result.Y);
-      Assert.AreEqual (3.14, result.Z);
-      Assert.AreEqual (TimeSpan.FromSeconds (0), result.X1);
-      Assert.AreEqual (0, result.Y1);
-      Assert.IsNull (result.W);
-      Assert.AreEqual (TimeSpan.FromSeconds (3), result.Xd);
-      Assert.AreEqual (3, result.Yd);
-      Assert.AreEqual (3.0, result.Zd);
-      Assert.Null (result.S1);
-      Assert.Null (result.S2);
-      Assert.AreEqual (3, result.V);
+      Assert.Multiple (() => {
+        Assert.That (result.X, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        Assert.That (result.Y, Is.EqualTo (0));
+        Assert.That (result.Z, Is.EqualTo (3.14));
+        Assert.That (result.X1, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        Assert.That (result.Y1, Is.EqualTo (0));
+      });
+      Assert.That (result.W, Is.Null);
+      Assert.Multiple (() => {
+        Assert.That (result.Xd, Is.EqualTo (TimeSpan.FromSeconds (3)));
+        Assert.That (result.Yd, Is.EqualTo (3));
+        Assert.That (result.Zd, Is.EqualTo (3.0));
+      });
+      Assert.Multiple (() => {
+        Assert.That (result.S1, Is.Null);
+        Assert.That (result.S2, Is.Null);
+        Assert.That (result.V, Is.EqualTo (3));
+      });
     }
 
     /// <summary>
@@ -161,20 +173,28 @@ namespace Lemoine.Collections.UnitTests
       }
       };
       var result = JsonConvert.DeserializeObject<A> (text, jsonSettings);
-      Assert.AreEqual (TimeSpan.FromSeconds (0), result.X);
-      Assert.AreEqual (0, result.Y);
-      Assert.AreEqual (3.14, result.Z);
-      Assert.AreEqual (TimeSpan.FromSeconds (0), result.X1);
-      Assert.AreEqual (0, result.Y1);
-      Assert.IsNull (result.W);
-      Assert.AreEqual (TimeSpan.FromSeconds (3), result.Xd);
-      Assert.AreEqual (3, result.Yd);
-      Assert.AreEqual (3.0, result.Zd);
-      Assert.NotNull (result.S1);
-      Assert.AreEqual (2, result.S1.Count ());
-      Assert.AreEqual (TimeSpan.FromSeconds (3), result.T.Value);
-      Assert.Null (result.S2);
-      Assert.AreEqual (3, result.V);
+      Assert.Multiple (() => {
+        Assert.That (result.X, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        Assert.That (result.Y, Is.EqualTo (0));
+        Assert.That (result.Z, Is.EqualTo (3.14));
+        Assert.That (result.X1, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        Assert.That (result.Y1, Is.EqualTo (0));
+      });
+      Assert.That (result.W, Is.Null);
+      Assert.Multiple (() => {
+        Assert.That (result.Xd, Is.EqualTo (TimeSpan.FromSeconds (3)));
+        Assert.That (result.Yd, Is.EqualTo (3));
+        Assert.That (result.Zd, Is.EqualTo (3.0));
+      });
+      Assert.That (result.S1, Is.Not.Null);
+      Assert.Multiple (() => {
+        Assert.That (result.S1.Count (), Is.EqualTo (2));
+        Assert.That (result.T.Value, Is.EqualTo (TimeSpan.FromSeconds (3)));
+      });
+      Assert.Multiple (() => {
+        Assert.That (result.S2, Is.Null);
+        Assert.That (result.V, Is.EqualTo (3));
+      });
     }
 
     [Test]
@@ -190,7 +210,7 @@ namespace Lemoine.Collections.UnitTests
   }
 }";
       var result = JsonConvert.DeserializeObject<P> (text);
-      Assert.AreEqual (3, result.V);
+      Assert.That (result.V, Is.EqualTo (3));
     }
   }
 }

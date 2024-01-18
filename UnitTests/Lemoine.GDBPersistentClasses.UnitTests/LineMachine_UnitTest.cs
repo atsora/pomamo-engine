@@ -65,7 +65,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference of 4 Machines
         IList<IMachine> machines = machineDAO.FindAll();
-        Assert.GreaterOrEqual(machines.Count, 4, "not enough machines in the database (at least 4)");
+        Assert.That (machines, Has.Count.GreaterThanOrEqualTo (4), "not enough machines in the database (at least 4)");
         IMachine machine1 = machines[0];
         IMachine machine2 = machines[1];
         IMachine machine3 = machines[2];
@@ -73,7 +73,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference to 1 Operation
         IList<IOperation> operations = daoFactory.OperationDAO.FindAll();
-        Assert.GreaterOrEqual(operations.Count, 1, "not enough machines in the database (at least 1)");
+        Assert.That (operations.Count, Is.GreaterThanOrEqualTo (1), "not enough machines in the database (at least 1)");
         IOperation operation1 = operations[0];
                 
         // Creation de 5 LineMachines
@@ -88,23 +88,27 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         lineMachineDAO.MakePersistent(lineMachine4);
         lineMachineDAO.MakePersistent(lineMachine5);
 
-        // Check the different numbers of LineMachines
-        Assert.AreEqual(3, lineMachineDAO.FindAllByLine(line1).Count, "wrong count of lineMachines for line 1");
-        Assert.AreEqual(2, lineMachineDAO.FindAllByLine(line2).Count, "wrong count of lineMachines for line 2");
-        Assert.AreEqual(1, lineMachineDAO.FindAllByMachine(machine1).Count, "wrong count of lineMachines for machine 1");
-        Assert.AreEqual(1, lineMachineDAO.FindAllByMachine(machine2).Count, "wrong count of lineMachines for machine 2");
-        Assert.AreEqual(2, lineMachineDAO.FindAllByMachine(machine3).Count, "wrong count of lineMachines for machine 3");
-        Assert.AreEqual(1, lineMachineDAO.FindAllByMachine(machine4).Count, "wrong count of lineMachines for machine 4");
-        
+        Assert.Multiple (() => {
+          // Check the different numbers of LineMachines
+          Assert.That (lineMachineDAO.FindAllByLine (line1), Has.Count.EqualTo (3), "wrong count of lineMachines for line 1");
+          Assert.That (lineMachineDAO.FindAllByLine (line2), Has.Count.EqualTo (2), "wrong count of lineMachines for line 2");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine1), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 1");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine2), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 2");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine3), Has.Count.EqualTo (2), "wrong count of lineMachines for machine 3");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine4), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 4");
+        });
+
         // Remove 1 LineMachine and check the new count
         lineMachineDAO.MakeTransient(lineMachine5);
-        Assert.AreEqual(3, lineMachineDAO.FindAllByLine(line1).Count, "wrong count of lineMachines for line 1");
-        Assert.AreEqual(1, lineMachineDAO.FindAllByLine(line2).Count, "wrong count of lineMachines for line 2");
-        Assert.AreEqual(1, lineMachineDAO.FindAllByMachine(machine1).Count, "wrong count of lineMachines for machine 1");
-        Assert.AreEqual(1, lineMachineDAO.FindAllByMachine(machine2).Count, "wrong count of lineMachines for machine 2");
-        Assert.AreEqual(2, lineMachineDAO.FindAllByMachine(machine3).Count, "wrong count of lineMachines for machine 3");
-        Assert.AreEqual(0, lineMachineDAO.FindAllByMachine(machine4).Count, "wrong count of lineMachines for machine 4");
-        
+        Assert.Multiple (() => {
+          Assert.That (lineMachineDAO.FindAllByLine (line1), Has.Count.EqualTo (3), "wrong count of lineMachines for line 1");
+          Assert.That (lineMachineDAO.FindAllByLine (line2), Has.Count.EqualTo (1), "wrong count of lineMachines for line 2");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine1), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 1");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine2), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 2");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine3), Has.Count.EqualTo (2), "wrong count of lineMachines for machine 3");
+          Assert.That (lineMachineDAO.FindAllByMachine (machine4), Is.Empty, "wrong count of lineMachines for machine 4");
+        });
+
         transaction.Rollback ();
       }
     }

@@ -43,13 +43,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         try {
           IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById(4);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IWorkOrder workOrder1 = ModelDAOHelper.DAOFactory.WorkOrderDAO.FindById(1);
-          Assert.NotNull (workOrder1);
+          Assert.That (workOrder1, Is.Not.Null);
           IComponent component1 = ModelDAOHelper.DAOFactory.ComponentDAO.FindById(1);
-          Assert.NotNull (component1);
+          Assert.That (component1, Is.Not.Null);
           IOperation operation1 = ModelDAOHelper.DAOFactory.OperationDAO.FindById(13157);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           var machineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
             .FindById (101); // Shift1-2
           var production = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
@@ -78,14 +78,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           }
           { // 1.b) Check the data
             var slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO.FindOverlapsRange (machine, R(-2, +6));
-            Assert.AreEqual (3, slots.Count);
+            Assert.That (slots, Has.Count.EqualTo (3));
             int i = 0;
             {
               var slot = slots[i];
-              Assert.AreEqual (machineStateTemplate, slot.MachineStateTemplate);
-              Assert.AreEqual (production, slot.MachineObservationState);
-              Assert.AreEqual (shift1, slot.Shift);
-              Assert.AreEqual (R(-2, +1), slot.DateTimeRange);
+              Assert.Multiple (() => {
+                Assert.That (slot.MachineStateTemplate, Is.EqualTo (machineStateTemplate));
+                Assert.That (slot.MachineObservationState, Is.EqualTo (production));
+                Assert.That (slot.Shift, Is.EqualTo (shift1));
+                Assert.That (slot.DateTimeRange, Is.EqualTo (R (-2, +1)));
+              });
             }
           }
           
@@ -99,11 +101,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           }
           { // 2.b) Check there is a unique operation slot
             var slots = ModelDAOHelper.DAOFactory.OperationSlotDAO.FindOverlapsRange (machine, R(-2, +6));
-            Assert.AreEqual (1, slots.Count);
+            Assert.That (slots, Has.Count.EqualTo (1));
             int i = 0;
             {
               var slot = slots [i];
-              Assert.AreEqual (shift1, slot.Shift);
+              Assert.That (slot.Shift, Is.EqualTo (shift1));
             }
           }
           
@@ -120,23 +122,25 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           }
           { // 3.b) Check the observation state slots
             var slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO.FindOverlapsRange (machine, R(-2, +6));
-            Assert.AreEqual (3, slots.Count);
+            Assert.That (slots, Has.Count.EqualTo (3));
             int i = 0;
             {
               var slot = slots[i];
-              Assert.AreEqual (machineStateTemplate, slot.MachineStateTemplate);
-              Assert.AreEqual (production, slot.MachineObservationState);
-              Assert.AreEqual (shift1, slot.Shift);
-              Assert.AreEqual (R(-2, +1), slot.DateTimeRange);
+              Assert.Multiple (() => {
+                Assert.That (slot.MachineStateTemplate, Is.EqualTo (machineStateTemplate));
+                Assert.That (slot.MachineObservationState, Is.EqualTo (production));
+                Assert.That (slot.Shift, Is.EqualTo (shift1));
+                Assert.That (slot.DateTimeRange, Is.EqualTo (R (-2, +1)));
+              });
             }
           }
           { // 3.c) Check again there is a unique operation slot
             var slots = ModelDAOHelper.DAOFactory.OperationSlotDAO.FindOverlapsRange (machine, R(-2, +6));
-            Assert.AreEqual (1, slots.Count);
+            Assert.That (slots, Has.Count.EqualTo (1));
             int i = 0;
             {
               var slot = slots [i];
-              Assert.AreEqual (shift1, slot.Shift);
+              Assert.That (slot.Shift, Is.EqualTo (shift1));
             }
           }
         }
@@ -171,9 +175,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         XmlSerializer deserializer = new XmlSerializer (typeof (ProcessMachineStateTemplate));
         TextReader textReader = new StringReader(stringWriter.ToString());
         ProcessMachineStateTemplate processMachineStateTemplateBis = (ProcessMachineStateTemplate) deserializer.Deserialize (textReader);
-        
-        Assert.AreEqual (processMachineStateTemplate.Machine.Name, processMachineStateTemplateBis.Machine.Name);
-        Assert.AreEqual (processMachineStateTemplate.Range, processMachineStateTemplateBis.Range);
+
+        Assert.Multiple (() => {
+          Assert.That (processMachineStateTemplateBis.Machine.Name, Is.EqualTo (processMachineStateTemplate.Machine.Name));
+          Assert.That (processMachineStateTemplateBis.Range, Is.EqualTo (processMachineStateTemplate.Range));
+        });
       }
 
       {
@@ -191,9 +197,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         XmlSerializer deserializer = new XmlSerializer (typeof (ProcessMachineStateTemplate));
         TextReader textReader = new StringReader(stringWriter.ToString());
         ProcessMachineStateTemplate processMachineStateTemplateBis = (ProcessMachineStateTemplate) deserializer.Deserialize (textReader);
-        
-        Assert.AreEqual (processMachineStateTemplate.Machine.Name, processMachineStateTemplateBis.Machine.Name);
-        Assert.AreEqual (processMachineStateTemplate.Range, processMachineStateTemplateBis.Range);
+
+        Assert.Multiple (() => {
+          Assert.That (processMachineStateTemplateBis.Machine.Name, Is.EqualTo (processMachineStateTemplate.Machine.Name));
+          Assert.That (processMachineStateTemplateBis.Range, Is.EqualTo (processMachineStateTemplate.Range));
+        });
       }
 
 
@@ -212,9 +220,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         XmlSerializer deserializer = new XmlSerializer (typeof (MachineModification));
         TextReader textReader = new StringReader(stringWriter.ToString());
         ProcessMachineStateTemplate processMachineStateTemplateBis = (ProcessMachineStateTemplate) deserializer.Deserialize (textReader);
-        
-        Assert.AreEqual (processMachineStateTemplate.Machine.Name, processMachineStateTemplateBis.Machine.Name);
-        Assert.AreEqual (processMachineStateTemplate.Range, processMachineStateTemplateBis.Range);
+
+        Assert.Multiple (() => {
+          Assert.That (processMachineStateTemplateBis.Machine.Name, Is.EqualTo (processMachineStateTemplate.Machine.Name));
+          Assert.That (processMachineStateTemplateBis.Range, Is.EqualTo (processMachineStateTemplate.Range));
+        });
       }
     }
     #endregion // XML Serialization

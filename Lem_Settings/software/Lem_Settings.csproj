@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <Platforms>x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
@@ -66,11 +66,11 @@
 
   <ItemGroup Condition="'$(Configuration)'=='VS'">
     <!-- include plugins .dll files for tests (instead of ProjectReference) - projects must be compiled in sln -->
-    <None Include="..\configurators\ConfiguratorPlugins\bin\$(Configuration)\net6.0-windows\ConfiguratorPlugins.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\configurators\ConfiguratorAlarms\bin\$(Configuration)\net6.0-windows\ConfiguratorAlarms.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\wizards\WizardCreateMachine\bin\$(Configuration)\net6.0-windows\WizardCreateMachine.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\wizards\WizardMonitorMachine\bin\$(Configuration)\net6.0-windows\WizardMonitorMachine.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\wizards\WizardCreateStampingConfig\bin\$(Configuration)\net6.0-windows\WizardCreateStampingConfig.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\configurators\ConfiguratorPlugins\bin\$(Configuration)\net8.0-windows\ConfiguratorPlugins.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\configurators\ConfiguratorAlarms\bin\$(Configuration)\net8.0-windows\ConfiguratorAlarms.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\wizards\WizardCreateMachine\bin\$(Configuration)\net8.0-windows\WizardCreateMachine.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\wizards\WizardMonitorMachine\bin\$(Configuration)\net8.0-windows\WizardMonitorMachine.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\wizards\WizardCreateStampingConfig\bin\$(Configuration)\net8.0-windows\WizardCreateStampingConfig.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
 </Project>

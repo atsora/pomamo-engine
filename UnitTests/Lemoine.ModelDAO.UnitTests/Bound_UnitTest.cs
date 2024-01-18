@@ -24,9 +24,9 @@ namespace Lemoine.ModelDAO.UnitTests
     [Test]
     public void TestLt()
     {
-      Assert.IsTrue (new DateTime () < new UpperBound<DateTime> (null));
+      Assert.That (new DateTime () < new UpperBound<DateTime> (null), Is.True);
       Assert.IsFalse (new UpperBound<DateTime> (null) < new DateTime ());
-      Assert.IsTrue (new LowerBound<DateTime> (null) < new DateTime ());
+      Assert.That (new LowerBound<DateTime> (null) < new DateTime (), Is.True);
       Assert.IsFalse (new DateTime () < new LowerBound<DateTime> (null));
     }
     
@@ -42,9 +42,9 @@ namespace Lemoine.ModelDAO.UnitTests
     
     public void TestToString ()
     {
-      Assert.AreEqual ("+oo", new UpperBound<DateTime> (null));
-      Assert.AreEqual ("-oo", new LowerBound<DateTime> (null));
-      Assert.AreEqual ("+oo", new Bound<DateTime> (null, BoundType.Upper));
+      Assert.That (new UpperBound<DateTime> (null).ToString (), Is.EqualTo ("+oo"));
+      Assert.That (new LowerBound<DateTime> (null).ToString (), Is.EqualTo ("-oo"));
+      Assert.That (new Bound<DateTime> (null, BoundType.Upper).ToString (), Is.EqualTo ("+oo"));
     }
   }
 }

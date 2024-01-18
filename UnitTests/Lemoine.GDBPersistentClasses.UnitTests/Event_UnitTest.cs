@@ -48,7 +48,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           }
           {
             var e = ModelDAOHelper.DAOFactory.EventDAO.FindById (id);
-            Assert.AreEqual (id, e.Id);
+            Assert.That (e.Id, Is.EqualTo (id));
             Assert.IsInstanceOf<IEventMessage> (e);
           }
         }
@@ -79,13 +79,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           }
           {
             var e = ModelDAOHelper.DAOFactory.EventDAO.FindById (id);
-            Assert.AreEqual (id, e.Id);
+            Assert.That (e.Id, Is.EqualTo (id));
             Assert.IsInstanceOf<IEventMachineMessage> (e);
           }
           {
             var events = ModelDAOHelper.DAOFactory.EventDAO.FindAll ();
             var e = events.First (x => x.Id == id);
-            Assert.AreEqual (id, e.Id);
+            Assert.That (e.Id, Is.EqualTo (id));
             Assert.IsInstanceOf<IEventMachineMessage> (e);
           }
         }
@@ -122,13 +122,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           }
           {
             var e = ModelDAOHelper.DAOFactory.EventDAO.FindById (id);
-            Assert.AreEqual (id, e.Id);
+            Assert.That (e.Id, Is.EqualTo (id));
             Assert.IsInstanceOf<IEventToolLife> (e);
           }
           {
             var events = ModelDAOHelper.DAOFactory.EventDAO.FindAll ();
             var e = events.First (x => x.Id == id);
-            Assert.AreEqual (id, e.Id);
+            Assert.That (e.Id, Is.EqualTo (id));
             Assert.IsInstanceOf<IEventToolLife> (e);
           }
         }
@@ -158,7 +158,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               stringWriter.NewLine = "\n";
               serializer.Serialize (stringWriter, ev);
               var xml = stringWriter.ToString ();
-              Assert.AreEqual ("""
+              Assert.That (xml.ReplaceLineEndings ().Length, Is.EqualTo ("""
 <?xml version="1.0" encoding="utf-16"?>
 <Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="EventMachineMessage" DateTime="2022-06-24 09:52:23" LocalDateTimeString="24/06/2022 11:52:23" LocalDateTimeG="24/06/2022 11:52:23">
   <Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" />
@@ -166,7 +166,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     <MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" />
   </Machine>
 </Event>
-""".ReplaceLineEndings ().Length, xml.ReplaceLineEndings ().Length);
+""".ReplaceLineEndings ().Length));
             }
           }
         }

@@ -47,11 +47,11 @@ namespace Lemoine.Conversion.UnitTests
     {
       var json = "true";
       var deserialized = JsonConvert.DeserializeObject<object> (json);
-      Assert.IsTrue (deserialized is bool);
+      Assert.That (deserialized is bool, Is.True);
       var x = (bool)deserialized;
-      Assert.AreEqual (true, x);
+      Assert.That (x, Is.EqualTo (true));
       var y = Convert.ChangeType (deserialized, typeof (bool));
-      Assert.AreEqual (true, y);
+      Assert.That (y, Is.EqualTo (true));
     }
 
     /// <summary>
@@ -62,11 +62,11 @@ namespace Lemoine.Conversion.UnitTests
     {
       var json = "123";
       var deserialized = JsonConvert.DeserializeObject<object> (json);
-      Assert.IsTrue (deserialized is long);
+      Assert.That (deserialized is long, Is.True);
       var x = (long)deserialized;
-      Assert.AreEqual (123, x);
+      Assert.That (x, Is.EqualTo (123));
       var y = Convert.ChangeType (deserialized, typeof (int));
-      Assert.AreEqual (123, y);
+      Assert.That (y, Is.EqualTo (123));
     }
 
     /// <summary>
@@ -77,11 +77,11 @@ namespace Lemoine.Conversion.UnitTests
     {
       var json = "123.45";
       var deserialized = JsonConvert.DeserializeObject<object> (json);
-      Assert.IsTrue (deserialized is double);
+      Assert.That (deserialized is double, Is.True);
       var x = (double)deserialized;
-      Assert.AreEqual (123.45, x);
+      Assert.That (x, Is.EqualTo (123.45));
       var y = Convert.ChangeType (deserialized, typeof (double));
-      Assert.AreEqual (123.45, y);
+      Assert.That (y, Is.EqualTo (123.45));
     }
 
     /// <summary>
@@ -92,11 +92,11 @@ namespace Lemoine.Conversion.UnitTests
     {
       var json = "\"123.45\"";
       var deserialized = JsonConvert.DeserializeObject<object> (json);
-      Assert.IsTrue (deserialized is string);
+      Assert.That (deserialized is string, Is.True);
       var x = (string)deserialized;
-      Assert.AreEqual ("123.45", x);
+      Assert.That (x, Is.EqualTo ("123.45"));
       var y = Convert.ChangeType (deserialized, typeof (string));
-      Assert.AreEqual ("123.45", y);
+      Assert.That (y, Is.EqualTo ("123.45"));
     }
 
     /// <summary>
@@ -107,11 +107,11 @@ namespace Lemoine.Conversion.UnitTests
     {
       var json = "[1, 2, 3]";
       var deserialized = JsonConvert.DeserializeObject<object> (json);
-      Assert.IsTrue (deserialized is IEnumerable<Newtonsoft.Json.Linq.JToken>);
+      Assert.That (deserialized is IEnumerable<Newtonsoft.Json.Linq.JToken>, Is.True);
       var x = (IEnumerable<Newtonsoft.Json.Linq.JToken>)deserialized;
       var first = x.First ();
       var firstInt = (int)first;
-      Assert.AreEqual (1, firstInt);
+      Assert.That (firstInt, Is.EqualTo (1));
     }
 
     /// <summary>
@@ -122,12 +122,14 @@ namespace Lemoine.Conversion.UnitTests
     {
       var json = "{\"a\": 1, \"b\": 2, \"c\": 3}";
       var deserialized = JsonConvert.DeserializeObject<object> (json);
-      Assert.IsTrue (deserialized is IDictionary<string, Newtonsoft.Json.Linq.JToken>);
-      Assert.IsTrue (deserialized is IEnumerable<KeyValuePair<string, Newtonsoft.Json.Linq.JToken>>);
+      Assert.Multiple (() => {
+        Assert.That (deserialized is IDictionary<string, Newtonsoft.Json.Linq.JToken>, Is.True);
+        Assert.That (deserialized is IEnumerable<KeyValuePair<string, Newtonsoft.Json.Linq.JToken>>, Is.True);
+      });
       var x = (IDictionary<string, Newtonsoft.Json.Linq.JToken>)deserialized;
       var first = x.First ();
       var firstInt = (int)first.Value;
-      Assert.AreEqual (1, firstInt);
+      Assert.That (firstInt, Is.EqualTo (1));
     }
 
     /// <summary>
@@ -142,12 +144,12 @@ namespace Lemoine.Conversion.UnitTests
       var t = typeof (NewtonsoftJson_UnitTest);
       var m = t.GetMethod ("RunMethodLong");
       var r = (bool)m.Invoke (this, deserialized.Parameters);
-      Assert.IsTrue (r);
+      Assert.That (r, Is.True);
       m = t.GetMethod ("RunMethodInt");
       var r2 = (bool)m.Invoke (this, ConvertLongToInt (deserialized.Parameters));
-      Assert.IsTrue (r2);
+      Assert.That (r2, Is.True);
       var r3 = (bool)m.Invoke (this, ConvertAuto (deserialized.Parameters, m.GetParameters ()));
-      Assert.IsTrue (r3);
+      Assert.That (r3, Is.True);
     }
 
     object[] ConvertLongToInt (object[] x)
@@ -166,12 +168,12 @@ namespace Lemoine.Conversion.UnitTests
       return result;
     }
 
-    public bool RunMethodLong (long x, double y, string s)
+    private bool RunMethodLong (long x, double y, string s)
     {
       return true;
     }
 
-    public bool RunMethodInt (int x, double y, string s)
+    private bool RunMethodInt (int x, double y, string s)
     {
       return true;
     }

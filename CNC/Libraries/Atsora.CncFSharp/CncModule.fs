@@ -8,7 +8,7 @@ type CncModule(name) =
   let mutable logger = LogManager.GetLogger (name: string)
   let mutable dataHandler: IChecked = null
 
-  member val Logger = logger
+  member this.Logger with get () = logger
 
   member val BaseLogCategory = name
 

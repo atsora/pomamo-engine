@@ -83,7 +83,7 @@ namespace Lemoine.Plugin.Groups.UnitTests
           var request = new Lemoine.Business.Machine.GroupFromId (groupId);
           var group = Lemoine.Business.ServiceProvider.Get (request);
           var machines = group.GetMachines ();
-          Assert.AreEqual (8, machines.Count ());
+          Assert.That (machines.Count (), Is.EqualTo (8));
         }
         finally {
           Lemoine.Extensions.ExtensionManager.ClearDeactivate ();

@@ -47,9 +47,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
           var applicationState2 = ModelDAOHelper.DAOFactory.ApplicationStateDAO
             .GetApplicationState (key);
-          Assert.AreEqual (dateTime, applicationState2.Value);
+          Assert.That (applicationState2.Value, Is.EqualTo (dateTime));
 
-          Assert.IsTrue (applicationState2.Value is null);
+          Assert.That (applicationState2.Value is null, Is.True);
         }
         finally {
           transaction.Rollback ();
@@ -74,7 +74,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
           var applicationState2 = ModelDAOHelper.DAOFactory.ApplicationStateDAO
             .GetApplicationState (key);
-          Assert.AreEqual (dateTime, applicationState2.Value);
+          Assert.That (applicationState2.Value, Is.EqualTo (dateTime));
         }
         finally {
           transaction.Rollback ();

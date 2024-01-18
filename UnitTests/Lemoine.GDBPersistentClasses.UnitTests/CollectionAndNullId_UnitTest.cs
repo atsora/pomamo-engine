@@ -40,19 +40,23 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       string FailString = "TestSimpleNullIdToNonNullId failure on class " + typeof (T).FullName;
       ISet<T> customSet = new InitialNullIdSet<T, ID> ();
 
-      Assert.AreNotEqual (ObjWithId, OtherObjWithId, FailString);
+      Assert.That (OtherObjWithId, Is.Not.EqualTo (ObjWithId), FailString);
 
       Lemoine.Collections.IDataWithId<ID> CastedObjWithId = (Lemoine.Collections.IDataWithId<ID>)ObjWithId;
       Lemoine.Collections.IDataWithId<ID> CastedOtherObjWithId = (Lemoine.Collections.IDataWithId<ID>)OtherObjWithId;
 
-      Assert.AreEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
+      });
 
       customSet.Add (ObjWithId);
       customSet.Add (OtherObjWithId);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
     }
 
     public void TestNullIdToNonNullId<T, ID> (T ObjWithId, T OtherObjWithId,
@@ -62,28 +66,33 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       string FailString = "TestNullIdToNonNullId failure on class " + typeof (T).FullName;
       ISet<T> customSet = new InitialNullIdSet<T, ID> ();
 
-      Assert.AreNotEqual (ObjWithId, OtherObjWithId, FailString);
+      Assert.That (OtherObjWithId, Is.Not.EqualTo (ObjWithId), FailString);
 
       Lemoine.Collections.IDataWithId<ID> CastedObjWithId = (Lemoine.Collections.IDataWithId<ID>)ObjWithId;
       Lemoine.Collections.IDataWithId<ID> CastedOtherObjWithId = (Lemoine.Collections.IDataWithId<ID>)OtherObjWithId;
 
-
-      Assert.AreEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
+      });
 
       customSet.Add (ObjWithId);
       customSet.Add (OtherObjWithId);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
 
       daoFactory.MakePersistent (ObjWithId);
 
-      Assert.AreNotEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Not.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
     }
 
     public void TestNullIdToNonNullIdByMachine<T, ID> (T ObjWithId, T OtherObjWithId,
@@ -94,28 +103,33 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       string FailString = "TestNullIdToNonNullId failure on class " + typeof (T).FullName;
       ISet<T> customSet = new InitialNullIdSet<T, ID> ();
 
-      Assert.AreNotEqual (ObjWithId, OtherObjWithId, FailString);
+      Assert.That (OtherObjWithId, Is.Not.EqualTo (ObjWithId), FailString);
 
       Lemoine.Collections.IDataWithId<ID> CastedObjWithId = (Lemoine.Collections.IDataWithId<ID>)ObjWithId;
       Lemoine.Collections.IDataWithId<ID> CastedOtherObjWithId = (Lemoine.Collections.IDataWithId<ID>)OtherObjWithId;
 
-
-      Assert.AreEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
+      });
 
       customSet.Add (ObjWithId);
       customSet.Add (OtherObjWithId);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
 
       daoFactory.MakePersistent (ObjWithId);
 
-      Assert.AreNotEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Not.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
     }
 
     public void TestNullIdToNonNullIdSorted<T, ID> (T ObjWithId, T OtherObjWithId,
@@ -126,28 +140,33 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       string FailString = "TestNullIdToNonNullIdSorted failure on class " + typeof (T).FullName;
       ISet<T> customSet = new InitialNullIdSortedSet<T, ID> ();
 
-      Assert.AreNotEqual (ObjWithId, OtherObjWithId, FailString);
+      Assert.That (OtherObjWithId, Is.Not.EqualTo (ObjWithId), FailString);
 
       Lemoine.Collections.IDataWithId<ID> CastedObjWithId = (Lemoine.Collections.IDataWithId<ID>)ObjWithId;
       Lemoine.Collections.IDataWithId<ID> CastedOtherObjWithId = (Lemoine.Collections.IDataWithId<ID>)OtherObjWithId;
 
-
-      Assert.AreEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
+      });
 
       customSet.Add (ObjWithId);
       customSet.Add (OtherObjWithId);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
 
       daoFactory.MakePersistent (ObjWithId);
 
-      Assert.AreNotEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Not.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
     }
 
     public void TestNullIdToNonNullIdBag<T, ID> (T ObjWithId, T OtherObjWithId,
@@ -157,28 +176,33 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       string FailString = "TestNullIdToNonNullIdSorted failure on class " + typeof (T).FullName;
       IList<T> customSet = new List<T> ();
 
-      Assert.AreNotEqual (ObjWithId, OtherObjWithId, FailString);
+      Assert.That (OtherObjWithId, Is.Not.EqualTo (ObjWithId), FailString);
 
       Lemoine.Collections.IDataWithId<ID> CastedObjWithId = (Lemoine.Collections.IDataWithId<ID>)ObjWithId;
       Lemoine.Collections.IDataWithId<ID> CastedOtherObjWithId = (Lemoine.Collections.IDataWithId<ID>)OtherObjWithId;
 
-
-      Assert.AreEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
+      });
 
       customSet.Add (ObjWithId);
       customSet.Add (OtherObjWithId);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+      Assert.Multiple (() => {
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
 
       daoFactory.MakePersistent (ObjWithId);
 
-      Assert.AreNotEqual (0, CastedObjWithId.Id, FailString);
-      Assert.AreEqual (0, CastedOtherObjWithId.Id, FailString);
+      Assert.Multiple (() => {
+        Assert.That (CastedObjWithId.Id, Is.Not.Zero, FailString);
+        Assert.That (CastedOtherObjWithId.Id, Is.Zero, FailString);
 
-      Assert.AreEqual (true, customSet.Contains (ObjWithId), FailString);
-      Assert.AreEqual (true, customSet.Contains (OtherObjWithId), FailString);
+        Assert.That (customSet.Contains (ObjWithId), Is.EqualTo (true), FailString);
+        Assert.That (customSet.Contains (OtherObjWithId), Is.EqualTo (true), FailString);
+      });
     }
 
     /// <summary>

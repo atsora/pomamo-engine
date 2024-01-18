@@ -127,8 +127,8 @@ where foo.Component.Id=:Component_Id
           .AddIntermediateWorkPiece (iwp2);
         IComponentIntermediateWorkPiece iwp3 = (IComponentIntermediateWorkPiece) ((ComponentIntermediateWorkPiece)compIwp2)
           .FindPersistentClass (new string[] {"Component", "IntermediateWorkPiece.Code"});
-        Assert.NotNull (iwp3);
-        Assert.AreEqual (iwp, iwp3.IntermediateWorkPiece);
+        Assert.That (iwp3, Is.Not.Null);
+        Assert.That (iwp3.IntermediateWorkPiece, Is.EqualTo (iwp));
         
         transaction.Rollback ();
       }
@@ -175,8 +175,8 @@ where foo.Component.Id=:Component_Id
           .AddIntermediateWorkPiece (iwp2);
         IComponentIntermediateWorkPiece iwp3 = (IComponentIntermediateWorkPiece) ((ComponentIntermediateWorkPiece)compIwp2)
           .FindPersistentClass (new string[] {"Component", "IntermediateWorkPiece.Operation.Code"});
-        Assert.NotNull (iwp3);
-        Assert.AreEqual (iwp, iwp3.IntermediateWorkPiece);
+        Assert.That (iwp3, Is.Not.Null);
+        Assert.That (iwp3.IntermediateWorkPiece, Is.EqualTo (iwp));
         
         transaction.Rollback ();
       }

@@ -31,7 +31,7 @@ namespace Pulse.Web.UnitTests.CncValue
       var request = new CncValueCurrentRequestDTO ();
       request.MachineId = 1000; // non existing
       ErrorDTO response = m_service.GetWithoutCache (request) as ErrorDTO;
-      Assert.IsNotNull (response);
+      Assert.That (response, Is.Not.Null);
     }
 
 
@@ -46,13 +46,14 @@ namespace Pulse.Web.UnitTests.CncValue
 
       var response = m_service.GetWithoutCache (request) as CncValueCurrentResponseDTO;
 
-      Assert.IsNotNull (response, "/CncValue/Current MachineId=1 returns null");
-      Assert.AreEqual ("Feedrate", response.ByMachineModule[0].ByField[0].Field.Display);
-      // TODO: test unit
-      /* Assert.AreEqual ("mm/min", ...); */
-      Assert.AreEqual (95.5, response.ByMachineModule[0].ByField[0].Value);
-      Assert.AreEqual (ConvertDTO.DateTimeUtcToIsoString (new DateTime (2008, 1, 16, 10, 0, 0, DateTimeKind.Utc)),
-        response.ByMachineModule[0].ByField[0].DateTime);
+      Assert.That (response, Is.Not.Null, "/CncValue/Current MachineId=1 returns null");
+      Assert.Multiple (() => {
+        Assert.That (response.ByMachineModule[0].ByField[0].Field.Display, Is.EqualTo ("Feedrate"));
+        // TODO: test unit
+        /* Assert.AreEqual ("mm/min", ...); */
+        Assert.That (response.ByMachineModule[0].ByField[0].Value, Is.EqualTo (95.5));
+        Assert.That (response.ByMachineModule[0].ByField[0].DateTime, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (new DateTime (2008, 1, 16, 10, 0, 0, DateTimeKind.Utc))));
+      });
     }
 
     [OneTimeSetUp]

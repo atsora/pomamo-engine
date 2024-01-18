@@ -34,17 +34,17 @@ namespace Lemoine.Info.UnitTests
 
       {
         var testName = $"{assemblyName.Name}";
-        Assert.AreEqual (null, new AssemblyName (testName).Version);
+        Assert.That (new AssemblyName (testName).Version, Is.EqualTo (null));
       }
 
       {
         var testName = $"{assemblyName.Name}, Version={assemblyName.Version}";
-        Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (assemblyName, new AssemblyName (testName)));
+        Assert.That (AssemblyName.ReferenceMatchesDefinition (assemblyName, new AssemblyName (testName)), Is.True);
       }
 
       {
         var testName = $"{assemblyName.Name}, Version=0.0.9.0";
-        Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (assemblyName, new AssemblyName (testName)));
+        Assert.That (AssemblyName.ReferenceMatchesDefinition (assemblyName, new AssemblyName (testName)), Is.True);
       }
     }
   }

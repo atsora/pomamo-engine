@@ -36,9 +36,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       
       var json = JsonConvert.SerializeObject (dico);
       var deserialized = JsonConvert.DeserializeObject<IDictionary<string, object>> (json);
-      
-      Assert.AreEqual (30, deserialized["Id"]);
-      Assert.AreEqual ("Toto", deserialized["Name"]);
+
+      Assert.Multiple (() => {
+        Assert.That (deserialized["Id"], Is.EqualTo (30));
+        Assert.That (deserialized["Name"], Is.EqualTo ("Toto"));
+      });
     }
 
     [OneTimeSetUp]

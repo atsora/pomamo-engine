@@ -23,37 +23,48 @@ namespace Lemoine.Collections.UnitTests
     [Test]
     public void Test()
     {
-      CachedQueue<int> cachedQueue = new CachedQueue<int> (new ListQueue<int> (), new ListQueue<int> ());
+      var cachedQueue = new CachedQueue<int> (new ListQueue<int> (), new ListQueue<int> ());
       cachedQueue.MaxVolatileElements = 2;
-      Assert.AreEqual (0, cachedQueue.Count);
+      Assert.That (cachedQueue.Count, Is.EqualTo (0));
       cachedQueue.Enqueue (0);
-      Assert.AreEqual (1, cachedQueue.Count);
-      Assert.AreEqual (0, cachedQueue.Peek ());
-      Assert.AreEqual (0, cachedQueue.Dequeue ());
-      Assert.AreEqual (0, cachedQueue.Count);
+      Assert.That (cachedQueue.Count, Is.EqualTo (1));
+      Assert.Multiple (() => {
+        Assert.That (cachedQueue.Peek (), Is.EqualTo (0));
+        Assert.That (cachedQueue.Dequeue (), Is.EqualTo (0));
+        Assert.That (cachedQueue.Count, Is.EqualTo (0));
+      });
       cachedQueue.Enqueue (0);
       cachedQueue.UnsafeDequeue ();
       cachedQueue.Enqueue (0);
       cachedQueue.Enqueue (1);
-      Assert.AreEqual (2, cachedQueue.Count);
+      Assert.That (cachedQueue.Count, Is.EqualTo (2));
       {
         IList<int> list = cachedQueue.Peek (2);
-        Assert.AreEqual (0, list [0]);
-        Assert.AreEqual (1, list [1]);
+        Assert.Multiple (() => {
+          Assert.That (list[0], Is.EqualTo (0));
+          Assert.That (list[1], Is.EqualTo (1));
+        });
       }
       cachedQueue.Enqueue (2);
-      Assert.AreEqual (3, cachedQueue.Count);
+      Assert.That (cachedQueue.Count, Is.EqualTo (3));
       {
         IList<int> list = cachedQueue.Peek (3);
-        Assert.AreEqual (0, list [0]);
-        Assert.AreEqual (1, list [1]);
-        Assert.AreEqual (2, list [2]);
+        Assert.Multiple (() => {
+          Assert.That (list[0], Is.EqualTo (0));
+          Assert.That (list[1], Is.EqualTo (1));
+          Assert.That (list[2], Is.EqualTo (2));
+        });
       }
-      Assert.AreEqual (0, cachedQueue.Dequeue ());
-      Assert.AreEqual (1, cachedQueue.Peek ());
+
+      Assert.Multiple (() => {
+        Assert.That (cachedQueue.Dequeue (), Is.EqualTo (0));
+        Assert.That (cachedQueue.Peek (), Is.EqualTo (1));
+      });
       cachedQueue.UnsafeDequeue ();
-      Assert.AreEqual (2, cachedQueue.Dequeue ());
-      Assert.AreEqual (0, cachedQueue.Count);
+      Assert.Multiple (() => {
+        Assert.That (cachedQueue.Dequeue (), Is.EqualTo (2));
+        Assert.That (cachedQueue.Count, Is.EqualTo (0));
+      });
     }
   }
 }

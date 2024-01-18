@@ -45,9 +45,11 @@ namespace Pulse.Web.UnitTests.Machine
 
           var response = m_service.GetWithoutCache (request) as NameResponseDTO;
 
-          Assert.IsNotNull (response);
-          Assert.AreEqual ("1", response.Id);
-          Assert.AreEqual ("MACHINE_A17", response.Name);
+          Assert.That (response, Is.Not.Null);
+          Assert.Multiple (() => {
+            Assert.That (response.Id, Is.EqualTo ("1"));
+            Assert.That (response.Name, Is.EqualTo ("MACHINE_A17"));
+          });
         }
         finally {
           transaction.Rollback ();
@@ -69,9 +71,11 @@ namespace Pulse.Web.UnitTests.Machine
 
           var response = m_service.GetWithoutCache (request) as NameResponseDTO;
 
-          Assert.IsNotNull (response);
-          Assert.AreEqual ("1", response.Id);
-          Assert.AreEqual ("MACHINE_A17", response.Name);
+          Assert.That (response, Is.Not.Null);
+          Assert.Multiple (() => {
+            Assert.That (response.Id, Is.EqualTo ("1"));
+            Assert.That (response.Name, Is.EqualTo ("MACHINE_A17"));
+          });
         }
         finally {
           transaction.Rollback ();
@@ -93,7 +97,7 @@ namespace Pulse.Web.UnitTests.Machine
 
           var response = m_service.GetWithoutCache (request) as ErrorDTO;
 
-          Assert.IsNotNull (response);
+          Assert.That (response, Is.Not.Null);
         }
         finally {
           transaction.Rollback ();

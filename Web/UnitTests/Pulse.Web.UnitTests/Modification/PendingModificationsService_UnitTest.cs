@@ -45,8 +45,8 @@ namespace Pulse.Web.UnitTests.Modification
           reasonSave.MachineId = machine1.Id;
           reasonSave.Range = "[" + ConvertDTO.DateTimeUtcToIsoString (begin) + "," + ConvertDTO.DateTimeUtcToIsoString (end) + ")";
           reasonSave.ReasonDetails = details;
-          ReasonSaveResponseDTO response = new ReasonSaveService ().GetSync (reasonSave) as ReasonSaveResponseDTO;   
-          Assert.IsNotNull(response, "Non OK saveReasonResponse");
+          ReasonSaveResponseDTO response = new ReasonSaveService ().GetSync (reasonSave) as ReasonSaveResponseDTO;
+          Assert.That (response, Is.Not.Null, "Non OK saveReasonResponse");
           
           int revisionId = (int)response.Revision.Id;
           
@@ -56,13 +56,13 @@ namespace Pulse.Web.UnitTests.Modification
             request.RevisionId = revisionId;
             PendingModificationsResponseDTO pendingModifications =
               m_service.GetWithoutCache (request) as PendingModificationsResponseDTO;
-            Assert.IsNotNull(pendingModifications, "Null number of pending modifications");
-            Assert.AreEqual(1, pendingModifications.Number, "Not 1 pending modification");
+            Assert.That (pendingModifications, Is.Not.Null, "Null number of pending modifications");
+            Assert.That (pendingModifications.Number, Is.EqualTo (1), "Not 1 pending modification");
           }
           
           // save reason a second time
           ReasonSaveResponseDTO response2 = new ReasonSaveService ().GetSync (reasonSave) as ReasonSaveResponseDTO;
-          Assert.IsNotNull(response2, "Non OK saveReasonResponse");
+          Assert.That (response2, Is.Not.Null, "Non OK saveReasonResponse");
           
           int revisionId2 = (int)response2.Revision.Id;
           {
@@ -70,8 +70,8 @@ namespace Pulse.Web.UnitTests.Modification
             request.RevisionId = revisionId2;
             PendingModificationsResponseDTO pendingModifications =
               m_service.GetWithoutCache (request) as PendingModificationsResponseDTO;
-            Assert.IsNotNull(pendingModifications);
-            Assert.AreEqual(2, pendingModifications.Number);
+            Assert.That (pendingModifications, Is.Not.Null);
+            Assert.That (pendingModifications.Number, Is.EqualTo (2));
           }          
         }
         finally {

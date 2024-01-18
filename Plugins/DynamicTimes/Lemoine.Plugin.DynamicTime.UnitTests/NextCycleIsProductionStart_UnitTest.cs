@@ -77,21 +77,25 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 }
 ");
           var initializeResult = extension.Initialize (machine, null);
-          Assert.IsTrue (initializeResult);
+          Assert.That (initializeResult, Is.True);
 
           {
             var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
-            Assert.IsFalse (response.Hint.Lower.HasValue);
-            Assert.IsFalse (response.Hint.Upper.HasValue);
-            Assert.IsFalse (response.Final.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (response.Hint.Lower.HasValue, Is.False);
+              Assert.That (response.Hint.Upper.HasValue, Is.False);
+              Assert.That (response.Final.HasValue, Is.False);
+            });
           }
 
           var cycle = StartCycle (machine, operationSlot, cycleStart);
           CycleDetectionStatusExtension.SetCycleDetectionDateTime (T (2));
           {
             var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
-            Assert.IsTrue (response.Final.HasValue);
-            Assert.AreEqual (cycleStart, response.Final.Value);
+            Assert.Multiple (() => {
+              Assert.That (response.Final.HasValue, Is.True);
+              Assert.That (response.Final.Value, Is.EqualTo (cycleStart));
+            });
           }
 
           CycleDetectionStatusExtension.SetCycleDetectionDateTime (T (3));
@@ -124,7 +128,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     void CheckNotApplicable (IDynamicTimeExtension extension, DateTime dateTime)
     {
       var response = extension.Get (dateTime, new UtcDateTimeRange ("(,)"), new UtcDateTimeRange ("(,)"));
-      Assert.IsTrue (response.NotApplicable);
+      Assert.That (response.NotApplicable, Is.True);
     }
   }
 }

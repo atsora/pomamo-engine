@@ -36,7 +36,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         v = ModelDAOHelper.DAOFactory.MonitoredMachineAnalysisStatusDAO
           .Reload (v);
-        Assert.AreEqual (new DateTime (2013, 01, 01, 00, 00, 00), v.ActivityAnalysisDateTime);
+        Assert.That (v.ActivityAnalysisDateTime, Is.EqualTo (new DateTime (2013, 01, 01, 00, 00, 00)));
         
         using (IDAOTransaction transaction = session.BeginTransaction ()) {
           v.ActivityAnalysisDateTime = DateTime.UtcNow;
@@ -45,7 +45,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         v = ModelDAOHelper.DAOFactory.MonitoredMachineAnalysisStatusDAO
           .Reload (v);
-        Assert.AreEqual (new DateTime (2013, 01, 01, 00, 00, 00), v.ActivityAnalysisDateTime);
+        Assert.That (v.ActivityAnalysisDateTime, Is.EqualTo (new DateTime (2013, 01, 01, 00, 00, 00)));
       }
     }
 

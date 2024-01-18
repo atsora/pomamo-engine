@@ -25,33 +25,44 @@ namespace Lemoine.Collections.UnitTests
     {
       var queue = new ConcurrentExtendedQueue<int> ();
       queue.Enqueue (0);
-      Assert.AreEqual (1, queue.Count);
-      Assert.AreEqual (0, queue.Peek ());
-      Assert.AreEqual (0, queue.Dequeue ());
-      Assert.AreEqual (0, queue.Count);
+      Assert.That (queue.Count, Is.EqualTo (1));
+      Assert.Multiple (() => {
+        Assert.That (queue.Peek (), Is.EqualTo (0));
+        Assert.That (queue.Dequeue (), Is.EqualTo (0));
+        Assert.That (queue.Count, Is.EqualTo (0));
+      });
       queue.Enqueue (0);
       queue.UnsafeDequeue ();
       queue.Enqueue (0);
       queue.Enqueue (1);
-      Assert.AreEqual (2, queue.Count);
+      Assert.That (queue.Count, Is.EqualTo (2));
       {
         IList<int> list = queue.Peek (2);
-        Assert.AreEqual (0, list[0]);
-        Assert.AreEqual (1, list[1]);
+        Assert.Multiple (() => {
+          Assert.That (list[0], Is.EqualTo (0));
+          Assert.That (list[1], Is.EqualTo (1));
+        });
       }
       queue.Enqueue (2);
-      Assert.AreEqual (3, queue.Count);
+      Assert.That (queue.Count, Is.EqualTo (3));
       {
         IList<int> list = queue.Peek (3);
-        Assert.AreEqual (0, list[0]);
-        Assert.AreEqual (1, list[1]);
-        Assert.AreEqual (2, list[2]);
+        Assert.Multiple (() => {
+          Assert.That (list[0], Is.EqualTo (0));
+          Assert.That (list[1], Is.EqualTo (1));
+          Assert.That (list[2], Is.EqualTo (2));
+        });
       }
-      Assert.AreEqual (0, queue.Dequeue ());
-      Assert.AreEqual (1, queue.Peek ());
+
+      Assert.Multiple (() => {
+        Assert.That (queue.Dequeue (), Is.EqualTo (0));
+        Assert.That (queue.Peek (), Is.EqualTo (1));
+      });
       queue.UnsafeDequeue ();
-      Assert.AreEqual (2, queue.Dequeue ());
-      Assert.AreEqual (0, queue.Count);
+      Assert.Multiple (() => {
+        Assert.That (queue.Dequeue (), Is.EqualTo (2));
+        Assert.That (queue.Count, Is.EqualTo (0));
+      });
     }
   }
 }

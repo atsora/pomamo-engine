@@ -78,7 +78,9 @@ namespace Lemoine.Database.Persistent
     {
       var configCachePath = GetConfigCachePath ();
 
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
       BinaryFormatter binaryFormatter = new BinaryFormatter ();
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
       try {
         // Note: binary serialization is obsolete
         // This code is still active but not really required. If absolutely needed this could be removed in the future
@@ -114,8 +116,10 @@ namespace Lemoine.Database.Persistent
 
       // Note: binary serialization is obsolete
       // This code is still active but not really required. If absolutely needed this could be removed in the future
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
       BinaryFormatter binaryFormatter = new BinaryFormatter ();
-      // TODO: Async deserialization using a memory stream
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+                                  // TODO: Async deserialization using a memory stream
       using (Stream configCacheFile = File.Open (configCachePath, FileMode.Open)) {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
         m_configuration = await System.Threading.Tasks.Task.Run<Configuration> (() => binaryFormatter.Deserialize (configCacheFile)
@@ -191,7 +195,9 @@ namespace Lemoine.Database.Persistent
     {
       // Note: binary serialization is obsolete
       // This code is still active but not really required. If absolutely needed this could be removed in the future
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
       BinaryFormatter binaryFormatter = new BinaryFormatter ();
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
       using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
         binaryFormatter.Serialize (configCacheFile, configuration);
@@ -207,8 +213,10 @@ namespace Lemoine.Database.Persistent
     {
       // Note: binary serialization is obsolete
       // This code is still active but not really required. If absolutely needed this could be removed in the future
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
       BinaryFormatter binaryFormatter = new BinaryFormatter ();
-      // TODO: async serialize with a MemoryStream
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+                                  // TODO: async serialize with a MemoryStream
       using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
         binaryFormatter.Serialize (configCacheFile, configuration);
@@ -238,10 +246,12 @@ namespace Lemoine.Database.Persistent
 
       if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (STORE_MAPPING_CACHE_KEY,
                                                    STORE_MAPPING_CACHE_DEFAULT)) {
+#pragma warning disable SYSLIB0050 // Type or member is obsolete
         if (!typeof (Configuration).IsSerializable) {
           log.Error ($"TryStore: configuration type is not serializable, give up");
           return;
         }
+#pragma warning restore SYSLIB0050 // Type or member is obsolete
         else if (log.IsInfoEnabled) {
           log.Info ($"TryStore: configuration type is serializable, try to serialize it");
         }
@@ -273,10 +283,12 @@ namespace Lemoine.Database.Persistent
 
       if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (STORE_MAPPING_CACHE_KEY,
                                                    STORE_MAPPING_CACHE_DEFAULT)) {
+#pragma warning disable SYSLIB0050 // Type or member is obsolete
         if (!typeof (Configuration).IsSerializable) {
           log.Error ($"TryStoreAsync: configuration type is not serializable, give up");
           return;
         }
+#pragma warning restore SYSLIB0050 // Type or member is obsolete
         else if (log.IsInfoEnabled) {
           log.Info ($"TryStoreAsync: configuration type is serializable, try to serialize it");
         }

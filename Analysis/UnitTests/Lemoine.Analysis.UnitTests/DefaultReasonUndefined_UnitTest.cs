@@ -62,8 +62,10 @@ namespace Lemoine.Analysis.UnitTests
             reasonExtension.Initialize (machine);
 
             reasonExtension.TryResetReason (ref reasonSlot);
-            Assert.AreEqual (reasonUndefined, reasonSlot.Reason);
-            Assert.AreEqual (0.0, reasonSlot.ReasonScore);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlot.Reason, Is.EqualTo (reasonUndefined));
+              Assert.That (reasonSlot.ReasonScore, Is.EqualTo (0.0));
+            });
           }
           finally {
             transaction.Rollback ();

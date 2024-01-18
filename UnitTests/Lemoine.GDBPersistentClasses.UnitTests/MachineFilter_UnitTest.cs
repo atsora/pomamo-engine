@@ -57,11 +57,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                                  .CreateMachineFilterItem (machine2,
                                                            MachineFilterRule.Add));
         ModelDAOHelper.DAOFactory.MachineFilterDAO.MakePersistent (machineFilter);
-        
-        Assert.IsFalse (machineFilter.IsMatch (machine1));
-        Assert.IsTrue (machineFilter.IsMatch (machine2));
-        Assert.IsTrue (machineFilter.IsMatch (machine8));
-        
+
+        Assert.Multiple (() => {
+          Assert.That (machineFilter.IsMatch (machine1), Is.False);
+          Assert.That (machineFilter.IsMatch (machine2), Is.True);
+          Assert.That (machineFilter.IsMatch (machine8), Is.True);
+        });
+
         transaction.Rollback ();
       }
     }
@@ -102,11 +104,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                                  .CreateMachineFilterItem (machine2,
                                                            MachineFilterRule.Remove));
         ModelDAOHelper.DAOFactory.MachineFilterDAO.MakePersistent (machineFilter);
-        
-        Assert.IsTrue (machineFilter.IsMatch (machine1));
-        Assert.IsFalse (machineFilter.IsMatch (machine2));
-        Assert.IsFalse (machineFilter.IsMatch (machine8));
-        
+
+        Assert.Multiple (() => {
+          Assert.That (machineFilter.IsMatch (machine1), Is.True);
+          Assert.That (machineFilter.IsMatch (machine2), Is.False);
+          Assert.That (machineFilter.IsMatch (machine8), Is.False);
+        });
+
         transaction.Rollback ();
       }
     }

@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <Platforms>x86;x64</Platforms>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
@@ -23,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Cors" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
@@ -48,6 +44,7 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="System.IO.Ports" /><!--indirect dependency for Lemoine.Cnc.Serial -->
     <PackageReference Include="System.Data.SQLite.Core" /> <!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
+    <PackageReference Include="System.Net.Primitives" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
@@ -71,7 +68,7 @@
     <None Include="bin\$(ProductDir)\$(Configuration)\$(PlatformTarget)\$(TargetFramework)\runtimes\linux-x64\native\SQLite.Interop.dll" CopyToPublishDirectory="Always" Link="SQLite.Interop.dll" />
   </ItemGroup>  
   <ItemGroup>
-    <None Remove="bin\VS\net6.0\runtimes\win-x86\native\SQLite.Interop.dll" />
+    <None Remove="bin\VS\net8.0\runtimes\win-x86\native\SQLite.Interop.dll" />
   </ItemGroup>
   
   <ItemGroup>
@@ -82,7 +79,7 @@
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Hosting\Lemoine.Hosting.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net6.0;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net8.0;TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions\Pulse.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
@@ -102,7 +99,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="bin\VS\net6.0\runtimes\win-x86\native\" />
+    <Folder Include="bin\VS\net8.0\runtimes\win-x86\native\" />
   </ItemGroup>
 
 </Project>

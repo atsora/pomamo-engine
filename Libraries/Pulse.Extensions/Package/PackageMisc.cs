@@ -7,6 +7,7 @@ using System;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
+using System.Linq;
 
 namespace Lemoine.Extensions.Package
 {
@@ -104,10 +105,8 @@ namespace Lemoine.Extensions.Package
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ("PackageManager.Remove")) {
           var package = ModelDAOHelper.DAOFactory.PackageDAO.FindByIdentifyingName (packageIdentifier);
-          if (null == package) {
-            log.WarnFormat ("Remove: " +
-                            "package {0} does not exist in database",
-                            packageIdentifier);
+          if (package is null) {
+            log.Warn ($"Remove: package {packageIdentifier} does not exist in database");
           }
           else {
             ModelDAOHelper.DAOFactory.PackageDAO.MakeTransient (package);
@@ -132,6 +131,24 @@ namespace Lemoine.Extensions.Package
         }
         catch (Exception ex) {
           log.Error ($"NotifyConfigUpdate: configupdate in database failed", ex);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Run CheckConfig on <see cref="IInstallationExtension"/> extensions
+    /// </summary>
+    public static void CheckConfigs ()
+    {
+      var extensions = Lemoine.Extensions.ExtensionManager
+        .GetExtensions<Lemoine.Extensions.Business.Config.IInstallationExtension> ()
+        .OrderBy (x => x.Priority);
+      foreach (var extension in extensions) {
+        try {
+          extension.CheckConfig ();
+        }
+        catch (Exception ex) {
+          log.Error ($"CheckConfigs: CheckConfig of {extension} ended in exception", ex);
         }
       }
     }

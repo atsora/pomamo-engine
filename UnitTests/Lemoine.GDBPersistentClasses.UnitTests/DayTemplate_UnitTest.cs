@@ -30,43 +30,43 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (1, 02));
-        Assert.AreEqual (T (1, 06), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (1, 06)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (1, 06));
-        Assert.AreEqual (T (1, 06), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (1, 06)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (1, 08));
-        Assert.AreEqual (T (1, 22), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (1, 22)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (1, 22));
-        Assert.AreEqual (T (1, 22), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (1, 22)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (1, 23));
-        Assert.AreEqual (T (3, 03), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (3, 03)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (2, 02));
-        Assert.AreEqual (T (3, 03), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (3, 03)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (2, 03));
-        Assert.AreEqual (T (3, 03), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (3, 03)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (2, 23));
-        Assert.AreEqual (T (3, 03), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (3, 03)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (3, 02));
-        Assert.AreEqual (T (3, 03), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (3, 03)));
       }
       { // Test
         DateTime dayBegin = dayTemplate.AdjustToDayBegin (T (3, 03));
-        Assert.AreEqual (T (3, 03), dayBegin);
+        Assert.That (dayBegin, Is.EqualTo (T (3, 03)));
       }
     }
     

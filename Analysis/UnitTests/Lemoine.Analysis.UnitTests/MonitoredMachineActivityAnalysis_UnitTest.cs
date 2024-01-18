@@ -120,13 +120,17 @@ namespace Lemoine.Analysis.UnitTests
               // OperationSlots
               IList<IOperationSlot> operationSlots =
                 daoFactory.OperationSlotDAO.FindAll (machine);
-              Assert.AreEqual (2, operationSlots.Count);
+              Assert.That (operationSlots.Count, Is.EqualTo (2));
               int i = 0;
-              Assert.AreEqual (machine.Id, operationSlots[i].Machine.Id);
-              Assert.AreEqual (TimeSpan.FromMinutes (12), operationSlots[i].RunTime);
+              Assert.Multiple (() => {
+                Assert.That (operationSlots[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromMinutes (12)));
+              });
               ++i;
-              Assert.AreEqual (machine.Id, operationSlots[i].Machine.Id);
-              Assert.AreEqual (TimeSpan.FromMinutes (7), operationSlots[i].RunTime);
+              Assert.Multiple (() => {
+                Assert.That (operationSlots[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromMinutes (7)));
+              });
             }
             {
               // ActivitySummaries
@@ -136,43 +140,55 @@ namespace Lemoine.Analysis.UnitTests
                 .AddOrder (Order.Asc ("Day"))
                 .AddOrder (Order.Desc ("MachineMode"))
                 .List<MachineActivitySummary> ();
-              Assert.AreEqual (1101, activitySummaries.Count);
+              Assert.That (activitySummaries.Count, Is.EqualTo (1101));
               int i = 0;
-              Assert.AreEqual (machine.Id, activitySummaries[i].Machine.Id);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16), activitySummaries[i].Day);
-              Assert.AreEqual (2, activitySummaries[i].MachineObservationState.Id);
-              Assert.AreEqual (noDataMode, activitySummaries[i].MachineMode);
-              Assert.AreEqual (33840, activitySummaries[i].Time.TotalSeconds);
+              Assert.Multiple (() => {
+                Assert.That (activitySummaries[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (activitySummaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 16)));
+                Assert.That (activitySummaries[i].MachineObservationState.Id, Is.EqualTo (2));
+                Assert.That (activitySummaries[i].MachineMode, Is.EqualTo (noDataMode));
+                Assert.That (activitySummaries[i].Time.TotalSeconds, Is.EqualTo (33840));
+              });
               ++i;
-              Assert.AreEqual (machine.Id, activitySummaries[i].Machine.Id);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16), activitySummaries[i].Day);
-              Assert.AreEqual (2, activitySummaries[i].MachineObservationState.Id);
-              Assert.AreEqual (autoMode, activitySummaries[i].MachineMode);
-              Assert.AreEqual (3000, activitySummaries[i].Time.TotalSeconds);
+              Assert.Multiple (() => {
+                Assert.That (activitySummaries[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (activitySummaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 16)));
+                Assert.That (activitySummaries[i].MachineObservationState.Id, Is.EqualTo (2));
+                Assert.That (activitySummaries[i].MachineMode, Is.EqualTo (autoMode));
+                Assert.That (activitySummaries[i].Time.TotalSeconds, Is.EqualTo (3000));
+              });
               ++i;
-              Assert.AreEqual (machine.Id, activitySummaries[i].Machine.Id);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16), activitySummaries[i].Day);
-              Assert.AreEqual (2, activitySummaries[i].MachineObservationState.Id);
-              Assert.AreEqual (inactiveMode, activitySummaries[i].MachineMode);
-              Assert.AreEqual (2760, activitySummaries[i].Time.TotalSeconds);
+              Assert.Multiple (() => {
+                Assert.That (activitySummaries[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (activitySummaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 16)));
+                Assert.That (activitySummaries[i].MachineObservationState.Id, Is.EqualTo (2));
+                Assert.That (activitySummaries[i].MachineMode, Is.EqualTo (inactiveMode));
+                Assert.That (activitySummaries[i].Time.TotalSeconds, Is.EqualTo (2760));
+              });
               ++i;
-              Assert.AreEqual (machine.Id, activitySummaries[i].Machine.Id);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 17), activitySummaries[i].Day);
-              Assert.AreEqual (2, activitySummaries[i].MachineObservationState.Id);
-              Assert.AreEqual (noDataMode, activitySummaries[i].MachineMode);
-              Assert.AreEqual (86400, activitySummaries[i].Time.TotalSeconds);
+              Assert.Multiple (() => {
+                Assert.That (activitySummaries[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (activitySummaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 17)));
+                Assert.That (activitySummaries[i].MachineObservationState.Id, Is.EqualTo (2));
+                Assert.That (activitySummaries[i].MachineMode, Is.EqualTo (noDataMode));
+                Assert.That (activitySummaries[i].Time.TotalSeconds, Is.EqualTo (86400));
+              });
               i = 1101 - 2;
-              Assert.AreEqual (machine.Id, activitySummaries[i].Machine.Id);
-              Assert.AreEqual (UtcDateTime.From (2011, 01, 16), activitySummaries[i].Day);
-              Assert.AreEqual (2, activitySummaries[i].MachineObservationState.Id);
-              Assert.AreEqual (autoMode, activitySummaries[i].MachineMode);
-              Assert.AreEqual (3000, activitySummaries[i].Time.TotalSeconds);
+              Assert.Multiple (() => {
+                Assert.That (activitySummaries[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (activitySummaries[i].Day, Is.EqualTo (UtcDateTime.From (2011, 01, 16)));
+                Assert.That (activitySummaries[i].MachineObservationState.Id, Is.EqualTo (2));
+                Assert.That (activitySummaries[i].MachineMode, Is.EqualTo (autoMode));
+                Assert.That (activitySummaries[i].Time.TotalSeconds, Is.EqualTo (3000));
+              });
               i = 1101 - 1;
-              Assert.AreEqual (machine.Id, activitySummaries[i].Machine.Id);
-              Assert.AreEqual (UtcDateTime.From (2011, 01, 16), activitySummaries[i].Day);
-              Assert.AreEqual (2, activitySummaries[i].MachineObservationState.Id);
-              Assert.AreEqual (inactiveMode, activitySummaries[i].MachineMode);
-              Assert.AreEqual (2760, activitySummaries[i].Time.TotalSeconds);
+              Assert.Multiple (() => {
+                Assert.That (activitySummaries[i].Machine.Id, Is.EqualTo (machine.Id));
+                Assert.That (activitySummaries[i].Day, Is.EqualTo (UtcDateTime.From (2011, 01, 16)));
+                Assert.That (activitySummaries[i].MachineObservationState.Id, Is.EqualTo (2));
+                Assert.That (activitySummaries[i].MachineMode, Is.EqualTo (inactiveMode));
+                Assert.That (activitySummaries[i].Time.TotalSeconds, Is.EqualTo (2760));
+              });
             }
 
             // New ObservationStateSlot
@@ -261,35 +277,47 @@ namespace Lemoine.Analysis.UnitTests
               .List<ReasonSlot> ();
             Assert.GreaterOrEqual (reasonSlots.Count, 6, "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 26, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 31, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (autoMode, reasonSlots[i].MachineMode);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 26, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 31, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (autoMode));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 31, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 36, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (idleMode, reasonSlots[i].MachineMode);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 31, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 36, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (idleMode));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 36, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 16, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 36, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 16, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 16, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 17, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (attended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 16, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 17, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 17, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 17, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (idleMode, reasonSlots[i].MachineMode);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (idleMode));
+            });
             ++i;
           }
         }
@@ -395,11 +423,11 @@ namespace Lemoine.Analysis.UnitTests
               existingReasonSlot.Consolidate (null, null);
               ModelDAOHelper.DAOFactory.ReasonSlotDAO.MakePersistent (existingReasonSlot);
               AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (machine);
-              Assert.AreEqual (reasonUnattended, existingReasonSlot.Reason);
+              Assert.That (existingReasonSlot.Reason, Is.EqualTo (reasonUnattended));
               var productionStates1 = ModelDAOHelper.DAOFactory.ProductionStateDAO.FindAll ();
               var productionStateNoProduction1 = productionStates1.Single (p => p.TranslationKey.Equals ("ProductionStateNoProduction"));
 
-              Assert.AreEqual (productionStateNoProduction1, existingReasonSlot.ProductionState);
+              Assert.That (existingReasonSlot.ProductionState, Is.EqualTo (productionStateNoProduction1));
             }
 
             var productionStates = ModelDAOHelper.DAOFactory.ProductionStateDAO.FindAll ();
@@ -454,11 +482,13 @@ namespace Lemoine.Analysis.UnitTests
             {
               MachineStatus machineStatus =
                 session.Get<MachineStatus> (machine.Id);
-              Assert.AreEqual (reasonTV, machineStatus.Reason);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 32, 00), machineStatus.ReasonSlotEnd);
-              Assert.AreEqual (ReasonSource.Manual, machineStatus.ReasonSource);
-              Assert.AreEqual (true, machineStatus.ConsolidationLimit.HasValue);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 36, 00), machineStatus.ConsolidationLimit.Value);
+              Assert.Multiple (() => {
+                Assert.That (machineStatus.Reason, Is.EqualTo (reasonTV));
+                Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 32, 00)));
+                Assert.That (machineStatus.ReasonSource, Is.EqualTo (ReasonSource.Manual));
+                Assert.That (machineStatus.ConsolidationLimit.HasValue, Is.EqualTo (true));
+                Assert.That (machineStatus.ConsolidationLimit.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 36, 00)));
+              });
             }
 
             MonitoredMachineActivityAnalysis activityAnalysis =
@@ -478,46 +508,56 @@ namespace Lemoine.Analysis.UnitTests
                 .List<ReasonSlot> ();
               Assert.GreaterOrEqual (reasonSlots.Count, 5, "Number of reason slots");
               int i = 0;
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 31, 00), reasonSlots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 36, 00), reasonSlots[i].EndDateTime.Value);
-              Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-              Assert.AreEqual (idleMode, reasonSlots[i].MachineMode);
-              Assert.AreEqual (reasonTV, reasonSlots[i].Reason);
-              Assert.AreEqual (false, reasonSlots[i].DefaultReason);
-              Assert.AreEqual (productionStateNoProduction, reasonSlots[i].ProductionState);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 31, 00)));
+                Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 36, 00)));
+                Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+                Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (idleMode));
+                Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonTV));
+                Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (false));
+                Assert.That (reasonSlots[i].ProductionState, Is.EqualTo (productionStateNoProduction));
+              });
 
               ++i;
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 36, 00), reasonSlots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 16, 00, 00), reasonSlots[i].EndDateTime.Value);
-              Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-              Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-              Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-              Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-              Assert.AreEqual (null, reasonSlots[i].ProductionState);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 36, 00)));
+                Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 16, 00, 00)));
+                Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+                Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+                Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+                Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+                Assert.That (reasonSlots[i].ProductionState, Is.EqualTo (null));
+              });
               ++i;
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 16, 00, 00), reasonSlots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 17, 00, 00), reasonSlots[i].EndDateTime.Value);
-              Assert.AreEqual (attended, reasonSlots[i].MachineObservationState);
-              Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-              Assert.AreEqual (reasonUnanswered, reasonSlots[i].Reason);
-              Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-              Assert.AreEqual (null, reasonSlots[i].ProductionState);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 16, 00, 00)));
+                Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 17, 00, 00)));
+                Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (attended));
+                Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+                Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnanswered));
+                Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+                Assert.That (reasonSlots[i].ProductionState, Is.EqualTo (null));
+              });
               ++i;
-              Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 17, 00, 00), reasonSlots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 00, 00), reasonSlots[i].EndDateTime.Value);
-              Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-              Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-              Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-              Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-              Assert.AreEqual (null, reasonSlots[i].ProductionState);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 17, 00, 00)));
+                Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 00, 00)));
+                Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+                Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+                Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+                Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+                Assert.That (reasonSlots[i].ProductionState, Is.EqualTo (null));
+              });
               ++i;
-              Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 00, 00), reasonSlots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), reasonSlots[i].EndDateTime.Value);
-              Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-              Assert.AreEqual (idleMode, reasonSlots[i].MachineMode);
-              Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-              Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-              Assert.AreEqual (productionStateNoProduction, reasonSlots[i].ProductionState);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 00, 00)));
+                Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+                Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+                Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (idleMode));
+                Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+                Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+                Assert.That (reasonSlots[i].ProductionState, Is.EqualTo (productionStateNoProduction));
+              });
               ++i;
             }
           }
@@ -640,7 +680,7 @@ namespace Lemoine.Analysis.UnitTests
             existingReasonSlot.Consolidate (null, null);
             session.Save (existingReasonSlot);
             AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (machine);
-            Assert.AreEqual (reasonUnattended, existingReasonSlot.Reason);
+            Assert.That (existingReasonSlot.Reason, Is.EqualTo (reasonUnattended));
           }
           {
             IMachineActivitySummary summary = ModelDAOHelper.ModelFactory
@@ -716,19 +756,21 @@ namespace Lemoine.Analysis.UnitTests
           {
             IMachineStatus machineStatus = ModelDAOHelper.DAOFactory.MachineStatusDAO
               .FindById (machine.Id);
-            Assert.AreEqual (reasonUnattended, machineStatus.Reason);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 16, 00, 00), machineStatus.ReasonSlotEnd);
-            Assert.AreEqual (ReasonSource.DefaultAuto, machineStatus.ReasonSource);
-            Assert.AreEqual (new UpperBound<DateTime> (), machineStatus.ConsolidationLimit);
-            Assert.AreEqual (mstUnattended, machineStatus.MachineStateTemplate);
-            Assert.AreEqual (unattended, machineStatus.MachineObservationState);
+            Assert.Multiple (() => {
+              Assert.That (machineStatus.Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 16, 00, 00)));
+              Assert.That (machineStatus.ReasonSource, Is.EqualTo (ReasonSource.DefaultAuto));
+              Assert.That (machineStatus.ConsolidationLimit, Is.EqualTo (new UpperBound<DateTime> ()));
+              Assert.That (machineStatus.MachineStateTemplate, Is.EqualTo (mstUnattended));
+              Assert.That (machineStatus.MachineObservationState, Is.EqualTo (unattended));
+            });
           }
 
           // But the observation state slots were updated
           {
             IList<IObservationStateSlot> stateSlots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
               .FindOverlapsRange (machine, new UtcDateTimeRange (UtcDateTime.From (0)));
-            Assert.AreEqual (2, stateSlots.Count);
+            Assert.That (stateSlots.Count, Is.EqualTo (2));
             // TODO: check them
           }
 
@@ -742,12 +784,14 @@ namespace Lemoine.Analysis.UnitTests
           {
             IMachineStatus machineStatus = ModelDAOHelper.DAOFactory.MachineStatusDAO
               .FindById (machine.Id);
-            Assert.AreEqual (reasonMotion, machineStatus.Reason);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 17, 00, 00), machineStatus.ReasonSlotEnd);
-            Assert.AreEqual (ReasonSource.DefaultAuto | ReasonSource.DefaultIsAuto, machineStatus.ReasonSource);
-            Assert.AreEqual (new UpperBound<DateTime> (), machineStatus.ConsolidationLimit);
-            Assert.AreEqual (mstAttended, machineStatus.MachineStateTemplate);
-            Assert.AreEqual (attended, machineStatus.MachineObservationState);
+            Assert.Multiple (() => {
+              Assert.That (machineStatus.Reason, Is.EqualTo (reasonMotion));
+              Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 17, 00, 00)));
+              Assert.That (machineStatus.ReasonSource, Is.EqualTo (ReasonSource.DefaultAuto | ReasonSource.DefaultIsAuto));
+              Assert.That (machineStatus.ConsolidationLimit, Is.EqualTo (new UpperBound<DateTime> ()));
+              Assert.That (machineStatus.MachineStateTemplate, Is.EqualTo (mstAttended));
+              Assert.That (machineStatus.MachineObservationState, Is.EqualTo (attended));
+            });
           }
 
           DAOFactory.EmptyAccumulators ();
@@ -761,21 +805,25 @@ namespace Lemoine.Analysis.UnitTests
               .Add (Restrictions.Eq ("Machine", machine))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, reasonSlots.Count);
+            Assert.That (reasonSlots.Count, Is.EqualTo (2));
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 12, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 16, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (idleMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 12, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 16, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (idleMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 16, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 17, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (attended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (autoMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonMotion, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 16, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 17, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (autoMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonMotion));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+            });
             ++i;
           }
         }
@@ -842,7 +890,7 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("Day"))
               .AddOrder (Order.Asc ("Reason.Id"))
               .List<IReasonSummary> ();
-            Assert.AreEqual (0, summaries.Count);
+            Assert.That (summaries.Count, Is.EqualTo (0));
           }
 
           // Existing reason slots
@@ -856,7 +904,7 @@ namespace Lemoine.Analysis.UnitTests
             ((ReasonSlot)existingReasonSlot).Consolidate (null, null);
             ModelDAOHelper.DAOFactory.ReasonSlotDAO.MakePersistent (existingReasonSlot);
             AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (machine);
-            Assert.AreEqual (reasonShort, existingReasonSlot.Reason);
+            Assert.That (existingReasonSlot.Reason, Is.EqualTo (reasonShort));
           }
 
           // MachineModuleStatus
@@ -929,12 +977,16 @@ namespace Lemoine.Analysis.UnitTests
           {
             IMachineStatus machineStatus = ModelDAOHelper.DAOFactory.MachineStatusDAO
               .FindById (machine.Id);
-            Assert.AreEqual (reasonUnanswered, machineStatus.Reason);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 17, 00, 00), machineStatus.ReasonSlotEnd);
-            Assert.AreEqual (ReasonSource.Default, machineStatus.ReasonSource);
+            Assert.Multiple (() => {
+              Assert.That (machineStatus.Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 17, 00, 00)));
+              Assert.That (machineStatus.ReasonSource, Is.EqualTo (ReasonSource.Default));
+            });
             Assert.IsFalse (machineStatus.ConsolidationLimit.HasValue);
-            Assert.AreEqual (null, machineStatus.MachineStateTemplate);
-            Assert.AreEqual (attended, machineStatus.MachineObservationState);
+            Assert.Multiple (() => {
+              Assert.That (machineStatus.MachineStateTemplate, Is.EqualTo (null));
+              Assert.That (machineStatus.MachineObservationState, Is.EqualTo (attended));
+            });
           }
 
           // Note: cut-off time is at 21:00 UTC
@@ -944,14 +996,16 @@ namespace Lemoine.Analysis.UnitTests
             IList<IReasonSlot> reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine, new UtcDateTimeRange (new DateTime (2008, 01, 01, 12, 00, 00),
                                                                  new DateTime (2008, 01, 01, 17, 00, 00)));
-            Assert.AreEqual (1, reasonSlots.Count);
+            Assert.That (reasonSlots.Count, Is.EqualTo (1));
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 12, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 17, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (attended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (idleMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnanswered, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 12, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 17, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (idleMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+            });
             ++i;
           }
           {
@@ -962,14 +1016,16 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("Day"))
               .AddOrder (Order.Asc ("Reason.Id"))
               .List<IReasonSummary> ();
-            Assert.AreEqual (1, summaries.Count);
+            Assert.That (summaries.Count, Is.EqualTo (1));
             int i = 0;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), summaries[i].Day);
-            Assert.AreEqual (attended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromHours (5), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (5)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
             ++i;
           }
         }
@@ -1031,7 +1087,7 @@ namespace Lemoine.Analysis.UnitTests
             existingReasonSlot.Consolidate (null, null);
             session.Save (existingReasonSlot);
             AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (machine);
-            Assert.AreEqual (reasonUnattended, existingReasonSlot.Reason);
+            Assert.That (existingReasonSlot.Reason, Is.EqualTo (reasonUnattended));
           }
           {
             var machineActivitySummary = ModelDAOHelper.ModelFactory
@@ -1078,11 +1134,13 @@ namespace Lemoine.Analysis.UnitTests
           {
             MachineStatus machineStatus =
               session.Get<MachineStatus> (machine.Id);
-            Assert.AreEqual (reasonUnattended, machineStatus.Reason);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 16, 00, 00), machineStatus.ReasonSlotEnd);
-            Assert.AreEqual (ReasonSource.DefaultAuto | ReasonSource.DefaultIsAuto, machineStatus.ReasonSource);
-            Assert.AreEqual (new UpperBound<DateTime> (), machineStatus.ConsolidationLimit);
-            Assert.AreEqual (unattended, machineStatus.MachineObservationState);
+            Assert.Multiple (() => {
+              Assert.That (machineStatus.Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 16, 00, 00)));
+              Assert.That (machineStatus.ReasonSource, Is.EqualTo (ReasonSource.DefaultAuto | ReasonSource.DefaultIsAuto));
+              Assert.That (machineStatus.ConsolidationLimit, Is.EqualTo (new UpperBound<DateTime> ()));
+              Assert.That (machineStatus.MachineObservationState, Is.EqualTo (unattended));
+            });
           }
 
           MonitoredMachineActivityAnalysis activityAnalysis =
@@ -1104,26 +1162,32 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 12, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 21, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 12, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 21, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 21, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 23, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (attended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnanswered, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 21, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 23, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 23, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 23, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+            });
           }
           {
             // - ReasonSummary
@@ -1134,26 +1198,32 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("Reason.Id"))
               .List<IReasonSummary> ();
             int i = 0;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnattended, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromHours (9), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (9)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (attended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromHours (2), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (2)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnattended, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromHours (22), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (22)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
           }
           {
             // - MachineActivitySummary
@@ -1164,20 +1234,26 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("MachineObservationState.Id"))
               .List<IMachineActivitySummary> ();
             int i = 0;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (TimeSpan.FromHours (9), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (9)));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (attended, summaries[i].MachineObservationState);
-            Assert.AreEqual (TimeSpan.FromHours (2), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (2)));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (TimeSpan.FromHours (22), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (22)));
+            });
           }
         }
         finally {
@@ -1245,7 +1321,7 @@ namespace Lemoine.Analysis.UnitTests
             existingReasonSlot.Consolidate (null, null);
             session.Save (existingReasonSlot);
             AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (machine);
-            Assert.AreEqual (reasonUnattended, existingReasonSlot.Reason);
+            Assert.That (existingReasonSlot.Reason, Is.EqualTo (reasonUnattended));
           }
           {
             var machineActivitySummary = ModelDAOHelper.ModelFactory
@@ -1294,11 +1370,13 @@ namespace Lemoine.Analysis.UnitTests
           {
             MachineStatus machineStatus =
               session.Get<MachineStatus> (machine.Id);
-            Assert.AreEqual (reasonUnattended, machineStatus.Reason);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 16, 00, 00), machineStatus.ReasonSlotEnd);
-            Assert.AreEqual (ReasonSource.DefaultAuto, machineStatus.ReasonSource);
-            Assert.AreEqual (new UpperBound<DateTime> (), machineStatus.ConsolidationLimit);
-            Assert.AreEqual (unattended, machineStatus.MachineObservationState);
+            Assert.Multiple (() => {
+              Assert.That (machineStatus.Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 16, 00, 00)));
+              Assert.That (machineStatus.ReasonSource, Is.EqualTo (ReasonSource.DefaultAuto));
+              Assert.That (machineStatus.ConsolidationLimit, Is.EqualTo (new UpperBound<DateTime> ()));
+              Assert.That (machineStatus.MachineObservationState, Is.EqualTo (unattended));
+            });
           }
 
           MonitoredMachineActivityAnalysis activityAnalysis =
@@ -1320,45 +1398,53 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 12, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), reasonSlots[i].BeginDay.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 16, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), reasonSlots[i].EndDay.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-            Assert.AreEqual (shift1, reasonSlots[i].Shift);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 12, 00, 00)));
+              Assert.That (reasonSlots[i].BeginDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 16, 00, 00)));
+              Assert.That (reasonSlots[i].EndDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (reasonSlots[i].Shift, Is.EqualTo (shift1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 16, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), reasonSlots[i].BeginDay.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 21, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), reasonSlots[i].EndDay.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-            Assert.AreEqual (null, reasonSlots[i].Shift);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 16, 00, 00)));
+              Assert.That (reasonSlots[i].BeginDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 21, 00, 00)));
+              Assert.That (reasonSlots[i].EndDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (reasonSlots[i].Shift, Is.EqualTo (null));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 21, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), reasonSlots[i].BeginDay.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 23, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), reasonSlots[i].EndDay.Value);
-            Assert.AreEqual (attended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnanswered, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-            Assert.AreEqual (shift2, reasonSlots[i].Shift);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 21, 00, 00)));
+              Assert.That (reasonSlots[i].BeginDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 23, 00, 00)));
+              Assert.That (reasonSlots[i].EndDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (reasonSlots[i].Shift, Is.EqualTo (shift2));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01, 23, 00, 00), reasonSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), reasonSlots[i].BeginDay.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 00, 00), reasonSlots[i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16), reasonSlots[i].EndDay.Value);
-            Assert.AreEqual (unattended, reasonSlots[i].MachineObservationState);
-            Assert.AreEqual (noDataMode, reasonSlots[i].MachineMode);
-            Assert.AreEqual (reasonUnattended, reasonSlots[i].Reason);
-            Assert.AreEqual (true, reasonSlots[i].DefaultReason);
-            Assert.AreEqual (null, reasonSlots[i].Shift);
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 23, 00, 00)));
+              Assert.That (reasonSlots[i].BeginDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 00, 00)));
+              Assert.That (reasonSlots[i].EndDay.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (reasonSlots[i].Shift, Is.EqualTo (null));
+            });
           }
           {
             // - ReasonSummary
@@ -1370,35 +1456,43 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("Reason.Id"))
               .List<IReasonSummary> ();
             int i = 0;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnattended, summaries[i].Reason);
-            Assert.AreEqual (shift1, summaries[i].Shift);
-            Assert.AreEqual (TimeSpan.FromHours (4), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (summaries[i].Shift, Is.EqualTo (shift1));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (4)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnattended, summaries[i].Reason);
-            Assert.AreEqual (null, summaries[i].Shift);
-            Assert.AreEqual (TimeSpan.FromHours (5), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (summaries[i].Shift, Is.EqualTo (null));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (5)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (attended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromHours (2), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (2)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (reasonUnattended, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromHours (22), summaries[i].Time);
-            Assert.AreEqual (1, summaries[i].Number);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnattended));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (22)));
+              Assert.That (summaries[i].Number, Is.EqualTo (1));
+            });
           }
           {
             // - MachineActivitySummary
@@ -1409,29 +1503,37 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("MachineObservationState.Id"))
               .List<IMachineActivitySummary> ();
             int i = 0;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (shift1, summaries[i].Shift);
-            Assert.AreEqual (TimeSpan.FromHours (4), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Shift, Is.EqualTo (shift1));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (4)));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 01), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (null, summaries[i].Shift);
-            Assert.AreEqual (TimeSpan.FromHours (5), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 01)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Shift, Is.EqualTo (null));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (5)));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (attended, summaries[i].MachineObservationState);
-            Assert.AreEqual (shift2, summaries[i].Shift);
-            Assert.AreEqual (TimeSpan.FromHours (2), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (summaries[i].Shift, Is.EqualTo (shift2));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (2)));
+            });
             ++i;
-            Assert.AreEqual (machine, summaries[i].Machine);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 02), summaries[i].Day);
-            Assert.AreEqual (unattended, summaries[i].MachineObservationState);
-            Assert.AreEqual (null, summaries[i].Shift);
-            Assert.AreEqual (TimeSpan.FromHours (22), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine));
+              Assert.That (summaries[i].Day, Is.EqualTo (UtcDateTime.From (2008, 01, 02)));
+              Assert.That (summaries[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (summaries[i].Shift, Is.EqualTo (null));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromHours (22)));
+            });
           }
         }
         finally {
@@ -1582,7 +1684,7 @@ namespace Lemoine.Analysis.UnitTests
                                          lastModificationId,
                                          lastPriority, 0);
 
-          Assert.AreEqual (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc3).Id, ((Lemoine.Collections.IDataWithId<long>)currentModification).Id,
+          Assert.That (((Lemoine.Collections.IDataWithId<long>)currentModification).Id, Is.EqualTo (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc3).Id),
                           "Modification with highest priority should be treated first");
 
           lastModificationId = ((Lemoine.Collections.IDataWithId<long>)currentModification).Id;
@@ -1594,7 +1696,7 @@ namespace Lemoine.Analysis.UnitTests
                                          lastModificationId,
                                          lastPriority, 0);
 
-          Assert.AreEqual (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc2).Id, ((Lemoine.Collections.IDataWithId<long>)currentModification).Id,
+          Assert.That (((Lemoine.Collections.IDataWithId<long>)currentModification).Id, Is.EqualTo (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc2).Id),
                           "Modification with second highest priority should be treated second");
 
           lastModificationId = ((Lemoine.Collections.IDataWithId<long>)currentModification).Id;
@@ -1608,7 +1710,7 @@ namespace Lemoine.Analysis.UnitTests
 
           Assert.IsNotNull (machineObsAssoc1);
           Assert.IsNotNull (currentModification);
-          Assert.AreEqual (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc1).Id, ((Lemoine.Collections.IDataWithId<long>)currentModification).Id,
+          Assert.That (((Lemoine.Collections.IDataWithId<long>)currentModification).Id, Is.EqualTo (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc1).Id),
                           "Modification with lowest priority should be treated last");
         }
         finally {
@@ -1652,7 +1754,7 @@ namespace Lemoine.Analysis.UnitTests
               ModelDAOHelper.ModelFactory
               .CreateMachineObservationStateAssociation (machine, attended,
                                                         currentDate);
-            Assert.AreNotEqual (null, machineObsAssocArray[i]);
+            Assert.That (machineObsAssocArray[i], Is.Not.EqualTo (null));
             daoFactory.MachineObservationStateAssociationDAO.MakePersistent (machineObsAssocArray[i]);
           }
 
@@ -1680,10 +1782,11 @@ namespace Lemoine.Analysis.UnitTests
                                            lastModificationId,
                                            lastPriority, 0);
 
-            Assert.AreNotEqual (null, currentModification);
-            Assert.AreEqual (((Lemoine.Collections.IDataWithId<long>)machineObsAssocArray[oracleId[i]]).Id,
-                            ((Lemoine.Collections.IDataWithId<long>)currentModification).Id,
-                            String.Format ("Error at index {0}", i));
+            Assert.Multiple (() => {
+              Assert.That (currentModification, Is.Not.EqualTo (null));
+              Assert.That (((Lemoine.Collections.IDataWithId<long>)currentModification).Id, Is.EqualTo (((Lemoine.Collections.IDataWithId<long>)machineObsAssocArray[oracleId[i]]).Id),
+                              String.Format ("Error at index {0}", i));
+            });
 
             lastModificationId = ((Lemoine.Collections.IDataWithId<long>)currentModification).Id;
             lastPriority = currentModification.StatusPriority;
@@ -1730,7 +1833,7 @@ namespace Lemoine.Analysis.UnitTests
         periods.Add (ModelDAOHelper.ModelFactory.CreateFact (machine, T (3), T (4), active));
         IEnumerable<IAutoSequencePeriod> trimmed =
           AutoSequenceAnalysis.Trim (periods);
-        Assert.AreEqual (2, trimmed.Count ());
+        Assert.That (trimmed.Count (), Is.EqualTo (2));
       }
       {
         IList<IAutoSequencePeriod> periods = new List<IAutoSequencePeriod> ();
@@ -1740,7 +1843,7 @@ namespace Lemoine.Analysis.UnitTests
         periods.Add (ModelDAOHelper.ModelFactory.CreateFact (machine, T (7), T (8), inactive));
         IEnumerable<IAutoSequencePeriod> trimmed =
           AutoSequenceAnalysis.Trim (periods);
-        Assert.AreEqual (2, trimmed.Count ());
+        Assert.That (trimmed.Count (), Is.EqualTo (2));
       }
     }
 
@@ -1806,70 +1909,86 @@ namespace Lemoine.Analysis.UnitTests
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
       Assert.IsTrue (result);
-      Assert.AreEqual (1, currentPeriods.Count ());
-      Assert.AreEqual (T (1.1), currentPeriods.First ().Begin);
-      Assert.AreEqual (T (1.2), currentPeriods.Last ().End);
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.Count (), Is.EqualTo (1));
+        Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (1.1)));
+        Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (1.2)));
+      });
       Assert.IsFalse (currentPeriods.First ().AutoSequence);
-      Assert.AreEqual (0, matchingAutoSequences.Count ());
+      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
       Assert.IsTrue (result);
-      Assert.AreEqual (1, currentPeriods.Count ());
-      Assert.AreEqual (T (2), currentPeriods.First ().Begin);
-      Assert.AreEqual (T (4), currentPeriods.Last ().End);
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.Count (), Is.EqualTo (1));
+        Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (2)));
+        Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (4)));
+      });
       Assert.IsTrue (currentPeriods.First ().AutoSequence);
-      Assert.AreEqual (1, matchingAutoSequences.Count ());
-      Assert.AreEqual (T (1), matchingAutoSequences.First ().Begin);
-      Assert.AreEqual (T (3), matchingAutoSequences.Last ().End.Value);
+      Assert.Multiple (() => {
+        Assert.That (matchingAutoSequences.Count (), Is.EqualTo (1));
+        Assert.That (matchingAutoSequences.First ().Begin, Is.EqualTo (T (1)));
+        Assert.That (matchingAutoSequences.Last ().End.Value, Is.EqualTo (T (3)));
+      });
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
       Assert.IsTrue (result);
-      Assert.AreEqual (1, currentPeriods.Count ());
-      Assert.AreEqual (T (4), currentPeriods.First ().Begin);
-      Assert.AreEqual (T (5), currentPeriods.Last ().End);
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.Count (), Is.EqualTo (1));
+        Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (4)));
+        Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (5)));
+      });
       Assert.IsFalse (currentPeriods.First ().AutoSequence);
-      Assert.AreEqual (0, matchingAutoSequences.Count ());
+      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
       Assert.IsTrue (result);
-      Assert.AreEqual (2, currentPeriods.Count ());
-      Assert.AreEqual (T (5), currentPeriods.First ().Begin);
-      Assert.AreEqual (T (8), currentPeriods.Last ().End);
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.Count (), Is.EqualTo (2));
+        Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (5)));
+        Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (8)));
+      });
       Assert.IsTrue (currentPeriods.First ().AutoSequence);
-      Assert.AreEqual (0, matchingAutoSequences.Count ());
+      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
       Assert.IsTrue (result);
-      Assert.AreEqual (2, currentPeriods.Count ());
-      Assert.AreEqual (T (8), currentPeriods.First ().Begin);
-      Assert.AreEqual (T (9), currentPeriods.Last ().End);
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.Count (), Is.EqualTo (2));
+        Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (8)));
+        Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (9)));
+      });
       Assert.IsFalse (currentPeriods.First ().AutoSequence);
-      Assert.AreEqual (0, matchingAutoSequences.Count ());
+      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
       Assert.IsTrue (result);
-      Assert.AreEqual (3, currentPeriods.Count ());
-      Assert.AreEqual (T (9), currentPeriods.First ().Begin);
-      Assert.AreEqual (T (19), currentPeriods.Last ().End);
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.Count (), Is.EqualTo (3));
+        Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (9)));
+        Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (19)));
+      });
       Assert.IsTrue (currentPeriods.First ().AutoSequence);
-      Assert.AreEqual (3, matchingAutoSequences.Count ());
-      Assert.AreEqual (T (10), matchingAutoSequences.First ().Begin);
-      Assert.AreEqual (T (20), matchingAutoSequences.Last ().End.Value);
+      Assert.Multiple (() => {
+        Assert.That (matchingAutoSequences.Count (), Is.EqualTo (3));
+        Assert.That (matchingAutoSequences.First ().Begin, Is.EqualTo (T (10)));
+        Assert.That (matchingAutoSequences.Last ().End.Value, Is.EqualTo (T (20)));
+      });
     }
 
     /// <summary>

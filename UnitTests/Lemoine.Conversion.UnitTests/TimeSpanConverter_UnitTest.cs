@@ -34,7 +34,7 @@ namespace Lemoine.Conversion.UnitTests
       test.Duration = TimeSpan.FromMinutes (3);
 
       string s = JsonConvert.SerializeObject (test, new Lemoine.Conversion.JavaScript.TimeSpanConverter ());
-      Assert.AreEqual ("{\"Duration\":\"00:03:00\"}", s);
+      Assert.That (s, Is.EqualTo ("{\"Duration\":\"00:03:00\"}"));
     }
     
     /// <summary>
@@ -45,7 +45,7 @@ namespace Lemoine.Conversion.UnitTests
     {
       const string s = "{\"Duration\":\"0:03:00\"}";
       Test test = JsonConvert.DeserializeObject<Test> (s);
-      Assert.AreEqual (TimeSpan.FromMinutes (3), test.Duration);
+      Assert.That (test.Duration, Is.EqualTo (TimeSpan.FromMinutes (3)));
     }
   }
 }

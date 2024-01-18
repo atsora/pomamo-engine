@@ -88,29 +88,35 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         {
           IList<IMachineStateTemplateSlot> slots = ModelDAOHelper.DAOFactory.MachineStateTemplateSlotDAO
             .FindAll (machine);
-          Assert.AreEqual (3, slots.Count);
-          Assert.AreEqual (T(0), slots[0].DateTimeRange.Upper.Value);
-          Assert.AreEqual (unattended, slots [0].MachineStateTemplate);
-          Assert.AreEqual (R(0, 2), slots[1].DateTimeRange);
-          Assert.AreEqual (setup, slots[1].MachineStateTemplate);
-          Assert.AreEqual (R(2, null), slots[2].DateTimeRange);
-          Assert.AreEqual (production, slots[2].MachineStateTemplate);
+          Assert.That (slots, Has.Count.EqualTo (3));
+          Assert.Multiple (() => {
+            Assert.That (slots[0].DateTimeRange.Upper.Value, Is.EqualTo (T (0)));
+            Assert.That (slots[0].MachineStateTemplate, Is.EqualTo (unattended));
+            Assert.That (slots[1].DateTimeRange, Is.EqualTo (R (0, 2)));
+            Assert.That (slots[1].MachineStateTemplate, Is.EqualTo (setup));
+            Assert.That (slots[2].DateTimeRange, Is.EqualTo (R (2, null)));
+            Assert.That (slots[2].MachineStateTemplate, Is.EqualTo (production));
+          });
         }
         {
           UtcDateTimeRange range = R(1,3);
           IList<IMachineStateTemplateSlot> slots = ModelDAOHelper.DAOFactory.MachineStateTemplateSlotDAO
             .FindOverlapsRange (machine, R(1, 3));
-          Assert.AreEqual (2, slots.Count);
-          Assert.AreEqual (R(0, 2), slots[0].DateTimeRange);
-          Assert.AreEqual (setup, slots[0].MachineStateTemplate);
-          Assert.AreEqual (R(2, null), slots[1].DateTimeRange);
-          Assert.AreEqual (production, slots[1].MachineStateTemplate);
+          Assert.That (slots, Has.Count.EqualTo (2));
+          Assert.Multiple (() => {
+            Assert.That (slots[0].DateTimeRange, Is.EqualTo (R (0, 2)));
+            Assert.That (slots[0].MachineStateTemplate, Is.EqualTo (setup));
+            Assert.That (slots[1].DateTimeRange, Is.EqualTo (R (2, null)));
+            Assert.That (slots[1].MachineStateTemplate, Is.EqualTo (production));
+          });
         }
         {
           IMachineStateTemplateSlot slot = ModelDAOHelper.DAOFactory.MachineStateTemplateSlotDAO
             .FindAt (machine, T(3));
-          Assert.AreEqual (R(2, null), slot.DateTimeRange);
-          Assert.AreEqual (production, slot.MachineStateTemplate);
+          Assert.Multiple (() => {
+            Assert.That (slot.DateTimeRange, Is.EqualTo (R (2, null)));
+            Assert.That (slot.MachineStateTemplate, Is.EqualTo (production));
+          });
         }
         
         transaction.Rollback ();

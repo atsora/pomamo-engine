@@ -41,10 +41,12 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         IList<IDayTemplateSlot> slots = ModelDAOHelper.DAOFactory.DayTemplateSlotDAO
           .FindAll ();
-        Assert.AreEqual (1, slots.Count);
-        Assert.IsTrue (!slots [0].DateTimeRange.Lower.HasValue);
-        Assert.IsTrue (!slots [0].DateTimeRange.Upper.HasValue);
-        
+        Assert.Multiple (() => {
+          Assert.That (slots, Has.Count.EqualTo (1));
+          Assert.That (!slots[0].DateTimeRange.Lower.HasValue, Is.True);
+          Assert.That (!slots[0].DateTimeRange.Upper.HasValue, Is.True);
+        });
+
         DateTime split = new DateTime (2015, 05, 01, 00, 00, 00, DateTimeKind.Utc);
         
         {
@@ -63,15 +65,19 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         {
           IList<IDayTemplateSlot> newSlots = ModelDAOHelper.DAOFactory.DayTemplateSlotDAO
             .FindAll ();
-          Assert.AreEqual (2, newSlots.Count);
+          Assert.That (newSlots, Has.Count.EqualTo (2));
           int i = 0;
-          Assert.IsTrue (!newSlots [i].DateTimeRange.Lower.HasValue);
-          Assert.IsTrue (newSlots [i].DateTimeRange.Upper.HasValue);
-          Assert.AreEqual (split, newSlots [i].DateTimeRange.Upper.Value);
+          Assert.Multiple (() => {
+            Assert.That (!newSlots[i].DateTimeRange.Lower.HasValue, Is.True);
+            Assert.That (newSlots[i].DateTimeRange.Upper.HasValue, Is.True);
+            Assert.That (newSlots[i].DateTimeRange.Upper.Value, Is.EqualTo (split));
+          });
           ++i;
-          Assert.IsTrue (newSlots [i].DateTimeRange.Lower.HasValue);
-          Assert.IsTrue (!newSlots [i].DateTimeRange.Upper.HasValue);
-          Assert.AreEqual (split, newSlots [i].DateTimeRange.Lower.Value);
+          Assert.Multiple (() => {
+            Assert.That (newSlots[i].DateTimeRange.Lower.HasValue, Is.True);
+            Assert.That (!newSlots[i].DateTimeRange.Upper.HasValue, Is.True);
+            Assert.That (newSlots[i].DateTimeRange.Lower.Value, Is.EqualTo (split));
+          });
         }
         
         transaction.Rollback ();

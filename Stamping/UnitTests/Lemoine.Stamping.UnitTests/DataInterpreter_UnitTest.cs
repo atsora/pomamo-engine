@@ -35,8 +35,10 @@ namespace Lemoine.Stamping.UnitTests
       var stampingData = new StampingData ();
       var cadName = "Project_Name";
       TestCadName (stampingData, cadName);
-      Assert.AreEqual ($"Project", stampingData.Get<string> ("ProjectName"));
-      Assert.AreEqual ($"Name", stampingData.Get<string> ("ComponentName"));
+      Assert.Multiple (() => {
+        Assert.That (stampingData.Get<string> ("ProjectName"), Is.EqualTo ($"Project"));
+        Assert.That (stampingData.Get<string> ("ComponentName"), Is.EqualTo ($"Name"));
+      });
     }
 
     /// <summary>
@@ -48,8 +50,10 @@ namespace Lemoine.Stamping.UnitTests
       var stampingData = new StampingData ();
       var cadName = "Project-Name";
       TestCadName (stampingData, cadName);
-      Assert.AreEqual ($"?{cadName}?", stampingData.Get<string> ("ProjectName"));
-      Assert.AreEqual ($"?{cadName}?", stampingData.Get<string> ("ComponentName"));
+      Assert.Multiple (() => {
+        Assert.That (stampingData.Get<string> ("ProjectName"), Is.EqualTo ($"?{cadName}?"));
+        Assert.That (stampingData.Get<string> ("ComponentName"), Is.EqualTo ($"?{cadName}?"));
+      });
     }
 
     void TestCadName (StampingData stampingData, string cadName)
@@ -63,7 +67,7 @@ namespace Lemoine.Stamping.UnitTests
       var regexFallbackDataInterpreter = System.Text.Json.JsonSerializer.Deserialize<RegexFallbackInterpreter> (json);
       regexFallbackDataInterpreter.Regex = @"(?<ProjectName>\w+)_(?<ComponentName>\w+)";
       var result = regexFallbackDataInterpreter.Interpret (stampingData);
-      Assert.IsTrue (result);
+      Assert.That (result, Is.True);
     }
 
     /// <summary>
@@ -85,10 +89,12 @@ namespace Lemoine.Stamping.UnitTests
       var regexFallbackDataInterpreter = System.Text.Json.JsonSerializer.Deserialize<RegexFallbackInterpreter> (json);
       regexFallbackDataInterpreter.Regex = @"(?<ProjectName>\w+)_(?<ComponentName>\w+)";
       var result = regexFallbackDataInterpreter.Interpret (stampingData);
-      Assert.IsTrue (result);
+      Assert.Multiple (() => {
+        Assert.That (result, Is.True);
 
-      Assert.AreEqual ($"...{cadName}...", stampingData.Get<string> ("ProjectName"));
-      Assert.AreEqual ($"...{cadName}...", stampingData.Get<string> ("ComponentName"));
+        Assert.That (stampingData.Get<string> ("ProjectName"), Is.EqualTo ($"...{cadName}..."));
+        Assert.That (stampingData.Get<string> ("ComponentName"), Is.EqualTo ($"...{cadName}..."));
+      });
     }
 
     /// <summary>
@@ -109,10 +115,12 @@ namespace Lemoine.Stamping.UnitTests
 """;
       var regexFallbackDataInterpreter = System.Text.Json.JsonSerializer.Deserialize<RegexFallbackInterpreter> (json);
       var result = regexFallbackDataInterpreter.Interpret (stampingData);
-      Assert.IsTrue (result);
+      Assert.Multiple (() => {
+        Assert.That (result, Is.True);
 
-      Assert.AreEqual ($"Project", stampingData.Get<string> ("ProjectName"));
-      Assert.AreEqual ($"Name", stampingData.Get<string> ("ComponentName"));
+        Assert.That (stampingData.Get<string> ("ProjectName"), Is.EqualTo ($"Project"));
+        Assert.That (stampingData.Get<string> ("ComponentName"), Is.EqualTo ($"Name"));
+      });
     }
 
 

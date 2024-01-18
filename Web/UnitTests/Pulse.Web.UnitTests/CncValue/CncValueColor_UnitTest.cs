@@ -32,7 +32,7 @@ namespace Pulse.Web.UnitTests.CncValue
       request.MachineId = 1000; // non existing
       request.Range = "";
       ErrorDTO response = m_service.GetWithoutCache (request) as ErrorDTO;
-      Assert.IsNotNull(response);
+      Assert.That (response, Is.Not.Null);
       
       request.MachineId = 1;
       request.Range = "blabla";
@@ -53,9 +53,9 @@ namespace Pulse.Web.UnitTests.CncValue
 
       DateTime targetDay = new DateTime(2008,01,16);
       IDaySlot daySlot = ModelDAOHelper.DAOFactory.DaySlotDAO.FindProcessedByDay (targetDay);
-      
-      Assert.IsNotNull(response);
-      Assert.AreEqual ("[2008-01-15T21:00:00Z,2008-01-16T21:00:00Z)", response.Range);
+
+      Assert.That (response, Is.Not.Null);
+      Assert.That (response.Range, Is.EqualTo ("[2008-01-15T21:00:00Z,2008-01-16T21:00:00Z)"));
     }
     
 

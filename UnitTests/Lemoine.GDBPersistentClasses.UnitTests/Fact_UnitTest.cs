@@ -41,11 +41,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           ModelDAOHelper.DAOFactory.FactDAO
           .FindAllInUtcRange (machine,
                               new UtcDateTimeRange (day, day.AddDays (1)));
-        Assert.AreEqual (1, facts.Count);
+        Assert.That (facts, Has.Count.EqualTo (1));
         foreach (IFact fact in facts) {
           log.DebugFormat ("TestFactProperties: read fact ({0}) begin={1}",
                            fact.Machine.Id, fact.Begin);
-          Assert.AreEqual (fact.Begin.Kind, DateTimeKind.Utc);
+          Assert.That (fact.Begin.Kind, Is.EqualTo (DateTimeKind.Utc));
         }
       }
     }
@@ -69,11 +69,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           ModelDAOHelper.DAOFactory.FactDAO
           .FindAllInUtcRange (machine,
                               new UtcDateTimeRange (from, to));
-        Assert.AreEqual (4, facts.Count);
+        Assert.That (facts, Has.Count.EqualTo (4));
         foreach (IFact fact in facts) {
           log.DebugFormat ("TestFactProperties: read fact ({0}) begin={1}",
                            fact.Machine.Id, fact.Begin);
-          Assert.AreEqual (fact.Begin.Kind, DateTimeKind.Utc);
+          Assert.That (fact.Begin.Kind, Is.EqualTo (DateTimeKind.Utc));
         }
         
         from = new DateTime ();
@@ -82,11 +82,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         facts =
           ModelDAOHelper.DAOFactory.FactDAO
           .FindAllInUtcRange (machine, new UtcDateTimeRange (from, to));
-        Assert.AreNotEqual (0, facts.Count);
+        Assert.That (facts.Count, Is.Not.EqualTo (0));
         foreach (IFact fact in facts) {
           log.DebugFormat ("TestFactProperties: read fact ({0}) begin={1}",
                            fact.Machine.Id, fact.Begin);
-          Assert.AreEqual (fact.Begin.Kind, DateTimeKind.Utc);
+          Assert.That (fact.Begin.Kind, Is.EqualTo (DateTimeKind.Utc));
         }
       }
     }
@@ -109,7 +109,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .FindAllAfter (machine,
                          from,
                          3);
-        Assert.AreEqual (3, facts.Count);
+        Assert.That (facts, Has.Count.EqualTo (3));
       }
     }
 
@@ -170,7 +170,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         {
           IFact fact = NHibernateHelper.GetCurrentSession ()
             .GetPersistentCacheOnly<IFact> (13);
-          Assert.AreEqual (null, fact);
+          Assert.That (fact, Is.EqualTo (null));
           transaction.Rollback ();
         }
       }
@@ -183,10 +183,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .FindById (1);
           IFact fact1 = ModelDAOHelper.DAOFactory.FactDAO
             .FindById(13, machine);
-          Assert.AreNotEqual (null, fact1);
+          Assert.That (fact1, Is.Not.EqualTo (null));
           IFact fact2 = NHibernateHelper.GetCurrentSession ()
             .GetPersistentCacheOnly<IFact> (13);
-          Assert.AreNotEqual (null, fact2);
+          Assert.That (fact2, Is.Not.EqualTo (null));
           transaction.Rollback ();
         }
       }

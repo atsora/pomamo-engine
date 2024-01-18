@@ -49,21 +49,21 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IComponent component4 = daoFactory.ComponentDAO.FindById(4);
-        Assert.NotNull (component4);
+        Assert.That (component4, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
 
         IOperationSlot opSlot1 =
           ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
@@ -98,8 +98,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots0 =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (3, operationSlots0.Count, "Number of operation slots (1)");
+
+        Assert.That (operationSlots0, Has.Count.EqualTo (3), "Number of operation slots (1)");
         
         IOperationMachineAssociation operationMachineAssociation =
           ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine,
@@ -114,14 +114,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (3, operationSlots.Count, "Number of operation slots (2)");
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots[0].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots[0].EndDateTime.Value);
-        Assert.AreEqual (operation3, operationSlots[0].Operation);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots[1].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots[1].EndDateTime.Value);
-        Assert.AreEqual (operation2, operationSlots[1].Operation);
+
+        Assert.That (operationSlots, Has.Count.EqualTo (3), "Number of operation slots (2)");
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[0].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (operationSlots[0].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+          Assert.That (operationSlots[0].Operation, Is.EqualTo (operation3));
+          Assert.That (operationSlots[1].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+          Assert.That (operationSlots[1].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+          Assert.That (operationSlots[1].Operation, Is.EqualTo (operation2));
+        });
       }
     }
 
@@ -139,21 +141,21 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IComponent component4 = daoFactory.ComponentDAO.FindById(4);
-        Assert.NotNull (component4);
+        Assert.That (component4, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
 
         IOperationSlot opSlot1 =
           ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
@@ -188,8 +190,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots0 =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (3, operationSlots0.Count, "Number of operation slots (1)");
+
+        Assert.That (operationSlots0, Has.Count.EqualTo (3), "Number of operation slots (1)");
         
         IOperationMachineAssociation operationMachineAssociation =
           ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine,
@@ -204,14 +206,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (2, operationSlots.Count, "Number of operation slots (2)");
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots[0].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots[0].EndDateTime.Value);
-        Assert.AreEqual (operation1, operationSlots[0].Operation);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots[1].BeginDateTime.Value);
-        Assert.IsFalse (operationSlots [1].EndDateTime.HasValue); // current slot extended to infinity
-        Assert.AreEqual (operation3, operationSlots[1].Operation);
+
+        Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots (2)");
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[0].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (operationSlots[0].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+          Assert.That (operationSlots[0].Operation, Is.EqualTo (operation1));
+          Assert.That (operationSlots[1].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+          Assert.That (operationSlots[1].EndDateTime.HasValue, Is.False); // current slot extended to infinity
+          Assert.That (operationSlots[1].Operation, Is.EqualTo (operation3));
+        });
       }
     }
 
@@ -229,21 +233,21 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IComponent component4 = daoFactory.ComponentDAO.FindById(4);
-        Assert.NotNull (component4);
+        Assert.That (component4, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
 
         IOperationSlot opSlot1 =
           ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
@@ -278,8 +282,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots0 =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (3, operationSlots0.Count, "Number of operation slots (1)");
+
+        Assert.That (operationSlots0, Has.Count.EqualTo (3), "Number of operation slots (1)");
         
         IOperationMachineAssociation operationMachineAssociation =
           ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine,
@@ -295,20 +299,22 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (4, operationSlots.Count, "Number of operation slots (2)");
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots[0].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots[0].EndDateTime.Value);
-        Assert.AreEqual (operation1, operationSlots[0].Operation);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots[1].BeginDateTime.Value);
-        Assert.AreEqual ((UtcDateTime.From (2011, 08, 02)).AddHours(1), operationSlots[1].EndDateTime.Value);
-        Assert.AreEqual (operation3, operationSlots[1].Operation);
-        Assert.AreEqual ((UtcDateTime.From (2011, 08, 02)).AddHours(1), operationSlots[2].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots[2].EndDateTime.Value);
-        Assert.AreEqual (operation2, operationSlots[2].Operation);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots[3].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 04), operationSlots[3].EndDateTime.Value);
-        Assert.AreEqual (null, operationSlots[3].Operation);
+
+        Assert.That (operationSlots, Has.Count.EqualTo (4), "Number of operation slots (2)");
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[0].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (operationSlots[0].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+          Assert.That (operationSlots[0].Operation, Is.EqualTo (operation1));
+          Assert.That (operationSlots[1].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+          Assert.That (operationSlots[1].EndDateTime.Value, Is.EqualTo ((UtcDateTime.From (2011, 08, 02)).AddHours (1)));
+          Assert.That (operationSlots[1].Operation, Is.EqualTo (operation3));
+          Assert.That (operationSlots[2].BeginDateTime.Value, Is.EqualTo ((UtcDateTime.From (2011, 08, 02)).AddHours (1)));
+          Assert.That (operationSlots[2].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+          Assert.That (operationSlots[2].Operation, Is.EqualTo (operation2));
+          Assert.That (operationSlots[3].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+          Assert.That (operationSlots[3].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 04)));
+          Assert.That (operationSlots[3].Operation, Is.EqualTo (null));
+        });
       }
     }
     
@@ -326,21 +332,21 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IComponent component4 = daoFactory.ComponentDAO.FindById(4);
-        Assert.NotNull (component4);
+        Assert.That (component4, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
 
         IOperationSlot opSlot1 =
           ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
@@ -355,8 +361,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots0 =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (1, operationSlots0.Count, "Number of operation slots (1)");
+
+        Assert.That (operationSlots0, Has.Count.EqualTo (1), "Number of operation slots (1)");
         
         IOperationMachineAssociation operationMachineAssociation =
           ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine,
@@ -371,11 +377,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (1, operationSlots.Count, "Number of operation slots (2)");
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots[0].BeginDateTime.Value);
-        Assert.IsFalse (operationSlots [0].EndDateTime.HasValue);
-        Assert.AreEqual (operation1, operationSlots[0].Operation);
+
+        Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots (2)");
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[0].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (operationSlots[0].EndDateTime.HasValue, Is.False);
+          Assert.That (operationSlots[0].Operation, Is.EqualTo (operation1));
+        });
       }
     }
 
@@ -393,21 +401,21 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IComponent component4 = daoFactory.ComponentDAO.FindById(4);
-        Assert.NotNull (component4);
+        Assert.That (component4, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
 
         IOperationSlot opSlot1 =
           ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
@@ -422,8 +430,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots0 =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (1, operationSlots0.Count, "Number of operation slots (1)");
+
+        Assert.That (operationSlots0, Has.Count.EqualTo (1), "Number of operation slots (1)");
         
         IOperationMachineAssociation operationMachineAssociation =
           ModelDAOHelper.ModelFactory.CreateOperationMachineAssociation (machine,
@@ -440,12 +448,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll(machine);
-        
-        Assert.AreEqual (1, operationSlots.Count, "Number of operation slots (2)");
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots[0].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots[0].EndDateTime.Value);
-        Assert.AreEqual (null, operationSlots[0].Operation);
-        
+
+        Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots (2)");
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[0].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (operationSlots[0].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+          Assert.That (operationSlots[0].Operation, Is.EqualTo (null));
+        });
+
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (1);
       }
     }
@@ -467,27 +477,27 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         ISession session = NHibernateHelper.GetCurrentSession ();
         // Reference data
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IComponent component4 = daoFactory.ComponentDAO.FindById(4);
-        Assert.NotNull (component4);
+        Assert.That (component4, Is.Not.Null);
         IIntermediateWorkPiece intermediateWorkPiece1 = daoFactory.IntermediateWorkPieceDAO.FindById (13506);
-        Assert.NotNull (intermediateWorkPiece1); // associated to operation1
+        Assert.That (intermediateWorkPiece1, Is.Not.Null); // associated to operation1
         IIntermediateWorkPiece intermediateWorkPiece2 = daoFactory.IntermediateWorkPieceDAO.FindById (2);
-        Assert.NotNull (intermediateWorkPiece2); // associated to operation2
+        Assert.That (intermediateWorkPiece2, Is.Not.Null); // associated to operation2
         IIntermediateWorkPiece intermediateWorkPiece3 = daoFactory.IntermediateWorkPieceDAO.FindById (11003);
-        Assert.NotNull (intermediateWorkPiece3); // associated to operation3
+        Assert.That (intermediateWorkPiece3, Is.Not.Null); // associated to operation3
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
         MachineObservationState attended =
           session.Get<MachineObservationState> ((int) MachineObservationStateId.Attended);
         MachineObservationState unattended =
@@ -651,72 +661,86 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           session.CreateCriteria<OperationSlot> ()
           .AddOrder (Order.Asc ("DateTimeRange"))
           .List<OperationSlot> ();
-        Assert.AreEqual (6, operationSlots.Count, "Number of operation slots");
+        Assert.That (operationSlots, Has.Count.EqualTo (6), "Number of operation slots");
         int i = 0;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots [i].EndDateTime.Value);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].Component).Id);
-        Assert.AreEqual (operation1, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromDays (2), operationSlots [i].Duration);
-        Assert.AreEqual (TimeSpan.FromHours (24), operationSlots [i].RunTime);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].Component).Id, Is.EqualTo (1));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+          Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (2)));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromHours (24)));
+        });
         ++i;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 04), operationSlots [i].EndDateTime.Value);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (null, operationSlots [i].WorkOrder);
-        Assert.AreEqual (null, operationSlots [i].Component);
-        Assert.AreEqual (operation3, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromDays (1), operationSlots [i].Duration);
-        Assert.AreEqual (TimeSpan.FromSeconds (0), operationSlots [i].RunTime);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+          Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 04)));
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (operationSlots[i].WorkOrder, Is.EqualTo (null));
+          Assert.That (operationSlots[i].Component, Is.EqualTo (null));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+          Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (1)));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        });
         ++i;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 04), operationSlots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 08), operationSlots [i].EndDateTime.Value);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (null, operationSlots [i].WorkOrder);
-        Assert.AreEqual (null, operationSlots [i].Component);
-        Assert.AreEqual (operation2, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromDays (4), operationSlots [i].Duration);
-        Assert.AreEqual (TimeSpan.FromDays (2), operationSlots [i].RunTime);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 04)));
+          Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 08)));
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (operationSlots[i].WorkOrder, Is.EqualTo (null));
+          Assert.That (operationSlots[i].Component, Is.EqualTo (null));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+          Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (4)));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromDays (2)));
+        });
         ++i;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 08), operationSlots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 10), operationSlots [i].EndDateTime.Value);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-        Assert.AreEqual (component1, operationSlots [i].Component);
-        Assert.AreEqual (operation2, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromDays (2), operationSlots [i].Duration);
-        Assert.AreEqual (TimeSpan.FromSeconds (0), operationSlots [i].RunTime);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 08)));
+          Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 10)));
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+          Assert.That (operationSlots[i].Component, Is.EqualTo (component1));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+          Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (2)));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        });
         ++i;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 10), operationSlots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 12), operationSlots [i].EndDateTime.Value);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-        Assert.AreEqual (component1, operationSlots [i].Component);
-        Assert.AreEqual (null, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromDays (2), operationSlots [i].Duration);
-        Assert.AreEqual (TimeSpan.FromSeconds (0), operationSlots [i].RunTime);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 10)));
+          Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 12)));
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+          Assert.That (operationSlots[i].Component, Is.EqualTo (component1));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (null));
+          Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (2)));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        });
         ++i;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 12), operationSlots [i].BeginDateTime.Value);
-        Assert.IsFalse (operationSlots [i].EndDateTime.HasValue);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-        Assert.AreEqual (component1, operationSlots [i].Component);
-        Assert.AreEqual (operation2, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromSeconds (0), operationSlots [i].RunTime);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 12)));
+          Assert.That (operationSlots[i].EndDateTime.HasValue, Is.False);
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+          Assert.That (operationSlots[i].Component, Is.EqualTo (component1));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromSeconds (0)));
+        });
         // - Modifications
         IList<OperationMachineAssociation> modifications =
           session.CreateCriteria<OperationMachineAssociation> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<OperationMachineAssociation> ();
-        Assert.AreEqual (12, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[1].AnalysisStatus, "2nd modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[2].AnalysisStatus, "3rd modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[3].AnalysisStatus, "4th modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[4].AnalysisStatus, "5th modification status");
-        
+        Assert.That (modifications, Has.Count.EqualTo (12), "Number of modifications");
+        Assert.Multiple (() => {
+          Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
+          Assert.That (modifications[1].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "2nd modification status");
+          Assert.That (modifications[2].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "3rd modification status");
+          Assert.That (modifications[3].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "4th modification status");
+          Assert.That (modifications[4].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "5th modification status");
+        });
+
         transaction.Rollback ();
       }
     }
@@ -738,19 +762,19 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         ISession session = NHibernateHelper.GetCurrentSession ();
         // Reference data
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1); // => workOrder1
+        Assert.That (operation1, Is.Not.Null); // => workOrder1
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2); // => workOrder1
+        Assert.That (operation2, Is.Not.Null); // => workOrder1
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3); // => workOrder3
+        Assert.That (operation3, Is.Not.Null); // => workOrder3
         MachineObservationState attended =
           session.Get<MachineObservationState> ((int) MachineObservationStateId.Attended);
         MachineObservationState unattended =
@@ -908,64 +932,76 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             session.CreateCriteria<OperationSlot> ()
             .AddOrder (Order.Asc ("DateTimeRange"))
             .List<OperationSlot> ();
-          Assert.AreEqual (5, operationSlots.Count, "Number of operation slots");
+          Assert.That (operationSlots, Has.Count.EqualTo (5), "Number of operation slots");
           int i = 0;
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots [i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots [i].EndDateTime.Value);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].Component).Id);
-          Assert.AreEqual (operation1, operationSlots [i].Operation);
-          Assert.AreEqual (TimeSpan.FromDays (2), operationSlots [i].Duration);
-          Assert.AreEqual (TimeSpan.FromHours (24), operationSlots [i].RunTime);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+            Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].Component).Id, Is.EqualTo (1));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+            Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (2)));
+            Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromHours (24)));
+          });
           ++i;
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots [i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 04), operationSlots [i].EndDateTime.Value);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (3, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-          Assert.AreEqual (3, ((Lemoine.Collections.IDataWithId)operationSlots [i].Component).Id);
-          Assert.AreEqual (operation3, operationSlots [i].Operation);
-          Assert.AreEqual (TimeSpan.FromDays (1), operationSlots [i].Duration);
-          Assert.AreEqual (TimeSpan.FromSeconds (0), operationSlots [i].RunTime);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+            Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 04)));
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (3));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].Component).Id, Is.EqualTo (3));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+            Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (1)));
+            Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromSeconds (0)));
+          });
           ++i;
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 04), operationSlots [i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 10), operationSlots [i].EndDateTime.Value);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-          Assert.AreEqual (component1, operationSlots [i].Component);
-          Assert.AreEqual (operation2, operationSlots [i].Operation);
-          Assert.AreEqual (TimeSpan.FromDays (6), operationSlots [i].Duration);
-          Assert.AreEqual (TimeSpan.FromDays (2), operationSlots [i].RunTime);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 04)));
+            Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 10)));
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+            Assert.That (operationSlots[i].Component, Is.EqualTo (component1));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+            Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (6)));
+            Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromDays (2)));
+          });
           ++i;
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 10), operationSlots [i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 12), operationSlots [i].EndDateTime.Value);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-          Assert.AreEqual (component1, operationSlots [i].Component);
-          Assert.AreEqual (null, operationSlots [i].Operation);
-          Assert.AreEqual (TimeSpan.FromDays (2), operationSlots [i].Duration);
-          Assert.AreEqual (TimeSpan.FromSeconds (0), operationSlots [i].RunTime);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 10)));
+            Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 12)));
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+            Assert.That (operationSlots[i].Component, Is.EqualTo (component1));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (null));
+            Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (2)));
+            Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromSeconds (0)));
+          });
           ++i;
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 12), operationSlots [i].BeginDateTime.Value);
-          Assert.IsFalse (operationSlots [i].EndDateTime.HasValue);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-          Assert.AreEqual (component1, operationSlots [i].Component);
-          Assert.AreEqual (operation2, operationSlots [i].Operation);
-          Assert.AreEqual (TimeSpan.FromSeconds (0), operationSlots [i].RunTime);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 12)));
+            Assert.That (operationSlots[i].EndDateTime.HasValue, Is.False);
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+            Assert.That (operationSlots[i].Component, Is.EqualTo (component1));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+            Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromSeconds (0)));
+          });
         }
         // - Modifications
         IList<OperationMachineAssociation> modifications =
           session.CreateCriteria<OperationMachineAssociation> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<OperationMachineAssociation> ();
-        Assert.AreEqual (12, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[1].AnalysisStatus, "2nd modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[2].AnalysisStatus, "3rd modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[3].AnalysisStatus, "4th modification status");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[4].AnalysisStatus, "5th modification status");
-        
+        Assert.That (modifications, Has.Count.EqualTo (12), "Number of modifications");
+        Assert.Multiple (() => {
+          Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
+          Assert.That (modifications[1].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "2nd modification status");
+          Assert.That (modifications[2].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "3rd modification status");
+          Assert.That (modifications[3].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "4th modification status");
+          Assert.That (modifications[4].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "5th modification status");
+        });
+
         transaction.Rollback ();
       }
     }
@@ -983,27 +1019,27 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         ISession session = NHibernateHelper.GetCurrentSession ();
         // Reference data
         IMachine machine = daoFactory.MachineDAO.FindById(4);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IComponent component4 = daoFactory.ComponentDAO.FindById(4);
-        Assert.NotNull (component4);
+        Assert.That (component4, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
         IIntermediateWorkPiece intermediateWorkPiece1 = daoFactory.IntermediateWorkPieceDAO.FindById (13506);
-        Assert.NotNull (intermediateWorkPiece1); // associated to operation1
+        Assert.That (intermediateWorkPiece1, Is.Not.Null); // associated to operation1
         IIntermediateWorkPiece intermediateWorkPiece2 = daoFactory.IntermediateWorkPieceDAO.FindById (2);
-        Assert.NotNull (intermediateWorkPiece2); // associated to operation2
+        Assert.That (intermediateWorkPiece2, Is.Not.Null); // associated to operation2
         IIntermediateWorkPiece intermediateWorkPiece3 = daoFactory.IntermediateWorkPieceDAO.FindById (11003);
-        Assert.NotNull (intermediateWorkPiece3); // associated to operation3
+        Assert.That (intermediateWorkPiece3, Is.Not.Null); // associated to operation3
         IMachineObservationState attended =
           daoFactory.MachineObservationStateDAO.FindById((int) MachineObservationStateId.Attended);
         IMachineObservationState unattended =
@@ -1070,23 +1106,27 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           session.CreateCriteria<OperationSlot> ()
           .AddOrder (Order.Asc ("DateTimeRange"))
           .List<OperationSlot> ();
-        Assert.AreEqual (2, operationSlots.Count, "Number of operation slots");
+        Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots");
         int i = 0;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 06), operationSlots [i].EndDateTime.Value);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (null, operationSlots [i].WorkOrder);
-        Assert.AreEqual (operation1, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromDays (3), operationSlots [i].Duration);
-        Assert.AreEqual (TimeSpan.FromDays (1), operationSlots [i].RunTime);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+          Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 06)));
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (operationSlots[i].WorkOrder, Is.EqualTo (null));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+          Assert.That (operationSlots[i].Duration, Is.EqualTo (TimeSpan.FromDays (3)));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromDays (1)));
+        });
         ++i;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 06), operationSlots [i].BeginDateTime.Value);
-        Assert.IsFalse (operationSlots [i].EndDateTime.HasValue);
-        Assert.AreEqual (machine, operationSlots [i].Machine);
-        Assert.AreEqual (workOrder1, operationSlots [i].WorkOrder);
-        Assert.AreEqual (operation1, operationSlots [i].Operation);
-        Assert.AreEqual (TimeSpan.FromDays (1), operationSlots [i].RunTime);
-        
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 06)));
+          Assert.That (operationSlots[i].EndDateTime.HasValue, Is.False);
+          Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+          Assert.That (operationSlots[i].WorkOrder, Is.EqualTo (workOrder1));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+          Assert.That (operationSlots[i].RunTime, Is.EqualTo (TimeSpan.FromDays (1)));
+        });
+
         transaction.Rollback ();
       }
     }
@@ -1107,19 +1147,19 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference data
         IMachine machine = daoFactory.MachineDAO.FindById(1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-        Assert.NotNull (workOrder1);
+        Assert.That (workOrder1, Is.Not.Null);
         IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
         IComponent component1 = daoFactory.ComponentDAO.FindById(1);
-        Assert.NotNull (component1);
+        Assert.That (component1, Is.Not.Null);
         IOperation operation1 = daoFactory.OperationDAO.FindById(13157);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 = daoFactory.OperationDAO.FindById(2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         IOperation operation3 = daoFactory.OperationDAO.FindById(11003);
-        Assert.NotNull (operation3);
+        Assert.That (operation3, Is.Not.Null);
 
         // Configuration
         Lemoine.Info.ConfigSet.ForceValue (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.WorkOrderFromComponentOnly), true);
@@ -1156,21 +1196,23 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           session.CreateCriteria<OperationSlot> ()
           .AddOrder (Order.Asc ("DateTimeRange"))
           .List<OperationSlot> ();
-        Assert.AreEqual (1, operationSlots.Count, "Number of operation slots");
+        Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots");
         int i = 0;
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 10), operationSlots [i].EndDateTime.Value);
-        Assert.AreEqual (1, operationSlots [i].Machine.Id);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].WorkOrder).Id);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [i].Component).Id);
-        Assert.AreEqual (operation1, operationSlots [i].Operation);
+        Assert.Multiple (() => {
+          Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 10)));
+          Assert.That (operationSlots[i].Machine.Id, Is.EqualTo (1));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].WorkOrder).Id, Is.EqualTo (1));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[i].Component).Id, Is.EqualTo (1));
+          Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+        });
         // - Modifications
         IList<OperationMachineAssociation> modifications =
           session.CreateCriteria<OperationMachineAssociation> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<OperationMachineAssociation> ();
-        Assert.AreEqual (2, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+        Assert.That (modifications, Has.Count.EqualTo (2), "Number of modifications");
+        Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         
         transaction.Rollback ();
       }
@@ -1204,19 +1246,19 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           
           // Reference data
           IMachine machine = daoFactory.MachineDAO.FindById(1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IWorkOrder workOrder1 = daoFactory.WorkOrderDAO.FindById(1);
-          Assert.NotNull (workOrder1);
+          Assert.That (workOrder1, Is.Not.Null);
           IWorkOrder workOrder2 = daoFactory.WorkOrderDAO.FindById(2);
-          Assert.NotNull (workOrder2);
+          Assert.That (workOrder2, Is.Not.Null);
           IComponent component1 = daoFactory.ComponentDAO.FindById (1);
-          Assert.NotNull (component1);
+          Assert.That (component1, Is.Not.Null);
           IOperation operation1 = daoFactory.OperationDAO.FindById (13157);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           IOperation operation2 = daoFactory.OperationDAO.FindById (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           IOperation operation3 = daoFactory.OperationDAO.FindById (11003);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           
           // Existing operation slots
           {
@@ -1263,21 +1305,23 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             session.CreateCriteria<OperationSlot> ()
             .AddOrder (Order.Asc ("DateTimeRange"))
             .List<OperationSlot> ();
-          Assert.AreEqual (2, operationSlots.Count, "Number of operation slots");
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01), operationSlots [0].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots [0].EndDateTime.Value);
-          Assert.AreEqual (1, operationSlots [0].Machine.Id);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [0].WorkOrder).Id);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [0].Component).Id);
-          Assert.AreEqual (operation1, operationSlots [0].Operation);
-          Assert.AreEqual (12, operationSlots [0].TotalCycles);
-          Assert.AreEqual (2, operationSlots [0].PartialCycles);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 02), operationSlots [1].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 03), operationSlots [1].EndDateTime.Value);
-          Assert.AreEqual (1, operationSlots [1].Machine.Id);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [1].WorkOrder).Id);
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)operationSlots [1].Component).Id);
-          Assert.AreEqual (operation2, operationSlots [1].Operation);
+          Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots");
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[0].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+            Assert.That (operationSlots[0].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+            Assert.That (operationSlots[0].Machine.Id, Is.EqualTo (1));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[0].WorkOrder).Id, Is.EqualTo (1));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[0].Component).Id, Is.EqualTo (1));
+            Assert.That (operationSlots[0].Operation, Is.EqualTo (operation1));
+            Assert.That (operationSlots[0].TotalCycles, Is.EqualTo (12));
+            Assert.That (operationSlots[0].PartialCycles, Is.EqualTo (2));
+            Assert.That (operationSlots[1].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 02)));
+            Assert.That (operationSlots[1].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+            Assert.That (operationSlots[1].Machine.Id, Is.EqualTo (1));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[1].WorkOrder).Id, Is.EqualTo (1));
+            Assert.That (((Lemoine.Collections.IDataWithId)operationSlots[1].Component).Id, Is.EqualTo (1));
+            Assert.That (operationSlots[1].Operation, Is.EqualTo (operation2));
+          });
           CheckSummaries (operationSlots[0]);
           CheckSummaries (operationSlots[1]);
           // - Modifications
@@ -1285,8 +1329,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             session.CreateCriteria<OperationMachineAssociation> ()
             .AddOrder (Order.Asc ("DateTime"))
             .List<OperationMachineAssociation> ();
-          Assert.AreEqual (1, modifications.Count, "Number of modifications");
-          Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+          Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+          Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         }
         finally {
           transaction.Rollback ();
@@ -1320,12 +1364,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           var partial = operationSlots
             .Sum (s => s.PartialCycles);
           if (null == summary) {
-            Assert.AreEqual (0, total);
-            Assert.AreEqual (0, partial);
+            Assert.Multiple (() => {
+              Assert.That (total, Is.EqualTo (0));
+              Assert.That (partial, Is.EqualTo (0));
+            });
           }
           else {
-            Assert.AreEqual (summary.Full, total);
-            Assert.AreEqual (summary.Partial, partial);
+            Assert.Multiple (() => {
+              Assert.That (total, Is.EqualTo (summary.Full));
+              Assert.That (partial, Is.EqualTo (summary.Partial));
+            });
           }
         }
       }

@@ -46,8 +46,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           ModelDAOHelper.DAOFactory.Flush ();
 
           var read = ModelDAOHelper.DAOFactory.StampingConfigByNameDAO.FindById (stampingConfigByName.Id);
-          Assert.AreEqual (stampingConfigByName.Name, read.Name);
-          Assert.AreEqual ("Singleton", stampingConfigByName.Config.Singletons.First ().Name);
+          Assert.Multiple (() => {
+            Assert.That (read.Name, Is.EqualTo (stampingConfigByName.Name));
+            Assert.That (stampingConfigByName.Config.Singletons.First ().Name, Is.EqualTo ("Singleton"));
+          });
         }
         finally {
           transaction.Rollback ();

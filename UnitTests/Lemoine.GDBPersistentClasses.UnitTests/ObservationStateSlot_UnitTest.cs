@@ -78,7 +78,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // Process the templates
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindOverlapsRange (machine1, new UtcDateTimeRange (T(0)));
-          Assert.AreEqual (3, slots.Count, "Number of observation state slots");
+          Assert.That (slots, Has.Count.EqualTo (3), "Number of observation state slots");
           ((ObservationStateSlot)slots [1]).ProcessTemplate (System.Threading.CancellationToken.None, new UtcDateTimeRange (new LowerBound<DateTime> (null),
                                                                                    T(13)),
                                                              null, false, null, null);
@@ -89,86 +89,87 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           // - ObservationStateSlots
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindOverlapsRange (machine1, new UtcDateTimeRange (T(0)));
-          Assert.AreEqual (10, slots.Count, "Number of observation state slots");
+          Assert.That (slots, Has.Count.EqualTo (10), "Number of observation state slots");
           int i = 1;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (attendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (shift2, slots [i].Shift);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (new DateTime (2014, 10, 03, 12, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (attendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 03, 12, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (unattendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (new DateTime (2014, 10, 03, 12, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].BeginDateTime.Value);
-          Assert.AreEqual (new DateTime (2014, 10, 06, 00, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (unattendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 03, 12, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 06, 00, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (attendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (shift2, slots [i].Shift);
-          Assert.AreEqual (new DateTime (2014, 10, 06, 00, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].BeginDateTime.Value);
-          Assert.AreEqual (new DateTime (2014, 10, 08, 06, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (attendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 06, 00, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 08, 06, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (unattendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (new DateTime (2014, 10, 08, 06, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].BeginDateTime.Value);
-          Assert.AreEqual (new DateTime (2014, 10, 08, 18, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (unattendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 08, 06, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 08, 18, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (attendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (shift2, slots [i].Shift);
-          Assert.AreEqual (new DateTime (2014, 10, 08, 18, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].BeginDateTime.Value);
-          Assert.AreEqual (new DateTime (2014, 10, 10, 12, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (attendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 08, 18, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 10, 12, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (unattendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (new DateTime (2014, 10, 10, 12, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].BeginDateTime.Value);
-          Assert.AreEqual (new DateTime (2014, 10, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (unattendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 10, 12, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (attendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (shift2, slots [i].Shift);
-          Assert.AreEqual (new DateTime (2014, 10, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime (),
-                           slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(13),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (attendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (new DateTime (2014, 10, 13, 00, 00, 00, DateTimeKind.Local).ToUniversalTime ()));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (13)));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (null, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (T(13),
-                           slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(15),
-                           slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (null));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (13)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (15)));
+          });
           ++i;
         }
         
@@ -226,7 +227,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // Process the templates
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindOverlapsRange (machine1, new UtcDateTimeRange (T(0)));
-          Assert.AreEqual (3, slots.Count, "Number of observation state slots");
+          Assert.That (slots, Has.Count.EqualTo (3), "Number of observation state slots");
           ((ObservationStateSlot)slots [1]).ProcessTemplate (System.Threading.CancellationToken.None, new UtcDateTimeRange (new LowerBound<DateTime> (null),
                                                                                    T(25)),
                                                              null, false, null, null);
@@ -237,23 +238,27 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           // - ObservationStateSlots
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindOverlapsRange (machine1, new UtcDateTimeRange (T(0)));
-          Assert.AreEqual (3, slots.Count, "Number of observation state slots");
+          Assert.That (slots, Has.Count.EqualTo (3), "Number of observation state slots");
           int i = 1;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (attendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (mst, slots [i].MachineStateTemplate);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (shift2, slots [i].Shift);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(20), slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (attendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (mst));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (20)));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (unattendedMOS, slots [i].MachineObservationState);
-          Assert.AreEqual (unattended, slots [i].MachineStateTemplate);
-          Assert.AreEqual (null, slots [i].User);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (T(20), slots [i].BeginDateTime.Value);
-          Assert.IsFalse (slots [i].EndDateTime.HasValue);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (unattendedMOS));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (unattended));
+            Assert.That (slots[i].User, Is.EqualTo (null));
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (20)));
+            Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+          });
           ++i;
         }
         

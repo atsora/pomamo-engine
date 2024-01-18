@@ -34,7 +34,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         IGoal goal = ModelDAOHelper.DAOFactory.GoalDAO
           .FindMatch (GoalTypeId.UtilizationPercentage, null, machine);
         Assert.IsNotNull (goal);
-        Assert.AreEqual(50.0, goal.Value);
+        Assert.That (goal.Value, Is.EqualTo (50.0));
       }
     }
     

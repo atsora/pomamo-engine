@@ -43,9 +43,9 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine and corresponding machine module
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             var machineModules = machine.MachineModules;
-            Assert.IsNotEmpty (machineModules);
+            Assert.That (machineModules, Is.Not.Empty);
             IMachineModule firstMachineModule = null;
             foreach (var machineModule in machineModules) {
               firstMachineModule = machineModule;
@@ -55,7 +55,7 @@ namespace Lemoine.AutoReason.UnitTests
             // FIRST RUN, INITIALIZING THE PLUGIN ON AN OLD EVENT
 
             IEventLevel level = ModelDAOHelper.DAOFactory.EventLevelDAO.FindById (1);
-            Assert.NotNull (level);
+            Assert.That (level, Is.Not.Null);
 
             // Tool life warning at T(0)
             {
@@ -95,17 +95,21 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of associations");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of associations");
 
               var association = reasonAssociations[0];
-              Assert.AreEqual ("T1", association.ReasonDetails, "wrong T for reason 1");
-              Assert.AreEqual (T (5), association.Begin.Value, "wrong start for reason 1");
-              Assert.AreEqual (T (5 + 60), association.End.Value, "wrong end for reason 1");
+              Assert.Multiple (() => {
+                Assert.That (association.ReasonDetails, Is.EqualTo ("T1"), "wrong T for reason 1");
+                Assert.That (association.Begin.Value, Is.EqualTo (T (5)), "wrong start for reason 1");
+                Assert.That (association.End.Value, Is.EqualTo (T (5 + 60)), "wrong end for reason 1");
+              });
 
               association = reasonAssociations[1];
-              Assert.AreEqual ("T5", association.ReasonDetails, "wrong T for reason 2");
-              Assert.AreEqual (T (10), association.Begin.Value, "wrong start for reason 2");
-              Assert.AreEqual (T (10 + 60), association.End.Value, "wrong end for reason 2");
+              Assert.Multiple (() => {
+                Assert.That (association.ReasonDetails, Is.EqualTo ("T5"), "wrong T for reason 2");
+                Assert.That (association.Begin.Value, Is.EqualTo (T (10)), "wrong start for reason 2");
+                Assert.That (association.End.Value, Is.EqualTo (T (10 + 60)), "wrong end for reason 2");
+              });
             }
           } finally {
             transaction.Rollback ();

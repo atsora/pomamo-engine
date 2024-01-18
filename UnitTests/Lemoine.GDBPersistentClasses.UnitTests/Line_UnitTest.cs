@@ -64,15 +64,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         line.Name = "a name";
         line.Code = "a code";
         daoFactory.LineDAO.MakePersistent(line);
-        
+
         // Check that another element is stored
-        Assert.AreEqual(count + 1, lineDAO.FindAll().Count, "Wrong count after insertion");
+        Assert.That (lineDAO.FindAll(), Has.Count.EqualTo (count + 1), "Wrong count after insertion");
         
         // Remove the line from the database
         lineDAO.MakeTransient(line);
-        
+
         // Check the number of elements stored
-        Assert.AreEqual(count, lineDAO.FindAll().Count, "Wrong count after deletion");
+        Assert.That (lineDAO.FindAll(), Has.Count.EqualTo (count), "Wrong count after deletion");
         
         transaction.Rollback ();
       }
@@ -98,16 +98,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         line.AddComponent(componentDAO.FindAll()[0]);
         line.AddComponent(componentDAO.FindAll()[1]);
         daoFactory.LineDAO.MakePersistent(line);
-        
+
         // Count the number of components stored
-        Assert.AreEqual(2, lineDAO.FindById(line.Id).Components.Count,
+        Assert.That (lineDAO.FindById(line.Id).Components, Has.Count.EqualTo (2),
                         "wrong count of components after insertion");
         
         // Remove one component from the line
         line.RemoveComponent(line.Components.First());
-        
+
         // Count the new number of components stored
-        Assert.AreEqual(1, lineDAO.FindById(line.Id).Components.Count,
+        Assert.That (lineDAO.FindById(line.Id).Components, Has.Count.EqualTo (1),
                         "wrong count of components after deletion");
         
         transaction.Rollback ();

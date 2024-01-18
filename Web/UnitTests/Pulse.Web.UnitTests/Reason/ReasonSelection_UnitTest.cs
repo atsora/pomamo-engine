@@ -36,14 +36,16 @@ namespace Pulse.Web.UnitTests.Reason
           request.Range = "[2011-11-22T08:30:00Z,2011-11-22T08:30:00Z]";
           
           var response = m_service.GetWithoutCache (request) as IList<ReasonSelectionResponseDTO>;
-          
-          Assert.IsNotNull(response);
-          Assert.AreEqual (9, response.Count);
+
+          Assert.That (response, Is.Not.Null);
+          Assert.That (response, Has.Count.EqualTo (9));
           
           var reason1 = response.First (item => (16 == item.Id));
-          Assert.AreEqual (16, reason1.Id);
-          Assert.AreEqual (17, reason1.ReasonGroupId);
-          Assert.AreEqual ("Mounted new workpiece", reason1.ReasonGroupDisplay);
+          Assert.Multiple (() => {
+            Assert.That (reason1.Id, Is.EqualTo (16));
+            Assert.That (reason1.ReasonGroupId, Is.EqualTo (17));
+            Assert.That (reason1.ReasonGroupDisplay, Is.EqualTo ("Mounted new workpiece"));
+          });
         }
         finally {
           transaction.Rollback();

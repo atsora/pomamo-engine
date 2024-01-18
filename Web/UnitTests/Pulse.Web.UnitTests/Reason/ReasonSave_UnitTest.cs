@@ -42,18 +42,20 @@ namespace Pulse.Web.UnitTests.Reason
           reasonSave.ReasonDetails = details;
           
           var response = new ReasonSaveService ().GetSync (reasonSave) as ReasonSaveResponseDTO;
-              
-          Assert.IsNotNull(response);
+
+          Assert.That (response, Is.Not.Null);
           
           // just test there is a pending modification of the right type
           IList<IModification> modifications = ModelDAOHelper.DAOFactory.ModificationDAO.FindAll().ToList ();
-          Assert.IsNotNull(modifications, "no modification");
-          Assert.AreEqual(1, modifications.Count, "not 1 modification");
+          Assert.That (modifications, Is.Not.Null, "no modification");
+          Assert.That (modifications, Has.Count.EqualTo (1), "not 1 modification");
           IModification modification = modifications[0];
           IReasonMachineAssociation reasonMachineAssociation = modification as IReasonMachineAssociation;
-          Assert.IsNotNull(reasonMachineAssociation, "not a reason machine association");
-          Assert.AreEqual(details, reasonMachineAssociation.ReasonDetails, "bad details");
-          Assert.AreEqual(reason1.Id, reasonMachineAssociation.Reason.Id);
+          Assert.That (reasonMachineAssociation, Is.Not.Null, "not a reason machine association");
+          Assert.Multiple (() => {
+            Assert.That (reasonMachineAssociation.ReasonDetails, Is.EqualTo (details), "bad details");
+            Assert.That (reasonMachineAssociation.Reason.Id, Is.EqualTo (reason1.Id));
+          });
         }
         finally {
           transaction.Rollback();

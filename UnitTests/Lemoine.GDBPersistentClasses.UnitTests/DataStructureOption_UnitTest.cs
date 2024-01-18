@@ -33,7 +33,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         bool result = Lemoine.Info.ConfigSet
           .Get<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.WorkOrderProjectIsJob));
-        Assert.AreEqual (false, result);
+        Assert.That (result, Is.EqualTo (false));
       }
     }
 

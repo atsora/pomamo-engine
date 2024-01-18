@@ -34,8 +34,10 @@ namespace Lemoine.Business.UnitTests.Time
       var day = new DateTime (2018, 05, 03);
       var request = new Lemoine.Business.Time.DaySlotFromDay (day);
       var response = Lemoine.Business.ServiceProvider.Get (request);
-      Assert.AreEqual (new DateTime (2018, 05, 02, 20, 00, 00, DateTimeKind.Utc), response.DateTimeRange.Lower.Value);
-      Assert.AreEqual (new DateTime (2018, 05, 03, 20, 00, 00, DateTimeKind.Utc), response.DateTimeRange.Upper.Value);
+      Assert.Multiple (() => {
+        Assert.That (response.DateTimeRange.Lower.Value, Is.EqualTo (new DateTime (2018, 05, 02, 20, 00, 00, DateTimeKind.Utc)));
+        Assert.That (response.DateTimeRange.Upper.Value, Is.EqualTo (new DateTime (2018, 05, 03, 20, 00, 00, DateTimeKind.Utc)));
+      });
     }
   }
 }

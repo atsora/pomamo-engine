@@ -39,24 +39,30 @@ namespace Lemoine.DataRepository.UnitTests
       // With a valid XML File
       b = new ODBCBuilder (XmlSourceType.URI,
                            System.IO.Path.Combine (m_unitTestsIn, "testODBCSynchroBuilder-Valid.xml"));
-      Assert.AreEqual (b.ConnectionParameters.DsnName, "LemoineUnitTests");
-      Assert.AreEqual (b.ConnectionParameters.Username, "DatabaseUser");
-      Assert.AreEqual (b.ConnectionParameters.Password, "DatabasePassword");
-      
+      Assert.Multiple (() => {
+        Assert.That (b.ConnectionParameters.DsnName, Is.EqualTo ("LemoineUnitTests"));
+        Assert.That (b.ConnectionParameters.Username, Is.EqualTo ("DatabaseUser"));
+        Assert.That (b.ConnectionParameters.Password, Is.EqualTo ("DatabasePassword"));
+      });
+
       // With a valid odbcfactconfig XML File
       b = new ODBCBuilder (XmlSourceType.URI,
                            System.IO.Path.Combine (m_unitTestsIn, "testSynchroFactodbcconfig-Valid.xml"));
-      Assert.AreEqual (b.ConnectionParameters.DsnName, "MSSQLuser");
-      Assert.AreEqual (b.ConnectionParameters.Username, "User");
-      Assert.AreEqual (b.ConnectionParameters.Password, "password");
-      
+      Assert.Multiple (() => {
+        Assert.That (b.ConnectionParameters.DsnName, Is.EqualTo ("MSSQLuser"));
+        Assert.That (b.ConnectionParameters.Username, Is.EqualTo ("User"));
+        Assert.That (b.ConnectionParameters.Password, Is.EqualTo ("password"));
+      });
+
       // With a valid unicode odbcfactconfig XML File
       b = new ODBCBuilder (XmlSourceType.URI,
                            System.IO.Path.Combine (m_unitTestsIn, "testSynchroFactodbcconfigUnicode-Valid.xml"));
-      Assert.AreEqual (b.ConnectionParameters.DsnName, "MSSQLuser");
-      Assert.AreEqual (b.ConnectionParameters.Username, "User");
-      Assert.AreEqual (b.ConnectionParameters.Password, "password");
-      
+      Assert.Multiple (() => {
+        Assert.That (b.ConnectionParameters.DsnName, Is.EqualTo ("MSSQLuser"));
+        Assert.That (b.ConnectionParameters.Username, Is.EqualTo ("User"));
+        Assert.That (b.ConnectionParameters.Password, Is.EqualTo ("password"));
+      });
+
       // With an invalid XML file with an empty root element (no DSN name)
       Assert.Throws<ODBCBuilder.SchemaException>
         (delegate {
@@ -104,10 +110,12 @@ namespace Lemoine.DataRepository.UnitTests
         "</root>";
       b = new ODBCBuilder (XmlSourceType.STRING,
                            xmlData);
-      Assert.AreEqual (b.ConnectionParameters.DsnName, "LemoineUnitTests");
-      Assert.AreEqual (b.ConnectionParameters.Username, "DatabaseUser");
-      Assert.AreEqual (b.ConnectionParameters.Password, "DatabasePassword");
-      
+      Assert.Multiple (() => {
+        Assert.That (b.ConnectionParameters.DsnName, Is.EqualTo ("LemoineUnitTests"));
+        Assert.That (b.ConnectionParameters.Username, Is.EqualTo ("DatabaseUser"));
+        Assert.That (b.ConnectionParameters.Password, Is.EqualTo ("DatabasePassword"));
+      });
+
       // With an invalid XML string with no root element
       xmlData = "no root element";
       Assert.Throws<XmlException>
@@ -140,15 +148,17 @@ namespace Lemoine.DataRepository.UnitTests
       const string xmlData = "<?xml version='1.0'?>\n" + "<root xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='factodbcconfig.xsd' " + "      xmlns:pulse='urn:pulse.lemoinetechnologies.com:synchro:odbc' " + "      pulse:dsnname='LemoineUnitTests' pulse:user='DatabaseUser' pulse:password='DatabasePassword'>" + "</root>";
       ODBCBuilder b = new ODBCBuilder (XmlSourceType.STRING,
                                        xmlData);
-      Assert.AreEqual (b.ConnectionParameters.DsnName, "LemoineUnitTests");
-      Assert.AreEqual (b.ConnectionParameters.Username, "DatabaseUser");
-      Assert.AreEqual (b.ConnectionParameters.Password, "DatabasePassword");
+      Assert.Multiple (() => {
+        Assert.That (b.ConnectionParameters.DsnName, Is.EqualTo ("LemoineUnitTests"));
+        Assert.That (b.ConnectionParameters.Username, Is.EqualTo ("DatabaseUser"));
+        Assert.That (b.ConnectionParameters.Password, Is.EqualTo ("DatabasePassword"));
+      });
     }
 
 #if ENABLE_ODBCBUILDER_UNITTEST_TESTBUILD
     [Test]
 #endif // ENABLE_ODBCBUILDER_UNITTEST_TESTBUILD
-    public void TestBuild ()
+    private void TestBuild ()
     {
       const string xmlData = "<?xml version='1.0'?>\n" + "<root xmlns:pulse='urn:pulse.lemoinetechnologies.com:synchro:odbc' " + "      pulse:dsnname='LemoineUnitTests' pulse:user='DatabaseUser' pulse:password='DatabasePassword'>" + "  <parent id=''>" + "    <element id='' pulse:request=" + "       'UPDATE testodbcbuilder SET id={@id}, parent={../@id}' />" + "  </parent>" + "  <anyelement attr='anyattr' />" + "</root>";
       ODBCBuilder b = new ODBCBuilder (XmlSourceType.STRING,

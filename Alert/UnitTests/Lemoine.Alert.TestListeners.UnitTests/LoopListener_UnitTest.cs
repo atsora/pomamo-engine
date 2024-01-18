@@ -37,12 +37,12 @@ namespace Lemoine.Alert.TestListeners.UnitTests
             stringWriter.NewLine = "\n";
             serializer.Serialize (stringWriter, listener);
             var s = stringWriter.ToString ();
-            Assert.AreEqual ("""
+            Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
 <?xml version="1.0" encoding="utf-16"?>
 <LoopListener xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Frequency="00:00:01.5000000">
   <Data>&lt;Test /&gt;</Data>
 </LoopListener>
-""".ReplaceLineEndings (), s.ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
           }
         }
       }
@@ -63,7 +63,7 @@ namespace Lemoine.Alert.TestListeners.UnitTests
         (IListener) serializer.Deserialize (textReader);
       Assert.IsTrue (listener is LoopListener);
       LoopListener loopListener = listener as LoopListener;
-      Assert.AreEqual ("<Test />", loopListener.Data);
+      Assert.That (loopListener.Data, Is.EqualTo ("<Test />"));
     }
 
   }

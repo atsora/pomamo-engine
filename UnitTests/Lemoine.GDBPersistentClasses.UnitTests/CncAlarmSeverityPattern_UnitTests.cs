@@ -75,23 +75,25 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         cASP.Rules.Number = "k";
         cASP.Rules.Properties = null;
         cASP_DAO.Reload(cASP);
-        
-        // Check that another element is stored
-        Assert.AreEqual(count + 1, cASP_DAO.FindAll().Count, "Wrong count after insertion");
-        
-        // Check the properties
-        Assert.AreEqual("Cnc test", cASP.CncInfo, "Wrong cnc info");
-        Assert.AreEqual(cAS.Id, cASP.Severity.Id, "Wrong severity");
-        Assert.AreEqual("123", cASP.Rules.Number, "Wrong pattern 'number'");
-        Assert.AreEqual ("high", cASP.Rules.Properties["severity"], "Wrong pattern 'properties -> severity'");
-        Assert.AreEqual(EditStatus.DEFAULT_VALUE_DELETED, cASP.Status, "wrong Status");
-        Assert.AreEqual("foo", cASP.Name, "wrong Name");
-        
+
+        Assert.Multiple (() => {
+          // Check that another element is stored
+          Assert.That (cASP_DAO.FindAll (), Has.Count.EqualTo (count + 1), "Wrong count after insertion");
+
+          // Check the properties
+          Assert.That (cASP.CncInfo, Is.EqualTo ("Cnc test"), "Wrong cnc info");
+          Assert.That (cASP.Severity.Id, Is.EqualTo (cAS.Id), "Wrong severity");
+          Assert.That (cASP.Rules.Number, Is.EqualTo ("123"), "Wrong pattern 'number'");
+          Assert.That (cASP.Rules.Properties["severity"], Is.EqualTo ("high"), "Wrong pattern 'properties -> severity'");
+          Assert.That (cASP.Status, Is.EqualTo (EditStatus.DEFAULT_VALUE_DELETED), "wrong Status");
+          Assert.That (cASP.Name, Is.EqualTo ("foo"), "wrong Name");
+        });
+
         // Remove the cnc alarm from the database
         cASP_DAO.MakeTransient(cASP);
-        
+
         // Check the number of elements stored
-        Assert.AreEqual(count, cASP_DAO.FindAll().Count, "Wrong count after deletion");
+        Assert.That (cASP_DAO.FindAll(), Has.Count.EqualTo (count), "Wrong count after deletion");
         
         transaction.Rollback();
       }

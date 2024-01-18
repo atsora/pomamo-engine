@@ -54,7 +54,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes / Machine observation states / Shifts
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
@@ -93,16 +93,22 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (3, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (3), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (5), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (8), reasonAssociation.End.Value, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (5)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (8)), "wrong end 1");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (13), reasonAssociation.Begin.Value, "wrong start 2");
-              Assert.AreEqual (T (16), reasonAssociation.End.Value, "wrong end 2");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (13)), "wrong start 2");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (16)), "wrong end 2");
+              });
               reasonAssociation = reasonAssociations[2];
-              Assert.AreEqual (T (21), reasonAssociation.Begin.Value, "wrong start 3");
-              Assert.AreEqual (T (24), reasonAssociation.End.Value, "wrong end 3");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (21)), "wrong start 3");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (24)), "wrong end 3");
+              });
 
             }
           } finally {

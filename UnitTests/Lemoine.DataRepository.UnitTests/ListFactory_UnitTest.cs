@@ -77,11 +77,13 @@ namespace Lemoine.DataRepository.UnitTests
       // Given a list
       f = new ListFactory<ClassA> (new ListMaker<ClassA> (GenerateList));
       d = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
-      Assert.AreNotEqual (d, null);
+      Assert.That (d, Is.Not.EqualTo (null));
       XmlElement root = d.DocumentElement;
-      Assert.AreNotEqual (root, null);
-      Assert.AreEqual (root.Name, "root");
-      Assert.AreEqual (root.GetElementsByTagName ("ClassA").Count, 2);
+      Assert.That (root, Is.Not.EqualTo (null));
+      Assert.Multiple (() => {
+        Assert.That (root.Name, Is.EqualTo ("root"));
+        Assert.That (root.GetElementsByTagName ("ClassA"), Has.Count.EqualTo (2));
+      });
       XmlElement element = root.GetElementsByTagName ("ClassA") [0] as XmlElement;
       XmlSerializer xmlSerializer = new XmlSerializer (typeof (ClassA));
       ClassA first;
@@ -89,30 +91,38 @@ namespace Lemoine.DataRepository.UnitTests
       {
         first = (ClassA) xmlSerializer.Deserialize (reader);
       }
-      Assert.AreEqual (1, first.I);
-      Assert.IsNotNull (first.L);
-      Assert.AreEqual (0, first.L.Count); // Note: here the null list is converted to an empty list
-      Assert.AreEqual ("s1", first.S);
+
+      Assert.Multiple (() => {
+        Assert.That (first.I, Is.EqualTo (1));
+        Assert.That (first.L, Is.Not.Null);
+      });
+      Assert.That (first.L, Is.Empty); // Note: here the null list is converted to an empty list
+      Assert.That (first.S, Is.EqualTo ("s1"));
       element = root.GetElementsByTagName ("ClassA") [1] as XmlElement;
       ClassA second;
       using (TextReader reader = new StringReader (element.OuterXml))
       {
         second = (ClassA) xmlSerializer.Deserialize (reader);
       }
-      Assert.AreEqual (2, second.I);
-      Assert.IsNotNull (second.L);
-      Assert.AreEqual (0, second.L.Count);
-      Assert.AreEqual ("s2", second.S);
+
+      Assert.Multiple (() => {
+        Assert.That (second.I, Is.EqualTo (2));
+        Assert.That (second.L, Is.Not.Null);
+      });
+      Assert.That (second.L, Is.Empty);
+      Assert.That (second.S, Is.EqualTo ("s2"));
       
       // List null
       List<ClassA> list = null;
       f = new ListFactory<ClassA> (list);
       d = f.GetData (cancellationToken: System.Threading.CancellationToken.None);
-      Assert.AreNotEqual (d, null);
+      Assert.That (d, Is.Not.EqualTo (null));
       root = d.DocumentElement;
-      Assert.AreNotEqual (root, null);
-      Assert.AreEqual (root.Name, "root");
-      Assert.AreEqual (root.HasChildNodes, false);
+      Assert.That (root, Is.Not.EqualTo (null));
+      Assert.Multiple (() => {
+        Assert.That (root.Name, Is.EqualTo ("root"));
+        Assert.That (root.HasChildNodes, Is.EqualTo (false));
+      });
     }
   }
 }

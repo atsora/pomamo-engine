@@ -46,12 +46,14 @@ namespace Pulse.Web.UnitTests.User
 
           var response = System.Threading.Tasks.Task.Run ( () => m_service.PostAsync (postDto)).Result as UserPermissionsResponseDTO;
 
-          Assert.IsNotNull (response);
-          Assert.AreEqual ("lionel", response.Login);
-          Assert.AreEqual ("Lionel", response.UserName);
-          Assert.AreEqual ("lionel (Lionel)", response.UserDisplay);
-          Assert.AreEqual ("Operator", response.Role);
-          Assert.AreEqual (2, response.CompanyId);
+          Assert.That (response, Is.Not.Null);
+          Assert.Multiple (() => {
+            Assert.That (response.Login, Is.EqualTo ("lionel"));
+            Assert.That (response.UserName, Is.EqualTo ("Lionel"));
+            Assert.That (response.UserDisplay, Is.EqualTo ("lionel (Lionel)"));
+            Assert.That (response.Role, Is.EqualTo ("Operator"));
+            Assert.That (response.CompanyId, Is.EqualTo (2));
+          });
         }
         finally {
           transaction.Rollback ();

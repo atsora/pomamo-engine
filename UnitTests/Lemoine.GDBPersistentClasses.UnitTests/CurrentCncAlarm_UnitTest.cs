@@ -74,26 +74,30 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CurrentCncAlarmDAO.MakePersistent(currentCncAlarm);
         ModelDAOHelper.DAOFactory.Flush();
         ModelDAOHelper.DAOFactory.CurrentCncAlarmDAO.Reload(currentCncAlarm);
-        
-        // Check that another element is stored
-        Assert.AreEqual(count + 1, currentCncAlarmDAO.FindAll().Count, "Wrong count after insertion");
-        
-        // Check the properties (after a reload)
-        Assert.AreEqual(2, currentCncAlarm.Properties.Count);
-        Assert.AreEqual("cncInfo", currentCncAlarm.CncInfo, "wrong cnc info");
-        Assert.AreEqual("subCncInfo", currentCncAlarm.CncSubInfo, "wrong cnc sub info");
-        Assert.AreEqual("alarmType", currentCncAlarm.Type, "wrong type");
-        Assert.AreEqual("1", currentCncAlarm.Number, "wrong name");
-        Assert.AreEqual(true, currentCncAlarm.Properties.ContainsKey("property1"));
-        Assert.AreEqual(true, currentCncAlarm.Properties.ContainsKey("property2"));
-        Assert.AreEqual("value1", currentCncAlarm.Properties["property1"]);
-        Assert.AreEqual("value2", currentCncAlarm.Properties["property2"]);
-        
+
+        Assert.Multiple (() => {
+          // Check that another element is stored
+          Assert.That (currentCncAlarmDAO.FindAll (), Has.Count.EqualTo (count + 1), "Wrong count after insertion");
+
+          // Check the properties (after a reload)
+          Assert.That (currentCncAlarm.Properties, Has.Count.EqualTo (2));
+          Assert.That (currentCncAlarm.CncInfo, Is.EqualTo ("cncInfo"), "wrong cnc info");
+          Assert.That (currentCncAlarm.CncSubInfo, Is.EqualTo ("subCncInfo"), "wrong cnc sub info");
+          Assert.That (currentCncAlarm.Type, Is.EqualTo ("alarmType"), "wrong type");
+          Assert.That (currentCncAlarm.Number, Is.EqualTo ("1"), "wrong name");
+        });
+        Assert.Multiple (() => {
+          Assert.That (currentCncAlarm.Properties.ContainsKey ("property1"), Is.EqualTo (true));
+          Assert.That (currentCncAlarm.Properties.ContainsKey ("property2"), Is.EqualTo (true));
+          Assert.That (currentCncAlarm.Properties["property1"], Is.EqualTo ("value1"));
+          Assert.That (currentCncAlarm.Properties["property2"], Is.EqualTo ("value2"));
+        });
+
         // Remove the cnc alarm from the database
         currentCncAlarmDAO.MakeTransient(currentCncAlarm);
-        
+
         // Check the number of elements stored
-        Assert.AreEqual(count, currentCncAlarmDAO.FindAll().Count, "Wrong count after deletion");
+        Assert.That (currentCncAlarmDAO.FindAll(), Has.Count.EqualTo (count), "Wrong count after deletion");
         
         transaction.Rollback();
       }
@@ -153,9 +157,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CurrentCncAlarmDAO.Reload(alarm2);
         daoFactory.CurrentCncAlarmDAO.Reload(alarm3);
         daoFactory.CurrentCncAlarmDAO.Reload(alarm4);
-        
+
         // Check that the severities are correct
-        Assert.AreEqual(cAS, alarm1.Severity, "Wrong severity for alarm 1");
+        Assert.That (alarm1.Severity, Is.EqualTo (cAS), "Wrong severity for alarm 1");
         Assert.IsNull(alarm2.Severity, "Wrong severity for alarm 2");
         Assert.IsNull(alarm3.Severity, "Wrong severity for alarm 3");
         Assert.IsNull(alarm4.Severity, "Wrong severity for alarm 4");
@@ -229,9 +233,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CurrentCncAlarmDAO.Reload(alarm2);
         daoFactory.CurrentCncAlarmDAO.Reload(alarm3);
         daoFactory.CurrentCncAlarmDAO.Reload(alarm4);
-        
+
         // Check that the severities are correct
-        Assert.AreEqual(cAS1, alarm1.Severity, "Wrong severity for alarm 1");
+        Assert.That (alarm1.Severity, Is.EqualTo (cAS1), "Wrong severity for alarm 1");
         Assert.IsNull(alarm2.Severity, "Wrong severity for alarm 2");
         Assert.IsNull(alarm3.Severity, "Wrong severity for alarm 3");
         Assert.IsNull(alarm4.Severity, "Wrong severity for alarm 4");

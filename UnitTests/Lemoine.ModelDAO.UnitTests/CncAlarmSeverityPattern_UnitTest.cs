@@ -42,14 +42,14 @@ namespace Lemoine.ModelDAO.UnitTests
         WriteIndented = true,
       });
       log.Debug ($"TestDeserialize: json={json}");
-      Assert.AreEqual ("""
+      Assert.That (json.ReplaceLineEndings (), Is.EqualTo ("""
 {
   "message": "This is a message",
   "properties": {
     "A": "1"
   }
 }
-""".ReplaceLineEndings (), json.ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
     }
 
     [Test]
@@ -67,7 +67,7 @@ namespace Lemoine.ModelDAO.UnitTests
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault,
         PropertyNameCaseInsensitive = true,
       });
-      Assert.AreEqual ("This is a message", rule.Message);
+      Assert.That (rule.Message, Is.EqualTo ("This is a message"));
       Assert.IsNull (rule.Number);
       Assert.IsNull (rule.CncSubInfo);
       Assert.IsNull (rule.Type);

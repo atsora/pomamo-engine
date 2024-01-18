@@ -25,7 +25,7 @@ namespace Lemoine.Info.UnitTests
     {
       System.Environment.SetEnvironmentVariable ("MainServerInstallDir",
                                                  "Test");
-      Assert.AreEqual ("Test", Lemoine.Info.PulseInfo.MainServerInstallationDirectory);
+      Assert.That (Lemoine.Info.PulseInfo.MainServerInstallationDirectory, Is.EqualTo ("Test"));
       System.Environment.SetEnvironmentVariable ("MainServerInstallDir",
                                                  "");
     }

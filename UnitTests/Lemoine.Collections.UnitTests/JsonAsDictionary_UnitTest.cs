@@ -38,10 +38,10 @@ namespace Lemoine.Collections.UnitTests
 }
 ";
       var dictionary = JsonConvert.DeserializeObject<IDictionary<string, object>> (json);
-      Assert.AreEqual ("a value", dictionary["a"]);
+      Assert.That (dictionary["a"], Is.EqualTo ("a value"));
       var b = dictionary["b"]; // b is long
       var bInt = Convert.ToInt32 (b);
-      Assert.AreEqual (123, dictionary["b"]);
+      Assert.That (dictionary["b"], Is.EqualTo (123));
     }
   }
 }

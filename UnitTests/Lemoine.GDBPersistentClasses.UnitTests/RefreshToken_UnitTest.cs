@@ -41,7 +41,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           System.Threading.Tasks.Task.Run (() => ModelDAOHelper.DAOFactory.UserDAO.MakePersistentAsync (user)).Wait ();
           var refreshToken = ModelDAOHelper.ModelFactory.CreateRefreshToken (user, TimeSpan.FromSeconds (30));
           System.Threading.Tasks.Task.Run (() => ModelDAOHelper.DAOFactory.RefreshTokenDAO.MakePersistentAsync (refreshToken)).Wait ();
-          Assert.IsTrue (0 != refreshToken.Id);
+          Assert.That (0 != refreshToken.Id, Is.True);
           ModelDAOHelper.DAOFactory.Flush ();
           System.Threading.Tasks.Task.Run (() => ModelDAOHelper.DAOFactory.RefreshTokenDAO.MakeTransientAsync (refreshToken)).Wait ();
           ModelDAOHelper.DAOFactory.Flush ();
@@ -74,28 +74,28 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           var refreshToken = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.GetRefreshTokenAsync (user, true);
           ModelDAOHelper.DAOFactory.Flush ();
           Assert.IsNotNull (refreshToken);
-          Assert.AreNotEqual (0, refreshToken.Id);
+          Assert.That (refreshToken.Id, Is.Not.EqualTo (0));
           var refreshToken2 = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.GetRefreshTokenAsync (user, true);
           ModelDAOHelper.DAOFactory.Flush ();
           Assert.IsNotNull (refreshToken2);
-          Assert.AreEqual (refreshToken, refreshToken2);
+          Assert.That (refreshToken2, Is.EqualTo (refreshToken));
           refreshToken.Revoked = DateTime.UtcNow;
           await ModelDAOHelper.DAOFactory.RefreshTokenDAO.MakePersistentAsync (refreshToken);
           ModelDAOHelper.DAOFactory.Flush ();
           var refreshToken3 = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.GetRefreshTokenAsync (user, false);
           ModelDAOHelper.DAOFactory.Flush ();
           var allTokens = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.FindAllAsync ();
-          Assert.AreEqual (2, allTokens.Count);
+          Assert.That (allTokens, Has.Count.EqualTo (2));
           refreshToken3.Revoked = DateTime.UtcNow;
           var refreshToken4 = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.GetRefreshTokenAsync (user, false);
           ModelDAOHelper.DAOFactory.Flush ();
           allTokens = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.FindAllAsync ();
-          Assert.AreEqual (3, allTokens.Count);
+          Assert.That (allTokens, Has.Count.EqualTo (3));
           var refreshToken5 = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.GetRefreshTokenAsync (user, true);
           ModelDAOHelper.DAOFactory.Flush ();
-          Assert.AreEqual (refreshToken4, refreshToken5);
+          Assert.That (refreshToken5, Is.EqualTo (refreshToken4));
           allTokens = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.FindAllAsync ();
-          Assert.AreEqual (1, allTokens.Count, "Last number of tokens");
+          Assert.That (allTokens, Has.Count.EqualTo (1), "Last number of tokens");
         }
         finally {
           Lemoine.Info.ConfigSet.ResetForceValues ();

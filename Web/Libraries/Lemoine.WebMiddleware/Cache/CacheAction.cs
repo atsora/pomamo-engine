@@ -73,10 +73,10 @@ namespace Lemoine.WebMiddleware.Cache
         return CacheAction.Default;
       }
       var cacheAction = CacheAction.None;
-      if (query.Value.Any (s => s.Equals ("no", StringComparison.InvariantCultureIgnoreCase))) {
+      if (query.Value.Any (s => s?.Equals ("no", StringComparison.InvariantCultureIgnoreCase) ?? false)) {
         cacheAction |= CacheAction.RequestWithNoCache;
       }
-      if (query.Value.Any (s => s.Equals ("clear", StringComparison.InvariantCultureIgnoreCase))) {
+      if (query.Value.Any (s => s?.Equals ("clear", StringComparison.InvariantCultureIgnoreCase) ?? false)) {
         cacheAction |= CacheAction.Clear;
       }
       if (cacheAction.Equals (CacheAction.None)) {

@@ -36,15 +36,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           IComponentType componentType = ModelDAOHelper.DAOFactory.ComponentTypeDAO.FindById (1);
           IProject project = ModelDAOHelper.DAOFactory.ProjectDAO.FindById (1);
           IComponent component = ModelDAOHelper.ModelFactory.CreateComponentFromName (project, "TestSaveUpdate", componentType);
-          Assert.AreEqual (0, ((Lemoine.Collections.IDataWithId)component).Id);
+          Assert.That (((Lemoine.Collections.IDataWithId)component).Id, Is.EqualTo (0));
           ModelDAOHelper.DAOFactory.Flush ();
-          Assert.AreEqual (0, ((Lemoine.Collections.IDataWithId)component).Id);
+          Assert.That (((Lemoine.Collections.IDataWithId)component).Id, Is.EqualTo (0));
           ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistent (component);
-          Assert.AreNotEqual (0, ((Lemoine.Collections.IDataWithId)component).Id);
+          Assert.That (((Lemoine.Collections.IDataWithId)component).Id, Is.Not.EqualTo (0));
           ModelDAOHelper.DAOFactory.ComponentDAO.MakeTransient (component);
-          Assert.IsFalse (NHibernateHelper.GetCurrentSession ().Contains (component));
+          Assert.That (NHibernateHelper.GetCurrentSession ().Contains (component), Is.False);
           ModelDAOHelper.DAOFactory.Flush ();
-          Assert.AreNotEqual (0, ((Lemoine.Collections.IDataWithId)component).Id);
+          Assert.That (((Lemoine.Collections.IDataWithId)component).Id, Is.Not.EqualTo (0));
           transaction.Rollback ();
         }
       }

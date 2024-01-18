@@ -45,9 +45,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         XmlSerializer deserializer = new XmlSerializer (typeof (IntermediateWorkPieceSummary));
         IntermediateWorkPieceSummary iwps =
           (IntermediateWorkPieceSummary) deserializer.Deserialize (textReader);
-        Assert.AreEqual ("IntermediateWorkPieceName", iwps.IntermediateWorkPiece.Name);
-        Assert.AreEqual ("ComponentName", iwps.Component.Name);
-        Assert.AreEqual ("WorkOrderName", iwps.WorkOrder.Name);
+        Assert.Multiple (() => {
+          Assert.That (iwps.IntermediateWorkPiece.Name, Is.EqualTo ("IntermediateWorkPieceName"));
+          Assert.That (iwps.Component.Name, Is.EqualTo ("ComponentName"));
+          Assert.That (iwps.WorkOrder.Name, Is.EqualTo ("WorkOrderName"));
+        });
         transaction.Rollback ();
       }
     }

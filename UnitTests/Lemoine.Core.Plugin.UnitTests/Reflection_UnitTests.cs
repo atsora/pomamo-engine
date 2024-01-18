@@ -32,7 +32,7 @@ namespace Lemoine.Core.Plugin.UnitTests
     public void TestInvokeAuto ()
     {
       var result = Lemoine.Core.Plugin.Reflection.InvokeMethodAuto (this, "Test", "123", "1.23", "First", "s");
-      Assert.AreEqual (456, result);
+      Assert.That (result, Is.EqualTo (456));
 
       Assert.Throws<ArgumentException> (() => Lemoine.Core.Plugin.Reflection.InvokeMethodAuto (this, new IAutoConverter[] { }, null, "Test", "123", "1.23", "First", "s"));
     }
@@ -42,34 +42,36 @@ namespace Lemoine.Core.Plugin.UnitTests
     public void TestInvokeStaticMethod ()
     {
       var result = Lemoine.Core.Plugin.Reflection.InvokeStaticMethod (new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader (), "Lemoine.Core.Plugin.UnitTests.Reflection_UnitTests, Lemoine.Core.Plugin.UnitTests", "StaticMethod");
-      Assert.AreEqual (987, result);
+      Assert.That (result, Is.EqualTo (987));
 
       var physicalMemory = (long)Lemoine.Core.Plugin.Reflection.InvokeStaticMethod (new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader (), "Lemoine.Info.ProgramInfo, Lemoine.Core", "GetPhysicalMemory");
-      Assert.IsTrue (0 < physicalMemory);
+      Assert.That (physicalMemory, Is.GreaterThan (0));
     }
 
     [Test]
     public void TestInvokeStaticMethodAuto ()
     {
       var result = Lemoine.Core.Plugin.Reflection.InvokeStaticMethodAuto (new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader (), "Lemoine.Core.Plugin.UnitTests.Reflection_UnitTests, Lemoine.Core.Plugin.UnitTests", "StaticMethod");
-      Assert.AreEqual (987, result);
+      Assert.That (result, Is.EqualTo (987));
     }
 
-    public int Test (int x, double d, EnumTest enumTest, int y)
+    private int Test (int x, double d, EnumTest enumTest, int y)
     {
-      Assert.IsTrue (false);
+      Assert.Fail ("Fail always");
       return 0;
     }
-    public int Test (int x, double d, EnumTest enumTest, string s)
+    private int Test (int x, double d, EnumTest enumTest, string s)
     {
-      Assert.AreEqual (123, x);
-      Assert.AreEqual (1.23, d);
-      Assert.AreEqual (EnumTest.First, enumTest);
-      Assert.AreEqual ("s", s);
+      Assert.Multiple (() => {
+        Assert.That (x, Is.EqualTo (123));
+        Assert.That (d, Is.EqualTo (1.23));
+        Assert.That (enumTest, Is.EqualTo (EnumTest.First));
+        Assert.That (s, Is.EqualTo ("s"));
+      });
       return 456;
     }
 
-    public static int StaticMethod ()
+    private static int StaticMethod ()
     {
       return 987;
     }

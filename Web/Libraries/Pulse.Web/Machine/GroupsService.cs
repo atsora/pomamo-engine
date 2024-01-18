@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Lemoine.Web;
 using Pulse.Extensions.Web.Responses;
+using Lemoine.WebMiddleware.HttpContext;
 
 namespace Pulse.Web.Machine
 {

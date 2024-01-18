@@ -39,11 +39,11 @@ namespace Lemoine.Core.Cache.UnitTests
         using (var batchUpdater2 = new CacheClientBatchUpdater (cache)) {
           cache.RemoveByRegex ("a.*");
           cache.RemoveByRegex ("b.*");
-          Assert.AreEqual (1, cache.Get<int?> ("a1"));
+          Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (1));
         }
-        Assert.AreEqual (1, cache.Get<int?> ("a1"));
+        Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (1));
       }
-      Assert.AreEqual (null, cache.Get<int?> ("a1"));
+      Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (null));
 
       cache.Set ("a1", 1);
       cache.Set ("a2", 2);
@@ -51,10 +51,10 @@ namespace Lemoine.Core.Cache.UnitTests
         cache.RemoveByRegex ("c.*");
         cache.RemoveByRegex ("b.*");
       }
-      Assert.AreEqual (1, cache.Get<int?> ("a1"));
+      Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (1));
 
       cache.RemoveByRegex ("a.*");
-      Assert.AreEqual (null, cache.Get<int?> ("a1"));
+      Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (null));
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ namespace Lemoine.Core.Cache.UnitTests
           cache.RemoveByRegex ("b.*");
         }
       }
-      Assert.AreEqual (null, cache.Get<int?> ("a1"));
+      Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (null));
 
       cache.Set ("a1", 1, TimeSpan.FromMilliseconds (1));
       cache.Set ("a2", 2, TimeSpan.FromMilliseconds (1));
@@ -83,10 +83,10 @@ namespace Lemoine.Core.Cache.UnitTests
         cache.RemoveByRegex ("c.*");
         cache.RemoveByRegex ("b.*");
       }
-      Assert.AreEqual (null, cache.Get<int?> ("a1"));
+      Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (null));
 
       cache.RemoveByRegex ("a.*");
-      Assert.AreEqual (null, cache.Get<int?> ("a1"));
+      Assert.That (cache.Get<int?> ("a1"), Is.EqualTo (null));
     }
   }
 }

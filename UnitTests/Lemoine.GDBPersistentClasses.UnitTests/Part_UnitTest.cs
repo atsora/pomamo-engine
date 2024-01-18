@@ -65,14 +65,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         Project project = session.CreateCriteria<Project> ()
           .Add (Restrictions.Eq ("Name", "TestInsertPart"))
           .UniqueResult<Project> ();
-        Assert.NotNull (project);
-        Assert.AreEqual ("TestInsertPart", project.Name);
+        Assert.That (project, Is.Not.Null);
+        Assert.That (project.Name, Is.EqualTo ("TestInsertPart"));
         project = session.CreateQuery ("from Project foo " +
                                        "where foo.Name=?")
           .SetParameter (0, "TestInsertPart")
           .UniqueResult<Project> ();
-        Assert.NotNull (project);
-        Assert.AreEqual ("TestInsertPart", project.Name);
+        Assert.That (project, Is.Not.Null);
+        Assert.That (project.Name, Is.EqualTo ("TestInsertPart"));
         transaction.Rollback ();
       }
     }
@@ -97,8 +97,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         PartView part2 = new PartView ();
         part2.Name = "TestInsertPart";
         part = (IPartView) part2.FindPersistentClass (session);
-        Assert.NotNull (part);
-        Assert.AreEqual ("TestInsertPart", part.Name);
+        Assert.That (part, Is.Not.Null);
+        Assert.That (part.Name, Is.EqualTo ("TestInsertPart"));
         transaction.Rollback ();
       }
     }
@@ -156,8 +156,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         session.Update (part);
         session.Flush ();
         PartView part2 = session.Get<PartView> (part.ComponentId);
-        Assert.NotNull (part2);
-        Assert.AreEqual ("Code", part2.Code);
+        Assert.That (part2, Is.Not.Null);
+        Assert.That (part2.Code, Is.EqualTo ("Code"));
         transaction.Rollback ();
       }
       
@@ -169,8 +169,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         session.Update (part);
         session.Flush ();
         PartView part2 = session.Load<PartView> (1);
-        Assert.NotNull (part2);
-        Assert.AreEqual ("TestCode", part2.Code);
+        Assert.That (part2, Is.Not.Null);
+        Assert.That (part2.Code, Is.EqualTo ("TestCode"));
         transaction.Rollback ();
       }
     }
@@ -189,8 +189,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         PartView part = session.CreateCriteria<PartView> ()
           .Add (Restrictions.Eq ("Name", "component1"))
           .UniqueResult<PartView> ();
-        Assert.NotNull (part);
-        Assert.AreEqual (1, part.ComponentId);
+        Assert.That (part, Is.Not.Null);
+        Assert.That (part.ComponentId, Is.EqualTo (1));
       }
     }
     
@@ -209,9 +209,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           session.CreateQuery ("from PartView foo where foo.Name=?")
           .SetParameter (0, "component1")
           .UniqueResult<PartView> ();
-        Assert.NotNull (part);
-        Assert.AreEqual (1, part.ComponentId);
-        Assert.AreEqual ("COMPONENT1", part.Name);
+        Assert.That (part, Is.Not.Null);
+        Assert.Multiple (() => {
+          Assert.That (part.ComponentId, Is.EqualTo (1));
+          Assert.That (part.Name, Is.EqualTo ("COMPONENT1"));
+        });
       }
     }
     
@@ -238,8 +240,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (oldPart, newPart,
                   ConflictResolution.Keep);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual (newTempPart.ComponentId, merged.ComponentId);
-        Assert.AreEqual ("CreatedPart", merged.Name);
+        Assert.Multiple (() => {
+          Assert.That (merged.ComponentId, Is.EqualTo (newTempPart.ComponentId));
+          Assert.That (merged.Name, Is.EqualTo ("CreatedPart"));
+        });
         transaction.Rollback ();
       }
     }
@@ -261,8 +265,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (oldPart, newPart,
                   ConflictResolution.Overwrite);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual (4, merged.ComponentId);
-        Assert.AreEqual ("Test", merged.Name);
+        Assert.Multiple (() => {
+          Assert.That (merged.ComponentId, Is.EqualTo (4));
+          Assert.That (merged.Name, Is.EqualTo ("Test"));
+        });
         transaction.Rollback ();
       }
     }
@@ -300,8 +306,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (oldPart, newPart,
                   ConflictResolution.Overwrite);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual (4, merged.ComponentId);
-        Assert.AreEqual ("Test", merged.Name);
+        Assert.Multiple (() => {
+          Assert.That (merged.ComponentId, Is.EqualTo (4));
+          Assert.That (merged.Name, Is.EqualTo ("Test"));
+        });
         transaction.Rollback ();
       }
       
@@ -315,8 +323,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Merge (oldPart, newPart,
                   ConflictResolution.Keep);
         NHibernateHelper.GetCurrentSession ().Flush ();
-        Assert.AreEqual (4, merged.ComponentId);
-        Assert.AreEqual ("C3A02-2   ", merged.Name);
+        Assert.Multiple (() => {
+          Assert.That (merged.ComponentId, Is.EqualTo (4));
+          Assert.That (merged.Name, Is.EqualTo ("C3A02-2   "));
+        });
         transaction.Rollback ();
       }
     }

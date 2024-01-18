@@ -50,7 +50,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes / Machine observation states / Shifts
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
@@ -85,11 +85,13 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (16), reasonAssociation.End.Value, "wrong end 1");
-              Assert.AreEqual ("", reasonAssociation.ReasonDetails, "wrong reason detail");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (16)), "wrong end 1");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo (""), "wrong reason detail");
+              });
             }
           } finally {
             transaction.Rollback ();
@@ -116,7 +118,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes / Machine observation states / Shifts
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -149,10 +151,12 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (16), reasonAssociation.End.Value, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (16)), "wrong end 1");
+              });
             }
           }
           finally {
@@ -182,7 +186,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes / Machine observation states / Shifts
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
@@ -219,10 +223,12 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (16), reasonAssociation.End.Value, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (16)), "wrong end 1");
+              });
             }
           }
           finally {
@@ -251,7 +257,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes / Machine observation states / Shifts
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
@@ -288,7 +294,7 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (0, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Is.Empty, "wrong number of auto reason created");
             }
           }
           finally {
@@ -317,7 +323,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes / Machine observation states / Shifts
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
@@ -354,10 +360,12 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                  .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (16), reasonAssociation.End.Value, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (16)), "wrong end 1");
+              });
             }
           }
           finally {
@@ -386,7 +394,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes / Machine observation states / Shifts
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
@@ -423,13 +431,17 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (16), reasonAssociation.End.Value, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (16)), "wrong end 1");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (16), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual (T (20), reasonAssociation.End.Value, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (16)), "wrong start 1");
+                Assert.That (reasonAssociation.End.Value, Is.EqualTo (T (20)), "wrong end 1");
+              });
             }
           }
           finally {

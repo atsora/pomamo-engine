@@ -68,17 +68,17 @@ namespace Lemoine.Core.Plugin.UnitTests
       var methods = this.GetType ().GetMethods ();
       var matchingMethods = methods.Where (m => m.Name.Equals ("Test"))
         .Where (m => m.IsParameterMatch (autoConverter, "123", "1.23", "First", "s"));
-      Assert.AreEqual (1, matchingMethods.Count ());
+      Assert.That (matchingMethods.Count (), Is.EqualTo (1));
       var method = matchingMethods.First ();
       var result = method.InvokeAutoConvert (autoConverter, this, "123", "1.23", "First", "s");
-      Assert.AreEqual (456, result);
+      Assert.That (result, Is.EqualTo (456));
 
       var matchingMethods2 = methods.Where (m => m.Name.Equals ("Test"))
         .Where (m => m.IsParameterMatch (autoConverter, "123"));
       Assert.IsFalse (matchingMethods2.Any ());
 
       var result2 = method.InvokeAutoConvert (autoConverter, this, (object)"123", (object)"1.23", (object)"First", (object)"s");
-      Assert.AreEqual (456, result2);
+      Assert.That (result2, Is.EqualTo (456));
     }
 
     /// <summary>
@@ -91,38 +91,40 @@ namespace Lemoine.Core.Plugin.UnitTests
       var methods = this.GetType ().GetMethods ();
       var matchingMethods = methods.Where (m => m.Name.Equals ("Test"))
         .Where (m => m.IsParameterMatch (autoConverter, "123", "1.23", "First", "s"));
-      Assert.AreEqual (1, matchingMethods.Count ());
+      Assert.That (matchingMethods.Count (), Is.EqualTo (1));
       var method = matchingMethods.First ();
       var result = method.InvokeAutoConvert (autoConverter, this, "123", "1.23", "First", "s");
-      Assert.AreEqual (456, result);
+      Assert.That (result, Is.EqualTo (456));
 
       var matchingMethods2 = methods.Where (m => m.Name.Equals ("Test"))
         .Where (m => m.IsParameterMatch (autoConverter, "123"));
       Assert.IsFalse (matchingMethods2.Any ());
 
       var result2 = method.InvokeAutoConvert (autoConverter, this, (object)"123", (object)"1.23", (object)"First", (object)"s");
-      Assert.AreEqual (456, result2);
+      Assert.That (result2, Is.EqualTo (456));
 
       var toolTypeResult = methods.Single (m => m.Name.Equals ("GetToolType"))
         .InvokeAutoConvert (autoConverter, this, "23");
-      Assert.AreEqual ("TTT23", toolTypeResult);
+      Assert.That (toolTypeResult, Is.EqualTo ("TTT23"));
     }
 
-    public int Test (int x, double d, EnumTest enumTest, int y)
+    private int Test (int x, double d, EnumTest enumTest, int y)
     {
-      Assert.IsTrue (false);
+      Assert.That (false, Is.True);
       return 0;
     }
-    public int Test (int x, double d, EnumTest enumTest, string s)
+    private int Test (int x, double d, EnumTest enumTest, string s)
     {
-      Assert.AreEqual (123, x);
-      Assert.AreEqual (1.23, d);
-      Assert.AreEqual (EnumTest.First, enumTest);
-      Assert.AreEqual ("s", s);
+      Assert.Multiple (() => {
+        Assert.That (x, Is.EqualTo (123));
+        Assert.That (d, Is.EqualTo (1.23));
+        Assert.That (enumTest, Is.EqualTo (EnumTest.First));
+        Assert.That (s, Is.EqualTo ("s"));
+      });
       return 456;
     }
 
-    public string GetToolType (int toolNo)
+    private string GetToolType (int toolNo)
     {
       return $"TTT{toolNo}";
     }

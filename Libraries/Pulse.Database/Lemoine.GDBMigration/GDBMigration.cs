@@ -88,31 +88,5 @@ namespace Lemoine.GDBMigration
       }
       return table + "_" + new String (resultArray);
     }
-
-    #if TEST
-    /// <summary>
-    /// Unit tests for GDBMigration
-    /// </summary>
-    [TestFixture]
-    public class GDBMigration_UnitTest
-    {
-      static readonly ILog log = LogManager.GetLogger(typeof (GDBMigration_UnitTest).FullName);
-
-      /// <summary>
-      /// Test BuildIndexName
-      /// </summary>
-      [Test]
-      public void TestBuildIndexName ()
-      {
-        List <Column> columns = new List<Column> ();
-        columns.Add (new Column ("sfkdate"));
-        columns.Add (new Column ("sfktype"));
-        columns.Add (new Column ("machid"));
-        string indexName = GDBMigration.BuildIndexName ("sfkanly",
-                                                        columns);
-        Assert.AreEqual (indexName, "sfkanly_iwipsxb");
-      }
-    }
-    #endif // TEST
   }
 }

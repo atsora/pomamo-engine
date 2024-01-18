@@ -37,16 +37,18 @@ namespace Lemoine.Conversion.UnitTests
     public void TestAutoConvert ()
     {
       var converter = new DefaultAutoConverter ();
-      Assert.AreEqual (123, converter.ConvertAuto<int> ("123"));
-      Assert.AreEqual (123, converter.ConvertAuto<System.Int32> ("123"));
-      Assert.AreEqual (123, converter.ConvertAuto ("123", typeof (System.Int32)));
-      Assert.AreEqual (123.45, converter.ConvertAuto<double> ("123.45"));
-      Assert.AreEqual (TimeSpan.FromDays (1.5), converter.ConvertAuto<TimeSpan> ("1.12:00:00"));
-      Assert.AreEqual (new DateTime (2020, 11, 15, 10, 00, 00, DateTimeKind.Unspecified), converter.ConvertAuto<DateTime> ("2020-11-15 10:00:00"));
-      Assert.AreEqual (new DateTime (2020, 11, 15, 10, 00, 00, DateTimeKind.Utc), converter.ConvertAuto<DateTime> ("2020-11-15T10:00:00Z"));
-      Assert.AreEqual (EnumTest.First, converter.ConvertAuto<EnumTest> (1));
-      Assert.AreEqual (EnumTest.First, converter.ConvertAuto<EnumTest> ("First"));
-      Assert.AreEqual (EnumTest.First, converter.ConvertAuto<EnumTest> ("1"));
+      Assert.Multiple (() => {
+        Assert.That (converter.ConvertAuto<int> ("123"), Is.EqualTo (123));
+        Assert.That (converter.ConvertAuto<System.Int32> ("123"), Is.EqualTo (123));
+        Assert.That (converter.ConvertAuto ("123", typeof (System.Int32)), Is.EqualTo (123));
+        Assert.That (converter.ConvertAuto<double> ("123.45"), Is.EqualTo (123.45));
+        Assert.That (converter.ConvertAuto<TimeSpan> ("1.12:00:00"), Is.EqualTo (TimeSpan.FromDays (1.5)));
+        Assert.That (converter.ConvertAuto<DateTime> ("2020-11-15 10:00:00"), Is.EqualTo (new DateTime (2020, 11, 15, 10, 00, 00, DateTimeKind.Unspecified)));
+        Assert.That (converter.ConvertAuto<DateTime> ("2020-11-15T10:00:00Z"), Is.EqualTo (new DateTime (2020, 11, 15, 10, 00, 00, DateTimeKind.Utc)));
+        Assert.That (converter.ConvertAuto<EnumTest> (1), Is.EqualTo (EnumTest.First));
+        Assert.That (converter.ConvertAuto<EnumTest> ("First"), Is.EqualTo (EnumTest.First));
+        Assert.That (converter.ConvertAuto<EnumTest> ("1"), Is.EqualTo (EnumTest.First));
+      });
     }
 
     [Test]
@@ -55,7 +57,7 @@ namespace Lemoine.Conversion.UnitTests
       var converter = new DefaultAutoConverter ();
       var doubleList = new List<double> { 2.5 };
       var converted = converter.ConvertAuto<IEnumerable<int>> (doubleList);
-      Assert.AreEqual (2, converted.First ());
+      Assert.That (converted.First (), Is.EqualTo (2));
     }
   }
 }

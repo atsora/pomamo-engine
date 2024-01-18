@@ -230,9 +230,7 @@ namespace ConfiguratorPlugins
           PackageFile.InstallOrUpgrade (dialog.FileName, true);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("ButtonAddClick: " +
-                           "InstallPackage failed with {0} \n {1}",
-                           ex, ex.StackTrace);
+          log.Error ($"ButtonAddClick: InstallPackage failed", ex);
           errors.Add ("couldn't install the package: " + ex.Message);
         }
 

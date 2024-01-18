@@ -39,29 +39,33 @@ namespace Lemoine.Conversion.UnitTests
       };
       options.Converters.Add (new JsonStringEnumConverter ());
       var serialized = System.Text.Json.JsonSerializer.Serialize (position, options);
-      Assert.IsTrue (serialized.StartsWith ("{\"X\":0,\"Y\":3,\"Z\":4"));
+      Assert.That (serialized, Does.StartWith ("{\"X\":0,\"Y\":3,\"Z\":4"));
 
       var newtonsoftSettings = new Newtonsoft.Json.JsonSerializerSettings ();
       newtonsoftSettings.NullValueHandling = NullValueHandling.Ignore;
       var newtonsoftSerialized = JsonConvert.SerializeObject (position, newtonsoftSettings);
       var newtonsoftDeserialized = JsonConvert.DeserializeObject<JPosition> (newtonsoftSerialized);
-      Assert.AreEqual (position, newtonsoftDeserialized);
+      Assert.That (newtonsoftDeserialized, Is.EqualTo (position));
       var newtonsoftObjectDeserialized = JsonConvert.DeserializeObject (newtonsoftSerialized);
-      Assert.IsTrue (newtonsoftObjectDeserialized is Newtonsoft.Json.Linq.JObject);
-      Assert.AreEqual (position, ((Newtonsoft.Json.Linq.JObject)newtonsoftObjectDeserialized).ToObject<JPosition> ());
+      Assert.Multiple (() => {
+        Assert.That (newtonsoftObjectDeserialized is Newtonsoft.Json.Linq.JObject, Is.True);
+        Assert.That (((Newtonsoft.Json.Linq.JObject)newtonsoftObjectDeserialized).ToObject<JPosition> (), Is.EqualTo (position));
+      });
 
       var objectDeserialized = JsonConvert.DeserializeObject (serialized);
-      Assert.IsTrue (objectDeserialized is Newtonsoft.Json.Linq.JObject);
-      Assert.AreEqual (position, ((Newtonsoft.Json.Linq.JObject)objectDeserialized).ToObject<JPosition> ());
+      Assert.Multiple (() => {
+        Assert.That (objectDeserialized is Newtonsoft.Json.Linq.JObject, Is.True);
+        Assert.That (((Newtonsoft.Json.Linq.JObject)objectDeserialized).ToObject<JPosition> (), Is.EqualTo (position));
+      });
 
       var autoConverter = new DefaultAutoConverter ();
       var jposition = autoConverter.ConvertAuto<JPosition> (objectDeserialized);
-      Assert.AreEqual (position, jposition);
+      Assert.That (jposition, Is.EqualTo (position));
       var p = autoConverter.ConvertAuto<Position> (jposition);
-      Assert.AreEqual (new Position (position), p);
+      Assert.That (p, Is.EqualTo (new Position (position)));
 
       var ip = autoConverter.ConvertAuto<IPosition> (jposition);
-      Assert.AreEqual (0, ip.GetAxisValue ("X"));
+      Assert.That (ip.GetAxisValue ("X"), Is.EqualTo (0));
     }
   }
 }

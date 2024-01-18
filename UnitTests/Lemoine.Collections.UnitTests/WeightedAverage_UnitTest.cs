@@ -31,8 +31,10 @@ namespace Lemoine.Collections.UnitTests
     {
       var list = new List<(double, TimeSpan)> { (10.0, TimeSpan.FromSeconds (2)), (20.0, TimeSpan.FromSeconds (4)), (30, TimeSpan.FromSeconds (4)) };
       var weightedAverage = list.WeightedAverage (x => x.Item1, x => x.Item2);
-      Assert.AreEqual (18,0, weightedAverage.Item1);
-      Assert.AreEqual (TimeSpan.FromSeconds (10), weightedAverage.Item2);
+      Assert.Multiple (() => {
+        Assert.That (weightedAverage.Item1, Is.EqualTo (22));
+        Assert.That (weightedAverage.Item2, Is.EqualTo (TimeSpan.FromSeconds (10)));
+      });
     }
   }
 }

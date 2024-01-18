@@ -66,7 +66,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference of 4 WorkOrders
         IList<IWorkOrder> workOrders = workOrderDAO.FindAll();
-        Assert.GreaterOrEqual(workOrders.Count, 4, "not enough workOrders in the database (at least 4)");
+        Assert.That (workOrders, Has.Count.GreaterThanOrEqualTo (4), "not enough workOrders in the database (at least 4)");
         IWorkOrder workOrder1 = workOrders[0];
         IWorkOrder workOrder2 = workOrders[1];
         IWorkOrder workOrder3 = workOrders[2];
@@ -84,23 +84,27 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         workOrderLineDAO.MakePersistent(workOrderLine4);
         workOrderLineDAO.MakePersistent(workOrderLine5);
 
-        // Check the different numbers of WorkOrderLines
-        Assert.AreEqual(3, workOrderLineDAO.FindAllByLine(line1).Count, "wrong count of lineMachines for line 1");
-        Assert.AreEqual(2, workOrderLineDAO.FindAllByLine(line2).Count, "wrong count of lineMachines for line 2");
-        Assert.AreEqual(1, workOrderLineDAO.FindAllByWorkOrder(workOrder1).Count, "wrong count of lineMachines for machine 1");
-        Assert.AreEqual(1, workOrderLineDAO.FindAllByWorkOrder(workOrder2).Count, "wrong count of lineMachines for machine 2");
-        Assert.AreEqual(2, workOrderLineDAO.FindAllByWorkOrder(workOrder3).Count, "wrong count of lineMachines for machine 3");
-        Assert.AreEqual(1, workOrderLineDAO.FindAllByWorkOrder(workOrder4).Count, "wrong count of lineMachines for machine 4");
-        
+        Assert.Multiple (() => {
+          // Check the different numbers of WorkOrderLines
+          Assert.That (workOrderLineDAO.FindAllByLine (line1), Has.Count.EqualTo (3), "wrong count of lineMachines for line 1");
+          Assert.That (workOrderLineDAO.FindAllByLine (line2), Has.Count.EqualTo (2), "wrong count of lineMachines for line 2");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder1), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 1");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder2), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 2");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder3), Has.Count.EqualTo (2), "wrong count of lineMachines for machine 3");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder4), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 4");
+        });
+
         // Remove 1 WorkOrderLines and check the new count
         workOrderLineDAO.MakeTransient(workOrderLine5);
-        Assert.AreEqual(3, workOrderLineDAO.FindAllByLine(line1).Count, "wrong count of lineMachines for line 1");
-        Assert.AreEqual(1, workOrderLineDAO.FindAllByLine(line2).Count, "wrong count of lineMachines for line 2");
-        Assert.AreEqual(1, workOrderLineDAO.FindAllByWorkOrder(workOrder1).Count, "wrong count of lineMachines for machine 1");
-        Assert.AreEqual(1, workOrderLineDAO.FindAllByWorkOrder(workOrder2).Count, "wrong count of lineMachines for machine 2");
-        Assert.AreEqual(2, workOrderLineDAO.FindAllByWorkOrder(workOrder3).Count, "wrong count of lineMachines for machine 3");
-        Assert.AreEqual(0, workOrderLineDAO.FindAllByWorkOrder(workOrder4).Count, "wrong count of lineMachines for machine 4");
-        
+        Assert.Multiple (() => {
+          Assert.That (workOrderLineDAO.FindAllByLine (line1), Has.Count.EqualTo (3), "wrong count of lineMachines for line 1");
+          Assert.That (workOrderLineDAO.FindAllByLine (line2), Has.Count.EqualTo (1), "wrong count of lineMachines for line 2");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder1), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 1");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder2), Has.Count.EqualTo (1), "wrong count of lineMachines for machine 2");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder3), Has.Count.EqualTo (2), "wrong count of lineMachines for machine 3");
+          Assert.That (workOrderLineDAO.FindAllByWorkOrder (workOrder4), Is.Empty, "wrong count of lineMachines for machine 4");
+        });
+
         transaction.Rollback ();
       }
     }

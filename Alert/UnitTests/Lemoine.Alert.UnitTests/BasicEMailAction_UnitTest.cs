@@ -40,14 +40,13 @@ namespace Lemoine.Alert.UnitTests
             stringWriter.NewLine = "\n";
             serializer.Serialize (stringWriter, action);
             var s = stringWriter.ToString ();
-            Assert.AreEqual ("""
+            Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
 <?xml version="1.0" encoding="utf-16"?>
 <BasicEMailAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" To="Recipient &lt;recipient@company&gt;" CC="" Bcc="" WeekDays="3" Subject="Subject">
   <TimePeriod>00:00:00-00:00:00</TimePeriod>
   <Body>The body</Body>
 </BasicEMailAction>
-""".ReplaceLineEndings (),
-                             s.ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
           }
         }
       }
@@ -68,8 +67,8 @@ namespace Lemoine.Alert.UnitTests
         (IAction) serializer.Deserialize (textReader);
       Assert.IsTrue (action is BasicEMailAction);
       BasicEMailAction basicEMailAction = action as BasicEMailAction;
-      Assert.AreEqual ("Subject", basicEMailAction.Subject);
-      Assert.AreEqual (Model.WeekDay.Tuesday | Model.WeekDay.Wednesday | Model.WeekDay.Thursday | Model.WeekDay.Friday | Model.WeekDay.Saturday, basicEMailAction.WeekDays);
+      Assert.That (basicEMailAction.Subject, Is.EqualTo ("Subject"));
+      Assert.That (basicEMailAction.WeekDays, Is.EqualTo (Model.WeekDay.Tuesday | Model.WeekDay.Wednesday | Model.WeekDay.Thursday | Model.WeekDay.Friday | Model.WeekDay.Saturday));
     }
   }
 }

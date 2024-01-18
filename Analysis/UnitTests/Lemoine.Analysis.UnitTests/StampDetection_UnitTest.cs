@@ -83,12 +83,14 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
           
           // 5. IsoFileEnd detection at 10:19:59
@@ -100,12 +102,14 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 5.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 5.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), autoSequences [i].Begin);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 59), autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 59)));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
 
           // 8. Sequence 2 detection at 10:25:01
@@ -117,17 +121,21 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (2, autoSequences.Count, "Number of auto-sequences after 8.");
+            Assert.That (autoSequences.Count, Is.EqualTo (2), "Number of auto-sequences after 8.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), autoSequences [i].Begin);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 59), autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 59)));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 01), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 01)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence2, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
+            });
           }
 
           // 9. Sequence 1 detection at 10:28:00
@@ -139,22 +147,28 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (3, autoSequences.Count, "Number of auto-sequences after 9.");
+            Assert.That (autoSequences.Count, Is.EqualTo (3), "Number of auto-sequences after 9.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), autoSequences [i].Begin);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 59), autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 59)));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 01), autoSequences [i].Begin);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence2, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 01)));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
         }
         finally {
@@ -253,39 +267,47 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 00, 00, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual ((5+4)*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo ((5 + 4) * 60));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<ISequenceSlot> sequenceSlots = ModelDAOHelper.DAOFactory.SequenceSlotDAO
               .FindAll ();
-            Assert.AreEqual (1, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
 
           // 5. Sequence 0 detection at 10:19:59
@@ -298,30 +320,36 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots after 5.");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 5.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 00, 00, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (9*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (9 * 60));
+            });
             // Check the auto-processes
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-processes after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-processes after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), autoSequences [i].Begin);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 59), autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 59)));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
 
           // 8. Sequence 2 detection at 10:25:01
@@ -337,52 +365,64 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (3, operationSlots.Count, "Number of operation slots after 5.");
+            Assert.That (operationSlots.Count, Is.EqualTo (3), "Number of operation slots after 5.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 00, 00, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (9*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (9 * 60));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation2, operationSlots [i].Operation);
-            Assert.AreEqual (3*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (3 * 60));
+            });
             // Check the auto-processes
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 8.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 8.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 00), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence2, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
+            });
             // Check the SequenceSlots
             IList<ISequenceSlot> sequenceSlots = ModelDAOHelper.DAOFactory.SequenceSlotDAO
               .FindAll ();
-            Assert.AreEqual (2, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence2, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence2));
+            });
           }
 
           // 9. Sequence 1 detection at 10:28:00
@@ -413,78 +453,98 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (5, operationSlots.Count, "Number of operation slots after 9.");
+            Assert.That (operationSlots.Count, Is.EqualTo (5), "Number of operation slots after 9.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 00, 00, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (9*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (9 * 60));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation2, operationSlots [i].Operation);
-            Assert.AreEqual (3*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (3 * 60));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 31, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (2400-180, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 31, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (2400 - 180));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (5*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (5 * 60));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 9.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 9.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (4, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (4), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 05, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 19, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 19, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 25, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence2, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence2));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 10, 28, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2008, 01, 16, 11, 31, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 31, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
         }
         finally {
@@ -576,47 +636,57 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (T1, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T3, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T3));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (T3, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T4, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation4, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T3));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T4));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation4));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (T4, autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (T4));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (2, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (T1, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T3, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence3, sequenceSlots [i].Sequence);
-            Assert.AreEqual (T3, sequenceSlots [i].NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T3));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence3));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T3));
+            });
             ++i;
-            Assert.AreEqual (T3, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T4, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence4, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T3));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T4));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence4));
+            });
           }
         }
         finally {
@@ -715,72 +785,90 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (4, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (4), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (T02, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T1, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T02));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T1));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (T1, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T2, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T2));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (T2, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T21, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation2, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T2));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T21));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (T3, operationSlots [i].BeginDateTime.Value);
+            Assert.That (operationSlots [i].BeginDateTime.Value, Is.EqualTo (T3));
             Assert.IsFalse (operationSlots [i].EndDateTime.HasValue);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation4, operationSlots [i].Operation);
-            Assert.AreEqual (6000, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation4));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (6000));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (T2, autoSequences [i].Begin);
-            Assert.AreEqual (T3, autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence2, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T2));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (T3));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (4, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (4), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (T02, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T1, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
-            Assert.AreEqual (T1, sequenceSlots [i].NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T02));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T1));
+            });
             ++i;
-            Assert.AreEqual (T1, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T2, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence3, sequenceSlots [i].Sequence);
-            Assert.AreEqual (T2, sequenceSlots [i].NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T2));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence3));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T2));
+            });
             ++i;
-            Assert.AreEqual (T2, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T21, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence2, sequenceSlots [i].Sequence);
-            Assert.AreEqual (T3, sequenceSlots [i].NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T2));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T21));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence2));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T3));
+            });
             ++i;
-            Assert.AreEqual (T3, sequenceSlots [i].BeginDateTime.Value);
+            Assert.That (sequenceSlots [i].BeginDateTime.Value, Is.EqualTo (T3));
             Assert.IsFalse (sequenceSlots [i].EndDateTime.HasValue);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence4, sequenceSlots [i].Sequence);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence4));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+            });
           }
         }
         finally {
@@ -858,91 +946,117 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (5, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (5), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (T(1), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(2), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+            });
             ++i;
-            Assert.AreEqual (T(2), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(3), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+            });
             ++i;
-            Assert.AreEqual (T(11), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(12), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation2, operationSlots [i].Operation);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (11)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (12)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+            });
             ++i;
-            Assert.AreEqual (T(12), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(13), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation4, operationSlots [i].Operation);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (12)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (13)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation4));
+            });
             ++i;
-            Assert.AreEqual (T(13), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(15), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation2, operationSlots [i].Operation);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (13)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (15)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (T(13), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (T (13)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence2, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (7, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (7), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (T(0), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(1), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T(1), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T (1)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
             ++i;
-            Assert.AreEqual (T(1), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(2), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T(2), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T (2)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (T(2), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(3), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T(3), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence3, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T (3)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence3));
+            });
             ++i;
-            Assert.AreEqual (T(3), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(4), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T(11), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T (4)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T (11)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
             ++i;
-            Assert.AreEqual (T(11), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(12), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T(12), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence2, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (11)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T (12)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T (12)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence2));
+            });
             ++i;
-            Assert.AreEqual (T(12), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(13), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T(13), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence4, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (12)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T (13)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T (13)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence4));
+            });
             ++i;
-            Assert.AreEqual (T(13), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T(15), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence2, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (13)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T (15)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence2));
+            });
           }
         }
         finally {
@@ -1030,22 +1144,28 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (3, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (3), "Number of auto-sequences after 1.");
             int i = 0;
-            Assert.AreEqual (T0, autoSequences [i].Begin);
-            Assert.AreEqual (T1, autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T0));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (T1));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (T2, autoSequences [i].Begin);
-            Assert.AreEqual (T3, autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence2, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T2));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (T3));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
+            });
             ++i;
-            Assert.AreEqual (T4, autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (T4));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
           {
             // Check the SequenceSlots
@@ -1053,18 +1173,22 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (2, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
             int i = 0;
-            Assert.AreEqual (T1, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T2, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence3, sequenceSlots [i].Sequence);
-            Assert.AreEqual (T3, sequenceSlots [i].NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T2));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence3));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T3));
+            });
             ++i;
-            Assert.AreEqual (T3, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T4, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence4, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T3));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T4));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence4));
+            });
           }
         }
         finally {
@@ -1136,54 +1260,66 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (T11, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T12, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T12));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (T31, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T32, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T31));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T32));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (T3, autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (T3));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (3, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (3), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (T11, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T12, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T21, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T12));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T21));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (T21, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T22, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (T31, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T21));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T22));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T31));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
             ++i;
-            Assert.AreEqual (T31, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T32, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T31));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T32));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
         }
         finally {
@@ -1242,31 +1378,35 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (1, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (T1, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T2, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T2));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (0, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (1, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (T1, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T2, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence3, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T2));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence3));
+            });
           }
         }
         finally {
@@ -1316,25 +1456,27 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (0, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (0), "Number of operation slots after 1.");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (0, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (1, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
             int i = 0;
-            Assert.AreEqual (T1, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T2, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T2));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
           }
         }
         finally {
@@ -1391,19 +1533,19 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (0, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (0), "Number of operation slots after 1.");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (0, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (0, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (0), "Number of SequenceSlots after 1.");
           }
         }
         finally {
@@ -1465,28 +1607,30 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (0, autoSequences.Count, "Number of auto-sequences");
+            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (2, sequenceSlots.Count, "Number of SequenceSlots");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots");
             int i = 0;
             ISequenceSlot sequenceSlot;
             sequenceSlot = sequenceSlots [i];
-            Assert.AreEqual (T1, sequenceSlot.BeginDateTime.Value);
-            Assert.AreEqual (T2, sequenceSlot.EndDateTime.Value);
-            Assert.AreEqual (T2, sequenceSlot.NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlot.BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlot.EndDateTime.Value, Is.EqualTo (T2));
+              Assert.That (sequenceSlot.NextBegin, Is.EqualTo (T2));
+            });
             ++i;
             sequenceSlot = sequenceSlots [i];
-            Assert.AreEqual (T2, sequenceSlot.BeginDateTime.Value);
+            Assert.That (sequenceSlot.BeginDateTime.Value, Is.EqualTo (T2));
             Assert.IsFalse (sequenceSlot.EndDateTime.HasValue);
             Assert.IsNull (sequenceSlot.NextBegin);
           }
@@ -1538,25 +1682,27 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (0, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (0), "Number of operation slots after 1.");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (0, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (1, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
             int i = 0;
-            Assert.AreEqual (T1, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T3, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T3));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
           }
         }
         finally {
@@ -1617,36 +1763,42 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (1, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (T11, operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T13, operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T13));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (T1, autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (T1));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (1, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (T11, sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (T13, sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (T13));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
         }
         finally {
@@ -1741,42 +1893,50 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots after 2b.");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 2b.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 00, 00, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 00, 00, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (5*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (5 * 60));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (1, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
 
           // Test the margins
@@ -1798,54 +1958,66 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots after 2b.");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 2b.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 00, 00, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 00, 00, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 20, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (10*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 20, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (10 * 60));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 01), autoSequences [i].Begin);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 22, 00), autoSequences [i].End.Value);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
+              Assert.That (autoSequences[i].End.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 22, 00)));
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (3, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (3), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 01), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 01), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 01), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 20, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 20, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
 
           // Test the margins
@@ -1863,78 +2035,98 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (3, operationSlots.Count, "Number of operation slots after 2b.");
+            Assert.That (operationSlots.Count, Is.EqualTo (3), "Number of operation slots after 2b.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 00, 00, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation3, operationSlots [i].Operation);
-            Assert.AreEqual (0, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 00, 00, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation3));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 27, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (12*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 27, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (12 * 60));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 29, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 30, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 29, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 30, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (60));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (1, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 29, 00), autoSequences [i].Begin);
+            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 29, 00)));
             Assert.IsFalse (autoSequences [i].End.HasValue);
-            Assert.AreEqual (machineModule, autoSequences [i].MachineModule);
-            Assert.AreEqual (sequence1, autoSequences [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
+            });
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (6, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (6), "Number of SequenceSlots after 1.");
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 01), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 01), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 01), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 20, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 25, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 20, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 25, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 25, 00), sequenceSlots [i].BeginDateTime.Value); // Because of the StopIsoFile at 10:22
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 27, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 27, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 25, 00))); // Because of the StopIsoFile at 10:22
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 27, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 27, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 27, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 29, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 29, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 27, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 29, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 29, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 29, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 30, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 29, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 30, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
           }
         }
         finally {
@@ -2005,19 +2197,21 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (1, operationSlots.Count, "Number of operation slots after 1.");
+            Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots after 1.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 05, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 08, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
-            Assert.AreEqual (3*60, operationSlots [i].RunTime.Value.TotalSeconds);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+              Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (3 * 60));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (0, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
           }
         }
         finally {
@@ -2105,44 +2299,52 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.AreEqual (2, operationSlots.Count, "Number of operation slots after 2.");
+            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 2.");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 08, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation1, operationSlots [i].Operation);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 10, 00), operationSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 15, 00), operationSlots [i].EndDateTime.Value);
-            Assert.AreEqual (machine, operationSlots [i].Machine);
-            Assert.AreEqual (operation2, operationSlots [i].Operation);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 10, 00)));
+              Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 00)));
+              Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+              Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+            });
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.AreEqual (0, autoSequences.Count, "Number of auto-sequences after 1.");
+            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.AreEqual (2, sequenceSlots.Count, "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
             // Note: here the used date/time are quite approximative. The sequence slots are not cut exactly at the time
             //       of the operation machine association. May be it is possible to do something better, but may be it
             //       is not so important too
             i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 08, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 12, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 12, 00), sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (sequence1, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 12, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 12, 00)));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence1));
+            });
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 12, 00), sequenceSlots [i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 20, 00), sequenceSlots [i].EndDateTime.Value);
-            Assert.AreEqual (null, sequenceSlots [i].NextBegin);
-            Assert.AreEqual (machineModule, sequenceSlots [i].MachineModule);
-            Assert.AreEqual (null, sequenceSlots [i].Sequence);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 12, 00)));
+              Assert.That (sequenceSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 20, 00)));
+              Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (null));
+              Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (null));
+            });
           }
         }
         finally {
@@ -2186,14 +2388,14 @@ namespace Lemoine.Analysis.UnitTests
           
           Sequence sequence1 = session.Get<Sequence> (8);
           Assert.NotNull (sequence1);
-          Assert.AreEqual(operation1, sequence1.Operation);
+          Assert.That (sequence1.Operation, Is.EqualTo (operation1));
           Sequence sequence2 = session.Get<Sequence> (9);
           Assert.NotNull (sequence2);
-          Assert.AreEqual(operation1, sequence2.Operation);
+          Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
           Sequence sequence3 = session.Get<Sequence> (10);
           Assert.NotNull (sequence3);
-          Assert.AreEqual(operation1, sequence3.Operation);
+          Assert.That (sequence3.Operation, Is.EqualTo (operation1));
           
           Stamp stamp1 = new Stamp ();
           stamp1.Sequence = sequence1;
@@ -2222,9 +2424,9 @@ namespace Lemoine.Analysis.UnitTests
           
           IOperationSlot initOperationSlot =
             daoFactory.OperationSlotDAO.FindAt(machine, T1);
-          
-          Assert.AreNotEqual(null, initOperationSlot);
-          Assert.AreEqual(operation1, initOperationSlot.Operation);
+
+          Assert.That (initOperationSlot, Is.Not.EqualTo (null));
+          Assert.That (initOperationSlot.Operation, Is.EqualTo (operation1));
           // Assert.AreEqual(T34, initOperationSlot.EndDateTime.Value);
 
           // find last operation slot (w.r.t. begin date times)
@@ -2236,7 +2438,7 @@ namespace Lemoine.Analysis.UnitTests
             .SetMaxResults (1)
             .UniqueResult<OperationSlot> ();
 
-          Assert.AreEqual(initOperationSlot, operationSlot2);
+          Assert.That (operationSlot2, Is.EqualTo (initOperationSlot));
           
         } finally {
           transaction.Rollback ();
@@ -2280,14 +2482,14 @@ namespace Lemoine.Analysis.UnitTests
           
           Sequence sequence1 = session.Get<Sequence> (8);
           Assert.NotNull (sequence1);
-          Assert.AreEqual(operation1, sequence1.Operation);
+          Assert.That (sequence1.Operation, Is.EqualTo (operation1));
           Sequence sequence2 = session.Get<Sequence> (9);
           Assert.NotNull (sequence2);
-          Assert.AreEqual(operation1, sequence2.Operation);
+          Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
           Sequence sequence3 = session.Get<Sequence> (10);
           Assert.NotNull (sequence3);
-          Assert.AreEqual(operation1, sequence3.Operation);
+          Assert.That (sequence3.Operation, Is.EqualTo (operation1));
           
           Stamp stamp1 = new Stamp ();
           stamp1.Sequence = sequence1;
@@ -2313,11 +2515,13 @@ namespace Lemoine.Analysis.UnitTests
           
           IOperationSlot initOperationSlot =
             daoFactory.OperationSlotDAO.FindAt(machine, T1);
-          
-          Assert.AreNotEqual(null, initOperationSlot);
-          Assert.AreEqual(operation1, initOperationSlot.Operation);
-          Assert.AreEqual(T2, initOperationSlot.EndDateTime.Value);
-          
+
+          Assert.That (initOperationSlot, Is.Not.EqualTo (null));
+          Assert.Multiple (() => {
+            Assert.That (initOperationSlot.Operation, Is.EqualTo (operation1));
+            Assert.That (initOperationSlot.EndDateTime.Value, Is.EqualTo (T2));
+          });
+
           // find last operation slot (w.r.t. begin date times)
           IOperationSlot operationSlot2 =
             NHibernateHelper.GetCurrentSession ()
@@ -2327,10 +2531,12 @@ namespace Lemoine.Analysis.UnitTests
             .SetMaxResults (1)
             .UniqueResult<OperationSlot> ();
 
-          Assert.AreNotEqual(initOperationSlot, operationSlot2);
-          Assert.AreEqual(operation1, operationSlot2.Operation);
-          Assert.AreEqual(T3, operationSlot2.BeginDateTime.Value);
-          Assert.AreEqual(T4, operationSlot2.EndDateTime.Value);
+          Assert.That (operationSlot2, Is.Not.EqualTo (initOperationSlot));
+          Assert.Multiple (() => {
+            Assert.That (operationSlot2.Operation, Is.EqualTo (operation1));
+            Assert.That (operationSlot2.BeginDateTime.Value, Is.EqualTo (T3));
+            Assert.That (operationSlot2.EndDateTime.Value, Is.EqualTo (T4));
+          });
         } finally {
           transaction.Rollback ();
         }
@@ -2370,14 +2576,14 @@ namespace Lemoine.Analysis.UnitTests
             
             Sequence sequence1 = session.Get<Sequence> (8);
             Assert.NotNull (sequence1);
-            Assert.AreEqual(operation1, sequence1.Operation);
+            Assert.That (sequence1.Operation, Is.EqualTo (operation1));
             Sequence sequence2 = session.Get<Sequence> (9);
             Assert.NotNull (sequence2);
-            Assert.AreEqual(operation1, sequence2.Operation);
+            Assert.That (sequence2.Operation, Is.EqualTo (operation1));
             
             Sequence sequenceForOp2 = session.Get<Sequence> (1);
             Assert.NotNull (sequenceForOp2);
-            Assert.AreEqual(operation2, sequenceForOp2.Operation);
+            Assert.That (sequenceForOp2.Operation, Is.EqualTo (operation2));
             
             Stamp stamp1 = new Stamp ();
             stamp1.Sequence = sequence1;
@@ -2400,14 +2606,16 @@ namespace Lemoine.Analysis.UnitTests
             
             IOperationSlot initOperationSlot =
               daoFactory.OperationSlotDAO.FindAt(machine, T0);
-            
-            Assert.AreNotEqual(null, initOperationSlot);
-            Assert.AreEqual(operation1, initOperationSlot.Operation);
-            Assert.AreEqual(T1, initOperationSlot.EndDateTime.Value);
+
+            Assert.That (initOperationSlot, Is.Not.EqualTo (null));
+            Assert.Multiple (() => {
+              Assert.That (initOperationSlot.Operation, Is.EqualTo (operation1));
+              Assert.That (initOperationSlot.EndDateTime.Value, Is.EqualTo (T1));
+            });
 
             // create a succession of green then yellow, and stamps
             // does not account for merging successive corresponding facts etc
-            
+
             Random randomGenerator = new Random(seed); // use controllable seed
             
             DateTime currentDateTime = T1;
@@ -2438,9 +2646,9 @@ namespace Lemoine.Analysis.UnitTests
             
             IOperationSlot operationSlot =
               daoFactory.OperationSlotDAO.FindAt(machine, T0);
-            
-            Assert.AreNotEqual(null, operationSlot);
-            Assert.AreEqual(operation1, operationSlot.Operation);
+
+            Assert.That (operationSlot, Is.Not.EqualTo (null));
+            Assert.That (operationSlot.Operation, Is.EqualTo (operation1));
             // Assert.AreEqual(lastGreenEnd, operationSlot.EndDateTime.Value);
             
             // find last operation slot (w.r.t. begin date times)
@@ -2453,8 +2661,8 @@ namespace Lemoine.Analysis.UnitTests
               .UniqueResult<OperationSlot> ();
 
             // never a new slot
-            Assert.AreNotEqual(null, operationSlot2);
-            Assert.AreEqual(operationSlot, operationSlot2);
+            Assert.That (operationSlot2, Is.Not.EqualTo (null));
+            Assert.That (operationSlot2, Is.EqualTo (operationSlot));
             
           } finally {
             transaction.Rollback ();
@@ -2517,14 +2725,14 @@ namespace Lemoine.Analysis.UnitTests
           
           Sequence sequence1 = session.Get<Sequence> (8);
           Assert.NotNull (sequence1);
-          Assert.AreEqual(operation1, sequence1.Operation);
+          Assert.That (sequence1.Operation, Is.EqualTo (operation1));
           Sequence sequence2 = session.Get<Sequence> (9);
           Assert.NotNull (sequence2);
-          Assert.AreEqual(operation1, sequence2.Operation);
+          Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
           Sequence sequenceForOp2 = session.Get<Sequence> (1);
           Assert.NotNull (sequenceForOp2);
-          Assert.AreEqual(operation2, sequenceForOp2.Operation);
+          Assert.That (sequenceForOp2.Operation, Is.EqualTo (operation2));
           
           Stamp stamp1 = new Stamp ();
           stamp1.Sequence = sequence1;
@@ -2542,18 +2750,20 @@ namespace Lemoine.Analysis.UnitTests
           
           IOperationSlot operationSlot =
             daoFactory.OperationSlotDAO.FindAt(machine, T0);
-          
-          Assert.AreEqual(null, operationSlot);
+
+          Assert.That (operationSlot, Is.EqualTo (null));
           
           operationSlot =
             daoFactory.OperationSlotDAO.FindAt(machine, T21);
-          
-          Assert.AreNotEqual(null, operationSlot);
-          Assert.AreEqual(operation1, operationSlot.Operation);
-          Assert.AreEqual(T3, operationSlot.EndDateTime.Value);
-          
+
+          Assert.That (operationSlot, Is.Not.EqualTo (null));
+          Assert.Multiple (() => {
+            Assert.That (operationSlot.Operation, Is.EqualTo (operation1));
+            Assert.That (operationSlot.EndDateTime.Value, Is.EqualTo (T3));
+          });
+
           // machine idle T3 -> T31
-          
+
           // machine active T31 -> T32
           autoSequenceMachineModuleAnalysis.AddAutoSequencePeriod (T31, T32);
           
@@ -2565,11 +2775,13 @@ namespace Lemoine.Analysis.UnitTests
           // operation slot should now have an extended end date time
           operationSlot =
             daoFactory.OperationSlotDAO.FindAt(machine, T21);
-          
-          Assert.AreNotEqual(null, operationSlot);
-          Assert.AreEqual(operation1, operationSlot.Operation);
-          Assert.AreEqual(T32, operationSlot.EndDateTime.Value);
-          
+
+          Assert.That (operationSlot, Is.Not.EqualTo (null));
+          Assert.Multiple (() => {
+            Assert.That (operationSlot.Operation, Is.EqualTo (operation1));
+            Assert.That (operationSlot.EndDateTime.Value, Is.EqualTo (T32));
+          });
+
           // find last operation slot
           IOperationSlot operationSlot2 =
             NHibernateHelper.GetCurrentSession ()
@@ -2580,8 +2792,8 @@ namespace Lemoine.Analysis.UnitTests
             .UniqueResult<OperationSlot> ();
 
           // no new slot
-          Assert.AreNotEqual(null, operationSlot2);
-          Assert.AreEqual(operationSlot, operationSlot2);
+          Assert.That (operationSlot2, Is.Not.EqualTo (null));
+          Assert.That (operationSlot2, Is.EqualTo (operationSlot));
 
           // machine active from T36->T37
           autoSequenceMachineModuleAnalysis.AddAutoSequencePeriod (T36, T37);
@@ -2601,8 +2813,8 @@ namespace Lemoine.Analysis.UnitTests
             .SetMaxResults (1)
             .UniqueResult<OperationSlot> ();
 
-          Assert.AreNotEqual(null, operationSlot2);
-          Assert.AreEqual(operationSlot, operationSlot2);
+          Assert.That (operationSlot2, Is.Not.EqualTo (null));
+          Assert.That (operationSlot2, Is.EqualTo (operationSlot));
           
           // now emit fact8 which is late enough to be assoc with last stamp (new op)
           autoSequenceMachineModuleAnalysis.AddAutoSequencePeriod (T40, T41);
@@ -2616,17 +2828,17 @@ namespace Lemoine.Analysis.UnitTests
             .SetMaxResults (1)
             .UniqueResult<OperationSlot> ();
 
-          Assert.AreNotEqual(null, operationSlot2);
-          
+          Assert.That (operationSlot2, Is.Not.EqualTo (null));
+
           // success: good this time
-          Assert.AreNotEqual(operationSlot, operationSlot2);
+          Assert.That (operationSlot2, Is.Not.EqualTo (operationSlot));
           
           IOperationSlot operationSlot3 =
             daoFactory.OperationSlotDAO.FindAt(machine, T40);
-          
+
           // OK this time
-          Assert.AreNotEqual(null, operationSlot3);
-          Assert.AreEqual(operation2, operationSlot3.Operation);
+          Assert.That (operationSlot3, Is.Not.EqualTo (null));
+          Assert.That (operationSlot3.Operation, Is.EqualTo (operation2));
           
         } finally {
           transaction.Rollback ();
@@ -2711,18 +2923,22 @@ namespace Lemoine.Analysis.UnitTests
             IList<IsoFileSlot> isoFileSlots = session.CreateCriteria<IsoFileSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<IsoFileSlot>();
-            Assert.AreEqual (2, isoFileSlots.Count, "Number of isoFile slots");
+            Assert.That (isoFileSlots.Count, Is.EqualTo (2), "Number of isoFile slots");
             int i = 0;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 04, 52), isoFileSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 08, 59), isoFileSlots[i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, isoFileSlots[i].MachineModule);
-            Assert.AreEqual (isofile1, isoFileSlots[i].IsoFile);
-            
+            Assert.Multiple (() => {
+              Assert.That (isoFileSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 04, 52)));
+              Assert.That (isoFileSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 59)));
+              Assert.That (isoFileSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (isoFileSlots[i].IsoFile, Is.EqualTo (isofile1));
+            });
+
             ++i;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 08, 59), isoFileSlots[i].BeginDateTime.Value);
+            Assert.That (isoFileSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 59)));
             Assert.IsFalse (isoFileSlots [i].EndDateTime.HasValue);
-            Assert.AreEqual (machineModule, isoFileSlots[i].MachineModule);
-            Assert.AreEqual (isofile2, isoFileSlots[i].IsoFile);
+            Assert.Multiple (() => {
+              Assert.That (isoFileSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (isoFileSlots[i].IsoFile, Is.EqualTo (isofile2));
+            });
           }
           
           // End the second isoFileSlot
@@ -2733,12 +2949,14 @@ namespace Lemoine.Analysis.UnitTests
             IList<IsoFileSlot> isoFileSlots = session.CreateCriteria<IsoFileSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<IsoFileSlot>();
-            Assert.AreEqual (2, isoFileSlots.Count, "Number of isoFile slots");
+            Assert.That (isoFileSlots.Count, Is.EqualTo (2), "Number of isoFile slots");
             int i = 1;
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 10, 08, 59), isoFileSlots[i].BeginDateTime.Value);
-            Assert.AreEqual (UtcDateTime.From (2011, 01, 16, 12, 00, 00), isoFileSlots[i].EndDateTime.Value);
-            Assert.AreEqual (machineModule, isoFileSlots[i].MachineModule);
-            Assert.AreEqual (isofile2, isoFileSlots[i].IsoFile);
+            Assert.Multiple (() => {
+              Assert.That (isoFileSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 59)));
+              Assert.That (isoFileSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 12, 00, 00)));
+              Assert.That (isoFileSlots[i].MachineModule, Is.EqualTo (machineModule));
+              Assert.That (isoFileSlots[i].IsoFile, Is.EqualTo (isofile2));
+            });
           }
         }
         finally {

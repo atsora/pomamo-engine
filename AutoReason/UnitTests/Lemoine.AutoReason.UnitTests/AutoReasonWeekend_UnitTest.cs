@@ -40,14 +40,14 @@ namespace Lemoine.AutoReason.UnitTests
     void CheckAutoReasonState (IMonitoredMachine machine, string key, object v)
     {
       var autoReasonState = ModelDAOHelper.DAOFactory.AutoReasonStateDAO.GetAutoReasonState (machine, key);
-      Assert.AreEqual (v, autoReasonState.Value);
+      Assert.That (autoReasonState.Value, Is.EqualTo (v));
     }
 
     void CheckNoReasonMachineAssociation ()
     {
       var reasonMachineAssociations = new ReasonMachineAssociationDAO ()
         .FindAll ();
-      Assert.AreEqual (0, reasonMachineAssociations.Count);
+      Assert.That (reasonMachineAssociations, Is.Empty);
     }
 
     /// <summary>
@@ -215,8 +215,10 @@ namespace Lemoine.AutoReason.UnitTests
 
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ().FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
-              Assert.AreEqual (reasonMachineAssociations[0].Range, R (5, 7));
+              Assert.Multiple (() => {
+                Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
+                Assert.That (R (5, 7), Is.EqualTo (reasonMachineAssociations[0].Range));
+              });
             }
           }
           finally {
@@ -392,8 +394,10 @@ namespace Lemoine.AutoReason.UnitTests
 
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ().FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
-              Assert.AreEqual (reasonMachineAssociations[0].Range, R (7, 14));
+              Assert.Multiple (() => {
+                Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
+                Assert.That (R (7, 14), Is.EqualTo (reasonMachineAssociations[0].Range));
+              });
             }
           } finally {
             transaction.Rollback ();
@@ -759,8 +763,10 @@ namespace Lemoine.AutoReason.UnitTests
 
             { // Test ReasonMachineAssociation
               var reasonMachineAssociations = new ReasonMachineAssociationDAO ().FindAll ();
-              Assert.AreEqual (1, reasonMachineAssociations.Count);
-              Assert.AreEqual (reasonMachineAssociations[0].Range, R (9, 15));
+              Assert.Multiple (() => {
+                Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1));
+                Assert.That (R (9, 15), Is.EqualTo (reasonMachineAssociations[0].Range));
+              });
             }
           } finally {
             transaction.Rollback ();

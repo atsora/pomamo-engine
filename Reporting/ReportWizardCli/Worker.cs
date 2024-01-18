@@ -18,7 +18,6 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MimeKit;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ReportWizardCli
 {
@@ -153,7 +152,7 @@ The requested format is {format}
             FileName = Path.GetFileName (outputPath)
           };
 
-          var multipart = new Multipart ("mixed") {
+          var multipart = new MimeKit.Multipart("mixed") {
             body,
             attachment
           };

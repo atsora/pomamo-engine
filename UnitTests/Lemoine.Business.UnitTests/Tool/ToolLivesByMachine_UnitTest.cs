@@ -51,47 +51,55 @@ namespace Lemoine.Business.UnitTests.Tool
 
           var response = Lemoine.Business.ServiceProvider
             .Get (new Lemoine.Business.Tool.ToolLivesByMachine (machineModule.MonitoredMachine));
-          Assert.IsNotNull (response);
+          Assert.That (response, Is.Not.Null);
           {
             int i = 0;
             {
               var t = response.Tools[i];
-              Assert.IsFalse (t.ActiveSisterTool);
-              Assert.IsTrue (t.ValidSisterTools);
-              Assert.IsTrue (t.Expired);
-              Assert.AreEqual (-1, t.RemainingCyclesToLimit);
-              Assert.IsFalse (t.Group);
+              Assert.Multiple (() => {
+                Assert.That (t.ActiveSisterTool, Is.False);
+                Assert.That (t.ValidSisterTools, Is.True);
+                Assert.That (t.Expired, Is.True);
+                Assert.That (t.RemainingCyclesToLimit, Is.EqualTo (-1));
+                Assert.That (t.Group, Is.False);
+              });
             }
             ++i;
             {
               var t = response.Tools[i];
-              Assert.IsTrue (t.ActiveSisterTool);
-              Assert.IsTrue (t.ValidSisterTools);
-              Assert.IsFalse (t.Expired);
-              Assert.AreEqual (2, t.RemainingCyclesToLimit);
-              Assert.IsFalse (t.Group);
+              Assert.Multiple (() => {
+                Assert.That (t.ActiveSisterTool, Is.True);
+                Assert.That (t.ValidSisterTools, Is.True);
+                Assert.That (t.Expired, Is.False);
+                Assert.That (t.RemainingCyclesToLimit, Is.EqualTo (2));
+                Assert.That (t.Group, Is.False);
+              });
             }
             ++i;
             {
               var t = response.Tools[i];
-              Assert.IsFalse (t.ActiveSisterTool);
-              Assert.IsFalse (t.ValidSisterTools);
-              Assert.IsFalse (t.Expired);
-              Assert.AreEqual (5, t.RemainingCyclesToLimit);
-              Assert.IsFalse (t.Group);
+              Assert.Multiple (() => {
+                Assert.That (t.ActiveSisterTool, Is.False);
+                Assert.That (t.ValidSisterTools, Is.False);
+                Assert.That (t.Expired, Is.False);
+                Assert.That (t.RemainingCyclesToLimit, Is.EqualTo (5));
+                Assert.That (t.Group, Is.False);
+              });
             }
             ++i;
             {
               var t = response.Tools[i];
-              Assert.IsFalse (t.ActiveSisterTool);
-              Assert.IsFalse (t.ValidSisterTools);
-              Assert.IsFalse (t.Expired);
-              Assert.AreEqual (7, t.RemainingCyclesToLimit);
-              Assert.AreEqual ("T123", t.Display);
-              Assert.IsTrue (t.Group);
+              Assert.Multiple (() => {
+                Assert.That (t.ActiveSisterTool, Is.False);
+                Assert.That (t.ValidSisterTools, Is.False);
+                Assert.That (t.Expired, Is.False);
+                Assert.That (t.RemainingCyclesToLimit, Is.EqualTo (7));
+                Assert.That (t.Display, Is.EqualTo ("T123"));
+                Assert.That (t.Group, Is.True);
+              });
             }
           }
-          Assert.IsFalse (response.Expired);
+          Assert.That (response.Expired, Is.False);
         }
         finally {
           transaction.Rollback ();

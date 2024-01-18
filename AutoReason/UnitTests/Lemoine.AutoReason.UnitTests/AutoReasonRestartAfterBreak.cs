@@ -40,7 +40,7 @@ namespace Lemoine.AutoReason.UnitTests
     void CheckAutoReasonState (IMonitoredMachine machine, string key, object v)
     {
       var autoReasonState = ModelDAOHelper.DAOFactory.AutoReasonStateDAO.GetAutoReasonState (machine, key);
-      Assert.AreEqual (v, autoReasonState.Value);
+      Assert.That (autoReasonState.Value, Is.EqualTo (v));
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine observation state slots
             var mos_production = ModelDAOHelper.DAOFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Production);
@@ -191,15 +191,17 @@ namespace Lemoine.AutoReason.UnitTests
 
             // Number of reasons created
             var reasonMachineAssociations = new ReasonMachineAssociationDAO ().FindAll ();
-            Assert.AreEqual (1, reasonMachineAssociations.Count, "Wrong number of reasons");
+            Assert.That (reasonMachineAssociations, Has.Count.EqualTo (1), "Wrong number of reasons");
 
             // Properties of the reason
             var reasonMachineAssociation = reasonMachineAssociations[0];
             Assert.IsTrue (reasonMachineAssociation.Range.Lower.HasValue);
             Assert.IsFalse (reasonMachineAssociation.Range.Upper.HasValue);
-            Assert.AreEqual (T (10), reasonMachineAssociation.Range.Lower.Value);
-            Assert.AreEqual ("NextMachineMode", reasonMachineAssociation.DynamicEnd);
-            Assert.AreEqual (machine, reasonMachineAssociation.Machine);
+            Assert.Multiple (() => {
+              Assert.That (reasonMachineAssociation.Range.Lower.Value, Is.EqualTo (T (10)));
+              Assert.That (reasonMachineAssociation.DynamicEnd, Is.EqualTo ("NextMachineMode"));
+              Assert.That (reasonMachineAssociation.Machine, Is.EqualTo (machine));
+            });
 
             // After a next run, we are at the end of the machine status
             autoReason.RunOnce ();

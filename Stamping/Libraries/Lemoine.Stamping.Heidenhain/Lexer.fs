@@ -1,3 +1,4 @@
+
 # 1 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
  
 // fsharplint:disable ParameterNames PublicValuesNames
@@ -12,7 +13,7 @@ let log = LogManager.GetLogger("Lemoine.Stamping.Heidenhain.Lexer")
 
 let lexeme = LexBuffer<_>.LexemeString
 
-let parseDouble x =
+let parseDouble (x: string) =
   try
     Double.Parse(x, System.Globalization.CultureInfo.InvariantCulture)
   with
@@ -32,7 +33,7 @@ let parseInt32 x =
       reraise()
     end
 
-# 35 "Lexer.fs"
+# 36 "Lexer.fs"
 let trans : uint16[] array = 
     [| 
     (* State 0 *)
@@ -1019,407 +1020,407 @@ and main  lexbuf =
   | 0 -> ( 
 # 53 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               main lexbuf 
-# 1022 "Lexer.fs"
+# 1023 "Lexer.fs"
           )
   | 1 -> ( 
 # 54 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                            log.Trace $"main.newline"; NEWLINE (lexbuf.StartPos.AbsoluteOffset) 
-# 1027 "Lexer.fs"
+# 1028 "Lexer.fs"
           )
   | 2 -> ( 
 # 55 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                            begin if log.IsTraceEnabled then log.Trace $"natural={lexeme lexbuf}" end; lexeme lexbuf |> parseInt32 |> NATURAL 
-# 1032 "Lexer.fs"
+# 1033 "Lexer.fs"
           )
   | 3 -> ( 
 # 56 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                      lexeme lexbuf |> parseDouble |> NUMBER 
-# 1037 "Lexer.fs"
+# 1038 "Lexer.fs"
           )
   | 4 -> ( 
 # 57 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        read_quoted_string "" lexbuf 
-# 1042 "Lexer.fs"
+# 1043 "Lexer.fs"
           )
   | 5 -> ( 
 # 58 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                COMMENT (lexeme lexbuf) 
-# 1047 "Lexer.fs"
+# 1048 "Lexer.fs"
           )
   | 6 -> ( 
 # 59 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                            begin if log.IsTraceEnabled then log.Trace $"PgmToken={lexeme lexbuf}" end; multipleargs (lexeme lexbuf) [] lexbuf 
-# 1052 "Lexer.fs"
+# 1053 "Lexer.fs"
           )
   | 7 -> ( 
 # 60 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                nargs "BLK FORM" [] 2 lexbuf 
-# 1057 "Lexer.fs"
+# 1058 "Lexer.fs"
           )
   | 8 -> ( 
 # 61 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                              multipleargs (lexeme lexbuf) [] lexbuf 
-# 1062 "Lexer.fs"
+# 1063 "Lexer.fs"
           )
   | 9 -> ( 
 # 62 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                  PATTERNDEF 
-# 1067 "Lexer.fs"
+# 1068 "Lexer.fs"
           )
   | 10 -> ( 
 # 63 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         POSX (lexeme lexbuf) 
-# 1072 "Lexer.fs"
+# 1073 "Lexer.fs"
           )
   | 11 -> ( 
 # 64 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                lastarg (lexeme lexbuf) [] lexbuf 
-# 1077 "Lexer.fs"
+# 1078 "Lexer.fs"
           )
   | 12 -> ( 
 # 65 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          LBL 
-# 1082 "Lexer.fs"
+# 1083 "Lexer.fs"
           )
   | 13 -> ( 
 # 66 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               CALLLBL 
-# 1087 "Lexer.fs"
+# 1088 "Lexer.fs"
           )
   | 14 -> ( 
 # 67 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          REP 
-# 1092 "Lexer.fs"
+# 1093 "Lexer.fs"
           )
   | 15 -> ( 
 # 68 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               lastarg (lexeme lexbuf) [] lexbuf 
-# 1097 "Lexer.fs"
+# 1098 "Lexer.fs"
           )
   | 16 -> ( 
 # 69 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               multipleargs (lexeme lexbuf) [] lexbuf 
-# 1102 "Lexer.fs"
+# 1103 "Lexer.fs"
           )
   | 17 -> ( 
 # 70 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                 TOOLCALL 
-# 1107 "Lexer.fs"
+# 1108 "Lexer.fs"
           )
   | 18 -> ( 
 # 71 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                         raise (NotImplementedException()) 
-# 1112 "Lexer.fs"
+# 1113 "Lexer.fs"
           )
   | 19 -> ( 
 # 72 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                     raise (NotImplementedException()) 
-# 1117 "Lexer.fs"
+# 1118 "Lexer.fs"
           )
   | 20 -> ( 
 # 73 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                        raise (NotImplementedException()) 
-# 1122 "Lexer.fs"
+# 1123 "Lexer.fs"
           )
   | 21 -> ( 
 # 74 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                    multipleargs (lexeme lexbuf) [] lexbuf 
-# 1127 "Lexer.fs"
+# 1128 "Lexer.fs"
           )
   | 22 -> ( 
 # 75 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                     lastarg (lexeme lexbuf) [] lexbuf 
-# 1132 "Lexer.fs"
+# 1133 "Lexer.fs"
           )
   | 23 -> ( 
 # 76 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                raise (NotImplementedException()) 
-# 1137 "Lexer.fs"
+# 1138 "Lexer.fs"
           )
   | 24 -> ( 
 # 77 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                             multipleargs "PLANE" [] lexbuf 
-# 1142 "Lexer.fs"
+# 1143 "Lexer.fs"
           )
   | 25 -> ( 
 # 78 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                           raise (NotImplementedException()) 
-# 1147 "Lexer.fs"
+# 1148 "Lexer.fs"
           )
   | 26 -> ( 
 # 79 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                           multipleargs "TCH" [] lexbuf 
-# 1152 "Lexer.fs"
+# 1153 "Lexer.fs"
           )
   | 27 -> ( 
 # 80 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                            multipleargs "ERROR" [] lexbuf 
-# 1157 "Lexer.fs"
+# 1158 "Lexer.fs"
           )
   | 28 -> ( 
 # 81 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                                                                                                                                                                                                                                                                                                                                                                                   multipleargs (lexeme lexbuf) [] lexbuf 
-# 1162 "Lexer.fs"
+# 1163 "Lexer.fs"
           )
   | 29 -> ( 
 # 82 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         FN 
-# 1167 "Lexer.fs"
+# 1168 "Lexer.fs"
           )
   | 30 -> ( 
 # 83 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        COLON 
-# 1172 "Lexer.fs"
+# 1173 "Lexer.fs"
           )
   | 31 -> ( 
 # 84 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                     RADIUSCOMPENSATION (lexeme lexbuf) 
-# 1177 "Lexer.fs"
+# 1178 "Lexer.fs"
           )
   | 32 -> ( 
 # 85 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                           FMAX 
-# 1182 "Lexer.fs"
+# 1183 "Lexer.fs"
           )
   | 33 -> ( 
 # 86 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                            FAUTO 
-# 1187 "Lexer.fs"
+# 1188 "Lexer.fs"
           )
   | 34 -> ( 
 # 87 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                FUNIT (lexeme lexbuf) 
-# 1192 "Lexer.fs"
+# 1193 "Lexer.fs"
           )
   | 35 -> ( 
 # 88 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        FCODE 
-# 1197 "Lexer.fs"
+# 1198 "Lexer.fs"
           )
   | 36 -> ( 
 # 89 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                             COMPARISON (lexeme lexbuf) 
-# 1202 "Lexer.fs"
+# 1203 "Lexer.fs"
           )
   | 37 -> ( 
 # 90 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                              SIGN (lexeme lexbuf) 
-# 1207 "Lexer.fs"
+# 1208 "Lexer.fs"
           )
   | 38 -> ( 
 # 91 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                                OP (lexeme lexbuf) 
-# 1212 "Lexer.fs"
+# 1213 "Lexer.fs"
           )
   | 39 -> ( 
 # 92 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                                                                                                                                                                FUNC (lexeme lexbuf) 
-# 1217 "Lexer.fs"
+# 1218 "Lexer.fs"
           )
   | 40 -> ( 
 # 93 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                              raise (NotImplementedException()) 
-# 1222 "Lexer.fs"
+# 1223 "Lexer.fs"
           )
   | 41 -> ( 
 # 94 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                    SETUNDEFINED 
-# 1227 "Lexer.fs"
+# 1228 "Lexer.fs"
           )
   | 42 -> ( 
 # 95 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                 ISDEFINED 
-# 1232 "Lexer.fs"
+# 1233 "Lexer.fs"
           )
   | 43 -> ( 
 # 96 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                   ISUNDEFINED 
-# 1237 "Lexer.fs"
+# 1238 "Lexer.fs"
           )
   | 44 -> ( 
 # 97 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         IF 
-# 1242 "Lexer.fs"
+# 1243 "Lexer.fs"
           )
   | 45 -> ( 
 # 98 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                           GOTO 
-# 1247 "Lexer.fs"
+# 1248 "Lexer.fs"
           )
   | 46 -> ( 
 # 99 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                           STOP 
-# 1252 "Lexer.fs"
+# 1253 "Lexer.fs"
           )
   | 47 -> ( 
 # 100 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         CONST (lexeme lexbuf) 
-# 1257 "Lexer.fs"
+# 1258 "Lexer.fs"
           )
   | 48 -> ( 
 # 101 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          LP 
-# 1262 "Lexer.fs"
+# 1263 "Lexer.fs"
           )
   | 49 -> ( 
 # 102 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         LN 
-# 1267 "Lexer.fs"
+# 1268 "Lexer.fs"
           )
   | 50 -> ( 
 # 103 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         LINE 
-# 1272 "Lexer.fs"
+# 1273 "Lexer.fs"
           )
   | 51 -> ( 
 # 104 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                           APPR 
-# 1277 "Lexer.fs"
+# 1278 "Lexer.fs"
           )
   | 52 -> ( 
 # 105 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          DEP 
-# 1282 "Lexer.fs"
+# 1283 "Lexer.fs"
           )
   | 53 -> ( 
 # 106 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          LEN 
-# 1287 "Lexer.fs"
+# 1288 "Lexer.fs"
           )
   | 54 -> ( 
 # 107 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        R 
-# 1292 "Lexer.fs"
+# 1293 "Lexer.fs"
           )
   | 55 -> ( 
 # 108 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          CCA 
-# 1297 "Lexer.fs"
+# 1298 "Lexer.fs"
           )
   | 56 -> ( 
 # 109 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                                         APPROACHSTRATEGY (lexeme lexbuf) 
-# 1302 "Lexer.fs"
+# 1303 "Lexer.fs"
           )
   | 57 -> ( 
 # 110 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          CHF 
-# 1307 "Lexer.fs"
+# 1308 "Lexer.fs"
           )
   | 58 -> ( 
 # 111 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         CC 
-# 1312 "Lexer.fs"
+# 1313 "Lexer.fs"
           )
   | 59 -> ( 
 # 112 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         CP 
-# 1317 "Lexer.fs"
+# 1318 "Lexer.fs"
           )
   | 60 -> ( 
 # 113 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          CTP 
-# 1322 "Lexer.fs"
+# 1323 "Lexer.fs"
           )
   | 61 -> ( 
 # 114 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         CT 
-# 1327 "Lexer.fs"
+# 1328 "Lexer.fs"
           )
   | 62 -> ( 
 # 115 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        C 
-# 1332 "Lexer.fs"
+# 1333 "Lexer.fs"
           )
   | 63 -> ( 
 # 116 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          DRPLUS (lexeme lexbuf) 
-# 1337 "Lexer.fs"
+# 1338 "Lexer.fs"
           )
   | 64 -> ( 
 # 117 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                          DRMINUS (lexeme lexbuf) 
-# 1342 "Lexer.fs"
+# 1343 "Lexer.fs"
           )
   | 65 -> ( 
 # 118 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         STRVARPREFIX (lexeme lexbuf) 
-# 1347 "Lexer.fs"
+# 1348 "Lexer.fs"
           )
   | 66 -> ( 
 # 119 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                VARPREFIX (lexeme lexbuf) 
-# 1352 "Lexer.fs"
+# 1353 "Lexer.fs"
           )
   | 67 -> ( 
 # 120 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        QCODE 
-# 1357 "Lexer.fs"
+# 1358 "Lexer.fs"
           )
   | 68 -> ( 
 # 121 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                     DECLARESTRING 
-# 1362 "Lexer.fs"
+# 1363 "Lexer.fs"
           )
   | 69 -> ( 
 # 122 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                                                   AXIS (lexeme lexbuf) 
-# 1367 "Lexer.fs"
+# 1368 "Lexer.fs"
           )
   | 70 -> ( 
 # 123 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                                              mcommand (lexeme lexbuf) [] lexbuf 
-# 1372 "Lexer.fs"
+# 1373 "Lexer.fs"
           )
   | 71 -> ( 
 # 124 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        MCODE 
-# 1377 "Lexer.fs"
+# 1378 "Lexer.fs"
           )
   | 72 -> ( 
 # 125 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        SCODE 
-# 1382 "Lexer.fs"
+# 1383 "Lexer.fs"
           )
   | 73 -> ( 
 # 126 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                        TOOLOVERSIZE (lexeme lexbuf) 
-# 1387 "Lexer.fs"
+# 1388 "Lexer.fs"
           )
   | 74 -> ( 
 # 127 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                        POLAR (lexeme lexbuf) 
-# 1392 "Lexer.fs"
+# 1393 "Lexer.fs"
           )
   | 75 -> ( 
 # 128 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        comment lexbuf 
-# 1397 "Lexer.fs"
+# 1398 "Lexer.fs"
           )
   | 76 -> ( 
 # 129 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        LBRACKET 
-# 1402 "Lexer.fs"
+# 1403 "Lexer.fs"
           )
   | 77 -> ( 
 # 130 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        RBRACKET 
-# 1407 "Lexer.fs"
+# 1408 "Lexer.fs"
           )
   | 78 -> ( 
 # 131 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        EQSYMB 
-# 1412 "Lexer.fs"
+# 1413 "Lexer.fs"
           )
   | 79 -> ( 
 # 132 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        log.Trace "eof"; EOF (lexbuf.StartPos.AbsoluteOffset) 
-# 1417 "Lexer.fs"
+# 1418 "Lexer.fs"
           )
   | 80 -> ( 
 # 133 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                      failwith (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) 
-# 1422 "Lexer.fs"
+# 1423 "Lexer.fs"
           )
   | _ -> failwith "main"
 // Rule comment
@@ -1428,22 +1429,22 @@ and comment  lexbuf =
   | 0 -> ( 
 # 135 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                              begin if log.IsTraceEnabled then log.Trace $"comment.tolineend={lexeme lexbuf}" end; COMMENT (lexeme lexbuf) 
-# 1431 "Lexer.fs"
+# 1432 "Lexer.fs"
           )
   | 1 -> ( 
 # 136 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                            log.Trace $"comment.newline"; NEWLINE (lexbuf.StartPos.AbsoluteOffset) 
-# 1436 "Lexer.fs"
+# 1437 "Lexer.fs"
           )
   | 2 -> ( 
 # 137 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        EOF (lexbuf.StartPos.AbsoluteOffset) 
-# 1441 "Lexer.fs"
+# 1442 "Lexer.fs"
           )
   | 3 -> ( 
 # 138 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                      failwith (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) 
-# 1446 "Lexer.fs"
+# 1447 "Lexer.fs"
           )
   | _ -> failwith "comment"
 // Rule lastarg
@@ -1452,22 +1453,22 @@ and lastarg command args lexbuf =
   | 0 -> ( 
 # 140 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               begin if log.IsTraceEnabled then log.Trace $"lastarg.witespace={lexeme lexbuf}" end; lastarg command args lexbuf 
-# 1455 "Lexer.fs"
+# 1456 "Lexer.fs"
           )
   | 1 -> ( 
 # 141 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                              begin if log.IsTraceEnabled then log.Trace $"lastarg.tolineend={lexeme lexbuf} start={lexbuf.StartPos.AbsoluteOffset} end={lexbuf.EndPos.AbsoluteOffset} nexline={lexbuf.EndPos.NextLine.AbsoluteOffset}" end; let pos = lexbuf.EndPos.AbsoluteOffset in lexbuf.EndPos <- lexbuf.EndPos.NextLine; COMMAND (command, args @ [lexeme lexbuf], pos) 
-# 1460 "Lexer.fs"
+# 1461 "Lexer.fs"
           )
   | 2 -> ( 
 # 142 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                            begin if log.IsTraceEnabled then log.Trace $"lastarg.newline={lexeme lexbuf}" end; COMMAND (command, args @ [lexeme lexbuf], lexbuf.StartPos.AbsoluteOffset) 
-# 1465 "Lexer.fs"
+# 1466 "Lexer.fs"
           )
   | 3 -> ( 
 # 143 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                      failwith (sprintf "SyntaxError: Unexpected char in lastarg: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) 
-# 1470 "Lexer.fs"
+# 1471 "Lexer.fs"
           )
   | _ -> failwith "lastarg"
 // Rule nargs
@@ -1476,17 +1477,17 @@ and nargs command args n lexbuf =
   | 0 -> ( 
 # 145 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         begin if log.IsTraceEnabled then log.Trace $"nargs.word={lexeme lexbuf} n={n}" end; if n <= 2 then lastarg command (args @ [lexeme lexbuf]) lexbuf else nargs command (args @ [lexeme lexbuf]) (n-1) lexbuf 
-# 1479 "Lexer.fs"
+# 1480 "Lexer.fs"
           )
   | 1 -> ( 
 # 146 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               nargs command args n lexbuf 
-# 1484 "Lexer.fs"
+# 1485 "Lexer.fs"
           )
   | 2 -> ( 
 # 147 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                      failwith (sprintf "SyntaxError: Unexpected char in nargs: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) 
-# 1489 "Lexer.fs"
+# 1490 "Lexer.fs"
           )
   | _ -> failwith "nargs"
 // Rule multipleargs
@@ -1495,27 +1496,27 @@ and multipleargs command args lexbuf =
   | 0 -> ( 
 # 149 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         begin if log.IsTraceEnabled then log.Trace $"multipleargs.word={lexeme lexbuf}" end; multipleargs command (args @ [lexeme lexbuf]) lexbuf 
-# 1498 "Lexer.fs"
+# 1499 "Lexer.fs"
           )
   | 1 -> ( 
 # 150 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               multipleargs command args lexbuf 
-# 1503 "Lexer.fs"
+# 1504 "Lexer.fs"
           )
   | 2 -> ( 
 # 151 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                            log.Trace "multipleargs.newline"; COMMAND (command, args, lexbuf.StartPos.AbsoluteOffset) 
-# 1508 "Lexer.fs"
+# 1509 "Lexer.fs"
           )
   | 3 -> ( 
 # 152 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        log.Trace "multipleargs.eof"; let pos = lexbuf.StartPos.AbsoluteOffset in COMMAND (command, args, pos) 
-# 1513 "Lexer.fs"
+# 1514 "Lexer.fs"
           )
   | 4 -> ( 
 # 153 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                      failwith (sprintf "SyntaxError: Unexpected char in multipleargs: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) 
-# 1518 "Lexer.fs"
+# 1519 "Lexer.fs"
           )
   | _ -> failwith "multipleargs"
 // Rule mcommand
@@ -1524,22 +1525,22 @@ and mcommand mcode args lexbuf =
   | 0 -> ( 
 # 155 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                         begin if log.IsTraceEnabled then log.Trace $"mcommand.word={lexeme lexbuf}" end; mcommand mcode (args @ [lexeme lexbuf]) lexbuf 
-# 1527 "Lexer.fs"
+# 1528 "Lexer.fs"
           )
   | 1 -> ( 
 # 156 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                               mcommand mcode args lexbuf 
-# 1532 "Lexer.fs"
+# 1533 "Lexer.fs"
           )
   | 2 -> ( 
 # 157 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                                  log.Trace "mcommand.newline"; MCOMMAND (mcode, args, lexbuf.StartPos.AbsoluteOffset) 
-# 1537 "Lexer.fs"
+# 1538 "Lexer.fs"
           )
   | 3 -> ( 
 # 158 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                      failwith (sprintf "SyntaxError: Unexpected char in mcommand: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) 
-# 1542 "Lexer.fs"
+# 1543 "Lexer.fs"
           )
   | _ -> failwith "mcommand"
 // Rule read_quoted_string
@@ -1548,17 +1549,17 @@ and read_quoted_string s lexbuf =
   | 0 -> ( 
 # 160 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        QUOTED (s) 
-# 1551 "Lexer.fs"
+# 1552 "Lexer.fs"
           )
   | 1 -> ( 
 # 161 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                             read_quoted_string (s+(lexeme lexbuf)) lexbuf 
-# 1556 "Lexer.fs"
+# 1557 "Lexer.fs"
           )
   | 2 -> ( 
 # 162 "..\Lemoine.Stamping.Heidenhain\Lexer.fsl"
                        failwith (sprintf "SyntaxError: string %s is not terminated" s) 
-# 1561 "Lexer.fs"
+# 1562 "Lexer.fs"
           )
   | _ -> failwith "read_quoted_string"
 

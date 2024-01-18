@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <AssemblyVersion>6.7.0.0</AssemblyVersion>
   </PropertyGroup>
@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\..\Libraries\Pulse.Business\Pulse.Business.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
+    <ProjectReference Include="..\Lemoine.WebMiddleware\Lemoine.WebMiddleware.csproj" />
     <ProjectReference Include="..\Lemoine.Web\Lemoine.Web.csproj" />
     <ProjectReference Include="..\..\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
     <ProjectReference Include="..\..\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" />

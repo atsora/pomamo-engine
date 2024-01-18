@@ -61,16 +61,6 @@ namespace Lemoine.CncEngine
       : base (message, inner)
     {
     }
-
-    /// <summary>
-    /// <see cref="System.Runtime.Serialization.ISerializable"/>
-    /// </summary>
-    /// <param name="serializationInfo"></param>
-    /// <param name="streamingContext"></param>
-    protected ConfigReloadRequired (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
-      : base (serializationInfo, streamingContext)
-    {
-    }
   }
 
   /// <summary>

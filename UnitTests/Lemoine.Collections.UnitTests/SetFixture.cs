@@ -110,18 +110,20 @@ namespace Lemoine.Collections.UnitTests
       int count = 0;
 
       foreach (IdClass obj in dest) {
-        Assert.IsTrue (_set.Contains (obj), "set should contain the object in the array");
+        Assert.That (_set.Contains (obj), Is.True, "set should contain the object in the array");
         count++;
       }
 
-      Assert.AreEqual (3, count, "should have 3 items in array");
+      Assert.That (count, Is.EqualTo (3), "should have 3 items in array");
     }
 
     [Test]
     public void Count ()
     {
-      Assert.AreEqual (3, _set.Count (), "should be 3 items");
-      Assert.AreEqual (0, CreateInstance ().Count (), "new set should have nothing in it.");
+      Assert.Multiple (() => {
+        Assert.That (_set.Count (), Is.EqualTo (3), "should be 3 items");
+        Assert.That (CreateInstance ().Count (), Is.EqualTo (0), "new set should have nothing in it.");
+      });
     }
 
     #endregion
@@ -138,11 +140,11 @@ namespace Lemoine.Collections.UnitTests
 
       ISet<IdClass> theSet = CreateInstance (init);
 
-      Assert.AreEqual (3, init.Count, "3 items in set");
+      Assert.That (init, Has.Count.EqualTo (3), "3 items in set");
 
       int index = 0;
       foreach (IdClass obj in init) {
-        Assert.IsTrue (theSet.Contains (obj), "set should contain obj at index = " + index.ToString ());
+        Assert.That (theSet.Contains (obj), Is.True, "set should contain obj at index = " + index.ToString ());
         index++;
       }
     }
@@ -155,11 +157,13 @@ namespace Lemoine.Collections.UnitTests
     public void Add ()
     {
       try {
-        Assert.IsTrue (_set.Add (new IdClass (4, "four")), "should have added 'four'");
-        Assert.AreEqual (4, _set.Count (), "should have added 'four'");
+        Assert.Multiple (() => {
+          Assert.That (_set.Add (new IdClass (4, "four")), Is.True, "should have added 'four'");
+          Assert.That (_set.Count (), Is.EqualTo (4), "should have added 'four'");
 
-        Assert.IsFalse (_set.Add (two), "'two' was already there");
-        Assert.AreEqual (4, _set.Count (), "object already in set");
+          Assert.That (_set.Add (two), Is.False, "'two' was already there");
+        });
+        Assert.That (_set.Count (), Is.EqualTo (4), "object already in set");
         if (_set.IsReadOnly)
           Assert.Fail ("Read-only set can be modified");
       }
@@ -174,7 +178,7 @@ namespace Lemoine.Collections.UnitTests
     {
       try {
         ((System.Collections.Generic.ICollection<IdClass>)_set).Clear ();
-        Assert.AreEqual (0, _set.Count (), "should have no items in ISet.");
+        Assert.That (_set.Count (), Is.EqualTo (0), "should have no items in ISet.");
 
         if (_set.IsReadOnly)
           Assert.Fail ("Read-only set can be modified");
@@ -188,19 +192,23 @@ namespace Lemoine.Collections.UnitTests
     [Test]
     public void Contains ()
     {
-      Assert.IsTrue (_set.Contains (one), "does contain one");
-      Assert.IsFalse (_set.Contains (new IdClass (4, "four")), "does not contain 'four'");
+      Assert.Multiple (() => {
+        Assert.That (_set.Contains (one), Is.True, "does contain one");
+        Assert.That (_set.Contains (new IdClass (4, "four")), Is.False, "does not contain 'four'");
+      });
     }
 
     [Test]
     public void Remove ()
     {
       try {
-        Assert.IsTrue (_set.Remove (one), "should have removed 'one'");
-        Assert.IsFalse (_set.Contains (one), "one should have been removed");
-        Assert.AreEqual (2, _set.Count (), "should be 2 items after one removed.");
+        Assert.Multiple (() => {
+          Assert.That (_set.Remove (one), Is.True, "should have removed 'one'");
+          Assert.That (_set.Contains (one), Is.False, "one should have been removed");
+          Assert.That (_set.Count (), Is.EqualTo (2), "should be 2 items after one removed.");
+        });
 
-        Assert.IsFalse (_set.Remove (one), "was already removed.");
+        Assert.That (_set.Remove (one), Is.False, "was already removed.");
         if (_set.IsReadOnly)
           Assert.Fail ("Read-only set can be modified");
       }

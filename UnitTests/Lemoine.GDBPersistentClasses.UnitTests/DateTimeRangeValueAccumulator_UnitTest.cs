@@ -59,32 +59,50 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         var values = accumulator.DateTimeRangeValues;
         int i = 0;
-        Assert.AreEqual (R(1, 2), values[i].Range);
-        Assert.AreEqual (1, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (1, 2)));
+          Assert.That (values[i].Value, Is.EqualTo (1));
+        });
         ++i;
-        Assert.AreEqual (R(3, 4), values[i].Range);
-        Assert.AreEqual (1, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (3, 4)));
+          Assert.That (values[i].Value, Is.EqualTo (1));
+        });
         ++i;
-        Assert.AreEqual (R(4, 5), values[i].Range);
-        Assert.AreEqual (2, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (4, 5)));
+          Assert.That (values[i].Value, Is.EqualTo (2));
+        });
         ++i;
-        Assert.AreEqual (R(5, 6), values[i].Range);
-        Assert.AreEqual (1, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (5, 6)));
+          Assert.That (values[i].Value, Is.EqualTo (1));
+        });
         ++i;
-        Assert.AreEqual (R(6, 7), values[i].Range);
-        Assert.AreEqual (2, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (6, 7)));
+          Assert.That (values[i].Value, Is.EqualTo (2));
+        });
         ++i;
-        Assert.AreEqual (R(7, 8), values[i].Range);
-        Assert.AreEqual (1, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (7, 8)));
+          Assert.That (values[i].Value, Is.EqualTo (1));
+        });
         ++i;
-        Assert.AreEqual (R(9, 10), values[i].Range);
-        Assert.AreEqual (1, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (9, 10)));
+          Assert.That (values[i].Value, Is.EqualTo (1));
+        });
         ++i;
-        Assert.AreEqual (R(10, 11), values[i].Range);
-        Assert.AreEqual (2, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (10, 11)));
+          Assert.That (values[i].Value, Is.EqualTo (2));
+        });
         ++i;
-        Assert.AreEqual (R(11, 12), values[i].Range);
-        Assert.AreEqual (1, values[i].Value);
+        Assert.Multiple (() => {
+          Assert.That (values[i].Range, Is.EqualTo (R (11, 12)));
+          Assert.That (values[i].Value, Is.EqualTo (1));
+        });
       }
     }
     

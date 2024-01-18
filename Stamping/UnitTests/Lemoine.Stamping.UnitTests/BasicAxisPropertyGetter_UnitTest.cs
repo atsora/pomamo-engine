@@ -38,8 +38,10 @@ namespace Lemoine.Stamping.UnitTests
 }
 """;
         var axisPropertyGetter = JsonSerializer.Deserialize<Lemoine.Stamping.AxisPropertyGetters.BasicAxisPropertyGetter> (json);
-        Assert.AreEqual (AxisUnit.Default, axisPropertyGetter.GetDefaultUnit ("X"));
-        Assert.IsNull (axisPropertyGetter.GetMaxVelocity ("X"));
+        Assert.Multiple (() => {
+          Assert.That (axisPropertyGetter.GetDefaultUnit ("X"), Is.EqualTo (AxisUnit.Default));
+          Assert.That (axisPropertyGetter.GetMaxVelocity ("X"), Is.Null);
+        });
       }
 
       {
@@ -50,8 +52,10 @@ namespace Lemoine.Stamping.UnitTests
 }
 """;
         var axisPropertyGetter = JsonSerializer.Deserialize<Lemoine.Stamping.AxisPropertyGetters.BasicAxisPropertyGetter> (json);
-        Assert.AreEqual (AxisUnit.Mm, axisPropertyGetter.GetDefaultUnit ("X"));
-        Assert.AreEqual (1000, axisPropertyGetter.GetMaxVelocity ("X"));
+        Assert.Multiple (() => {
+          Assert.That (axisPropertyGetter.GetDefaultUnit ("X"), Is.EqualTo (AxisUnit.Mm));
+          Assert.That (axisPropertyGetter.GetMaxVelocity ("X"), Is.EqualTo (1000));
+        });
       }
     }
   }

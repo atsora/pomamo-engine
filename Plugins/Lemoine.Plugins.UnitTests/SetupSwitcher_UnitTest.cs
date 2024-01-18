@@ -84,8 +84,8 @@ namespace Lemoine.Plugins.UnitTests
         { // Check the new machine state template
           IMachineStateTemplateAssociation newAssociation = ModelDAOHelper.DAOFactory
             .MachineStateTemplateAssociationDAO.FindAll ().First ();
-          Assert.AreEqual (setup, newAssociation.MachineStateTemplate);
-          Assert.AreEqual (T(2), newAssociation.Begin.Value);
+          Assert.That (newAssociation.MachineStateTemplate, Is.EqualTo (setup));
+          Assert.That (newAssociation.Begin.Value, Is.EqualTo (T (2)));
         }
         
         transaction.Rollback ();

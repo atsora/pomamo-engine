@@ -28,7 +28,7 @@ namespace Lemoine.Info.UnitTests
     public void TestGetIPAddressesV4OnlyLocalhost ()
     {
       var ipAddresses = Lemoine.Net.NetworkAddress.GetIPAddressesV4Only ("localhost");
-      Assert.IsTrue (ipAddresses.Contains (new IPAddress (new byte[] { 127, 0, 0, 1 })));
+      Assert.That (ipAddresses, Does.Contain (new IPAddress (new byte[] { 127, 0, 0, 1 })));
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ namespace Lemoine.Info.UnitTests
     public void TestGetIPAddressesV4Only127001 ()
     {
       var ipAddresses = Lemoine.Net.NetworkAddress.GetIPAddressesV4Only ("127.0.0.1");
-      Assert.IsTrue (ipAddresses.Contains (new IPAddress (new byte[] { 127, 0, 0, 1 })));
+      Assert.That (ipAddresses, Does.Contain (new IPAddress (new byte[] { 127, 0, 0, 1 })));
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ namespace Lemoine.Info.UnitTests
     public void TestGetIPAddressesV4Only3333 ()
     {
       var ipAddresses = Lemoine.Net.NetworkAddress.GetIPAddressesV4Only ("3.3.3.3");
-      Assert.IsTrue (ipAddresses.Contains (new IPAddress (new byte[] { 3, 3, 3, 3 })));
+      Assert.That (ipAddresses, Does.Contain (new IPAddress (new byte[] { 3, 3, 3, 3 })));
     }
   }
 }

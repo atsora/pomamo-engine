@@ -26,7 +26,7 @@ namespace Lemoine.Extensions.ExtensionsProvider
   /// 
   /// Threadsafe
   /// </summary>
-  public class ExtensionsProvider: IExtensionsProvider
+  public class ExtensionsProvider : IExtensionsProvider
   {
     static readonly string CHECK_INTERFACES_KEY = "Extensions.CheckInterfaces";
     static readonly bool CHECK_INTERFACES_DEFAULT = false;
@@ -64,8 +64,7 @@ namespace Lemoine.Extensions.ExtensionsProvider
     /// </summary>
     public IEnumerable<IPluginDllLoader> LoadErrorPlugins
     {
-      get
-      {
+      get {
         Load ();
         return m_pluginsLoader.GetLoadErrorPlugins ();
       }
@@ -179,15 +178,11 @@ namespace Lemoine.Extensions.ExtensionsProvider
         return extensions;
       }
 
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
 
       var plugins = m_pluginsLoader.GetActivePlugins ();
       foreach (var plugin in plugins.Distinct ()) {
-        if (null != checkedThread) {
-          checkedThread.SetActive ();
-        }
+        checkedThread?.SetActive ();
         var activeExtensionTypes = plugin.ActiveExtensionTypes
           .Where (type => IsValidInterfaceImplementation<T> (type));
         // Note: in .Net Core, replace it by type.GetTypeInfo ().IsAbstract
@@ -195,9 +190,7 @@ namespace Lemoine.Extensions.ExtensionsProvider
           if (log.IsDebugEnabled) {
             log.Debug ($"GetExtensions: add extension of type {activeExtensionType} for plugin {plugin}");
           }
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           bool uniqueInstance = false;
           IExtension extension = null;
           var instances = plugin.Instances

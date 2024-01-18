@@ -48,7 +48,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Associated machine module
             IMachineModule mamo = null;
@@ -58,7 +58,7 @@ namespace Lemoine.AutoReason.UnitTests
               }
             }
 
-            Assert.NotNull (mamo);
+            Assert.That (mamo, Is.Not.Null);
 
             // Get an operation
             var operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (1);
@@ -80,12 +80,12 @@ namespace Lemoine.AutoReason.UnitTests
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (7), reasonAssociation.Begin.Value, "wrong start for the first reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start for the first reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (10), reasonAssociation.Begin.Value, "wrong start for the second reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (10)), "wrong start for the second reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
             }
           } finally {

@@ -321,33 +321,39 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                 .Add (Expression.Eq ("Machine", machine1))
                 .AddOrder (Order.Asc ("DateTimeRange"))
                 .List<ReasonSlot> ();
-              Assert.AreEqual (3, slots.Count, "Number of reason slots");
+              Assert.That (slots, Has.Count.EqualTo (3), "Number of reason slots");
               int i = 0;
-              Assert.AreEqual (machine1, slots[i].Machine);
-              Assert.AreEqual (reasonSetup, slots[i].Reason);
-              Assert.AreEqual (false, slots[i].DefaultReason);
-              Assert.AreEqual (inactive, slots[i].MachineMode);
-              Assert.AreEqual (attended, slots[i].MachineObservationState);
-              Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 00, 00), slots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 10, 00), slots[i].EndDateTime.Value);
-              Assert.AreEqual (productionStateNoProduction, slots[i].ProductionState);
+              Assert.Multiple (() => {
+                Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+                Assert.That (slots[i].Reason, Is.EqualTo (reasonSetup));
+                Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+                Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+                Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+                Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 00, 00)));
+                Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 10, 00)));
+                Assert.That (slots[i].ProductionState, Is.EqualTo (productionStateNoProduction));
+              });
               ++i;
-              Assert.AreEqual (machine1, slots[i].Machine);
-              Assert.AreEqual (reasonMotion, slots[i].Reason);
-              Assert.AreEqual (true, slots[i].DefaultReason);
-              Assert.AreEqual (active, slots[i].MachineMode);
-              Assert.AreEqual (attended, slots[i].MachineObservationState);
-              Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 10, 00), slots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 20, 00), slots[i].EndDateTime.Value);
-              Assert.AreEqual (productionStateProduction, slots[i].ProductionState);
+              Assert.Multiple (() => {
+                Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+                Assert.That (slots[i].Reason, Is.EqualTo (reasonMotion));
+                Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+                Assert.That (slots[i].MachineMode, Is.EqualTo (active));
+                Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+                Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 10, 00)));
+                Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 20, 00)));
+                Assert.That (slots[i].ProductionState, Is.EqualTo (productionStateProduction));
+              });
               ++i;
-              Assert.AreEqual (machine1, slots[i].Machine);
-              Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-              Assert.AreEqual (true, slots[i].DefaultReason);
-              Assert.AreEqual (inactive, slots[i].MachineMode);
-              Assert.AreEqual (attended, slots[i].MachineObservationState);
-              Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 20, 00), slots[i].BeginDateTime.Value);
-              Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 30, 00), slots[i].EndDateTime.Value);
+              Assert.Multiple (() => {
+                Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+                Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+                Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+                Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+                Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+                Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 20, 00)));
+                Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 30, 00)));
+              });
             }
             // - AnalysisLogs
             AnalysisUnitTests.CheckNumberOfAnalysisLogs (session, 1); // Warning on reason slot motion
@@ -487,13 +493,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 1;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
           }
 
           transaction.Rollback ();
@@ -644,14 +652,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 1;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+            });
           }
 
           // New association 1 -> 3
@@ -688,14 +698,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 1;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+            });
           }
 
           // New association 1 -> 3
@@ -744,14 +756,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 1;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+            });
           }
 
           transaction.Rollback ();
@@ -926,14 +940,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
           }
           { // 2nd run: until T(2)
             AnalysisUnitTests.RunFirst ();
@@ -946,21 +962,25 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (2), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (2), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
           }
           { // 3rd run: until T(3)
             AnalysisUnitTests.RunMakeAnalysis ();
@@ -972,14 +992,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
           }
 
           transaction.Rollback ();
@@ -1084,14 +1106,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
           }
           { // 2nd run: until T(2)
             AnalysisUnitTests.RunFirst ();
@@ -1104,21 +1128,25 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (2), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (2), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
           }
           { // 3rd run: until T(3)
             AnalysisUnitTests.RunMakeAnalysis ();
@@ -1130,14 +1158,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
           }
 
           transaction.Rollback ();
@@ -1243,14 +1273,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (5), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+            });
             Assert.Greater (slots[i].AutoReasonNumber, 0);
           }
           { // 2rd run: until T(3)
@@ -1263,21 +1295,25 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (3), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (5), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+            });
           }
 
           transaction.Rollback ();
@@ -1381,14 +1417,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (5), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+            });
           }
 
           transaction.Rollback ();
@@ -1493,14 +1531,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (5), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+            });
           }
           { // 2rd run: until T(3)
             AnalysisUnitTests.RunMakeAnalysis ();
@@ -1512,21 +1552,25 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (3), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (3), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (5), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (3)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+            });
           }
 
           transaction.Rollback ();
@@ -1734,7 +1778,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
           }
 
           // New association 2 -> 4: Television
@@ -1755,7 +1799,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (3, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (3), "Number of reason slots");
           }
 
           {
@@ -1769,31 +1813,37 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .Add (Expression.Eq ("Machine", machine1))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.AreEqual (3, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (3), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (T (1), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (2), slots[i].EndDateTime.Value);
-            Assert.AreEqual (1, slots[i].AutoReasonNumber);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (slots[i].AutoReasonNumber, Is.EqualTo (1));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonTelevision, slots[i].Reason);
-            Assert.AreEqual (T (2), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (4), slots[i].EndDateTime.Value);
-            Assert.IsTrue (slots[i].ReasonSource.HasFlag (ReasonSource.UnsafeAutoReasonNumber));
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonTelevision));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (4)));
+              Assert.That (slots[i].ReasonSource.HasFlag (ReasonSource.UnsafeAutoReasonNumber), Is.True);
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (T (4), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (5), slots[i].EndDateTime.Value);
-            Assert.AreEqual (0, slots[i].AutoReasonNumber);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (4)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+              Assert.That (slots[i].AutoReasonNumber, Is.EqualTo (0));
+            });
             ++i;
           }
         }

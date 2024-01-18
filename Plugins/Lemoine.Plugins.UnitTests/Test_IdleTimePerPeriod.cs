@@ -25,7 +25,7 @@ namespace Lemoine.Plugins.UnitTests
     {
       int value = 0;
       int expected = 0;
-      Assert.AreEqual (expected, value);
+      Assert.That (value, Is.EqualTo (expected));
     }
   }
 }

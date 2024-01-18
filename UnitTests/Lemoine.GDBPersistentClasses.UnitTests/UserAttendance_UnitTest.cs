@@ -100,22 +100,26 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Add (Expression.Eq ("User", user1))
           .AddOrder (Order.Asc ("BeginDateTime"))
           .List<UserSlot> ();
-        Assert.AreEqual (2, slots.Count, "Number of slots");
+        Assert.That (slots, Has.Count.EqualTo (2), "Number of slots");
         int i = 0;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), slots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), slots [i].EndDateTime.Value);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+        });
         ++i;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 04), slots [i].BeginDateTime.Value);
-        Assert.IsFalse (slots [i].EndDateTime.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 04)));
+          Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+        });
         // - Modifications
         IList<UserAttendance> modifications =
           session.CreateCriteria<UserAttendance> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<UserAttendance> ();
-        Assert.AreEqual (1, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+        Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+        Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (0);
         
@@ -190,18 +194,20 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Add (Expression.Eq ("User", user1))
           .AddOrder (Order.Asc ("BeginDateTime"))
           .List<UserSlot> ();
-        Assert.AreEqual (1, slots.Count, "Number of slots");
+        Assert.That (slots, Has.Count.EqualTo (1), "Number of slots");
         int i = 0;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), slots [i].BeginDateTime.Value);
-        Assert.IsFalse (slots [i].EndDateTime.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+        });
         // - Modifications
         IList<UserAttendance> modifications =
           session.CreateCriteria<UserAttendance> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<UserAttendance> ();
-        Assert.AreEqual (1, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+        Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+        Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (0);
         
@@ -279,39 +285,49 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         // - UserSlots
         IList<IUserSlot> slots = ModelDAOHelper.DAOFactory.UserSlotDAO
           .FindAll (user1);
-        Assert.AreEqual (5, slots.Count, "Number of slots");
+        Assert.That (slots, Has.Count.EqualTo (5), "Number of slots");
         int i = 0;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-        Assert.AreEqual (T(3), slots [i].EndDateTime.Value);
-        Assert.AreEqual (shift2, slots [i].Shift);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+          Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+          Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+        });
         ++i;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (T(3), slots [i].BeginDateTime.Value);
-        Assert.AreEqual (T(4), slots [i].EndDateTime.Value);
-        Assert.AreEqual (shift1, slots [i].Shift);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (3)));
+          Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (4)));
+          Assert.That (slots[i].Shift, Is.EqualTo (shift1));
+        });
         ++i;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (T(4), slots [i].BeginDateTime.Value);
-        Assert.AreEqual (T(5), slots [i].EndDateTime.Value);
-        Assert.AreEqual (shift3, slots [i].Shift);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (4)));
+          Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+          Assert.That (slots[i].Shift, Is.EqualTo (shift3));
+        });
         ++i;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (T(5), slots [i].BeginDateTime.Value);
-        Assert.AreEqual (T(6), slots [i].EndDateTime.Value);
-        Assert.AreEqual (shift2, slots [i].Shift);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (5)));
+          Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (6)));
+          Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+        });
         ++i;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (T(6), slots [i].BeginDateTime.Value);
-        Assert.IsFalse (slots [i].EndDateTime.HasValue);
-        Assert.AreEqual (shift1, slots [i].Shift);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (6)));
+          Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+          Assert.That (slots[i].Shift, Is.EqualTo (shift1));
+        });
         ++i;
         // TODO: test the machine observation states
         // - Modifications
         IList<IUserAttendance> modifications = ModelDAOHelper.DAOFactory.UserAttendanceDAO
           .FindAll ();
-        Assert.AreEqual (1, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+        Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+        Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (0);
         
@@ -390,24 +406,28 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         // - UserSlots
         IList<IUserSlot> slots = ModelDAOHelper.DAOFactory.UserSlotDAO
           .FindAll (user1);
-        Assert.AreEqual (2, slots.Count, "Number of slots");
+        Assert.That (slots, Has.Count.EqualTo (2), "Number of slots");
         int i = 0;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-        Assert.AreEqual (T(2), slots [i].EndDateTime.Value);
-        Assert.AreEqual (shift2, slots [i].Shift);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+          Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+          Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+        });
         ++i;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-        Assert.IsFalse (slots [i].EndDateTime.HasValue);
-        Assert.AreEqual (shift3, slots [i].Shift);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+          Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+          Assert.That (slots[i].Shift, Is.EqualTo (shift3));
+        });
         ++i;
         // TODO: test the machine observation states
         // - Modifications
         IList<IUserAttendance> modifications = ModelDAOHelper.DAOFactory.UserAttendanceDAO
           .FindAll ();
-        Assert.AreEqual (1, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+        Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+        Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (0);
         
@@ -463,18 +483,22 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // - UserSlots
           IList<IUserSlot> slots = ModelDAOHelper.DAOFactory.UserSlotDAO
             .FindOverlapsRange (user1, new UtcDateTimeRange (T(1)));
-          Assert.AreEqual (1, slots.Count, "Number of slots");
+          Assert.That (slots, Has.Count.EqualTo (1), "Number of slots");
           int i = 0;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-          Assert.IsFalse (slots [i].EndDateTime.HasValue);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+          });
         }
         { // - Modifications
           IList<IUserAttendance> modifications = ModelDAOHelper.DAOFactory.UserAttendanceDAO
             .FindAll ();
-          Assert.AreEqual (1, modifications.Count, "Number of modifications");
-          Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
-          Assert.IsTrue (modifications[0].AnalysisSubModifications);
+          Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+          Assert.Multiple (() => {
+            Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
+            Assert.That (modifications[0].AnalysisSubModifications, Is.True);
+          });
         }
         { // - AnalysisLogs
           AnalysisUnitTests.CheckNumberOfAnalysisLogs (0);
@@ -482,19 +506,23 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // - ObservationStateSlot
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindByUserInRange (user1, new UtcDateTimeRange (T(1)));
-          Assert.AreEqual (2, slots.Count);
+          Assert.That (slots, Has.Count.EqualTo (2));
           int i = 0;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(3), slots [i].EndDateTime.Value);
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (attended, slots [i].MachineStateTemplate);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (attended));
+          });
           ++i;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(3), slots [i].EndDateTime.Value);
-          Assert.AreEqual (machine2, slots [i].Machine);
-          Assert.AreEqual (onSite, slots [i].MachineStateTemplate);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            Assert.That (slots[i].Machine, Is.EqualTo (machine2));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (onSite));
+          });
         }
         
         transaction.Rollback ();
@@ -564,18 +592,20 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Add (Expression.Eq ("User", user1))
           .AddOrder (Order.Asc ("BeginDateTime"))
           .List<UserSlot> ();
-        Assert.AreEqual (1, slots.Count, "Number of slots");
+        Assert.That (slots, Has.Count.EqualTo (1), "Number of slots");
         int i = 0;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), slots [i].BeginDateTime.Value);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 03), slots [i].EndDateTime.Value);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 03)));
+        });
         // - Modifications
         IList<UserAttendance> modifications =
           session.CreateCriteria<UserAttendance> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<UserAttendance> ();
-        Assert.AreEqual (1, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+        Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+        Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (3);
         
@@ -662,11 +692,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .Add (Expression.Eq ("User", user1))
             .AddOrder (Order.Asc ("BeginDateTime"))
             .List<UserSlot> ();
-          Assert.AreEqual (1, slots.Count, "Number of user slots");
+          Assert.That (slots, Has.Count.EqualTo (1), "Number of user slots");
           int i = 0;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(2), slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+          });
         }
         {
           // - ObservationStateSlots
@@ -675,32 +707,38 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .Add (Expression.Eq ("Machine", machine1))
             .AddOrder (Order.Asc ("DateTimeRange"))
             .List<ObservationStateSlot> ();
-          Assert.AreEqual (3, slots.Count, "Number of observation state slots");
+          Assert.That (slots, Has.Count.EqualTo (3), "Number of observation state slots");
           int i = 1;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (attended, slots [i].MachineStateTemplate);
-          Assert.AreEqual (mosAttended, slots [i].MachineObservationState);
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (shift3, slots [i].Shift);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(2), slots [i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (attended));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (mosAttended));
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift3));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+          });
           ++i;
-          Assert.AreEqual (machine1, slots [i].Machine);
-          Assert.AreEqual (unattended, slots [i].MachineStateTemplate);
-          Assert.AreEqual (mosUnattended, slots [i].MachineObservationState);
-          Assert.AreEqual (null, slots [i].User);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-          Assert.IsFalse (slots [i].EndDateTime.HasValue);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+            Assert.That (slots[i].MachineStateTemplate, Is.EqualTo (unattended));
+            Assert.That (slots[i].MachineObservationState, Is.EqualTo (mosUnattended));
+            Assert.That (slots[i].User, Is.EqualTo (null));
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+          });
         }
         // - Modifications
         IList<UserAttendance> modifications =
           session.CreateCriteria<UserAttendance> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<UserAttendance> ();
-        Assert.AreEqual (1, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
-        Assert.IsTrue (modifications[0].AnalysisSubModifications);
+        Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+        Assert.Multiple (() => {
+          Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
+          Assert.That (modifications[0].AnalysisSubModifications, Is.True);
+        });
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (2);
         
@@ -775,19 +813,21 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .Add (Expression.Eq ("User", user1))
           .AddOrder (Order.Asc ("BeginDateTime"))
           .List<UserSlot> ();
-        Assert.AreEqual (1, slots.Count, "Number of slots");
+        Assert.That (slots, Has.Count.EqualTo (1), "Number of slots");
         int i = 0;
-        Assert.AreEqual (user1, slots [i].User);
-        Assert.AreEqual (UtcDateTime.From (2011, 08, 01), slots [i].BeginDateTime.Value);
-        Assert.IsFalse (slots [i].EndDateTime.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (slots[i].User, Is.EqualTo (user1));
+          Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01)));
+          Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+        });
         ++i;
         // - Modifications
         IList<UserAttendance> modifications =
           session.CreateCriteria<UserAttendance> ()
           .AddOrder (Order.Asc ("DateTime"))
           .List<UserAttendance> ();
-        Assert.AreEqual (1, modifications.Count, "Number of modifications");
-        Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
+        Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+        Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (0);
         

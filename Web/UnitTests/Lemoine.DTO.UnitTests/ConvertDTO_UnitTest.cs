@@ -25,7 +25,7 @@ namespace Lemoine.DTO.UnitTests
     {
       DateTime day = new DateTime (2015, 11, 15);
       string s = Lemoine.DTO.ConvertDTO.DayToString (day);
-      Assert.AreEqual ("2015-11-15", s);
+      Assert.That (s, Is.EqualTo ("2015-11-15"));
     }
 
     /// <summary>
@@ -36,8 +36,10 @@ namespace Lemoine.DTO.UnitTests
     {
       const string s = "2015-11-15";
       DateTime? day = Lemoine.DTO.ConvertDTO.StringToDay (s);
-      Assert.IsTrue (day.HasValue);
-      Assert.AreEqual (new DateTime (2015, 11, 15), day.Value);
+      Assert.Multiple (() => {
+        Assert.That (day.HasValue, Is.True);
+        Assert.That (day.Value, Is.EqualTo (new DateTime (2015, 11, 15)));
+      });
     }
   }
 }

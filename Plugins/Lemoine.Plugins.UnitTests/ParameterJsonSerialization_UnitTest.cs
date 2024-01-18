@@ -50,7 +50,7 @@ namespace Lemoine.Plugins.UnitTests
 }}
 ");
             extension.Initialize (machine);
-            Assert.AreEqual (3, extension.NewMachineModeFilter.Id);
+            Assert.That (extension.NewMachineModeFilter.Id, Is.EqualTo (3));
           }
         }
         finally {

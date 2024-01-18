@@ -97,33 +97,43 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .Add (Expression.Eq ("MachineModule", machineModule))
             .AddOrder (Order.Asc ("BeginDateTime"))
             .List<IsoFileSlot> ();
-          
-          Assert.AreEqual (5, slots.Count, "Number of isofile slots");
+
+          Assert.That (slots, Has.Count.EqualTo (5), "Number of isofile slots");
           int i = 0;
-          Assert.AreEqual (machineModule, slots[i].MachineModule);
-          Assert.AreEqual (isoFile1, slots[i].IsoFile);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 00, 00), slots[i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 10, 00), slots[i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].MachineModule, Is.EqualTo (machineModule));
+            Assert.That (slots[i].IsoFile, Is.EqualTo (isoFile1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 00, 00)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 10, 00)));
+          });
           ++i;
-          Assert.AreEqual (machineModule, slots[i].MachineModule);
-          Assert.AreEqual (isoFile2, slots[i].IsoFile);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 10, 00), slots[i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 20, 00), slots[i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].MachineModule, Is.EqualTo (machineModule));
+            Assert.That (slots[i].IsoFile, Is.EqualTo (isoFile2));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 10, 00)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 20, 00)));
+          });
           ++i;
-          Assert.AreEqual (machineModule, slots[i].MachineModule);
-          Assert.AreEqual (isoFile3, slots[i].IsoFile);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 20, 00), slots[i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 25, 00), slots[i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].MachineModule, Is.EqualTo (machineModule));
+            Assert.That (slots[i].IsoFile, Is.EqualTo (isoFile3));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 20, 00)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 25, 00)));
+          });
           ++i;
-          Assert.AreEqual (machineModule, slots[i].MachineModule);
-          Assert.AreEqual (isoFile4, slots[i].IsoFile);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 25, 00), slots[i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 32, 00), slots[i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].MachineModule, Is.EqualTo (machineModule));
+            Assert.That (slots[i].IsoFile, Is.EqualTo (isoFile4));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 25, 00)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 32, 00)));
+          });
           ++i;
-          Assert.AreEqual (machineModule, slots[i].MachineModule);
-          Assert.AreEqual (isoFile5, slots[i].IsoFile);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 32, 00), slots[i].BeginDateTime.Value);
-          Assert.IsFalse (slots [i].EndDateTime.HasValue);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].MachineModule, Is.EqualTo (machineModule));
+            Assert.That (slots[i].IsoFile, Is.EqualTo (isoFile5));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 32, 00)));
+            Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+          });
         }
         
         // New association: isofile null 12:36:00 -> oo
@@ -142,13 +152,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .Add (Expression.Eq ("MachineModule", machineModule))
             .AddOrder (Order.Asc ("BeginDateTime"))
             .List<IsoFileSlot> ();
-          
-          Assert.AreEqual (5, slots.Count, "Number of isofile slots");
+
+          Assert.That (slots, Has.Count.EqualTo (5), "Number of isofile slots");
           int i = 4;
-          Assert.AreEqual (machineModule, slots[i].MachineModule);
-          Assert.AreEqual (isoFile5, slots[i].IsoFile);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 32, 00), slots[i].BeginDateTime.Value);
-          Assert.AreEqual (UtcDateTime.From (2011, 08, 01, 12, 36, 00), slots[i].EndDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].MachineModule, Is.EqualTo (machineModule));
+            Assert.That (slots[i].IsoFile, Is.EqualTo (isoFile5));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 32, 00)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 36, 00)));
+          });
         }
         
         transaction.Rollback ();

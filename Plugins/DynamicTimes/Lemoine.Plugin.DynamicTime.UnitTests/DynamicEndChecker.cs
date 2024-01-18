@@ -39,9 +39,11 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     {
       var response = Lemoine.Business.DynamicTimes.DynamicTime
         .GetDynamicTime (name, machine, dateTime);
-      Assert.IsFalse (response.Hint.Lower.HasValue);
-      Assert.IsFalse (response.Hint.Upper.HasValue);
-      Assert.IsFalse (response.Final.HasValue);
+      Assert.Multiple (() => {
+        Assert.That (response.Hint.Lower.HasValue, Is.False);
+        Assert.That (response.Hint.Upper.HasValue, Is.False);
+        Assert.That (response.Final.HasValue, Is.False);
+      });
     }
 
     public void CheckPending ()
@@ -54,24 +56,30 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime);
-        Assert.IsTrue (response.Hint.Lower.HasValue);
-        Assert.AreEqual (after, response.Hint.Lower.Value);
-        Assert.IsFalse (response.Final.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (response.Hint.Lower.HasValue, Is.True);
+          Assert.That (response.Hint.Lower.Value, Is.EqualTo (after));
+          Assert.That (response.Final.HasValue, Is.False);
+        });
       }
       var t1 = dateTime.AddSeconds (1);
       if (t1 < after) {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime, new UtcDateTimeRange (t1), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Hint.Lower.HasValue);
-        Assert.AreEqual (after, response.Hint.Lower.Value);
-        Assert.IsFalse (response.Final.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (response.Hint.Lower.HasValue, Is.True);
+          Assert.That (response.Hint.Lower.Value, Is.EqualTo (after));
+          Assert.That (response.Final.HasValue, Is.False);
+        });
       }
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime, new UtcDateTimeRange (after), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Hint.Lower.HasValue);
-        Assert.AreEqual (after, response.Hint.Lower.Value);
-        Assert.IsFalse (response.Final.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (response.Hint.Lower.HasValue, Is.True);
+          Assert.That (response.Hint.Lower.Value, Is.EqualTo (after));
+          Assert.That (response.Final.HasValue, Is.False);
+        });
       }
     }
 
@@ -89,14 +97,18 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime, new UtcDateTimeRange (final.Subtract (TimeSpan.FromSeconds (1))), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
     }
 
@@ -109,7 +121,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     {
       var response = Lemoine.Business.DynamicTimes.DynamicTime
         .GetDynamicTime (name, machine, dateTime);
-      Assert.IsTrue (response.NoData);
+      Assert.That (response.NoData, Is.True);
     }
 
     public void CheckNotApplicable ()
@@ -121,8 +133,10 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     {
       var response = Lemoine.Business.DynamicTimes.DynamicTime
         .GetDynamicTime (name, machine, dateTime);
-      Assert.IsTrue (response.NoData);
-      Assert.IsTrue (response.NotApplicable);
+      Assert.Multiple (() => {
+        Assert.That (response.NoData, Is.True);
+        Assert.That (response.NotApplicable, Is.True);
+      });
     }
   }
 }

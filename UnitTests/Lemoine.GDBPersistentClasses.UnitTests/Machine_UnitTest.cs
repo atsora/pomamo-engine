@@ -33,14 +33,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         // ID = 1: MACHINE_A17
         Machine machine = session.Get <Machine> (1);
-        Assert.AreEqual (machine.Id, 1);
-        Assert.AreEqual (machine.Name, "MACHINE_A17");
-        
+        Assert.Multiple (() => {
+          Assert.That (machine.Id, Is.EqualTo (1));
+          Assert.That (machine.Name, Is.EqualTo ("MACHINE_A17"));
+        });
+
         // ID = 10 does not exist
         machine = session.Get <Machine> (10);
         log.DebugFormat ("GetMachine: Got machine {0} for ID=10",
                          machine);
-        Assert.AreEqual (machine, null);
+        Assert.That (machine, Is.EqualTo (null));
       }
     }
     
@@ -57,33 +59,41 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         using (ITransaction transaction = session.BeginTransaction ())
       {
         machine = session.Get <Machine> (1);
-        Assert.AreEqual (machine.Id, 1);
-        Assert.AreEqual (machine.Name, "MACHINE_A17");
+        Assert.Multiple (() => {
+          Assert.That (machine.Id, Is.EqualTo (1));
+          Assert.That (machine.Name, Is.EqualTo ("MACHINE_A17"));
+        });
 
         monitoredMachine =
           session.Get <MonitoredMachine> (1);
-        Assert.AreEqual (monitoredMachine.Id, 1);
-        Assert.AreEqual (monitoredMachine.Name, "MACHINE_A17");
-        
+        Assert.Multiple (() => {
+          Assert.That (monitoredMachine.Id, Is.EqualTo (1));
+          Assert.That (monitoredMachine.Name, Is.EqualTo ("MACHINE_A17"));
+        });
+
         MachineModule machineModule =
           session.Get <MachineModule> (1);
-        Assert.AreEqual (machineModule.Name, "machinemodule-1");
+        Assert.That (machineModule.Name, Is.EqualTo ("machinemodule-1"));
         
         machineModule.MonitoredMachine.Name = "Poi";
         session.Update (machineModule);
-        Assert.AreEqual (monitoredMachine.Name, "Poi");
-        Assert.AreEqual (machine.Name, "Poi");
-        
+        Assert.Multiple (() => {
+          Assert.That (monitoredMachine.Name, Is.EqualTo ("Poi"));
+          Assert.That (machine.Name, Is.EqualTo ("Poi"));
+        });
+
         monitoredMachine.MainMachineModule.Name = "Abc";
         session.Update (monitoredMachine);
-        Assert.AreEqual (machineModule.Name, "Abc");
+        Assert.That (machineModule.Name, Is.EqualTo ("Abc"));
         
         MonitoredMachine monitoredMachine2 =
           machine as MonitoredMachine;
-        Assert.AreEqual (monitoredMachine.Id, 1);
-        Assert.AreEqual (monitoredMachine.Name, "Poi");
-        Assert.AreEqual (monitoredMachine.MainMachineModule.Name, "Abc");
-        
+        Assert.Multiple (() => {
+          Assert.That (monitoredMachine.Id, Is.EqualTo (1));
+          Assert.That (monitoredMachine.Name, Is.EqualTo ("Poi"));
+          Assert.That (monitoredMachine.MainMachineModule.Name, Is.EqualTo ("Abc"));
+        });
+
         session.Flush ();
         transaction.Rollback ();
       }
@@ -92,22 +102,28 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         using (ITransaction transaction = session.BeginTransaction ())
       {
         session.Lock (machine, LockMode.None);
-        Assert.AreEqual (1, machine.Id);
-        Assert.AreEqual ("Poi", machine.Name);
+        Assert.Multiple (() => {
+          Assert.That (machine.Id, Is.EqualTo (1));
+          Assert.That (machine.Name, Is.EqualTo ("Poi"));
+        });
 
         session.Lock (monitoredMachine, LockMode.None);
-        Assert.AreEqual (1, monitoredMachine.Id);
-        Assert.AreEqual ("Poi", monitoredMachine.Name);
-        
+        Assert.Multiple (() => {
+          Assert.That (monitoredMachine.Id, Is.EqualTo (1));
+          Assert.That (monitoredMachine.Name, Is.EqualTo ("Poi"));
+        });
+
         MachineModule machineModule =
           session.Get <MachineModule> (1);
-        Assert.AreEqual ("machinemodule-1", machineModule.Name);
+        Assert.That (machineModule.Name, Is.EqualTo ("machinemodule-1"));
         
         machineModule.MonitoredMachine.Name = "Poi";
         session.Update (machineModule);
-        Assert.AreEqual ("Poi", monitoredMachine.Name);
-        Assert.AreEqual ("Poi", machine.Name);
-        
+        Assert.Multiple (() => {
+          Assert.That (monitoredMachine.Name, Is.EqualTo ("Poi"));
+          Assert.That (machine.Name, Is.EqualTo ("Poi"));
+        });
+
         /*
          * Note: with session.Lock, NHibernate.NonUniqueObjectException
          *       is returned
@@ -117,7 +133,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         session.Update (monitoredMachine);
         Assert.AreEqual ("Abc", machineModule.Name);
          */
-        
+
         session.Flush ();
         transaction.Rollback ();
       }
@@ -166,15 +182,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         // ID = 1: MACHINE_A17
         MonitoredMachine machine = session.Get <MonitoredMachine> (1);
-        Assert.AreEqual (machine.Id, 1);
-        Assert.AreEqual (machine.Name, "MACHINE_A17");
-        Assert.AreEqual (machine.OperationFromCnc, true);
-        
+        Assert.Multiple (() => {
+          Assert.That (machine.Id, Is.EqualTo (1));
+          Assert.That (machine.Name, Is.EqualTo ("MACHINE_A17"));
+          Assert.That (machine.OperationFromCnc, Is.EqualTo (true));
+        });
+
         // ID = 10 does not exist
         machine = session.Get <MonitoredMachine> (10);
         log.DebugFormat ("GetMonitoredMachine: Got machine {0} for ID=10",
                          machine);
-        Assert.AreEqual (machine, null);
+        Assert.That (machine, Is.EqualTo (null));
       }
     }
 
@@ -185,7 +203,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
           .FindByIdWithMonitoredMachine (1);
         var machine = cncAcquisition.MachineModules.Single ().MonitoredMachine;
-        Assert.AreEqual ("MACHINE_A17", machine.Name);
+        Assert.That (machine.Name, Is.EqualTo ("MACHINE_A17"));
       }
     }
 
@@ -204,14 +222,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         int initialVersion = machine.Version;
 
         ModelDAOHelper.DAOFactory.MachineDAO.MakePersistent (machine);
-        Assert.AreEqual (initialVersion, machine.Version, "the version should have been the same after MakePersistent");
+        Assert.That (machine.Version, Is.EqualTo (initialVersion), "the version should have been the same after MakePersistent");
 
         // The version should remain the same even after a flush and a reload
         ModelDAOHelper.DAOFactory.FlushData ();
-        Assert.AreEqual (initialVersion, machine.Version, "the version should have been the same after Flush");
+        Assert.That (machine.Version, Is.EqualTo (initialVersion), "the version should have been the same after Flush");
 
         ModelDAOHelper.DAOFactory.MachineDAO.Reload (machine);
-        Assert.AreEqual (initialVersion, machine.Version, "the version should have been the same after Reload");
+        Assert.That (machine.Version, Is.EqualTo (initialVersion), "the version should have been the same after Reload");
 
         transaction.Rollback ();
       }

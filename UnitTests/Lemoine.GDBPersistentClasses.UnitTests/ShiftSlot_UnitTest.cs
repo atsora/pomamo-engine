@@ -62,72 +62,86 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         {
           IList<IShiftTemplateSlot> slots = ModelDAOHelper.DAOFactory.ShiftTemplateSlotDAO
             .FindOverlapsRange (R(1));
-          Assert.AreEqual (1, slots.Count);
+          Assert.That (slots, Has.Count.EqualTo (1));
           int i = 0;
-          Assert.AreEqual (template, slots [i].ShiftTemplate);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.IsFalse (slots [i].EndDateTime.HasValue);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].ShiftTemplate, Is.EqualTo (template));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.HasValue, Is.False);
+          });
         }
         {
           IList<IShiftSlot> slots = ModelDAOHelper.DAOFactory.ShiftSlotDAO
             .FindOverlapsRange (R(1));
           int i = 0;
-          Assert.AreEqual (template, slots [i].ShiftTemplate);
-          Assert.IsFalse (slots [i].TemplateProcessed);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].ShiftTemplate, Is.EqualTo (template));
+            Assert.That (slots[i].TemplateProcessed, Is.False);
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+          });
           i = slots.Count-1;
-          Assert.IsFalse (slots [i].EndDateTime.HasValue);
+          Assert.That (slots [i].EndDateTime.HasValue, Is.False);
         }
         
         { // Process the templates
           IList<IShiftSlot> slots = ModelDAOHelper.DAOFactory.ShiftSlotDAO
             .GetNotProcessTemplate (R(1), 1).ToList ();
-          Assert.AreEqual (1, slots.Count);
+          Assert.That (slots, Has.Count.EqualTo (1));
           int i = 0;
-          Assert.AreEqual (template, slots [i].ShiftTemplate);
-          Assert.IsFalse (slots [i].TemplateProcessed);
-          Assert.AreEqual (null, slots [i].Shift);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].ShiftTemplate, Is.EqualTo (template));
+            Assert.That (slots[i].TemplateProcessed, Is.False);
+            Assert.That (slots[i].Shift, Is.EqualTo (null));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+          });
           ((ShiftSlot)slots [0]).ProcessTemplate (System.Threading.CancellationToken.None, R (1, 2), null, true, null, null);
         }
         
         { // Second check
           IList<IShiftSlot> slots = ModelDAOHelper.DAOFactory.ShiftSlotDAO
             .FindOverlapsRange (R(1, 2));
-          Assert.AreEqual (4, slots.Count);
+          Assert.That (slots, Has.Count.EqualTo (4));
           int i = 0;
-          Assert.AreEqual (template, slots [i].ShiftTemplate);
+          Assert.That (slots [i].ShiftTemplate, Is.EqualTo (template));
           Assert.IsNull (slots [i].Shift);
-          Assert.IsTrue (slots [i].TemplateProcessed);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (D(1, TimeSpan.FromHours(8)), slots [i].EndDateTime.Value);
-          Assert.AreEqual (T(1).Date, slots [i].Day.Value);
-          Assert.AreEqual (0, slots [i].Breaks.Count);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].TemplateProcessed, Is.True);
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (8))));
+            Assert.That (slots[i].Day.Value, Is.EqualTo (T (1).Date));
+            Assert.That (slots[i].Breaks, Is.Empty);
+          });
           ++i;
-          Assert.AreEqual (template, slots [i].ShiftTemplate);
-          Assert.AreEqual (shift1, slots [i].Shift);
-          Assert.IsTrue (slots [i].TemplateProcessed);
-          Assert.AreEqual (D(1, TimeSpan.FromHours (8)), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (D(1, TimeSpan.FromHours(15)), slots [i].EndDateTime.Value);
-          Assert.AreEqual (T(1).Date, slots [i].Day.Value);
-          Assert.AreEqual (1, slots [i].Breaks.Count);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].ShiftTemplate, Is.EqualTo (template));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift1));
+            Assert.That (slots[i].TemplateProcessed, Is.True);
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (8))));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (15))));
+            Assert.That (slots[i].Day.Value, Is.EqualTo (T (1).Date));
+            Assert.That (slots[i].Breaks, Has.Count.EqualTo (1));
+          });
           foreach (IShiftSlotBreak b in slots [i].Breaks) {
-            Assert.AreEqual (D(1, TimeSpan.FromHours (12)), b.Range.Lower.Value);
-            Assert.AreEqual (D(1, TimeSpan.FromHours (13)), b.Range.Upper.Value);
+            Assert.Multiple (() => {
+              Assert.That (b.Range.Lower.Value, Is.EqualTo (D (1, TimeSpan.FromHours (12))));
+              Assert.That (b.Range.Upper.Value, Is.EqualTo (D (1, TimeSpan.FromHours (13))));
+            });
           }
           ++i;
-          Assert.AreEqual (template, slots [i].ShiftTemplate);
+          Assert.That (slots [i].ShiftTemplate, Is.EqualTo (template));
           Assert.IsNull (slots [i].Shift);
-          Assert.IsTrue (slots [i].TemplateProcessed);
-          Assert.AreEqual (D(1, TimeSpan.FromHours (15)), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (D(1, TimeSpan.FromHours (22)), slots [i].EndDateTime.Value);
-          Assert.AreEqual (T(1).Date, slots [i].Day.Value);
-          Assert.AreEqual (0, slots [i].Breaks.Count);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].TemplateProcessed, Is.True);
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (15))));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (22))));
+            Assert.That (slots[i].Day.Value, Is.EqualTo (T (1).Date));
+            Assert.That (slots[i].Breaks, Is.Empty);
+          });
           ++i;
-          Assert.AreEqual (template, slots [i].ShiftTemplate);
+          Assert.That (slots [i].ShiftTemplate, Is.EqualTo (template));
           Assert.IsNull (slots [i].Shift);
-          Assert.IsFalse (slots [i].TemplateProcessed); // Processed only until D(1, TimeSpan.FromHours (22)
+          Assert.That (slots [i].TemplateProcessed, Is.False); // Processed only until D(1, TimeSpan.FromHours (22)
           ++i;
         }
         
@@ -165,7 +179,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // Process the templates
           IList<IShiftSlot> slots = ModelDAOHelper.DAOFactory.ShiftSlotDAO
             .GetNotProcessTemplate (R(1, 2));
-          Assert.AreEqual (2, slots.Count);
+          Assert.That (slots, Has.Count.EqualTo (2));
           foreach (IShiftSlot slot in slots) {
             slot.ProcessTemplate (System.Threading.CancellationToken.None, R (1, 2));
           }
@@ -174,18 +188,22 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         { // Check
           IList<IShiftSlot> slots = ModelDAOHelper.DAOFactory.ShiftSlotDAO
             .FindOverlapsRange (R(1, 2));
-          Assert.AreEqual (2, slots.Count);
+          Assert.That (slots, Has.Count.EqualTo (2));
           int i = 0;
           Assert.IsNull (slots [i].ShiftTemplate);
-          Assert.AreEqual (shift1, slots [i].Shift);
-          Assert.IsTrue (slots [i].TemplateProcessed);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (D(1, TimeSpan.FromHours(22)), slots [i].EndDateTime.Value);
-          Assert.AreEqual (T(1).Date, slots [i].Day.Value);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Shift, Is.EqualTo (shift1));
+            Assert.That (slots[i].TemplateProcessed, Is.True);
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (22))));
+            Assert.That (slots[i].Day.Value, Is.EqualTo (T (1).Date));
+          });
           ++i;
           Assert.IsNull (slots [i].ShiftTemplate);
-          Assert.AreEqual (shift1, slots [i].Shift);
-          Assert.IsTrue (slots [i].TemplateProcessed);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].Shift, Is.EqualTo (shift1));
+            Assert.That (slots[i].TemplateProcessed, Is.True);
+          });
           ++i;
         }
         

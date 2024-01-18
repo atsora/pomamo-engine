@@ -31,8 +31,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                                "where WorkOrderProject.WorkOrder.Name=:WorkOrderName")
           .SetParameter ("WorkOrderName", "JOB1")
           .UniqueResult<WorkOrderProject> ();
-        Assert.NotNull (workOrderProject);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)workOrderProject.WorkOrder).Id);
+        Assert.Multiple (() => {
+          Assert.That (workOrderProject, Is.Not.Null);
+          Assert.That (((Lemoine.Collections.IDataWithId)workOrderProject.WorkOrder).Id, Is.EqualTo (1));
+        });
 
         // Note there is a bug with Criteria and composite keys
         // http://www.codewrecks.com/blog/index.php/2009/04/29/nhibernate-icriteria-and-composite-id-with-key-many-to-one/

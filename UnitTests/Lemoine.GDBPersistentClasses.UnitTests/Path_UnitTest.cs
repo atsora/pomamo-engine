@@ -47,8 +47,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         path1.Operation = operation;
         path2.Operation = operation;
-        
-        Assert.AreEqual(2, operation.Paths.Count);
+
+        Assert.That (operation.Paths, Has.Count.EqualTo (2));
         
         ISequence seq1 = ModelDAOHelper.ModelFactory.CreateSequence("seq1");
         seq1.Order = 1;
@@ -57,11 +57,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         seq1.Path = path1;
         seq2.Path = path1;
-        
-        Assert.AreEqual(2, path1.Sequences.Count);
-        Assert.AreEqual(0, path2.Sequences.Count);
-        Assert.AreEqual(seq1.Operation.Name, operation.Name);
-        Assert.AreEqual(seq2.Operation.Name, operation.Name);
+
+        Assert.Multiple (() => {
+          Assert.That (path1.Sequences, Has.Count.EqualTo (2));
+          Assert.That (path2.Sequences, Is.Empty);
+          Assert.That (operation.Name, Is.EqualTo (seq1.Operation.Name));
+        });
+        Assert.That (operation.Name, Is.EqualTo (seq2.Operation.Name));
         transaction.Rollback ();
       }
     }

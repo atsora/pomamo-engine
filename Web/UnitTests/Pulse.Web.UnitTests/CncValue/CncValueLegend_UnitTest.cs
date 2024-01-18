@@ -35,17 +35,21 @@ namespace Pulse.Web.UnitTests.CncValue
       request.MachineIds.Add (2);
       
       var response = m_service.GetWithoutCache (request) as CncValueLegendResponseDTO;
-      
-      Assert.IsNotNull (response);
-      Assert.AreEqual (1, response.Items.Count);
-      Assert.AreEqual (100, response.Items[0].Field.Id);
-      Assert.AreEqual (4, response.Items[0].Legends.Count);
+
+      Assert.That (response, Is.Not.Null);
+      Assert.That (response.Items, Has.Count.EqualTo (1));
+      Assert.Multiple (() => {
+        Assert.That (response.Items[0].Field.Id, Is.EqualTo (100));
+        Assert.That (response.Items[0].Legends, Has.Count.EqualTo (4));
+      });
       var fl1 = response.Items[0].Legends[0];
       var fl4 = response.Items[0].Legends[3];
-      Assert.AreEqual("< 1000", fl1.Display, "First field legend label");
-      Assert.AreEqual("#0080FF", fl1.Color, "First field legend color");
-      Assert.AreEqual("> 6000", fl4.Display, "Fourth field legend label");
-      Assert.AreEqual("#800080", fl4.Color, "Fourth field legend color");      
+      Assert.Multiple (() => {
+        Assert.That (fl1.Display, Is.EqualTo ("< 1000"), "First field legend label");
+        Assert.That (fl1.Color, Is.EqualTo ("#0080FF"), "First field legend color");
+        Assert.That (fl4.Display, Is.EqualTo ("> 6000"), "Fourth field legend label");
+        Assert.That (fl4.Color, Is.EqualTo ("#800080"), "Fourth field legend color");
+      });
     }
     
     /// <summary>
@@ -59,9 +63,9 @@ namespace Pulse.Web.UnitTests.CncValue
       request.MachineIds.Add (100);
       
       var response = m_service.GetWithoutCache (request) as CncValueLegendResponseDTO;
-      
-      Assert.IsNotNull (response);
-      Assert.AreEqual (0, response.Items.Count);
+
+      Assert.That (response, Is.Not.Null);
+      Assert.That (response.Items, Is.Empty);
     }
 
     [OneTimeSetUp]

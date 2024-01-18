@@ -69,17 +69,21 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.FlushData ();
         daoFactory.ToolPositionDAO.Reload (toolPosition);
 
-        // Check that another element is stored
-        Assert.AreEqual (count + 1, daoFactory.ToolPositionDAO.FindAll ().Count, "Wrong count after insertion");
+        Assert.Multiple (() => {
+          // Check that another element is stored
+          Assert.That (daoFactory.ToolPositionDAO.FindAll (), Has.Count.EqualTo (count + 1), "Wrong count after insertion");
 
-        // Check the properties (after a reload)
-        Assert.AreEqual (1, toolPosition.Version, "wrong version here");
-        Assert.AreEqual (2, toolPosition.Properties.Count);
-        Assert.AreEqual ("toolId1", toolPosition.ToolId, "wrong tool id");
-        Assert.AreEqual (true, toolPosition.Properties.ContainsKey ("property1"));
-        Assert.AreEqual (true, toolPosition.Properties.ContainsKey ("property2"));
-        Assert.AreEqual ("value1", toolPosition.Properties["property1"]);
-        Assert.AreEqual ("value2", toolPosition.Properties["property2"]);
+          // Check the properties (after a reload)
+          Assert.That (toolPosition.Version, Is.EqualTo (1), "wrong version here");
+          Assert.That (toolPosition.Properties, Has.Count.EqualTo (2));
+          Assert.That (toolPosition.ToolId, Is.EqualTo ("toolId1"), "wrong tool id");
+        });
+        Assert.Multiple (() => {
+          Assert.That (toolPosition.Properties.ContainsKey ("property1"), Is.EqualTo (true));
+          Assert.That (toolPosition.Properties.ContainsKey ("property2"), Is.EqualTo (true));
+          Assert.That (toolPosition.Properties["property1"], Is.EqualTo ("value1"));
+          Assert.That (toolPosition.Properties["property2"], Is.EqualTo ("value2"));
+        });
         int currentVersion = toolPosition.Version;
 
         // Update the properties
@@ -89,18 +93,20 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.ToolPositionDAO.Reload (toolPosition);
 
         // Check the new properties (after a reload)
-        Assert.AreEqual (2, toolPosition.Properties.Count);
-        Assert.AreEqual (true, toolPosition.Properties.ContainsKey ("property1"));
-        Assert.AreEqual (true, toolPosition.Properties.ContainsKey ("property2"));
-        Assert.AreEqual ("value3", toolPosition.Properties["property1"]);
-        Assert.AreEqual ("value2", toolPosition.Properties["property2"]);
-        Assert.AreEqual (currentVersion + 1, toolPosition.Version, "wrong version");
+        Assert.That (toolPosition.Properties, Has.Count.EqualTo (2));
+        Assert.Multiple (() => {
+          Assert.That (toolPosition.Properties.ContainsKey ("property1"), Is.EqualTo (true));
+          Assert.That (toolPosition.Properties.ContainsKey ("property2"), Is.EqualTo (true));
+          Assert.That (toolPosition.Properties["property1"], Is.EqualTo ("value3"));
+          Assert.That (toolPosition.Properties["property2"], Is.EqualTo ("value2"));
+          Assert.That (toolPosition.Version, Is.EqualTo (currentVersion + 1), "wrong version");
+        });
 
         // Remove the tool position from the database
         daoFactory.ToolPositionDAO.MakeTransient (toolPosition);
 
         // Check the number of elements stored
-        Assert.AreEqual (count, daoFactory.ToolPositionDAO.FindAll ().Count, "Wrong count after deletion");
+        Assert.That (daoFactory.ToolPositionDAO.FindAll (), Has.Count.EqualTo (count), "Wrong count after deletion");
         transaction.Rollback ();
       }
     }
@@ -125,14 +131,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
         // Call "MakePersistent" on this untouched tool position and check that the version is the same
         daoFactory.ToolPositionDAO.MakePersistent (toolPosition);
-        Assert.AreEqual (initialVersion, toolPosition.Version, "the version should have been the same after MakePersistent");
+        Assert.That (toolPosition.Version, Is.EqualTo (initialVersion), "the version should have been the same after MakePersistent");
 
         // The version should remain the same even after a flush and a reload
         daoFactory.FlushData ();
-        Assert.AreEqual (initialVersion, toolPosition.Version, "the version should have been the same after Flush");
+        Assert.That (toolPosition.Version, Is.EqualTo (initialVersion), "the version should have been the same after Flush");
 
         daoFactory.ToolPositionDAO.Reload (toolPosition);
-        Assert.AreEqual (initialVersion, toolPosition.Version, "the version should have been the same after Reload");
+        Assert.That (toolPosition.Version, Is.EqualTo (initialVersion), "the version should have been the same after Reload");
 
         transaction.Rollback ();
       }

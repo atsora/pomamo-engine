@@ -29,12 +29,12 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ())
         {
-          Assert.IsTrue (ModelDAOHelper.DAOFactory.IsTransactionReadOnly ());
+          Assert.That (ModelDAOHelper.DAOFactory.IsTransactionReadOnly (), Is.True);
         }
 
         using (IDAOTransaction transaction = session.BeginTransaction ())
         {
-          Assert.IsFalse (ModelDAOHelper.DAOFactory.IsTransactionReadOnly ());
+          Assert.That (ModelDAOHelper.DAOFactory.IsTransactionReadOnly (), Is.False);
           transaction.Commit ();
         }
       }
@@ -44,7 +44,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     public void TestConnectionString()
     {
       string connectionString = Lemoine.Info.GDBConnectionParameters.GetGDBConnectionString ("App");
-      Assert.IsFalse (string.IsNullOrEmpty (connectionString));
+      Assert.That (string.IsNullOrEmpty (connectionString), Is.False);
     }
     
     [Test]
@@ -60,7 +60,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           serverVersion = (string)command.ExecuteScalar ();
         }
       }
-      Assert.IsFalse (string.IsNullOrEmpty (serverVersion));
+      Assert.That (string.IsNullOrEmpty (serverVersion), Is.False);
     }
     
     [OneTimeSetUp]

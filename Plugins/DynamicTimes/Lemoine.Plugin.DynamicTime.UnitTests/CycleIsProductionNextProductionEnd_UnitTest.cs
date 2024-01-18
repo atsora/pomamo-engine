@@ -75,7 +75,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 }
 ");
           var initializeResult = extension.Initialize (machine, null);
-          Assert.IsTrue (initializeResult);
+          Assert.That (initializeResult, Is.True);
 
           CheckPending (extension, T (0));
 
@@ -124,24 +124,30 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     void CheckPending (IDynamicTimeExtension extension, DateTime dateTime)
     {
       var response = extension.Get (dateTime, new UtcDateTimeRange ("(,)"), new UtcDateTimeRange ("(,)"));
-      Assert.IsFalse (response.Hint.Lower.HasValue);
-      Assert.IsFalse (response.Hint.Upper.HasValue);
-      Assert.IsFalse (response.Final.HasValue);
+      Assert.Multiple (() => {
+        Assert.That (response.Hint.Lower.HasValue, Is.False);
+        Assert.That (response.Hint.Upper.HasValue, Is.False);
+        Assert.That (response.Final.HasValue, Is.False);
+      });
     }
 
     void CheckAfter (IDynamicTimeExtension extension, DateTime dateTime, DateTime after)
     {
       {
         var response = extension.Get (dateTime, new UtcDateTimeRange ("(,)"), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Hint.Lower.HasValue);
-        Assert.AreEqual (after, response.Hint.Lower.Value);
-        Assert.IsFalse (response.Final.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (response.Hint.Lower.HasValue, Is.True);
+          Assert.That (response.Hint.Lower.Value, Is.EqualTo (after));
+          Assert.That (response.Final.HasValue, Is.False);
+        });
       }
       {
         var response = extension.Get (dateTime, new UtcDateTimeRange (after), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Hint.Lower.HasValue);
-        Assert.AreEqual (after, response.Hint.Lower.Value);
-        Assert.IsFalse (response.Final.HasValue);
+        Assert.Multiple (() => {
+          Assert.That (response.Hint.Lower.HasValue, Is.True);
+          Assert.That (response.Hint.Lower.Value, Is.EqualTo (after));
+          Assert.That (response.Final.HasValue, Is.False);
+        });
       }
     }
 
@@ -149,50 +155,60 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     {
       {
         var response = extension.Get (dateTime, new UtcDateTimeRange ("(,)"), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
       {
         var response = extension.Get (dateTime, new UtcDateTimeRange (final.Subtract (TimeSpan.FromSeconds (1))), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
     }
 
     void CheckNoData (IDynamicTimeExtension extension, DateTime dateTime)
     {
       var response = extension.Get (dateTime, new UtcDateTimeRange ("(,)"), new UtcDateTimeRange ("(,)"));
-      Assert.IsTrue (response.NoData);
+      Assert.That (response.NoData, Is.True);
     }
 
     void CheckNotApplicable (IDynamicTimeExtension extension, DateTime dateTime)
     {
       var response = extension.Get (dateTime, new UtcDateTimeRange ("(,)"), new UtcDateTimeRange ("(,)"));
-      Assert.IsTrue (response.NotApplicable);
+      Assert.That (response.NotApplicable, Is.True);
     }
 
     void CheckNoData (IDynamicTimeExtension extension, DateTime at, UtcDateTimeRange limit)
     {
       var response = extension.Get (at, R (0), limit);
-      Assert.IsTrue (response.NoData || (response.Final.HasValue && !limit.ContainsElement (response.Final.Value)));
+      Assert.That (response.NoData || (response.Final.HasValue && !limit.ContainsElement (response.Final.Value)), Is.True);
     }
 
     void CheckFinal (IDynamicTimeExtension extension, DateTime at, DateTime final, UtcDateTimeRange limit)
     {
       {
         var response = extension.Get (at, R (0), limit);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
       if (T (1) < final) {
         var response = extension.Get (at, R (1), limit);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
       {
         var response = extension.Get (at, new UtcDateTimeRange (final), limit);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
     }
   }

@@ -18,6 +18,7 @@ using System.Security.Claims;
 using Lemoine.Web;
 using Pulse.Extensions.Web.Responses;
 using Lemoine.Business.Machine;
+using Lemoine.WebMiddleware.HttpContext;
 
 namespace Pulse.Web.Machine
 {

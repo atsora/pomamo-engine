@@ -43,10 +43,9 @@ namespace Lemoine.Core.Extensions.Logging
     /// <returns>
     /// An IDisposable that ends the logical operation scope on dispose.
     /// </returns>
-    public IDisposable BeginScope<TState> (TState state)
-    {
-      return m_log.BeginScope (state);
-    }
+    public IDisposable? BeginScope<TState> (TState state)
+      where TState : notnull
+      => m_log.BeginScope (state);
 
     /// <summary>
     /// Determines whether the logging level is enabled.

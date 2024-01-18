@@ -50,7 +50,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes
             var mmActive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -79,16 +79,18 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that 1 autoreason appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ().OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual ("NextMachineMode", reasonAssociation.DynamicEnd, "wrong dynamic end 1");
-              Assert.AreEqual (translationKey, reasonAssociation.Reason.TranslationKey, "wrong translation key 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.DynamicEnd, Is.EqualTo ("NextMachineMode"), "wrong dynamic end 1");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo (translationKey), "wrong translation key 1");
+              });
             }
 
             // Test that the translation value is set correctly
             var translation = ModelDAOHelper.DAOFactory.TranslationDAO.Find ("", translationKey);
-            Assert.IsNotNull (translation);
+            Assert.That (translation, Is.Not.Null);
 
           } finally {
             transaction.Rollback ();
@@ -120,7 +122,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes
             var mmActive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -154,18 +156,20 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that 1 autoreason appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ().OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual ("NextMachineMode", reasonAssociation.DynamicEnd, "wrong dynamic end 1");
-              Assert.AreEqual (translationKey, reasonAssociation.Reason.TranslationKey, "wrong translation key 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.DynamicEnd, Is.EqualTo ("NextMachineMode"), "wrong dynamic end 1");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo (translationKey), "wrong translation key 1");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (13), reasonAssociation.Begin.Value, "wrong start 2");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (13)), "wrong start 2");
             }
 
             // Test that the translation value is set correctly
             var translation = ModelDAOHelper.DAOFactory.TranslationDAO.Find ("", translationKey);
-            Assert.IsNotNull (translation);
+            Assert.That (translation, Is.Not.Null);
 
           }
           finally {
@@ -198,7 +202,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes
             var mmActive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -229,16 +233,18 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that 1 autoreason appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ().OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (10), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual ("NextMachineMode", reasonAssociation.DynamicEnd, "wrong dynamic end 1");
-              Assert.AreEqual (translationKey, reasonAssociation.Reason.TranslationKey, "wrong translation key 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (10)), "wrong start 1");
+                Assert.That (reasonAssociation.DynamicEnd, Is.EqualTo ("NextMachineMode"), "wrong dynamic end 1");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo (translationKey), "wrong translation key 1");
+              });
             }
 
             // Test that the translation value is set correctly
             var translation = ModelDAOHelper.DAOFactory.TranslationDAO.Find ("", translationKey);
-            Assert.IsNotNull (translation);
+            Assert.That (translation, Is.Not.Null);
 
           }
           finally {
@@ -273,7 +279,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes
             var mmActive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -305,18 +311,20 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that 2 autoreasons appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ().OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual ("NextMachineMode", reasonAssociation.DynamicEnd, "wrong dynamic end 1");
-              Assert.AreEqual (translationKey, reasonAssociation.Reason.TranslationKey, "wrong translation key 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.DynamicEnd, Is.EqualTo ("NextMachineMode"), "wrong dynamic end 1");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo (translationKey), "wrong translation key 1");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (20), reasonAssociation.Begin.Value, "wrong start 2");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (20)), "wrong start 2");
             }
 
             // Test that the translation value is set correctly
             var translation = ModelDAOHelper.DAOFactory.TranslationDAO.Find ("", translationKey);
-            Assert.IsNotNull (translation);
+            Assert.That (translation, Is.Not.Null);
 
           }
           finally {
@@ -350,7 +358,7 @@ namespace Lemoine.AutoReason.UnitTests
           try {
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Machine modes
             var mmActive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -381,16 +389,18 @@ namespace Lemoine.AutoReason.UnitTests
             // Check that 1 autoreason appeared
             {
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ().OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (8), reasonAssociation.Begin.Value, "wrong start 1");
-              Assert.AreEqual ("NextMachineMode", reasonAssociation.DynamicEnd, "wrong dynamic end 1");
-              Assert.AreEqual (translationKey, reasonAssociation.Reason.TranslationKey, "wrong translation key 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (8)), "wrong start 1");
+                Assert.That (reasonAssociation.DynamicEnd, Is.EqualTo ("NextMachineMode"), "wrong dynamic end 1");
+                Assert.That (reasonAssociation.Reason.TranslationKey, Is.EqualTo (translationKey), "wrong translation key 1");
+              });
             }
 
             // Test that the translation value is set correctly
             var translation = ModelDAOHelper.DAOFactory.TranslationDAO.Find ("", translationKey);
-            Assert.IsNotNull (translation);
+            Assert.That (translation, Is.Not.Null);
 
           }
           finally {

@@ -62,18 +62,22 @@ namespace Lemoine.WebService.UnitTests
       project1 = ModelDAOHelper.DAOFactory.ProjectDAO.FindById(1);
       job1 = project1.Job;
 
-      Assert.IsNotNull(machine1);
-      Assert.IsNotNull(machine2);
-      Assert.IsNotNull(machineModule1);
-      Assert.AreEqual(machineModule1.MonitoredMachine, machine1, "Machine module not OK");
-      Assert.IsNotNull(component1);
-      Assert.IsNotNull(component2);
-      Assert.IsNotNull(operation1);
-      Assert.IsNotNull(operation2);
-      Assert.IsNotNull(operation3);
-      Assert.IsNotNull(part1);
-      Assert.IsNotNull(workOrder1);
-      Assert.IsNotNull(workOrder2);
+      Assert.Multiple (() => {
+        Assert.That (machine1, Is.Not.Null);
+        Assert.That (machine2, Is.Not.Null);
+        Assert.That (machineModule1, Is.Not.Null);
+      });
+      Assert.Multiple (() => {
+        Assert.That (machine1, Is.EqualTo (machineModule1.MonitoredMachine), "Machine module not OK");
+        Assert.That (component1, Is.Not.Null);
+        Assert.That (component2, Is.Not.Null);
+        Assert.That (operation1, Is.Not.Null);
+        Assert.That (operation2, Is.Not.Null);
+        Assert.That (operation3, Is.Not.Null);
+        Assert.That (part1, Is.Not.Null);
+        Assert.That (workOrder1, Is.Not.Null);
+        Assert.That (workOrder2, Is.Not.Null);
+      });
     }
     
     #region TestGetLastCycleWithSerialNumberSuccess
@@ -115,14 +119,16 @@ namespace Lemoine.WebService.UnitTests
           
           LastCycleWithSerialNumberV2DTO lastCycleWithSerialNumberDTO = new GetLastCycleWithSerialNumberV2Service ().GetWithoutCache (getLastCycleWithSerialNumber)
             as LastCycleWithSerialNumberV2DTO;
-          
-          Assert.IsNotNull(lastCycleWithSerialNumberDTO, "GetLastCycleWithSerialNumber is null");
-          Assert.AreEqual(lastCycle.Id, lastCycleWithSerialNumberDTO.CycleId, "Bad cycle id");
-          Assert.AreEqual(false, lastCycleWithSerialNumberDTO.EstimatedBegin, "Bad cycle estimated begin status");
-          Assert.AreEqual(false, lastCycleWithSerialNumberDTO.EstimatedEnd, "Bad cycle estimated end status");
-          Assert.AreEqual(serialNumber, lastCycleWithSerialNumberDTO.SerialNumber, "Bad serial number arg");
-          Assert.AreEqual(true, lastCycleWithSerialNumberDTO.DataMissing, "Bad data missing arg");
-          
+
+          Assert.That (lastCycleWithSerialNumberDTO, Is.Not.Null, "GetLastCycleWithSerialNumber is null");
+          Assert.Multiple (() => {
+            Assert.That (lastCycleWithSerialNumberDTO.CycleId, Is.EqualTo (lastCycle.Id), "Bad cycle id");
+            Assert.That (lastCycleWithSerialNumberDTO.EstimatedBegin, Is.EqualTo (false), "Bad cycle estimated begin status");
+            Assert.That (lastCycleWithSerialNumberDTO.EstimatedEnd, Is.EqualTo (false), "Bad cycle estimated end status");
+            Assert.That (lastCycleWithSerialNumberDTO.SerialNumber, Is.EqualTo (serialNumber), "Bad serial number arg");
+            Assert.That (lastCycleWithSerialNumberDTO.DataMissing, Is.EqualTo (true), "Bad data missing arg");
+          });
+
           string serialNumber2 = "S2345";
           IDeliverablePiece deliverablePiece2 = ModelDAOHelper.ModelFactory.CreateDeliverablePiece(serialNumber2);
           deliverablePiece2.Component = component1;
@@ -135,11 +141,13 @@ namespace Lemoine.WebService.UnitTests
           LastCycleWithSerialNumberV2DTO lastCycleWithSerialNumberDTO2 =
             new GetLastCycleWithSerialNumberV2Service ().GetWithoutCache (getLastCycleWithSerialNumber)
             as LastCycleWithSerialNumberV2DTO;
-          
-          Assert.IsNotNull(lastCycleWithSerialNumberDTO2, "GetLastCycleWithSerialNumber is null (2)");
-          Assert.AreEqual(lastCycle.Id, lastCycleWithSerialNumberDTO2.CycleId, "Bad cycle id");
-          Assert.AreEqual(serialNumber, lastCycleWithSerialNumberDTO2.SerialNumber, "Bad serial number arg (2)");
-          Assert.AreEqual(false, lastCycleWithSerialNumberDTO2.DataMissing, "Bad data missing arg (2)");
+
+          Assert.That (lastCycleWithSerialNumberDTO2, Is.Not.Null, "GetLastCycleWithSerialNumber is null (2)");
+          Assert.Multiple (() => {
+            Assert.That (lastCycleWithSerialNumberDTO2.CycleId, Is.EqualTo (lastCycle.Id), "Bad cycle id");
+            Assert.That (lastCycleWithSerialNumberDTO2.SerialNumber, Is.EqualTo (serialNumber), "Bad serial number arg (2)");
+            Assert.That (lastCycleWithSerialNumberDTO2.DataMissing, Is.EqualTo (false), "Bad data missing arg (2)");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -186,25 +194,29 @@ namespace Lemoine.WebService.UnitTests
           LastCycleWithSerialNumberV2DTO lastCycleWithSerialNumberDTO =
             new GetLastCycleWithSerialNumberV2Service ().GetWithoutCache (getLastCycleWithSerialNumber)
             as LastCycleWithSerialNumberV2DTO;
-          
-          Assert.IsNotNull(lastCycleWithSerialNumberDTO, "GetLastCycleWithSerialNumber is null");
-          Assert.AreEqual(lastCycle.Id, lastCycleWithSerialNumberDTO.CycleId, "Bad cycle id");
-          Assert.AreEqual(serialNumber, lastCycleWithSerialNumberDTO.SerialNumber, "Bad serial number arg");
-          Assert.AreEqual(false, lastCycleWithSerialNumberDTO.DataMissing, "Bad data missing arg (1)");
-          
-          
+
+          Assert.That (lastCycleWithSerialNumberDTO, Is.Not.Null, "GetLastCycleWithSerialNumber is null");
+          Assert.Multiple (() => {
+            Assert.That (lastCycleWithSerialNumberDTO.CycleId, Is.EqualTo (lastCycle.Id), "Bad cycle id");
+            Assert.That (lastCycleWithSerialNumberDTO.SerialNumber, Is.EqualTo (serialNumber), "Bad serial number arg");
+            Assert.That (lastCycleWithSerialNumberDTO.DataMissing, Is.EqualTo (false), "Bad data missing arg (1)");
+          });
+
+
           // go back in time to fetch missing serial on firstCycle
           getLastCycleWithSerialNumber.Begin = ConvertDTO.DateTimeUtcToIsoString(currentDate.Subtract(TimeSpan.FromHours(40)));
           lastCycleWithSerialNumberDTO =
             new GetLastCycleWithSerialNumberV2Service ().GetWithoutCache (getLastCycleWithSerialNumber)
             as LastCycleWithSerialNumberV2DTO;
-          
-          Assert.IsNotNull(lastCycleWithSerialNumberDTO, "GetLastCycleWithSerialNumber is null");
-          Assert.AreEqual(lastCycle.Id, lastCycleWithSerialNumberDTO.CycleId, "Bad cycle id");
-          Assert.AreEqual(serialNumber, lastCycleWithSerialNumberDTO.SerialNumber, "Bad serial number arg");
-          Assert.AreEqual(true, lastCycleWithSerialNumberDTO.DataMissing, "Bad data missing arg (2)");
-          
-          
+
+          Assert.That (lastCycleWithSerialNumberDTO, Is.Not.Null, "GetLastCycleWithSerialNumber is null");
+          Assert.Multiple (() => {
+            Assert.That (lastCycleWithSerialNumberDTO.CycleId, Is.EqualTo (lastCycle.Id), "Bad cycle id");
+            Assert.That (lastCycleWithSerialNumberDTO.SerialNumber, Is.EqualTo (serialNumber), "Bad serial number arg");
+            Assert.That (lastCycleWithSerialNumberDTO.DataMissing, Is.EqualTo (true), "Bad data missing arg (2)");
+          });
+
+
         } finally {
           transaction.Rollback();
         }
@@ -244,10 +256,12 @@ namespace Lemoine.WebService.UnitTests
           LastCycleWithSerialNumberV2DTO lastCycleWithSerialNumberDTO =
             new GetLastCycleWithSerialNumberV2Service ().GetWithoutCache (getLastSerialNumber)
             as LastCycleWithSerialNumberV2DTO;
-          
-          Assert.IsNotNull(lastCycleWithSerialNumberDTO, "GetLastCycleWithSerialNumber is null");
-          Assert.AreEqual("0", lastCycleWithSerialNumberDTO.SerialNumber, "Bad serial number arg");
-          Assert.AreEqual(true, lastCycleWithSerialNumberDTO.DataMissing, "Bad data missing arg");
+
+          Assert.That (lastCycleWithSerialNumberDTO, Is.Not.Null, "GetLastCycleWithSerialNumber is null");
+          Assert.Multiple (() => {
+            Assert.That (lastCycleWithSerialNumberDTO.SerialNumber, Is.EqualTo ("0"), "Bad serial number arg");
+            Assert.That (lastCycleWithSerialNumberDTO.DataMissing, Is.EqualTo (true), "Bad data missing arg");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -271,10 +285,12 @@ namespace Lemoine.WebService.UnitTests
         LastCycleWithSerialNumberV2DTO lastCycleWithSerialNumberDTO =
           new GetLastCycleWithSerialNumberV2Service ().GetWithoutCache (getLastCycleWithSerialNumber)
           as LastCycleWithSerialNumberV2DTO;
-        
-        Assert.IsNotNull(lastCycleWithSerialNumberDTO, "GetLastCycleWithSerialNumber is null");
-        Assert.AreEqual("-1", lastCycleWithSerialNumberDTO.SerialNumber, "Bad serial number arg");
-        Assert.AreEqual(false, lastCycleWithSerialNumberDTO.DataMissing, "Bad data missing arg");
+
+        Assert.That (lastCycleWithSerialNumberDTO, Is.Not.Null, "GetLastCycleWithSerialNumber is null");
+        Assert.Multiple (() => {
+          Assert.That (lastCycleWithSerialNumberDTO.SerialNumber, Is.EqualTo ("-1"), "Bad serial number arg");
+          Assert.That (lastCycleWithSerialNumberDTO.DataMissing, Is.EqualTo (false), "Bad data missing arg");
+        });
       }
     }
     #endregion
@@ -296,8 +312,8 @@ namespace Lemoine.WebService.UnitTests
           
           ErrorDTO response = new GetLastCycleWithSerialNumberV2Service ().GetWithoutCache (getLastSerialNumber) as ErrorDTO;
 
-          Assert.IsNotNull(response, "No error dto");
-          Assert.IsTrue(response.ErrorMessage.StartsWith("No monitored machine with id"), "Bad error msg");
+          Assert.That (response, Is.Not.Null, "No error dto");
+          Assert.That (response.ErrorMessage, Does.StartWith ("No monitored machine with id"), "Bad error msg");
         } finally {
           transaction.Rollback();
         }
@@ -346,46 +362,50 @@ namespace Lemoine.WebService.UnitTests
           getCyclesInCurrentPeriod.Id = machine1.Id; // monitored machine
           
           CyclesWithWorkInformationsInPeriodV2DTO cyclesInPeriodDTO = new GetCyclesWithWorkInformationsInPeriodV2Service ().GetWithoutCache (getCyclesInCurrentPeriod) as CyclesWithWorkInformationsInPeriodV2DTO;
-          
-          Assert.IsNotNull(cyclesInPeriodDTO, "GetCyclesInPeriod returns null");
-          Assert.IsNotNull(cyclesInPeriodDTO.List, "GetCyclesInPeriod returns null list");
-          Assert.AreEqual(2, cyclesInPeriodDTO.List.Count, "GetCyclesInPeriod returns bad number of cycle DTOs");
+
+          Assert.That (cyclesInPeriodDTO, Is.Not.Null, "GetCyclesInPeriod returns null");
+          Assert.That (cyclesInPeriodDTO.List, Is.Not.Null, "GetCyclesInPeriod returns null list");
+          Assert.That (cyclesInPeriodDTO.List, Has.Count.EqualTo (2), "GetCyclesInPeriod returns bad number of cycle DTOs");
           CycleWithWorkInformationsV2DTO cycleDTO1 = cyclesInPeriodDTO.List[0];
           CycleWithWorkInformationsV2DTO cycleDTO2 = cyclesInPeriodDTO.List[1];
-          
-          // reverse order
-          Assert.AreEqual(lastCycle.Id, cycleDTO1.CycleId, "bad cycle id (1)");
-          Assert.AreEqual(firstCycle.Id, cycleDTO2.CycleId, "bad cycle id (2)");
 
-          Assert.AreEqual(false, cycleDTO1.EstimatedBegin, "bad 2nd cycle estimated begin");
-          Assert.AreEqual(false, cycleDTO1.EstimatedEnd, "bad 2nd cycle estimated end");
-          
-          Assert.AreEqual(false, cycleDTO2.EstimatedBegin, "bad first cycle estimated begin");
-          Assert.AreEqual(true, cycleDTO2.EstimatedEnd, "bad first cycle estimated end");
-          
-          Assert.AreEqual(serialNumber, cycleDTO1.SerialNumber, "Bad Serial Number (1)");
-          Assert.AreEqual(null, cycleDTO2.SerialNumber, "Bad Serial Number (2)");
+          Assert.Multiple (() => {
+            // reverse order
+            Assert.That (cycleDTO1.CycleId, Is.EqualTo (lastCycle.Id), "bad cycle id (1)");
+            Assert.That (cycleDTO2.CycleId, Is.EqualTo (firstCycle.Id), "bad cycle id (2)");
 
-          Assert.IsNotNull(cyclesInPeriodDTO.Begin, "null begin"); // exact values are difficult to tell
-          Assert.IsNotNull(cyclesInPeriodDTO.End, "null end");
+            Assert.That (cycleDTO1.EstimatedBegin, Is.EqualTo (false), "bad 2nd cycle estimated begin");
+            Assert.That (cycleDTO1.EstimatedEnd, Is.EqualTo (false), "bad 2nd cycle estimated end");
 
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleBegin), cycleDTO2.Begin, "Bad begin for cycle (1)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleEnd), cycleDTO2.End, "Bad end for cycle (1)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(lastCycleBegin), cycleDTO1.Begin, "Bad begin for cycle (2)");
-          Assert.AreEqual("", cycleDTO1.End, "Bad end for cycle (2)");
-          
+            Assert.That (cycleDTO2.EstimatedBegin, Is.EqualTo (false), "bad first cycle estimated begin");
+            Assert.That (cycleDTO2.EstimatedEnd, Is.EqualTo (true), "bad first cycle estimated end");
+
+            Assert.That (cycleDTO1.SerialNumber, Is.EqualTo (serialNumber), "Bad Serial Number (1)");
+            Assert.That (cycleDTO2.SerialNumber, Is.EqualTo (null), "Bad Serial Number (2)");
+
+            Assert.That (cyclesInPeriodDTO.Begin, Is.Not.Null, "null begin"); // exact values are difficult to tell
+            Assert.That (cyclesInPeriodDTO.End, Is.Not.Null, "null end");
+
+            Assert.That (cycleDTO2.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleBegin)), "Bad begin for cycle (1)");
+            Assert.That (cycleDTO2.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleEnd)), "Bad end for cycle (1)");
+            Assert.That (cycleDTO1.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (lastCycleBegin)), "Bad begin for cycle (2)");
+            Assert.That (cycleDTO1.End, Is.EqualTo (""), "Bad end for cycle (2)");
+          });
+
           getCyclesInCurrentPeriod.Begin = ConvertDTO.DateTimeUtcToIsoString(firstCycleBegin);
           getCyclesInCurrentPeriod.End = ConvertDTO.DateTimeUtcToIsoString(firstCycleEnd);
           CyclesWithWorkInformationsInPeriodV2DTO cyclesInPeriodDTO2 = new GetCyclesWithWorkInformationsInPeriodV2Service ().GetWithoutCache (getCyclesInCurrentPeriod) as CyclesWithWorkInformationsInPeriodV2DTO;
-          Assert.IsNotNull(cyclesInPeriodDTO2, "GetCyclesInPeriod returns null (2)");
-          Assert.IsNotNull(cyclesInPeriodDTO2.List, "GetCyclesInPeriod returns null list (2)");
-          Assert.AreEqual(1, cyclesInPeriodDTO2.List.Count, "GetCyclesInPeriod returns bad number of cycle DTOs (2)");
+          Assert.That (cyclesInPeriodDTO2, Is.Not.Null, "GetCyclesInPeriod returns null (2)");
+          Assert.That (cyclesInPeriodDTO2.List, Is.Not.Null, "GetCyclesInPeriod returns null list (2)");
+          Assert.That (cyclesInPeriodDTO2.List, Has.Count.EqualTo (1), "GetCyclesInPeriod returns bad number of cycle DTOs (2)");
           CycleWithWorkInformationsV2DTO cycleDTO3 = cyclesInPeriodDTO2.List[0];
-          Assert.AreEqual(null, cycleDTO3.SerialNumber, "Bad Serial Number (3)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleBegin), cyclesInPeriodDTO2.Begin, "Bad begin for cycle (3)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleEnd), cyclesInPeriodDTO2.End, "Bad begin for cycle (3)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleBegin), cycleDTO3.Begin, "Bad begin for cycle (3)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleEnd), cycleDTO3.End, "Bad begin for cycle (3)");
+          Assert.Multiple (() => {
+            Assert.That (cycleDTO3.SerialNumber, Is.EqualTo (null), "Bad Serial Number (3)");
+            Assert.That (cyclesInPeriodDTO2.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleBegin)), "Bad begin for cycle (3)");
+            Assert.That (cyclesInPeriodDTO2.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleEnd)), "Bad begin for cycle (3)");
+            Assert.That (cycleDTO3.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleBegin)), "Bad begin for cycle (3)");
+            Assert.That (cycleDTO3.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleEnd)), "Bad begin for cycle (3)");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -432,32 +452,36 @@ namespace Lemoine.WebService.UnitTests
           getCyclesInCurrentPeriod.Begin = ConvertDTO.DateTimeUtcToIsoString(currentDate.AddSeconds(-5));
           
           CyclesWithWorkInformationsInPeriodV2DTO cyclesInPeriodDTO = new GetCyclesWithWorkInformationsInPeriodV2Service ().GetWithoutCache (getCyclesInCurrentPeriod) as CyclesWithWorkInformationsInPeriodV2DTO;
-          
-          Assert.IsNotNull(cyclesInPeriodDTO, "GetCyclesInPeriod returns null");
-          Assert.IsNotNull(cyclesInPeriodDTO.List, "GetCyclesInPeriod returns null list");
-          Assert.AreEqual(1, cyclesInPeriodDTO.List.Count, "GetCyclesInPeriod returns bad number of cycle DTOs");
-          CycleWithWorkInformationsV2DTO cycleDTO2 = cyclesInPeriodDTO.List[0];
-          
-          Assert.AreEqual(serialNumber, cycleDTO2.SerialNumber, "Bad Serial Number");
 
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(lastCycleBegin), cycleDTO2.Begin, "Bad begin for cycle");
-          Assert.AreEqual("", cycleDTO2.End, "Bad end for cycle");
-          
+          Assert.That (cyclesInPeriodDTO, Is.Not.Null, "GetCyclesInPeriod returns null");
+          Assert.That (cyclesInPeriodDTO.List, Is.Not.Null, "GetCyclesInPeriod returns null list");
+          Assert.That (cyclesInPeriodDTO.List, Has.Count.EqualTo (1), "GetCyclesInPeriod returns bad number of cycle DTOs");
+          CycleWithWorkInformationsV2DTO cycleDTO2 = cyclesInPeriodDTO.List[0];
+
+          Assert.Multiple (() => {
+            Assert.That (cycleDTO2.SerialNumber, Is.EqualTo (serialNumber), "Bad Serial Number");
+
+            Assert.That (cycleDTO2.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (lastCycleBegin)), "Bad begin for cycle");
+            Assert.That (cycleDTO2.End, Is.EqualTo (""), "Bad end for cycle");
+          });
+
           getCyclesInCurrentPeriod.Begin = ConvertDTO.DateTimeUtcToIsoString(currentDate.AddSeconds(-10));
           getCyclesInCurrentPeriod.End = ConvertDTO.DateTimeUtcToIsoString(currentDate.AddSeconds(-9));
           
           cyclesInPeriodDTO = new GetCyclesWithWorkInformationsInPeriodV2Service ().GetWithoutCache (getCyclesInCurrentPeriod) as CyclesWithWorkInformationsInPeriodV2DTO;
-          
-          Assert.IsNotNull(cyclesInPeriodDTO, "GetCyclesInPeriod returns null (2)");
-          Assert.IsNotNull(cyclesInPeriodDTO.List, "GetCyclesInPeriod returns null list");
-          Assert.AreEqual(1, cyclesInPeriodDTO.List.Count, "GetCyclesInPeriod returns bad number of cycle DTOs (2)");
-          CycleWithWorkInformationsV2DTO cycleDTO1 = cyclesInPeriodDTO.List[0];
-          
-          Assert.AreEqual(null, cycleDTO1.SerialNumber, "Bad Serial Number (2)");
 
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleBegin), cycleDTO1.Begin, "Bad begin for cycle (2)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstCycleEnd), cycleDTO1.End, "Bad end for cycle (2)");
-          
+          Assert.That (cyclesInPeriodDTO, Is.Not.Null, "GetCyclesInPeriod returns null (2)");
+          Assert.That (cyclesInPeriodDTO.List, Is.Not.Null, "GetCyclesInPeriod returns null list");
+          Assert.That (cyclesInPeriodDTO.List, Has.Count.EqualTo (1), "GetCyclesInPeriod returns bad number of cycle DTOs (2)");
+          CycleWithWorkInformationsV2DTO cycleDTO1 = cyclesInPeriodDTO.List[0];
+
+          Assert.Multiple (() => {
+            Assert.That (cycleDTO1.SerialNumber, Is.EqualTo (null), "Bad Serial Number (2)");
+
+            Assert.That (cycleDTO1.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleBegin)), "Bad begin for cycle (2)");
+            Assert.That (cycleDTO1.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstCycleEnd)), "Bad end for cycle (2)");
+          });
+
         } finally {
           transaction.Rollback();
         }
@@ -480,8 +504,8 @@ namespace Lemoine.WebService.UnitTests
           
           ErrorDTO response = new GetCyclesWithWorkInformationsInPeriodV2Service ().GetWithoutCache(getCyclesInCurrentPeriod) as ErrorDTO;
 
-          Assert.IsNotNull(response, "No error dto");
-          Assert.IsTrue(response.ErrorMessage.StartsWith("No monitored machine with id"), "Bad error msg");
+          Assert.That (response, Is.Not.Null, "No error dto");
+          Assert.That (response.ErrorMessage, Does.StartWith ("No monitored machine with id"), "Bad error msg");
         } finally {
           transaction.Rollback();
         }
@@ -520,8 +544,8 @@ namespace Lemoine.WebService.UnitTests
           saveSerialNumber.SerialNumber = serialNumber;
           
           object saveSerialNumberResponse = new SaveSerialNumberV5Service ().GetSync (saveSerialNumber);
-          
-          Assert.IsNotNull(saveSerialNumberResponse as OkDTO, "Non-OK saveSerialNumberResponse");
+
+          Assert.That (saveSerialNumberResponse as OkDTO, Is.Not.Null, "Non-OK saveSerialNumberResponse");
           
           ModelDAOHelper.DAOFactory.Flush ();
           
@@ -531,12 +555,14 @@ namespace Lemoine.WebService.UnitTests
           pendingModificationAnalysis.MakeAnalysis(System.Threading.CancellationToken.None, currentDate.AddSeconds(10), 0, 0);
           
           IList<IOperationCycleDeliverablePiece> ocdpList = ModelDAOHelper.DAOFactory.OperationCycleDeliverablePieceDAO.FindAllWithOperationCycle(firstCycle);
-          Assert.IsNotNull(ocdpList, "No associated serial number");
-          Assert.AreEqual(1, ocdpList.Count, "No single associated serial number");
+          Assert.That (ocdpList, Is.Not.Null, "No associated serial number");
+          Assert.That (ocdpList, Has.Count.EqualTo (1), "No single associated serial number");
           IDeliverablePiece deliverablePiece = ocdpList[0].DeliverablePiece;
-          Assert.IsNotNull(deliverablePiece, "Null serial number");
-          Assert.AreEqual(serialNumber, deliverablePiece.Code, "Bad serial number");
-          Assert.AreEqual(component1, deliverablePiece.Component, "Bad component");
+          Assert.That (deliverablePiece, Is.Not.Null, "Null serial number");
+          Assert.Multiple (() => {
+            Assert.That (deliverablePiece.Code, Is.EqualTo (serialNumber), "Bad serial number");
+            Assert.That (deliverablePiece.Component, Is.EqualTo (component1), "Bad component");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -564,7 +590,7 @@ namespace Lemoine.WebService.UnitTests
           firstCycle.OperationSlot = lastSlot;
           firstCycle.Begin = currentDate.AddSeconds(1);
 
-          Assert.IsTrue(firstCycle.HasRealBegin(), "firstCycle should have real begin date time");
+          Assert.That (firstCycle.HasRealBegin(), Is.True, "firstCycle should have real begin date time");
           
           ModelDAOHelper.DAOFactory.OperationSlotDAO.MakePersistent(lastSlot);
           ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistent(firstCycle);
@@ -576,8 +602,8 @@ namespace Lemoine.WebService.UnitTests
           saveSerialNumber.SerialNumber = serialNumber;
           
           object saveSerialNumberResponse = new SaveSerialNumberV5Service ().GetSync (saveSerialNumber);
-          
-          Assert.IsNotNull(saveSerialNumberResponse as OkDTO, "Non-OK saveSerialNumberResponse");
+
+          Assert.That (saveSerialNumberResponse as OkDTO, Is.Not.Null, "Non-OK saveSerialNumberResponse");
           
           ModelDAOHelper.DAOFactory.Flush ();
           
@@ -587,12 +613,14 @@ namespace Lemoine.WebService.UnitTests
           pendingModificationAnalysis.MakeAnalysis(System.Threading.CancellationToken.None, currentDate.AddSeconds(10), 0, 0);
           
           IList<IOperationCycleDeliverablePiece> ocdpList = ModelDAOHelper.DAOFactory.OperationCycleDeliverablePieceDAO.FindAllWithOperationCycle(firstCycle);
-          Assert.IsNotNull(ocdpList, "No associated serial number");
-          Assert.AreEqual(1, ocdpList.Count, "No single associated serial number");
+          Assert.That (ocdpList, Is.Not.Null, "No associated serial number");
+          Assert.That (ocdpList, Has.Count.EqualTo (1), "No single associated serial number");
           IDeliverablePiece deliverablePiece = ocdpList[0].DeliverablePiece;
-          Assert.IsNotNull(deliverablePiece, "Null serial number");
-          Assert.AreEqual(serialNumber, deliverablePiece.Code, "Bad serial number");
-          Assert.AreEqual(component1, deliverablePiece.Component, "Bad component");
+          Assert.That (deliverablePiece, Is.Not.Null, "Null serial number");
+          Assert.Multiple (() => {
+            Assert.That (deliverablePiece.Code, Is.EqualTo (serialNumber), "Bad serial number");
+            Assert.That (deliverablePiece.Component, Is.EqualTo (component1), "Bad component");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -628,34 +656,34 @@ namespace Lemoine.WebService.UnitTests
           
           LastWorkInformationV3DTO getLastWorkInformationV2Response = new GetLastWorkInformationV3Service ()
             .GetWithoutCache (getLastWorkInformationV2) as LastWorkInformationV3DTO;
-          
-          Assert.IsNotNull(getLastWorkInformationV2Response, "No last workpiece information");
-          Assert.AreEqual(false, getLastWorkInformationV2Response.SlotMissing, "Bad slot misssing information");
+
+          Assert.That (getLastWorkInformationV2Response, Is.Not.Null, "No last workpiece information");
+          Assert.That (getLastWorkInformationV2Response.SlotMissing, Is.EqualTo (false), "Bad slot misssing information");
           
           IList<WorkInformationDTO> lastWorkInformationList = getLastWorkInformationV2Response.WorkInformations;
-          
-          Assert.IsNotNull(lastWorkInformationList, "WorkInformations null");
-          Assert.AreEqual(4, lastWorkInformationList.Count, "WorkInformations.Count != 4");
+
+          Assert.That (lastWorkInformationList, Is.Not.Null, "WorkInformations null");
+          Assert.That (lastWorkInformationList, Has.Count.EqualTo (4), "WorkInformations.Count != 4");
           for(int i = 0 ; i < 4 ; i++) {
             WorkInformationDTO wpInfoDTO = lastWorkInformationList[i];
             switch(wpInfoDTO.Kind) {
               case WorkInformationKind.WorkOrder:
-                Assert.AreEqual(wpInfoDTO.Value, workOrder1.Display);
+                Assert.That (workOrder1.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Operation:
-                Assert.AreEqual(wpInfoDTO.Value, operation1.Display);
+                Assert.That (operation1.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Part:
-                Assert.AreEqual(wpInfoDTO.Value, part1.Display);
+                Assert.That (part1.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Component:
-                Assert.AreEqual(wpInfoDTO.Value, component1.Display);
+                Assert.That (component1.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Project:
-                Assert.AreEqual(wpInfoDTO.Value, component1.Project.Display);
+                Assert.That (component1.Project.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               default:
-                Assert.IsTrue(false, String.Format("Bad kind {0}", wpInfoDTO.Kind.ToString()));
+                Assert.Fail ($"Bad kind {wpInfoDTO.Kind}");
                 break;
             }
           }
@@ -670,17 +698,17 @@ namespace Lemoine.WebService.UnitTests
           LastWorkInformationV3DTO getLastWorkInformationV2Response2 =
             new GetLastWorkInformationV3Service ()
             .GetWithoutCache (getLastWorkInformationV2) as LastWorkInformationV3DTO;
-          
-          Assert.IsNotNull(getLastWorkInformationV2Response2, "No last workpiece information (2)");
+
+          Assert.That (getLastWorkInformationV2Response2, Is.Not.Null, "No last workpiece information (2)");
           // TODO: the unit tests data is wrong. A component is returned and the following test failed
           /*
           Assert.AreEqual(true, getLastWorkInformationV2Response2.DataMissing, "Bad data misssing information (2)");
            */
 
           IList<WorkInformationDTO> lastWorkInformationList2 = getLastWorkInformationV2Response2.WorkInformations;
-          
-          Assert.IsNotNull(lastWorkInformationList2, "WorkInformations null (2)");
-          Assert.AreEqual(4, lastWorkInformationList2.Count, "WorkInformations.Count != 4 (2)");
+
+          Assert.That (lastWorkInformationList2, Is.Not.Null, "WorkInformations null (2)");
+          Assert.That (lastWorkInformationList2, Has.Count.EqualTo (4), "WorkInformations.Count != 4 (2)");
           
         } finally {
           transaction.Rollback();
@@ -726,34 +754,34 @@ namespace Lemoine.WebService.UnitTests
           LastWorkInformationV3DTO getLastWorkInformationV2Response =
             new GetLastWorkInformationV3Service ()
             .GetWithoutCache (getLastWorkInformationV2) as LastWorkInformationV3DTO;
-          
-          Assert.IsNotNull(getLastWorkInformationV2Response, "No last workpiece information");
-          Assert.AreEqual(false, getLastWorkInformationV2Response.SlotMissing, "Bad slot misssing information");
+
+          Assert.That (getLastWorkInformationV2Response, Is.Not.Null, "No last workpiece information");
+          Assert.That (getLastWorkInformationV2Response.SlotMissing, Is.EqualTo (false), "Bad slot misssing information");
           
           IList<WorkInformationDTO> lastWorkInformationList = getLastWorkInformationV2Response.WorkInformations;
-          
-          Assert.IsNotNull(lastWorkInformationList, "WorkInformations null");
-          Assert.AreEqual(4, lastWorkInformationList.Count, "WorkInformations.Count != 4");
+
+          Assert.That (lastWorkInformationList, Is.Not.Null, "WorkInformations null");
+          Assert.That (lastWorkInformationList, Has.Count.EqualTo (4), "WorkInformations.Count != 4");
           for(int i = 0 ; i < 4 ; i++) {
             WorkInformationDTO wpInfoDTO = lastWorkInformationList[i];
             switch(wpInfoDTO.Kind) {
               case WorkInformationKind.WorkOrder:
-                Assert.AreEqual(wpInfoDTO.Value, workOrder1.Display);
+                Assert.That (workOrder1.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Operation:
-                Assert.AreEqual(wpInfoDTO.Value, operation1.Display);
+                Assert.That (operation1.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Part:
-                Assert.AreEqual(wpInfoDTO.Value, part1.Display);
+                Assert.That (part1.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Component:
-                Assert.AreEqual(wpInfoDTO.Value, component2.Display);
+                Assert.That (component2.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               case WorkInformationKind.Project:
-                Assert.AreEqual(wpInfoDTO.Value, component2.Project.Display);
+                Assert.That (component2.Project.Display, Is.EqualTo (wpInfoDTO.Value));
                 break;
               default:
-                Assert.IsTrue(false, String.Format("Bad kind {0}", wpInfoDTO.Kind.ToString()));
+                Assert.Fail ($"Bad kind {wpInfoDTO.Kind}");
                 break;
             }
           }
@@ -802,36 +830,38 @@ namespace Lemoine.WebService.UnitTests
           LastWorkInformationV3DTO getLastWorkInformationV2Response =
             new GetLastWorkInformationV3Service ()
             .GetWithoutCache (getLastWorkInformationV2) as LastWorkInformationV3DTO;
-          
-          Assert.IsNotNull(getLastWorkInformationV2Response, "No last workpiece information");
-          Assert.AreEqual(false, getLastWorkInformationV2Response.SlotMissing, "Bad slot missing information");
-          // operationfromCnc => only operation missing implies no data missing
-          Assert.AreEqual(false, getLastWorkInformationV2Response.DataMissing, "Bad data missing information");
-          
+
+          Assert.That (getLastWorkInformationV2Response, Is.Not.Null, "No last workpiece information");
+          Assert.Multiple (() => {
+            Assert.That (getLastWorkInformationV2Response.SlotMissing, Is.EqualTo (false), "Bad slot missing information");
+            // operationfromCnc => only operation missing implies no data missing
+            Assert.That (getLastWorkInformationV2Response.DataMissing, Is.EqualTo (false), "Bad data missing information");
+          });
+
           IList<WorkInformationDTO> lastWorkInformationList = getLastWorkInformationV2Response.WorkInformations;
-          
-          Assert.IsNotNull(lastWorkInformationList, "WorkInformations null");
-          Assert.AreEqual(4, lastWorkInformationList.Count, "WorkInformations.Count != 4");
+
+          Assert.That (lastWorkInformationList, Is.Not.Null, "WorkInformations null");
+          Assert.That (lastWorkInformationList, Has.Count.EqualTo (4), "WorkInformations.Count != 4");
           for(int i = 0 ; i < 4 ; i++) {
             WorkInformationDTO wpInfoDTO = lastWorkInformationList[i];
             switch(wpInfoDTO.Kind) {
               case WorkInformationKind.WorkOrder:
-                Assert.AreEqual(workOrder1.Display, wpInfoDTO.Value);
+                Assert.That (wpInfoDTO.Value, Is.EqualTo (workOrder1.Display));
                 break;
               case WorkInformationKind.Operation:
-                Assert.AreEqual(operation1.Display, wpInfoDTO.Value);
+                Assert.That (wpInfoDTO.Value, Is.EqualTo (operation1.Display));
                 break;
               case WorkInformationKind.Part:
-                Assert.AreEqual(part1.Display, wpInfoDTO.Value);
+                Assert.That (wpInfoDTO.Value, Is.EqualTo (part1.Display));
                 break;
               case WorkInformationKind.Component:
-                Assert.AreEqual(component2.Display, wpInfoDTO.Value);
+                Assert.That (wpInfoDTO.Value, Is.EqualTo (component2.Display));
                 break;
               case WorkInformationKind.Project:
-                Assert.AreEqual(component2.Project.Display, wpInfoDTO.Value);
+                Assert.That (wpInfoDTO.Value, Is.EqualTo (component2.Project.Display));
                 break;
               default:
-                Assert.IsTrue(false, String.Format("Bad kind {0}", wpInfoDTO.Kind.ToString()));
+                Assert.Fail ($"Bad kind {wpInfoDTO.Kind}");
                 break;
             }
           }
@@ -861,9 +891,9 @@ namespace Lemoine.WebService.UnitTests
           ErrorDTO getLastWorkInformationV2Response =
             new GetLastWorkInformationV3Service ()
             .GetWithoutCache (getLastWorkInformationV2) as ErrorDTO;
-          
-          Assert.IsNotNull(getLastWorkInformationV2Response, "No error dto");
-          Assert.IsTrue(getLastWorkInformationV2Response.ErrorMessage.StartsWith("No monitored machine with id"), "bad error msg");
+
+          Assert.That (getLastWorkInformationV2Response, Is.Not.Null, "No error dto");
+          Assert.That (getLastWorkInformationV2Response.ErrorMessage, Does.StartWith ("No monitored machine with id"), "bad error msg");
 
           // good id but no operation slot
           getLastWorkInformationV2.Id = 1;
@@ -871,10 +901,12 @@ namespace Lemoine.WebService.UnitTests
           LastWorkInformationV3DTO getLastWorkInformationV2Response2 =
             new GetLastWorkInformationV3Service ()
             .GetWithoutCache (getLastWorkInformationV2) as LastWorkInformationV3DTO;
-          
-          Assert.IsNotNull(getLastWorkInformationV2Response2, "No last work information dto");
-          Assert.IsTrue(getLastWorkInformationV2Response2.SlotMissing, "bad slot missing info");
-          Assert.IsFalse(getLastWorkInformationV2Response2.DataMissing, "bad data missing info (2)");
+
+          Assert.That (getLastWorkInformationV2Response2, Is.Not.Null, "No last work information dto");
+          Assert.Multiple (() => {
+            Assert.That (getLastWorkInformationV2Response2.SlotMissing, Is.True, "bad slot missing info");
+            Assert.That (getLastWorkInformationV2Response2.DataMissing, Is.False, "bad data missing info (2)");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -910,9 +942,9 @@ namespace Lemoine.WebService.UnitTests
           LastWorkInformationV3DTO getLastWorkInformationV2Response =
             new GetLastWorkInformationV3Service ()
             .GetWithoutCache (getLastWorkInformationV2) as LastWorkInformationV3DTO;
-          
-          Assert.IsNotNull(getLastWorkInformationV2Response, "No last workpiece information");
-          Assert.AreEqual(false, getLastWorkInformationV2Response.SlotMissing, "Bad slot misssing information");
+
+          Assert.That (getLastWorkInformationV2Response, Is.Not.Null, "No last workpiece information");
+          Assert.That (getLastWorkInformationV2Response.SlotMissing, Is.EqualTo (false), "Bad slot misssing information");
         } finally {
           transaction.Rollback();
         }
@@ -938,9 +970,9 @@ namespace Lemoine.WebService.UnitTests
           ListOfOperationSlotV2DTO getListOperationSlotResponse0 = new GetListOfOperationSlotV2Service ()
             .GetWithoutCache (getListOperationSlot) as ListOfOperationSlotV2DTO;
 
-          Assert.IsNotNull(getListOperationSlotResponse0, "No last operation slots (0)");
-          Assert.IsNotNull(getListOperationSlotResponse0.List, "No last operation slots list (0)");
-          Assert.AreEqual(0, getListOperationSlotResponse0.List.Count, "Not 0 operation slots");
+          Assert.That (getListOperationSlotResponse0, Is.Not.Null, "No last operation slots (0)");
+          Assert.That (getListOperationSlotResponse0.List, Is.Not.Null, "No last operation slots list (0)");
+          Assert.That (getListOperationSlotResponse0.List, Is.Empty, "Not 0 operation slots");
 
           // Now create some operation slot information
           DateTime currentDate = DateTime.UtcNow;
@@ -962,16 +994,18 @@ namespace Lemoine.WebService.UnitTests
             new GetListOfOperationSlotV2Service ()
             .GetWithoutCache (getListOperationSlot) as ListOfOperationSlotV2DTO;
 
-          Assert.IsNotNull(getListOperationSlotResponse, "No last operation slots");
-          Assert.IsNotNull(getListOperationSlotResponse.List, "No last operation slots list");
-          Assert.AreEqual(2, getListOperationSlotResponse.List.Count, "Not 2 operation slots");
+          Assert.That (getListOperationSlotResponse, Is.Not.Null, "No last operation slots");
+          Assert.That (getListOperationSlotResponse.List, Is.Not.Null, "No last operation slots list");
+          Assert.That (getListOperationSlotResponse.List, Has.Count.EqualTo (2), "Not 2 operation slots");
           
           OperationSlotV2DTO firstResponseSlot = getListOperationSlotResponse.List[0];
           OperationSlotV2DTO secondResponseSlot = getListOperationSlotResponse.List[1];
-          
-          // reverse chronological order
-          Assert.AreEqual(firstSlot.Id, secondResponseSlot.OperationSlotId, "Last slot does not come first");
-          Assert.AreEqual(secondSlot.Id, firstResponseSlot.OperationSlotId, "More ancient slot does not come last");
+
+          Assert.Multiple (() => {
+            // reverse chronological order
+            Assert.That (secondResponseSlot.OperationSlotId, Is.EqualTo (firstSlot.Id), "Last slot does not come first");
+            Assert.That (firstResponseSlot.OperationSlotId, Is.EqualTo (secondSlot.Id), "More ancient slot does not come last");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -998,9 +1032,9 @@ namespace Lemoine.WebService.UnitTests
             new GetListOfOperationSlotV2Service ()
             .GetWithoutCache (getListOperationSlot) as ListOfOperationSlotV2DTO;
 
-          Assert.IsNotNull(getListOperationSlotResponse0, "No last operation slots (0)");
-          Assert.IsNotNull(getListOperationSlotResponse0.List, "No last operation slots list (0)");
-          Assert.AreEqual(0, getListOperationSlotResponse0.List.Count, "Not 0 operation slots");
+          Assert.That (getListOperationSlotResponse0, Is.Not.Null, "No last operation slots (0)");
+          Assert.That (getListOperationSlotResponse0.List, Is.Not.Null, "No last operation slots list (0)");
+          Assert.That (getListOperationSlotResponse0.List, Is.Empty, "Not 0 operation slots");
 
           // Now create some operation slot information
           DateTime currentDate = DateTime.UtcNow;
@@ -1026,13 +1060,13 @@ namespace Lemoine.WebService.UnitTests
             new GetListOfOperationSlotV2Service ()
             .GetWithoutCache (getListOperationSlot) as ListOfOperationSlotV2DTO;
 
-          Assert.IsNotNull(getListOperationSlotResponse, "No last operation slots");
-          Assert.IsNotNull(getListOperationSlotResponse.List, "No last operation slots list");
-          Assert.AreEqual(1, getListOperationSlotResponse.List.Count, "Not 1 operation slot");
+          Assert.That (getListOperationSlotResponse, Is.Not.Null, "No last operation slots");
+          Assert.That (getListOperationSlotResponse.List, Is.Not.Null, "No last operation slots list");
+          Assert.That (getListOperationSlotResponse.List, Has.Count.EqualTo (1), "Not 1 operation slot");
           
           OperationSlotV2DTO responseSlot = getListOperationSlotResponse.List[0];
-          
-          Assert.AreEqual(secondSlot.Id, responseSlot.OperationSlotId, "bad slot");
+
+          Assert.That (responseSlot.OperationSlotId, Is.EqualTo (secondSlot.Id), "bad slot");
           
           // now only first slot
           getListOperationSlot.Begin = ConvertDTO.DateTimeUtcToIsoString(firstSlot.BeginDateTime);
@@ -1042,15 +1076,17 @@ namespace Lemoine.WebService.UnitTests
             new GetListOfOperationSlotV2Service ()
             .GetWithoutCache (getListOperationSlot) as ListOfOperationSlotV2DTO;
 
-          Assert.IsNotNull(getListOperationSlotResponse, "No last operation slots (2)");
-          Assert.IsNotNull(getListOperationSlotResponse.List, "No last operation slots list (2)");
-          Assert.AreEqual(1, getListOperationSlotResponse.List.Count, "Not 1 operation slot (2)");
+          Assert.That (getListOperationSlotResponse, Is.Not.Null, "No last operation slots (2)");
+          Assert.That (getListOperationSlotResponse.List, Is.Not.Null, "No last operation slots list (2)");
+          Assert.That (getListOperationSlotResponse.List, Has.Count.EqualTo (1), "Not 1 operation slot (2)");
           
           responseSlot = getListOperationSlotResponse.List[0];
-          
-          Assert.AreEqual(firstSlot.Id, responseSlot.OperationSlotId, "bad slot (2)");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstSlot.BeginDateTime), responseSlot.Begin, "bad begin");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstSlot.EndDateTime), responseSlot.End, "bad begin");
+
+          Assert.Multiple (() => {
+            Assert.That (responseSlot.OperationSlotId, Is.EqualTo (firstSlot.Id), "bad slot (2)");
+            Assert.That (responseSlot.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstSlot.BeginDateTime)), "bad begin");
+            Assert.That (responseSlot.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstSlot.EndDateTime)), "bad begin");
+          });
         } finally {
           transaction.Rollback();
         }
@@ -1077,8 +1113,8 @@ namespace Lemoine.WebService.UnitTests
             new GetListOfOperationSlotV2Service ()
             .GetWithoutCache (getListOperationSlot) as ErrorDTO;
 
-          Assert.IsNotNull(getListOperationSlotResponse, "No error dto");
-          Assert.IsTrue(getListOperationSlotResponse.ErrorMessage.StartsWith("No monitored machine with id"), "Bad error msg");
+          Assert.That (getListOperationSlotResponse, Is.Not.Null, "No error dto");
+          Assert.That (getListOperationSlotResponse.ErrorMessage, Does.StartWith ("No monitored machine with id"), "Bad error msg");
         } finally {
           transaction.Rollback();
         }
@@ -1122,14 +1158,16 @@ namespace Lemoine.WebService.UnitTests
           LastMachineExtendedStatusV2DTO getLastMachineStatusResponse =
             new GetLastMachineStatusV2Service ()
             .GetWithoutCache (getLastMachineStatus) as LastMachineExtendedStatusV2DTO;
-          
-          Assert.IsNotNull(getLastMachineStatusResponse, "No last machine extended status information");
-          Assert.IsNotNull(getLastMachineStatusResponse.MachineStatus, "Null Machine Status");
-          Assert.AreEqual(machineMode1.Id, getLastMachineStatusResponse.MachineStatus.MachineMode.Id, "Bad MachineMode");
-          Assert.AreEqual(machineObsState1.Id, getLastMachineStatusResponse.MachineStatus.MachineObservationState.Id, "Bad MachineObservationState");
-          Assert.AreEqual(lastSlot.Id, getLastMachineStatusResponse.MachineStatus.ReasonSlot.Id, "Bad ReasonSlot");
-          Assert.AreEqual(reason1.Id, getLastMachineStatusResponse.MachineStatus.ReasonSlot.Reason.Id, "Bad Reason");
-          Assert.IsFalse(getLastMachineStatusResponse.RequiredReason);
+
+          Assert.That (getLastMachineStatusResponse, Is.Not.Null, "No last machine extended status information");
+          Assert.That (getLastMachineStatusResponse.MachineStatus, Is.Not.Null, "Null Machine Status");
+          Assert.Multiple (() => {
+            Assert.That (getLastMachineStatusResponse.MachineStatus.MachineMode.Id, Is.EqualTo (machineMode1.Id), "Bad MachineMode");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.MachineObservationState.Id, Is.EqualTo (machineObsState1.Id), "Bad MachineObservationState");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.ReasonSlot.Id, Is.EqualTo (lastSlot.Id), "Bad ReasonSlot");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.ReasonSlot.Reason.Id, Is.EqualTo (reason1.Id), "Bad Reason");
+            Assert.That (getLastMachineStatusResponse.RequiredReason, Is.False);
+          });
           // ModelDAOHelper.DAOFactory.ReasonSlotDAO.MakeTransient(lastSlot);
 
           // change overwrite
@@ -1140,8 +1178,8 @@ namespace Lemoine.WebService.UnitTests
           getLastMachineStatusResponse =
             new GetLastMachineStatusV2Service ()
             .GetWithoutCache (getLastMachineStatus) as LastMachineExtendedStatusV2DTO;
-          
-          Assert.IsTrue(getLastMachineStatusResponse.RequiredReason); // this changed from false to true
+
+          Assert.That (getLastMachineStatusResponse.RequiredReason, Is.True); // this changed from false to true
 
 
           // make slot older than 1 minute => obsolete
@@ -1160,12 +1198,14 @@ namespace Lemoine.WebService.UnitTests
           LastMachineExtendedStatusV2DTO getLastMachineStatusResponse2 =
             new GetLastMachineStatusV2Service ()
             .GetWithoutCache (getLastMachineStatus) as LastMachineExtendedStatusV2DTO;
-          
-          Assert.IsNotNull(getLastMachineStatusResponse2, "Last machine extended status information is not null");
-          Assert.IsNotNull(getLastMachineStatusResponse2.MachineStatus, "Machine status information is not null");
-          Assert.IsTrue(getLastMachineStatusResponse2.ReasonTooOld,"ReasonSlot is too old");
-          Assert.IsFalse(getLastMachineStatusResponse2.RequiredReason, "Reason is not required");
-          
+
+          Assert.That (getLastMachineStatusResponse2, Is.Not.Null, "Last machine extended status information is not null");
+          Assert.Multiple (() => {
+            Assert.That (getLastMachineStatusResponse2.MachineStatus, Is.Not.Null, "Machine status information is not null");
+            Assert.That (getLastMachineStatusResponse2.ReasonTooOld, Is.True, "ReasonSlot is too old");
+            Assert.That (getLastMachineStatusResponse2.RequiredReason, Is.False, "Reason is not required");
+          });
+
         } finally {
           transaction.Rollback();
         }
@@ -1222,30 +1262,34 @@ namespace Lemoine.WebService.UnitTests
           LastMachineExtendedStatusV2DTO getLastMachineStatusResponse =
             new GetLastMachineStatusV2Service ()
             .GetWithoutCache (getLastMachineStatus) as LastMachineExtendedStatusV2DTO;
-          
-          Assert.IsNotNull(getLastMachineStatusResponse, "No last machine extended status information");
-          Assert.IsNotNull(getLastMachineStatusResponse.MachineStatus, "Null Machine Status");
-          Assert.AreEqual(machineMode1.Id, getLastMachineStatusResponse.MachineStatus.MachineMode.Id, "Bad MachineMode");
-          Assert.AreEqual(machineObsState1.Id, getLastMachineStatusResponse.MachineStatus.MachineObservationState.Id, "Bad MachineObservationState");
-          Assert.AreEqual(veryLastSlot.Id, getLastMachineStatusResponse.MachineStatus.ReasonSlot.Id, "Bad ReasonSlot");
-          Assert.AreEqual(reason1.Id, getLastMachineStatusResponse.MachineStatus.ReasonSlot.Reason.Id, "Bad Reason");
-          // only veryLastSlot fetched => no overwrite required
-          Assert.IsFalse(getLastMachineStatusResponse.RequiredReason, "False required reason");
+
+          Assert.That (getLastMachineStatusResponse, Is.Not.Null, "No last machine extended status information");
+          Assert.That (getLastMachineStatusResponse.MachineStatus, Is.Not.Null, "Null Machine Status");
+          Assert.Multiple (() => {
+            Assert.That (getLastMachineStatusResponse.MachineStatus.MachineMode.Id, Is.EqualTo (machineMode1.Id), "Bad MachineMode");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.MachineObservationState.Id, Is.EqualTo (machineObsState1.Id), "Bad MachineObservationState");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.ReasonSlot.Id, Is.EqualTo (veryLastSlot.Id), "Bad ReasonSlot");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.ReasonSlot.Reason.Id, Is.EqualTo (reason1.Id), "Bad Reason");
+            // only veryLastSlot fetched => no overwrite required
+            Assert.That (getLastMachineStatusResponse.RequiredReason, Is.False, "False required reason");
+          });
 
           getLastMachineStatus.Begin = ConvertDTO.DateTimeUtcToIsoString(lastSlot.BeginDateTime.Value.AddHours(1));
           getLastMachineStatusResponse = new GetLastMachineStatusV2Service ()
             .GetWithoutCache (getLastMachineStatus) as LastMachineExtendedStatusV2DTO;
-          
-          Assert.IsNotNull(getLastMachineStatusResponse, "No last machine extended status information");
-          Assert.IsNotNull(getLastMachineStatusResponse.MachineStatus, "Null Machine Status");
-          Assert.AreEqual(machineMode1.Id, getLastMachineStatusResponse.MachineStatus.MachineMode.Id, "Bad MachineMode");
-          Assert.AreEqual(machineObsState1.Id, getLastMachineStatusResponse.MachineStatus.MachineObservationState.Id, "Bad MachineObservationState");
-          Assert.AreEqual(veryLastSlot.Id, getLastMachineStatusResponse.MachineStatus.ReasonSlot.Id, "Bad ReasonSlot");
-          Assert.AreEqual(reason1.Id, getLastMachineStatusResponse.MachineStatus.ReasonSlot.Reason.Id, "Bad Reason");
-          // lastSlot also fetched => overwrite required
-          Assert.IsTrue(getLastMachineStatusResponse.RequiredReason, "True required reason");
 
-          
+          Assert.That (getLastMachineStatusResponse, Is.Not.Null, "No last machine extended status information");
+          Assert.That (getLastMachineStatusResponse.MachineStatus, Is.Not.Null, "Null Machine Status");
+          Assert.Multiple (() => {
+            Assert.That (getLastMachineStatusResponse.MachineStatus.MachineMode.Id, Is.EqualTo (machineMode1.Id), "Bad MachineMode");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.MachineObservationState.Id, Is.EqualTo (machineObsState1.Id), "Bad MachineObservationState");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.ReasonSlot.Id, Is.EqualTo (veryLastSlot.Id), "Bad ReasonSlot");
+            Assert.That (getLastMachineStatusResponse.MachineStatus.ReasonSlot.Reason.Id, Is.EqualTo (reason1.Id), "Bad Reason");
+            // lastSlot also fetched => overwrite required
+            Assert.That (getLastMachineStatusResponse.RequiredReason, Is.True, "True required reason");
+          });
+
+
         } finally {
           transaction.Rollback();
         }
@@ -1291,27 +1335,29 @@ namespace Lemoine.WebService.UnitTests
           
           MachineObservationStateSlotListV2DTO GetMachineObservationStateListV2Response =
             new GetMachineObservationStateListV2Service ().GetWithoutCache (GetMachineObservationStateListV2) as MachineObservationStateSlotListV2DTO;
-          
-          Assert.IsNotNull(GetMachineObservationStateListV2Response, "No machine observation state list");
-          Assert.IsNotNull(GetMachineObservationStateListV2Response.List, "No machine observation state list's list");
+
+          Assert.That (GetMachineObservationStateListV2Response, Is.Not.Null, "No machine observation state list");
+          Assert.That (GetMachineObservationStateListV2Response.List, Is.Not.Null, "No machine observation state list's list");
           // there is already a slot with no end in LemoineUnitTests (the last in response) that we don't care about
-          Assert.AreEqual(3, GetMachineObservationStateListV2Response.List.Count, "Not 3 machine observation states");
+          Assert.That (GetMachineObservationStateListV2Response.List, Has.Count.EqualTo (3), "Not 3 machine observation states");
           MachineObservationStateSlotV2DTO mobs1 = GetMachineObservationStateListV2Response.List[0];
           MachineObservationStateSlotV2DTO mobs2 = GetMachineObservationStateListV2Response.List[1];
-          
-          // reverse chronological order
-          Assert.AreEqual(secondSlot.Id, mobs1.Id, "Bad id for first machine observation state");
-          Assert.AreEqual(firstSlot.Id,  mobs2.Id, "Bad id for second machine observation state");
-          
-          Assert.AreEqual(secondSlot.MachineObservationState.Display, mobs1.MachineObservationState.Text, "Bad text for first machine observation state");
-          Assert.AreEqual(firstSlot.MachineObservationState.Display, mobs2.MachineObservationState.Text, "Bad text for second machine observation state");
 
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(secondSlot.BeginDateTime), mobs1.Begin, "Bad begin for first machine observation state");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstSlot.BeginDateTime), mobs2.Begin, "Bad begin for second machine observation state");
-          
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(secondSlot.EndDateTime), mobs1.End, "Bad end for first machine observation state");
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(firstSlot.EndDateTime), mobs2.End, "Bad end for second machine observation state");
-          
+          Assert.Multiple (() => {
+            // reverse chronological order
+            Assert.That (mobs1.Id, Is.EqualTo (secondSlot.Id), "Bad id for first machine observation state");
+            Assert.That (mobs2.Id, Is.EqualTo (firstSlot.Id), "Bad id for second machine observation state");
+
+            Assert.That (mobs1.MachineObservationState.Text, Is.EqualTo (secondSlot.MachineObservationState.Display), "Bad text for first machine observation state");
+            Assert.That (mobs2.MachineObservationState.Text, Is.EqualTo (firstSlot.MachineObservationState.Display), "Bad text for second machine observation state");
+
+            Assert.That (mobs1.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (secondSlot.BeginDateTime)), "Bad begin for first machine observation state");
+            Assert.That (mobs2.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstSlot.BeginDateTime)), "Bad begin for second machine observation state");
+
+            Assert.That (mobs1.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (secondSlot.EndDateTime)), "Bad end for first machine observation state");
+            Assert.That (mobs2.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (firstSlot.EndDateTime)), "Bad end for second machine observation state");
+          });
+
         } finally {
           transaction.Rollback();
         }
@@ -1359,22 +1405,24 @@ namespace Lemoine.WebService.UnitTests
           
           MachineObservationStateSlotListV2DTO GetMachineObservationStateListV2Response =
             new GetMachineObservationStateListV2Service ().GetWithoutCache (GetMachineObservationStateListV2) as MachineObservationStateSlotListV2DTO;
-          
-          Assert.IsNotNull(GetMachineObservationStateListV2Response, "No machine observation state list");
-          Assert.IsNotNull(GetMachineObservationStateListV2Response.List, "No machine observation state list's list");
-          // there is already a slot with no end in LemoineUnitTests (the last in response) that we don't care about
-          Assert.AreEqual(2, GetMachineObservationStateListV2Response.List.Count, "Not 2 machine observation states");
-          MachineObservationStateSlotV2DTO mobs1 = GetMachineObservationStateListV2Response.List[0];
-          
-          // reverse chronological order
-          Assert.AreEqual(secondSlot.Id, mobs1.Id, "Bad id for first machine observation state");
-          
-          Assert.AreEqual(secondSlot.MachineObservationState.Display, mobs1.MachineObservationState.Text, "Bad text for first machine observation state");
 
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(secondSlot.BeginDateTime), mobs1.Begin, "Bad begin for first machine observation state");
-          
-          Assert.AreEqual(ConvertDTO.DateTimeUtcToIsoString(secondSlot.EndDateTime), mobs1.End, "Bad end for first machine observation state");
-          
+          Assert.That (GetMachineObservationStateListV2Response, Is.Not.Null, "No machine observation state list");
+          Assert.That (GetMachineObservationStateListV2Response.List, Is.Not.Null, "No machine observation state list's list");
+          // there is already a slot with no end in LemoineUnitTests (the last in response) that we don't care about
+          Assert.That (GetMachineObservationStateListV2Response.List, Has.Count.EqualTo (2), "Not 2 machine observation states");
+          MachineObservationStateSlotV2DTO mobs1 = GetMachineObservationStateListV2Response.List[0];
+
+          Assert.Multiple (() => {
+            // reverse chronological order
+            Assert.That (mobs1.Id, Is.EqualTo (secondSlot.Id), "Bad id for first machine observation state");
+
+            Assert.That (mobs1.MachineObservationState.Text, Is.EqualTo (secondSlot.MachineObservationState.Display), "Bad text for first machine observation state");
+
+            Assert.That (mobs1.Begin, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (secondSlot.BeginDateTime)), "Bad begin for first machine observation state");
+
+            Assert.That (mobs1.End, Is.EqualTo (ConvertDTO.DateTimeUtcToIsoString (secondSlot.EndDateTime)), "Bad end for first machine observation state");
+          });
+
           GetMachineObservationStateListV2.Begin =
             ConvertDTO.DateTimeUtcToIsoString(beginDateTime1);
 
@@ -1383,17 +1431,19 @@ namespace Lemoine.WebService.UnitTests
           
           GetMachineObservationStateListV2Response =
             new GetMachineObservationStateListV2Service ().GetWithoutCache (GetMachineObservationStateListV2) as MachineObservationStateSlotListV2DTO;
-          
-          Assert.IsNotNull(GetMachineObservationStateListV2Response, "No machine observation state list (2)");
-          Assert.IsNotNull(GetMachineObservationStateListV2Response.List, "No machine observation state list's list (2)");
+
+          Assert.That (GetMachineObservationStateListV2Response, Is.Not.Null, "No machine observation state list (2)");
+          Assert.That (GetMachineObservationStateListV2Response.List, Is.Not.Null, "No machine observation state list's list (2)");
           // there is already a slot with no end in LemoineUnitTests (the last in response) that we don't care about
-          Assert.AreEqual(2, GetMachineObservationStateListV2Response.List.Count, "Not 2 machine observation states (2)");
+          Assert.That (GetMachineObservationStateListV2Response.List, Has.Count.EqualTo (2), "Not 2 machine observation states (2)");
           mobs1 = GetMachineObservationStateListV2Response.List[0];
-          
-          // reverse chronological order
-          Assert.AreEqual(firstSlot.Id, mobs1.Id, "Bad id for first machine observation state (2)");
-          
-          Assert.AreEqual(firstSlot.MachineObservationState.Display, mobs1.MachineObservationState.Text, "Bad text for first machine observation state (2)");
+
+          Assert.Multiple (() => {
+            // reverse chronological order
+            Assert.That (mobs1.Id, Is.EqualTo (firstSlot.Id), "Bad id for first machine observation state (2)");
+
+            Assert.That (mobs1.MachineObservationState.Text, Is.EqualTo (firstSlot.MachineObservationState.Display), "Bad text for first machine observation state (2)");
+          });
 
         } finally {
           transaction.Rollback();
@@ -1418,9 +1468,9 @@ namespace Lemoine.WebService.UnitTests
           
           IList<MachineObservationStateDTO> getMachineObservationStateSelectionResponse =
             new GetMachineObservationStateSelectionService ().GetWithoutCache (getMachineObservationStateSelection) as IList<MachineObservationStateDTO>;
-          
-          Assert.IsNotNull(getMachineObservationStateSelectionResponse, "No GetMachineObservationStateSelection response");
-          Assert.AreEqual(14, getMachineObservationStateSelectionResponse.Count, "Bad number of machine observation states");
+
+          Assert.That (getMachineObservationStateSelectionResponse, Is.Not.Null, "No GetMachineObservationStateSelection response");
+          Assert.That (getMachineObservationStateSelectionResponse, Has.Count.EqualTo (14), "Bad number of machine observation states");
 
         } finally {
           transaction.Rollback();
@@ -1452,20 +1502,22 @@ namespace Lemoine.WebService.UnitTests
           saveMachineObservationState.MachineObservationStateId = machObs1.Id;
           
           object saveMachineObservationStateResponse = new SaveMachineObservationStateV2Service ().GetSync (saveMachineObservationState);
-          
-          Assert.IsNotNull(saveMachineObservationStateResponse as OkDTO, "Non-OK saveMachineObservationState");
+
+          Assert.That (saveMachineObservationStateResponse as OkDTO, Is.Not.Null, "Non-OK saveMachineObservationState");
           
           // just test there is a pending modification of the right type
           
           IList<IModification> modifications = ModelDAOHelper.DAOFactory.ModificationDAO.FindAll().ToList ();
-          Assert.IsNotNull(modifications, "no modification");
-          Assert.AreEqual(1, modifications.Count, "not 1 modification");
+          Assert.That (modifications, Is.Not.Null, "no modification");
+          Assert.That (modifications, Has.Count.EqualTo (1), "not 1 modification");
           IModification modification = modifications[0];
           IMachineObservationStateAssociation machineObservationStateAssociation = modification as IMachineObservationStateAssociation;
-          Assert.IsNotNull(machineObservationStateAssociation, "not a machine observation state association");
-          Assert.AreEqual(begin.ToUniversalTime(), machineObservationStateAssociation.Begin.Value, "bad begin for machine observation state association");
-          Assert.AreEqual(end.ToUniversalTime(), machineObservationStateAssociation.End.Value, "bad end for machine observation state association");
-          Assert.AreEqual(machObs1.Id, machineObservationStateAssociation.MachineObservationState.Id);
+          Assert.That (machineObservationStateAssociation, Is.Not.Null, "not a machine observation state association");
+          Assert.Multiple (() => {
+            Assert.That (machineObservationStateAssociation.Begin.Value, Is.EqualTo (begin.ToUniversalTime ()), "bad begin for machine observation state association");
+            Assert.That (machineObservationStateAssociation.End.Value, Is.EqualTo (end.ToUniversalTime ()), "bad end for machine observation state association");
+            Assert.That (machineObservationStateAssociation.MachineObservationState.Id, Is.EqualTo (machObs1.Id));
+          });
 
         } finally {
           transaction.Rollback();
@@ -1497,20 +1549,22 @@ namespace Lemoine.WebService.UnitTests
           saveMachineObservationStateV2.MachineObservationStateId = machObs1.Id;
           
           object SaveMachineObservationStateV2Response = new SaveMachineObservationStateV2Service ().GetSync (saveMachineObservationStateV2);
-          
-          Assert.IsNotNull(SaveMachineObservationStateV2Response as OkDTO, "Non-OK SaveMachineObservationStateV2");
+
+          Assert.That (SaveMachineObservationStateV2Response as OkDTO, Is.Not.Null, "Non-OK SaveMachineObservationStateV2");
           
           // just test there is a pending modification of the right type
           
           IList<IModification> modifications = ModelDAOHelper.DAOFactory.ModificationDAO.FindAll().ToList ();
-          Assert.IsNotNull(modifications, "no modification");
-          Assert.AreEqual(1, modifications.Count, "not 1 modification");
+          Assert.That (modifications, Is.Not.Null, "no modification");
+          Assert.That (modifications, Has.Count.EqualTo (1), "not 1 modification");
           IModification modification = modifications[0];
           IMachineObservationStateAssociation machineObservationStateAssociation = modification as IMachineObservationStateAssociation;
-          Assert.IsNotNull(machineObservationStateAssociation, "not a machine observation state association");
-          Assert.AreEqual(begin.ToUniversalTime(), machineObservationStateAssociation.Begin.Value, "bad begin for machine observation state association");
-          Assert.AreEqual(end.ToUniversalTime(), machineObservationStateAssociation.End.Value, "bad end for machine observation state association");
-          Assert.AreEqual(machObs1.Id, machineObservationStateAssociation.MachineObservationState.Id);
+          Assert.That (machineObservationStateAssociation, Is.Not.Null, "not a machine observation state association");
+          Assert.Multiple (() => {
+            Assert.That (machineObservationStateAssociation.Begin.Value, Is.EqualTo (begin.ToUniversalTime ()), "bad begin for machine observation state association");
+            Assert.That (machineObservationStateAssociation.End.Value, Is.EqualTo (end.ToUniversalTime ()), "bad end for machine observation state association");
+            Assert.That (machineObservationStateAssociation.MachineObservationState.Id, Is.EqualTo (machObs1.Id));
+          });
 
         } finally {
           transaction.Rollback();
@@ -1527,25 +1581,27 @@ namespace Lemoine.WebService.UnitTests
     {
       DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
       long ticks = ConvertDTO.ConvertDateTimeToJavaTotalTicksMilliseconds(origin);
-      Assert.AreEqual(ticks, 0);
+      Assert.That (ticks, Is.EqualTo (0));
       ticks = 1000;
       DateTime originPlus1s = origin.AddSeconds(1);
       DateTime ticksConvertedDt = ConvertDTO.ConvertJavaTotalTicksMillisecondsToDateTime(ticks);
-      Assert.AreEqual(DateTimeKind.Utc, ticksConvertedDt.Kind);
-      Assert.AreEqual(originPlus1s, ticksConvertedDt);
+      Assert.Multiple (() => {
+        Assert.That (ticksConvertedDt.Kind, Is.EqualTo (DateTimeKind.Utc));
+        Assert.That (ticksConvertedDt, Is.EqualTo (originPlus1s));
+      });
       DateTime current = DateTime.UtcNow; // new DateTime(2000, 1, 1, 12, 15, 35, DateTimeKind.Utc);
-      Assert.AreEqual(DateTimeKind.Utc, current.Kind);
+      Assert.That (current.Kind, Is.EqualTo (DateTimeKind.Utc));
       ticks = ConvertDTO.ConvertDateTimeToJavaTotalTicksMilliseconds(current);
       DateTime shouldBeCurrent = ConvertDTO.ConvertJavaTotalTicksMillisecondsToDateTime(ticks);
-      Assert.AreEqual(shouldBeCurrent.Millisecond, current.Millisecond);
+      Assert.That (current.Millisecond, Is.EqualTo (shouldBeCurrent.Millisecond));
       // Assert.AreEqual(shouldBeCurrent, current); // no cf. ms resolution only
       long ticks2 =  ConvertDTO.ConvertDateTimeToJavaTotalTicksMilliseconds(shouldBeCurrent);
-      Assert.AreEqual(ticks2, ticks);
+      Assert.That (ticks, Is.EqualTo (ticks2));
       
       DateTime preOrigin = new DateTime(1950, 1, 1, 0, 0, 0, DateTimeKind.Utc);
       long ticksPre = ConvertDTO.ConvertDateTimeToJavaTotalTicksMilliseconds(preOrigin);
       DateTime convertedPreOrigin = ConvertDTO.ConvertJavaTotalTicksMillisecondsToDateTime(ticksPre);
-      Assert.AreEqual(preOrigin, convertedPreOrigin, "Bad convert for 1950");
+      Assert.That (convertedPreOrigin, Is.EqualTo (preOrigin), "Bad convert for 1950");
     }
     
     [OneTimeSetUp]

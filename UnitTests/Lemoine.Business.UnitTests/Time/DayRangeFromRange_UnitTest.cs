@@ -35,8 +35,10 @@ namespace Lemoine.Business.UnitTests.Time
       var upper = new DateTime (2018, 05, 04, 03, 00, 00, DateTimeKind.Utc);
       var request = new Lemoine.Business.Time.DayRangeFromRange (new UtcDateTimeRange (lower, upper));
       var response = Lemoine.Business.ServiceProvider.Get (request);
-      Assert.AreEqual (new DateTime (2018, 05, 02), response.Lower.Value);
-      Assert.AreEqual (new DateTime (2018, 05, 04), response.Upper.Value);
+      Assert.Multiple (() => {
+        Assert.That (response.Lower.Value, Is.EqualTo (new DateTime (2018, 05, 02)));
+        Assert.That (response.Upper.Value, Is.EqualTo (new DateTime (2018, 05, 04)));
+      });
     }
   }
 }

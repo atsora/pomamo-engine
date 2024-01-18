@@ -42,14 +42,16 @@ namespace Lemoine.WebService.UnitTests
           getRangeAround.Around    = "2015-09-06T14:59:00Z";
           
           RangeDTO getRangeAroundResponse = new GetRangeAroundService ().GetWithoutCache (getRangeAround) as RangeDTO;
-          Assert.IsNotNull(getRangeAroundResponse, "No getRangeAroundResponse");
-          
-          // Verify
-          Assert.AreEqual("2015-08-31T20:00:00Z", getRangeAroundResponse.DateTimeRange.Begin, "rangeAround.Begin is not 2015-08-31T20:00:00Z");
-          Assert.AreEqual("2015-09-30T20:00:00Z", getRangeAroundResponse.DateTimeRange.End, "rangeAround.End is not 2015-09-30T20:00:00Z");
-          Assert.AreEqual("2015-09-01", getRangeAroundResponse.DayRange.Begin, "rangeAround.Begin is not 2015-09-01");
-          Assert.AreEqual("2015-09-30", getRangeAroundResponse.DayRange.End, "rangeAround.End is not 2015-09-30");
-          
+          Assert.That (getRangeAroundResponse, Is.Not.Null, "No getRangeAroundResponse");
+
+          Assert.Multiple (() => {
+            // Verify
+            Assert.That (getRangeAroundResponse.DateTimeRange.Begin, Is.EqualTo ("2015-08-31T20:00:00Z"), "rangeAround.Begin is not 2015-08-31T20:00:00Z");
+            Assert.That (getRangeAroundResponse.DateTimeRange.End, Is.EqualTo ("2015-09-30T20:00:00Z"), "rangeAround.End is not 2015-09-30T20:00:00Z");
+            Assert.That (getRangeAroundResponse.DayRange.Begin, Is.EqualTo ("2015-09-01"), "rangeAround.Begin is not 2015-09-01");
+            Assert.That (getRangeAroundResponse.DayRange.End, Is.EqualTo ("2015-09-30"), "rangeAround.End is not 2015-09-30");
+          });
+
         } finally {
           transaction.Rollback();
         }
@@ -64,14 +66,16 @@ namespace Lemoine.WebService.UnitTests
           getRangeAround.Around    = "2016-05-16T17:00:00Z";
           
           RangeDTO getRangeAroundResponse = new GetRangeAroundService ().GetWithoutCache (getRangeAround) as RangeDTO;
-          Assert.IsNotNull(getRangeAroundResponse, "No getRangeAroundResponse");
-          
-          // Verify
-          Assert.AreEqual("2016-03-31T20:00:00Z", getRangeAroundResponse.DateTimeRange.Begin, "rangeAround.Begin is not ");
-          Assert.AreEqual("2016-06-30T20:00:00Z", getRangeAroundResponse.DateTimeRange.End, "rangeAround.End is not ");
-          Assert.AreEqual("2016-04-01", getRangeAroundResponse.DayRange.Begin, "rangeAround.Begin is not ");
-          Assert.AreEqual("2016-06-30", getRangeAroundResponse.DayRange.End, "rangeAround.End is not ");
-          
+          Assert.That (getRangeAroundResponse, Is.Not.Null, "No getRangeAroundResponse");
+
+          Assert.Multiple (() => {
+            // Verify
+            Assert.That (getRangeAroundResponse.DateTimeRange.Begin, Is.EqualTo ("2016-03-31T20:00:00Z"), "rangeAround.Begin is not ");
+            Assert.That (getRangeAroundResponse.DateTimeRange.End, Is.EqualTo ("2016-06-30T20:00:00Z"), "rangeAround.End is not ");
+            Assert.That (getRangeAroundResponse.DayRange.Begin, Is.EqualTo ("2016-04-01"), "rangeAround.Begin is not ");
+            Assert.That (getRangeAroundResponse.DayRange.End, Is.EqualTo ("2016-06-30"), "rangeAround.End is not ");
+          });
+
         } finally {
           transaction.Rollback();
         }
@@ -86,14 +90,16 @@ namespace Lemoine.WebService.UnitTests
           getRangeAround.Around    = "2015-09-06T14:59:00Z";
           
           RangeDTO getRangeAroundResponse = new GetRangeAroundService ().GetWithoutCache (getRangeAround) as RangeDTO;
-          Assert.IsNotNull(getRangeAroundResponse, "No getRangeAroundResponse");
-          
-          // Verify
-          Assert.AreEqual("2015-09-04T20:00:00Z", getRangeAroundResponse.DateTimeRange.Begin, "rangeAround.Begin is not 2015-09-04T20:00:00Z");
-          Assert.AreEqual("2015-09-06T20:00:00Z", getRangeAroundResponse.DateTimeRange.End, "rangeAround.End is not 2015-09-06T20:00:00Z");
-          Assert.AreEqual("2015-09-05", getRangeAroundResponse.DayRange.Begin, "rangeAround.Begin is not 2015-09-05");
-          Assert.AreEqual("2015-09-06", getRangeAroundResponse.DayRange.End, "rangeAround.End is not 2015-09-06");
-          
+          Assert.That (getRangeAroundResponse, Is.Not.Null, "No getRangeAroundResponse");
+
+          Assert.Multiple (() => {
+            // Verify
+            Assert.That (getRangeAroundResponse.DateTimeRange.Begin, Is.EqualTo ("2015-09-04T20:00:00Z"), "rangeAround.Begin is not 2015-09-04T20:00:00Z");
+            Assert.That (getRangeAroundResponse.DateTimeRange.End, Is.EqualTo ("2015-09-06T20:00:00Z"), "rangeAround.End is not 2015-09-06T20:00:00Z");
+            Assert.That (getRangeAroundResponse.DayRange.Begin, Is.EqualTo ("2015-09-05"), "rangeAround.Begin is not 2015-09-05");
+            Assert.That (getRangeAroundResponse.DayRange.End, Is.EqualTo ("2015-09-06"), "rangeAround.End is not 2015-09-06");
+          });
+
         } finally {
           transaction.Rollback();
         }

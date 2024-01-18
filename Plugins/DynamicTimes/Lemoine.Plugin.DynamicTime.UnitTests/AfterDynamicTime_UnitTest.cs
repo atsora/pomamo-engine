@@ -73,12 +73,10 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     public IDynamicTimeResponse Get (DateTime dateTime, UtcDateTimeRange hint, UtcDateTimeRange limit)
     {
       var step = s_step++;
-      switch (step) {
-      case 0:
-        return this.CreateWithHint (R (13));
-      default:
-        return this.CreateFinal (T (15));
-      }
+      return step switch {
+        0 => this.CreateWithHint (R (13)),
+        _ => this.CreateFinal (T (15)),
+      };
     }
 
     public TimeSpan GetCacheTimeout (IDynamicTimeResponse data)
@@ -153,12 +151,10 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       }
       else {
         var step = s_step++;
-        switch (step) {
-        case 0:
-          return this.CreateWithHint (R (1));
-        default:
-          return this.CreateFinal (T (2));
-        }
+        return step switch {
+          0 => this.CreateWithHint (R (1)),
+          _ => this.CreateFinal (T (2)),
+        };
       }
     }
 
@@ -451,10 +447,12 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime);
-        Assert.IsFalse (response.Final.HasValue);
-        Assert.IsFalse (response.NotApplicable);
-        Assert.IsFalse (response.NoData);
-        Assert.AreEqual (new UtcDateTimeRange ("(,)"), response.Hint);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.False);
+          Assert.That (response.NotApplicable, Is.False);
+          Assert.That (response.NoData, Is.False);
+          Assert.That (response.Hint, Is.EqualTo (new UtcDateTimeRange ("(,)")));
+        });
       }
     }
 
@@ -463,10 +461,12 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime);
-        Assert.IsFalse (response.Final.HasValue);
-        Assert.IsFalse (response.NotApplicable);
-        Assert.IsFalse (response.NoData);
-        Assert.AreEqual (hint, response.Hint);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.False);
+          Assert.That (response.NotApplicable, Is.False);
+          Assert.That (response.NoData, Is.False);
+          Assert.That (response.Hint, Is.EqualTo (hint));
+        });
       }
     }
 
@@ -475,14 +475,18 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime);
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
       {
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime, new UtcDateTimeRange (final.Subtract (TimeSpan.FromSeconds (1))), new UtcDateTimeRange ("(,)"));
-        Assert.IsTrue (response.Final.HasValue);
-        Assert.AreEqual (final, response.Final.Value);
+        Assert.Multiple (() => {
+          Assert.That (response.Final.HasValue, Is.True);
+          Assert.That (response.Final.Value, Is.EqualTo (final));
+        });
       }
     }
 
@@ -490,8 +494,10 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     {
       var response = Lemoine.Business.DynamicTimes.DynamicTime
         .GetDynamicTime (name, machine, dateTime);
-      Assert.IsTrue (response.NoData);
-      Assert.IsTrue (response.NotApplicable);
+      Assert.Multiple (() => {
+        Assert.That (response.NoData, Is.True);
+        Assert.That (response.NotApplicable, Is.True);
+      });
     }
   }
 }

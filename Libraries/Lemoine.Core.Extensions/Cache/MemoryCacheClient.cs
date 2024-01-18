@@ -138,8 +138,7 @@ namespace Lemoine.Core.Extensions.Cache
     public bool Add<T> (string key, T value)
     {
       using (new PerfTracker ("Cache.Memory.Add")) {
-        T existing;
-        if (!m_memoryCache.TryGetValue (key, out existing)) {
+        if (!m_memoryCache.TryGetValue (key, out T? existing)) {
           return Set<T> (key, value);
         }
         else {
@@ -159,8 +158,7 @@ namespace Lemoine.Core.Extensions.Cache
     public bool Add<T> (string key, T value, DateTime expiresAt)
     {
       using (new PerfTracker ("Cache.Memory.AddExpiresAt")) {
-        T existing;
-        if (!m_memoryCache.TryGetValue (key, out existing)) {
+        if (!m_memoryCache.TryGetValue (key, out T? existing)) {
           return Set<T> (key, value, expiresAt);
         }
         else {
@@ -180,8 +178,7 @@ namespace Lemoine.Core.Extensions.Cache
     public bool Add<T> (string key, T value, TimeSpan expiresIn)
     {
       using (new PerfTracker ("Cache.Memory.AddExpiresIn")) {
-        T existing;
-        if (!m_memoryCache.TryGetValue (key, out existing)) {
+        if (!m_memoryCache.TryGetValue (key, out T? existing)) {
           return Set<T> (key, value, expiresIn);
         }
         else {
@@ -235,7 +232,14 @@ namespace Lemoine.Core.Extensions.Cache
     public T Get<T> (string key)
     {
       using (new PerfTracker ("Cache.Memory.Get")) {
-        return m_memoryCache.Get<T> (key);
+        var result = m_memoryCache.Get<T> (key);
+        if (result is null) {
+          log.Fatal ($"Get: result is null");
+          throw new NullReferenceException ();
+        }
+        else {
+          return result;
+        }
       }
     }
 
@@ -351,8 +355,7 @@ namespace Lemoine.Core.Extensions.Cache
     public bool Replace<T> (string key, T value)
     {
       using (new PerfTracker ("Cache.Memory.Replace")) {
-        T existing;
-        if (m_memoryCache.TryGetValue<T> (key, out existing)) {
+        if (m_memoryCache.TryGetValue<T> (key, out T? existing)) {
           return Set<T> (key, value);
         }
         else {
@@ -372,8 +375,7 @@ namespace Lemoine.Core.Extensions.Cache
     public bool Replace<T> (string key, T value, DateTime expiresAt)
     {
       using (new PerfTracker ("Cache.Memory.ReplaceExpiresAt")) {
-        T existing;
-        if (m_memoryCache.TryGetValue<T> (key, out existing)) {
+        if (m_memoryCache.TryGetValue<T> (key, out T? existing)) {
           return Set<T> (key, value, expiresAt);
         }
         else {
@@ -393,8 +395,7 @@ namespace Lemoine.Core.Extensions.Cache
     public bool Replace<T> (string key, T value, TimeSpan expiresIn)
     {
       using (new PerfTracker ("Cache.Memory.ReplaceExpiresIn")) {
-        T existing;
-        if (m_memoryCache.TryGetValue<T> (key, out existing)) {
+        if (m_memoryCache.TryGetValue<T> (key, out T? existing)) {
           return Set<T> (key, value, expiresIn);
         }
         else {

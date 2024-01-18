@@ -11,7 +11,7 @@ let log = LogManager.GetLogger("Lemoine.Stamping.Heidenhain.Lexer")
 
 let lexeme = LexBuffer<_>.LexemeString
 
-let parseDouble x =
+let parseDouble (x: string) =
   try
     Double.Parse(x, System.Globalization.CultureInfo.InvariantCulture)
   with

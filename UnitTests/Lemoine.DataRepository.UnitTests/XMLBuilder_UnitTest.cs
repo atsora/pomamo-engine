@@ -26,7 +26,7 @@ namespace Lemoine.DataRepository.UnitTests
     public void TestXMLBuilder()
     {
       XMLBuilder builder = new XMLBuilder (".\\UnitTests-out\\testXMLBuilder.xml");
-      Assert.AreEqual (builder.Filename, ".\\UnitTests-out\\testXMLBuilder.xml");
+      Assert.That (builder.Filename, Is.EqualTo (".\\UnitTests-out\\testXMLBuilder.xml"));
 
     }
     

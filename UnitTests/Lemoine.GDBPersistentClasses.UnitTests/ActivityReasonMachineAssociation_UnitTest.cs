@@ -79,16 +79,18 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonProcessing, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8 * 60), slots[i].EndDateTime.Value);
-            Assert.AreEqual (ReasonSource.Default | ReasonSource.UnsafeAutoReasonNumber | ReasonSource.UnsafeManualFlag, slots[i].ReasonSource);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonProcessing));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8 * 60)));
+              Assert.That (slots[i].ReasonSource, Is.EqualTo (ReasonSource.Default | ReasonSource.UnsafeAutoReasonNumber | ReasonSource.UnsafeManualFlag));
+            });
           }
 
           // New association 8 -> 16 autoNullOverride
@@ -106,25 +108,29 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonProcessing, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8 * 60), slots[i].EndDateTime.Value);
-            Assert.AreEqual (ReasonSource.Default | ReasonSource.UnsafeAutoReasonNumber | ReasonSource.UnsafeManualFlag, slots[i].ReasonSource);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonProcessing));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8 * 60)));
+              Assert.That (slots[i].ReasonSource, Is.EqualTo (ReasonSource.Default | ReasonSource.UnsafeAutoReasonNumber | ReasonSource.UnsafeManualFlag));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonProcessing, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (nulloverride, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (8 * 60), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (16 * 60), slots[i].EndDateTime.Value);
-            Assert.AreEqual (ReasonSource.Default | ReasonSource.UnsafeAutoReasonNumber | ReasonSource.UnsafeManualFlag, slots[i].ReasonSource);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonProcessing));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (nulloverride));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (8 * 60)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (16 * 60)));
+              Assert.That (slots[i].ReasonSource, Is.EqualTo (ReasonSource.Default | ReasonSource.UnsafeAutoReasonNumber | ReasonSource.UnsafeManualFlag));
+            });
             ++i;
           }
 
@@ -136,23 +142,27 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (2, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8 * 60), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8 * 60)));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (nulloverride, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (8 * 60), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (16 * 60), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (nulloverride));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (8 * 60)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (16 * 60)));
+            });
             ++i;
           }
           {
@@ -160,11 +170,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .ConvertToDayRange (R (0, null));
             IList<IReasonSummary> summaries = ModelDAOHelper.DAOFactory.ReasonSummaryDAO
               .FindInDayRangeWithReason (machine1, dayRange);
-            Assert.AreEqual (1, summaries.Count);
+            Assert.That (summaries, Has.Count.EqualTo (1));
             int i = 0;
-            Assert.AreEqual (machine1, summaries[i].Machine);
-            Assert.AreEqual (reasonUnanswered, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromMinutes (16), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine1));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromMinutes (16)));
+            });
           }
 
         }
@@ -235,15 +247,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonUnanswered, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (16 * 60), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (16 * 60)));
+            });
             ++i;
           }
           {
@@ -251,11 +265,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .ConvertToDayRange (R (0, null));
             IList<IReasonSummary> summaries = ModelDAOHelper.DAOFactory.ReasonSummaryDAO
               .FindInDayRangeWithReason (machine1, dayRange);
-            Assert.AreEqual (1, summaries.Count);
+            Assert.That (summaries, Has.Count.EqualTo (1));
             int i = 0;
-            Assert.AreEqual (machine1, summaries[i].Machine);
-            Assert.AreEqual (reasonUnanswered, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromMinutes (16), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine1));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromMinutes (16)));
+            });
           }
         }
         finally {
@@ -458,14 +474,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8)));
+            });
             ++i;
           }
           AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
@@ -475,15 +493,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (false, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8)));
+            });
             ++i;
           }
 
@@ -507,15 +527,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (false, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (16), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (16)));
+            });
             ++i;
           }
           {
@@ -523,11 +545,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               .ConvertToDayRange (R (0, null));
             IList<IReasonSummary> summaries = ModelDAOHelper.DAOFactory.ReasonSummaryDAO
               .FindInDayRangeWithReason (machine1, dayRange);
-            Assert.AreEqual (1, summaries.Count);
+            Assert.That (summaries, Has.Count.EqualTo (1));
             int i = 0;
-            Assert.AreEqual (machine1, summaries[i].Machine);
-            Assert.AreEqual (reasonCoffee, summaries[i].Reason);
-            Assert.AreEqual (TimeSpan.FromSeconds (16), summaries[i].Time);
+            Assert.Multiple (() => {
+              Assert.That (summaries[i].Machine, Is.EqualTo (machine1));
+              Assert.That (summaries[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (summaries[i].Time, Is.EqualTo (TimeSpan.FromSeconds (16)));
+            });
           }
         }
         finally {
@@ -597,14 +621,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8)));
+            });
             ++i;
           }
           AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
@@ -614,15 +640,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (1, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (1), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (false, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8)));
+            });
             ++i;
           }
 
@@ -646,31 +674,37 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             IList<IReasonSlot> slots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine1, R (0, null));
-            Assert.AreEqual (3, slots.Count, "Number of reason slots");
+            Assert.That (slots, Has.Count.EqualTo (3), "Number of reason slots");
             int i = 0;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (false, slots[i].DefaultReason);
-            Assert.AreEqual (inactive, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (0), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (8), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (8)));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonCoffee, slots[i].Reason);
-            Assert.AreEqual (false, slots[i].DefaultReason);
-            Assert.AreEqual (nulloverride, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (8), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (12), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (nulloverride));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (8)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (12)));
+            });
             ++i;
-            Assert.AreEqual (machine1, slots[i].Machine);
-            Assert.AreEqual (reasonShort, slots[i].Reason);
-            Assert.AreEqual (true, slots[i].DefaultReason);
-            Assert.AreEqual (nulloverride, slots[i].MachineMode);
-            Assert.AreEqual (attended, slots[i].MachineObservationState);
-            Assert.AreEqual (T (12), slots[i].BeginDateTime.Value);
-            Assert.AreEqual (T (16), slots[i].EndDateTime.Value);
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonShort));
+              Assert.That (slots[i].DefaultReason, Is.EqualTo (true));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (nulloverride));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (12)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (16)));
+            });
             ++i;
           }
         }

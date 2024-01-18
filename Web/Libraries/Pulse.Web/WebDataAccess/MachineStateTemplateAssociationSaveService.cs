@@ -16,6 +16,7 @@ using Lemoine.Extensions.Web.Responses;
 using Microsoft.AspNetCore.Http;
 using Lemoine.Extensions.Web.Interfaces;
 using Lemoine.Web;
+using Lemoine.WebMiddleware.HttpContext;
 
 namespace Pulse.Web.WebDataAccess
 {

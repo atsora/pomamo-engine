@@ -38,8 +38,10 @@ namespace Lemoine.Stamping.UnitTests
 }
 """;
         var timeConfig = JsonSerializer.Deserialize<Lemoine.Stamping.TimeConfigs.TimeConfig> (json);
-        Assert.AreEqual (1.0, timeConfig.GetTimeFactor ());
-        Assert.AreEqual (TimeSpan.FromMinutes (2), timeConfig.GetMilestoneTriggerFrequency ());
+        Assert.Multiple (() => {
+          Assert.That (timeConfig.GetTimeFactor (), Is.EqualTo (1.0));
+          Assert.That (timeConfig.GetMilestoneTriggerFrequency (), Is.EqualTo (TimeSpan.FromMinutes (2)));
+        });
       }
 
       {
@@ -50,8 +52,10 @@ namespace Lemoine.Stamping.UnitTests
 }
 """;
         var timeConfig = JsonSerializer.Deserialize<Lemoine.Stamping.TimeConfigs.TimeConfig> (json);
-        Assert.AreEqual (0.9, timeConfig.GetTimeFactor ());
-        Assert.AreEqual (TimeSpan.FromMinutes (10), timeConfig.GetMilestoneTriggerFrequency ());
+        Assert.Multiple (() => {
+          Assert.That (timeConfig.GetTimeFactor (), Is.EqualTo (0.9));
+          Assert.That (timeConfig.GetMilestoneTriggerFrequency (), Is.EqualTo (TimeSpan.FromMinutes (10)));
+        });
       }
     }
   }

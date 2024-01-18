@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFrameworks>net48;net6.0;net40</TargetFrameworks>
+    <TargetFrameworks>net48;net8.0;net40</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
 
-  <ItemGroup Condition="('$(TargetFramework)' != 'net6.0') and ('$(TargetFramework)' != 'netstandard2.0')">
+  <ItemGroup Condition="('$(TargetFramework)' != 'net8.0') and ('$(TargetFramework)' != 'netstandard2.0')">
     <Reference Include="System.Configuration.Install" />
   </ItemGroup>
 

@@ -67,24 +67,26 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         cAS_DAO.MakePersistent(cAS);
         ModelDAOHelper.DAOFactory.Flush();
         cAS_DAO.Reload(cAS);
-        
-        // Check that another element is stored
-        Assert.AreEqual(count + 1, cAS_DAO.FindAll().Count, "Wrong count after insertion");
-        
-        // Check the properties
-        Assert.AreEqual("Cnc test", cAS.CncInfo, "wrong CncInfo");
-        Assert.AreEqual("severity test", cAS.Name, "wrong Name");
-        Assert.AreEqual("#123456", cAS.Color, "wrong Color");
-        Assert.AreEqual("desc", cAS.Description, "wrong Description");
-        Assert.AreEqual(CncAlarmStopStatus.Possibly, cAS.StopStatus, "wrong StopStatus");
-        Assert.AreEqual(true, cAS.Focus, "wrong Focus");
-        Assert.AreEqual(EditStatus.DEFAULT_VALUE, cAS.Status, "wrong Status");
-        
+
+        Assert.Multiple (() => {
+          // Check that another element is stored
+          Assert.That (cAS_DAO.FindAll (), Has.Count.EqualTo (count + 1), "Wrong count after insertion");
+
+          // Check the properties
+          Assert.That (cAS.CncInfo, Is.EqualTo ("Cnc test"), "wrong CncInfo");
+          Assert.That (cAS.Name, Is.EqualTo ("severity test"), "wrong Name");
+          Assert.That (cAS.Color, Is.EqualTo ("#123456"), "wrong Color");
+          Assert.That (cAS.Description, Is.EqualTo ("desc"), "wrong Description");
+          Assert.That (cAS.StopStatus, Is.EqualTo (CncAlarmStopStatus.Possibly), "wrong StopStatus");
+          Assert.That (cAS.Focus, Is.EqualTo (true), "wrong Focus");
+          Assert.That (cAS.Status, Is.EqualTo (EditStatus.DEFAULT_VALUE), "wrong Status");
+        });
+
         // Remove the cnc alarm from the database
         cAS_DAO.MakeTransient(cAS);
-        
+
         // Check the number of elements stored
-        Assert.AreEqual(count, cAS_DAO.FindAll().Count, "Wrong count after deletion");
+        Assert.That (cAS_DAO.FindAll(), Has.Count.EqualTo (count), "Wrong count after deletion");
         
         transaction.Rollback();
       }

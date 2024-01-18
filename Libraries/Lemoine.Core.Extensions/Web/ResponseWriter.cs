@@ -50,7 +50,7 @@ namespace Lemoine.Core.Extensions.Web
     /// <param name="effectiveContentType"></param>
     /// <param name="defaultContentType">content type to consider if content type is empty or null</param>
     /// <returns></returns>
-    public async Task WriteToBodyAsync (Microsoft.AspNetCore.Http.HttpContext context, object responseObject, string? contentType = "", string defaultContentType = "application/json")
+    public async Task WriteToBodyAsync (HttpContext context, object responseObject, string? contentType = "", string defaultContentType = "application/json")
     {
       var effectiveContentType = string.IsNullOrEmpty (contentType)
         ? defaultContentType

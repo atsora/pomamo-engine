@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -51,14 +52,14 @@ namespace Lem_AspService
       m_responseWriter = responseWriter;
     }
 
-    public async Task InvokeAsync (Microsoft.AspNetCore.Http.HttpContext context)
+    public async Task InvokeAsync (HttpContext context)
     {
       var path = context.Request.Path;
       if (path.HasValue) {
         var lowerPath = path.Value?.ToLowerInvariant ();
         if (lowerPath?.StartsWith ("/maintenance/") ?? false) {
           var broadcastQuery = context.Request.Query["Broadcast"];
-          var broadcast = !broadcastQuery.Any (s => s.Equals ("false", StringComparison.InvariantCultureIgnoreCase));
+          var broadcast = !broadcastQuery.Any (s => s?.Equals ("false", StringComparison.InvariantCultureIgnoreCase) ?? false);
           switch (lowerPath) {
           case "/maintenance/on":
             CheckSource (context.Connection);

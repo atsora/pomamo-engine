@@ -76,26 +76,30 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CncAlarmDAO.MakePersistent(cncAlarm);
         ModelDAOHelper.DAOFactory.FlushData();
         ModelDAOHelper.DAOFactory.CncAlarmDAO.Reload(cncAlarm);
-        
-        // Check that another element is stored
-        Assert.AreEqual(count + 1, cncAlarmDAO.FindAll().Count, "Wrong count after insertion");
-        
-        // Check the properties (after a reload)
-        Assert.AreEqual(2, cncAlarm.Properties.Count);
-        Assert.AreEqual("cncInfo", cncAlarm.CncInfo, "wrong cnc info");
-        Assert.AreEqual("subCncInfo", cncAlarm.CncSubInfo, "wrong cnc sub info");
-        Assert.AreEqual("alarmType", cncAlarm.Type, "wrong type");
-        Assert.AreEqual("1", cncAlarm.Number, "wrong name");
-        Assert.AreEqual(true, cncAlarm.Properties.ContainsKey("property1"));
-        Assert.AreEqual(true, cncAlarm.Properties.ContainsKey("property2"));
-        Assert.AreEqual("value1", cncAlarm.Properties["property1"]);
-        Assert.AreEqual("value2", cncAlarm.Properties["property2"]);
-        
+
+        Assert.Multiple (() => {
+          // Check that another element is stored
+          Assert.That (cncAlarmDAO.FindAll (), Has.Count.EqualTo (count + 1), "Wrong count after insertion");
+
+          // Check the properties (after a reload)
+          Assert.That (cncAlarm.Properties, Has.Count.EqualTo (2));
+          Assert.That (cncAlarm.CncInfo, Is.EqualTo ("cncInfo"), "wrong cnc info");
+          Assert.That (cncAlarm.CncSubInfo, Is.EqualTo ("subCncInfo"), "wrong cnc sub info");
+          Assert.That (cncAlarm.Type, Is.EqualTo ("alarmType"), "wrong type");
+          Assert.That (cncAlarm.Number, Is.EqualTo ("1"), "wrong name");
+        });
+        Assert.Multiple (() => {
+          Assert.That (cncAlarm.Properties.ContainsKey ("property1"), Is.EqualTo (true));
+          Assert.That (cncAlarm.Properties.ContainsKey ("property2"), Is.EqualTo (true));
+          Assert.That (cncAlarm.Properties["property1"], Is.EqualTo ("value1"));
+          Assert.That (cncAlarm.Properties["property2"], Is.EqualTo ("value2"));
+        });
+
         // Remove the cnc alarm from the database
         cncAlarmDAO.MakeTransient(cncAlarm);
-        
+
         // Check the number of elements stored
-        Assert.AreEqual(count, cncAlarmDAO.FindAll().Count, "Wrong count after deletion");
+        Assert.That (cncAlarmDAO.FindAll(), Has.Count.EqualTo (count), "Wrong count after deletion");
         
         transaction.Rollback();
       }
@@ -157,7 +161,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CncAlarmDAO.Reload(alarm4);
 
         // Check that the severities are correct
-        Assert.AreEqual (cAS, alarm1.Severity, "Wrong severity for alarm 1");
+        Assert.That (alarm1.Severity, Is.EqualTo (cAS), "Wrong severity for alarm 1");
         Assert.IsNull(alarm2.Severity, "Wrong severity for alarm 2");
         Assert.IsNull(alarm3.Severity, "Wrong severity for alarm 3");
         Assert.IsNull(alarm4.Severity, "Wrong severity for alarm 4");
@@ -231,9 +235,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CncAlarmDAO.Reload(alarm2);
         daoFactory.CncAlarmDAO.Reload(alarm3);
         daoFactory.CncAlarmDAO.Reload(alarm4);
-        
+
         // Check that the severities are correct
-        Assert.AreEqual(cAS1, alarm1.Severity, "Wrong severity for alarm 1");
+        Assert.That (alarm1.Severity, Is.EqualTo (cAS1), "Wrong severity for alarm 1");
         Assert.IsNull(alarm2.Severity, "Wrong severity for alarm 2");
         Assert.IsNull(alarm3.Severity, "Wrong severity for alarm 3");
         Assert.IsNull(alarm4.Severity, "Wrong severity for alarm 4");

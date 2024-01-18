@@ -42,12 +42,12 @@ namespace Lemoine.Info.UnitTests
     {
       var key = "TestPersistentConfigWriter";
       Lemoine.Info.ConfigSet.SetPersistentConfig (key, true);
-      Assert.IsTrue (Lemoine.Info.ConfigSet.Get<bool> (key));
+      Assert.That (Lemoine.Info.ConfigSet.Get<bool> (key), Is.True);
       {
         var commonApplicationData = System.Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
-        var commonConfigDirectory = Path.Combine (commonApplicationData, "Lemoine", "PULSE");
+        var commonConfigDirectory = Path.Combine (commonApplicationData, "Pomamo");
         var path = Path.Combine (commonConfigDirectory, $"{PulseInfo.ProductFolderName}.options.d", key + ".options");
-        Assert.IsTrue (File.Exists (path));
+        Assert.That (File.Exists (path), Is.True);
       }
       Lemoine.Info.ConfigSet.ResetPersistentConfig (key);
       Assert.Throws<ConfigKeyNotFoundException> (() => Lemoine.Info.ConfigSet.Get<bool> (key));
@@ -62,34 +62,38 @@ namespace Lemoine.Info.UnitTests
       configReader.Add ("C", 3);
       var persistentCacheConfigReader = new PersistentCacheConfigReader (configReader, "UnitTest.persistentoptions");
       var a = persistentCacheConfigReader.Get<int> ("A");
-      Assert.AreEqual (1, a);
+      Assert.That (a, Is.EqualTo (1));
       var path = Path.Combine (PulseInfo.LocalConfigurationDirectory, "UnitTest.persistentoptions");
-      Assert.AreEqual (
-"""
+      Assert.That (
+File.ReadAllText (path).ReplaceLineEndings (), Is.EqualTo ("""
 A:1
 
-""".ReplaceLineEndings (), File.ReadAllText (path).ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
       configReader.Available = false;
       a = persistentCacheConfigReader.Get<int> ("A");
-      Assert.AreEqual (1, a);
+      Assert.That (a, Is.EqualTo (1));
       Assert.Throws<ConfigKeyNotFoundException> (() => persistentCacheConfigReader.Get<int> ("B"));
       configReader.Available = true;
       var b = persistentCacheConfigReader.Get<int> ("B");
-      Assert.AreEqual (2, b);
-      Assert.AreEqual (
-"""
+      Assert.Multiple (() => {
+        Assert.That (b, Is.EqualTo (2));
+        Assert.That (
+  File.ReadAllText (path).ReplaceLineEndings (), Is.EqualTo ("""
 A:1
 B:2
 
-""".ReplaceLineEndings (), File.ReadAllText (path).ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
+      });
       configReader.Add ("A", 11, true);
       a = persistentCacheConfigReader.Get<int> ("A");
-      Assert.AreEqual (11, a);
-      Assert.AreEqual (
-"""
+      Assert.Multiple (() => {
+        Assert.That (a, Is.EqualTo (11));
+        Assert.That (
+  File.ReadAllText (path).ReplaceLineEndings (), Is.EqualTo ("""
 A:11
 
-""".ReplaceLineEndings (), File.ReadAllText (path).ReplaceLineEndings ());
+""".ReplaceLineEndings ()));
+      });
       File.Delete (path);
     }
   }

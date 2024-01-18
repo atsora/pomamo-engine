@@ -27,93 +27,93 @@ namespace Lemoine.ModelDAO.UnitTests
     {
       {
         Range<double> range = new Range<double> (1, 4);
-        Assert.AreEqual (1, range.Lower.Value);
-        Assert.AreEqual (4, range.Upper.Value);
-        Assert.AreEqual (true, range.LowerInclusive);
-        Assert.AreEqual (false, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("[1,4)", range.ToString ());
+        Assert.That (range.Lower.Value, Is.EqualTo (1));
+        Assert.That (range.Upper.Value, Is.EqualTo (4));
+        Assert.That (range.LowerInclusive, Is.EqualTo (true));
+        Assert.That (range.UpperInclusive, Is.EqualTo (false));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("[1,4)"));
       }
       {
         Range<double> range = new Range<double> (1, 4, "()");
-        Assert.AreEqual (1, range.Lower.Value);
-        Assert.AreEqual (4, range.Upper.Value);
-        Assert.AreEqual (false, range.LowerInclusive);
-        Assert.AreEqual (false, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("(1,4)", range.ToString ());
+        Assert.That (range.Lower.Value, Is.EqualTo (1));
+        Assert.That (range.Upper.Value, Is.EqualTo (4));
+        Assert.That (range.LowerInclusive, Is.EqualTo (false));
+        Assert.That (range.UpperInclusive, Is.EqualTo (false));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("(1,4)"));
       }
       {
         Range<double> range = new Range<double> (1, 4, "[]");
-        Assert.AreEqual (1, range.Lower.Value);
-        Assert.AreEqual (4, range.Upper.Value);
-        Assert.AreEqual (true, range.LowerInclusive);
-        Assert.AreEqual (true, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("[1,4]", range.ToString ());
+        Assert.That (range.Lower.Value, Is.EqualTo (1));
+        Assert.That (range.Upper.Value, Is.EqualTo (4));
+        Assert.That (range.LowerInclusive, Is.EqualTo (true));
+        Assert.That (range.UpperInclusive, Is.EqualTo (true));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("[1,4]"));
       }
       {
         Range<double> range = new Range<double> (4, 4, "[]");
-        Assert.AreEqual (4, range.Lower.Value);
-        Assert.AreEqual (4, range.Upper.Value);
-        Assert.AreEqual (true, range.LowerInclusive);
-        Assert.AreEqual (true, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("[4,4]", range.ToString ());
+        Assert.That (range.Lower.Value, Is.EqualTo (4));
+        Assert.That (range.Upper.Value, Is.EqualTo (4));
+        Assert.That (range.LowerInclusive, Is.EqualTo (true));
+        Assert.That (range.UpperInclusive, Is.EqualTo (true));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("[4,4]"));
       }
       {
         Range<double> range = new Range<double> (1, 4, "(]");
-        Assert.AreEqual (1, range.Lower.Value);
-        Assert.AreEqual (4, range.Upper.Value);
-        Assert.AreEqual (false, range.LowerInclusive);
-        Assert.AreEqual (true, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("(1,4]", range.ToString ());
+        Assert.That (range.Lower.Value, Is.EqualTo (1));
+        Assert.That (range.Upper.Value, Is.EqualTo (4));
+        Assert.That (range.LowerInclusive, Is.EqualTo (false));
+        Assert.That (range.UpperInclusive, Is.EqualTo (true));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("(1,4]"));
       }
       {
         Range<double> range = new Range<double> (1, 4, "[)");
-        Assert.AreEqual (1, range.Lower.Value);
-        Assert.AreEqual (4, range.Upper.Value);
-        Assert.AreEqual (true, range.LowerInclusive);
-        Assert.AreEqual (false, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("[1,4)", range.ToString ());
+        Assert.That (range.Lower.Value, Is.EqualTo (1));
+        Assert.That (range.Upper.Value, Is.EqualTo (4));
+        Assert.That (range.LowerInclusive, Is.EqualTo (true));
+        Assert.That (range.UpperInclusive, Is.EqualTo (false));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("[1,4)"));
       }
       {
         Range<double> range = new Range<double> ();
-        Assert.AreEqual (true, range.IsEmpty ());
+        Assert.That (range.IsEmpty (), Is.EqualTo (true));
         Assert.Throws<InvalidOperationException> (new TestDelegate (delegate () { LowerBound<double> lower = range.Lower; }));
         Assert.Throws<InvalidOperationException> (new TestDelegate (delegate () { UpperBound<double> upper = range.Upper; }));
-        Assert.AreEqual (false, range.LowerInclusive);
-        Assert.AreEqual (false, range.UpperInclusive);
-        Assert.AreEqual ("empty", range.ToString ());
+        Assert.That (range.LowerInclusive, Is.EqualTo (false));
+        Assert.That (range.UpperInclusive, Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("empty"));
       }
       {
         Range<double> range = new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "[]");
-        Assert.AreEqual (false, range.Lower.HasValue);
-        Assert.AreEqual (false, range.Upper.HasValue);
-        Assert.AreEqual (false, range.LowerInclusive);
-        Assert.AreEqual (false, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("(,)", range.ToString ());
+        Assert.That (range.Lower.HasValue, Is.EqualTo (false));
+        Assert.That (range.Upper.HasValue, Is.EqualTo (false));
+        Assert.That (range.LowerInclusive, Is.EqualTo (false));
+        Assert.That (range.UpperInclusive, Is.EqualTo (false));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("(,)"));
       }
       {
         Range<double> range = new Range<double> (new LowerBound<double> (null), 4, "[]");
-        Assert.AreEqual (false, range.Lower.HasValue);
-        Assert.AreEqual (true, range.Upper.HasValue);
-        Assert.AreEqual (false, range.LowerInclusive);
-        Assert.AreEqual (true, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("(,4]", range.ToString ());
+        Assert.That (range.Lower.HasValue, Is.EqualTo (false));
+        Assert.That (range.Upper.HasValue, Is.EqualTo (true));
+        Assert.That (range.LowerInclusive, Is.EqualTo (false));
+        Assert.That (range.UpperInclusive, Is.EqualTo (true));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("(,4]"));
       }
       {
         Range<double> range = new Range<double> (1, new UpperBound<double> (null), "[]");
-        Assert.AreEqual (true, range.Lower.HasValue);
-        Assert.AreEqual (false, range.Upper.HasValue);
-        Assert.AreEqual (true, range.LowerInclusive);
-        Assert.AreEqual (false, range.UpperInclusive);
-        Assert.AreEqual (false, range.IsEmpty ());
-        Assert.AreEqual ("[1,)", range.ToString ());
+        Assert.That (range.Lower.HasValue, Is.EqualTo (true));
+        Assert.That (range.Upper.HasValue, Is.EqualTo (false));
+        Assert.That (range.LowerInclusive, Is.EqualTo (true));
+        Assert.That (range.UpperInclusive, Is.EqualTo (false));
+        Assert.That (range.IsEmpty (), Is.EqualTo (false));
+        Assert.That (range.ToString (), Is.EqualTo ("[1,)"));
       }
     }
     
@@ -125,13 +125,13 @@ namespace Lemoine.ModelDAO.UnitTests
     {
       Range<double> src = new Range<double> (1, 4, "[)");
       Range<double> range = (Range<double>) src.Clone ();
-      Assert.AreEqual (1, range.Lower.Value);
-      Assert.AreEqual (4, range.Upper.Value);
-      Assert.AreEqual (true, range.LowerInclusive);
-      Assert.AreEqual (false, range.UpperInclusive);
-      Assert.AreEqual (false, range.IsEmpty ());
-      Assert.AreEqual ("[1,4)", range.ToString ());
-      Assert.IsTrue (src.Equals (range));
+      Assert.That (range.Lower.Value, Is.EqualTo (1));
+      Assert.That (range.Upper.Value, Is.EqualTo (4));
+      Assert.That (range.LowerInclusive, Is.EqualTo (true));
+      Assert.That (range.UpperInclusive, Is.EqualTo (false));
+      Assert.That (range.IsEmpty (), Is.EqualTo (false));
+      Assert.That (range.ToString (), Is.EqualTo ("[1,4)"));
+      Assert.That (src.Equals (range), Is.True);
     }
     
     /// <summary>
@@ -143,10 +143,10 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse (new Range<double> ().ContainsRange (new Range<double>()));
       Assert.IsFalse (new Range<double> ().ContainsRange (new Range<double> (1, 4)));
 
-      Assert.IsTrue (new Range<double> (1, 4).ContainsRange (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (1, 4).ContainsRange (new Range<double> (1, 3)));
-      Assert.IsTrue (new Range<double> (1, 4).ContainsRange (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").ContainsRange (new Range<double> (1, 4, "()")));
+      Assert.That (new Range<double> (1, 4).ContainsRange (new Range<double> ()), Is.True);
+      Assert.That (new Range<double> (1, 4).ContainsRange (new Range<double> (1, 3)), Is.True);
+      Assert.That (new Range<double> (1, 4).ContainsRange (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (1, 4, "(]").ContainsRange (new Range<double> (1, 4, "()")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "()").ContainsRange (new Range<double> (1, 4)));
       Assert.IsFalse (new Range<double> (1, 4, "[)").ContainsRange (new Range<double> (1, 4, "[]")));
       Assert.IsFalse (new Range<double> (1, 4).ContainsRange (new Range<double> (4, 4, "[]")));
@@ -157,44 +157,44 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse (new Range<double> (1, 4).ContainsRange (new Range<double> (1, new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, 4).ContainsRange (new Range<double> (new LowerBound<double> (null), 4)));
 
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "(]").ContainsRange (new Range<double> (1, 4, "()")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "()").ContainsRange (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "[)").ContainsRange (new Range<double> (1, 4, "[]")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (4, 4, "[]")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (2, 5)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (0, 3)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (6, 50)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (new LowerBound<double> (null), 4)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> ()), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "(]").ContainsRange (new Range<double> (1, 4, "()")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "()").ContainsRange (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "[)").ContainsRange (new Range<double> (1, 4, "[]")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (4, 4, "[]")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (2, 5)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (0, 3)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (6, 50)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (1, new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsRange (new Range<double> (new LowerBound<double> (null), 4)), Is.True);
 
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null), "(]").ContainsRange (new Range<double> (1, 4, "()")));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> ()), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null), "(]").ContainsRange (new Range<double> (1, 4, "()")), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null), "()").ContainsRange (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null), "[)").ContainsRange (new Range<double> (1, 4, "[]")));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (1, 1, "[]")));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (2, 5)));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null), "[)").ContainsRange (new Range<double> (1, 4, "[]")), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (1, 1, "[]")), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (2, 5)), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (0, 3)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (6, 50)));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (6, 50)), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (1, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (1, new UpperBound<double> (null))), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).ContainsRange (new Range<double> (new LowerBound<double> (null), 4)));
-      
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4, "(]").ContainsRange (new Range<double> (1, 4, "()")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4, "()").ContainsRange (new Range<double> (1, 4)));
+
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> ()), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4, "(]").ContainsRange (new Range<double> (1, 4, "()")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4, "()").ContainsRange (new Range<double> (1, 4)), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "[)").ContainsRange (new Range<double> (1, 4, "[]")));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (4, 4, "[]")));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (2, 5)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (0, 3)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (0, 3)), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (6, 50)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (new LowerBound<double> (null), 4)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).ContainsRange (new Range<double> (new LowerBound<double> (null), 4)), Is.True);
     }
 
     /// <summary>
@@ -203,17 +203,17 @@ namespace Lemoine.ModelDAO.UnitTests
     [Test]
     public void TestContainsElement ()
     {
-      Assert.IsTrue (new Range<double> (1, 4).ContainsElement (2));
-      Assert.IsTrue (new Range<double> (1, 4).ContainsElement (1));
+      Assert.That (new Range<double> (1, 4).ContainsElement (2), Is.True);
+      Assert.That (new Range<double> (1, 4).ContainsElement (1), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).ContainsElement (4));
       Assert.IsFalse (new Range<double> (1, 4).ContainsElement (-3));
 
-      Assert.IsTrue (new Range<double> (1, 4, "(]").ContainsElement (2));
+      Assert.That (new Range<double> (1, 4, "(]").ContainsElement (2), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "(]").ContainsElement (1));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").ContainsElement (4));
+      Assert.That (new Range<double> (1, 4, "(]").ContainsElement (4), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "(]").ContainsElement (-3));
 
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsElement (2));
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).ContainsElement (2), Is.True);
     }
 
     /// <summary>
@@ -226,18 +226,18 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse (new Range<double> ().Overlaps (new Range<double> (1, 4)));
 
       Assert.IsFalse (new Range<double> (1, 4).Overlaps (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (1, 4).Overlaps (new Range<double> (1, 3)));
-      Assert.IsTrue (new Range<double> (1, 4).Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").Overlaps (new Range<double> (1, 4, "()")));
-      Assert.IsTrue (new Range<double> (1, 4, "()").Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (1, 4, "[)").Overlaps (new Range<double> (1, 4, "[]")));
+      Assert.That (new Range<double> (1, 4).Overlaps (new Range<double> (1, 3)), Is.True);
+      Assert.That (new Range<double> (1, 4).Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (1, 4, "(]").Overlaps (new Range<double> (1, 4, "()")), Is.True);
+      Assert.That (new Range<double> (1, 4, "()").Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (1, 4, "[)").Overlaps (new Range<double> (1, 4, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).Overlaps (new Range<double> (4, 4, "[]")));
-      Assert.IsTrue (new Range<double> (1, 4).Overlaps (new Range<double> (2, 5)));
-      Assert.IsTrue (new Range<double> (1, 4).Overlaps (new Range<double> (0, 3)));
+      Assert.That (new Range<double> (1, 4).Overlaps (new Range<double> (2, 5)), Is.True);
+      Assert.That (new Range<double> (1, 4).Overlaps (new Range<double> (0, 3)), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).Overlaps (new Range<double> (6, 50)));
-      Assert.IsTrue (new Range<double> (1, 4).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, 4).Overlaps (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, 4).Overlaps (new Range<double> (new LowerBound<double> (null), 4)));
+      Assert.That (new Range<double> (1, 4).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (1, 4).Overlaps (new Range<double> (1, new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (1, 4).Overlaps (new Range<double> (new LowerBound<double> (null), 4)), Is.True);
       
       // Bug 2016-02-19
       Assert.IsFalse (new Range<int> (1,3, "[)").Overlaps (new Range<int> (3, new UpperBound<int> (null), "[)")));
@@ -246,48 +246,48 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse (new Range<int> (2, 4).Overlaps (new Range<int> (10, 15)));
       Assert.IsFalse (new Range<int> (10, 15).Overlaps (new Range<int> (2, 4)));
       Assert.IsFalse (new Range<int> (10, 15).Overlaps (new Range<int> (2, 10)));
-      Assert.IsTrue (new Range<int> (10, 15).Overlaps (new Range<int> (2, 10, "[]")));
+      Assert.That (new Range<int> (10, 15).Overlaps (new Range<int> (2, 10, "[]")), Is.True);
 
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "(]").Overlaps (new Range<double> (1, 4, "()")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "()").Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "[)").Overlaps (new Range<double> (1, 4, "[]")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (4, 4, "[]")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (2, 5)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (0, 3)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (6, 50)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), 4)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "(]").Overlaps (new Range<double> (1, 4, "()")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "()").Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null), "[)").Overlaps (new Range<double> (1, 4, "[]")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (4, 4, "[]")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (2, 5)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (0, 3)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (6, 50)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (1, new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), 4)), Is.True);
 
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null), "(]").Overlaps (new Range<double> (1, 4, "()")));
-      Assert.IsTrue(new Range<double> (1, new UpperBound<double> (null), "()").Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null), "[)").Overlaps (new Range<double> (1, 4, "[]")));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (1, 1, "[]")));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (2, 5)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (0, 3)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (6, 50)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), 4)));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null), "(]").Overlaps (new Range<double> (1, 4, "()")), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null), "()").Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null), "[)").Overlaps (new Range<double> (1, 4, "[]")), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (1, 1, "[]")), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (2, 5)), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (0, 3)), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (6, 50)), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (1, new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), 4)), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).Overlaps (new Range<double> (new LowerBound<double> (null), 1)));
       
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> ()));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4, "(]").Overlaps (new Range<double> (1, 4, "()")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4, "()").Overlaps (new Range<double> (1, 4)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4, "[)").Overlaps (new Range<double> (1, 4, "[]")));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4, "(]").Overlaps (new Range<double> (1, 4, "()")), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4, "()").Overlaps (new Range<double> (1, 4)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4, "[)").Overlaps (new Range<double> (1, 4, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (4, 4, "[]")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (2, 5)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (0, 3)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (2, 5)), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (0, 3)), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (6, 50)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (1, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (1, new UpperBound<double> (null))), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (4, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (new LowerBound<double> (null), 4)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).Overlaps (new Range<double> (new LowerBound<double> (null), 4)), Is.True);
     }
 
     /// <summary>
@@ -301,18 +301,18 @@ namespace Lemoine.ModelDAO.UnitTests
 
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> ()));
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (1, 3)));
-      Assert.IsTrue (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (4, 5)));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").IsStrictlyLeftOf (new Range<double> (4, 5, "()")));
-      Assert.IsTrue (new Range<double> (1, 4, "()").IsStrictlyLeftOf (new Range<double> (4, 5)));
-      Assert.IsTrue (new Range<double> (1, 4, "[)").IsStrictlyLeftOf (new Range<double> (4, 5, "[]")));
+      Assert.That (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (4, 5)), Is.True);
+      Assert.That (new Range<double> (1, 4, "(]").IsStrictlyLeftOf (new Range<double> (4, 5, "()")), Is.True);
+      Assert.That (new Range<double> (1, 4, "()").IsStrictlyLeftOf (new Range<double> (4, 5)), Is.True);
+      Assert.That (new Range<double> (1, 4, "[)").IsStrictlyLeftOf (new Range<double> (4, 5, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "[]").IsStrictlyLeftOf (new Range<double> (4, 5, "[]")));
-      Assert.IsTrue (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (4, 4, "[]")));
+      Assert.That (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (4, 4, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (2, 5)));
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (0, 3)));
-      Assert.IsTrue (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (6, 50)));
+      Assert.That (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (6, 50)), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (4, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (4, new UpperBound<double> (null))), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyLeftOf (new Range<double> (new LowerBound<double> (null), 1)));
 
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).IsStrictlyLeftOf (new Range<double> ()));
@@ -347,16 +347,16 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "(]").IsStrictlyLeftOf (new Range<double> (1, 4, "()")));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "()").IsStrictlyLeftOf (new Range<double> (1, 4)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "[)").IsStrictlyLeftOf (new Range<double> (1, 4, "[]")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (4, 4, "[]")));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (4, 4, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (2, 5)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (0, 3)));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (6, 50)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (6, 50)), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (4, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (4, new UpperBound<double> (null))), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (new LowerBound<double> (null), 4)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (3, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (5, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyLeftOf (new Range<double> (5, new UpperBound<double> (null))), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "[]").IsStrictlyLeftOf (new Range<double> (4, new UpperBound<double> (null))));
     }
 
@@ -371,19 +371,19 @@ namespace Lemoine.ModelDAO.UnitTests
 
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> ()));
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (1, 3)));
-      Assert.IsTrue (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (0, 1)));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").IsStrictlyRightOf (new Range<double> (0, 1, "()")));
-      Assert.IsTrue (new Range<double> (1, 4, "()").IsStrictlyRightOf (new Range<double> (0, 1)));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").IsStrictlyRightOf (new Range<double> (0, 1, "[]")));
+      Assert.That (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (0, 1)), Is.True);
+      Assert.That (new Range<double> (1, 4, "(]").IsStrictlyRightOf (new Range<double> (0, 1, "()")), Is.True);
+      Assert.That (new Range<double> (1, 4, "()").IsStrictlyRightOf (new Range<double> (0, 1)), Is.True);
+      Assert.That (new Range<double> (1, 4, "(]").IsStrictlyRightOf (new Range<double> (0, 1, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "[]").IsStrictlyRightOf (new Range<double> (0, 1, "[]")));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").IsStrictlyRightOf (new Range<double> (1, 1, "[]")));
+      Assert.That (new Range<double> (1, 4, "(]").IsStrictlyRightOf (new Range<double> (1, 1, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (0, 3)));
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (2, 5)));
-      Assert.IsTrue (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (0, 1)));
+      Assert.That (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (0, 1)), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (1, new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (4, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), 1)));
+      Assert.That (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), 1)), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), 1, "[]")));
 
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> ()));
@@ -405,14 +405,14 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse(new Range<double> (1, new UpperBound<double> (null), "()").IsStrictlyRightOf (new Range<double> (1, 4)));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null), "[)").IsStrictlyRightOf (new Range<double> (1, 4, "[]")));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (1, 1, "[]")));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null), "()").IsStrictlyRightOf (new Range<double> (1, 1, "[]")));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (-1, 0)));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null), "()").IsStrictlyRightOf (new Range<double> (1, 1, "[]")), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (-1, 0)), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (0, 3)));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (6, 50)));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (1, new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), 4)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), 1)));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), 1)), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsStrictlyRightOf (new Range<double> (new LowerBound<double> (null), 1, "[]")));
       
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsStrictlyRightOf (new Range<double> ()));
@@ -443,24 +443,24 @@ namespace Lemoine.ModelDAO.UnitTests
 
       Assert.IsFalse (new Range<double> (1, 4).IsAdjacentTo (new Range<double> ()));
       Assert.IsFalse (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (1, 3)));
-      Assert.IsTrue (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (4, 5)));
-      Assert.IsTrue (new Range<double> (1, 4, "(]").IsAdjacentTo (new Range<double> (4, 5, "()")));
-      Assert.IsTrue (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (4, 5)));
-      Assert.IsTrue (new Range<double> (1, 4, "[)").IsAdjacentTo (new Range<double> (4, 5, "[]")));
+      Assert.That (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (4, 5)), Is.True);
+      Assert.That (new Range<double> (1, 4, "(]").IsAdjacentTo (new Range<double> (4, 5, "()")), Is.True);
+      Assert.That (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (4, 5)), Is.True);
+      Assert.That (new Range<double> (1, 4, "[)").IsAdjacentTo (new Range<double> (4, 5, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "[]").IsAdjacentTo (new Range<double> (4, 5, "[]")));
-      Assert.IsTrue (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (4, 4, "[]")));
+      Assert.That (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (4, 4, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (2, 5)));
       Assert.IsFalse (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (0, 3)));
-      Assert.IsTrue (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (0, 1)));
-      Assert.IsTrue (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (0, 1, "[]")));
+      Assert.That (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (0, 1)), Is.True);
+      Assert.That (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (0, 1, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (0, 1)));
       Assert.IsFalse (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (6, 50)));
       Assert.IsFalse (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1)));
+      Assert.That (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (1, 4).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1)), Is.True);
       Assert.IsFalse (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1)));
-      Assert.IsTrue (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1, "(]")));
+      Assert.That (new Range<double> (1, 4, "()").IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1, "(]")), Is.True);
 
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).IsAdjacentTo (new Range<double> ()));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).IsAdjacentTo (new Range<double> (1, 4)));
@@ -487,8 +487,8 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsAdjacentTo (new Range<double> (1, new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null)).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 4)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null)).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1)));
-      Assert.IsTrue (new Range<double> (1, new UpperBound<double> (null), "()").IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1, "[]")));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1)), Is.True);
+      Assert.That (new Range<double> (1, new UpperBound<double> (null), "()").IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (1, new UpperBound<double> (null), "()").IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 1, "()")));
       
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> ()));
@@ -496,22 +496,22 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "(]").IsAdjacentTo (new Range<double> (1, 4, "()")));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "()").IsAdjacentTo (new Range<double> (1, 4)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "[)").IsAdjacentTo (new Range<double> (1, 4, "[]")));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (4, 4, "[]")));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (4, 4, "[]")), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (2, 5)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (0, 3)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (6, 50)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (1, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null))), Is.True);
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (new LowerBound<double> (null), 4)));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (3, new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4).IsAdjacentTo (new Range<double> (5, new UpperBound<double> (null))));
       Assert.IsFalse (new Range<double> (new LowerBound<double> (null), 4, "[]").IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4, "()").IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null))));
-      Assert.IsTrue (new Range<double> (new LowerBound<double> (null), 4, "[]").IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null), "()")));
-      
-      Assert.IsTrue (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).IsAdjacentTo (new DayRange (new DateTime (2016, 01, 07), new DateTime (2016, 01, 08))));
-      Assert.IsTrue (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).IsAdjacentTo (new DayRange (new DateTime (2016, 01, 03), new DateTime (2016, 01, 04))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4, "()").IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null))), Is.True);
+      Assert.That (new Range<double> (new LowerBound<double> (null), 4, "[]").IsAdjacentTo (new Range<double> (4, new UpperBound<double> (null), "()")), Is.True);
+
+      Assert.That (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).IsAdjacentTo (new DayRange (new DateTime (2016, 01, 07), new DateTime (2016, 01, 08))), Is.True);
+      Assert.That (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).IsAdjacentTo (new DayRange (new DateTime (2016, 01, 03), new DateTime (2016, 01, 04))), Is.True);
       Assert.IsFalse (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).IsAdjacentTo (new DayRange (new DateTime (2016, 01, 03), new DateTime (2016, 01, 05))));
     }
 
@@ -524,63 +524,37 @@ namespace Lemoine.ModelDAO.UnitTests
       Assert.Throws<ArgumentException> (new TestDelegate (delegate {new Range<double> (1, 3).Union (new Range<double> (4, 5)); }));
       Assert.Throws<ArgumentException> (new TestDelegate (delegate {new Range<double> (new LowerBound<double> (null), 1).Union (new Range<double> (2, new UpperBound<double> (null))); }));
       Assert.Throws<ArgumentException> (new TestDelegate (delegate {new Range<double> (new LowerBound<double> (null), 1, "()").Union (new Range<double> (1, new UpperBound<double> (null), "()")); }));
-      
-      Assert.AreEqual (new Range<double> (),
-                       new Range<double> ().Union (new Range<double> ()));
-      Assert.AreEqual (new Range<double> (1,5),
-                       new Range<double> ().Union (new Range<double> (1, 5)));
-      Assert.AreEqual (new Range<double> (1,5),
-                       new Range<double> (1, 5).Union (new Range<double> ()));
-      Assert.AreEqual (new Range<double> (1,5),
-                       new Range<double> (1, 3).Union (new Range<double> (3, 5)));
-      Assert.AreEqual (new Range<double> (1,5),
-                       new Range<double> (1, 5).Union (new Range<double> (2, 3)));
-      Assert.AreEqual (new Range<double> (1,5),
-                       new Range<double> (1, 3).Union (new Range<double> (2, 5)));
-      Assert.AreEqual (new Range<double> (1,5, "[]"),
-                       new Range<double> (1, 3, "[]").Union (new Range<double> (3, 5, "[]")));
-      Assert.AreEqual (new Range<double> (1,5, "()"),
-                       new Range<double> (1, 3, "()").Union (new Range<double> (2, 5, "()")));
-      Assert.AreEqual (new Range<double> (1,5),
-                       new Range<double> (3, 5).Union (new Range<double> (1, 3)));
-      Assert.AreEqual (new Range<double> (1,5),
-                       new Range<double> (2, 5).Union (new Range<double> (1, 3)));
-      Assert.AreEqual (new Range<double> (1,5, "[]"),
-                       new Range<double> (3, 5, "[]").Union (new Range<double> (1, 3, "[]")));
-      Assert.AreEqual (new Range<double> (1,5, "()"),
-                       new Range<double> (2, 5, "()").Union (new Range<double> (1, 3, "()")));
-      
-      Assert.AreEqual (new Range<double> (1, new UpperBound<double> (null)),
-                       new Range<double> (1, 3).Union (new Range<double> (3, new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (1, new UpperBound<double> (null)),
-                       new Range<double> (1, 3).Union (new Range<double> (2, new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (1, new UpperBound<double> (null)),
-                       new Range<double> (1, new UpperBound<double> (null)).Union (new Range<double> (3, new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (1, new UpperBound<double> (null)),
-                       new Range<double> (1, new UpperBound<double> (null)).Union (new Range<double> (3, 5)));
 
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), 5),
-                       new Range<double> (new LowerBound<double> (null), 5).Union (new Range<double> (3, 5)));
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), 5),
-                       new Range<double> (new LowerBound<double> (null), 5).Union (new Range<double> (new LowerBound<double> (null), 3)));
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), 5),
-                       new Range<double> (2, 5).Union (new Range<double> (new LowerBound<double> (null), 3)));
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), 5, "[]"),
-                       new Range<double> (2, 5, "[]").Union (new Range<double> (new LowerBound<double> (null), 3)));
+      Assert.That (new Range<double> ().Union (new Range<double> ()), Is.EqualTo (new Range<double> ()));
+      Assert.That (new Range<double> ().Union (new Range<double> (1, 5)), Is.EqualTo (new Range<double> (1,5)));
+      Assert.That (new Range<double> (1, 5).Union (new Range<double> ()), Is.EqualTo (new Range<double> (1,5)));
+      Assert.That (new Range<double> (1, 3).Union (new Range<double> (3, 5)), Is.EqualTo (new Range<double> (1,5)));
+      Assert.That (new Range<double> (1, 5).Union (new Range<double> (2, 3)), Is.EqualTo (new Range<double> (1,5)));
+      Assert.That (new Range<double> (1, 3).Union (new Range<double> (2, 5)), Is.EqualTo (new Range<double> (1,5)));
+      Assert.That (new Range<double> (1, 3, "[]").Union (new Range<double> (3, 5, "[]")), Is.EqualTo (new Range<double> (1,5, "[]")));
+      Assert.That (new Range<double> (1, 3, "()").Union (new Range<double> (2, 5, "()")), Is.EqualTo (new Range<double> (1,5, "()")));
+      Assert.That (new Range<double> (3, 5).Union (new Range<double> (1, 3)), Is.EqualTo (new Range<double> (1,5)));
+      Assert.That (new Range<double> (2, 5).Union (new Range<double> (1, 3)), Is.EqualTo (new Range<double> (1,5)));
+      Assert.That (new Range<double> (3, 5, "[]").Union (new Range<double> (1, 3, "[]")), Is.EqualTo (new Range<double> (1,5, "[]")));
+      Assert.That (new Range<double> (2, 5, "()").Union (new Range<double> (1, 3, "()")), Is.EqualTo (new Range<double> (1,5, "()")));
 
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)),
-                       new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Union (new Range<double> (3, 5)));
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)),
-                       new Range<double> (new LowerBound<double> (null), 3).Union (new Range<double> (3, new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)),
-                       new Range<double> (new LowerBound<double> (null), 5).Union (new Range<double> (3, new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)),
-                       new Range<double> (new LowerBound<double> (null), 3, "[]").Union (new Range<double> (3, new UpperBound<double> (null), "()")));
-      
-      Assert.AreEqual (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 08)),
-                       new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).Union (new DayRange (new DateTime (2016, 01, 07), new DateTime (2016, 01, 08))));
-      Assert.AreEqual (new DayRange (new DateTime (2016, 01, 03), new DateTime (2016, 01, 06)),
-                       new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).Union (new DayRange (new DateTime (2016, 01, 03), new DateTime (2016, 01, 04))));
+      Assert.That (new Range<double> (1, 3).Union (new Range<double> (3, new UpperBound<double> (null))), Is.EqualTo (new Range<double> (1, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (1, 3).Union (new Range<double> (2, new UpperBound<double> (null))), Is.EqualTo (new Range<double> (1, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Union (new Range<double> (3, new UpperBound<double> (null))), Is.EqualTo (new Range<double> (1, new UpperBound<double> (null))));
+      Assert.That (new Range<double> (1, new UpperBound<double> (null)).Union (new Range<double> (3, 5)), Is.EqualTo (new Range<double> (1, new UpperBound<double> (null))));
+
+      Assert.That (new Range<double> (new LowerBound<double> (null), 5).Union (new Range<double> (3, 5)), Is.EqualTo (new Range<double> (new LowerBound<double> (null), 5)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 5).Union (new Range<double> (new LowerBound<double> (null), 3)), Is.EqualTo (new Range<double> (new LowerBound<double> (null), 5)));
+      Assert.That (new Range<double> (2, 5).Union (new Range<double> (new LowerBound<double> (null), 3)), Is.EqualTo (new Range<double> (new LowerBound<double> (null), 5)));
+      Assert.That (new Range<double> (2, 5, "[]").Union (new Range<double> (new LowerBound<double> (null), 3)), Is.EqualTo (new Range<double> (new LowerBound<double> (null), 5, "[]")));
+
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Union (new Range<double> (3, 5)), Is.EqualTo (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 3).Union (new Range<double> (3, new UpperBound<double> (null))), Is.EqualTo (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 5).Union (new Range<double> (3, new UpperBound<double> (null))), Is.EqualTo (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 3, "[]").Union (new Range<double> (3, new UpperBound<double> (null), "()")), Is.EqualTo (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
+
+      Assert.That (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).Union (new DayRange (new DateTime (2016, 01, 07), new DateTime (2016, 01, 08))), Is.EqualTo (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 08))));
+      Assert.That (new DayRange (new DateTime (2016, 01, 05), new DateTime (2016, 01, 06)).Union (new DayRange (new DateTime (2016, 01, 03), new DateTime (2016, 01, 04))), Is.EqualTo (new DayRange (new DateTime (2016, 01, 03), new DateTime (2016, 01, 06))));
     }
 
     /// <summary>
@@ -589,28 +563,17 @@ namespace Lemoine.ModelDAO.UnitTests
     [Test]
     public void TestIntersects ()
     {
-      Assert.AreEqual (new Range<double> (),
-                       new Range<double> ().Intersects (new Range<double> ()));
-      Assert.AreEqual (new Range<double> (),
-                       new Range<double> ().Intersects (new Range<double> (1, 3)));
-      Assert.AreEqual (new Range<double> (),
-                       new Range<double> (2, 4).Intersects (new Range<double> ()));
-      Assert.AreEqual (new Range<double> (),
-                       new Range<double> (1, 3).Intersects (new Range<double> (4, 5)));
-      Assert.AreEqual (new Range<double> (),
-                       new Range<double> (1, 3, "()").Intersects (new Range<double> (3, 5, "()")));
-      Assert.AreEqual (new Range<double> (3, 3, "[]"),
-                       new Range<double> (1, 3, "[]").Intersects (new Range<double> (3, 5)));
-      Assert.AreEqual (new Range<double> (1, 3),
-                       new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Intersects (new Range<double> (1, 3)));
-      Assert.AreEqual (new Range<double> (1, 3),
-                       new Range<double> (1, 3).Intersects (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (2, 3),
-                       new Range<double> (new LowerBound<double> (null), 3).Intersects (new Range<double> (2, new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (2, 3, "[]"),
-                       new Range<double> (new LowerBound<double> (null), 3, "[]").Intersects (new Range<double> (2, new UpperBound<double> (null))));
-      Assert.AreEqual (new Range<double> (),
-                       new Range<double> (new LowerBound<double> (null), 3).Intersects (new Range<double> (4, new UpperBound<double> (null))));
+      Assert.That (new Range<double> ().Intersects (new Range<double> ()), Is.EqualTo (new Range<double> ()));
+      Assert.That (new Range<double> ().Intersects (new Range<double> (1, 3)), Is.EqualTo (new Range<double> ()));
+      Assert.That (new Range<double> (2, 4).Intersects (new Range<double> ()), Is.EqualTo (new Range<double> ()));
+      Assert.That (new Range<double> (1, 3).Intersects (new Range<double> (4, 5)), Is.EqualTo (new Range<double> ()));
+      Assert.That (new Range<double> (1, 3, "()").Intersects (new Range<double> (3, 5, "()")), Is.EqualTo (new Range<double> ()));
+      Assert.That (new Range<double> (1, 3, "[]").Intersects (new Range<double> (3, 5)), Is.EqualTo (new Range<double> (3, 3, "[]")));
+      Assert.That (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null)).Intersects (new Range<double> (1, 3)), Is.EqualTo (new Range<double> (1, 3)));
+      Assert.That (new Range<double> (1, 3).Intersects (new Range<double> (new LowerBound<double> (null), new UpperBound<double> (null))), Is.EqualTo (new Range<double> (1, 3)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 3).Intersects (new Range<double> (2, new UpperBound<double> (null))), Is.EqualTo (new Range<double> (2, 3)));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 3, "[]").Intersects (new Range<double> (2, new UpperBound<double> (null))), Is.EqualTo (new Range<double> (2, 3, "[]")));
+      Assert.That (new Range<double> (new LowerBound<double> (null), 3).Intersects (new Range<double> (4, new UpperBound<double> (null))), Is.EqualTo (new Range<double> ()));
     }
     
     [Test]
@@ -619,12 +582,12 @@ namespace Lemoine.ModelDAO.UnitTests
       {
         UtcDateTimeRange range = new UtcDateTimeRange ("[\"2015-06-03 04:00:00\",)");
         Assert.IsFalse (range.Upper.HasValue);
-        Assert.AreEqual (new DateTime (2015, 06, 03, 04, 00, 00, DateTimeKind.Utc), range.Lower.Value);
+        Assert.That (range.Lower.Value, Is.EqualTo (new DateTime (2015, 06, 03, 04, 00, 00, DateTimeKind.Utc)));
       }
       {
         UtcDateTimeRange range = new UtcDateTimeRange ("'[\"2015-06-03 04:00:00\",)'");
         Assert.IsFalse (range.Upper.HasValue);
-        Assert.AreEqual (new DateTime (2015, 06, 03, 04, 00, 00, DateTimeKind.Utc), range.Lower.Value);
+        Assert.That (range.Lower.Value, Is.EqualTo (new DateTime (2015, 06, 03, 04, 00, 00, DateTimeKind.Utc)));
       }
     }
   }

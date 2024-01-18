@@ -39,7 +39,7 @@ namespace Lemoine.Core.UnitTests.IO
       stringPipeBuffer.Release (stringWriter, 3);
       stringPipeBuffer.Skip (3);
       stringPipeBuffer.Release (stringWriter);
-      Assert.AreEqual ("123789", stringWriter.ToString ());
+      Assert.That (stringWriter.ToString (), Is.EqualTo ("123789"));
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace Lemoine.Core.UnitTests.IO
       stringPipeBuffer.Release (stringWriter, 3);
       await stringPipeBuffer.SkipAsync (3);
       stringPipeBuffer.Release (stringWriter);
-      Assert.AreEqual ("123789", stringWriter.ToString ());
+      Assert.That (stringWriter.ToString (), Is.EqualTo ("123789"));
     }
 
     /// <summary>
@@ -68,10 +68,12 @@ namespace Lemoine.Core.UnitTests.IO
       stringPipeBuffer.Add ("123456789");
       stringPipeBuffer.Release (stringWriter, 3);
       var n = await stringPipeBuffer.SkipAsync ();
-      Assert.AreEqual (6, n);
-      Assert.AreEqual ("123", stringWriter.ToString ());
+      Assert.Multiple (() => {
+        Assert.That (n, Is.EqualTo (6));
+        Assert.That (stringWriter.ToString (), Is.EqualTo ("123"));
+      });
       stringPipeBuffer.Release (stringWriter);
-      Assert.AreEqual ("123", stringWriter.ToString ());
+      Assert.That (stringWriter.ToString (), Is.EqualTo ("123"));
     }
 
     /// <summary>
@@ -84,10 +86,12 @@ namespace Lemoine.Core.UnitTests.IO
       using var stringPipeBuffer = new StringPipeBuffer ();
       stringPipeBuffer.Add ("123456789");
       stringPipeBuffer.Release (stringWriter, 3);
-      Assert.AreEqual ("123", stringWriter.ToString ());
+      Assert.That (stringWriter.ToString (), Is.EqualTo ("123"));
       var n = await stringPipeBuffer.ReleaseAsync (stringWriter);
-      Assert.AreEqual (6, n);
-      Assert.AreEqual ("123456789", stringWriter.ToString ());
+      Assert.Multiple (() => {
+        Assert.That (n, Is.EqualTo (6));
+        Assert.That (stringWriter.ToString (), Is.EqualTo ("123456789"));
+      });
     }
   }
 }

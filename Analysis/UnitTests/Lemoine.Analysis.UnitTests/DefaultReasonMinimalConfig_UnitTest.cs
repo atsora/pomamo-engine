@@ -56,7 +56,7 @@ namespace Lemoine.Analysis.UnitTests
               InactiveLongDefaultReasonTranslationKey = "ReasonUnanswered",
               InactiveLongDefaultReasonTranslationValue = "Unanswered",
             } });
-            Assert.IsTrue (initializationResult);
+            Assert.That (initializationResult, Is.True);
 
             { // Motion
               var reasonSlot = ModelDAOHelper.ModelFactory.CreateReasonSlot (machine, R (1, 3));
@@ -64,8 +64,10 @@ namespace Lemoine.Analysis.UnitTests
               reasonSlot.MachineObservationState = attended;
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (reasonMotion, reasonSlot.Reason);
-              Assert.AreEqual (2.0, reasonSlot.ReasonScore);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (reasonMotion));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (2.0));
+              });
             }
 
             { // AutoNullOverride / Long
@@ -74,8 +76,10 @@ namespace Lemoine.Analysis.UnitTests
               reasonSlot.MachineObservationState = attended;
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (reasonUnanswered, reasonSlot.Reason);
-              Assert.AreEqual (2.0, reasonSlot.ReasonScore);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (reasonUnanswered));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (2.0));
+              });
             }
 
             { // AutoNullOverride / Short
@@ -84,8 +88,10 @@ namespace Lemoine.Analysis.UnitTests
               reasonSlot.MachineObservationState = attended;
 
               reasonExtension.TryResetReason (ref reasonSlot);
-              Assert.AreEqual (reasonShort, reasonSlot.Reason);
-              Assert.AreEqual (2.0, reasonSlot.ReasonScore);
+              Assert.Multiple (() => {
+                Assert.That (reasonSlot.Reason, Is.EqualTo (reasonShort));
+                Assert.That (reasonSlot.ReasonScore, Is.EqualTo (2.0));
+              });
             }
           }
           finally {

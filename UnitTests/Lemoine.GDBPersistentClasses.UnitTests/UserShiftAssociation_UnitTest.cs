@@ -117,65 +117,81 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         {
           IList<IUserSlot> slots = ModelDAOHelper.DAOFactory.UserSlotDAO
             .FindAll (user1);
-          Assert.AreEqual (2, slots.Count, "Number of slots");
+          Assert.That (slots, Has.Count.EqualTo (2), "Number of slots");
           int i = 0;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(2), slots [i].EndDateTime.Value);
-          Assert.AreEqual (shift2, slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+          });
           ++i;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(3), slots [i].EndDateTime.Value);
-          Assert.AreEqual (shift3, slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift3));
+          });
           ++i;
         }
         // - UserShiftSlots
         {
           IList<IUserShiftSlot> slots = ModelDAOHelper.DAOFactory.UserShiftSlotDAO
             .FindAll (user1);
-          Assert.AreEqual (3, slots.Count, "Number of slots");
+          Assert.That (slots, Has.Count.EqualTo (3), "Number of slots");
           int i = 0;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(2), slots [i].EndDateTime.Value);
-          Assert.AreEqual (shift2, slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+          });
           ++i;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(5), slots [i].EndDateTime.Value);
-          Assert.AreEqual (shift3, slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift3));
+          });
           ++i;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(5), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(6), slots [i].EndDateTime.Value);
-          Assert.AreEqual (shift2, slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (5)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (6)));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+          });
           ++i;
         }
         // - ObservationStateSlots
         {
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindByUserInRange (user1, new UtcDateTimeRange (T(1)));
-          Assert.AreEqual (2, slots.Count, "Number of slots");
+          Assert.That (slots, Has.Count.EqualTo (2), "Number of slots");
           int i = 0;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(1), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(2), slots [i].EndDateTime.Value);
-          Assert.AreEqual (shift2, slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift2));
+          });
           ++i;
-          Assert.AreEqual (user1, slots [i].User);
-          Assert.AreEqual (T(2), slots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(3), slots [i].EndDateTime.Value);
-          Assert.AreEqual (shift3, slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].User, Is.EqualTo (user1));
+            Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            Assert.That (slots[i].Shift, Is.EqualTo (shift3));
+          });
           ++i;
         }
         // - Modifications
         {
           IList<IUserShiftAssociation> modifications = ModelDAOHelper.DAOFactory.UserShiftAssociationDAO
             .FindAll ();
-          Assert.AreEqual (1, modifications.Count, "Number of modifications");
-          Assert.AreEqual (AnalysisStatus.Done, modifications[0].AnalysisStatus, "1st modification status");
-          Assert.IsTrue (modifications[0].AnalysisSubModifications);
+          Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
+          Assert.Multiple (() => {
+            Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
+            Assert.That (modifications[0].AnalysisSubModifications, Is.True);
+          });
         }
         // - AnalysisLogs
         AnalysisUnitTests.CheckNumberOfAnalysisLogs (0);

@@ -39,8 +39,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         IOperation oldOperation = daoFactory.OperationDAO.FindById (12666);
         IOperation merged = ModelDAOHelper.DAOFactory.OperationDAO.Merge (oldOperation, newOperation,
                                                                           ConflictResolution.Exception);
-        Assert.AreEqual (12666, ((Lemoine.Collections.IDataWithId)merged).Id);
-        Assert.AreEqual ("CreatedOperation", merged.Name);
+        Assert.Multiple (() => {
+          Assert.That (((Lemoine.Collections.IDataWithId)merged).Id, Is.EqualTo (12666));
+          Assert.That (merged.Name, Is.EqualTo ("CreatedOperation"));
+        });
         transaction.Rollback ();
       }
     }
@@ -61,15 +63,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         IOperation merged = ModelDAOHelper.DAOFactory.OperationDAO
           .Merge (oldOperation, newOperation,
                   ConflictResolution.Exception);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)merged).Id);
-        Assert.AreEqual ("SFKPROCESS1", merged.Name);
-        Assert.AreEqual (1, merged.Paths.Count, "not a single path");
+        Assert.Multiple (() => {
+          Assert.That (((Lemoine.Collections.IDataWithId)merged).Id, Is.EqualTo (1));
+          Assert.That (merged.Name, Is.EqualTo ("SFKPROCESS1"));
+          Assert.That (merged.Paths, Has.Count.EqualTo (1), "not a single path");
+        });
         bool sequence9found = false;
         foreach (Sequence sequence in merged.Sequences) {
-          Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)sequence.Operation).Id);
+          Assert.That (((Lemoine.Collections.IDataWithId)sequence.Operation).Id, Is.EqualTo (1));
           if (9 == sequence.Id) { sequence9found = true; }
         }
-        Assert.AreEqual (true, sequence9found);
+        Assert.That (sequence9found, Is.EqualTo (true));
         transaction.Rollback ();
       }
     }
@@ -103,8 +107,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         IOperation merged = ModelDAOHelper.DAOFactory.OperationDAO
           .Merge (oldOperation, newOperation,
                   ConflictResolution.Overwrite);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)merged).Id);
-        Assert.AreEqual ("SFKPROCESS2", merged.Name);
+        Assert.Multiple (() => {
+          Assert.That (((Lemoine.Collections.IDataWithId)merged).Id, Is.EqualTo (1));
+          Assert.That (merged.Name, Is.EqualTo ("SFKPROCESS2"));
+        });
         transaction.Rollback ();
       }
       
@@ -116,8 +122,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         IOperation merged = ModelDAOHelper.DAOFactory.OperationDAO
           .Merge (oldOperation, newOperation,
                   ConflictResolution.Keep);
-        Assert.AreEqual (1, ((Lemoine.Collections.IDataWithId)merged).Id);
-        Assert.AreEqual ("SFKPROCESS1", merged.Name);
+        Assert.Multiple (() => {
+          Assert.That (((Lemoine.Collections.IDataWithId)merged).Id, Is.EqualTo (1));
+          Assert.That (merged.Name, Is.EqualTo ("SFKPROCESS1"));
+        });
         transaction.Rollback ();
       }
     }
@@ -131,9 +139,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ())
       {
         IOperation operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (2);
-        Assert.AreEqual ("SFKPROCESS2", operation.Display);
-        Assert.AreEqual ("COMPONENT1 <CAVITY> 2", operation.LongDisplay);
-        Assert.AreEqual ("2", operation.ShortDisplay);
+        Assert.Multiple (() => {
+          Assert.That (operation.Display, Is.EqualTo ("SFKPROCESS2"));
+          Assert.That (operation.LongDisplay, Is.EqualTo ("COMPONENT1 <CAVITY> 2"));
+          Assert.That (operation.ShortDisplay, Is.EqualTo ("2"));
+        });
       }
     }
     

@@ -56,9 +56,9 @@ namespace Lemoine.AutoReason.UnitTests
 
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             var machineModule = machine.MachineModules.First ();
-            Assert.NotNull (machineModule);
+            Assert.That (machineModule, Is.Not.Null);
 
             // Acquisition state for the alarm is after the period we are analyzing
             var acquisitionState = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (machineModule, AcquisitionStateKey.Alarms);
@@ -107,15 +107,15 @@ namespace Lemoine.AutoReason.UnitTests
               // Should have been working but the severity is not detected (always null)
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ()
                 .OrderBy (x => x.Range.Lower).ToList ();
-              Assert.AreEqual (2, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (1), reasonAssociation.Begin.Value, "wrong start for the first reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (1)), "wrong start for the first reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.AreEqual ("1: message 1", reasonAssociation.ReasonDetails, "wrong detail of reason 1");
+              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("1: message 1"), "wrong detail of reason 1");
               reasonAssociation = reasonAssociations[1];
-              Assert.AreEqual (T (2), reasonAssociation.Begin.Value, "wrong start for the second reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the second reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
-              Assert.AreEqual ("2: message 2", reasonAssociation.ReasonDetails, "wrong detail of reason 2");
+              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("2: message 2"), "wrong detail of reason 2");
             }
           }
           finally {
@@ -174,7 +174,7 @@ namespace Lemoine.AutoReason.UnitTests
 
             // Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             // Associated machine module
             IMachineModule mamo = null;
@@ -182,7 +182,7 @@ namespace Lemoine.AutoReason.UnitTests
               mamo = mamoTmp;
               break;
             }
-            Assert.NotNull (mamo);
+            Assert.That (mamo, Is.Not.Null);
 
             // Acquisition state for the alarm is after the period we are analyzing
             var acquisitionState = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (mamo, AcquisitionStateKey.Alarms);
@@ -230,11 +230,11 @@ namespace Lemoine.AutoReason.UnitTests
             {
               // Should have been working but the severity is not detected (always null)
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ();
-              Assert.AreEqual (1, reasonAssociations.Count, "wrong number of auto reason created");
+              Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.AreEqual (T (1), reasonAssociation.Begin.Value, "wrong start for the first reason");
+              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (1)), "wrong start for the first reason");
               Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.AreEqual ("1: abc", reasonAssociation.ReasonDetails, "wrong detail of reason 1");
+              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("1: abc"), "wrong detail of reason 1");
             }
           }
           finally {

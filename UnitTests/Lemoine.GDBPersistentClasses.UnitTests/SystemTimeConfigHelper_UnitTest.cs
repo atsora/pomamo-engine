@@ -28,14 +28,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         DateTime dateTime = new DateTime (2011, 08, 23, 05, 00, 00, DateTimeKind.Local);
         DateTime day = ModelDAOHelper.DAOFactory.TimeConfigDAO.GetDay (dateTime);
         DateTime expectedDay = new DateTime (2011, 08, 23);
-        Assert.AreEqual (expectedDay, day);
+        Assert.That (day, Is.EqualTo (expectedDay));
       }
       
       {
         DateTime dateTime = new DateTime (2011, 08, 23, 23, 00, 00, DateTimeKind.Local);
         DateTime day = ModelDAOHelper.DAOFactory.TimeConfigDAO.GetDay (dateTime);
         DateTime expectedDay = new DateTime (2011, 08, 24);
-        Assert.AreEqual (expectedDay, day);
+        Assert.That (day, Is.EqualTo (expectedDay));
       }
     }
   }

@@ -83,11 +83,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           var slots2 = ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindOverlapsRangeDescending (machine, R (-30, 0), TimeSpan.FromDays (1)).ToList ();
 
-          Assert.AreEqual (slots0.Count, slots1.Count);
-          Assert.AreEqual (slots0.Count, slots2.Count);
+          Assert.Multiple (() => {
+            Assert.That (slots1, Has.Count.EqualTo (slots0.Count));
+            Assert.That (slots2, Has.Count.EqualTo (slots0.Count));
+          });
           for (int i = 0; i < slots0.Count; ++i) {
-            Assert.AreEqual (slots0[i].Id, slots1[i].Id);
-            Assert.AreEqual (slots0[i].Id, slots2[i].Id);
+            Assert.Multiple (() => {
+              Assert.That (slots1[i].Id, Is.EqualTo (slots0[i].Id));
+              Assert.That (slots2[i].Id, Is.EqualTo (slots0[i].Id));
+            });
           }
         }
         finally {
@@ -120,11 +124,15 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           var slots2 = ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindOverlapsRangeAscending (machine, R (-30, 0), TimeSpan.FromDays (1)).ToList ();
 
-          Assert.AreEqual (slots0.Count, slots1.Count);
-          Assert.AreEqual (slots0.Count, slots2.Count);
+          Assert.Multiple (() => {
+            Assert.That (slots1, Has.Count.EqualTo (slots0.Count));
+            Assert.That (slots2, Has.Count.EqualTo (slots0.Count));
+          });
           for (int i = 0; i < slots0.Count; ++i) {
-            Assert.AreEqual (slots0[i].Id, slots1[i].Id);
-            Assert.AreEqual (slots0[i].Id, slots2[i].Id);
+            Assert.Multiple (() => {
+              Assert.That (slots1[i].Id, Is.EqualTo (slots0[i].Id));
+              Assert.That (slots2[i].Id, Is.EqualTo (slots0[i].Id));
+            });
           }
         }
         finally {

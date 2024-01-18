@@ -43,9 +43,11 @@ namespace Lemoine.Stamping.UnitTests
         Format = "VC{0}={1}"
       };
       var basicCommentOnlyParser = new BasicCommentOnlyParser (stampVariablesGetter, lineFormatter);
-      Assert.IsFalse (basicCommentOnlyParser.IsStamp ("(VC=23)"));
-      Assert.IsFalse (basicCommentOnlyParser.IsStamp ("VC300=34.3"));
-      Assert.IsTrue (basicCommentOnlyParser.IsStamp ("VC590=234.234"));
+      Assert.Multiple (() => {
+        Assert.That (basicCommentOnlyParser.IsStamp ("(VC=23)"), Is.False);
+        Assert.That (basicCommentOnlyParser.IsStamp ("VC300=34.3"), Is.False);
+        Assert.That (basicCommentOnlyParser.IsStamp ("VC590=234.234"), Is.True);
+      });
     }
 
     [Test]
@@ -97,7 +99,7 @@ namespace Lemoine.Stamping.UnitTests
           log.Error ($"StampAsync: exception => raise OnStampingFailure", ex);
         }
         stamper.CloseAll ();
-        Assert.AreEqual (expectedOutput.ReplaceLineEndings (), stamper.Output.ReplaceLineEndings ());
+        Assert.That (stamper.Output.ReplaceLineEndings (), Is.EqualTo (expectedOutput.ReplaceLineEndings ()));
       }
     }
   }

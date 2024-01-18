@@ -55,12 +55,14 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindAll (machine);
-          Assert.AreEqual (1, operationSlots.Count, "Number of operation slots");
+          Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots");
           int i = 0;
-          Assert.AreEqual (T(0), operationSlots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(2).AddSeconds (1), operationSlots [i].EndDateTime.Value);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (operation1, operationSlots [i].Operation);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+            Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (2).AddSeconds (1)));
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+          });
         }
         
         transaction.Rollback ();
@@ -111,37 +113,45 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindAll (machine);
-          Assert.AreEqual (2, operationSlots.Count, "Number of operation slots");
+          Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots");
           int i = 0;
-          Assert.AreEqual (T(0), operationSlots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(1), operationSlots [i].EndDateTime.Value);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (operation1, operationSlots [i].Operation);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
+            Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (1)));
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (operation1));
+          });
           ++i;
-          Assert.AreEqual (T(2), operationSlots [i].BeginDateTime.Value);
-          Assert.AreEqual (T(2).AddSeconds (1), operationSlots [i].EndDateTime.Value);
-          Assert.AreEqual (machine, operationSlots [i].Machine);
-          Assert.AreEqual (operation2, operationSlots [i].Operation);
+          Assert.Multiple (() => {
+            Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (2)));
+            Assert.That (operationSlots[i].EndDateTime.Value, Is.EqualTo (T (2).AddSeconds (1)));
+            Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
+            Assert.That (operationSlots[i].Operation, Is.EqualTo (operation2));
+          });
         }
         
         // Check there are two new machine associations
         {
           IList<IComponentMachineAssociation> associations =
             ModelDAOHelper.DAOFactory.ComponentMachineAssociationDAO.FindAll ();
-          Assert.AreEqual (1, associations.Count);
-          Assert.AreEqual (component, associations [0].Component);
-          Assert.AreEqual (machine, associations [0].Machine);
-          Assert.AreEqual (T(1), associations [0].Begin.Value);
-          Assert.AreEqual (T(2), associations [0].End.Value);
+          Assert.That (associations.Count, Is.EqualTo (1));
+          Assert.Multiple (() => {
+            Assert.That (associations[0].Component, Is.EqualTo (component));
+            Assert.That (associations[0].Machine, Is.EqualTo (machine));
+            Assert.That (associations[0].Begin.Value, Is.EqualTo (T (1)));
+            Assert.That (associations[0].End.Value, Is.EqualTo (T (2)));
+          });
         }
         {
           IList<IWorkOrderMachineAssociation> associations =
             ModelDAOHelper.DAOFactory.WorkOrderMachineAssociationDAO.FindAll ();
-          Assert.AreEqual (1, associations.Count);
-          Assert.AreEqual (workOrder, associations [0].WorkOrder);
-          Assert.AreEqual (machine, associations [0].Machine);
-          Assert.AreEqual (T(1), associations [0].Begin.Value);
-          Assert.AreEqual (T(2), associations [0].End.Value);
+          Assert.That (associations.Count, Is.EqualTo (1));
+          Assert.Multiple (() => {
+            Assert.That (associations[0].WorkOrder, Is.EqualTo (workOrder));
+            Assert.That (associations[0].Machine, Is.EqualTo (machine));
+            Assert.That (associations[0].Begin.Value, Is.EqualTo (T (1)));
+            Assert.That (associations[0].End.Value, Is.EqualTo (T (2)));
+          });
         }
         
         transaction.Rollback ();

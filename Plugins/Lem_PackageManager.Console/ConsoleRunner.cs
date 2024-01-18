@@ -40,7 +40,7 @@ namespace Lem_PackageManager.Console
     public async Task RunConsoleAsync (CancellationToken cancellationToken = default)
     {
       try {
-        await m_applicationInitializer.InitializeApplicationAsync ();
+        await m_applicationInitializer.InitializeApplicationAsync (cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested ();
 

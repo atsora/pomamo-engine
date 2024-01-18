@@ -122,35 +122,38 @@ namespace Lemoine.DataRepository.UnitTests
 
         IList<Revision> revisions = session.CreateCriteria<Revision> ()
           .List<Revision> ();
-        Assert.AreEqual (2, revisions.Count);
+        Assert.That (revisions, Has.Count.EqualTo (2));
         IUpdater updater = revisions[0].Updater;
         var service = Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.ServiceDAO
           .FindById (updater.Id);
-        Assert.NotNull (service);
-        Assert.AreEqual ("Lemoine Machine Association Synchronization",
-                         service.Name);
+        Assert.That (service, Is.Not.Null);
+        Assert.That (service.Name, Is.EqualTo ("Lemoine Machine Association Synchronization"));
         // Check newattributes='Id'
         XPathNavigator node = pathNavigator.SelectSingleNode ("//Revision/@Id");
-        Assert.NotNull (node);
-        Assert.AreEqual (revisions[0].Id.ToString (), node.Value);
+        Assert.That (node, Is.Not.Null);
+        Assert.That (node.Value, Is.EqualTo (revisions[0].Id.ToString ()));
         IList<Modification> modifications = session.CreateCriteria<Modification> ()
           .List<Modification> ();
-        Assert.AreEqual (2, modifications.Count);
+        Assert.That (modifications, Has.Count.EqualTo (2));
         IList<ComponentMachineAssociation> componentMachineAssociations =
           session.CreateCriteria<ComponentMachineAssociation> ()
           .List<ComponentMachineAssociation> ();
-        Assert.AreEqual (1, componentMachineAssociations.Count);
-        Assert.AreEqual ("PART1", componentMachineAssociations[0].Component.Name);
+        Assert.That (componentMachineAssociations, Has.Count.EqualTo (1));
+        Assert.That (componentMachineAssociations[0].Component.Name, Is.EqualTo ("PART1"));
         // Check newattributes='Id'
         XPathNavigator partIdNode = pathNavigator.SelectSingleNode ("//Revision/PartView/@ComponentId");
-        Assert.NotNull (partIdNode);
-        Assert.AreEqual ("18514", partIdNode.Value);
-        Assert.AreEqual (18514, ((Lemoine.Collections.IDataWithId)componentMachineAssociations[0].Component).Id);
+        Assert.That (partIdNode, Is.Not.Null);
+        Assert.Multiple (() => {
+          Assert.That (partIdNode.Value, Is.EqualTo ("18514"));
+          Assert.That (((Lemoine.Collections.IDataWithId)componentMachineAssociations[0].Component).Id, Is.EqualTo (18514));
+        });
         IList<OperationMachineAssociation> operationMachineAssociations =
           session.CreateCriteria<OperationMachineAssociation> ()
           .List<OperationMachineAssociation> ();
-        Assert.AreEqual (1, operationMachineAssociations.Count);
-        Assert.AreEqual (11005, ((Lemoine.Collections.IDataWithId)operationMachineAssociations[0].Operation).Id);
+        Assert.Multiple (() => {
+          Assert.That (operationMachineAssociations, Has.Count.EqualTo (1));
+          Assert.That (((Lemoine.Collections.IDataWithId)operationMachineAssociations[0].Operation).Id, Is.EqualTo (11005));
+        });
         // Clean the database
         session.CreateQuery ("delete from Revision")
           .ExecuteUpdate ();
@@ -233,30 +236,32 @@ namespace Lemoine.DataRepository.UnitTests
         IPart part = session.CreateCriteria<Component> ()
           .Add (Expression.Eq ("Name", "TestNewPart"))
           .UniqueResult<Component> ().Part;
-        Assert.NotNull (part);
+        Assert.That (part, Is.Not.Null);
         IJob job = session.CreateCriteria<Project> ()
           .Add (Expression.Eq ("Name", "TestNewJob"))
           .UniqueResult<Project> ().Job;
-        Assert.NotNull (job);
+        Assert.That (job, Is.Not.Null);
         ISimpleOperation simpleOperation = session.CreateCriteria<Operation> ()
           .Add (Expression.Eq ("Name", "TestNewSimpleOperation"))
           .UniqueResult<Operation> ().SimpleOperation;
-        Assert.NotNull (simpleOperation);
+        Assert.That (simpleOperation, Is.Not.Null);
         IWorkOrder workOrder = session.CreateCriteria<WorkOrder> ()
           .Add (Expression.Eq ("Name", "TestNewWorkOrder"))
           .UniqueResult<WorkOrder> ();
-        Assert.NotNull (workOrder);
+        Assert.That (workOrder, Is.Not.Null);
         IWorkOrderProject workOrderProject =
           session.CreateQuery ("from WorkOrderProject foo " +
                                "where foo.WorkOrder.Name='TestNewWorkOrder' " +
                                "and foo.Project.Name='TestNewPart'")
           .UniqueResult<WorkOrderProject> ();
-        Assert.NotNull (workOrderProject);
-        Assert.NotNull (workOrderProject.WorkOrder);
-        Assert.NotNull (workOrderProject.WorkOrder.Status);
+        Assert.That (workOrderProject, Is.Not.Null);
+        Assert.That (workOrderProject.WorkOrder, Is.Not.Null);
+        Assert.That (workOrderProject.WorkOrder.Status, Is.Not.Null);
         WorkOrderStatus workOrderStatus1 = session.Get<WorkOrderStatus> (1);
-        Assert.NotNull (workOrderStatus1);
-        Assert.AreEqual (workOrderStatus1, workOrderProject.WorkOrder.Status);
+        Assert.Multiple (() => {
+          Assert.That (workOrderStatus1, Is.Not.Null);
+          Assert.That (workOrderProject.WorkOrder.Status, Is.EqualTo (workOrderStatus1));
+        });
         // 1st part / Delete
         session.Delete (workOrderProject);
         session.Flush ();
@@ -276,13 +281,15 @@ namespace Lemoine.DataRepository.UnitTests
         Project project = session.CreateCriteria<Project> ()
           .Add (Expression.Eq ("Name", "NEWPROJECT"))
           .UniqueResult<Project> ();
-        Assert.NotNull (project);
+        Assert.That (project, Is.Not.Null);
         Component component = session.CreateCriteria<Component> ()
           .Add (Expression.Eq ("Name", "NEWCOMPONENT"))
           .UniqueResult<Component> ();
-        Assert.NotNull (component);
-        Assert.AreEqual (project, component.Project);
-        Assert.AreEqual (1, component.Type.Id);
+        Assert.That (component, Is.Not.Null);
+        Assert.Multiple (() => {
+          Assert.That (component.Project, Is.EqualTo (project));
+          Assert.That (component.Type.Id, Is.EqualTo (1));
+        });
         session.Delete (component);
         session.Delete (project);
         /* TODO: something broken here. The number of synchronization log is 0 now
@@ -326,7 +333,7 @@ namespace Lemoine.DataRepository.UnitTests
           session.CreateCriteria<SynchronizationLog> ()
           .Add (Expression.Eq ("Message", "Type UnknownType is unknown and was not processed"))
           .List<SynchronizationLog> ();
-        Assert.AreEqual (1, synchronizationLogs.Count);
+        Assert.That (synchronizationLogs, Has.Count.EqualTo (1));
         session.Flush ();
         // Clean the database
         session.CreateQuery ("delete from SynchronizationLog")
@@ -374,7 +381,7 @@ namespace Lemoine.DataRepository.UnitTests
           .Add (Expression.Eq ("Message",
                                "No parent named JobView exists in ComponentMachineAssociation with pulse:relation='inverse'"))
           .List<SynchronizationLog> ();
-        Assert.AreEqual (1, synchronizationLogs.Count);
+        Assert.That (synchronizationLogs, Has.Count.EqualTo (1));
         session.Flush ();
         // Clean the database
         session.CreateQuery ("delete from SynchronizationLog")
@@ -407,7 +414,7 @@ namespace Lemoine.DataRepository.UnitTests
         IList<SynchronizationLog> synchronizationLogs =
           session.CreateCriteria<SynchronizationLog> ()
           .List<SynchronizationLog> ();
-        Assert.AreEqual (1, synchronizationLogs.Count);
+        Assert.That (synchronizationLogs, Has.Count.EqualTo (1));
         session.Flush ();
         // Clean the database
         session.CreateQuery ("delete from SynchronizationLog")
@@ -443,7 +450,7 @@ namespace Lemoine.DataRepository.UnitTests
           session.CreateCriteria<SynchronizationLog> ()
           .Add (Expression.Eq ("Message", "Persistent class not found"))
           .List<SynchronizationLog> ();
-        Assert.AreEqual (1, synchronizationLogs.Count);
+        Assert.That (synchronizationLogs, Has.Count.EqualTo (1));
         session.Flush ();
         // Clean the database
         session.CreateQuery ("delete from SynchronizationLog")
@@ -499,13 +506,15 @@ namespace Lemoine.DataRepository.UnitTests
         Project project = session.CreateCriteria<Project> ()
           .Add (Expression.Eq ("Name", "NEWPROJECT"))
           .UniqueResult<Project> ();
-        Assert.NotNull (project);
+        Assert.That (project, Is.Not.Null);
         Component component = session.CreateCriteria<Component> ()
           .Add (Expression.Eq ("Name", "NEWCOMPONENT"))
           .UniqueResult<Component> ();
-        Assert.NotNull (component);
-        Assert.AreEqual (project, component.Project);
-        Assert.AreEqual (1, component.Type.Id);
+        Assert.That (component, Is.Not.Null);
+        Assert.Multiple (() => {
+          Assert.That (component.Project, Is.EqualTo (project));
+          Assert.That (component.Type.Id, Is.EqualTo (1));
+        });
         session.Delete (component);
         session.Delete (project);
         session.Flush ();
@@ -546,8 +555,8 @@ namespace Lemoine.DataRepository.UnitTests
           session.CreateQuery (@"from ComponentIntermediateWorkPiece foo
 where foo.Component.Id=18514")
           .List<ComponentIntermediateWorkPiece> ();
-        Assert.AreEqual (1, componentIntermediateWorkPieces.Count);
-        Assert.AreEqual ("PART1", componentIntermediateWorkPieces[0].Component.Name);
+        Assert.That (componentIntermediateWorkPieces, Has.Count.EqualTo (1));
+        Assert.That (componentIntermediateWorkPieces[0].Component.Name, Is.EqualTo ("PART1"));
       }
 
       // Clean the database
@@ -596,8 +605,8 @@ where foo.Component.Id=18514")
 
         // Check newattributes='Id'
         XPathNavigator node = pathNavigator.SelectSingleNode ("//ComponentIntermediateWorkPiece/@Id");
-        Assert.NotNull (node);
-        Assert.AreEqual ("2", node.Value);
+        Assert.That (node, Is.Not.Null);
+        Assert.That (node.Value, Is.EqualTo ("2"));
       }
 
       {
@@ -627,15 +636,15 @@ where foo.Component.Id=18514")
         // Check newattributes='Id'
         {
           XPathNavigator node = pathNavigator.SelectSingleNode ("//ComponentIntermediateWorkPiece/@Id");
-          Assert.NotNull (node);
-          Assert.AreEqual ("11", node.Value);
+          Assert.That (node, Is.Not.Null);
+          Assert.That (node.Value, Is.EqualTo ("11"));
         }
 
         // Check newattributes='Operation'
         {
           XPathNavigator node = pathNavigator.SelectSingleNode ("//ComponentIntermediateWorkPiece/IntermediateWorkPiece/@Id");
-          Assert.NotNull (node);
-          Assert.AreEqual ("13506", node.Value);
+          Assert.That (node, Is.Not.Null);
+          Assert.That (node.Value, Is.EqualTo ("13506"));
         }
       }
       {
@@ -663,7 +672,7 @@ where foo.Component.Id=18514")
 
         // Check newattributes='Id'
         XPathNavigator node = pathNavigator.SelectSingleNode ("//ComponentIntermediateWorkPiece/@Order");
-        Assert.IsNull (node);
+        Assert.That (node, Is.Null);
       }
     }
 
@@ -707,19 +716,19 @@ where foo.Component.Id=18514")
         // Check newattributes='Id'
         {
           XPathNavigator node = pathNavigator.SelectSingleNode ("//A");
-          Assert.IsNotNull (node);
+          Assert.That (node, Is.Not.Null);
         }
 
         // Check newattributes='Name'
         {
           XPathNavigator node = pathNavigator.SelectSingleNode ("//A/IntermediateWorkPiece/@Name");
-          Assert.IsNotNull (node);
+          Assert.That (node, Is.Not.Null);
         }
 
         // Check newelement='Operation'
         {
           XPathNavigator node = pathNavigator.SelectSingleNode ("//A/IntermediateWorkPiece/Operation/@Id");
-          Assert.IsNotNull (node);
+          Assert.That (node, Is.Not.Null);
         }
       }
 
@@ -750,7 +759,7 @@ where foo.Component.Id=18514")
 
         // Check newattributes='Id'
         XPathNavigator node = pathNavigator.SelectSingleNode ("//A");
-        Assert.IsNull (node);
+        Assert.That (node, Is.Null);
       }
     }
 
@@ -786,7 +795,7 @@ where foo.Component.Id=18514")
 
         // Check newattributes='Id'
         XPathNavigator node = pathNavigator.SelectSingleNode ("//A");
-        Assert.IsNull (node);
+        Assert.That (node, Is.Null);
       }
 
       { // ifnot returns false
@@ -815,7 +824,7 @@ where foo.Component.Id=18514")
 
         // Check newattributes='Id'
         XPathNavigator node = pathNavigator.SelectSingleNode ("//A");
-        Assert.IsNotNull (node);
+        Assert.That (node, Is.Not.Null);
       }
     }
 
