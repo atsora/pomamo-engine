@@ -48,10 +48,10 @@ namespace Pulse.Graphql
       Field<NonNullGraphType<JobGraphType>, IJob> ("updateJob")
         .Argument<NonNullGraphType<UpdateJobInputType>> ("job")
         .Resolve (ctx => ctx.GetArgument<UpdateJob> ("job").Update ());
-      Field<NonNullGraphType<CncAcquisitionGraphType>, ICncAcquisition> ("createCncAcquisition")
+      Field<NonNullGraphType<CncAcquisitionGraphType>, CncAcquisitionResponse> ("createCncAcquisition")
         .Argument<NonNullGraphType<NewCncAcquisitionInputType>> ("cncAcquisition")
         .Resolve (ctx => ctx.GetArgument<NewCncAcquisition> ("cncAcquisition").CreateCncAcquisition ());
-      Field<NonNullGraphType<CncAcquisitionGraphType>, ICncAcquisition> ("updateCncAcquisition")
+      Field<NonNullGraphType<CncAcquisitionGraphType>, CncAcquisitionResponse> ("updateCncAcquisition")
         .Argument<NonNullGraphType<UpdateCncAcquisitionInputType>> ("cncAcquisition")
         .Resolve (ctx => ctx.GetArgument<UpdateCncAcquisition> ("cncAcquisition").Update ());
       Field<NonNullGraphType<BooleanGraphType>> ("removeCncAcquisition")

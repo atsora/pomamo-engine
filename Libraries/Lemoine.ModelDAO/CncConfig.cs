@@ -202,7 +202,7 @@ namespace Lemoine.Model
           "host" => Uri.CheckHostName (v) != UriHostNameType.Unknown,
           "string" => true,
           "int" or "integer" => int.TryParse (v, out var _),
-          "double" => double.TryParse (v, CultureInfo.InvariantCulture, out var _),
+          "double" => double.TryParse (v, NumberStyles.Any, CultureInfo.InvariantCulture, out var _),
           "list" => this.Values.Contains (v),
           "bool" or "boolean" => bool.TryParse (v, out var _),
           "file" => true, // TODO: see CncFileRepository
@@ -468,8 +468,9 @@ namespace Lemoine.Model
           log.Debug ($"Parse: omit param {cncConfigParam.Name} since its type is {cncConfigParam.Type}");
         }
       }
-      foreach (XmlElement deprecatedElement in xmlDocument.GetElementsByTagName ("deprecated")) {
+      foreach (XmlElement _ in xmlDocument.GetElementsByTagName ("deprecated")) {
         m_deprecated = true;
+        break;
       }
     }
   }

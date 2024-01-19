@@ -13,6 +13,7 @@ using Lemoine.Collections;
 using Lemoine.Core.Log;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
+using Pulse.Graphql.Type;
 
 namespace Pulse.Graphql.InputType
 {
@@ -21,6 +22,12 @@ namespace Pulse.Graphql.InputType
   /// </summary>
   public class UpdateCncAcquisition
   {
+    /// <summary>
+    /// Check the configuration file exists first
+    /// </summary>
+    static readonly string CHECK_CONFIG_FILE_KEY = "Graphql.CncAcquisition.CheckConfigFile";
+    static readonly bool CHECK_CONFIG_FILE_DEFAULT = true;
+
     /// <summary>
     /// Activate the new configuration key params
     /// </summary>
@@ -74,7 +81,7 @@ namespace Pulse.Graphql.InputType
     /// Create a new cnc acquisition
     /// </summary>
     /// <returns></returns>
-    public ICncAcquisition Update ()
+    public CncAcquisitionResponse Update ()
     {
       bool error = false;
       try {
@@ -82,6 +89,10 @@ namespace Pulse.Graphql.InputType
           using (var transaction = session.BeginTransaction ("UpdateCncAcquisition")) {
             var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
               .FindById (this.Id);
+            if (cncAcquisition is null) {
+              log.Error ($"Update: unknown id {this.Id}");
+              throw new Exception ("Invalid cnc acquisition id");
+            }
             if (m_cncConfigNameSet) {
               cncAcquisition.ConfigFile = m_cncConfigName + ".xml";
             }
@@ -93,9 +104,19 @@ namespace Pulse.Graphql.InputType
                 cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
               }
             }
+            var response = new CncAcquisitionResponse (cncAcquisition);
+            if ((m_cncConfigNameSet || m_parametersSet)
+              && Lemoine.Info.ConfigSet.LoadAndGet (CHECK_CONFIG_FILE_KEY, CHECK_CONFIG_FILE_DEFAULT)
+              && !response.CheckParameters (this.Parameters.ToDictionary (x => x.Name, x => x.Value))) {
+              log.Error ("CreateCncAcquisition: load error or invalid parameters");
+              response.UpdateAborted = true;
+              error = true;
+              transaction.Rollback ();
+              return response;
+            }
             ModelDAOHelper.DAOFactory.CncAcquisitionDAO.MakePersistent (cncAcquisition);
             transaction.Commit ();
-            return cncAcquisition;
+            return response;
           }
         }
       }

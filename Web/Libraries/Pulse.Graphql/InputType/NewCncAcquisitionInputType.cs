@@ -13,6 +13,7 @@ using Lemoine.Collections;
 using Lemoine.Core.Log;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
+using Pulse.Graphql.Type;
 
 namespace Pulse.Graphql.InputType
 {
@@ -23,6 +24,12 @@ namespace Pulse.Graphql.InputType
   /// </summary>
   public class NewCncAcquisition
   {
+    /// <summary>
+    /// Check the configuration file exists first
+    /// </summary>
+    static readonly string CHECK_CONFIG_FILE_KEY = "Graphql.CncAcquisition.CheckConfigFile";
+    static readonly bool CHECK_CONFIG_FILE_DEFAULT = true;
+
     /// <summary>
     /// Activate the new configuration key params
     /// </summary>
@@ -52,24 +59,32 @@ namespace Pulse.Graphql.InputType
     /// Create a new cnc acquisition
     /// </summary>
     /// <returns></returns>
-    public ICncAcquisition CreateCncAcquisition ()
+    public CncAcquisitionResponse CreateCncAcquisition ()
     {
       bool error = false;
       try {
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          var cncAcquisition = ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
+          var response = new CncAcquisitionResponse (cncAcquisition);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CreateCncAcquisition: configName={this.CncConfigName} parameters={this.Parameters}");
+          }
+          cncAcquisition.ConfigFile = this.CncConfigName + ".xml";
+          if (Lemoine.Info.ConfigSet.LoadAndGet (KEY_PARAMS_KEY, KEY_PARAMS_DEFAULT)) {
+            cncAcquisition.ConfigKeyParams = CncConfigParamValueInput.GetKeyParams (this.Parameters);
+          }
+          else {
+            cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
+          }
+          if (Lemoine.Info.ConfigSet.LoadAndGet (CHECK_CONFIG_FILE_KEY, CHECK_CONFIG_FILE_DEFAULT)
+            && !response.CheckParameters (this.Parameters.ToDictionary (x => x.Name, x => x.Value))) {
+            log.Error ("CreateCncAcquisition: load error or invalid parameters");
+            response.UpdateAborted = true;
+            error = true;
+            return response;
+          }
+
           using (var transaction = session.BeginTransaction ("CreateCncAcquisition")) {
-            var cncAcquisition = ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
-            if (log.IsDebugEnabled) {
-              log.Debug ($"CreateCncAcquisition: configName={this.CncConfigName} parameters={this.Parameters}");
-            }
-            // TODO: check the file exists first
-            cncAcquisition.ConfigFile = this.CncConfigName + ".xml";
-            if (Lemoine.Info.ConfigSet.LoadAndGet (KEY_PARAMS_KEY, KEY_PARAMS_DEFAULT)) {
-              cncAcquisition.ConfigKeyParams = CncConfigParamValueInput.GetKeyParams (this.Parameters);
-            }
-            else {
-              cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
-            }
             IComputer computer = ModelDAOHelper.DAOFactory.ComputerDAO
               .GetOrCreateLocal ();
             cncAcquisition.Computer = computer;
@@ -87,7 +102,7 @@ namespace Pulse.Graphql.InputType
             machineModule.CncAcquisition = cncAcquisition;
             ModelDAOHelper.DAOFactory.MachineModuleDAO.MakePersistent (machineModule);
             transaction.Commit ();
-            return cncAcquisition;
+            return response;
           }
         }
       }

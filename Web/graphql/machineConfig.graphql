@@ -66,9 +66,14 @@ type CncConfigParamValue {
 }
 
 type CncAcquisition {
-  id: ID!
+  id: ID
   cncConfig: CncConfig!
   parameters: [CncConfigParamValue!]!
+  loadError: Boolean
+  missingParameters: [string!]
+  invalidParameters: [string!]
+  additionalParameters: [string!]
+  updateAborted: Boolean
 }
 
 input CncConfigParamValueInput {

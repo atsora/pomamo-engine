@@ -87,11 +87,11 @@ namespace Pulse.Graphql
       Field<NonNullGraphType<CncConfigGraphType>, CncConfig> ("cncConfig")
         .Argument<NonNullGraphType<StringGraphType>> ("name")
         .Resolve (ctx => GetCncConfig (ctx.GetArgument<string> ("name")));
-      Field<NonNullGraphType<ListGraphType<NonNullGraphType<CncAcquisitionGraphType>>>, IEnumerable<ICncAcquisition>> ("cncAcquisitions")
-        .Resolve (ctx => GetCncAcquisitions ());
-      Field<NonNullGraphType<CncAcquisitionGraphType>, ICncAcquisition> ("cncAcquisition")
+      Field<NonNullGraphType<ListGraphType<NonNullGraphType<CncAcquisitionGraphType>>>, IEnumerable<CncAcquisitionResponse>> ("cncAcquisitions")
+        .Resolve (ctx => GetCncAcquisitions ().Select (x => new CncAcquisitionResponse (x)));
+      Field<NonNullGraphType<CncAcquisitionGraphType>, CncAcquisitionResponse> ("cncAcquisition")
         .Argument<NonNullGraphType<IdGraphType>> ("id")
-        .Resolve (ctx => GetCncAcquisition (ctx.GetArgument<int> ("id")));
+        .Resolve (ctx => new CncAcquisitionResponse (GetCncAcquisition (ctx.GetArgument<int> ("id"))));
     }
 
     IMachine GetMachine (int machineId)
