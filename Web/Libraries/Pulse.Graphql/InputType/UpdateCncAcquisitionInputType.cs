@@ -81,7 +81,7 @@ namespace Pulse.Graphql.InputType
     /// Create a new cnc acquisition
     /// </summary>
     /// <returns></returns>
-    public CncAcquisitionResponse Update ()
+    public CncAcquisitionChangeResponse Update ()
     {
       bool error = false;
       try {
@@ -99,17 +99,21 @@ namespace Pulse.Graphql.InputType
             if (m_parametersSet) {
               if (Lemoine.Info.ConfigSet.LoadAndGet (KEY_PARAMS_KEY, KEY_PARAMS_DEFAULT)) {
                 cncAcquisition.ConfigKeyParams = CncConfigParamValueInput.GetKeyParams (this.Parameters);
+                cncAcquisition.ConfigParameters = "";
               }
               else {
                 cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
+                cncAcquisition.ConfigKeyParams = CncConfigParamValueInput.GetKeyParams (this.Parameters)
+                  .Where (x => x.Key.StartsWith ("Param") && int.TryParse (x.Key.Substring ("Param".Length), out var _))
+                  .ToDictionary ();
               }
             }
-            var response = new CncAcquisitionResponse (cncAcquisition);
+            var response = new CncAcquisitionChangeResponse (cncAcquisition);
             if ((m_cncConfigNameSet || m_parametersSet)
               && Lemoine.Info.ConfigSet.LoadAndGet (CHECK_CONFIG_FILE_KEY, CHECK_CONFIG_FILE_DEFAULT)
               && !response.CheckParameters (this.Parameters.ToDictionary (x => x.Name, x => x.Value))) {
               log.Error ("CreateCncAcquisition: load error or invalid parameters");
-              response.UpdateAborted = true;
+              response.Aborted = true;
               error = true;
               transaction.Rollback ();
               return response;

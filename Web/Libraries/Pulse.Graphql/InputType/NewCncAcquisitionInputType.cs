@@ -59,13 +59,12 @@ namespace Pulse.Graphql.InputType
     /// Create a new cnc acquisition
     /// </summary>
     /// <returns></returns>
-    public CncAcquisitionResponse CreateCncAcquisition ()
+    public CncAcquisitionChangeResponse CreateCncAcquisition ()
     {
       bool error = false;
       try {
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           var cncAcquisition = ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
-          var response = new CncAcquisitionResponse (cncAcquisition);
           if (log.IsDebugEnabled) {
             log.Debug ($"CreateCncAcquisition: configName={this.CncConfigName} parameters={this.Parameters}");
           }
@@ -76,10 +75,11 @@ namespace Pulse.Graphql.InputType
           else {
             cncAcquisition.ConfigParameters = CncConfigParamValueInput.GetParametersString (this.Parameters);
           }
+          var response = new CncAcquisitionChangeResponse (cncAcquisition);
           if (Lemoine.Info.ConfigSet.LoadAndGet (CHECK_CONFIG_FILE_KEY, CHECK_CONFIG_FILE_DEFAULT)
             && !response.CheckParameters (this.Parameters.ToDictionary (x => x.Name, x => x.Value))) {
             log.Error ("CreateCncAcquisition: load error or invalid parameters");
-            response.UpdateAborted = true;
+            response.Aborted = true;
             error = true;
             return response;
           }

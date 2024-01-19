@@ -594,7 +594,19 @@ type CncConfigParamValue {
   value: String
 }
 
-type CncAcquisition {
+interface ICncAcquisition {
+  id: ID
+  cncConfig: CncConfig!
+  parameters: [CncConfigParamValue!]!  
+}
+
+type CncAcquisition implements ICncAcquisition {
+  id: ID!
+  cncConfig: CncConfig!
+  parameters: [CncConfigParamValue!]!
+}
+
+type CncAcquisitionChange implements ICncAcquisition {
   id: ID
   cncConfig: CncConfig!
   parameters: [CncConfigParamValue!]!
@@ -602,7 +614,7 @@ type CncAcquisition {
   missingParameters: [string!]
   invalidParameters: [string!]
   additionalParameters: [string!]
-  updateAborted: Boolean
+  aborted: Boolean
 }
 
 input CncConfigParamValueInput {

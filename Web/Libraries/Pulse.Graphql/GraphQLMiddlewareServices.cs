@@ -77,6 +77,7 @@ namespace Pulse.Graphql
         .AddSingleton<UpdateWorkOrderInputType> ()
 
         .AddSingleton<CncAcquisitionGraphType> ()
+        .AddSingleton<CncAcquisitionChangeGraphType> ()
         .AddSingleton<CncConfigGraphType> ()
         .AddSingleton<CncConfigMachineGraphType> ()
         .AddSingleton<CncConfigControlGraphType> ()
