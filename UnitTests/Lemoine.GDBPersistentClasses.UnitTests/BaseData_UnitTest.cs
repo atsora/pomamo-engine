@@ -54,7 +54,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       component.Project.Name = "JOB1";
       component.Type = new ComponentType ();
       component.Type.Name = "CAVITY";
-      component = component.FindPersistentClass<Component> (new string[] {"Name", "Project", "Type.Name"});
+      component = component.FindPersistentClass<Component> (["Name", "Project", "Type.Name"]);
       Assert.That (component, Is.Not.Null);
       Assert.That (component.Id, Is.EqualTo (1));
 
@@ -62,13 +62,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       component.Project.Name = "JOB1";
       component.Type = new ComponentType ();
       component.Type.Name = "Unknown";
-      component = component.FindPersistentClass<Component> (new string[] {"Name", "Project", "Type.Name"});
+      component = component.FindPersistentClass<Component> (["Name", "Project", "Type.Name"]);
       Assert.That (component, Is.Null);
       
       component = (Component) ModelDAOHelper.ModelFactory.CreateComponentFromType (null, componentType);
       component.Type = new ComponentType ();
       component.Type.Name = "CAVITY";
-      component = component.FindPersistentClass<Component> (new string[] {"Type"});
+      component = component.FindPersistentClass<Component> (["Type"]);
       Assert.That (component, Is.Not.Null);
       Assert.That (component.Id, Is.EqualTo (1));
       

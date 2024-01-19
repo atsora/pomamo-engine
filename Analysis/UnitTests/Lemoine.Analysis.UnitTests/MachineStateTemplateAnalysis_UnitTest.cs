@@ -87,7 +87,7 @@ namespace Lemoine.Analysis.UnitTests
           // - ObservationStateSlots
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindOverlapsRange (machine1, new UtcDateTimeRange (T(0)));
-          Assert.That (slots.Count, Is.EqualTo (10), "Number of observation state slots");
+          Assert.That (slots, Has.Count.EqualTo (10), "Number of observation state slots");
           int i = 1;
           Assert.Multiple (() => {
             Assert.That (slots[i].Machine, Is.EqualTo (machine1));
@@ -240,7 +240,7 @@ namespace Lemoine.Analysis.UnitTests
           // - ObservationStateSlots
           IList<IObservationStateSlot> slots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindOverlapsRange (machine1, new UtcDateTimeRange (T(0)));
-          Assert.That (slots.Count, Is.EqualTo (9), "Number of observation state slots");
+          Assert.That (slots, Has.Count.EqualTo (9), "Number of observation state slots");
           int i = 1;
           Assert.Multiple (() => {
             Assert.That (slots[i].Machine, Is.EqualTo (machine1));

@@ -101,7 +101,7 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (0));
+            Assert.That (associations, Is.Empty);
           }
           
           IOperationCycle operationCycle2 = ModelDAOHelper.ModelFactory
@@ -114,8 +114,10 @@ namespace Lemoine.Plugins.UnitTests
           { // Check the new machine state template
             IMachineStateTemplateAssociation newAssociation = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ().First ();
-            Assert.That (newAssociation.MachineStateTemplate, Is.EqualTo (production));
-            Assert.That (newAssociation.Begin.Value, Is.EqualTo (T (100)));
+            Assert.Multiple (() => {
+              Assert.That (newAssociation.MachineStateTemplate, Is.EqualTo (production));
+              Assert.That (newAssociation.Begin.Value, Is.EqualTo (T (100)));
+            });
           }
           
           // From now, any change is inhibited
@@ -129,7 +131,7 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (1));
+            Assert.That (associations, Has.Count.EqualTo (1));
           }
           
           // Until an error is detected...
@@ -139,9 +141,11 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (2));
-            Assert.That (associations[1].MachineStateTemplate, Is.EqualTo (production));
-            Assert.That (associations[1].Begin.Value, Is.EqualTo (T (200)));
+            Assert.That (associations, Has.Count.EqualTo (2));
+            Assert.Multiple (() => {
+              Assert.That (associations[1].MachineStateTemplate, Is.EqualTo (production));
+              Assert.That (associations[1].Begin.Value, Is.EqualTo (T (200)));
+            });
           }
           
           // From now any change is inhibited
@@ -155,7 +159,7 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (2));
+            Assert.That (associations, Has.Count.EqualTo (2));
           }
           
           // Until the observation state slots were flagged as modified
@@ -170,9 +174,11 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (3));
-            Assert.That (associations[2].MachineStateTemplate, Is.EqualTo (production));
-            Assert.That (associations[2].Begin.Value, Is.EqualTo (T (300)));
+            Assert.That (associations, Has.Count.EqualTo (3));
+            Assert.Multiple (() => {
+              Assert.That (associations[2].MachineStateTemplate, Is.EqualTo (production));
+              Assert.That (associations[2].Begin.Value, Is.EqualTo (T (300)));
+            });
           }
         }
         
@@ -253,7 +259,7 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (0));
+            Assert.That (associations, Is.Empty);
           }
           
           IOperationCycle operationCycle2 = ModelDAOHelper.ModelFactory
@@ -272,7 +278,7 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (0));
+            Assert.That (associations, Is.Empty);
           }
           
           IOperationCycle operationCycle3 = ModelDAOHelper.ModelFactory
@@ -288,7 +294,7 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (0));
+            Assert.That (associations, Is.Empty);
           }
           
           operationCycle3.SetRealEnd (T(260));
@@ -296,7 +302,7 @@ namespace Lemoine.Plugins.UnitTests
           {
             IList<IMachineStateTemplateAssociation> associations = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ();
-            Assert.That (associations.Count, Is.EqualTo (0));
+            Assert.That (associations, Is.Empty);
           }
           
           IOperationCycle operationCycle4 = ModelDAOHelper.ModelFactory
@@ -312,8 +318,10 @@ namespace Lemoine.Plugins.UnitTests
           { // Check the new machine state template
             IMachineStateTemplateAssociation newAssociation = ModelDAOHelper.DAOFactory
               .MachineStateTemplateAssociationDAO.FindAll ().First ();
-            Assert.That (newAssociation.MachineStateTemplate, Is.EqualTo (production));
-            Assert.That (newAssociation.Begin.Value, Is.EqualTo (T (200)));
+            Assert.Multiple (() => {
+              Assert.That (newAssociation.MachineStateTemplate, Is.EqualTo (production));
+              Assert.That (newAssociation.Begin.Value, Is.EqualTo (T (200)));
+            });
           }
         }
         

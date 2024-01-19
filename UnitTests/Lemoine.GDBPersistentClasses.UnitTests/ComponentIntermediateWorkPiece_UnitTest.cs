@@ -52,7 +52,7 @@ where foo.Component.Id=:Component_Id
           .SetParameter ("Component_IntermediateWorkPiece_Id", 11008)
           .SetParameter ("Component_IntermediateWorkPiece_Name", "SIMPLEOPERATION1")
           .UniqueResult<ComponentIntermediateWorkPiece> ();
-        Assert.IsNull (ciwp);
+        Assert.That (ciwp, Is.Null);
 
         // Note there is a bug with Criteria and composite keys
         // http://www.codewrecks.com/blog/index.php/2009/04/29/nhibernate-icriteria-and-composite-id-with-key-many-to-one/
@@ -82,9 +82,9 @@ where foo.Component.Id=:Component_Id
           new ComponentIntermediateWorkPiece (component,
                                               intermediateWorkPiece);
         BaseData baseData = ciwp as BaseData;
-        Assert.IsNotNull (baseData);
+        Assert.That (baseData, Is.Not.Null);
         ciwp = (ComponentIntermediateWorkPiece) baseData.FindPersistentClass (session);
-        Assert.IsNull (ciwp);
+        Assert.That (ciwp, Is.Null);
       }
     }
     
@@ -126,7 +126,7 @@ where foo.Component.Id=:Component_Id
         IComponentIntermediateWorkPiece compIwp2 = component
           .AddIntermediateWorkPiece (iwp2);
         IComponentIntermediateWorkPiece iwp3 = (IComponentIntermediateWorkPiece) ((ComponentIntermediateWorkPiece)compIwp2)
-          .FindPersistentClass (new string[] {"Component", "IntermediateWorkPiece.Code"});
+          .FindPersistentClass (["Component", "IntermediateWorkPiece.Code"]);
         Assert.That (iwp3, Is.Not.Null);
         Assert.That (iwp3.IntermediateWorkPiece, Is.EqualTo (iwp));
         
@@ -174,7 +174,7 @@ where foo.Component.Id=:Component_Id
         IComponentIntermediateWorkPiece compIwp2 = component
           .AddIntermediateWorkPiece (iwp2);
         IComponentIntermediateWorkPiece iwp3 = (IComponentIntermediateWorkPiece) ((ComponentIntermediateWorkPiece)compIwp2)
-          .FindPersistentClass (new string[] {"Component", "IntermediateWorkPiece.Operation.Code"});
+          .FindPersistentClass (["Component", "IntermediateWorkPiece.Operation.Code"]);
         Assert.That (iwp3, Is.Not.Null);
         Assert.That (iwp3.IntermediateWorkPiece, Is.EqualTo (iwp));
         

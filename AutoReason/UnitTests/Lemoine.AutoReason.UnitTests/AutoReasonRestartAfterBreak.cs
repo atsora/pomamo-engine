@@ -195,9 +195,9 @@ namespace Lemoine.AutoReason.UnitTests
 
             // Properties of the reason
             var reasonMachineAssociation = reasonMachineAssociations[0];
-            Assert.IsTrue (reasonMachineAssociation.Range.Lower.HasValue);
-            Assert.IsFalse (reasonMachineAssociation.Range.Upper.HasValue);
             Assert.Multiple (() => {
+              Assert.That (reasonMachineAssociation.Range.Lower.HasValue, Is.True);
+              Assert.That (reasonMachineAssociation.Range.Upper.HasValue, Is.False);
               Assert.That (reasonMachineAssociation.Range.Lower.Value, Is.EqualTo (T (10)));
               Assert.That (reasonMachineAssociation.DynamicEnd, Is.EqualTo ("NextMachineMode"));
               Assert.That (reasonMachineAssociation.Machine, Is.EqualTo (machine));

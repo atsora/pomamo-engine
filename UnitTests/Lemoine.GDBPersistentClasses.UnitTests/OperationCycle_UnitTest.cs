@@ -94,11 +94,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           operationCycle3.Begin = new DateTime (2012, 01, 01, 12, 00, 00);
           ModelDAOHelper.DAOFactory.OperationCycleDAO
             .MakePersistent (operationCycle3);
-          
-          Assert.IsNotNull(operationCycle1, "op cycle 1 should be not null");
-          Assert.IsNotNull(operationCycle2, "op cycle 2 should be not null");
-          Assert.IsNotNull(operationCycle3, "op cycle 3 should be not null");
-          
+
+          Assert.Multiple (() => {
+            Assert.That (operationCycle1, Is.Not.Null, "op cycle 1 should be not null");
+            Assert.That (operationCycle2, Is.Not.Null, "op cycle 2 should be not null");
+            Assert.That (operationCycle3, Is.Not.Null, "op cycle 3 should be not null");
+          });
+
           IOperationCycle operationCycleFind1 =
             ModelDAOHelper.DAOFactory.OperationCycleDAO.FindAt (machine as IMonitoredMachine,
                                                                 new DateTime (2012, 01, 01, 10, 05, 00));
@@ -111,9 +113,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             ModelDAOHelper.DAOFactory.OperationCycleDAO.FindAt (machine as IMonitoredMachine,
                                                                 new DateTime (2012, 01, 01, 12, 05, 00));
 
-          Assert.IsNotNull(operationCycleFind1, "op cycle find 1 should be not null");
-          Assert.IsNotNull(operationCycleFind2, "op cycle find 2 should be not null");
-          Assert.IsNotNull(operationCycleFind3, "op cycle find 3 should be not null");
+          Assert.Multiple (() => {
+            Assert.That (operationCycleFind1, Is.Not.Null, "op cycle find 1 should be not null");
+            Assert.That (operationCycleFind2, Is.Not.Null, "op cycle find 2 should be not null");
+            Assert.That (operationCycleFind3, Is.Not.Null, "op cycle find 3 should be not null");
+          });
 
           Assert.Multiple (() => {
             Assert.That (operationCycleFind1, Is.EqualTo (operationCycle1), "op cycles 1 should be equal");

@@ -59,13 +59,17 @@ namespace Lemoine.AutoReason.UnitTests
                 .OrderBy (x => x.Range.Lower).ToList ();
               Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the first reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("no alarms"), "wrong detail for the first reason");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the first reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the first reason should have no end");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("no alarms"), "wrong detail for the first reason");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (9)), "wrong start for the second reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
-              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("no alarms"), "wrong detail for the second reason");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (9)), "wrong start for the second reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the second reason should have no end");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("no alarms"), "wrong detail for the second reason");
+              });
             }
           } finally {
             transaction.Rollback ();
@@ -114,13 +118,17 @@ namespace Lemoine.AutoReason.UnitTests
                 .OrderBy (x => x.Range.Lower).ToList ();
               Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the first reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo (""), "wrong detail for the first reason");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the first reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the first reason should have no end");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo (""), "wrong detail for the first reason");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (9)), "wrong start for the second reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
-              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo (""), "wrong detail for the second reason");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (9)), "wrong start for the second reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the second reason should have no end");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo (""), "wrong detail for the second reason");
+              });
             }
           }
           finally {
@@ -146,9 +154,7 @@ namespace Lemoine.AutoReason.UnitTests
 
       // Acquisition state for the alarm is after the period we are analyzing
       var acquisitionState = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (mamo, AcquisitionStateKey.Alarms);
-      if (acquisitionState == null) {
-        acquisitionState = ModelDAOHelper.ModelFactory.CreateAcquisitionState (mamo, AcquisitionStateKey.Alarms);
-      }
+      acquisitionState ??= ModelDAOHelper.ModelFactory.CreateAcquisitionState (mamo, AcquisitionStateKey.Alarms);
 
       acquisitionState.DateTime = alarmAcquisition;
       ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent (acquisitionState);

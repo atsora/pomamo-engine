@@ -83,11 +83,15 @@ namespace Lemoine.AutoReason.UnitTests
                 .OrderBy (x => x.Range.Lower).ToList ();
               Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start for the first reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start for the first reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the first reason should have no end");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (10)), "wrong start for the second reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (10)), "wrong start for the second reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the second reason should have no end");
+              });
             }
           } finally {
             transaction.Rollback ();
@@ -148,8 +152,10 @@ namespace Lemoine.AutoReason.UnitTests
                 .OrderBy (x => x.Range.Lower).ToList ();
               Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start for the first reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (7)), "wrong start for the first reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the first reason should have no end");
+              });
             }
           }
           finally {

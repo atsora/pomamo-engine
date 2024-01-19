@@ -26,13 +26,10 @@ namespace Lemoine.Core.Plugin.UnitTests
       if (x.GetType () == typeof (string)) {
         // If the input data is a boolean, limit the type to a boolean
         if (t == typeof (bool)) {
-          switch ((string)x) {
-          case "True":
-          case "False":
-            return true;
-          default:
-            return false;
-          }
+          return (string)x switch {
+            "True" or "False" => true,
+            _ => false,
+          };
         }
 
         // If the input data is a number, limit the type to be a number
@@ -75,7 +72,7 @@ namespace Lemoine.Core.Plugin.UnitTests
 
       var matchingMethods2 = methods.Where (m => m.Name.Equals ("Test"))
         .Where (m => m.IsParameterMatch (autoConverter, "123"));
-      Assert.IsFalse (matchingMethods2.Any ());
+      Assert.That (matchingMethods2.Any (), Is.False);
 
       var result2 = method.InvokeAutoConvert (autoConverter, this, (object)"123", (object)"1.23", (object)"First", (object)"s");
       Assert.That (result2, Is.EqualTo (456));
@@ -98,7 +95,7 @@ namespace Lemoine.Core.Plugin.UnitTests
 
       var matchingMethods2 = methods.Where (m => m.Name.Equals ("Test"))
         .Where (m => m.IsParameterMatch (autoConverter, "123"));
-      Assert.IsFalse (matchingMethods2.Any ());
+      Assert.That (matchingMethods2.Any (), Is.False);
 
       var result2 = method.InvokeAutoConvert (autoConverter, this, (object)"123", (object)"1.23", (object)"First", (object)"s");
       Assert.That (result2, Is.EqualTo (456));
@@ -108,12 +105,14 @@ namespace Lemoine.Core.Plugin.UnitTests
       Assert.That (toolTypeResult, Is.EqualTo ("TTT23"));
     }
 
-    private int Test (int x, double d, EnumTest enumTest, int y)
+#pragma warning disable NUnit1028 // The non-test method is public
+    public int Test (int x, double d, EnumTest enumTest, int y)
     {
-      Assert.That (false, Is.True);
+      Assert.Fail ("Test");
       return 0;
     }
-    private int Test (int x, double d, EnumTest enumTest, string s)
+
+    public int Test (int x, double d, EnumTest enumTest, string s)
     {
       Assert.Multiple (() => {
         Assert.That (x, Is.EqualTo (123));
@@ -124,10 +123,11 @@ namespace Lemoine.Core.Plugin.UnitTests
       return 456;
     }
 
-    private string GetToolType (int toolNo)
+    public string GetToolType (int toolNo)
     {
       return $"TTT{toolNo}";
     }
+#pragma warning restore NUnit1028 // The non-test method is public
 
   }
 }

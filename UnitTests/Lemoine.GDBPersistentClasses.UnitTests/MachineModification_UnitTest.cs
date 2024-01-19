@@ -178,7 +178,7 @@ WHERE modificationid={modificationId}";
 
         IMachineModification modification = ModelDAOHelper.DAOFactory.MachineModificationDAO
           .FindById (10829, machine);
-        Assert.IsNotNull (modification);
+        Assert.That (modification, Is.Not.Null);
 
         transaction.Rollback ();
       }
@@ -210,7 +210,7 @@ VALUES (1, 10829)";
 
         IMachineModification modification = ModelDAOHelper.DAOFactory.MachineModificationDAO
           .FindById (10829, machine);
-        Assert.IsNotNull (modification);
+        Assert.That (modification, Is.Not.Null);
         
         transaction.Rollback ();
       }
@@ -237,7 +237,7 @@ VALUES (1, 10829)";
         
         IMachineModification modification = ModelDAOHelper.DAOFactory.MachineModificationDAO
           .FindById (associationId, machine);
-        Assert.IsNotNull (modification);
+        Assert.That (modification, Is.Not.Null);
         
         transaction.Rollback ();
       }
@@ -280,7 +280,7 @@ VALUES (1, 10829)";
         IMachineModification machineModification;
         machineModification = ModelDAOHelper.DAOFactory.MachineModificationDAO
           .FindById (associationId, machine);
-        Assert.IsNotNull (machineModification);
+        Assert.That (machineModification, Is.Not.Null);
         ModelDAOHelper.DAOFactory.Flush ();
 
         ModelDAOHelper.DAOFactory.MachineModificationDAO
@@ -290,7 +290,7 @@ VALUES (1, 10829)";
         
         machineModification = ModelDAOHelper.DAOFactory.MachineModificationDAO
           .FindById (associationId, machine);
-        Assert.IsNull (machineModification);
+        Assert.That (machineModification, Is.Null);
         ModelDAOHelper.DAOFactory.Flush ();
         
         transaction.Rollback ();
@@ -327,7 +327,7 @@ VALUES (1, 10829)";
             .GetMaxModificationId (machine);
           Assert.Multiple (() => {
             Assert.That (maxModificationId.HasValue);
-            Assert.That (associationId == maxModificationId.Value);
+            Assert.That (associationId, Is.EqualTo (maxModificationId.Value));
           });
         }
         

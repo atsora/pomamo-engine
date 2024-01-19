@@ -335,19 +335,19 @@ namespace Lemoine.Cnc.DataRepository
 
       ProcessIncludeElements (xmlDocument, keyParams, cancellationToken);
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetData: ProcessIncludeElements done");
+        log.Debug ("GetData: ProcessIncludeElements done");
       }
       SetActive ();
       cancellationToken.ThrowIfCancellationRequested ();
       ProcessExtensionElements (xmlDocument, keyParams, cancellationToken);
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetData: ProcessExtensionElements done");
+        log.Debug ("GetData: ProcessExtensionElements done");
       }
       SetActive ();
       cancellationToken.ThrowIfCancellationRequested ();
       ReplaceKeywords (xmlDocument, keyParams);
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetData: ReplaceKeywords done, end");
+        log.Debug ("GetData: ReplaceKeywords done, end");
       }
       SetActive ();
       cancellationToken.ThrowIfCancellationRequested ();

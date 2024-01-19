@@ -47,15 +47,15 @@ namespace Lemoine.Analysis.UnitTests
           IMachineModule machineModule =
             daoFactory.MachineModuleDAO
             .FindById (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           ISequence sequence1 =
             daoFactory.SequenceDAO
             .FindById (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           ISequence sequence2 =
             daoFactory.SequenceDAO
             .FindById (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -83,10 +83,12 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             int i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -102,7 +104,7 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 5.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 5.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
@@ -121,7 +123,7 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (2), "Number of auto-sequences after 8.");
+            Assert.That (autoSequences, Has.Count.EqualTo (2), "Number of auto-sequences after 8.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
@@ -130,8 +132,10 @@ namespace Lemoine.Analysis.UnitTests
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
             });
             ++i;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 01)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 01)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
@@ -147,7 +151,7 @@ namespace Lemoine.Analysis.UnitTests
               .CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (3), "Number of auto-sequences after 9.");
+            Assert.That (autoSequences, Has.Count.EqualTo (3), "Number of auto-sequences after 9.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
@@ -163,8 +167,10 @@ namespace Lemoine.Analysis.UnitTests
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
             });
             ++i;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -193,21 +199,21 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (11003);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -267,7 +273,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
@@ -289,10 +295,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -300,7 +308,7 @@ namespace Lemoine.Analysis.UnitTests
             // Check the SequenceSlots
             IList<ISequenceSlot> sequenceSlots = ModelDAOHelper.DAOFactory.SequenceSlotDAO
               .FindAll ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
@@ -320,7 +328,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 5.");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots after 5.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
@@ -342,7 +350,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-processes after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-processes after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
@@ -365,7 +373,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (3), "Number of operation slots after 5.");
+            Assert.That (operationSlots, Has.Count.EqualTo (3), "Number of operation slots after 5.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
@@ -395,10 +403,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 8.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 8.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 25, 00)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
@@ -406,7 +416,7 @@ namespace Lemoine.Analysis.UnitTests
             // Check the SequenceSlots
             IList<ISequenceSlot> sequenceSlots = ModelDAOHelper.DAOFactory.SequenceSlotDAO
               .FindAll ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (2), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
@@ -453,7 +463,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (5), "Number of operation slots after 9.");
+            Assert.That (operationSlots, Has.Count.EqualTo (5), "Number of operation slots after 9.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 00, 00, 00)));
@@ -499,10 +509,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 9.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 9.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 28, 00)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -512,7 +524,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (4), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (4), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 05, 00)));
@@ -569,25 +581,25 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (12708);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (12678);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           Sequence sequence3 = session.Get<Sequence> (3);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
           Sequence sequence4 = session.Get<Sequence> (4);
-          Assert.NotNull (sequence4);
+          Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -636,7 +648,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
@@ -658,10 +670,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (T4));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T4));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -671,7 +685,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (2), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
@@ -712,25 +726,25 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (12708);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (12678);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           Sequence sequence3 = session.Get<Sequence> (3);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
           Sequence sequence4 = session.Get<Sequence> (4);
-          Assert.NotNull (sequence4);
+          Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -785,7 +799,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (4), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (4), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T02));
@@ -811,8 +825,10 @@ namespace Lemoine.Analysis.UnitTests
               Assert.That (operationSlots[i].RunTime.Value.TotalSeconds, Is.EqualTo (0));
             });
             ++i;
-            Assert.That (operationSlots [i].BeginDateTime.Value, Is.EqualTo (T3));
-            Assert.IsFalse (operationSlots [i].EndDateTime.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T3));
+              Assert.That (operationSlots[i].EndDateTime.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
               Assert.That (operationSlots[i].Operation, Is.EqualTo (operation4));
@@ -823,7 +839,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].Begin, Is.EqualTo (T2));
@@ -836,7 +852,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (4), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (4), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T02));
@@ -862,8 +878,10 @@ namespace Lemoine.Analysis.UnitTests
               Assert.That (sequenceSlots[i].NextBegin, Is.EqualTo (T3));
             });
             ++i;
-            Assert.That (sequenceSlots [i].BeginDateTime.Value, Is.EqualTo (T3));
-            Assert.IsFalse (sequenceSlots [i].EndDateTime.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T3));
+              Assert.That (sequenceSlots[i].EndDateTime.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (sequenceSlots[i].Sequence, Is.EqualTo (sequence4));
@@ -893,25 +911,25 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (12708);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (12678);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           Sequence sequence3 = session.Get<Sequence> (3);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
           Sequence sequence4 = session.Get<Sequence> (4);
-          Assert.NotNull (sequence4);
+          Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -946,7 +964,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (5), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (5), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
@@ -987,10 +1005,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (T (13)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T (13)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
@@ -1000,7 +1020,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (7), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (7), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
@@ -1081,27 +1101,27 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (12708);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (12678);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           // The two next are 'auto'
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           // The two next are 'not auto'
           Sequence sequence3 = session.Get<Sequence> (3);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
           Sequence sequence4 = session.Get<Sequence> (4);
-          Assert.NotNull (sequence4);
+          Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -1144,7 +1164,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (3), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (3), "Number of auto-sequences after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].Begin, Is.EqualTo (T0));
@@ -1160,8 +1180,10 @@ namespace Lemoine.Analysis.UnitTests
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence2));
             });
             ++i;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (T4));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T4));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -1173,7 +1195,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (2), "Number of SequenceSlots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
@@ -1214,13 +1236,13 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -1260,7 +1282,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
@@ -1282,10 +1304,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (T3));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T3));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -1295,7 +1319,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (3), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (3), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
@@ -1344,13 +1368,13 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (12708);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Sequence sequence3 = session.Get<Sequence> (3);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
 
           // Stamps
           Stamp stamp3 = new Stamp ();
@@ -1378,7 +1402,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
@@ -1392,13 +1416,13 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Is.Empty, "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
@@ -1431,9 +1455,9 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
 
           OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machineModule.MonitoredMachine, new List<Lemoine.Extensions.Analysis.IDetectionExtension> ());
           OperationDetection operationDetection = new OperationDetection (machineModule.MonitoredMachine, new List<Lemoine.Extensions.Analysis.IOperationDetectionExtension> ());
@@ -1456,19 +1480,19 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (0), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Is.Empty, "Number of operation slots after 1.");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Is.Empty, "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (1), "Number of SequenceSlots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
@@ -1501,13 +1525,13 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -1533,19 +1557,19 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (0), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Is.Empty, "Number of operation slots after 1.");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Is.Empty, "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (0), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Is.Empty, "Number of SequenceSlots after 1.");
           }
         }
         finally {
@@ -1570,15 +1594,15 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Sequence sequence3 = session.Get<Sequence> (3);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
           Sequence sequence4 = session.Get<Sequence> (4);
-          Assert.NotNull (sequence4);
+          Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
           IStamp stamp3 = ModelDAOHelper.ModelFactory.CreateStamp ();
@@ -1607,19 +1631,19 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences");
+            Assert.That (autoSequences, Is.Empty, "Number of auto-sequences");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (2), "Number of SequenceSlots");
             int i = 0;
             ISequenceSlot sequenceSlot;
             sequenceSlot = sequenceSlots [i];
@@ -1630,9 +1654,11 @@ namespace Lemoine.Analysis.UnitTests
             });
             ++i;
             sequenceSlot = sequenceSlots [i];
-            Assert.That (sequenceSlot.BeginDateTime.Value, Is.EqualTo (T2));
-            Assert.IsFalse (sequenceSlot.EndDateTime.HasValue);
-            Assert.IsNull (sequenceSlot.NextBegin);
+            Assert.Multiple (() => {
+              Assert.That (sequenceSlot.BeginDateTime.Value, Is.EqualTo (T2));
+              Assert.That (sequenceSlot.EndDateTime.HasValue, Is.False);
+              Assert.That (sequenceSlot.NextBegin, Is.Null);
+            });
           }
         }
         finally {
@@ -1657,9 +1683,9 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
 
           OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machineModule.MonitoredMachine, new List<Lemoine.Extensions.Analysis.IDetectionExtension> ());
           OperationDetection operationDetection = new OperationDetection (machineModule.MonitoredMachine, new List<Lemoine.Extensions.Analysis.IOperationDetectionExtension> ());
@@ -1682,19 +1708,19 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (0), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Is.Empty, "Number of operation slots after 1.");
             // Check the auto-sequences
             IList<AutoSequence> autoSequences =
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Is.Empty, "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (1), "Number of SequenceSlots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T1));
@@ -1727,13 +1753,13 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -1763,7 +1789,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
@@ -1777,10 +1803,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (T1));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (T1));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -1790,7 +1818,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (T11));
@@ -1823,21 +1851,21 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (11003);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
 
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -1893,7 +1921,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 2b.");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots after 2b.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 00, 00, 00)));
@@ -1915,10 +1943,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -1928,7 +1958,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (1), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (1), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
@@ -1958,7 +1988,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 2b.");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots after 2b.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 00, 00, 00)));
@@ -1980,7 +2010,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 15, 01)));
@@ -1993,7 +2023,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (3), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (3), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
@@ -2035,7 +2065,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (3), "Number of operation slots after 2b.");
+            Assert.That (operationSlots, Has.Count.EqualTo (3), "Number of operation slots after 2b.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 00, 00, 00)));
@@ -2065,10 +2095,12 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (1), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Has.Count.EqualTo (1), "Number of auto-sequences after 1.");
             i = 0;
-            Assert.That (autoSequences [i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 29, 00)));
-            Assert.IsFalse (autoSequences [i].End.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (autoSequences[i].Begin, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 29, 00)));
+              Assert.That (autoSequences[i].End.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (autoSequences[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (autoSequences[i].Sequence, Is.EqualTo (sequence1));
@@ -2078,7 +2110,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (6), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (6), "Number of SequenceSlots after 1.");
             i = 0;
             Assert.Multiple (() => {
               Assert.That (sequenceSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
@@ -2153,21 +2185,21 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (11003);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -2197,7 +2229,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots after 1.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 05, 00)));
@@ -2211,7 +2243,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Is.Empty, "Number of auto-sequences after 1.");
           }
         }
         finally {
@@ -2237,21 +2269,21 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (11003);
-          Assert.NotNull (operation3);
+          Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
-          Assert.NotNull (operation4);
+          Assert.That (operation4, Is.Not.Null);
           Sequence sequence1 = session.Get<Sequence> (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Sequence sequence2 = session.Get<Sequence> (2);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -2299,7 +2331,7 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<OperationSlot> ()
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<OperationSlot> ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots after 2.");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots after 2.");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 00)));
@@ -2319,13 +2351,13 @@ namespace Lemoine.Analysis.UnitTests
               session.CreateCriteria<AutoSequence> ()
               .AddOrder (Order.Asc ("Begin"))
               .List<AutoSequence> ();
-            Assert.That (autoSequences.Count, Is.EqualTo (0), "Number of auto-sequences after 1.");
+            Assert.That (autoSequences, Is.Empty, "Number of auto-sequences after 1.");
             // Check the SequenceSlots
             IList<SequenceSlot> sequenceSlots =
               session.CreateCriteria<SequenceSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<SequenceSlot> ();
-            Assert.That (sequenceSlots.Count, Is.EqualTo (2), "Number of SequenceSlots after 1.");
+            Assert.That (sequenceSlots, Has.Count.EqualTo (2), "Number of SequenceSlots after 1.");
             // Note: here the used date/time are quite approximative. The sequence slots are not cut exactly at the time
             //       of the operation machine association. May be it is possible to do something better, but may be it
             //       is not so important too
@@ -2377,24 +2409,24 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           
           Operation operation1 = session.Get<Operation> (12666);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (1);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           
           Sequence sequence1 = session.Get<Sequence> (8);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Assert.That (sequence1.Operation, Is.EqualTo (operation1));
           Sequence sequence2 = session.Get<Sequence> (9);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
           Sequence sequence3 = session.Get<Sequence> (10);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
           Assert.That (sequence3.Operation, Is.EqualTo (operation1));
           
           Stamp stamp1 = new Stamp ();
@@ -2471,24 +2503,24 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           
           Operation operation1 = session.Get<Operation> (12666);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (1);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           
           Sequence sequence1 = session.Get<Sequence> (8);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Assert.That (sequence1.Operation, Is.EqualTo (operation1));
           Sequence sequence2 = session.Get<Sequence> (9);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
           Sequence sequence3 = session.Get<Sequence> (10);
-          Assert.NotNull (sequence3);
+          Assert.That (sequence3, Is.Not.Null);
           Assert.That (sequence3.Operation, Is.EqualTo (operation1));
           
           Stamp stamp1 = new Stamp ();
@@ -2565,24 +2597,24 @@ namespace Lemoine.Analysis.UnitTests
             // Reference data
             IMonitoredMachine machine =
               daoFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             MachineModule machineModule = session.Get<MachineModule> (1);
-            Assert.NotNull (machineModule);
+            Assert.That (machineModule, Is.Not.Null);
             
             Operation operation1 = session.Get<Operation> (12666);
-            Assert.NotNull (operation1);
+            Assert.That (operation1, Is.Not.Null);
             Operation operation2 = session.Get<Operation> (1);
-            Assert.NotNull (operation2);
+            Assert.That (operation2, Is.Not.Null);
             
             Sequence sequence1 = session.Get<Sequence> (8);
-            Assert.NotNull (sequence1);
+            Assert.That (sequence1, Is.Not.Null);
             Assert.That (sequence1.Operation, Is.EqualTo (operation1));
             Sequence sequence2 = session.Get<Sequence> (9);
-            Assert.NotNull (sequence2);
+            Assert.That (sequence2, Is.Not.Null);
             Assert.That (sequence2.Operation, Is.EqualTo (operation1));
             
             Sequence sequenceForOp2 = session.Get<Sequence> (1);
-            Assert.NotNull (sequenceForOp2);
+            Assert.That (sequenceForOp2, Is.Not.Null);
             Assert.That (sequenceForOp2.Operation, Is.EqualTo (operation2));
             
             Stamp stamp1 = new Stamp ();
@@ -2703,9 +2735,9 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           
           OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machineModule.MonitoredMachine, new List<Lemoine.Extensions.Analysis.IDetectionExtension> ());
           OperationDetection operationDetection = new OperationDetection (machineModule.MonitoredMachine, new List<Lemoine.Extensions.Analysis.IOperationDetectionExtension> ());
@@ -2719,19 +2751,19 @@ namespace Lemoine.Analysis.UnitTests
           autoSequenceMachineModuleAnalysis.AddAutoSequencePeriod (T2, T21);
           
           Operation operation1 = session.Get<Operation> (12666);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           Operation operation2 = session.Get<Operation> (1);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           
           Sequence sequence1 = session.Get<Sequence> (8);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           Assert.That (sequence1.Operation, Is.EqualTo (operation1));
           Sequence sequence2 = session.Get<Sequence> (9);
-          Assert.NotNull (sequence2);
+          Assert.That (sequence2, Is.Not.Null);
           Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
           Sequence sequenceForOp2 = session.Get<Sequence> (1);
-          Assert.NotNull (sequenceForOp2);
+          Assert.That (sequenceForOp2, Is.Not.Null);
           Assert.That (sequenceForOp2.Operation, Is.EqualTo (operation2));
           
           Stamp stamp1 = new Stamp ();
@@ -2895,11 +2927,11 @@ namespace Lemoine.Analysis.UnitTests
         try {
           // Reference data
           MachineModule machineModule = session.Get<MachineModule> (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           IIsoFile isofile1 = session.Get<IsoFile> (1);
-          Assert.NotNull(isofile1);
+          Assert.That (isofile1, Is.Not.Null);
           IIsoFile isofile2 = session.Get<IsoFile> (2);
-          Assert.NotNull(isofile2);
+          Assert.That (isofile2, Is.Not.Null);
           
           // Stamps
           Stamp stamp1 = new Stamp ();
@@ -2923,7 +2955,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IsoFileSlot> isoFileSlots = session.CreateCriteria<IsoFileSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<IsoFileSlot>();
-            Assert.That (isoFileSlots.Count, Is.EqualTo (2), "Number of isoFile slots");
+            Assert.That (isoFileSlots, Has.Count.EqualTo (2), "Number of isoFile slots");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (isoFileSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 04, 52)));
@@ -2933,8 +2965,10 @@ namespace Lemoine.Analysis.UnitTests
             });
 
             ++i;
-            Assert.That (isoFileSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 59)));
-            Assert.IsFalse (isoFileSlots [i].EndDateTime.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (isoFileSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 59)));
+              Assert.That (isoFileSlots[i].EndDateTime.HasValue, Is.False);
+            });
             Assert.Multiple (() => {
               Assert.That (isoFileSlots[i].MachineModule, Is.EqualTo (machineModule));
               Assert.That (isoFileSlots[i].IsoFile, Is.EqualTo (isofile2));
@@ -2949,7 +2983,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IsoFileSlot> isoFileSlots = session.CreateCriteria<IsoFileSlot> ()
               .AddOrder (Order.Asc ("BeginDateTime"))
               .List<IsoFileSlot>();
-            Assert.That (isoFileSlots.Count, Is.EqualTo (2), "Number of isoFile slots");
+            Assert.That (isoFileSlots, Has.Count.EqualTo (2), "Number of isoFile slots");
             int i = 1;
             Assert.Multiple (() => {
               Assert.That (isoFileSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 01, 16, 10, 08, 59)));

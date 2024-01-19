@@ -106,16 +106,20 @@ namespace Lemoine.Plugin.Groups.UnitTests
           {
             var request = new Lemoine.Business.Machine.GroupZoomIn ("Test");
             var response = Business.ServiceProvider.Get (request);
-            Assert.That (response.Children.Count (), Is.EqualTo (2));
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.IsTrue (response.Children.Contains ("1"));
-            Assert.IsTrue (response.Children.Contains ("2"));
+            Assert.Multiple (() => {
+              Assert.That (response.Children.Count (), Is.EqualTo (2));
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Children, Does.Contain ("1"));
+            });
+            Assert.That (response.Children, Does.Contain ("2"));
           }
           {
             var request = new Lemoine.Business.Machine.GroupZoomOut ("1");
             var response = Business.ServiceProvider.Get (request);
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.That (response.Parent, Is.EqualTo ("Test"));
+            Assert.Multiple (() => {
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Parent, Is.EqualTo ("Test"));
+            });
           }
         }
         finally {

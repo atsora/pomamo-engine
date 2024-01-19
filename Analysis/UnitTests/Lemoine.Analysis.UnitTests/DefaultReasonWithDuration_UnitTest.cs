@@ -43,7 +43,7 @@ namespace Lemoine.Analysis.UnitTests
             // Reference data
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);

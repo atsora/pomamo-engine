@@ -104,8 +104,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
               // Check that the severity is not null (also load the severity object)
               cncAlarm.Unproxy ();
-              Assert.IsNotNull (cncAlarm.Severity, "severity should not be null");
-              Assert.That (cncAlarm.Severity.Id != 0, Is.True, "severity id should have been different from 0");
+              Assert.That (cncAlarm.Severity, Is.Not.Null, "severity should not be null");
+              Assert.That (cncAlarm.Severity.Id, Is.Not.EqualTo (0), "severity id should have been different from 0");
 
               // Get the text of the serialized cnc alarm
               serializer.Serialize (xmlWriter, cncAlarm);
@@ -201,8 +201,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
               // Check that the severity is not null (also load the severity object)
               cncAlarm.Unproxy ();
-              Assert.IsNotNull (cncAlarm.Severity, "severity should not be null");
-              Assert.That (cncAlarm.Severity.Id != 0, Is.True, "severity id should have been different from 0");
+              Assert.That (cncAlarm.Severity, Is.Not.Null, "severity should not be null");
+              Assert.That (cncAlarm.Severity.Id, Is.Not.EqualTo (0), "severity id should have been different from 0");
 
               /* ************************* *
                * CREATE A SECOND CNC ALARM * 
@@ -220,8 +220,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
               // Check that the severity is not null (also load the severity object)
               cncAlarm2.Unproxy ();
-              Assert.IsNotNull (cncAlarm2.Severity, "severity should not be null");
-              Assert.That (cncAlarm2.Severity.Id != 0, Is.True, "severity id should have been different from 0");
+              Assert.That (cncAlarm2.Severity, Is.Not.Null, "severity should not be null");
+              Assert.That (cncAlarm2.Severity.Id, Is.Not.EqualTo (0), "severity id should have been different from 0");
 
               /* ****************** *
                * CREATE A CNC VALUE * 
@@ -577,7 +577,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 #if NET6_0_OR_GREATER
           Assert.That (s.ReplaceLineEndings (), Is.EqualTo ($"""
 <?xml version="1.0" encoding="utf-16"?>
-<UserAttendance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Priority="100" DateTime="{userAttendance.SqlDateTime}" Begin="{userAttendance.Begin.Value.ToString ("yyyy-MM-dd HH:mm:ss")}" End="{userAttendance.End.Value.ToString ("yyyy-MM-dd HH:mm:ss")}">
+<UserAttendance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DateTime="{userAttendance.SqlDateTime}" Priority="100" Begin="{userAttendance.Begin.Value.ToString ("yyyy-MM-dd HH:mm:ss")}" End="{userAttendance.End.Value.ToString ("yyyy-MM-dd HH:mm:ss")}">
   <User Name="USER" />
 </UserAttendance>
 """.ReplaceLineEndings ()));
@@ -660,8 +660,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 #if NET6_0_OR_GREATER
             Assert.That (s.ReplaceLineEndings (), Is.EqualTo ($"""
 <?xml version="1.0" encoding="utf-16"?>
-<MachineObservationStateAssociation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Priority="100" DateTime="{((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime}" Begin="0001-01-01 00:00:00">
-  <Machine Name="MACHINE" Id="0" />
+<MachineObservationStateAssociation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DateTime="{((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime}" Priority="100" Begin="0001-01-01 00:00:00">
+  <Machine Id="0" Name="MACHINE" />
   <Option xsi:nil="true" />
   <MachineObservationState UserRequired="false" ShiftRequired="false" IsProduction="false" />
   <User Name="USER" />
@@ -694,10 +694,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 #if NET6_0_OR_GREATER
             Assert.That (s.ReplaceLineEndings (), Is.EqualTo ($"""
 <?xml version="1.0" encoding="utf-16"?>
-<MachineObservationStateAssociation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Priority="100" DateTime="{((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime}" Begin="{machineObservationStateAssociation.Begin.Value.ToString ("yyyy-MM-dd HH:mm:ss")}" End="{machineObservationStateAssociation.End.Value.ToString ("yyyy-MM-dd HH:mm:ss")}">
-  <Machine Name="MACHINE" Id="0" />
+<MachineObservationStateAssociation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DateTime="{((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime}" Priority="100" Begin="{machineObservationStateAssociation.Begin.Value.ToString ("yyyy-MM-dd HH:mm:ss")}" End="{machineObservationStateAssociation.End.Value.ToString ("yyyy-MM-dd HH:mm:ss")}">
+  <Machine Id="0" Name="MACHINE" />
   <Option xsi:nil="true" />
-  <MachineObservationState UserRequired="false" ShiftRequired="false" IsProduction="false" OnSite="true" />
+  <MachineObservationState UserRequired="false" ShiftRequired="false" OnSite="true" IsProduction="false" />
   <User Name="USER" />
 </MachineObservationStateAssociation>
 """.ReplaceLineEndings ()));
@@ -788,7 +788,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       XmlSerializer deserializer2 = new XmlSerializer (typeof (Modification));
       Modification modification =
         (Modification)deserializer.Deserialize (textReader2);
-      Assert.IsInstanceOf<ComponentMachineAssociation> (modification);
+      Assert.That (modification, Is.InstanceOf<ComponentMachineAssociation> ());
       ComponentMachineAssociation componentMachineAssociation2 =
         (ComponentMachineAssociation)modification;
       Assert.Multiple (() => {
@@ -1130,7 +1130,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                 var s = stringWriter.ToString ();
 #if NET6_0_OR_GREATER
                 Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
-<?xml version="1.0" encoding="utf-16"?><Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="EventToolLife" DateTime="2012-12-12 00:00:00" LocalDateTimeString="12/12/2012 01:00:00" LocalDateTimeG="12/12/2012 01:00:00"><Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" /><Message /><OldToolState>Unknown</OldToolState><NewToolState>Unknown</NewToolState><ToolId>1</ToolId><Direction>Unknown</Direction><ElapsedTime>0</ElapsedTime><MachineModule Id="2" ConfigPrefix=""><MonitoredMachine Name="MACHINE_B17" Id="2"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine></MachineModule><MonitoredMachine Id="2" Name="MACHINE_B17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine><EventType>ExpirationReached</EventType><OldMagazine>-</OldMagazine><NewMagazine>-</NewMagazine><OldPot>-</OldPot><NewPot>-</NewPot><OldValue>-</OldValue><NewValue>-</NewValue><OldWarning>-</OldWarning><NewWarning>-</NewWarning><OldLimit>-</OldLimit><NewLimit>-</NewLimit><Unit TranslationKey="UnitDistanceMillimeter" Display="mm" Description="Distance (mm)" /><PreviousLocalDateString>12/12/2012 01:00:00</PreviousLocalDateString><OldToolStateName>ToolStateUnknown</OldToolStateName><NewToolStateName>ToolStateUnknown</NewToolStateName></Event>
+<?xml version="1.0" encoding="utf-16"?><Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="EventToolLife" DateTime="2012-12-12 00:00:00" LocalDateTimeString="12/12/2012 01:00:00" LocalDateTimeG="12/12/2012 01:00:00"><Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" /><Message /><OldToolState>Unknown</OldToolState><NewToolState>Unknown</NewToolState><ToolId>1</ToolId><Direction>Unknown</Direction><ElapsedTime>0</ElapsedTime><MachineModule Id="2" ConfigPrefix=""><MonitoredMachine Id="2" Name="MACHINE_B17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine></MachineModule><MonitoredMachine Id="2" Name="MACHINE_B17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine><EventType>ExpirationReached</EventType><OldMagazine>-</OldMagazine><NewMagazine>-</NewMagazine><OldPot>-</OldPot><NewPot>-</NewPot><OldValue>-</OldValue><NewValue>-</NewValue><OldWarning>-</OldWarning><NewWarning>-</NewWarning><OldLimit>-</OldLimit><NewLimit>-</NewLimit><Unit TranslationKey="UnitDistanceMillimeter" Display="mm" Description="Distance (mm)" /><PreviousLocalDateString>12/12/2012 01:00:00</PreviousLocalDateString><OldToolStateName>ToolStateUnknown</OldToolStateName><NewToolStateName>ToolStateUnknown</NewToolStateName></Event>
 """.ReplaceLineEndings ()));
 #else // NET48
             Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1181,7 +1181,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                 var s = stringWriter.ToString ();
 #if NET6_0_OR_GREATER
                 Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
-<?xml version="1.0" encoding="utf-16"?><EventToolLife xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DateTime="2012-12-12 00:00:00" LocalDateTimeString="12/12/2012 01:00:00" LocalDateTimeG="12/12/2012 01:00:00"><Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" /><Message /><OldToolState>Unknown</OldToolState><NewToolState>Unknown</NewToolState><Direction>Unknown</Direction><ElapsedTime>0</ElapsedTime><ToolId>1</ToolId><MachineModule Id="2" ConfigPrefix=""><MonitoredMachine Name="MACHINE_B17" Id="2"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine></MachineModule><MonitoredMachine Id="2" Name="MACHINE_B17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine><EventType>ExpirationReached</EventType><OldMagazine>-</OldMagazine><NewMagazine>-</NewMagazine><OldPot>-</OldPot><NewPot>-</NewPot><OldValue>-</OldValue><NewValue>-</NewValue><OldWarning>-</OldWarning><NewWarning>-</NewWarning><OldLimit>-</OldLimit><NewLimit>-</NewLimit><Unit TranslationKey="UnitDistanceMillimeter" Display="mm" Description="Distance (mm)" /><PreviousLocalDateString>12/12/2012 01:00:00</PreviousLocalDateString><OldToolStateName>ToolStateUnknown</OldToolStateName><NewToolStateName>ToolStateUnknown</NewToolStateName></EventToolLife>
+<?xml version="1.0" encoding="utf-16"?><EventToolLife xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DateTime="2012-12-12 00:00:00" LocalDateTimeString="12/12/2012 01:00:00" LocalDateTimeG="12/12/2012 01:00:00"><Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" /><Message /><OldToolState>Unknown</OldToolState><NewToolState>Unknown</NewToolState><ToolId>1</ToolId><Direction>Unknown</Direction><ElapsedTime>0</ElapsedTime><MachineModule Id="2" ConfigPrefix=""><MonitoredMachine Id="2" Name="MACHINE_B17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine></MachineModule><MonitoredMachine Id="2" Name="MACHINE_B17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine><EventType>ExpirationReached</EventType><OldMagazine>-</OldMagazine><NewMagazine>-</NewMagazine><OldPot>-</OldPot><NewPot>-</NewPot><OldValue>-</OldValue><NewValue>-</NewValue><OldWarning>-</OldWarning><NewWarning>-</NewWarning><OldLimit>-</OldLimit><NewLimit>-</NewLimit><Unit TranslationKey="UnitDistanceMillimeter" Display="mm" Description="Distance (mm)" /><PreviousLocalDateString>12/12/2012 01:00:00</PreviousLocalDateString><OldToolStateName>ToolStateUnknown</OldToolStateName><NewToolStateName>ToolStateUnknown</NewToolStateName></EventToolLife>
 """.ReplaceLineEndings ()));
 #else // NET48
             Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1275,8 +1275,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
         Assert.That (sequence2bis.Name, Is.EqualTo (sequence2.Name));
       });
-      Assert.That (operation.Name, Is.EqualTo (sequence2bis.Operation.Name));
-      Assert.That (path.Number, Is.EqualTo (sequence2bis.Path.Number));
+      Assert.Multiple (() => {
+        Assert.That (operation.Name, Is.EqualTo (sequence2bis.Operation.Name));
+        Assert.That (path.Number, Is.EqualTo (sequence2bis.Path.Number));
+      });
       Assert.That (operation.Name, Is.EqualTo (sequence2bis.Path.Operation.Name));
 
     }

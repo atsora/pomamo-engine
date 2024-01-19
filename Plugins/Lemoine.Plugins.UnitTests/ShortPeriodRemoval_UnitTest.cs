@@ -97,9 +97,11 @@ namespace Lemoine.Plugins.UnitTests
             {
               IList<IActivityManual> modifications = ModelDAOHelper.DAOFactory.ActivityManualDAO
                 .FindAll ();
-              Assert.That (modifications.Count, Is.EqualTo (1));
-              Assert.That (modifications[0].Range, Is.EqualTo (R (100, 110)));
-              Assert.That (modifications[0].MachineMode, Is.EqualTo (active));
+              Assert.That (modifications, Has.Count.EqualTo (1));
+              Assert.Multiple (() => {
+                Assert.That (modifications[0].Range, Is.EqualTo (R (100, 110)));
+                Assert.That (modifications[0].MachineMode, Is.EqualTo (active));
+              });
             }
           }
         }
@@ -183,9 +185,11 @@ namespace Lemoine.Plugins.UnitTests
             {
               IList<IActivityManual> modifications = ModelDAOHelper.DAOFactory.ActivityManualDAO
                 .FindAll ();
-              Assert.That (modifications.Count, Is.EqualTo (1));
-              Assert.That (modifications[0].Range, Is.EqualTo (R (100, 110)));
-              Assert.That (modifications[0].MachineMode, Is.EqualTo (active));
+              Assert.That (modifications, Has.Count.EqualTo (1));
+              Assert.Multiple (() => {
+                Assert.That (modifications[0].Range, Is.EqualTo (R (100, 110)));
+                Assert.That (modifications[0].MachineMode, Is.EqualTo (active));
+              });
             }
           }
         }

@@ -67,10 +67,12 @@ namespace Lemoine.ModelDAO.UnitTests
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault,
         PropertyNameCaseInsensitive = true,
       });
-      Assert.That (rule.Message, Is.EqualTo ("This is a message"));
-      Assert.IsNull (rule.Number);
-      Assert.IsNull (rule.CncSubInfo);
-      Assert.IsNull (rule.Type);
+      Assert.Multiple (() => {
+        Assert.That (rule.Message, Is.EqualTo ("This is a message"));
+        Assert.That (rule.Number, Is.Null);
+        Assert.That (rule.CncSubInfo, Is.Null);
+        Assert.That (rule.Type, Is.Null);
+      });
     }
   }
 }

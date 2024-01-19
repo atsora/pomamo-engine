@@ -35,7 +35,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     #endregion // Getters/Setters
 
     // simple test (for those classes having no DAO)
-    public void TestSimpleNullIdToNonNullId<T, ID> (T ObjWithId, T OtherObjWithId)
+    private void TestSimpleNullIdToNonNullId<T, ID> (T ObjWithId, T OtherObjWithId)
     {
       string FailString = "TestSimpleNullIdToNonNullId failure on class " + typeof (T).FullName;
       ISet<T> customSet = new InitialNullIdSet<T, ID> ();
@@ -59,7 +59,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       });
     }
 
-    public void TestNullIdToNonNullId<T, ID> (T ObjWithId, T OtherObjWithId,
+    private void TestNullIdToNonNullId<T, ID> (T ObjWithId, T OtherObjWithId,
                                              IGenericDAO<T, ID> daoFactory)
     // where T : Lemoine.Collections.IDataWithId
     {
@@ -95,7 +95,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       });
     }
 
-    public void TestNullIdToNonNullIdByMachine<T, ID> (T ObjWithId, T OtherObjWithId,
+    private void TestNullIdToNonNullIdByMachine<T, ID> (T ObjWithId, T OtherObjWithId,
                                              IGenericByMachineDAO<T, ID> daoFactory)
       where T : IPartitionedByMachine
       // where T : Lemoine.Collections.IDataWithId
@@ -132,7 +132,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       });
     }
 
-    public void TestNullIdToNonNullIdSorted<T, ID> (T ObjWithId, T OtherObjWithId,
+    private void TestNullIdToNonNullIdSorted<T, ID> (T ObjWithId, T OtherObjWithId,
                                                    IGenericDAO<T, int> daoFactory)
       where T : IComparable
       // where T : Lemoine.Collections.IDataWithId
@@ -169,7 +169,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       });
     }
 
-    public void TestNullIdToNonNullIdBag<T, ID> (T ObjWithId, T OtherObjWithId,
+    private void TestNullIdToNonNullIdBag<T, ID> (T ObjWithId, T OtherObjWithId,
                                                 IGenericDAO<T, int> daoFactory)
     {
       // bag means something implementing IList

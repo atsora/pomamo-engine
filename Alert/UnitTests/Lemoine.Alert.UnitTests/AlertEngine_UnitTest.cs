@@ -46,7 +46,7 @@ namespace Lemoine.Alert.UnitTests
         using (IDAOTransaction transaction = session.BeginTransaction ())
       {
         engine.RunOnePass (CancellationToken.None);
-        Assert.That (result.Count, Is.EqualTo (1));
+        Assert.That (result, Has.Count.EqualTo (1));
         IEventLevel level = ModelDAOHelper.DAOFactory.EventLevelDAO.FindById (3); // WARN, 400
         IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindByIdForXmlSerialization (1);
         IMachineMode machineMode = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById (1);
@@ -61,7 +61,7 @@ namespace Lemoine.Alert.UnitTests
         ModelDAOHelper.DAOFactory.EventLongPeriodDAO.MakePersistent (ev);
         ModelDAOHelper.DAOFactory.Flush ();
         engine.RunOnePass (CancellationToken.None);
-        Assert.That (result.Count, Is.EqualTo (2));
+        Assert.That (result, Has.Count.EqualTo (2));
         // Note: result[0] is a EventCncValue that is already in database
         var expected = "<Event xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
                        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xsi:type=\"EventLongPeriod\" " +
@@ -72,7 +72,7 @@ namespace Lemoine.Alert.UnitTests
                        "<MachineMode TranslationKey=\"MachineModeInactive\" Display=\"Inactive\" Running=\"false\" AutoSequence=\"false\" />" +
                        "<MachineObservationState TranslationKey=\"MachineObservationStateAttended\" Display=\"Machine ON with operator (attended)\" UserRequired=\"true\" ShiftRequired=\"false\" OnSite=\"true\" IsProduction=\"true\" />" +
                        "</Event>";
-        Assert.That (result [1].Length, Is.EqualTo (expected.Length));
+        Assert.That (result [1], Has.Length.EqualTo (expected.Length));
         IEventLongPeriod ev1 = ModelDAOHelper.ModelFactory
           .CreateEventLongPeriod (level,
                                   new DateTime (2013, 01, 02),
@@ -91,7 +91,7 @@ namespace Lemoine.Alert.UnitTests
         ModelDAOHelper.DAOFactory.EventLongPeriodDAO.MakePersistent (ev2);
         ModelDAOHelper.DAOFactory.Flush ();
         engine.RunOnePass (CancellationToken.None);
-        Assert.That (result.Count, Is.EqualTo (4));
+        Assert.That (result, Has.Count.EqualTo (4));
         transaction.Rollback ();
       }
       
@@ -117,15 +117,15 @@ namespace Lemoine.Alert.UnitTests
         using (IDAOTransaction transaction = session.BeginTransaction ())
       {
         engine.RunOnePass (CancellationToken.None);
-        Assert.That (result.Count, Is.EqualTo (0));
+        Assert.That (result, Is.Empty);
         IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindByIdForXmlSerialization (1);
         IDetectionAnalysisLog l = ModelDAOHelper.ModelFactory.CreateDetectionAnalysisLog (LogLevel.ERROR, "Test", machine);
         l.DateTime = new DateTime (2013, 3, 3);
         ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO.MakePersistent (l);
         ModelDAOHelper.DAOFactory.Flush ();
         engine.RunOnePass (CancellationToken.None);
-        Assert.That (result.Count, Is.EqualTo (1));
-        Assert.That (result [0].Length, Is.EqualTo (("<Log xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+        Assert.That (result, Has.Count.EqualTo (1));
+        Assert.That (result [0], Has.Length.EqualTo (("<Log xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
                          "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
                          "xsi:type=\"DetectionAnalysisLog\" " +
                          "DateTime=\"2013-03-03T00:00:00\" " +
@@ -137,7 +137,7 @@ namespace Lemoine.Alert.UnitTests
         IDetectionAnalysisLog l2 = ModelDAOHelper.ModelFactory.CreateDetectionAnalysisLog (LogLevel.ERROR, "Test2", machine);
         ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO.MakePersistent (l2);
         engine.RunOnePass (CancellationToken.None);
-        Assert.That (result.Count, Is.EqualTo (3));
+        Assert.That (result, Has.Count.EqualTo (3));
         transaction.Rollback ();
       }
       

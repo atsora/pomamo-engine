@@ -123,7 +123,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
         // Check there is at least one tool position in the database
         var toolPositions = daoFactory.ToolPositionDAO.FindAll ();
-        Assert.Greater (toolPositions.Count, 0, "at least one tool position should have been stored in the database");
+        Assert.That (toolPositions.Count, Is.GreaterThan (0), "at least one tool position should have been stored in the database");
 
         // Take the first tool position, keep the version in a variable
         var toolPosition = toolPositions[0];

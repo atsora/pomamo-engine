@@ -95,11 +95,13 @@ namespace Lemoine.Plugin.Groups.UnitTests
           var groupId = "Test";
           var request = new Lemoine.Business.Machine.GroupFromId (groupId);
           var group = Lemoine.Business.ServiceProvider.Get (request);
-          Assert.IsFalse (group.Dynamic);
+          Assert.That (group.Dynamic, Is.False);
           var machines = group.GetMachines ();
-          Assert.That (machines.Count (), Is.EqualTo (2));
-          Assert.IsTrue (machines.Any (m => m.Id == 1));
-          Assert.IsTrue (machines.Any (m => m.Id == 2));
+          Assert.Multiple (() => {
+            Assert.That (machines.Count (), Is.EqualTo (2));
+            Assert.That (machines.Any (m => m.Id == 1), Is.True);
+            Assert.That (machines.Any (m => m.Id == 2), Is.True);
+          });
         }
         finally {
           Lemoine.Extensions.ExtensionManager.ClearDeactivate ();

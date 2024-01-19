@@ -61,7 +61,7 @@ namespace Lemoine.Alert.TestListeners.UnitTests
       XmlSerializer serializer = new XmlSerializer (typeof (LoopListener));
       IListener listener =
         (IListener) serializer.Deserialize (textReader);
-      Assert.IsTrue (listener is LoopListener);
+      Assert.That (listener is LoopListener, Is.True);
       LoopListener loopListener = listener as LoopListener;
       Assert.That (loopListener.Data, Is.EqualTo ("<Test />"));
     }

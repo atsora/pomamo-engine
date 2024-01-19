@@ -6,8 +6,11 @@ using Lemoine.I18N;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -85,6 +88,8 @@ namespace Lemoine.Model
   /// </summary>
   public class CncConfigParam
   {
+    readonly ILog log = LogManager.GetLogger<CncConfigParam> ();
+
     /// <summary>
     /// Name of the parameter. Currently ParamX
     /// </summary>
@@ -162,6 +167,53 @@ namespace Lemoine.Model
     public CncConfigParam (string name)
     {
       this.Name = name;
+    }
+
+    /// <summary>
+    /// Test is a value is valid
+    /// </summary>
+    /// <param name="v"></param>
+    public bool IsValidValue (string v)
+    {
+      try {
+        if (!string.IsNullOrEmpty (this.Regex)) {
+          if (!new Regex (this.Regex).IsMatch (v)) {
+            log.Error ($"IsValidValue: {v} does not match regex {this.Regex}");
+            return false;
+          }
+        }
+
+        if (this.Min.HasValue || this.Max.HasValue) {
+          var d = double.Parse (v);
+          if (this.Min.HasValue && (d < this.Min.Value)) {
+            log.Error ($"IsValidValue: value {v} is lesser than min={this.Min}");
+            return false;
+          }
+          if (this.Max.HasValue && (this.Max.Value < d)) {
+            log.Error ($"IsValidValue: value {v} is greater than max={this.Max}");
+            return false;
+          }
+        }
+
+        return this.Type.ToLowerInvariant () switch {
+          "ip" => IPAddress.TryParse (v, out var _),
+          "url" => Uri.IsWellFormedUriString (v, UriKind.RelativeOrAbsolute),
+          "path" => System.IO.File.Exists (v) || System.IO.Directory.Exists (v),
+          "host" => Uri.CheckHostName (v) != UriHostNameType.Unknown,
+          "string" => true,
+          "int" or "integer" => int.TryParse (v, out var _),
+          "double" => double.TryParse (v, CultureInfo.InvariantCulture, out var _),
+          "list" => this.Values.Contains (v),
+          "bool" or "boolean" => bool.TryParse (v, out var _),
+          "file" => true, // TODO: see CncFileRepository
+          "null" => true,
+          _ => true
+        };
+      }
+      catch (Exception ex) {
+        log.Error ($"IsValidValue: exception", ex);
+        return false;
+      }
     }
   }
 

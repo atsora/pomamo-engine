@@ -40,7 +40,7 @@ namespace Lemoine.Analysis.UnitTests
             // Reference data
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -113,7 +113,7 @@ namespace Lemoine.Analysis.UnitTests
             // Reference data
             // - Machine
             var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             // - Machine modes / Machine observation states
             var inactive = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Inactive);
             var active = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.Active);
@@ -182,9 +182,9 @@ namespace Lemoine.Analysis.UnitTests
                 Assert.That (reasonSlot.Reason, Is.EqualTo (newReason1));
                 Assert.That (reasonSlot.ReasonScore, Is.EqualTo (100));
                 Assert.That (reasonSlot.DateTimeRange, Is.EqualTo (R (1, 300)));
+                Assert.That (reasonSlot.Consolidated, Is.True);
+                Assert.That (reasonSlot.ReasonDetails, Is.EqualTo ("details"));
               });
-              Assert.IsTrue (reasonSlot.Consolidated);
-              Assert.That (reasonSlot.ReasonDetails, Is.EqualTo ("details"));
 
               var reasonSlot2 = ModelDAOHelper.DAOFactory.ReasonSlotDAO
                 .FindAt (machine, T (300));
@@ -196,14 +196,12 @@ namespace Lemoine.Analysis.UnitTests
               Assert.Multiple (() => {
                 Assert.That (reasonSlot2.Reason, Is.EqualTo (newReason2));
                 Assert.That (reasonSlot2.ReasonDetails, Is.EqualTo ("details"));
-              });
-              Assert.IsTrue (reasonSlot2.Consolidated);
-              Assert.IsTrue (reasonSlot.Consolidated);
-              Assert.Multiple (() => {
+                Assert.That (reasonSlot2.Consolidated, Is.True);
+                Assert.That (reasonSlot.Consolidated, Is.True);
                 Assert.That (reasonSlot2.Reason, Is.Not.EqualTo (reasonSlot.Reason));
                 Assert.That (reasonSlot.ReasonDetails, Is.EqualTo ("details"));
+                Assert.That (reasonSlot.ReferenceDataEquals (reasonSlot2), Is.False);
               });
-              Assert.IsFalse (reasonSlot.ReferenceDataEquals (reasonSlot2));
             }
           }
           finally {

@@ -65,10 +65,12 @@ namespace Lemoine.Alert.UnitTests
       XmlSerializer serializer = new XmlSerializer (typeof (BasicEMailAction));
       IAction action =
         (IAction) serializer.Deserialize (textReader);
-      Assert.IsTrue (action is BasicEMailAction);
+      Assert.That (action is BasicEMailAction, Is.True);
       BasicEMailAction basicEMailAction = action as BasicEMailAction;
-      Assert.That (basicEMailAction.Subject, Is.EqualTo ("Subject"));
-      Assert.That (basicEMailAction.WeekDays, Is.EqualTo (Model.WeekDay.Tuesday | Model.WeekDay.Wednesday | Model.WeekDay.Thursday | Model.WeekDay.Friday | Model.WeekDay.Saturday));
+      Assert.Multiple (() => {
+        Assert.That (basicEMailAction.Subject, Is.EqualTo ("Subject"));
+        Assert.That (basicEMailAction.WeekDays, Is.EqualTo (Model.WeekDay.Tuesday | Model.WeekDay.Wednesday | Model.WeekDay.Thursday | Model.WeekDay.Friday | Model.WeekDay.Saturday));
+      });
     }
   }
 }

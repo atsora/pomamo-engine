@@ -58,24 +58,13 @@ namespace Lemoine.AutoReason.UnitTests
     {
       IDynamicTimeResponse answer = null;
 
-      switch (s_step++) {
-        case 0:
-          answer = this.CreateNotApplicable (); // Not in a cycle yet
-          break;
-        case 1:
-          answer = this.CreateFinal (T (5)); // End of the first cycle
-          break;
-        case 2:
-          answer = this.CreateNoData (); // No end for the second cycle
-          break;
-        case 3:
-          answer = this.CreateFinal (T (20)); // End of the third cycle
-          break;
-        default:
-          answer = this.CreatePending ();
-          break;
-      }
-
+      answer = s_step++ switch {
+        0 => this.CreateNotApplicable (),// Not in a cycle yet
+        1 => this.CreateFinal (T (5)),// End of the first cycle
+        2 => this.CreateNoData (),// No end for the second cycle
+        3 => this.CreateFinal (T (20)),// End of the third cycle
+        _ => this.CreatePending (),
+      };
       return answer;
     }
 

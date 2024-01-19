@@ -44,12 +44,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           int id = eventTest.Id;
           {
             var e = ModelDAOHelper.DAOFactory.EventMessageDAO.FindById (id);
-            Assert.IsNotNull (e);
+            Assert.That (e, Is.Not.Null);
           }
           {
             var e = ModelDAOHelper.DAOFactory.EventDAO.FindById (id);
-            Assert.That (e.Id, Is.EqualTo (id));
-            Assert.IsInstanceOf<IEventMessage> (e);
+            Assert.Multiple (() => {
+              Assert.That (e.Id, Is.EqualTo (id));
+              Assert.That (e, Is.InstanceOf<IEventMessage> ());
+            });
           }
         }
         finally {
@@ -75,18 +77,22 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           int id = eventTest.Id;
           {
             var e = ModelDAOHelper.DAOFactory.EventMachineMessageDAO.FindById (id, machine);
-            Assert.IsNotNull (e);
+            Assert.That (e, Is.Not.Null);
           }
           {
             var e = ModelDAOHelper.DAOFactory.EventDAO.FindById (id);
-            Assert.That (e.Id, Is.EqualTo (id));
-            Assert.IsInstanceOf<IEventMachineMessage> (e);
+            Assert.Multiple (() => {
+              Assert.That (e.Id, Is.EqualTo (id));
+              Assert.That (e, Is.InstanceOf<IEventMachineMessage> ());
+            });
           }
           {
             var events = ModelDAOHelper.DAOFactory.EventDAO.FindAll ();
             var e = events.First (x => x.Id == id);
-            Assert.That (e.Id, Is.EqualTo (id));
-            Assert.IsInstanceOf<IEventMachineMessage> (e);
+            Assert.Multiple (() => {
+              Assert.That (e.Id, Is.EqualTo (id));
+              Assert.That (e, Is.InstanceOf<IEventMachineMessage> ());
+            });
           }
         }
         finally {
@@ -118,18 +124,22 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           int id = eventTest.Id;
           {
             var e = ModelDAOHelper.DAOFactory.EventToolLifeDAO.FindById (id, machineModule);
-            Assert.IsNotNull (e);
+            Assert.That (e, Is.Not.Null);
           }
           {
             var e = ModelDAOHelper.DAOFactory.EventDAO.FindById (id);
-            Assert.That (e.Id, Is.EqualTo (id));
-            Assert.IsInstanceOf<IEventToolLife> (e);
+            Assert.Multiple (() => {
+              Assert.That (e.Id, Is.EqualTo (id));
+              Assert.That (e, Is.InstanceOf<IEventToolLife> ());
+            });
           }
           {
             var events = ModelDAOHelper.DAOFactory.EventDAO.FindAll ();
             var e = events.First (x => x.Id == id);
-            Assert.That (e.Id, Is.EqualTo (id));
-            Assert.IsInstanceOf<IEventToolLife> (e);
+            Assert.Multiple (() => {
+              Assert.That (e.Id, Is.EqualTo (id));
+              Assert.That (e, Is.InstanceOf<IEventToolLife> ());
+            });
           }
         }
         finally {
@@ -158,7 +168,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               stringWriter.NewLine = "\n";
               serializer.Serialize (stringWriter, ev);
               var xml = stringWriter.ToString ();
-              Assert.That (xml.ReplaceLineEndings ().Length, Is.EqualTo ("""
+              Assert.That (xml.ReplaceLineEndings (), Has.Length.EqualTo ("""
 <?xml version="1.0" encoding="utf-16"?>
 <Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="EventMachineMessage" DateTime="2022-06-24 09:52:23" LocalDateTimeString="24/06/2022 11:52:23" LocalDateTimeG="24/06/2022 11:52:23">
   <Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" />

@@ -59,7 +59,7 @@ namespace Lemoine.Analysis.UnitTests
         session.CreateCriteria<TModification> ()
         .AddOrder (Order.Asc ("DateTime"))
         .List<TModification> ();
-      Assert.That (modifications.Count, Is.EqualTo (1), "Number of modifications");
+      Assert.That (modifications, Has.Count.EqualTo (1), "Number of modifications");
       Assert.That (modifications[0].AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "1st modification status");
     }
 
@@ -75,7 +75,7 @@ namespace Lemoine.Analysis.UnitTests
         session.CreateCriteria<TModification> ()
         .AddOrder (Order.Asc ("DateTime"))
         .List<TModification> ();
-      Assert.That (modifications.Count, Is.EqualTo (expectedNumber), "Number of modifications");
+      Assert.That (modifications, Has.Count.EqualTo (expectedNumber), "Number of modifications");
       foreach (TModification modification in modifications) {
         Assert.That (modification.AnalysisStatus, Is.EqualTo (AnalysisStatus.Done), "modification status");
       }

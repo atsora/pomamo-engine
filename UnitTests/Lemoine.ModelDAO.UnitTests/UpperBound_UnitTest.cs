@@ -27,7 +27,7 @@ namespace Lemoine.ModelDAO.UnitTests
     {
       {
         UpperBound<double> test = new UpperBound<double> (null);
-        Assert.IsFalse (test.HasValue);
+        Assert.That (test.HasValue, Is.False);
       }
       
       {

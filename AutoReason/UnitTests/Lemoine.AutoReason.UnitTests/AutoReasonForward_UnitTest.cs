@@ -108,7 +108,7 @@ namespace Lemoine.AutoReason.UnitTests
 }
 ");
             bool initializeResult = autoReason.Initialize (machine, null);
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             string lastModificationIdKey = autoReason.GetKey ("LastModificationId");
             /*

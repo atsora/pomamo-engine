@@ -144,7 +144,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
         var reasonMachineAssociation = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
           .FindById (10829, machine);
-        Assert.IsNotNull (reasonMachineAssociation);
+        Assert.That (reasonMachineAssociation, Is.Not.Null);
 
         transaction.Rollback ();
       }
@@ -827,13 +827,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         var step = s_step++;
         switch (step) {
-        case 0:
-          return this.CreatePending ();
-        case 1:
-        case 2:
-          return this.CreateWithHint (R (2));
-        default:
-          return this.CreateFinal (T (3));
+          case 0:
+            return this.CreatePending ();
+          case 1:
+          case 2:
+            return this.CreateWithHint (R (2));
+          default:
+            return this.CreateFinal (T (3));
         }
       }
 
@@ -1282,8 +1282,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               Assert.That (slots[i].Reason, Is.EqualTo (reasonCoffee));
               Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
               Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (5)));
+              Assert.That (slots[i].AutoReasonNumber, Is.GreaterThan (0));
             });
-            Assert.Greater (slots[i].AutoReasonNumber, 0);
           }
           { // 2rd run: until T(3)
             AnalysisUnitTests.RunMakeAnalysis ();
@@ -1905,12 +1905,12 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         var step = s_step++;
         switch (step) {
-        case 0:
-          return this.CreatePending ();
-        case 1:
-          return this.CreateWithHint (R (1));
-        default:
-          return this.CreateFinal (T (1));
+          case 0:
+            return this.CreatePending ();
+          case 1:
+            return this.CreateWithHint (R (1));
+          default:
+            return this.CreateFinal (T (1));
         }
       }
 

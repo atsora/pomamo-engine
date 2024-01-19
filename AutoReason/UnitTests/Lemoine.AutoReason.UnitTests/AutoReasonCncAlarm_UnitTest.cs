@@ -62,9 +62,7 @@ namespace Lemoine.AutoReason.UnitTests
 
             // Acquisition state for the alarm is after the period we are analyzing
             var acquisitionState = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (machineModule, AcquisitionStateKey.Alarms);
-            if (acquisitionState == null) {
-              acquisitionState = ModelDAOHelper.ModelFactory.CreateAcquisitionState (machineModule, AcquisitionStateKey.Alarms);
-            }
+            acquisitionState ??= ModelDAOHelper.ModelFactory.CreateAcquisitionState (machineModule, AcquisitionStateKey.Alarms);
 
             acquisitionState.DateTime = T (7);
             ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent (acquisitionState);
@@ -109,13 +107,17 @@ namespace Lemoine.AutoReason.UnitTests
                 .OrderBy (x => x.Range.Lower).ToList ();
               Assert.That (reasonAssociations, Has.Count.EqualTo (2), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (1)), "wrong start for the first reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("1: message 1"), "wrong detail of reason 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (1)), "wrong start for the first reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the first reason should have no end");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("1: message 1"), "wrong detail of reason 1");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the second reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the second reason should have no end");
-              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("2: message 2"), "wrong detail of reason 2");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (2)), "wrong start for the second reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the second reason should have no end");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("2: message 2"), "wrong detail of reason 2");
+              });
             }
           }
           finally {
@@ -186,9 +188,7 @@ namespace Lemoine.AutoReason.UnitTests
 
             // Acquisition state for the alarm is after the period we are analyzing
             var acquisitionState = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (mamo, AcquisitionStateKey.Alarms);
-            if (acquisitionState == null) {
-              acquisitionState = ModelDAOHelper.ModelFactory.CreateAcquisitionState (mamo, AcquisitionStateKey.Alarms);
-            }
+            acquisitionState ??= ModelDAOHelper.ModelFactory.CreateAcquisitionState (mamo, AcquisitionStateKey.Alarms);
 
             acquisitionState.DateTime = T (7);
             ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent (acquisitionState);
@@ -232,9 +232,11 @@ namespace Lemoine.AutoReason.UnitTests
               var reasonAssociations = new ReasonMachineAssociationDAO ().FindAll ();
               Assert.That (reasonAssociations, Has.Count.EqualTo (1), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (1)), "wrong start for the first reason");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "the first reason should have no end");
-              Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("1: abc"), "wrong detail of reason 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (1)), "wrong start for the first reason");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "the first reason should have no end");
+                Assert.That (reasonAssociation.ReasonDetails, Is.EqualTo ("1: abc"), "wrong detail of reason 1");
+              });
             }
           }
           finally {

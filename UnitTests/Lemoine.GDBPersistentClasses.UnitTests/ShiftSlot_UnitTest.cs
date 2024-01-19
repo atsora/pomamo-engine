@@ -103,8 +103,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .FindOverlapsRange (R(1, 2));
           Assert.That (slots, Has.Count.EqualTo (4));
           int i = 0;
-          Assert.That (slots [i].ShiftTemplate, Is.EqualTo (template));
-          Assert.IsNull (slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].ShiftTemplate, Is.EqualTo (template));
+            Assert.That (slots[i].Shift, Is.Null);
+          });
           Assert.Multiple (() => {
             Assert.That (slots[i].TemplateProcessed, Is.True);
             Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
@@ -129,8 +131,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             });
           }
           ++i;
-          Assert.That (slots [i].ShiftTemplate, Is.EqualTo (template));
-          Assert.IsNull (slots [i].Shift);
+          Assert.Multiple (() => {
+            Assert.That (slots[i].ShiftTemplate, Is.EqualTo (template));
+            Assert.That (slots[i].Shift, Is.Null);
+          });
           Assert.Multiple (() => {
             Assert.That (slots[i].TemplateProcessed, Is.True);
             Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (15))));
@@ -139,9 +143,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             Assert.That (slots[i].Breaks, Is.Empty);
           });
           ++i;
-          Assert.That (slots [i].ShiftTemplate, Is.EqualTo (template));
-          Assert.IsNull (slots [i].Shift);
-          Assert.That (slots [i].TemplateProcessed, Is.False); // Processed only until D(1, TimeSpan.FromHours (22)
+          Assert.Multiple (() => {
+            Assert.That (slots[i].ShiftTemplate, Is.EqualTo (template));
+            Assert.That (slots[i].Shift, Is.Null);
+            Assert.That (slots[i].TemplateProcessed, Is.False); // Processed only until D(1, TimeSpan.FromHours (22)
+          });
           ++i;
         }
         
@@ -190,7 +196,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .FindOverlapsRange (R(1, 2));
           Assert.That (slots, Has.Count.EqualTo (2));
           int i = 0;
-          Assert.IsNull (slots [i].ShiftTemplate);
+          Assert.That (slots [i].ShiftTemplate, Is.Null);
           Assert.Multiple (() => {
             Assert.That (slots[i].Shift, Is.EqualTo (shift1));
             Assert.That (slots[i].TemplateProcessed, Is.True);
@@ -199,7 +205,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             Assert.That (slots[i].Day.Value, Is.EqualTo (T (1).Date));
           });
           ++i;
-          Assert.IsNull (slots [i].ShiftTemplate);
+          Assert.That (slots [i].ShiftTemplate, Is.Null);
           Assert.Multiple (() => {
             Assert.That (slots[i].Shift, Is.EqualTo (shift1));
             Assert.That (slots[i].TemplateProcessed, Is.True);

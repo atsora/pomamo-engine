@@ -33,7 +33,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById (1);
         IGoal goal = ModelDAOHelper.DAOFactory.GoalDAO
           .FindMatch (GoalTypeId.UtilizationPercentage, null, machine);
-        Assert.IsNotNull (goal);
+        Assert.That (goal, Is.Not.Null);
         Assert.That (goal.Value, Is.EqualTo (50.0));
       }
     }

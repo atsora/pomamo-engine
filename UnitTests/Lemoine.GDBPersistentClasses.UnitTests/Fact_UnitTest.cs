@@ -82,7 +82,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         facts =
           ModelDAOHelper.DAOFactory.FactDAO
           .FindAllInUtcRange (machine, new UtcDateTimeRange (from, to));
-        Assert.That (facts.Count, Is.Not.EqualTo (0));
+        Assert.That (facts, Is.Not.Empty);
         foreach (IFact fact in facts) {
           log.DebugFormat ("TestFactProperties: read fact ({0}) begin={1}",
                            fact.Machine.Id, fact.Begin);

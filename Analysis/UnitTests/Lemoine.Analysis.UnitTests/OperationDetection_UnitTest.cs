@@ -40,11 +40,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         
         OperationDetection operationDetection = new OperationDetection (machine, new List<Lemoine.Extensions.Analysis.IOperationDetectionExtension> ());
         operationDetection.StartOperation (operation1, T (0));
@@ -55,7 +55,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindAll (machine);
-          Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots");
+          Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots");
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
@@ -86,7 +86,7 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IComponent component =
           ModelDAOHelper.DAOFactory.ComponentDAO
           .FindById (2);
@@ -96,11 +96,11 @@ namespace Lemoine.Analysis.UnitTests
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (12691);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (12692);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
         
         OperationDetection operationDetection = new OperationDetection (machine, new List<Lemoine.Extensions.Analysis.IOperationDetectionExtension> ());
         operationDetection.StartOperation (operation1, T(0));
@@ -113,7 +113,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindAll (machine);
-          Assert.That (operationSlots.Count, Is.EqualTo (2), "Number of operation slots");
+          Assert.That (operationSlots, Has.Count.EqualTo (2), "Number of operation slots");
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (0)));
@@ -134,7 +134,7 @@ namespace Lemoine.Analysis.UnitTests
         {
           IList<IComponentMachineAssociation> associations =
             ModelDAOHelper.DAOFactory.ComponentMachineAssociationDAO.FindAll ();
-          Assert.That (associations.Count, Is.EqualTo (1));
+          Assert.That (associations, Has.Count.EqualTo (1));
           Assert.Multiple (() => {
             Assert.That (associations[0].Component, Is.EqualTo (component));
             Assert.That (associations[0].Machine, Is.EqualTo (machine));
@@ -145,7 +145,7 @@ namespace Lemoine.Analysis.UnitTests
         {
           IList<IWorkOrderMachineAssociation> associations =
             ModelDAOHelper.DAOFactory.WorkOrderMachineAssociationDAO.FindAll ();
-          Assert.That (associations.Count, Is.EqualTo (1));
+          Assert.That (associations, Has.Count.EqualTo (1));
           Assert.Multiple (() => {
             Assert.That (associations[0].WorkOrder, Is.EqualTo (workOrder));
             Assert.That (associations[0].Machine, Is.EqualTo (machine));

@@ -55,12 +55,13 @@ namespace Lemoine.Core.Plugin.UnitTests
       Assert.That (result, Is.EqualTo (987));
     }
 
-    private int Test (int x, double d, EnumTest enumTest, int y)
+#pragma warning disable NUnit1028 // The non-test method is public
+    public int Test (int x, double d, EnumTest enumTest, int y)
     {
       Assert.Fail ("Fail always");
       return 0;
     }
-    private int Test (int x, double d, EnumTest enumTest, string s)
+    public int Test (int x, double d, EnumTest enumTest, string s)
     {
       Assert.Multiple (() => {
         Assert.That (x, Is.EqualTo (123));
@@ -71,9 +72,10 @@ namespace Lemoine.Core.Plugin.UnitTests
       return 456;
     }
 
-    private static int StaticMethod ()
+    public static int StaticMethod ()
     {
       return 987;
     }
+#pragma warning restore NUnit1028 // The non-test method is public
   }
 }

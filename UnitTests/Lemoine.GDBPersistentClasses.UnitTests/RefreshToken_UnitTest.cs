@@ -41,7 +41,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           System.Threading.Tasks.Task.Run (() => ModelDAOHelper.DAOFactory.UserDAO.MakePersistentAsync (user)).Wait ();
           var refreshToken = ModelDAOHelper.ModelFactory.CreateRefreshToken (user, TimeSpan.FromSeconds (30));
           System.Threading.Tasks.Task.Run (() => ModelDAOHelper.DAOFactory.RefreshTokenDAO.MakePersistentAsync (refreshToken)).Wait ();
-          Assert.That (0 != refreshToken.Id, Is.True);
+          Assert.That (refreshToken.Id, Is.Not.EqualTo (0));
           ModelDAOHelper.DAOFactory.Flush ();
           System.Threading.Tasks.Task.Run (() => ModelDAOHelper.DAOFactory.RefreshTokenDAO.MakeTransientAsync (refreshToken)).Wait ();
           ModelDAOHelper.DAOFactory.Flush ();
@@ -73,11 +73,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           await ModelDAOHelper.DAOFactory.UserDAO.MakePersistentAsync (user);
           var refreshToken = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.GetRefreshTokenAsync (user, true);
           ModelDAOHelper.DAOFactory.Flush ();
-          Assert.IsNotNull (refreshToken);
+          Assert.That (refreshToken, Is.Not.Null);
           Assert.That (refreshToken.Id, Is.Not.EqualTo (0));
           var refreshToken2 = await ModelDAOHelper.DAOFactory.RefreshTokenDAO.GetRefreshTokenAsync (user, true);
           ModelDAOHelper.DAOFactory.Flush ();
-          Assert.IsNotNull (refreshToken2);
+          Assert.That (refreshToken2, Is.Not.Null);
           Assert.That (refreshToken2, Is.EqualTo (refreshToken));
           refreshToken.Revoked = DateTime.UtcNow;
           await ModelDAOHelper.DAOFactory.RefreshTokenDAO.MakePersistentAsync (refreshToken);

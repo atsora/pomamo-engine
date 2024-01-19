@@ -168,15 +168,17 @@ namespace Lemoine.Conversion.UnitTests
       return result;
     }
 
-    private bool RunMethodLong (long x, double y, string s)
+#pragma warning disable NUnit1028 // The non-test method is public
+    public bool RunMethodLong (long x, double y, string s)
     {
       return true;
     }
 
-    private bool RunMethodInt (int x, double y, string s)
+    public bool RunMethodInt (int x, double y, string s)
     {
       return true;
     }
+#pragma warning restore NUnit1028 // The non-test method is public
 
   }
 }

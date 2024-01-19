@@ -1417,10 +1417,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         }
         // Because there may be other operaiton slots that target the same summary,
         // there is a LessOrEqual
-        Assert.LessOrEqual (operationSlot.TotalCycles, counted1);
-        Assert.LessOrEqual (operationSlot.TotalCycles, corrected1);
-        Assert.LessOrEqual (operationSlot.TotalCycles, counted2);
-        Assert.LessOrEqual (operationSlot.TotalCycles, corrected2);
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (counted1));
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (corrected1));
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (counted2));
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (corrected2));
       }
     }
   }

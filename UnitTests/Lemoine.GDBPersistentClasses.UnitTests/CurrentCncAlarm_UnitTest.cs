@@ -158,12 +158,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CurrentCncAlarmDAO.Reload(alarm3);
         daoFactory.CurrentCncAlarmDAO.Reload(alarm4);
 
-        // Check that the severities are correct
-        Assert.That (alarm1.Severity, Is.EqualTo (cAS), "Wrong severity for alarm 1");
-        Assert.IsNull(alarm2.Severity, "Wrong severity for alarm 2");
-        Assert.IsNull(alarm3.Severity, "Wrong severity for alarm 3");
-        Assert.IsNull(alarm4.Severity, "Wrong severity for alarm 4");
-        
+        Assert.Multiple (() => {
+          // Check that the severities are correct
+          Assert.That (alarm1.Severity, Is.EqualTo (cAS), "Wrong severity for alarm 1");
+          Assert.That (alarm2.Severity, Is.Null, "Wrong severity for alarm 2");
+          Assert.That (alarm3.Severity, Is.Null, "Wrong severity for alarm 3");
+          Assert.That (alarm4.Severity, Is.Null, "Wrong severity for alarm 4");
+        });
+
         transaction.Rollback();
       }
     }
@@ -234,12 +236,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         daoFactory.CurrentCncAlarmDAO.Reload(alarm3);
         daoFactory.CurrentCncAlarmDAO.Reload(alarm4);
 
-        // Check that the severities are correct
-        Assert.That (alarm1.Severity, Is.EqualTo (cAS1), "Wrong severity for alarm 1");
-        Assert.IsNull(alarm2.Severity, "Wrong severity for alarm 2");
-        Assert.IsNull(alarm3.Severity, "Wrong severity for alarm 3");
-        Assert.IsNull(alarm4.Severity, "Wrong severity for alarm 4");
-        
+        Assert.Multiple (() => {
+          // Check that the severities are correct
+          Assert.That (alarm1.Severity, Is.EqualTo (cAS1), "Wrong severity for alarm 1");
+          Assert.That (alarm2.Severity, Is.Null, "Wrong severity for alarm 2");
+          Assert.That (alarm3.Severity, Is.Null, "Wrong severity for alarm 3");
+          Assert.That (alarm4.Severity, Is.Null, "Wrong severity for alarm 4");
+        });
+
         transaction.Rollback();
       }
     }

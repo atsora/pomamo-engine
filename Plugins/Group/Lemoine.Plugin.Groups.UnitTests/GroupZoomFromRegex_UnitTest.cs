@@ -132,29 +132,37 @@ namespace Lemoine.Plugin.Groups.UnitTests
           {
             var request = new Lemoine.Business.Machine.GroupZoomIn ("C1");
             var response = Business.ServiceProvider.Get (request);
-            Assert.That (response.Children.Count (), Is.EqualTo (2));
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.IsTrue (response.Children.Contains ("C1_D1"));
-            Assert.IsTrue (response.Children.Contains ("C1_D2"));
+            Assert.Multiple (() => {
+              Assert.That (response.Children.Count (), Is.EqualTo (2));
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Children, Does.Contain ("C1_D1"));
+              Assert.That (response.Children, Does.Contain ("C1_D2"));
+            });
           }
           {
             var request = new Lemoine.Business.Machine.GroupZoomOut ("C1_D1");
             var response = Business.ServiceProvider.Get (request);
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.That (response.Parent, Is.EqualTo ("C1"));
+            Assert.Multiple (() => {
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Parent, Is.EqualTo ("C1"));
+            });
           }
           {
             var request = new Lemoine.Business.Machine.GroupZoomIn ("C1_D1");
             var response = Business.ServiceProvider.Get (request);
-            Assert.That (response.Children.Count (), Is.EqualTo (1));
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.IsTrue (response.Children.First ().StartsWith ("MC"));
+            Assert.Multiple (() => {
+              Assert.That (response.Children.Count (), Is.EqualTo (1));
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Children.First (), Does.StartWith ("MC"));
+            });
           }
           {
             var request = new Lemoine.Business.Machine.GroupZoomOut ("MC" + machineCategory.Id);
             var response = Business.ServiceProvider.Get (request);
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.That (response.Parent, Is.EqualTo ("C1_D1"));
+            Assert.Multiple (() => {
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Parent, Is.EqualTo ("C1_D1"));
+            });
           }
         }
         finally {
@@ -269,29 +277,37 @@ namespace Lemoine.Plugin.Groups.UnitTests
           {
             var request = new Lemoine.Business.Machine.GroupZoomIn ("C1");
             var response = Business.ServiceProvider.Get (request);
-            Assert.That (response.Children.Count (), Is.EqualTo (2));
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.IsTrue (response.Children.Contains ("C1_D1"));
-            Assert.IsTrue (response.Children.Contains ("C1_D2"));
+            Assert.Multiple (() => {
+              Assert.That (response.Children.Count (), Is.EqualTo (2));
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Children, Does.Contain ("C1_D1"));
+            });
+            Assert.That (response.Children, Does.Contain ("C1_D2"));
           }
           {
             var request = new Lemoine.Business.Machine.GroupZoomOut ("C1_D1");
             var response = Business.ServiceProvider.Get (request);
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.That (response.Parent, Is.EqualTo ("C1"));
+            Assert.Multiple (() => {
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Parent, Is.EqualTo ("C1"));
+            });
           }
           {
             var request = new Lemoine.Business.Machine.GroupZoomIn ("C1_D1");
             var response = Business.ServiceProvider.Get (request);
-            Assert.That (response.Children.Count (), Is.EqualTo (1));
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.IsTrue (response.Children.First ().StartsWith ("C1_D1_MC"));
+            Assert.Multiple (() => {
+              Assert.That (response.Children.Count (), Is.EqualTo (1));
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Children.First (), Does.StartWith ("C1_D1_MC"));
+            });
           }
           {
             var request = new Lemoine.Business.Machine.GroupZoomOut ("C1_D1_MC" + machineCategory.Id);
             var response = Business.ServiceProvider.Get (request);
-            Assert.IsFalse (response.Dynamic.Value);
-            Assert.That (response.Parent, Is.EqualTo ("C1_D1"));
+            Assert.Multiple (() => {
+              Assert.That (response.Dynamic.Value, Is.False);
+              Assert.That (response.Parent, Is.EqualTo ("C1_D1"));
+            });
           }
         }
         finally {

@@ -112,7 +112,7 @@ namespace Lemoine.AutoReason.UnitTests
 }
 ");
             bool initializeResult = autoReason.Initialize (machine, null);
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             string dateTimeKey = autoReason.GetKey (machineModule, "DateTime");
             CreateAutoReasonState (machine, dateTimeKey, T (1));
@@ -193,7 +193,7 @@ namespace Lemoine.AutoReason.UnitTests
 }
 ");
             bool initializeResult = autoReason.Initialize (machine, null);
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             string dateTimeKey = autoReason.GetKey (machineModule, "DateTime");
             CreateAutoReasonState (machine, dateTimeKey, T (1));
@@ -274,7 +274,7 @@ namespace Lemoine.AutoReason.UnitTests
 }
 ");
             bool initializeResult = autoReason.Initialize (machine, null);
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             string dateTimeKey = autoReason.GetKey (machineModule, "DateTime");
             CreateAutoReasonState (machine, dateTimeKey, T (2));
@@ -349,7 +349,7 @@ namespace Lemoine.AutoReason.UnitTests
 }
 ");
             bool initializeResult = autoReason.Initialize (machine, null);
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             string dateTimeKey = autoReason.GetKey (machineModule, "DateTime");
             CreateAutoReasonState (machine, dateTimeKey, T (2));
@@ -416,7 +416,7 @@ namespace Lemoine.AutoReason.UnitTests
 }
 ");
             bool initializeResult = autoReason.Initialize (machine, null);
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             string dateTimeKey = autoReason.GetKey (machineModule, "DateTime");
             CreateAutoReasonState (machine, dateTimeKey, T (2));
@@ -479,7 +479,7 @@ namespace Lemoine.AutoReason.UnitTests
 }
 ");
             bool initializeResult = autoReason.Initialize (machine, null);
-            Assert.IsTrue (initializeResult);
+            Assert.That (initializeResult, Is.True);
 
             string dateTimeKey = autoReason.GetKey (machineModule, "DateTime");
             CreateAutoReasonState (machine, dateTimeKey, T (1));

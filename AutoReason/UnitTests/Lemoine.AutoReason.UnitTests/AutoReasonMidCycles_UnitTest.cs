@@ -71,14 +71,20 @@ namespace Lemoine.AutoReason.UnitTests
                 .OrderBy (x => x.Range.Lower).ToList ();
               Assert.That (reasonAssociations, Has.Count.EqualTo (3), "wrong number of auto reason created");
               var reasonAssociation = reasonAssociations[0];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (-20)), "wrong start 1");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "wrong end 1");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (-20)), "wrong start 1");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "wrong end 1");
+              });
               reasonAssociation = reasonAssociations[1];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (0)), "wrong start 2");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "wrong end 2");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (0)), "wrong start 2");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "wrong end 2");
+              });
               reasonAssociation = reasonAssociations[2];
-              Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (20)), "wrong start 3");
-              Assert.IsFalse (reasonAssociation.End.HasValue, "wrong end 3");
+              Assert.Multiple (() => {
+                Assert.That (reasonAssociation.Begin.Value, Is.EqualTo (T (20)), "wrong start 3");
+                Assert.That (reasonAssociation.End.HasValue, Is.False, "wrong end 3");
+              });
             }
           } finally {
             transaction.Rollback ();

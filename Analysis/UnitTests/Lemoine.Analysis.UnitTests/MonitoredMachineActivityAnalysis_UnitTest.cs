@@ -50,13 +50,13 @@ namespace Lemoine.Analysis.UnitTests
             // Reference data
             IMonitoredMachine machine =
               daoFactory.MonitoredMachineDAO.FindById (3);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             MachineMode autoMode = session.Get<MachineMode> (3);
-            Assert.NotNull (autoMode);
+            Assert.That (autoMode, Is.Not.Null);
             MachineMode inactiveMode = session.Get<MachineMode> (1);
-            Assert.NotNull (inactiveMode);
+            Assert.That (inactiveMode, Is.Not.Null);
             MachineMode noDataMode = session.Get<MachineMode> (8);
-            Assert.NotNull (noDataMode);
+            Assert.That (noDataMode, Is.Not.Null);
             MachineObservationState attended =
               session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
             MachineObservationState unattended =
@@ -120,7 +120,7 @@ namespace Lemoine.Analysis.UnitTests
               // OperationSlots
               IList<IOperationSlot> operationSlots =
                 daoFactory.OperationSlotDAO.FindAll (machine);
-              Assert.That (operationSlots.Count, Is.EqualTo (2));
+              Assert.That (operationSlots, Has.Count.EqualTo (2));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationSlots[i].Machine.Id, Is.EqualTo (machine.Id));
@@ -140,7 +140,7 @@ namespace Lemoine.Analysis.UnitTests
                 .AddOrder (Order.Asc ("Day"))
                 .AddOrder (Order.Desc ("MachineMode"))
                 .List<MachineActivitySummary> ();
-              Assert.That (activitySummaries.Count, Is.EqualTo (1101));
+              Assert.That (activitySummaries, Has.Count.EqualTo (1101));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (activitySummaries[i].Machine.Id, Is.EqualTo (machine.Id));
@@ -226,15 +226,15 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (3);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (3);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           MachineMode autoMode = session.Get<MachineMode> (3);
-          Assert.NotNull (autoMode);
+          Assert.That (autoMode, Is.Not.Null);
           MachineMode idleMode = session.Get<MachineMode> (1);
-          Assert.NotNull (idleMode);
+          Assert.That (idleMode, Is.Not.Null);
           MachineMode noDataMode = session.Get<MachineMode> (8);
-          Assert.NotNull (noDataMode);
+          Assert.That (noDataMode, Is.Not.Null);
           MachineObservationState attended =
             session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
           MachineObservationState unattended =
@@ -275,7 +275,7 @@ namespace Lemoine.Analysis.UnitTests
               .Add (Restrictions.Eq ("Machine", machine))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.GreaterOrEqual (reasonSlots.Count, 6, "Number of reason slots");
+            Assert.That (reasonSlots, Has.Count.GreaterThanOrEqualTo (6), "Number of reason slots");
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 26, 00)));
@@ -353,15 +353,15 @@ namespace Lemoine.Analysis.UnitTests
           try {
             // Reference data
             MonitoredMachine machine = session.Get<MonitoredMachine> (3);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             MachineModule machineModule = session.Get<MachineModule> (3);
-            Assert.NotNull (machineModule);
+            Assert.That (machineModule, Is.Not.Null);
             MachineMode autoMode = session.Get<MachineMode> (3);
-            Assert.NotNull (autoMode);
+            Assert.That (autoMode, Is.Not.Null);
             MachineMode idleMode = session.Get<MachineMode> (1);
-            Assert.NotNull (idleMode);
+            Assert.That (idleMode, Is.Not.Null);
             MachineMode noDataMode = session.Get<MachineMode> (8);
-            Assert.NotNull (noDataMode);
+            Assert.That (noDataMode, Is.Not.Null);
             MachineObservationState attended =
               session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
             MachineObservationState unattended =
@@ -506,7 +506,7 @@ namespace Lemoine.Analysis.UnitTests
                 .Add (Restrictions.Eq ("Machine", machine))
                 .AddOrder (Order.Asc ("DateTimeRange"))
                 .List<ReasonSlot> ();
-              Assert.GreaterOrEqual (reasonSlots.Count, 5, "Number of reason slots");
+              Assert.That (reasonSlots, Has.Count.GreaterThanOrEqualTo (5), "Number of reason slots");
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 11, 31, 00)));
@@ -637,19 +637,19 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (3);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (3);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           MachineMode autoMode = session.Get<MachineMode> (3);
-          Assert.NotNull (autoMode);
+          Assert.That (autoMode, Is.Not.Null);
           MachineMode idleMode = session.Get<MachineMode> (1);
-          Assert.NotNull (idleMode);
+          Assert.That (idleMode, Is.Not.Null);
           IMachineStateTemplate mstUnattended = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
             .FindById (2);
-          Assert.NotNull (mstUnattended);
+          Assert.That (mstUnattended, Is.Not.Null);
           IMachineStateTemplate mstAttended = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
             .FindById (1);
-          Assert.NotNull (mstAttended);
+          Assert.That (mstAttended, Is.Not.Null);
           IMachineObservationState attended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
             .FindById ((int)MachineObservationStateId.Attended);
           IMachineObservationState unattended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
@@ -770,7 +770,7 @@ namespace Lemoine.Analysis.UnitTests
           {
             IList<IObservationStateSlot> stateSlots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
               .FindOverlapsRange (machine, new UtcDateTimeRange (UtcDateTime.From (0)));
-            Assert.That (stateSlots.Count, Is.EqualTo (2));
+            Assert.That (stateSlots, Has.Count.EqualTo (2));
             // TODO: check them
           }
 
@@ -805,7 +805,7 @@ namespace Lemoine.Analysis.UnitTests
               .Add (Restrictions.Eq ("Machine", machine))
               .AddOrder (Order.Asc ("DateTimeRange"))
               .List<ReasonSlot> ();
-            Assert.That (reasonSlots.Count, Is.EqualTo (2));
+            Assert.That (reasonSlots, Has.Count.EqualTo (2));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 12, 00, 00)));
@@ -855,14 +855,14 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (3);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IMachineModule machineModule = ModelDAOHelper.DAOFactory.MachineModuleDAO.FindById (3);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           IMachineMode idleMode = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById (1);
-          Assert.NotNull (idleMode);
+          Assert.That (idleMode, Is.Not.Null);
           IMachineStateTemplate mstAttended = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
             .FindById (1);
-          Assert.NotNull (mstAttended);
+          Assert.That (mstAttended, Is.Not.Null);
           IMachineObservationState attended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
             .FindById ((int)MachineObservationStateId.Attended);
           IReason reasonShort = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (3);
@@ -890,7 +890,7 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("Day"))
               .AddOrder (Order.Asc ("Reason.Id"))
               .List<IReasonSummary> ();
-            Assert.That (summaries.Count, Is.EqualTo (0));
+            Assert.That (summaries, Is.Empty);
           }
 
           // Existing reason slots
@@ -982,7 +982,7 @@ namespace Lemoine.Analysis.UnitTests
               Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 17, 00, 00)));
               Assert.That (machineStatus.ReasonSource, Is.EqualTo (ReasonSource.Default));
             });
-            Assert.IsFalse (machineStatus.ConsolidationLimit.HasValue);
+            Assert.That (machineStatus.ConsolidationLimit.HasValue, Is.False);
             Assert.Multiple (() => {
               Assert.That (machineStatus.MachineStateTemplate, Is.EqualTo (null));
               Assert.That (machineStatus.MachineObservationState, Is.EqualTo (attended));
@@ -996,7 +996,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IReasonSlot> reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine, new UtcDateTimeRange (new DateTime (2008, 01, 01, 12, 00, 00),
                                                                  new DateTime (2008, 01, 01, 17, 00, 00)));
-            Assert.That (reasonSlots.Count, Is.EqualTo (1));
+            Assert.That (reasonSlots, Has.Count.EqualTo (1));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 12, 00, 00)));
@@ -1016,7 +1016,7 @@ namespace Lemoine.Analysis.UnitTests
               .AddOrder (Order.Asc ("Day"))
               .AddOrder (Order.Asc ("Reason.Id"))
               .List<IReasonSummary> ();
-            Assert.That (summaries.Count, Is.EqualTo (1));
+            Assert.That (summaries, Has.Count.EqualTo (1));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (summaries[i].Machine, Is.EqualTo (machine));
@@ -1057,15 +1057,15 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (3);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (3);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           MachineMode autoMode = session.Get<MachineMode> (3);
-          Assert.NotNull (autoMode);
+          Assert.That (autoMode, Is.Not.Null);
           MachineMode idleMode = session.Get<MachineMode> (1);
-          Assert.NotNull (idleMode);
+          Assert.That (idleMode, Is.Not.Null);
           MachineMode noDataMode = session.Get<MachineMode> (8);
-          Assert.NotNull (noDataMode);
+          Assert.That (noDataMode, Is.Not.Null);
           MachineObservationState attended =
             session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
           MachineObservationState unattended =
@@ -1290,15 +1290,15 @@ namespace Lemoine.Analysis.UnitTests
             daoFactory.ShiftDAO.FindById (3);
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (3);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           MachineModule machineModule = session.Get<MachineModule> (3);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           MachineMode autoMode = session.Get<MachineMode> (3);
-          Assert.NotNull (autoMode);
+          Assert.That (autoMode, Is.Not.Null);
           MachineMode idleMode = session.Get<MachineMode> (1);
-          Assert.NotNull (idleMode);
+          Assert.That (idleMode, Is.Not.Null);
           MachineMode noDataMode = session.Get<MachineMode> (8);
-          Assert.NotNull (noDataMode);
+          Assert.That (noDataMode, Is.Not.Null);
           MachineObservationState attended =
             session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
           MachineObservationState unattended =
@@ -1574,11 +1574,11 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (3);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
 
           MachineObservationState attended =
             session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
-          Assert.NotNull (attended);
+          Assert.That (attended, Is.Not.Null);
 
           DateTime date1, date2, date3;
 
@@ -1708,10 +1708,12 @@ namespace Lemoine.Analysis.UnitTests
                                          lastModificationId,
                                          lastPriority, 0);
 
-          Assert.IsNotNull (machineObsAssoc1);
-          Assert.IsNotNull (currentModification);
-          Assert.That (((Lemoine.Collections.IDataWithId<long>)currentModification).Id, Is.EqualTo (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc1).Id),
-                          "Modification with lowest priority should be treated last");
+          Assert.Multiple (() => {
+            Assert.That (machineObsAssoc1, Is.Not.Null);
+            Assert.That (currentModification, Is.Not.Null);
+            Assert.That (((Lemoine.Collections.IDataWithId<long>)currentModification).Id, Is.EqualTo (((Lemoine.Collections.IDataWithId<long>)machineObsAssoc1).Id),
+                            "Modification with lowest priority should be treated last");
+          });
         }
         finally {
           transaction.Rollback ();
@@ -1740,11 +1742,11 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (3);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
 
           MachineObservationState attended =
             session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
-          Assert.NotNull (attended);
+          Assert.That (attended, Is.Not.Null);
 
           IMachineObservationStateAssociation[] machineObsAssocArray
             = new IMachineObservationStateAssociation[10];
@@ -1769,7 +1771,7 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.FlushData ();
 
           // order of analysis should be 5, 8, 0, 1, 4, 6, 9, 3, 7, 2
-          int[] oracleId = new int[10] { 5, 8, 0, 1, 4, 6, 9, 3, 7, 2 };
+          int[] oracleId = [5, 8, 0, 1, 4, 6, 9, 3, 7, 2];
 
           long lastModificationId = 0;
           int lastPriority = Int32.MaxValue;
@@ -1817,7 +1819,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IAutoSequencePeriod> periods = new List<IAutoSequencePeriod> ();
         IEnumerable<IAutoSequencePeriod> trimmed =
           AutoSequenceAnalysis.Trim (periods);
-        Assert.IsFalse (trimmed.Any ());
+        Assert.That (trimmed.Any (), Is.False);
       }
       {
         IList<IAutoSequencePeriod> periods = new List<IAutoSequencePeriod> ();
@@ -1825,7 +1827,7 @@ namespace Lemoine.Analysis.UnitTests
         periods.Add (ModelDAOHelper.ModelFactory.CreateFact (machine, T (3), T (4), inactive));
         IEnumerable<IAutoSequencePeriod> trimmed =
           AutoSequenceAnalysis.Trim (periods);
-        Assert.IsFalse (trimmed.Any ());
+        Assert.That (trimmed.Any (), Is.False);
       }
       {
         IList<IAutoSequencePeriod> periods = new List<IAutoSequencePeriod> ();
@@ -1908,26 +1910,28 @@ namespace Lemoine.Analysis.UnitTests
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
-      Assert.IsTrue (result);
+      Assert.That (result, Is.True);
       Assert.Multiple (() => {
         Assert.That (currentPeriods.Count (), Is.EqualTo (1));
         Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (1.1)));
         Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (1.2)));
       });
-      Assert.IsFalse (currentPeriods.First ().AutoSequence);
-      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.First ().AutoSequence, Is.False);
+        Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
+      });
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
-      Assert.IsTrue (result);
+      Assert.That (result, Is.True);
       Assert.Multiple (() => {
         Assert.That (currentPeriods.Count (), Is.EqualTo (1));
         Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (2)));
         Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (4)));
       });
-      Assert.IsTrue (currentPeriods.First ().AutoSequence);
+      Assert.That (currentPeriods.First ().AutoSequence, Is.True);
       Assert.Multiple (() => {
         Assert.That (matchingAutoSequences.Count (), Is.EqualTo (1));
         Assert.That (matchingAutoSequences.First ().Begin, Is.EqualTo (T (1)));
@@ -1938,52 +1942,56 @@ namespace Lemoine.Analysis.UnitTests
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
-      Assert.IsTrue (result);
+      Assert.That (result, Is.True);
       Assert.Multiple (() => {
         Assert.That (currentPeriods.Count (), Is.EqualTo (1));
         Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (4)));
         Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (5)));
       });
-      Assert.IsFalse (currentPeriods.First ().AutoSequence);
-      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.First ().AutoSequence, Is.False);
+        Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
+      });
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
-      Assert.IsTrue (result);
       Assert.Multiple (() => {
+        Assert.That (result, Is.True);
         Assert.That (currentPeriods.Count (), Is.EqualTo (2));
         Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (5)));
         Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (8)));
+        Assert.That (currentPeriods.First ().AutoSequence, Is.True);
+        Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
       });
-      Assert.IsTrue (currentPeriods.First ().AutoSequence);
-      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
-      Assert.IsTrue (result);
+      Assert.That (result, Is.True);
       Assert.Multiple (() => {
         Assert.That (currentPeriods.Count (), Is.EqualTo (2));
         Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (8)));
         Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (9)));
       });
-      Assert.IsFalse (currentPeriods.First ().AutoSequence);
-      Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
+      Assert.Multiple (() => {
+        Assert.That (currentPeriods.First ().AutoSequence, Is.False);
+        Assert.That (matchingAutoSequences.Count (), Is.EqualTo (0));
+      });
 
       result = autoSequenceAnalysis.GetNextAutoSequencePeriods (machineModule, R (2, 19), ref periods,
                                                                 ref autoSequences,
                                                                 out currentPeriods,
                                                                 out matchingAutoSequences);
-      Assert.IsTrue (result);
+      Assert.That (result, Is.True);
       Assert.Multiple (() => {
         Assert.That (currentPeriods.Count (), Is.EqualTo (3));
         Assert.That (currentPeriods.First ().Begin, Is.EqualTo (T (9)));
         Assert.That (currentPeriods.Last ().End, Is.EqualTo (T (19)));
       });
-      Assert.IsTrue (currentPeriods.First ().AutoSequence);
+      Assert.That (currentPeriods.First ().AutoSequence, Is.True);
       Assert.Multiple (() => {
         Assert.That (matchingAutoSequences.Count (), Is.EqualTo (3));
         Assert.That (matchingAutoSequences.First ().Begin, Is.EqualTo (T (10)));

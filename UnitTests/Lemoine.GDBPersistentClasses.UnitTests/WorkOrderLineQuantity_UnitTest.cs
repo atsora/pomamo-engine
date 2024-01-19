@@ -66,7 +66,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference to 1 WorkOrder
         IList<IWorkOrder> workOrders = workOrderDAO.FindAll();
-        Assert.That (workOrders.Count, Is.GreaterThanOrEqualTo (1), "not enough workorders in the database (at least 1)");
+        Assert.That (workOrders, Is.Not.Empty, "not enough workorders in the database (at least 1)");
         IWorkOrder workOrder1 = workOrders[0];
         
         // Creation of 2 WorkOrderLines
@@ -78,7 +78,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference of 4 IntermediateWorkPiece
         IList<IIntermediateWorkPiece> iwps = iwpDAO.FindAll();
-        Assert.That (iwps.Count, Is.GreaterThanOrEqualTo (1), "not enough intermediate work pieces in the database (at least 1)");
+        Assert.That (iwps, Is.Not.Empty, "not enough intermediate work pieces in the database (at least 1)");
         IIntermediateWorkPiece iwp1 = iwps[0];
         
         // Creation de 5 WorkOrderLineQuantities

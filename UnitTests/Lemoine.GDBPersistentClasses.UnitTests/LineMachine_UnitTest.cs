@@ -73,7 +73,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         
         // Reference to 1 Operation
         IList<IOperation> operations = daoFactory.OperationDAO.FindAll();
-        Assert.That (operations.Count, Is.GreaterThanOrEqualTo (1), "not enough machines in the database (at least 1)");
+        Assert.That (operations, Is.Not.Empty, "not enough machines in the database (at least 1)");
         IOperation operation1 = operations[0];
                 
         // Creation de 5 LineMachines

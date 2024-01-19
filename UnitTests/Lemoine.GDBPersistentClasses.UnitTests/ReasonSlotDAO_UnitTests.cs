@@ -41,17 +41,17 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           {
             var reasonSlot = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindById (240450, machine);
-            Assert.IsNotNull (reasonSlot);
+            Assert.That (reasonSlot, Is.Not.Null);
           }
           {
             var reasonSlot = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindById (240450, machine);
-            Assert.IsNotNull (reasonSlot);
+            Assert.That (reasonSlot, Is.Not.Null);
           }
           {
             var reasonSlot = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindById (99999999, machine);
-            Assert.IsNull (reasonSlot);
+            Assert.That (reasonSlot, Is.Null);
           }
         }
         finally {

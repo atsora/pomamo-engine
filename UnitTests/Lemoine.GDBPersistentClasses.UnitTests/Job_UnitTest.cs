@@ -48,7 +48,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         Assert.That (job3, Is.Not.Null);
         Assert.That (job3.Name, Is.EqualTo ("TestInsertJob"));
 
-        JobView job4 = (JobView) job2.FindPersistentClass (new string[] {"Name"});
+        JobView job4 = (JobView) job2.FindPersistentClass (["Name"]);
         Assert.That (job4, Is.Not.Null);
         Assert.That (job4.Name, Is.EqualTo ("TestInsertJob"));
         

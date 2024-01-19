@@ -218,7 +218,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOTransaction transaction = session.BeginTransaction ()) {
         // ID = 1: MACHINE_A17
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById (1);
-        Assert.IsNotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         int initialVersion = machine.Version;
 
         ModelDAOHelper.DAOFactory.MachineDAO.MakePersistent (machine);

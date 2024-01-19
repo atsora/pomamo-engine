@@ -71,7 +71,7 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
 
         StartCycle (machine,
                     UtcDateTime.From (2012, 06, 19));
@@ -79,18 +79,20 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (1));
+        Assert.That (operationCycles, Has.Count.EqualTo (1));
         int i = 0;
         IOperationCycle operationCycle = operationCycles[i];
-        Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
-        Assert.IsNull (operationCycle.End);
-        Assert.That (operationCycle.Machine, Is.EqualTo (machine));
-        Assert.IsNull (operationCycle.OperationSlot);
+        Assert.Multiple (() => {
+          Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
+          Assert.That (operationCycle.End, Is.Null);
+          Assert.That (operationCycle.Machine, Is.EqualTo (machine));
+          Assert.That (operationCycle.OperationSlot, Is.Null);
+        });
 
         IList<IBetweenCycles> betweenCycless =
           ModelDAOHelper.DAOFactory.BetweenCyclesDAO
           .FindAll ();
-        Assert.That (betweenCycless.Count, Is.EqualTo (0));
+        Assert.That (betweenCycless, Is.Empty);
 
         transaction.Rollback ();
       }
@@ -113,17 +115,17 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         {
           IList<ICycleCountSummary> summaries =
             new CycleCountSummaryDAO ()
             .FindAll ();
-          Assert.That (summaries.Count, Is.EqualTo (0));
+          Assert.That (summaries, Is.Empty);
         }
 
         IOperationSlot operationSlot =
@@ -146,11 +148,13 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
-          Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
-          Assert.IsNull (operationCycle.End);
+          Assert.Multiple (() => {
+            Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
+            Assert.That (operationCycle.End, Is.Null);
+          });
           Assert.Multiple (() => {
             Assert.That (operationCycle.Machine, Is.EqualTo (machine));
             Assert.That (operationCycle.OperationSlot, Is.EqualTo (operationSlot));
@@ -158,20 +162,20 @@ namespace Lemoine.Analysis.UnitTests
             Assert.That (operationSlot.PartialCycles, Is.EqualTo (1));
             Assert.That (operationSlot.TotalCycles, Is.EqualTo (0));
           });
-          Assert.IsNull (operationSlot.AverageCycleTime);
+          Assert.That (operationSlot.AverageCycleTime, Is.Null);
           CheckSummaries (operationSlot);
         }
 
         IList<IBetweenCycles> betweenCycless =
           ModelDAOHelper.DAOFactory.BetweenCyclesDAO
           .FindAll ();
-        Assert.That (betweenCycless.Count, Is.EqualTo (0));
+        Assert.That (betweenCycless, Is.Empty);
 
         {
           IList<ICycleCountSummary> summaries =
             new CycleCountSummaryDAO ()
             .FindAll ();
-          Assert.That (summaries.Count, Is.EqualTo (1));
+          Assert.That (summaries, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (summaries[i].Operation, Is.EqualTo (operationSlot.Operation));
@@ -203,7 +207,7 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
 
         StartCycle (machine,
                     UtcDateTime.From (2012, 06, 19));
@@ -217,27 +221,29 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
-          Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
-          Assert.IsNull (operationCycle.End);
-          Assert.That (operationCycle.Machine, Is.EqualTo (machine));
-          Assert.IsNull (operationCycle.OperationSlot);
+          Assert.Multiple (() => {
+            Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
+            Assert.That (operationCycle.End, Is.Null);
+            Assert.That (operationCycle.Machine, Is.EqualTo (machine));
+            Assert.That (operationCycle.OperationSlot, Is.Null);
+          });
         }
 
         {
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (0));
+          Assert.That (betweenCycless, Is.Empty);
         }
 
         {
           IList<IDetectionAnalysisLog> detectionAnalysisLogs =
             ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
             .FindAll ();
-          Assert.That (detectionAnalysisLogs.Count, Is.EqualTo (1));
+          Assert.That (detectionAnalysisLogs, Has.Count.EqualTo (1));
           int i = 0;
           IDetectionAnalysisLog detectionAnalysisLog = detectionAnalysisLogs[i];
           Assert.Multiple (() => {
@@ -269,7 +275,7 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
 
         StopCycle (machine,
                    UtcDateTime.From (2012, 06, 19));
@@ -277,21 +283,21 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (1));
+        Assert.That (operationCycles, Has.Count.EqualTo (1));
         int i = 0;
         IOperationCycle operationCycle = operationCycles[i];
-        Assert.IsNull (operationCycle.Begin);
+        Assert.That (operationCycle.Begin, Is.Null);
         Assert.Multiple (() => {
           Assert.That (operationCycle.End, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
           Assert.That (operationCycle.Machine, Is.EqualTo (machine));
         });
-        Assert.IsNull (operationCycle.OperationSlot);
+        Assert.That (operationCycle.OperationSlot, Is.Null);
 
         {
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (0));
+          Assert.That (betweenCycless, Is.Empty);
         }
 
         transaction.Rollback ();
@@ -317,14 +323,14 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IWorkOrder workOrder2 = ModelDAOHelper.DAOFactory.WorkOrderDAO
           .FindById (2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -357,7 +363,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
           Assert.Multiple (() => {
@@ -387,7 +393,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (0));
+          Assert.That (betweenCycless, Is.Empty);
           // No gap between the two operation cycles
         }
 
@@ -397,7 +403,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
           Assert.Multiple (() => {
@@ -446,14 +452,14 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IWorkOrder workOrder2 = ModelDAOHelper.DAOFactory.WorkOrderDAO
           .FindById (2);
-        Assert.NotNull (workOrder2);
+        Assert.That (workOrder2, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -487,7 +493,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (30));
+          Assert.That (operationCycles, Has.Count.EqualTo (30));
           {
             IOperationCycle operationCycle = operationCycles[0];
             Assert.Multiple (() => {
@@ -513,7 +519,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IBetweenCycles> betweenCycless =
               ModelDAOHelper.DAOFactory.BetweenCyclesDAO
               .FindAll ();
-            Assert.That (betweenCycless.Count, Is.EqualTo (0));
+            Assert.That (betweenCycless, Is.Empty);
             // No gap between the operation cycles
           }
 
@@ -548,11 +554,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -581,7 +587,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (3));
+        Assert.That (operationCycles, Has.Count.EqualTo (3));
         int i = 1;
         Assert.Multiple (() => {
           Assert.That (operationCycles[i].Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 02)));
@@ -601,7 +607,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (1));
+          Assert.That (betweenCycless, Has.Count.EqualTo (1));
           int j = 0;
           IBetweenCycles betweenCycles = betweenCycless[j];
           Assert.Multiple (() => {
@@ -641,11 +647,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -671,7 +677,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (3));
+        Assert.That (operationCycles, Has.Count.EqualTo (3));
         int i = 0;
         Assert.Multiple (() => {
           Assert.That (operationCycles[i].Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 01)));
@@ -701,7 +707,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (0));
+          Assert.That (betweenCycless, Is.Empty);
           // No gap between the cycles
         }
 
@@ -733,16 +739,16 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -767,7 +773,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (1));
+        Assert.That (operationCycles, Has.Count.EqualTo (1));
         int i = 0;
         Assert.Multiple (() => {
           Assert.That (operationCycles[i].Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 01)));
@@ -824,8 +830,8 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.OperationCycleDAO.FindAllWithOperationSlot (operationSlot2);
 
         Assert.Multiple (() => {
-          Assert.That (operationCycles1.Count, Is.EqualTo (1));
-          Assert.That (operationCycles2.Count, Is.EqualTo (1));
+          Assert.That (operationCycles1, Has.Count.EqualTo (1));
+          Assert.That (operationCycles2, Has.Count.EqualTo (1));
         });
 
         IOperationCycle operationCycle1 = operationCycles1[0];
@@ -867,16 +873,16 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -936,8 +942,8 @@ namespace Lemoine.Analysis.UnitTests
           .FindAllWithOperationSlot (operationSlot2);
 
         Assert.Multiple (() => {
-          Assert.That (operationCycleList1.Count, Is.EqualTo (1), "1.not 1");
-          Assert.That (operationCycleList2.Count, Is.EqualTo (1), "2.not 1");
+          Assert.That (operationCycleList1, Has.Count.EqualTo (1), "1.not 1");
+          Assert.That (operationCycleList2, Has.Count.EqualTo (1), "2.not 1");
         });
 
         IOperationCycle operationCycle1 = operationCycleList1[0];
@@ -978,11 +984,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -1009,7 +1015,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (3));
+        Assert.That (operationCycles, Has.Count.EqualTo (3));
         int i = 0;
         Assert.Multiple (() => {
           Assert.That (operationCycles[i].End, Is.EqualTo (UtcDateTime.From (2012, 06, 01)));
@@ -1062,11 +1068,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -1109,7 +1115,7 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
         Assert.Multiple (() => {
-          Assert.That (operationCycles.Count, Is.EqualTo (5));
+          Assert.That (operationCycles, Has.Count.EqualTo (5));
           Assert.That (operationSlot.PartialCycles, Is.EqualTo (2));
           Assert.That (operationSlot.TotalCycles, Is.EqualTo (3));
         });
@@ -1160,7 +1166,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (2));
+          Assert.That (betweenCycless, Has.Count.EqualTo (2));
           int j = 0;
           IBetweenCycles betweenCycles = betweenCycless[j];
           Assert.Multiple (() => {
@@ -1203,15 +1209,15 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -1239,7 +1245,7 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
         Assert.Multiple (() => {
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           Assert.That (operationSlot.PartialCycles, Is.EqualTo (0));
           Assert.That (operationSlot.TotalCycles, Is.EqualTo (2));
         });
@@ -1266,7 +1272,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (0));
+          Assert.That (betweenCycless, Is.Empty);
           // No gap between the cycles
         }
 
@@ -1286,7 +1292,7 @@ namespace Lemoine.Analysis.UnitTests
           .FindAllWithOperationSlot (operationSlot);
 
         Assert.Multiple (() => {
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           // first full cycle remains associated to the slot
           // second full cycle not associated to the slot anymore
           Assert.That (operationSlot.PartialCycles, Is.EqualTo (0));
@@ -1310,13 +1316,15 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
 
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
-        Assert.IsTrue (operationCycles[0].End.HasValue && operationCycles[1].End.HasValue);
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
+        Assert.That (operationCycles[0].End.HasValue && operationCycles[1].End.HasValue, Is.True);
         IOperationCycle secondCycle = operationCycles[0].End.Value < operationCycles[1].End.Value ?
           operationCycles[1] : operationCycles[0];
-        Assert.That (secondCycle.OperationSlot, Is.EqualTo (null));
-        Assert.IsTrue (secondCycle.Status.HasFlag (OperationCycleStatus.BeginEstimated));
-        Assert.IsNull (secondCycle.Begin);
+        Assert.Multiple (() => {
+          Assert.That (secondCycle.OperationSlot, Is.EqualTo (null));
+          Assert.That (secondCycle.Status.HasFlag (OperationCycleStatus.BeginEstimated), Is.True);
+          Assert.That (secondCycle.Begin, Is.Null);
+        });
         transaction.Rollback ();
       }
     }
@@ -1339,15 +1347,15 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         DateTime T0 = UtcDateTime.From (2012, 01, 01, 00, 00, 00);
 
@@ -1382,7 +1390,7 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
         Assert.Multiple (() => {
-          Assert.That (operationCycles.Count, Is.EqualTo (1), "slot has not 1 cycle");
+          Assert.That (operationCycles, Has.Count.EqualTo (1), "slot has not 1 cycle");
           Assert.That (operationSlot.PartialCycles, Is.EqualTo (0), "slot has not 0 partial cycle");
           Assert.That (operationSlot.TotalCycles, Is.EqualTo (1), "slot has not 1 total cycle");
         });
@@ -1408,15 +1416,15 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         DateTime T0 = UtcDateTime.From (2012, 01, 01, 00, 00, 00);
 
@@ -1463,7 +1471,7 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
         Assert.Multiple (() => {
-          Assert.That (operationCycles.Count, Is.EqualTo (1), "slot has not 1 cycle");
+          Assert.That (operationCycles, Has.Count.EqualTo (1), "slot has not 1 cycle");
           Assert.That (operationSlot.PartialCycles, Is.EqualTo (0), "slot has not 0 partial cycle");
           Assert.That (operationSlot.TotalCycles, Is.EqualTo (1), "slot has not 1 total cycle");
         });
@@ -1490,11 +1498,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         StartCycle (machine,
                     UtcDateTime.From (2012, 06, 01));
@@ -1506,7 +1514,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
         int i = 1;
         IOperationCycle operationCycle = operationCycles[i];
         Assert.Multiple (() => {
@@ -1514,7 +1522,7 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationCycle.End, Is.EqualTo (UtcDateTime.From (2012, 06, 03)));
           Assert.That (operationCycle.Machine, Is.EqualTo (machine));
         });
-        Assert.IsNull (operationCycle.OperationSlot);
+        Assert.That (operationCycle.OperationSlot, Is.Null);
 
         transaction.Rollback ();
       }
@@ -1540,15 +1548,15 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         IOperationSlot operationSlot1 =
           ModelDAOHelper.ModelFactory
@@ -1581,7 +1589,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
           Assert.Multiple (() => {
@@ -1606,13 +1614,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot1.PartialCycles, Is.EqualTo (1));
           Assert.That (operationSlot1.TotalCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot1.AverageCycleTime);
+        Assert.That (operationSlot1.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot1);
         Assert.Multiple (() => {
           Assert.That (operationSlot2.TotalCycles, Is.EqualTo (1));
           Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot2.AverageCycleTime);
+        Assert.That (operationSlot2.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot2);
 
         transaction.Rollback ();
@@ -1639,15 +1647,15 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         IOperationSlot operationSlot1 =
           ModelDAOHelper.ModelFactory
@@ -1680,7 +1688,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
           Assert.Multiple (() => {
@@ -1695,13 +1703,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot1.PartialCycles, Is.EqualTo (0));
           Assert.That (operationSlot1.TotalCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot1.AverageCycleTime);
+        Assert.That (operationSlot1.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot1);
         Assert.Multiple (() => {
           Assert.That (operationSlot2.TotalCycles, Is.EqualTo (1));
           Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot2.AverageCycleTime);
+        Assert.That (operationSlot2.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot2);
 
         transaction.Rollback ();
@@ -1726,7 +1734,7 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
 
         StartCycle (machine,
                     UtcDateTime.From (2012, 06, 19));
@@ -1737,20 +1745,22 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
-          Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
-          Assert.IsNull (operationCycle.End);
-          Assert.That (operationCycle.Machine, Is.EqualTo (machine));
-          Assert.IsNull (operationCycle.OperationSlot);
+          Assert.Multiple (() => {
+            Assert.That (operationCycle.Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
+            Assert.That (operationCycle.End, Is.Null);
+            Assert.That (operationCycle.Machine, Is.EqualTo (machine));
+            Assert.That (operationCycle.OperationSlot, Is.Null);
+          });
         }
 
         {
           IList<IDetectionAnalysisLog> detectionAnalysisLogs =
             ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
             .FindAll ();
-          Assert.That (detectionAnalysisLogs.Count, Is.EqualTo (2));
+          Assert.That (detectionAnalysisLogs, Has.Count.EqualTo (2));
           int i = 0;
           Assert.Multiple (() => {
             // 1st log is on ExtendOperation
@@ -1787,7 +1797,7 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
 
         StopCycle (machine,
                    UtcDateTime.From (2012, 06, 19));
@@ -1798,15 +1808,15 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
-          Assert.IsNull (operationCycle.Begin);
+          Assert.That (operationCycle.Begin, Is.Null);
           Assert.Multiple (() => {
             Assert.That (operationCycle.End, Is.EqualTo (UtcDateTime.From (2012, 06, 19)));
             Assert.That (operationCycle.Machine, Is.EqualTo (machine));
           });
-          Assert.IsNull (operationCycle.OperationSlot);
+          Assert.That (operationCycle.OperationSlot, Is.Null);
         }
 
         {
@@ -1815,7 +1825,7 @@ namespace Lemoine.Analysis.UnitTests
             .FindAll ()
             .OrderBy (x => x.Id)
             .ToList ();
-          Assert.That (detectionAnalysisLogs.Count, Is.EqualTo (3));
+          Assert.That (detectionAnalysisLogs, Has.Count.EqualTo (3));
           int i = 0;
           Assert.Multiple (() => {
             // 1st 2 logs are on ExtendOperation
@@ -1857,11 +1867,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -1894,7 +1904,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           int i = 1;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Status, Is.EqualTo (OperationCycleStatus.BeginEstimated));
@@ -1908,14 +1918,14 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot.PartialCycles, Is.EqualTo (0));
           Assert.That (operationSlot.TotalCycles, Is.EqualTo (1));
         });
-        Assert.IsNull (operationSlot.AverageCycleTime);
+        Assert.That (operationSlot.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot);
 
         {
           IList<IDetectionAnalysisLog> detectionAnalysisLogs =
             ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
             .FindAll ();
-          Assert.That (detectionAnalysisLogs.Count, Is.EqualTo (1));
+          Assert.That (detectionAnalysisLogs, Has.Count.EqualTo (1));
           int i = 0;
           IDetectionAnalysisLog detectionAnalysisLog = detectionAnalysisLogs[i];
           Assert.Multiple (() => {
@@ -1952,11 +1962,11 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           operation1.MachiningDuration = TimeSpan.FromSeconds (30);
 
           DateTime T0 = UtcDateTime.From (2008, 01, 16, 00, 00, 00);
@@ -1983,7 +1993,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAll ();
-            Assert.That (operationCycles.Count, Is.EqualTo (1));
+            Assert.That (operationCycles, Has.Count.EqualTo (1));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationCycles[i].Begin, Is.EqualTo (T1));
@@ -1998,7 +2008,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<ICycleDurationSummary> summaries =
               new CycleDurationSummaryDAO ()
               .FindAll ();
-            Assert.That (summaries.Count, Is.EqualTo (1));
+            Assert.That (summaries, Has.Count.EqualTo (1));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (summaries[i].Operation, Is.EqualTo (operationSlot.Operation));
@@ -2043,11 +2053,11 @@ namespace Lemoine.Analysis.UnitTests
             IMonitoredMachine machine =
             ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             IOperation operation1 =
               ModelDAOHelper.DAOFactory.OperationDAO
               .FindById (1);
-            Assert.NotNull (operation1);
+            Assert.That (operation1, Is.Not.Null);
             operation1.MachiningDuration = TimeSpan.FromSeconds (30);
 
             DateTime T0 = UtcDateTime.From (2008, 01, 16, 00, 00, 00);
@@ -2074,7 +2084,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (2));
+              Assert.That (operationCycles, Has.Count.EqualTo (2));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (T1));
@@ -2099,7 +2109,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<ICycleDurationSummary> summaries =
                 new CycleDurationSummaryDAO ()
                 .FindAll ();
-              Assert.That (summaries.Count, Is.EqualTo (1));
+              Assert.That (summaries, Has.Count.EqualTo (1));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (summaries[i].Operation, Is.EqualTo (operationSlot.Operation));
@@ -2115,7 +2125,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<ICycleCountSummary> summaries =
                 new CycleCountSummaryDAO ()
                 .FindAll ();
-              Assert.That (summaries.Count, Is.EqualTo (1));
+              Assert.That (summaries, Has.Count.EqualTo (1));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (summaries[i].Operation, Is.EqualTo (operationSlot.Operation));
@@ -2160,11 +2170,11 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           operation1.MachiningDuration = TimeSpan.FromSeconds (30);
 
           DateTime T0 = UtcDateTime.From (2008, 01, 16, 00, 00, 00);
@@ -2191,7 +2201,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAll ();
-            Assert.That (operationCycles.Count, Is.EqualTo (2));
+            Assert.That (operationCycles, Has.Count.EqualTo (2));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationCycles[i].Status, Is.EqualTo (OperationCycleStatus.BeginEstimated));
@@ -2216,7 +2226,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<ICycleDurationSummary> summaries =
               new CycleDurationSummaryDAO ()
               .FindAll ();
-            Assert.That (summaries.Count, Is.EqualTo (2));
+            Assert.That (summaries, Has.Count.EqualTo (2));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (summaries[i].Operation, Is.EqualTo (operationSlot.Operation));
@@ -2241,7 +2251,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<ICycleCountSummary> summaries =
               new CycleCountSummaryDAO ()
               .FindAll ();
-            Assert.That (summaries.Count, Is.EqualTo (1));
+            Assert.That (summaries, Has.Count.EqualTo (1));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (summaries[i].Operation, Is.EqualTo (operationSlot.Operation));
@@ -2277,11 +2287,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -2302,7 +2312,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (operationSlot.BeginDateTime.NullableValue));
@@ -2317,14 +2327,14 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot.PartialCycles, Is.EqualTo (0));
           Assert.That (operationSlot.TotalCycles, Is.EqualTo (1));
         });
-        Assert.IsNull (operationSlot.AverageCycleTime);
+        Assert.That (operationSlot.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot);
 
         {
           IList<IDetectionAnalysisLog> detectionAnalysisLogs =
             ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
             .FindAll ();
-          Assert.That (detectionAnalysisLogs.Count, Is.EqualTo (1));
+          Assert.That (detectionAnalysisLogs, Has.Count.EqualTo (1));
           int i = 0;
           IDetectionAnalysisLog detectionAnalysisLog = detectionAnalysisLogs[i];
           Assert.Multiple (() => {
@@ -2355,11 +2365,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         IOperationSlot operationSlot =
           ModelDAOHelper.ModelFactory
@@ -2386,7 +2396,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (3));
+        Assert.That (operationCycles, Has.Count.EqualTo (3));
         int i = 1;
         Assert.Multiple (() => {
           Assert.That (operationCycles[i].Begin, Is.EqualTo (UtcDateTime.From (2012, 06, 02)));
@@ -2406,7 +2416,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (1));
+          Assert.That (betweenCycless, Has.Count.EqualTo (1));
           int j = 0;
           IBetweenCycles betweenCycles = betweenCycless[j];
           Assert.Multiple (() => {
@@ -2444,11 +2454,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         StartCycle (machine,
                     UtcDateTime.From (2012, 06, 01));
@@ -2462,7 +2472,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
         int i = 1;
         IOperationCycle operationCycle = operationCycles[i];
         Assert.Multiple (() => {
@@ -2470,13 +2480,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationCycle.End, Is.EqualTo (UtcDateTime.From (2012, 06, 03)));
           Assert.That (operationCycle.Machine, Is.EqualTo (machine));
         });
-        Assert.IsNull (operationCycle.OperationSlot);
+        Assert.That (operationCycle.OperationSlot, Is.Null);
 
         {
           IList<IBetweenCycles> betweenCycless =
             ModelDAOHelper.DAOFactory.BetweenCyclesDAO
             .FindAll ();
-          Assert.That (betweenCycless.Count, Is.EqualTo (0));
+          Assert.That (betweenCycless, Is.Empty);
           // No gap between the cycles
         }
 
@@ -2503,15 +2513,15 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         IOperationSlot operationSlot1 =
           ModelDAOHelper.ModelFactory
@@ -2545,7 +2555,7 @@ namespace Lemoine.Analysis.UnitTests
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
 
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
           Assert.Multiple (() => {
@@ -2570,13 +2580,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot1.PartialCycles, Is.EqualTo (1));
           Assert.That (operationSlot1.TotalCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot1.AverageCycleTime);
+        Assert.That (operationSlot1.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot1);
         Assert.Multiple (() => {
           Assert.That (operationSlot2.TotalCycles, Is.EqualTo (1));
           Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot2.AverageCycleTime);
+        Assert.That (operationSlot2.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot2);
 
         transaction.Rollback ();
@@ -2605,11 +2615,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation);
+        Assert.That (operation, Is.Not.Null);
         IShift shift1 = ModelDAOHelper.ModelFactory.CreateShiftFromName ("1");
         ModelDAOHelper.DAOFactory.ShiftDAO.MakePersistent (shift1);
         IShift shift2 = ModelDAOHelper.ModelFactory.CreateShiftFromName ("2");
@@ -2646,7 +2656,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
           Assert.Multiple (() => {
@@ -2662,13 +2672,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot1.PartialCycles, Is.EqualTo (0));
           Assert.That (operationSlot1.TotalCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot1.AverageCycleTime);
+        Assert.That (operationSlot1.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot1);
         Assert.Multiple (() => {
           Assert.That (operationSlot2.TotalCycles, Is.EqualTo (1));
           Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot2.AverageCycleTime);
+        Assert.That (operationSlot2.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot2);
 
         // Reset the config
@@ -2701,11 +2711,11 @@ namespace Lemoine.Analysis.UnitTests
             IMonitoredMachine machine =
               ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
             IOperation operation =
               ModelDAOHelper.DAOFactory.OperationDAO
               .FindById (1);
-            Assert.NotNull (operation);
+            Assert.That (operation, Is.Not.Null);
             IShift shift1 = ModelDAOHelper.ModelFactory.CreateShiftFromName ("1");
             ModelDAOHelper.DAOFactory.ShiftDAO.MakePersistent (shift1);
             IShift shift2 = ModelDAOHelper.ModelFactory.CreateShiftFromName ("2");
@@ -2743,7 +2753,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (1));
+              Assert.That (operationCycles, Has.Count.EqualTo (1));
               int i = 0;
               IOperationCycle operationCycle = operationCycles[i];
               Assert.Multiple (() => {
@@ -2759,13 +2769,13 @@ namespace Lemoine.Analysis.UnitTests
               Assert.That (operationSlot1.PartialCycles, Is.EqualTo (0));
               Assert.That (operationSlot1.TotalCycles, Is.EqualTo (0));
             });
-            Assert.IsNull (operationSlot1.AverageCycleTime);
+            Assert.That (operationSlot1.AverageCycleTime, Is.Null);
             CheckSummaries (operationSlot1);
             Assert.Multiple (() => {
               Assert.That (operationSlot2.TotalCycles, Is.EqualTo (1));
               Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0));
             });
-            Assert.IsNull (operationSlot2.AverageCycleTime);
+            Assert.That (operationSlot2.AverageCycleTime, Is.Null);
             CheckSummaries (operationSlot2);
 
             // Reset the config
@@ -2800,15 +2810,15 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         IOperationSlot operationSlot1 =
           ModelDAOHelper.ModelFactory
@@ -2840,7 +2850,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           IOperationCycle operationCycle = operationCycles[i];
           Assert.Multiple (() => {
@@ -2855,13 +2865,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot1.PartialCycles, Is.EqualTo (0));
           Assert.That (operationSlot1.TotalCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot1.AverageCycleTime);
+        Assert.That (operationSlot1.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot1);
         Assert.Multiple (() => {
           Assert.That (operationSlot2.TotalCycles, Is.EqualTo (1));
           Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0));
         });
-        Assert.IsNull (operationSlot2.AverageCycleTime);
+        Assert.That (operationSlot2.AverageCycleTime, Is.Null);
         CheckSummaries (operationSlot2);
 
         transaction.Rollback ();
@@ -2889,11 +2899,11 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
             ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
 
           IOperationSlot operationSlot =
             ModelDAOHelper.ModelFactory
@@ -2937,7 +2947,7 @@ namespace Lemoine.Analysis.UnitTests
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
 
-          Assert.That (operationCycles.Count, Is.EqualTo (3));
+          Assert.That (operationCycles, Has.Count.EqualTo (3));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T1));
@@ -2991,11 +3001,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         DateTime T0 = UtcDateTime.From (2012, 06, 01);
 
@@ -3044,7 +3054,7 @@ namespace Lemoine.Analysis.UnitTests
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
 
-        Assert.That (operationCycles.Count, Is.EqualTo (3));
+        Assert.That (operationCycles, Has.Count.EqualTo (3));
         int i = 0;
         Assert.Multiple (() => {
           Assert.That (operationCycles[i].Begin, Is.EqualTo (T1));
@@ -3099,11 +3109,11 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
             ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
 
           StartCycle (machine,
                       sameDate);
@@ -3120,25 +3130,19 @@ namespace Lemoine.Analysis.UnitTests
 
           // reorder ...
           if (operationCycles[0].Id > operationCycles[1].Id) {
-            IOperationCycle tmpCycle = operationCycles[1];
-            operationCycles[1] = operationCycles[0];
-            operationCycles[0] = tmpCycle;
+            (operationCycles[0], operationCycles[1]) = (operationCycles[1], operationCycles[0]);
           }
 
           if (operationCycles[1].Id > operationCycles[2].Id) {
-            IOperationCycle tmpCycle = operationCycles[2];
-            operationCycles[2] = operationCycles[1];
-            operationCycles[1] = tmpCycle;
+            (operationCycles[1], operationCycles[2]) = (operationCycles[2], operationCycles[1]);
           }
 
           if (operationCycles[0].Id > operationCycles[1].Id) {
-            IOperationCycle tmpCycle = operationCycles[1];
-            operationCycles[1] = operationCycles[0];
-            operationCycles[0] = tmpCycle;
+            (operationCycles[0], operationCycles[1]) = (operationCycles[1], operationCycles[0]);
           }
           // end reorder
 
-          Assert.That (operationCycles.Count, Is.EqualTo (3));
+          Assert.That (operationCycles, Has.Count.EqualTo (3));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (sameDate));
@@ -3186,25 +3190,19 @@ namespace Lemoine.Analysis.UnitTests
 
           // reorder ...
           if (operationCycles[0].Id > operationCycles[1].Id) {
-            IOperationCycle tmpCycle = operationCycles[1];
-            operationCycles[1] = operationCycles[0];
-            operationCycles[0] = tmpCycle;
+            (operationCycles[0], operationCycles[1]) = (operationCycles[1], operationCycles[0]);
           }
 
           if (operationCycles[1].Id > operationCycles[2].Id) {
-            IOperationCycle tmpCycle = operationCycles[2];
-            operationCycles[2] = operationCycles[1];
-            operationCycles[1] = tmpCycle;
+            (operationCycles[1], operationCycles[2]) = (operationCycles[2], operationCycles[1]);
           }
 
           if (operationCycles[0].Id > operationCycles[1].Id) {
-            IOperationCycle tmpCycle = operationCycles[1];
-            operationCycles[1] = operationCycles[0];
-            operationCycles[0] = tmpCycle;
+            (operationCycles[0], operationCycles[1]) = (operationCycles[1], operationCycles[0]);
           }
           // end reorder
 
-          Assert.That (operationCycles.Count, Is.EqualTo (3));
+          Assert.That (operationCycles, Has.Count.EqualTo (3));
           i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (sameDate));
@@ -3262,16 +3260,16 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine =
             daoFactory.MonitoredMachineDAO.FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IMachineModule machineModule =
             daoFactory.MachineModuleDAO.FindById (1);
-          Assert.NotNull (machineModule);
+          Assert.That (machineModule, Is.Not.Null);
           IOperation operation1 =
             daoFactory.OperationDAO.FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           ISequence sequence1 =
             daoFactory.SequenceDAO.FindById (1);
-          Assert.NotNull (sequence1);
+          Assert.That (sequence1, Is.Not.Null);
           sequence1.AutoOnly = true; // test pass only if set to false, otherwise cycle not associated
 
           // Stamps
@@ -3306,14 +3304,14 @@ namespace Lemoine.Analysis.UnitTests
             ModelDAOHelper.DAOFactory.FlushData ();
             DAOFactory.EmptyAccumulators ();
 
-            Assert.That (operationSlots.Count, Is.EqualTo (1), "Number of operation slots after 1.");
+            Assert.That (operationSlots, Has.Count.EqualTo (1), "Number of operation slots after 1.");
             Assert.That (operationSlots[0].TotalCycles, Is.EqualTo (1), "Number of cycles is not 1.");
 
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAllWithOperationSlot (operationSlots[0]);
 
-            Assert.That (operationCycles.Count, Is.EqualTo (1));
+            Assert.That (operationCycles, Has.Count.EqualTo (1));
             Assert.Multiple (() => {
               Assert.That (operationCycles[0].Begin, Is.EqualTo (T0));
               Assert.That (operationCycles[0].End, Is.EqualTo (T3));
@@ -3405,10 +3403,10 @@ namespace Lemoine.Analysis.UnitTests
         }
         // Because there may be other operaiton slots that target the same summary,
         // there is a LessOrEqual
-        Assert.LessOrEqual (operationSlot.TotalCycles, counted1);
-        Assert.LessOrEqual (operationSlot.TotalCycles, corrected1);
-        Assert.LessOrEqual (operationSlot.TotalCycles, counted2);
-        Assert.LessOrEqual (operationSlot.TotalCycles, corrected2);
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (counted1));
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (corrected1));
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (counted2));
+        Assert.That (operationSlot.TotalCycles, Is.LessThanOrEqualTo (corrected2));
       }
     }
 
@@ -3429,11 +3427,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         DateTime T0 = UtcDateTime.From (2000, 1, 1);
         DateTime T1 = T0.AddMinutes (10);
@@ -3461,14 +3459,14 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (1));
+        Assert.That (operationCycles, Has.Count.EqualTo (1));
         IOperationCycle operationCycle = operationCycles[0];
         Assert.Multiple (() => {
           Assert.That (operationCycle.Begin, Is.EqualTo (T1), "begin cycle1 not T1");
           Assert.That (operationCycle.End, Is.EqualTo (T3), "end cycle1 not T2");
         });
-        Assert.IsTrue (!operationCycle.Status.HasFlag (OperationCycleStatus.BeginEstimated)
-                       && !operationCycle.Status.HasFlag (OperationCycleStatus.EndEstimated));
+        Assert.That (!operationCycle.Status.HasFlag (OperationCycleStatus.BeginEstimated)
+                       && !operationCycle.Status.HasFlag (OperationCycleStatus.EndEstimated), Is.True);
 
         transaction.Rollback ();
       }
@@ -3493,11 +3491,11 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
 
           DateTime T0 = UtcDateTime.From (2000, 1, 1);
           DateTime T1 = T0.AddMinutes (10);
@@ -3546,16 +3544,18 @@ namespace Lemoine.Analysis.UnitTests
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
 
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           IOperationCycle operationCycle = operationCycles[0];
 
           {
             IList<IOperationSlot> operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
               .FindAll (machine);
-            Assert.That (operationSlots.Count, Is.EqualTo (2));
-            Assert.That (operationSlots[1].EndDateTime.Value, Is.EqualTo (T2.AddSeconds (2)));
-            Assert.IsNotNull (operationCycle.Begin);
-            Assert.IsNotNull (operationCycle.End);
+            Assert.That (operationSlots, Has.Count.EqualTo (2));
+            Assert.Multiple (() => {
+              Assert.That (operationSlots[1].EndDateTime.Value, Is.EqualTo (T2.AddSeconds (2)));
+              Assert.That (operationCycle.Begin, Is.Not.Null);
+              Assert.That (operationCycle.End, Is.Not.Null);
+            });
             Assert.Multiple (() => {
               Assert.That (operationCycle.Begin, Is.EqualTo (T1));
               Assert.That (operationCycle.End, Is.EqualTo (T2.AddSeconds (2)));
@@ -3603,16 +3603,16 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
             ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           operation1.MachiningDuration = TimeSpan.FromSeconds (30);
           IOperation operation2 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
 
           DateTime T1 = T0.AddMinutes (1);
           DateTime T2 = T0.AddMinutes (2);
@@ -3645,7 +3645,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           Assert.Multiple (() => {
             Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot));
             Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot));
@@ -3663,7 +3663,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll ();
 
-          Assert.That (operationSlots.Count, Is.EqualTo (2), "Not 2 operation slots");
+          Assert.That (operationSlots, Has.Count.EqualTo (2), "Not 2 operation slots");
 
           foreach (IOperationSlot opSlot in operationSlots) {
             (opSlot as OperationSlot)
@@ -3683,7 +3683,7 @@ namespace Lemoine.Analysis.UnitTests
           operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           Assert.Multiple (() => {
             Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlots[0]));
             Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlots[1]));
@@ -3713,16 +3713,16 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         operation1.MachiningDuration = TimeSpan.FromSeconds (30);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         DateTime T0 = UtcDateTime.From (2008, 01, 16, 00, 00, 00);
         DateTime T1 = T0.AddMinutes (1);
@@ -3757,7 +3757,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
         Assert.Multiple (() => {
           Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot));
           Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot));
@@ -3777,20 +3777,18 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll ();
 
-        Assert.That (operationSlots.Count, Is.EqualTo (2), "Not 2 operation slots");
+        Assert.That (operationSlots, Has.Count.EqualTo (2), "Not 2 operation slots");
 
         IOperationSlot operationSlot1 = operationSlots[0];
         IOperationSlot operationSlot2 = operationSlots[1];
 
         if (operationSlot1.BeginDateTime > operationSlot2.BeginDateTime) {
-          IOperationSlot tmpSlot = operationSlot1;
-          operationSlot1 = operationSlot2;
-          operationSlot2 = tmpSlot;
+          (operationSlot2, operationSlot1) = (operationSlot1, operationSlot2);
         }
 
-        Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
-        Assert.IsTrue (operationSlot1.EndDateTime.HasValue);
         Assert.Multiple (() => {
+          Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
+          Assert.That (operationSlot1.EndDateTime.HasValue, Is.True);
           Assert.That (operationSlot1.EndDateTime.Value, Is.EqualTo (T4));
           Assert.That (operationSlot2.BeginDateTime.Value, Is.EqualTo (T4));
         });
@@ -3798,7 +3796,7 @@ namespace Lemoine.Analysis.UnitTests
         operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
         Assert.Multiple (() => {
           Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot1));
           Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot1));
@@ -3830,16 +3828,16 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         operation1.MachiningDuration = TimeSpan.FromSeconds (30);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         DateTime T0 = UtcDateTime.From (2008, 01, 16, 00, 00, 00);
         DateTime T1 = T0.AddMinutes (1);
@@ -3877,7 +3875,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
         Assert.Multiple (() => {
           Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot));
           Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot));
@@ -3898,20 +3896,18 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll ();
 
-        Assert.That (operationSlots.Count, Is.EqualTo (2), "Not 2 operation slots");
+        Assert.That (operationSlots, Has.Count.EqualTo (2), "Not 2 operation slots");
 
         IOperationSlot operationSlot1 = operationSlots[0];
         IOperationSlot operationSlot2 = operationSlots[1];
 
         if (operationSlot1.BeginDateTime > operationSlot2.BeginDateTime) {
-          IOperationSlot tmpSlot = operationSlot1;
-          operationSlot1 = operationSlot2;
-          operationSlot2 = tmpSlot;
+          (operationSlot2, operationSlot1) = (operationSlot1, operationSlot2);
         }
 
-        Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
-        Assert.IsTrue (operationSlot1.EndDateTime.HasValue);
         Assert.Multiple (() => {
+          Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
+          Assert.That (operationSlot1.EndDateTime.HasValue, Is.True);
           Assert.That (operationSlot1.EndDateTime.Value, Is.EqualTo (T4));
           Assert.That (operationSlot2.BeginDateTime.Value, Is.EqualTo (T4));
         });
@@ -3919,7 +3915,7 @@ namespace Lemoine.Analysis.UnitTests
         operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (3), "not 3 cycles");
+        Assert.That (operationCycles, Has.Count.EqualTo (3), "not 3 cycles");
         Assert.Multiple (() => {
           Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot1));
           Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot1));
@@ -3930,15 +3926,15 @@ namespace Lemoine.Analysis.UnitTests
 
           Assert.That (operationSlot2.TotalCycles, Is.EqualTo (1), "not 1 total cycle");
           Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0), "not 0 partial cycle");
+
+          Assert.That (operationCycles[1].End.HasValue, Is.True);
+          Assert.That (operationCycles[1].End, Is.EqualTo (T4));
+          Assert.That (operationCycles[1].Status, Is.EqualTo (OperationCycleStatus.EndEstimated));
+
+          Assert.That (operationCycles[2].Begin, Is.EqualTo (T4));
+          Assert.That (operationCycles[2].Status, Is.EqualTo (OperationCycleStatus.BeginEstimated));
+          Assert.That (operationCycles[2].End, Is.EqualTo (T5));
         });
-
-        Assert.IsTrue (operationCycles[1].End.HasValue);
-        Assert.That (operationCycles[1].End, Is.EqualTo (T4));
-        Assert.IsTrue (operationCycles[1].Status.Equals (OperationCycleStatus.EndEstimated));
-
-        Assert.That (operationCycles[2].Begin, Is.EqualTo (T4));
-        Assert.IsTrue (operationCycles[2].Status.Equals (OperationCycleStatus.BeginEstimated));
-        Assert.That (operationCycles[2].End, Is.EqualTo (T5));
 
         transaction.Rollback ();
       }
@@ -3964,16 +3960,16 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
             ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           operation1.MachiningDuration = TimeSpan.FromSeconds (30);
           IOperation operation2 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
 
           DateTime T1 = T0.AddMinutes (1);
           DateTime T2 = T0.AddMinutes (2);
@@ -4010,7 +4006,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           Assert.Multiple (() => {
             Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot));
             Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot));
@@ -4031,19 +4027,19 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll ();
 
-          Assert.That (operationSlots.Count, Is.EqualTo (2), "Not 2 operation slots");
+          Assert.That (operationSlots, Has.Count.EqualTo (2), "Not 2 operation slots");
 
           IOperationSlot operationSlot1 = operationSlots[0];
           IOperationSlot operationSlot2 = operationSlots[1];
 
           if (operationSlot1.BeginDateTime > operationSlot2.BeginDateTime) {
-            IOperationSlot tmpSlot = operationSlot1;
-            operationSlot1 = operationSlot2;
-            operationSlot2 = tmpSlot;
+            (operationSlot2, operationSlot1) = (operationSlot1, operationSlot2);
           }
 
-          Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
-          Assert.IsTrue (operationSlot1.EndDateTime.HasValue);
+          Assert.Multiple (() => {
+            Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
+            Assert.That (operationSlot1.EndDateTime.HasValue, Is.True);
+          });
           Assert.Multiple (() => {
             Assert.That (operationSlot1.EndDateTime.Value, Is.EqualTo (T4));
             Assert.That (operationSlot2.BeginDateTime.Value, Is.EqualTo (T4));
@@ -4052,7 +4048,7 @@ namespace Lemoine.Analysis.UnitTests
           operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2), "not 2 cycles");
+          Assert.That (operationCycles, Has.Count.EqualTo (2), "not 2 cycles");
           Assert.Multiple (() => {
             Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot1));
             Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot2));
@@ -4065,7 +4061,7 @@ namespace Lemoine.Analysis.UnitTests
 
             Assert.That (operationCycles[1].Begin, Is.EqualTo (T3));
           });
-          Assert.IsTrue (operationCycles[1].End.HasValue);
+          Assert.That (operationCycles[1].End.HasValue, Is.True);
           Assert.Multiple (() => {
             Assert.That (operationCycles[1].End, Is.EqualTo (T5));
             Assert.That (operationCycles[1].Status, Is.EqualTo (new OperationCycleStatus ()));
@@ -4096,16 +4092,16 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         operation1.MachiningDuration = TimeSpan.FromSeconds (30);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation2);
+        Assert.That (operation2, Is.Not.Null);
 
         DateTime T0 = UtcDateTime.From (2008, 01, 16, 00, 00, 00);
         DateTime T1 = T0.AddMinutes (1);
@@ -4143,7 +4139,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
         Assert.Multiple (() => {
           Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot));
           Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot));
@@ -4164,20 +4160,18 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationSlot> operationSlots =
           ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll ();
 
-        Assert.That (operationSlots.Count, Is.EqualTo (2), "Not 2 operation slots");
+        Assert.That (operationSlots, Has.Count.EqualTo (2), "Not 2 operation slots");
 
         IOperationSlot operationSlot1 = operationSlots[0];
         IOperationSlot operationSlot2 = operationSlots[1];
 
         if (operationSlot1.BeginDateTime > operationSlot2.BeginDateTime) {
-          IOperationSlot tmpSlot = operationSlot1;
-          operationSlot1 = operationSlot2;
-          operationSlot2 = tmpSlot;
+          (operationSlot2, operationSlot1) = (operationSlot1, operationSlot2);
         }
 
-        Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
-        Assert.IsTrue (operationSlot1.EndDateTime.HasValue);
         Assert.Multiple (() => {
+          Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
+          Assert.That (operationSlot1.EndDateTime.HasValue, Is.True);
           Assert.That (operationSlot1.EndDateTime.Value, Is.EqualTo (T4));
           Assert.That (operationSlot2.BeginDateTime.Value, Is.EqualTo (T4));
         });
@@ -4185,7 +4179,7 @@ namespace Lemoine.Analysis.UnitTests
         operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (3), "not 3 cycles");
+        Assert.That (operationCycles, Has.Count.EqualTo (3), "not 3 cycles");
         Assert.Multiple (() => {
           Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot1));
           Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot1));
@@ -4198,21 +4192,15 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operationSlot2.PartialCycles, Is.EqualTo (0), "not 0 partial cycle");
 
           Assert.That (operationCycles[0].Begin, Is.EqualTo (T1));
-        });
-        Assert.IsTrue (operationCycles[0].End.HasValue);
-        Assert.Multiple (() => {
+          Assert.That (operationCycles[0].End.HasValue, Is.True);
           Assert.That (operationCycles[0].End, Is.EqualTo (T2));
           Assert.That (operationCycles[0].Status, Is.EqualTo (new OperationCycleStatus ()));
           Assert.That (operationCycles[1].Begin, Is.EqualTo (T3));
-        });
-        Assert.IsTrue (operationCycles[1].End.HasValue);
-        Assert.Multiple (() => {
+          Assert.That (operationCycles[1].End.HasValue, Is.True);
           Assert.That (operationCycles[1].End, Is.EqualTo (T4));
           Assert.That (operationCycles[1].Status, Is.EqualTo (OperationCycleStatus.EndEstimated));
           Assert.That (operationCycles[2].Begin, Is.EqualTo (T4));
-        });
-        Assert.IsTrue (operationCycles[2].End.HasValue);
-        Assert.Multiple (() => {
+          Assert.That (operationCycles[2].End.HasValue, Is.True);
           Assert.That (operationCycles[2].End.Value, Is.EqualTo (T5));
           Assert.That (operationCycles[2].Status, Is.EqualTo (OperationCycleStatus.BeginEstimated));
         });
@@ -4241,16 +4229,16 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
             ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           operation1.MachiningDuration = TimeSpan.FromSeconds (30);
           IOperation operation2 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
 
           DateTime T1 = T0.AddMinutes (1);
           DateTime T2 = T0.AddMinutes (2);
@@ -4286,7 +4274,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           Assert.Multiple (() => {
             Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot));
             Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot));
@@ -4297,7 +4285,7 @@ namespace Lemoine.Analysis.UnitTests
           {
             IList<IOperationSlot> operationSlots =
               ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll ();
-            Assert.That (operationSlots.Count, Is.EqualTo (1));
+            Assert.That (operationSlots, Has.Count.EqualTo (1));
           }
 
           IWorkOrder workOrder = ModelDAOHelper.DAOFactory.WorkOrderDAO.FindById (1);
@@ -4312,18 +4300,18 @@ namespace Lemoine.Analysis.UnitTests
           {
             IList<IOperationSlot> operationSlots =
               ModelDAOHelper.DAOFactory.OperationSlotDAO.FindAll ();
-            Assert.That (operationSlots.Count, Is.EqualTo (2), "Not 2 operation slots");
+            Assert.That (operationSlots, Has.Count.EqualTo (2), "Not 2 operation slots");
             IOperationSlot operationSlot1 = operationSlots[0];
             IOperationSlot operationSlot2 = operationSlots[1];
 
             if (operationSlot1.BeginDateTime > operationSlot2.BeginDateTime) {
-              IOperationSlot tmpSlot = operationSlot1;
-              operationSlot1 = operationSlot2;
-              operationSlot2 = tmpSlot;
+              (operationSlot2, operationSlot1) = (operationSlot1, operationSlot2);
             }
 
-            Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
-            Assert.IsTrue (operationSlot1.EndDateTime.HasValue);
+            Assert.Multiple (() => {
+              Assert.That (operationSlot1.BeginDateTime.Value, Is.EqualTo (T0));
+              Assert.That (operationSlot1.EndDateTime.HasValue, Is.True);
+            });
             Assert.Multiple (() => {
               Assert.That (operationSlot1.EndDateTime.Value, Is.EqualTo (T3));
               Assert.That (operationSlot2.BeginDateTime.Value, Is.EqualTo (T3));
@@ -4332,7 +4320,7 @@ namespace Lemoine.Analysis.UnitTests
             operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAll ();
-            Assert.That (operationCycles.Count, Is.EqualTo (2), "not 2 cycles");
+            Assert.That (operationCycles, Has.Count.EqualTo (2), "not 2 cycles");
             Assert.Multiple (() => {
               Assert.That (operationCycles[0].OperationSlot, Is.EqualTo (operationSlot1));
               Assert.That (operationCycles[1].OperationSlot, Is.EqualTo (operationSlot2));
@@ -4375,11 +4363,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
 
         OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machine, new List<IDetectionExtension> ());
@@ -4413,7 +4401,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T (0)));
@@ -4447,11 +4435,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machine, new List<IDetectionExtension> ());
         OperationDetection operationDetection = new OperationDetection (machine, new List<IOperationDetectionExtension> ());
@@ -4483,7 +4471,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T (0)));
@@ -4516,11 +4504,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IWorkOrder workOrder =
           ModelDAOHelper.DAOFactory.WorkOrderDAO
           .FindById (1);
@@ -4557,7 +4545,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindAll (machine);
-          Assert.That (operationSlots.Count, Is.EqualTo (2));
+          Assert.That (operationSlots, Has.Count.EqualTo (2));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
@@ -4570,7 +4558,7 @@ namespace Lemoine.Analysis.UnitTests
             Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
             Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (3)));
           });
-          Assert.IsFalse (operationSlots[i].EndDateTime.HasValue);
+          Assert.That (operationSlots[i].EndDateTime.HasValue, Is.False);
           Assert.Multiple (() => {
             Assert.That (operationSlots[i].Operation, Is.EqualTo (null));
             Assert.That (operationSlots[i].WorkOrder, Is.EqualTo (workOrder));
@@ -4580,7 +4568,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T (0)));
@@ -4614,11 +4602,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
         IWorkOrder workOrder =
           ModelDAOHelper.DAOFactory.WorkOrderDAO
           .FindById (1);
@@ -4654,7 +4642,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindAll (machine);
-          Assert.That (operationSlots.Count, Is.EqualTo (2));
+          Assert.That (operationSlots, Has.Count.EqualTo (2));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
@@ -4667,7 +4655,7 @@ namespace Lemoine.Analysis.UnitTests
             Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
             Assert.That (operationSlots[i].BeginDateTime.Value, Is.EqualTo (T (3)));
           });
-          Assert.IsFalse (operationSlots[i].EndDateTime.HasValue);
+          Assert.That (operationSlots[i].EndDateTime.HasValue, Is.False);
           Assert.Multiple (() => {
             Assert.That (operationSlots[i].Operation, Is.EqualTo (null));
             Assert.That (operationSlots[i].WorkOrder, Is.EqualTo (workOrder));
@@ -4677,7 +4665,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T (0)));
@@ -4710,11 +4698,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machine, new List<IDetectionExtension> ());
         OperationDetection operationDetection = new OperationDetection (machine, new List<IOperationDetectionExtension> ());
@@ -4747,7 +4735,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T (0)));
@@ -4782,11 +4770,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machine, new List<IDetectionExtension> ());
         OperationDetection operationDetection = new OperationDetection (machine, new List<IOperationDetectionExtension> ());
@@ -4817,7 +4805,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (1));
+          Assert.That (operationCycles, Has.Count.EqualTo (1));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T (0)));
@@ -4850,14 +4838,14 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
         IOperation operation2 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (2);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         OperationCycleDetection operationCycleDetection = new OperationCycleDetection (machine, new List<IDetectionExtension> ());
         OperationDetection operationDetection = new OperationDetection (machine, new List<IOperationDetectionExtension> ());
@@ -4891,7 +4879,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationSlot> operationSlots =
             ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindAll ();
-          Assert.That (operationSlots.Count, Is.EqualTo (2));
+          Assert.That (operationSlots, Has.Count.EqualTo (2));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationSlots[i].Machine, Is.EqualTo (machine));
@@ -4914,7 +4902,7 @@ namespace Lemoine.Analysis.UnitTests
           IList<IOperationCycle> operationCycles =
             ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAll ();
-          Assert.That (operationCycles.Count, Is.EqualTo (2));
+          Assert.That (operationCycles, Has.Count.EqualTo (2));
           int i = 0;
           Assert.Multiple (() => {
             Assert.That (operationCycles[i].Begin, Is.EqualTo (T (0)));
@@ -4956,11 +4944,11 @@ namespace Lemoine.Analysis.UnitTests
         IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-        Assert.NotNull (machine);
+        Assert.That (machine, Is.Not.Null);
         IOperation operation1 =
           ModelDAOHelper.DAOFactory.OperationDAO
           .FindById (1);
-        Assert.NotNull (operation1);
+        Assert.That (operation1, Is.Not.Null);
 
         // Option
         Lemoine.Info.ConfigSet.ForceValue<bool> (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.ExtendFullCycleWhenNewCycleEnd),
@@ -4994,7 +4982,7 @@ namespace Lemoine.Analysis.UnitTests
         IList<IOperationCycle> operationCycles =
           ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAll ();
-        Assert.That (operationCycles.Count, Is.EqualTo (2));
+        Assert.That (operationCycles, Has.Count.EqualTo (2));
         int i = 0;
         Assert.Multiple (() => {
           Assert.That (operationCycles[i].Begin, Is.EqualTo (T (1)));
@@ -5034,13 +5022,13 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
           machine.PalletChangingDuration = TimeSpan.FromSeconds (2);
 
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
 
           IOperationSlot operationSlot =
             ModelDAOHelper.ModelFactory
@@ -5064,7 +5052,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAll ();
-            Assert.That (operationCycles.Count, Is.EqualTo (2));
+            Assert.That (operationCycles, Has.Count.EqualTo (2));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationCycles[i].End, Is.EqualTo (T (1)));
@@ -5082,7 +5070,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IBetweenCycles> betweenCycless =
                 ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                 .FindAll ();
-              Assert.That (betweenCycless.Count, Is.EqualTo (1));
+              Assert.That (betweenCycless, Has.Count.EqualTo (1));
               int j = 0;
               IBetweenCycles betweenCycles = betweenCycless[j];
               Assert.Multiple (() => {
@@ -5130,19 +5118,19 @@ namespace Lemoine.Analysis.UnitTests
           IMonitoredMachine machine =
             ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
 
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           operation1.UnloadingDuration = TimeSpan.FromSeconds (3);
           ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation1);
 
           IOperation operation2 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           operation2.LoadingDuration = TimeSpan.FromSeconds (7);
           ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation2);
 
@@ -5178,7 +5166,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAll ();
-            Assert.That (operationCycles.Count, Is.EqualTo (2));
+            Assert.That (operationCycles, Has.Count.EqualTo (2));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationCycles[i].End, Is.EqualTo (T (1)));
@@ -5196,7 +5184,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IBetweenCycles> betweenCycless =
                 ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                 .FindAll ();
-              Assert.That (betweenCycless.Count, Is.EqualTo (1));
+              Assert.That (betweenCycless, Has.Count.EqualTo (1));
               int j = 0;
               IBetweenCycles betweenCycles = betweenCycless[j];
               Assert.Multiple (() => {
@@ -5206,8 +5194,10 @@ namespace Lemoine.Analysis.UnitTests
                 Assert.That (betweenCycles.PreviousCycle, Is.EqualTo (operationCycles[0]));
                 Assert.That (betweenCycles.NextCycle, Is.EqualTo (operationCycles[1]));
               });
-              Assert.That (betweenCycles.NextCycle.OperationSlot, Is.EqualTo (operationSlot2));
-              Assert.That (betweenCycles.OffsetDuration, Is.EqualTo (200)); // 100 * 20 / 10
+              Assert.Multiple (() => {
+                Assert.That (betweenCycles.NextCycle.OperationSlot, Is.EqualTo (operationSlot2));
+                Assert.That (betweenCycles.OffsetDuration, Is.EqualTo (200)); // 100 * 20 / 10
+              });
             }
           }
 
@@ -5253,19 +5243,19 @@ namespace Lemoine.Analysis.UnitTests
           // Reference data
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (1);
-          Assert.NotNull (machine);
+          Assert.That (machine, Is.Not.Null);
 
           IOperation operation1 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (1);
-          Assert.NotNull (operation1);
+          Assert.That (operation1, Is.Not.Null);
           operation1.UnloadingDuration = TimeSpan.FromSeconds (10);
           ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation1);
 
           IOperation operation2 =
             ModelDAOHelper.DAOFactory.OperationDAO
             .FindById (2);
-          Assert.NotNull (operation2);
+          Assert.That (operation2, Is.Not.Null);
           operation2.LoadingDuration = TimeSpan.FromSeconds (20);
           ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation2);
 
@@ -5292,7 +5282,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAll ();
-            Assert.That (operationCycles.Count, Is.EqualTo (2));
+            Assert.That (operationCycles, Has.Count.EqualTo (2));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationCycles[i].End, Is.EqualTo (T (1)));
@@ -5310,7 +5300,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IBetweenCycles> betweenCycless =
                 ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                 .FindAll ();
-              Assert.That (betweenCycless.Count, Is.EqualTo (1));
+              Assert.That (betweenCycless, Has.Count.EqualTo (1));
               int j = 0;
               IBetweenCycles betweenCycles = betweenCycless[j];
               Assert.Multiple (() => {
@@ -5320,8 +5310,10 @@ namespace Lemoine.Analysis.UnitTests
                 Assert.That (betweenCycles.PreviousCycle, Is.EqualTo (operationCycles[0]));
                 Assert.That (betweenCycles.NextCycle, Is.EqualTo (operationCycles[1]));
               });
-              Assert.That (betweenCycles.NextCycle.OperationSlot, Is.EqualTo (operationSlot));
-              Assert.That (betweenCycles.OffsetDuration, Is.EqualTo (200)); // 100 * 20 / 10
+              Assert.Multiple (() => {
+                Assert.That (betweenCycles.NextCycle.OperationSlot, Is.EqualTo (operationSlot));
+                Assert.That (betweenCycles.OffsetDuration, Is.EqualTo (200)); // 100 * 20 / 10
+              });
             }
           }
 
@@ -5342,7 +5334,7 @@ namespace Lemoine.Analysis.UnitTests
             IList<IOperationCycle> operationCycles =
               ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindAll ();
-            Assert.That (operationCycles.Count, Is.EqualTo (2));
+            Assert.That (operationCycles, Has.Count.EqualTo (2));
             int i = 0;
             Assert.Multiple (() => {
               Assert.That (operationCycles[i].End, Is.EqualTo (T (1)));
@@ -5360,7 +5352,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IBetweenCycles> betweenCycless =
                 ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                 .FindAll ();
-              Assert.That (betweenCycless.Count, Is.EqualTo (1));
+              Assert.That (betweenCycless, Has.Count.EqualTo (1));
               int j = 0;
               IBetweenCycles betweenCycles = betweenCycless[j];
               Assert.Multiple (() => {
@@ -5410,19 +5402,19 @@ namespace Lemoine.Analysis.UnitTests
             IMonitoredMachine machine =
               ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             IOperation operation1 =
               ModelDAOHelper.DAOFactory.OperationDAO
               .FindById (1);
-            Assert.NotNull (operation1);
+            Assert.That (operation1, Is.Not.Null);
             operation1.UnloadingDuration = TimeSpan.FromSeconds (10);
             ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation1);
 
             IOperation operation2 =
               ModelDAOHelper.DAOFactory.OperationDAO
               .FindById (2);
-            Assert.NotNull (operation2);
+            Assert.That (operation2, Is.Not.Null);
             operation2.LoadingDuration = TimeSpan.FromSeconds (20);
             ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation2);
 
@@ -5453,7 +5445,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (2));
+              Assert.That (operationCycles, Has.Count.EqualTo (2));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (1)));
@@ -5471,7 +5463,7 @@ namespace Lemoine.Analysis.UnitTests
                 IList<IBetweenCycles> betweenCycless =
                   ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                   .FindAll ();
-                Assert.That (betweenCycless.Count, Is.EqualTo (1));
+                Assert.That (betweenCycless, Has.Count.EqualTo (1));
                 int j = 0;
                 IBetweenCycles betweenCycles = betweenCycless[j];
                 Assert.Multiple (() => {
@@ -5481,8 +5473,10 @@ namespace Lemoine.Analysis.UnitTests
                   Assert.That (betweenCycles.PreviousCycle, Is.EqualTo (operationCycles[0]));
                   Assert.That (betweenCycles.NextCycle, Is.EqualTo (operationCycles[1]));
                 });
-                Assert.That (betweenCycles.NextCycle.OperationSlot, Is.EqualTo (operationSlot));
-                Assert.That (betweenCycles.OffsetDuration, Is.EqualTo (200)); // 100 * 20 / 10
+                Assert.Multiple (() => {
+                  Assert.That (betweenCycles.NextCycle.OperationSlot, Is.EqualTo (operationSlot));
+                  Assert.That (betweenCycles.OffsetDuration, Is.EqualTo (200)); // 100 * 20 / 10
+                });
               }
             }
 
@@ -5506,7 +5500,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (3));
+              Assert.That (operationCycles, Has.Count.EqualTo (3));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (1)));
@@ -5520,20 +5514,20 @@ namespace Lemoine.Analysis.UnitTests
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot.Operation, Is.EqualTo (operation1));
               });
-              Assert.IsFalse (operationCycles[i].Full);
+              Assert.That (operationCycles[i].Full, Is.False);
               ++i;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (split));
                 Assert.That (operationCycles[i].End, Is.EqualTo (stop2));
                 Assert.That (operationCycles[i].OperationSlot.Operation, Is.EqualTo (operation2));
               });
-              Assert.IsTrue (operationCycles[i].Full);
+              Assert.That (operationCycles[i].Full, Is.True);
 
               {
                 IList<IBetweenCycles> betweenCycless =
                   ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                   .FindAll ();
-                Assert.That (betweenCycless.Count, Is.EqualTo (1));
+                Assert.That (betweenCycless, Has.Count.EqualTo (1));
                 int j = 0;
                 IBetweenCycles betweenCycles = betweenCycless[j];
                 Assert.Multiple (() => {
@@ -5564,7 +5558,7 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (2));
+              Assert.That (operationCycles, Has.Count.EqualTo (2));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (1)));
@@ -5579,14 +5573,14 @@ namespace Lemoine.Analysis.UnitTests
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot.Operation, Is.EqualTo (operation1));
               });
-              Assert.IsTrue (operationCycles[i].Full);
+              Assert.That (operationCycles[i].Full, Is.True);
               CheckSummaries (operationCycles[i].OperationSlot);
 
               {
                 IList<IBetweenCycles> betweenCycless =
                   ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                   .FindAll ();
-                Assert.That (betweenCycless.Count, Is.EqualTo (1));
+                Assert.That (betweenCycless, Has.Count.EqualTo (1));
                 int j = 0;
                 IBetweenCycles betweenCycles = betweenCycless[j];
                 Assert.Multiple (() => {
@@ -5640,29 +5634,29 @@ namespace Lemoine.Analysis.UnitTests
             IMonitoredMachine machine =
               ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             IOperation operation1 =
               ModelDAOHelper.DAOFactory.OperationDAO
               .FindById (1);
-            Assert.NotNull (operation1);
+            Assert.That (operation1, Is.Not.Null);
             operation1.UnloadingDuration = TimeSpan.FromSeconds (10);
             ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation1);
 
             IOperation operation2 =
               ModelDAOHelper.DAOFactory.OperationDAO
               .FindById (2);
-            Assert.NotNull (operation2);
+            Assert.That (operation2, Is.Not.Null);
             operation2.LoadingDuration = TimeSpan.FromSeconds (20);
             ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation2);
 
             var component1 = ModelDAOHelper.DAOFactory.ComponentDAO
               .FindById (1);
-            Assert.NotNull (component1);
+            Assert.That (component1, Is.Not.Null);
 
             var workOrder1 = ModelDAOHelper.DAOFactory.WorkOrderDAO
               .FindById (1);
-            Assert.NotNull (workOrder1);
+            Assert.That (workOrder1, Is.Not.Null);
 
             IOperationSlot operationSlot1 =
               ModelDAOHelper.ModelFactory
@@ -5694,14 +5688,16 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (2));
+              Assert.That (operationCycles, Has.Count.EqualTo (2));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (T (1)));
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (3)));
               });
-              Assert.IsTrue (operationCycles[i].HasRealBegin ());
-              Assert.IsTrue (!operationCycles[i].HasRealEnd ());
+              Assert.Multiple (() => {
+                Assert.That (operationCycles[i].HasRealBegin (), Is.True);
+                Assert.That (!operationCycles[i].HasRealEnd (), Is.True);
+              });
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot, Is.EqualTo (operationSlot1));
@@ -5711,8 +5707,10 @@ namespace Lemoine.Analysis.UnitTests
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (T (3)));
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (4)));
               });
-              Assert.IsTrue (!operationCycles[i].HasRealBegin ());
-              Assert.IsTrue (operationCycles[i].HasRealEnd ());
+              Assert.Multiple (() => {
+                Assert.That (!operationCycles[i].HasRealBegin (), Is.True);
+                Assert.That (operationCycles[i].HasRealEnd (), Is.True);
+              });
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot, Is.EqualTo (operationSlot2));
@@ -5722,7 +5720,7 @@ namespace Lemoine.Analysis.UnitTests
                 IList<IBetweenCycles> betweenCycless =
                   ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                   .FindAll ();
-                Assert.That (betweenCycless.Count, Is.EqualTo (0));
+                Assert.That (betweenCycless, Is.Empty);
               }
             }
 
@@ -5750,18 +5748,20 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationSlot> operationSlots =
                 ModelDAOHelper.DAOFactory.OperationSlotDAO
                 .FindAll (machine);
-              Assert.That (operationSlots.Count, Is.EqualTo (2));
+              Assert.That (operationSlots, Has.Count.EqualTo (2));
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (1));
+              Assert.That (operationCycles, Has.Count.EqualTo (1));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (T (1)));
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (4)));
               });
-              Assert.IsTrue (operationCycles[i].HasRealBegin ());
-              Assert.IsTrue (operationCycles[i].HasRealEnd ());
+              Assert.Multiple (() => {
+                Assert.That (operationCycles[i].HasRealBegin (), Is.True);
+                Assert.That (operationCycles[i].HasRealEnd (), Is.True);
+              });
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot.Operation, Is.EqualTo (operation2));
@@ -5772,7 +5772,7 @@ namespace Lemoine.Analysis.UnitTests
                 IList<IBetweenCycles> betweenCycless =
                   ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                   .FindAll ();
-                Assert.That (betweenCycless.Count, Is.EqualTo (0));
+                Assert.That (betweenCycless, Is.Empty);
               }
 
               Assert.Multiple (() => {
@@ -5813,7 +5813,7 @@ namespace Lemoine.Analysis.UnitTests
        at NUnit.ConsoleRunner.ConsoleRunner.RunTests(TestPackage package, TestFilter filter)
        at NUnit.ConsoleRunner.Program.Main(String[] args)
      */
-    public void TestNewShift ()
+    private void TestNewShift ()
     {
       try {
         Lemoine.Info.ConfigSet.ForceValue<LowerBound<DateTime>> ("Database.OperationCycleDAO.FindOverlapsRangeStep.LowerLimit", new LowerBound<DateTime> (T (0)));
@@ -5837,34 +5837,34 @@ namespace Lemoine.Analysis.UnitTests
             IMonitoredMachine machine =
               ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindById (1);
-            Assert.NotNull (machine);
+            Assert.That (machine, Is.Not.Null);
 
             IOperation operation1 =
               ModelDAOHelper.DAOFactory.OperationDAO
               .FindById (1);
-            Assert.NotNull (operation1);
+            Assert.That (operation1, Is.Not.Null);
             operation1.UnloadingDuration = TimeSpan.FromSeconds (10);
             ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation1);
 
             var component1 = ModelDAOHelper.DAOFactory.ComponentDAO
               .FindById (1);
-            Assert.NotNull (component1);
+            Assert.That (component1, Is.Not.Null);
 
             var workOrder1 = ModelDAOHelper.DAOFactory.WorkOrderDAO
               .FindById (1);
-            Assert.NotNull (workOrder1);
+            Assert.That (workOrder1, Is.Not.Null);
 
             var shift1 = ModelDAOHelper.DAOFactory.ShiftDAO
               .FindById (1);
-            Assert.NotNull (shift1);
+            Assert.That (shift1, Is.Not.Null);
 
             var shift2 = ModelDAOHelper.DAOFactory.ShiftDAO
               .FindById (2);
-            Assert.NotNull (shift2);
+            Assert.That (shift2, Is.Not.Null);
 
             var attended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
               .FindById (1);
-            Assert.NotNull (attended);
+            Assert.That (attended, Is.Not.Null);
 
             IOperationSlot operationSlot1 =
               ModelDAOHelper.ModelFactory
@@ -5913,14 +5913,16 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (2));
+              Assert.That (operationCycles, Has.Count.EqualTo (2));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (T (1)));
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (2)));
               });
-              Assert.IsTrue (operationCycles[i].HasRealBegin ());
-              Assert.IsTrue (!operationCycles[i].HasRealEnd ());
+              Assert.Multiple (() => {
+                Assert.That (operationCycles[i].HasRealBegin (), Is.True);
+                Assert.That (!operationCycles[i].HasRealEnd (), Is.True);
+              });
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot, Is.EqualTo (operationSlot1));
@@ -5930,8 +5932,10 @@ namespace Lemoine.Analysis.UnitTests
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (null));
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (4)));
               });
-              Assert.IsTrue (!operationCycles[i].HasRealBegin ());
-              Assert.IsTrue (operationCycles[i].HasRealEnd ());
+              Assert.Multiple (() => {
+                Assert.That (!operationCycles[i].HasRealBegin (), Is.True);
+                Assert.That (operationCycles[i].HasRealEnd (), Is.True);
+              });
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot, Is.EqualTo (null));
@@ -5941,7 +5945,7 @@ namespace Lemoine.Analysis.UnitTests
                 IList<IBetweenCycles> betweenCycless =
                   ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                   .FindAll ();
-                Assert.That (betweenCycless.Count, Is.EqualTo (0));
+                Assert.That (betweenCycless, Is.Empty);
               }
             }
 
@@ -5964,19 +5968,17 @@ namespace Lemoine.Analysis.UnitTests
               IList<IOperationSlot> operationSlots =
                 ModelDAOHelper.DAOFactory.OperationSlotDAO
                 .FindAll (machine);
-              Assert.That (operationSlots.Count, Is.EqualTo (2));
+              Assert.That (operationSlots, Has.Count.EqualTo (2));
               IList<IOperationCycle> operationCycles =
                 ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .FindAll ();
-              Assert.That (operationCycles.Count, Is.EqualTo (1));
+              Assert.That (operationCycles, Has.Count.EqualTo (1));
               int i = 0;
               Assert.Multiple (() => {
                 Assert.That (operationCycles[i].Begin, Is.EqualTo (T (1)));
                 Assert.That (operationCycles[i].End, Is.EqualTo (T (4)));
-              });
-              Assert.IsTrue (operationCycles[i].HasRealBegin ());
-              Assert.IsTrue (operationCycles[i].HasRealEnd ());
-              Assert.Multiple (() => {
+                Assert.That (operationCycles[i].HasRealBegin (), Is.True);
+                Assert.That (operationCycles[i].HasRealEnd (), Is.True);
                 Assert.That (operationCycles[i].Machine, Is.EqualTo (machine));
                 Assert.That (operationCycles[i].OperationSlot.Operation, Is.EqualTo (operation1));
               });
@@ -5986,7 +5988,7 @@ namespace Lemoine.Analysis.UnitTests
                 IList<IBetweenCycles> betweenCycless =
                   ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                   .FindAll ();
-                Assert.That (betweenCycless.Count, Is.EqualTo (0));
+                Assert.That (betweenCycless, Is.Empty);
               }
 
               Assert.Multiple (() => {

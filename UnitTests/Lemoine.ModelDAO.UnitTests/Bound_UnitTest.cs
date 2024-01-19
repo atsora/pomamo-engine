@@ -24,10 +24,14 @@ namespace Lemoine.ModelDAO.UnitTests
     [Test]
     public void TestLt()
     {
-      Assert.That (new DateTime () < new UpperBound<DateTime> (null), Is.True);
-      Assert.IsFalse (new UpperBound<DateTime> (null) < new DateTime ());
-      Assert.That (new LowerBound<DateTime> (null) < new DateTime (), Is.True);
-      Assert.IsFalse (new DateTime () < new LowerBound<DateTime> (null));
+      Assert.Multiple (() => {
+#pragma warning disable NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure
+        Assert.That (new DateTime () < new UpperBound<DateTime> (null));
+        Assert.That (new UpperBound<DateTime> (null) >= new DateTime ());
+        Assert.That (new LowerBound<DateTime> (null) < new DateTime ());
+        Assert.That (new DateTime () >= new LowerBound<DateTime> (null));
+#pragma warning restore NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure
+      });
     }
     
     /// <summary>
@@ -36,15 +40,17 @@ namespace Lemoine.ModelDAO.UnitTests
     [Test]
     public void TestCompare()
     {
-      Assert.IsFalse (Bound.Compare<DateTime> (new UpperBound<DateTime> (),
-                                               new DateTime (1970, 1, 1, 00, 00, 00, DateTimeKind.Utc)) < 0);
+      Assert.That (Bound.Compare<DateTime> (new UpperBound<DateTime> (),
+                                               new DateTime (1970, 1, 1, 00, 00, 00, DateTimeKind.Utc)), Is.GreaterThanOrEqualTo (0));
     }
     
-    public void TestToString ()
+    private void TestToString ()
     {
-      Assert.That (new UpperBound<DateTime> (null).ToString (), Is.EqualTo ("+oo"));
-      Assert.That (new LowerBound<DateTime> (null).ToString (), Is.EqualTo ("-oo"));
-      Assert.That (new Bound<DateTime> (null, BoundType.Upper).ToString (), Is.EqualTo ("+oo"));
+      Assert.Multiple (() => {
+        Assert.That (new UpperBound<DateTime> (null).ToString (), Is.EqualTo ("+oo"));
+        Assert.That (new LowerBound<DateTime> (null).ToString (), Is.EqualTo ("-oo"));
+        Assert.That (new Bound<DateTime> (null, BoundType.Upper).ToString (), Is.EqualTo ("+oo"));
+      });
     }
   }
 }

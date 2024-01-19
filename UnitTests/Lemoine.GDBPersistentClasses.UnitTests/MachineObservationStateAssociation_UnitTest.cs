@@ -1161,7 +1161,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             // - MachineStatus
             IMachineStatus machineStatus =
               session.Get<MachineStatus> (machine1.Id);
-            Assert.IsNotNull (machineStatus);
+            Assert.That (machineStatus, Is.Not.Null);
             Assert.Multiple (() => {
               Assert.That (machineStatus.MachineObservationState, Is.EqualTo (attended));
               Assert.That (machineStatus.CncMachineMode, Is.EqualTo (inactive));

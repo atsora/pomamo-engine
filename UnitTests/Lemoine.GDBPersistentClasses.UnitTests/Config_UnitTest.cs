@@ -55,7 +55,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         ModelDAOHelper.DAOFactory.ConfigDAO.MakePersistent (config);
         
         IConfig config2 = ModelDAOHelper.DAOFactory.ConfigDAO.GetConfig ("Test");
-        Assert.IsNotNull (config2);
+        Assert.That (config2, Is.Not.Null);
         Assert.That (config2.Value, Is.EqualTo (true));
 
         transaction.Rollback ();
@@ -76,7 +76,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         ModelDAOHelper.DAOFactory.ConfigDAO.MakePersistent (config);
         
         IConfig config2 = ModelDAOHelper.DAOFactory.ConfigDAO.GetConfig ("Test");
-        Assert.IsNotNull (config2);
+        Assert.That (config2, Is.Not.Null);
         Assert.That (config2.Value, Is.EqualTo (3));
 
         transaction.Rollback ();
@@ -97,7 +97,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         ModelDAOHelper.DAOFactory.ConfigDAO.MakePersistent (config);
         
         IConfig config2 = ModelDAOHelper.DAOFactory.ConfigDAO.GetConfig ("Test");
-        Assert.IsNotNull (config2);
+        Assert.That (config2, Is.Not.Null);
         Assert.That (config2.Value, Is.EqualTo (TimeSpan.FromMinutes (3)));
 
         transaction.Rollback ();
