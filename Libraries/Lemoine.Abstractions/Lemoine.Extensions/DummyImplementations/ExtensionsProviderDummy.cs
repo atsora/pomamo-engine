@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#if !NET40
-
 using Lemoine.Extensions.Interfaces;
 using Lemoine.Threading;
 using System;
@@ -115,7 +113,12 @@ namespace Lemoine.Extensions.DummyImplementations
     /// <param name="cancellationToken"></param>
     /// <param name="checkedThread"></param>
     /// <returns></returns>
+#if NET40
+    public Task LoadAsync (CancellationToken cancellationToken, IChecked checkedThread = null) => new Task (DoNothing);
+    void DoNothing () { }
+#else // !NET40
     public Task LoadAsync (CancellationToken cancellationToken, IChecked checkedThread = null) => Task.CompletedTask;
+#endif // NET40
 
     /// <summary>
     /// <see cref="IExtensionsProvider"/>
@@ -134,5 +137,3 @@ namespace Lemoine.Extensions.DummyImplementations
     }
   }
 }
-
-#endif // !NET40

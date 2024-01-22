@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#if !NET40
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,12 +46,11 @@ namespace Lemoine.Extensions.DummyImplementations
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task LoadExtensionsAsync (CancellationToken? cancellationToken = null)
-    {
-      await Task.Delay (0);
-    }
-
+#if NET40
+    public Task LoadExtensionsAsync (CancellationToken? cancellationToken = null) => new Task (DoNothing);
+    void DoNothing () { }
+#else // !NET40
+    public Task LoadExtensionsAsync (CancellationToken? cancellationToken = null) => Task.CompletedTask;
+#endif // !NET40
   }
 }
-
-#endif // !NET40

@@ -122,7 +122,7 @@ namespace Lemoine.Cnc.DataRepository
       Debug.Assert (null != cncAcquisition);
 
       m_extensionsLoader = extensionsLoader;
-      this.m_cncAcquisition = cncAcquisition;
+      m_cncAcquisition = cncAcquisition;
       m_checkedThread = checkedThread;
       log = LogManager.GetLogger ($"{typeof (CncFileRepoFactory).FullName}.{cncAcquisition.Id}");
     }
@@ -269,8 +269,7 @@ namespace Lemoine.Cnc.DataRepository
           ModelDAOHelper.DAOFactory.CheckBasicConnection ();
 
           using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-            m_cncAcquisition =
-              ModelDAOHelper.DAOFactory.CncAcquisitionDAO
+            m_cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
               .FindByIdWithMonitoredMachine (m_cncAcquisitionId);
           }
         }
@@ -593,15 +592,14 @@ namespace Lemoine.Cnc.DataRepository
             }
 
             // {...Id}
-            ReplaceValue (attribute, m_cncAcquisition.ConfigPrefix + "Id",
+            ReplaceValue (attribute, m_cncAcquisition.ConfigPrefix ?? "" + "Id",
                           m_cncAcquisition.Id.ToString ());
             // {...Name}
-            ReplaceValue (attribute, m_cncAcquisition.ConfigPrefix + "Name",
+            ReplaceValue (attribute, m_cncAcquisition.ConfigPrefix ?? "" + "Name",
                           m_cncAcquisition.Name);
-            Debug.Assert (null != m_cncAcquisition.ConfigPrefix);
             if (null != m_cncAcquisition.ConfigParameters) {
               // {..Parameters}
-              string parametersKey = "{" + m_cncAcquisition.ConfigPrefix + "Parameter}";
+              string parametersKey = "{" + m_cncAcquisition.ConfigPrefix ?? "" + "Parameter}";
               if (attribute.Value.Contains (parametersKey)) {
                 attribute.Value = attribute.Value.Replace (parametersKey, m_cncAcquisition.ConfigParameters);
               }
@@ -611,10 +609,10 @@ namespace Lemoine.Cnc.DataRepository
               foreach (var kv in keyParams) {
                 var k = kv.Key;
                 var vs = kv.Value;
-                ReplaceValue (attribute, $"{m_cncAcquisition.ConfigPrefix}param:{k}", vs);
+                ReplaceValue (attribute, $"{m_cncAcquisition.ConfigPrefix ?? ""}param:{k}", vs);
                 if (k.StartsWith ("Param", StringComparison.InvariantCultureIgnoreCase)
                   && int.TryParse (k.Substring ("Param".Length), out var paramNumber)) {
-                  ReplaceValue (attribute, $"{m_cncAcquisition.ConfigPrefix}Param{paramNumber}", vs);
+                  ReplaceValue (attribute, $"{m_cncAcquisition.ConfigPrefix ?? ""}Param{paramNumber}", vs);
                 }
               }
             }

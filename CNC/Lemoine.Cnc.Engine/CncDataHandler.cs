@@ -84,6 +84,9 @@ namespace Lemoine.CncEngine
     static readonly string GARBAGE_COLLECTION_MIN_MEMORY_KEY = "Cnc.DataHandler.GarbageCollection.MinMemory"; // Minimum memory usage in bytes to run a garbage collection
     static readonly long GARBAGE_COLLECTION_MIN_MEMORY_DEFAULT = 1024 * 1024 * 80; // 80 MB
 
+    static readonly string DATA_STDOUT_KEY = "Cnc.DataHandler.DataStdout";
+    static readonly bool DATA_STDOUT_DEFAULT = false; // Alternative to the logs to output the data in the standard output
+
     static readonly string CNC_MODULES_DISTANT_DIRECTORY = "CncModules";
 
     #region Members
@@ -143,10 +146,7 @@ namespace Lemoine.CncEngine
     /// 
     /// Not thread safe
     /// </summary>
-    public IDictionary<string, Object> Data
-    {
-      get { return m_data; }
-    }
+    public IDictionary<string, Object> Data => m_data;
 
     /// <summary>
     /// Final data once all the module requests are completed
@@ -156,10 +156,7 @@ namespace Lemoine.CncEngine
     /// This is possible that from time to time a deprecated value is returned,
     /// but this should be pretty rare (there is no global lock)
     /// </summary>
-    public IDictionary<string, object> FinalData
-    {
-      get { return m_finalData; }
-    }
+    public IDictionary<string, object> FinalData => m_finalData;
     #endregion
 
     #region Constructors
@@ -797,7 +794,8 @@ namespace Lemoine.CncEngine
     /// <param name="useStampFile"></param>
     /// <param name="parentProcessId"></param>
     /// <param name="cancellationToken"></param>
-    internal void Work (bool useStampFile, int parentProcessId, CancellationToken cancellationToken)
+    /// <param name="calls">number of calls before stamping if not null and greater than 0</param>
+    internal void Work (bool useStampFile, int parentProcessId, CancellationToken cancellationToken = default, int? calls = null)
     {
       if (m_disposed) {
         log.Error ("Work: the object is already disposed");
@@ -805,7 +803,9 @@ namespace Lemoine.CncEngine
       }
 
       try {
-        while (!cancellationToken.IsCancellationRequested) {
+        int call = 0;
+        while (!cancellationToken.IsCancellationRequested
+          && (!calls.HasValue || (0 == calls.Value) || (call++ < calls.Value))) {
           if (ExitRequested) {
             log.Info ("Work: exit is requested => return");
             return;
@@ -953,6 +953,17 @@ namespace Lemoine.CncEngine
       FillFinalData (m_data);
       // Output m_data in the logs
       LogData (m_data);
+      if (Lemoine.Info.ConfigSet.LoadAndGet (DATA_STDOUT_KEY, DATA_STDOUT_DEFAULT)) {
+        foreach (var item in m_data) {
+          try {
+            System.Console.WriteLine ($"{item.Key}={GetStringFromKeyValueItem (item)}");
+          }
+          catch (Exception ex) {
+            log.Fatal ($"ProcessTasks: error while trying to output m_data in stdout for key {item.Key}", ex);
+          }
+        }
+        System.Console.WriteLine ("================================");
+      }
     }
 
     /// <summary>
@@ -1650,13 +1661,12 @@ namespace Lemoine.CncEngine
     void LogData (IDictionary<string, object> data)
     {
       if (dataLog.IsInfoEnabled) {
-        foreach (KeyValuePair<string, object> item in data) {
+        foreach (var item in data) {
           try {
-            dataLog.InfoFormat ("{0}={1}",
-                                item.Key, GetStringFromKeyValueItem (item));
+            dataLog.Info ($"{item.Key}={GetStringFromKeyValueItem (item)}");
           }
           catch (Exception ex) {
-            log.Fatal ($"ProcessTasks: error while trying to output m_data in the logs for key {item.Key}", ex);
+            log.Fatal ($"LogData: error while trying to output m_data in the logs for key {item.Key}", ex);
           }
         }
       }

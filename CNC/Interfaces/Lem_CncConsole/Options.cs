@@ -57,6 +57,9 @@ namespace Lem_CncConsole
     [Option ('l', "light", HelpText = "Light application initialization: no database connection, no file repo")]
     public bool Light { get; set; } = false;
 
+    [Option ('c', "calls", Required = false, HelpText = "Number of requests to run before stopping. If set the data is displayed in the standard output")]
+    public int? Calls { get; set; } = null;
+
     /// <summary>
     /// Additional microsoft parameters
     /// 

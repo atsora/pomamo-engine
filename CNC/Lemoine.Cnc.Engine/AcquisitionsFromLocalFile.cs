@@ -11,6 +11,7 @@ using System.Threading;
 using Lemoine.CncEngine;
 using Lemoine.Core.Log;
 using Lemoine.Core.Plugin;
+using Lemoine.Extensions.Interfaces;
 using Lemoine.FileRepository;
 
 namespace Lemoine.CncEngine
@@ -28,6 +29,7 @@ namespace Lemoine.CncEngine
     readonly string m_localFilePath;
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
+    readonly IExtensionsLoader m_extensionsLoader;
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1);
     volatile Acquisition m_acquisition = null;
 
@@ -38,9 +40,11 @@ namespace Lemoine.CncEngine
     /// <param name="localFilePath">Absolute or relative to the program</param>
     /// <param name="assemblyLoader">not null</param>
     /// <param name="fileRepoClientFactory">not null</param>
-    public AcquisitionsFromLocalFile (ICncEngineConfig cncEngineConfig, string localFilePath, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
+    /// <param name="extensionsLoader">not null</param>
+    public AcquisitionsFromLocalFile (ICncEngineConfig cncEngineConfig, string localFilePath, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, IExtensionsLoader extensionsLoader)
     {
       Debug.Assert (null != cncEngineConfig);
+      Debug.Assert (null != extensionsLoader, "ExtensionsLoader not null");
 
       m_cncEngineConfig = cncEngineConfig;
       if (Path.IsPathRooted (localFilePath)) {
@@ -51,6 +55,7 @@ namespace Lemoine.CncEngine
       }
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
+      m_extensionsLoader = extensionsLoader;
     }
 
     /// <summary>
@@ -67,7 +72,7 @@ namespace Lemoine.CncEngine
               return new List<Acquisition> ();
             }
 
-            m_acquisition = new Acquisition (m_cncEngineConfig, m_localFilePath, m_assemblyLoader, m_fileRepoClientFactory);
+            m_acquisition = new Acquisition (m_cncEngineConfig, m_localFilePath, m_assemblyLoader, m_fileRepoClientFactory, m_extensionsLoader);
           }
         }
       }

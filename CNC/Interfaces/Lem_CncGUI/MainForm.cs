@@ -107,7 +107,7 @@ namespace Lem_CncGUI
         XMLFactory copyFactory = new XMLFactory (XmlSourceType.URI, localConfigurationFile);
         XMLBuilder copyBuilder = new XMLBuilder (localConfigurationFile);
         Repository repository = new Repository (factory, copyBuilder, copyFactory);
-        var acquisition = new Lemoine.CncEngine.Acquisition (m_cncEngineConfig, cncAcquisition.Id, repository, m_assemblyLoader, m_fileRepoClientFactory);
+        var acquisition = new Lemoine.CncEngine.Acquisition (m_cncEngineConfig, cncAcquisition.Id, repository, m_assemblyLoader, m_fileRepoClientFactory, m_extensionsLoader);
         acquisition.InitDataHandler (CancellationToken.None);
         m_dataHandler = acquisition.CncDataHandler;
         timer.Interval = (int)m_dataHandler.Every.TotalMilliseconds;

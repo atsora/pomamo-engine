@@ -36,6 +36,7 @@ namespace Lem_CncConsole
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
     readonly IExtensionsLoader m_extensionsLoader;
+    Options m_options = null;
     TimeSpan m_every = DEFAULT_EVERY;
     bool m_staThread = false;
     int m_cncAcquisitionId = int.MinValue;
@@ -74,6 +75,7 @@ namespace Lem_CncConsole
 
     public void SetOptions (Options options)
     {
+      m_options = options;
       m_cncAcquisitionId = options.CncAcquisitionId;
       m_configurationFilePath = options.File;
       m_numParameters = options.NumParameters;
@@ -125,10 +127,10 @@ namespace Lem_CncConsole
       Acquisition acquisition;
       if (!string.IsNullOrEmpty (m_configurationFilePath)) {
         if (string.IsNullOrEmpty (m_numParameters) && !m_jsonParameters.Any ()) {
-          acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_assemblyLoader, m_fileRepoClientFactory);
+          acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_assemblyLoader, m_fileRepoClientFactory, m_extensionsLoader);
         }
         else {
-          acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_numParameters, m_jsonParameters, m_assemblyLoader, m_fileRepoClientFactory);
+          acquisition = new Acquisition (m_cncEngineConfig, m_configurationFilePath, m_numParameters, m_jsonParameters, m_assemblyLoader, m_fileRepoClientFactory, m_extensionsLoader);
         }
       }
       else if (int.MinValue != m_cncAcquisitionId) {
@@ -138,9 +140,13 @@ namespace Lem_CncConsole
         log.Error ($"Main: no configuration file path {m_configurationFilePath} and not a valid cnc acquisition id {m_cncAcquisitionId} => nothing to do");
         return;
       }
+      acquisition.Calls = m_options?.Calls ?? null;
       acquisition.UseStampFile = m_stamp;
       acquisition.ParentProcessId = m_parentProcessId;
       acquisition.RunDirectly (System.Threading.CancellationToken.None);
+      if (0 < (m_options?.Calls ?? 0)) {
+        acquisition.WriteFinalDataToStdout ();
+      }
     }
   }
 }

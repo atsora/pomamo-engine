@@ -15,16 +15,17 @@ using System.Diagnostics;
 using Lemoine.Business.Config;
 using Lemoine.Extensions;
 using Lemoine.ModelDAO.Interfaces;
-using Lemoine.Extensions.Interfaces;
 using Lemoine.Extensions.Plugin;
 using Lemoine.Extensions.ExtensionsProvider;
 using Pulse.Extensions;
 #endif // NETSTANDARD || NET48 || NETCOREAPP
+using Lemoine.Extensions.Interfaces;
 using Lemoine.FileRepository;
 using Lemoine.Core.Plugin;
 using System.ServiceModel;
 using Lem_CncService.Wcf;
 using Lemoine.Model;
+using Lemoine.Extensions.DummyImplementations;
 #if !NET40
 using Lemoine.GDBMigration;
 using Lemoine.Core.Hosting.LctrChecker;
@@ -257,12 +258,12 @@ namespace Lem_CncService
           acquisitionFinder = new AcquisitionFinderById ();
         }
         else {
-          acquisitionListBuilder = new AcquisitionsFromLocalFile (cncEngineConfig, m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory);
+          acquisitionListBuilder = new AcquisitionsFromLocalFile (cncEngineConfig, m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory, extensionsLoader);
 
           acquisitionFinder = new AcquisitionFinderUnique ();
         }
 #else // !(NETSTANDARD || NET48 || NETCOREAPP)
-        acquisitionListBuilder = new AcquisitionsFromLocalFile (cncEngineConfig, m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory);
+        acquisitionListBuilder = new AcquisitionsFromLocalFile (cncEngineConfig, m_localCncConfiguration, m_assemblyLoader, m_fileRepoClientFactory, new ExtensionsLoaderDummy ());
         acquisitionFinder = new AcquisitionFinderUnique ();
 #endif // !(NETSTANDARD || NET48 || NETCOREAPP)
 
@@ -310,7 +311,7 @@ namespace Lem_CncService
 
 #if NETSTANDARD || NET48 || NETCOREAPP
     static IEnumerable<IExtensionInterfaceProvider> GetInterfaceProviders () => Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ().Union (new List<IExtensionInterfaceProvider> { new Pulse.Extensions.Database.ExtensionInterfaceProvider () });
-#endif 
+#endif
 
     void CreateWcfServices (IAcquisitionSet acquisitionSet, IAcquisitionFinder acquisitionFinder)
     {

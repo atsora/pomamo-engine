@@ -76,7 +76,7 @@ namespace Lem_CncCoreService
       }
       else {
         services.AddTransient<IEnumerable<IAdditionalChecker>> ((IServiceProvider sp) => new IAdditionalChecker[] { });
-        services.AddSingleton<IAcquisitionSet> ((IServiceProvider sp) => new AcquisitionsFromLocalFile (sp.GetRequiredService<ICncEngineConfig> (), localCncConfiguration, sp.GetService<IAssemblyLoader> (), sp.GetService<IFileRepoClientFactory> ()));
+        services.AddSingleton<IAcquisitionSet> ((IServiceProvider sp) => new AcquisitionsFromLocalFile (sp.GetRequiredService<ICncEngineConfig> (), localCncConfiguration, sp.GetService<IAssemblyLoader> (), sp.GetService<IFileRepoClientFactory> (), sp.GetService<IExtensionsLoader> ()));
         services.AddSingleton<IAcquisitionFinder, AcquisitionFinderUnique> ();
       }
 

@@ -18,9 +18,7 @@ using Lemoine.Info;
 using Lemoine.Model;
 using Lemoine.Threading;
 using Lemoine.Core.Log;
-#if NETSTANDARD || NET48 || NETCOREAPP
 using Lemoine.Extensions.Interfaces;
-#endif // NETSTANDARD || NET48 || NETCOREAPP
 using Lemoine.Core.Plugin;
 using Lemoine.FileRepository;
 using System.Linq;
@@ -35,9 +33,7 @@ namespace Lemoine.CncEngine
   {
     #region Members
     readonly ICncEngineConfig m_cncEngineConfig;
-#if NETSTANDARD || NET48 || NETCOREAPP
     readonly IExtensionsLoader m_extensionsLoader;
-#endif // NETSTANDARD || NET48 || NETCOREAPP
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
     readonly int m_cncAcquisitionId;
@@ -86,6 +82,13 @@ namespace Lemoine.CncEngine
     }
 
     /// <summary>
+    /// Number of requests to run before stopping the acquisition
+    /// 
+    /// If not set, run until the exit is requested
+    /// </summary>
+    public int? Calls { get; set; } = null;
+
+    /// <summary>
     /// Latest execution date/time of the method
     /// </summary>
     public override DateTime LastExecution
@@ -117,10 +120,7 @@ namespace Lemoine.CncEngine
     /// <summary>
     /// Reference to the CNC Data Handler
     /// </summary>
-    public CncDataHandler CncDataHandler
-    {
-      get { return m_cncDataHandler; }
-    }
+    public CncDataHandler CncDataHandler => m_cncDataHandler;
 
     /// <summary>
     /// Final data once all the module requests are completed
@@ -192,6 +192,7 @@ namespace Lemoine.CncEngine
     /// <param name="every"></param>
     /// <param name="assemblyLoader"></param>
     /// <param name="fileRepoClientFactory"></param>
+    /// <param
     /// <param name="useStaThread"></param>
     /// <param name="useProcess">use process</param>
     public Acquisition (ICncEngineConfig cncEngineConfig, IExtensionsLoader extensionsLoader, int cncAcquisitionId, TimeSpan every, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useStaThread = false, bool useProcess = false)
@@ -223,16 +224,19 @@ namespace Lemoine.CncEngine
     /// <param name="useProcess"></param>
     /// <param name="assemblyLoader"></param>
     /// <param name="fileRepoClientFactory"></param>
-    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useProcess = false)
+    /// <param name="extensionsLoader">not null</param>
+    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, IExtensionsLoader extensionsLoader, bool useProcess = false)
     {
       Debug.Assert (null != cncEngineConfig);
+      Debug.Assert (null != extensionsLoader, "extensionsLoader not null");
 
       m_cncEngineConfig = cncEngineConfig;
       m_cncAcquisitionId = 0;
-      m_repository = CreateRepositoryFromLocalFile (localFilePath);
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
+      m_extensionsLoader = extensionsLoader;
       m_useProcess = useProcess;
+      m_repository = CreateRepositoryFromLocalFile (localFilePath);
     }
 
 #if NETSTANDARD || NET48 || NETCOREAPP
@@ -245,16 +249,19 @@ namespace Lemoine.CncEngine
     /// <param name="useProcess"></param>
     /// <param name="assemblyLoader"></param>
     /// <param name="fileRepoClientFactory"></param>
-    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, string numParameters, IDictionary<string, string> jsonParameters, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, bool useProcess = false)
+    /// <param name="extensionsLoader">not null</param>
+    public Acquisition (ICncEngineConfig cncEngineConfig, string localFilePath, string numParameters, IDictionary<string, string> jsonParameters, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, IExtensionsLoader extensionsLoader, bool useProcess = false)
     {
       Debug.Assert (null != cncEngineConfig);
+      Debug.Assert (null != extensionsLoader, "extensionsLoader not null");
 
       m_cncEngineConfig = cncEngineConfig;
       m_cncAcquisitionId = 0;
-      m_repository = CreateRepositoryFromLocalFileParameters (localFilePath, numParameters, jsonParameters);
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
+      m_extensionsLoader = extensionsLoader;
       m_useProcess = useProcess;
+      m_repository = CreateRepositoryFromLocalFileParameters (localFilePath, numParameters, jsonParameters);
     }
 
     /// <summary>
@@ -265,16 +272,19 @@ namespace Lemoine.CncEngine
     /// <param name="repository"></param>
     /// <param name="assemblyLoader"></param>
     /// <param name="fileRepoClientFactory"></param>
-    public Acquisition (ICncEngineConfig cncEngineConfig, int cncAcquisitionId, Repository repository, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory)
+    /// <param name="extensionsLoader">not null</param>
+    public Acquisition (ICncEngineConfig cncEngineConfig, int cncAcquisitionId, Repository repository, IAssemblyLoader assemblyLoader, IFileRepoClientFactory fileRepoClientFactory, IExtensionsLoader extensionsLoader)
     {
       Debug.Assert (null != cncEngineConfig);
       Debug.Assert (null != repository);
+      Debug.Assert (null != extensionsLoader);
 
       m_cncEngineConfig = cncEngineConfig;
       m_cncAcquisitionId = cncAcquisitionId;
       m_repository = repository;
       m_assemblyLoader = assemblyLoader;
       m_fileRepoClientFactory = fileRepoClientFactory;
+      m_extensionsLoader = extensionsLoader;
     }
 #endif // NETSTANDARD || NET48 || NETCOREAPP
     #endregion // Constructors
@@ -470,7 +480,7 @@ namespace Lemoine.CncEngine
         }
         SetActive ();
         if (!cancellationToken.IsCancellationRequested) {
-          m_cncDataHandler.Work (this.UseStampFile, this.ParentProcessId, cancellationToken);
+          m_cncDataHandler.Work (this.UseStampFile, this.ParentProcessId, cancellationToken, this.Calls);
         }
       }
       catch (Exception ex) {
@@ -548,6 +558,18 @@ namespace Lemoine.CncEngine
       }
       else {
         threadsAndProcessesChecker.AddThread (this);
+      }
+    }
+
+    public void WriteFinalDataToStdout ()
+    {
+      foreach (var item in this.FinalData) {
+        try {
+          System.Console.WriteLine ($"{item.Key}={m_cncDataHandler.GetStringFromKeyValueItem (item)}");
+        }
+        catch (Exception ex) {
+          log.Fatal ($"WriteFinalDataToStdout: error while trying to output m_data in the logs for key {item.Key}", ex);
+        }
       }
     }
   }

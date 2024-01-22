@@ -70,8 +70,9 @@ namespace Lem_CncConsole
       }
 
       if (options is null) {
-        log.Fatal ("Main: unexpected null options");
-        throw new NullReferenceException ();
+        log.Info ("Main: options null");
+        Environment.Exit (1);
+        return;
       }
 
       var applicationName = "Lem_CncConsole-" + options.CncAcquisitionId;
