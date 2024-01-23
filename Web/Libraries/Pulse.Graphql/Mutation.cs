@@ -57,6 +57,9 @@ namespace Pulse.Graphql
       Field<NonNullGraphType<BooleanGraphType>> ("removeCncAcquisition")
         .Argument<NonNullGraphType<IdGraphType>> ("cncAcquisitionId")
         .Resolve (ctx => RemoveCncAcquisition (ctx.GetArgument<int> ("cncAcquisitionId")));
+      Field<NonNullGraphType<CncAcquisitionTestGraphType>, CncAcquisitionTestResponse> ("testCncAcquisition")
+        .Argument<NonNullGraphType<TestCncAcquisitionInputType>> ("cncAcquisition")
+        .ResolveAsync (ctx => ctx.GetArgument<TestCncAcquisition> ("cncAcquisition").TestAsync ());
     }
 
     bool RemoveCncAcquisition (int id)

@@ -44,8 +44,9 @@ type Mutation {
   createComponentIntermediateWorkPiece(componentIntermediateWorkPiece: NewComponentIntermediateWorkPiece!): ComponentIntermediateWorkPiece!
   createOperation(operation: NewOperation!): Operation!
   updateOperation(operation: UpdateOperation!): Operation!
-  createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisition!
-  updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisition!
+  testCncAcquisition(cncAcquisition: TestCncAcquisition!): CncAcquisitionTest!
+  createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisitionChange!
+  updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisitionChange!
   removeCncAcquisition(cncAcquisitionId: ID!): Boolean!
 }
 
@@ -594,6 +595,17 @@ type CncConfigParamValue {
   value: String
 }
 
+type CncAcquisitionTest {
+  cncConfig: CncConfig!
+  parameters: [CncConfigParamValue!]!
+  loadError: Boolean
+  missingParameters: [String!]
+  invalidParameters: [String!]
+  additionalParameters: [String!]
+  cncData: String!
+  exitCode: Int # if the console test application was run
+}
+
 interface ICncAcquisition {
   id: ID
   cncConfig: CncConfig!
@@ -622,6 +634,11 @@ input CncConfigParamValueInput {
   value: String
 }
 
+input TestCncAcquisition {
+  cncConfigName: String!
+  parameters: [CncConfigParamValueInput!]!   
+}
+
 input NewCncAcquisition {
   cncConfigName: String!
   parameters: [CncConfigParamValueInput!]!   
@@ -629,6 +646,6 @@ input NewCncAcquisition {
 
 input UpdateCncAcquisition {
   id: ID!
-  cncConfigName: String!
-  parameters: [CncConfigParamValueInput!]! 
+  cncConfigName: String
+  parameters: [CncConfigParamValueInput!]
 }

@@ -11,8 +11,9 @@ type Query {
 }
 
 type Mutation {
-  createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisition!
-  updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisition!
+  testCncAcquisition(cncAcquisition: TestCncAcquisition!): CncAcquisitionTest!
+  createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisitionChange!
+  updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisitionChange!
   removeCncAcquisition(cncAcquisitionId: ID!): Boolean!
 }
 
@@ -65,6 +66,17 @@ type CncConfigParamValue {
   value: String
 }
 
+type CncAcquisitionTest {
+  cncConfig: CncConfig!
+  parameters: [CncConfigParamValue!]!
+  loadError: Boolean
+  missingParameters: [String!]
+  invalidParameters: [String!]
+  additionalParameters: [String!]
+  cncData: String!
+  exitCode: Int # if the console test application was run
+}
+
 interface ICncAcquisition {
   id: ID
   cncConfig: CncConfig!
@@ -91,6 +103,11 @@ type CncAcquisitionChange implements ICncAcquisition {
 input CncConfigParamValueInput {
   name: String!
   value: String
+}
+
+input TestCncAcquisition {
+  cncConfigName: String!
+  parameters: [CncConfigParamValueInput!]!   
 }
 
 input NewCncAcquisition {

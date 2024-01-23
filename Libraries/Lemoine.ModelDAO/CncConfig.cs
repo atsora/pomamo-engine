@@ -237,6 +237,7 @@ namespace Lemoine.Model
     string m_unit;
     IList<CncConfigParam> m_parameters = new List<CncConfigParam> ();
     bool m_deprecated;
+    bool m_hasLemoineModule = false;
 
     /// <summary>
     /// File name
@@ -326,6 +327,17 @@ namespace Lemoine.Model
       get {
         Load ();
         return m_deprecated;
+      }
+    }
+
+    /// <summary>
+    /// Does the configuration contain a Lemoine module?
+    /// </summary>
+    public bool HasLemoineModule
+    {
+      get {
+        Load ();
+        return m_hasLemoineModule;
       }
     }
 
@@ -471,6 +483,13 @@ namespace Lemoine.Model
       foreach (XmlElement _ in xmlDocument.GetElementsByTagName ("deprecated")) {
         m_deprecated = true;
         break;
+      }
+      foreach (XmlElement element in xmlDocument.GetElementsByTagName ("module")) { 
+        var typeAttribute = element.GetAttribute ("type");
+        if (typeAttribute.StartsWith ("Lemoine.Cnc.")) {
+          m_hasLemoineModule = true;
+          break;
+        }
       }
     }
   }
