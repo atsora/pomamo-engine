@@ -11,6 +11,8 @@ using System.Threading;
 
 #if NETSTANDARD || NET48 || NETCOREAPP
 using Lemoine.Cnc.DataRepository;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 using Lemoine.Collections;
 using Lemoine.DataRepository;
@@ -31,6 +33,26 @@ namespace Lemoine.CncEngine
   /// </summary>
   public class Acquisition : ProcessOrThreadClass, IThreadClass, IProcessClass, ILogged
   {
+#if NETSTANDARD || NET48 || NETCOREAPP
+    /// <summary>
+    /// Output in standard output with Json format
+    /// </summary>
+    static readonly string STDOUT_JSON_KEY = "Cnc.Stdout.Json";
+    static readonly bool STDOUT_JSON_DEFAULT = false;
+
+    /// <summary>
+    /// Keep only the listed keys (in a comma separated list) if not empty
+    /// </summary>
+    static readonly string STDOUT_FILTER_KEY = "Cnc.Stdout.Filter";
+    static readonly string STDOUT_FILTER_DEFAULT = "";
+
+    /// <summary>
+    /// Replace some keys replacedKey1:newKey1,replacedKey2:newKey2
+    /// </summary>
+    static readonly string STDOUT_REPLACE_KEY = "Cnc.Stdout.Replace";
+    static readonly string STDOUT_REPLACE_DEFAULT = "";
+#endif // NETSTANDARD || NET48 || NETCOREAPP
+
     #region Members
     readonly ICncEngineConfig m_cncEngineConfig;
     readonly IExtensionsLoader m_extensionsLoader;
@@ -563,14 +585,68 @@ namespace Lemoine.CncEngine
 
     public void WriteFinalDataToStdout ()
     {
-      foreach (var item in this.FinalData) {
+      IDictionary<string, object> d = this.FinalData;
+#if NETSTANDARD || NET48 || NETCOREAPP
+      var stdoutJson = Lemoine.Info.ConfigSet
+        .LoadAndGet (STDOUT_JSON_KEY, STDOUT_JSON_DEFAULT);
+      var filter = Lemoine.Info.ConfigSet
+        .LoadAndGet (STDOUT_FILTER_KEY, STDOUT_FILTER_DEFAULT);
+      if (!string.IsNullOrEmpty (filter)) {
+        var filterItems = filter.Split (',');
+        d = d
+          .Where (x => filterItems.Contains (x.Key))
+          .ToDictionary (x => x.Key, x => x.Value);
+      }
+      var replace = Lemoine.Info.ConfigSet
+        .LoadAndGet (STDOUT_REPLACE_KEY, STDOUT_REPLACE_DEFAULT);
+      if (!string.IsNullOrEmpty (replace)) {
+        var replaceItems = replace
+          .Split (',')
+          .Select (x => x.Split (':'));
+        d = d
+          .ToDictionary (x => Replace (x.Key, replaceItems), x => x.Value);
+      }
+      if (stdoutJson) {
         try {
-          System.Console.WriteLine ($"{item.Key}={m_cncDataHandler.GetStringFromKeyValueItem (item)}");
+          var json = ConvertToJson (d);
+          System.Console.WriteLine (json);
         }
         catch (Exception ex) {
-          log.Fatal ($"WriteFinalDataToStdout: error while trying to output m_data in the logs for key {item.Key}", ex);
+          log.Fatal ($"WriteFinalDataToStdout: error while trying to output FinalData in json", ex);
         }
       }
+      else {
+#endif // NETSTANDARD || NET48 || NETCOREAPP
+        foreach (var item in d) {
+          try {
+            System.Console.WriteLine ($"{item.Key}={m_cncDataHandler.GetStringFromKeyValueItem (item)}");
+          }
+          catch (Exception ex) {
+            log.Fatal ($"WriteFinalDataToStdout: error while trying to output FinalData in the logs for key {item.Key}", ex);
+          }
+        }
+#if NETSTANDARD || NET48 || NETCOREAPP
+      }
+#endif // NETSTANDARD || NET48 || NETCOREAPP
     }
+
+#if NETSTANDARD || NET48 || NETCOREAPP
+    string ConvertToJson (object v)
+    {
+      var options = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+      options.Converters.Add (new JsonStringEnumConverter ());
+      return JsonSerializer.Serialize (v, options);
+    }
+
+    string Replace (string s, IEnumerable<string[]> r)
+    {
+      if (r.Select (x => x[0]).Contains (s)) {
+        return r.First (x => x[0].Equals (s))[1];
+      }
+      else {
+        return s;
+      }
+    }
+#endif  // NETSTANDARD || NET48 || NETCOREAPP
   }
 }
