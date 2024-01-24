@@ -468,7 +468,7 @@ namespace Lemoine.CncEngine
 
       // Check if a license is required
       if (!IsLicenseOk (module)) {
-        log.WarnFormat ("LoadModule: the license is not ok for {0}, skip it", module);
+        log.Warn ($"LoadModule: the license is not ok for {module}, skip it");
         return;
       }
       SetActive ();
@@ -663,10 +663,7 @@ namespace Lemoine.CncEngine
     {
       PropertyInfo propertyInfo = module.GetType ().GetProperty (name);
       if (propertyInfo == null) {
-        log.WarnFormat ("SetProperty: " +
-                        "property {0} does not exist in module {1}",
-                        name,
-                        module.GetType ());
+        log.Warn ($"SetProperty: property {name} does not exist in module {module.GetType ()}");
       }
       else {
         if (propertyInfo.PropertyType.Equals (typeof (string))) {
@@ -677,10 +674,7 @@ namespace Lemoine.CncEngine
         else if (propertyInfo.PropertyType.Equals (typeof (int))) {
           int intValue = 0;
           if (false == int.TryParse (value, out intValue)) {
-            log.WarnFormat ("SetProperty: " +
-                            "could not convert property {0}={1} " +
-                            "into an integer",
-                            name, value);
+            log.Warn ($"SetProperty: could not convert property {name}={value} into an integer");
           }
           else {
             propertyInfo.SetValue (module,
@@ -1052,7 +1046,7 @@ namespace Lemoine.CncEngine
       try { // Run the Start method if it exists
         var result = cncModuleExecutor.Start (moduleElement, data);
         if (!result) {
-          log.WarnFormat ($"ProcessStart: Start method of {cncModuleExecutor.CncModule} failed => skip the elements of this module");
+          log.Warn ("ProcessStart: Start method of {cncModuleExecutor.CncModule} failed => skip the elements of this module");
           RecordStartError (moduleElement, data);
           return false;
         }
@@ -1277,19 +1271,13 @@ namespace Lemoine.CncEngine
       try {
         // 1. Get the object
         if (!data.ContainsKey (dataItem)) {
-          log.WarnFormat ("ProcessSet: " +
-                          "object {0} is not in data " +
-                          "=> do nothing",
-                          dataItem);
+          log.Warn ($"ProcessSet: object {dataItem} is not in data => do nothing");
           return;
         }
 
         object datavalue = data[dataItem];
         if (null == datavalue) {
-          log.WarnFormat ("ProcessSet: " +
-                          "object {0} is null " +
-                          "=> do nothing",
-                          dataItem);
+          log.Warn ($"ProcessSet: object {dataItem} is null => do nothing");
           return;
         }
 

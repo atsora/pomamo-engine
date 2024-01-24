@@ -74,7 +74,7 @@ namespace Pulse.Graphql.InputType
     /// Filter the cnc data
     /// </summary>
     static readonly string FILTER_KEY = "Graphql.CncAcquisition.Filter";
-    static readonly string FILTER_DEFAULT = "MachineModeActive,Feedrate,RapidTraverse,RapidTraverseRate,SpindleLoad,SpindleSpeed,FeedrateOverride,SpindleSpeedOverride,SpindleSpeedOverride,ProgramName,SubProgramName,ProgramComment,SubProgramComment,CncPartCount,PartCode,CncModes,CycleTimeTotalSeconds,AcquisitionError,PingOk,AddressNotValid,ConnectionErrorMessage";
+    static readonly string FILTER_DEFAULT = "MachineModeActive,Feedrate,RapidTraverse,RapidTraverseRate,SpindleLoad,SpindleSpeed,FeedrateOverride,SpindleSpeedOverride,SpindleSpeedOverride,ProgramName,SubProgramName,ProgramComment,SubProgramComment,CncPartCount,CncModes,Hold,SingleBlock,ToolNumber,PalletNumber,PalletReady,StackLight,PartCode,CycleTimeTotalSeconds,Alarms,AcquisitionError,PingOk,AddressNotValid,ConnectionErrorMessage";
 
     /// <summary>
     /// Replace instruction for the cnc data

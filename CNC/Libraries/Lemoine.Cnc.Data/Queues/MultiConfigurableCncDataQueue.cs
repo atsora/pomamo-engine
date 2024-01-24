@@ -294,7 +294,7 @@ namespace Lemoine.Cnc.Data
       }
 
       if (!ok) {
-        log.WarnFormat ("No queues configured for storing {0}", item);
+        log.Warn ($"No queues configured for storing {item}");
       }
     }
 
@@ -310,7 +310,7 @@ namespace Lemoine.Cnc.Data
 
       IList<ExchangeData> datas = Peek (1);
       if (0 == datas.Count) {
-        log.InfoFormat ("Peek: the queue is empty => throw InvalidOperationException");
+        log.Info ("Peek: the queue is empty => throw InvalidOperationException");
         throw new InvalidOperationException ();
       }
 

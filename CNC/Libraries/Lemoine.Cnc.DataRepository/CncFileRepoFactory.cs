@@ -503,7 +503,7 @@ namespace Lemoine.Cnc.DataRepository
               string configKey = attribute.Value
                 .Substring (index + 1 + configPrefix.Length);
               configKey = configKey.Substring (0, configKey.IndexOf ('}'));
-              var configValue = GetConfig (configKey)?.ToString () ?? "";
+              var configValue = GetConfig (configKey)?.ToString ();
               if (configValue is null) {
                 log.Error ($"ReplaceKeywords: configValue is null for key {configKey} => replace it by an empty string");
                 configValue = "";
@@ -512,7 +512,7 @@ namespace Lemoine.Cnc.DataRepository
                 log.Debug ($"ReplaceKeywords: configValue is empty for key {configKey}");
               }
               attribute.Value = attribute.Value.Replace ("{" + configPrefix + configKey + "}",
-                                                         configValue.ToString ());
+                                                         configValue ?? "");
             }
 
             // {AutoSequenceMachineModeTranslationKey} / {AutoSequenceMachineModeNameTranslation} / {AutoSequenceMachineModeId}
@@ -592,19 +592,20 @@ namespace Lemoine.Cnc.DataRepository
             }
 
             // {...Id}
-            ReplaceValue (attribute, m_cncAcquisition.ConfigPrefix ?? "" + "Id",
+            ReplaceValue (attribute, (m_cncAcquisition.ConfigPrefix ?? "") + "Id",
                           m_cncAcquisition.Id.ToString ());
             // {...Name}
-            ReplaceValue (attribute, m_cncAcquisition.ConfigPrefix ?? "" + "Name",
+            ReplaceValue (attribute, (m_cncAcquisition.ConfigPrefix ?? "") + "Name",
                           m_cncAcquisition.Name);
             if (null != m_cncAcquisition.ConfigParameters) {
-              // {..Parameters}
-              string parametersKey = "{" + m_cncAcquisition.ConfigPrefix ?? "" + "Parameter}";
-              if (attribute.Value.Contains (parametersKey)) {
-                attribute.Value = attribute.Value.Replace (parametersKey, m_cncAcquisition.ConfigParameters);
+              // {..Parameter}
+              string parameterKey = "{" + (m_cncAcquisition.ConfigPrefix ?? "") + "Parameter}";
+              if (attribute.Value.Contains (parameterKey)) {
+                attribute.Value = attribute.Value.Replace (parameterKey, m_cncAcquisition.ConfigParameters);
               }
             }
-            if (keyParams?.Any () ?? false) {
+            if (attribute.Value.ToLowerInvariant ().Contains ("param")
+              && (keyParams?.Any () ?? false)) {
               // {..param:key} / {..Parami}
               foreach (var kv in keyParams) {
                 var k = kv.Key;
@@ -819,6 +820,9 @@ namespace Lemoine.Cnc.DataRepository
     {
       string fullKey = "{" + keyword + "}";
       if (attribute.Value.Contains (fullKey)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ReplaceValue: replace {fullKey} by {v}");
+        }
         attribute.Value = attribute.Value.Replace (fullKey, v);
       }
     }
@@ -943,7 +947,7 @@ namespace Lemoine.Cnc.DataRepository
           throw new DatabaseException ("Config read problem", ex);
         }
         if (null == config) {
-          log.WarnFormat ($"GetConfig: config key {key} does not exist");
+          log.Warn ($"GetConfig: config key {key} does not exist");
           return "";
         }
         else {
@@ -989,6 +993,11 @@ namespace Lemoine.Cnc.DataRepository
     {
       var keyParams = m_cncAcquisition.ConfigKeyParams
         .ToDictionary (kv => kv.Key, kv => kv.Value); // Clone it
+      if (log.IsDebugEnabled) {
+        foreach (var kv in keyParams) {
+          log.Debug ($"GetKeyParams: add {kv.Key}={kv.Value} from ConfigKeyParams");
+        }
+      }
 
       if (!string.IsNullOrEmpty (m_cncAcquisition.ConfigParameters)) {
         if (log.IsDebugEnabled) {
@@ -1022,6 +1031,7 @@ namespace Lemoine.Cnc.DataRepository
           var v = keyParams[name];
           if (v is string path && !path.Equals ("")) {
             if (!File.Exists (path)) {
+              log.Debug ($"GetKeyParams: path={path} does not exist => get it in file repo");
               keyParams[name] = GetPathInFileRepo (path);
             }
             else if (log.IsDebugEnabled) {

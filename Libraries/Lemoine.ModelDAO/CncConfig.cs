@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -198,7 +199,7 @@ namespace Lemoine.Model
         return this.Type.ToLowerInvariant () switch {
           "ip" => IPAddress.TryParse (v, out var _),
           "url" => Uri.IsWellFormedUriString (v, UriKind.RelativeOrAbsolute),
-          "path" => System.IO.File.Exists (v) || System.IO.Directory.Exists (v),
+          "path" => !Path.IsPathRooted (v) || System.IO.File.Exists (v) || System.IO.Directory.Exists (v),
           "host" => Uri.CheckHostName (v) != UriHostNameType.Unknown,
           "string" => true,
           "int" or "integer" => int.TryParse (v, out var _),

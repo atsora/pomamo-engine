@@ -104,13 +104,14 @@ namespace Lemoine.FileRepository
 
       using (var synchronizerFile = new SynchronizerFile ()) {
         if (File.Exists (localPath) && !IsUpdateNeeded (fileRepoClient, synchronizerFile, distantDirectory, distantFileName, localPath)) {
-          log.DebugFormat ("SynchronizeFile: {0} is already the latest version, do nothing",
-            localPath);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"SynchronizeFile: {localPath} is already the latest version, do nothing");
+          }
           return true;
         }
         else { // Download requested
           if (log.IsDebugEnabled) {
-            log.DebugFormat ($"SynchronizeFile: download of {distantDirectory}/{distantFileName} to {localPath} is requested");
+            log.Debug ($"SynchronizeFile: download of {distantDirectory}/{distantFileName} to {localPath} is requested");
           }
           string backupPath = null;
           if (File.Exists (localPath)) {
@@ -131,14 +132,14 @@ namespace Lemoine.FileRepository
             }
             catch (Exception ex1) {
               if (log.IsErrorEnabled) {
-                log.Error ("SynchronizeFile: exception in post-process phase", ex1);
+                log.Error ($"SynchronizeFile: exception in post-process phase for {distantDirectory}/{distantFileName} => {localPath}", ex1);
               }
             }
             return true;
           }
           catch (Exception ex) {
             if (log.IsErrorEnabled) {
-              log.Error ("SynchronizeFile: GetFile exception", ex);
+              log.Error ($"SynchronizeFile: GetFile exception for {distantDirectory}/{distantFileName} => {localPath}", ex);
             }
             if (null != backupPath) {
               if (File.Exists (localPath)) {

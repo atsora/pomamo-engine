@@ -180,7 +180,12 @@ namespace Pulse.Graphql.Type
               // If not optional, then the default value used if not value is set
               v = cncConfigParam.Default;
             }
-            if (!cncConfigParam.IsValidValue (v)) {
+            if (cncConfigParam.Optional && string.IsNullOrEmpty (v)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"CheckParameters: {p.Key} is optional and the value is null or empty => ok");
+              }
+            }
+            else if (!cncConfigParam.IsValidValue (v)) { // Set or not optional
               log.Error ($"CheckParameters: invalid value {v} for parameter {p.Key}");
               this.AddInvalidParameter (p.Key);
             }
