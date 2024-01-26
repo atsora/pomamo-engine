@@ -13,6 +13,17 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
+  <!-- For x86 compilation that is using the global .sln -->
+  <PropertyGroup Condition="$(Product.StartsWith('Atsora')) == 'true'">
+    <DefineConstants>$(DefineConstants);ATSORA</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Product)' == 'Atsora Connector'">
+    <DefineConstants>$(DefineConstants);CONNECTOR</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Product.StartsWith('Lemoine')) == 'true'">
+    <DefineConstants>$(DefineConstants);LEMOINE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="NHibernate">
       <HintPath>..\..\..\pomamo-extern\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
@@ -23,6 +34,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\..\atsora-libs\Atsora.JsonFileData\Atsora.JsonFileData.csproj" />
     <ProjectReference Include="..\..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />

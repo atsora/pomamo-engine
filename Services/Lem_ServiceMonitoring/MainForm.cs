@@ -65,6 +65,13 @@ namespace LemoineServiceMonitoring
     static readonly string SEQUENTIAL_KEY = "ServiceMonitoring.Sequential";
     static readonly bool SEQUENTIAL_DEFAULT = false;
 
+    const string WATCH_DOG_32_SERVICE_NAME =
+#if CONNECTOR
+      "AconnectorWatchDogService";
+#else // !CONNECTOR
+      "Lem_WatchDog32Service";
+#endif // !CONNECTOR
+
     private static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
     volatile int m_listViewUpdate = 0;
@@ -627,7 +634,7 @@ namespace LemoineServiceMonitoring
     /// <returns></returns>
     async Task<bool> StopWatchDog32ServiceAsync ()
     {
-      var controlSC = new WindowsServiceController ("Lem_WatchDog32Service");
+      var controlSC = new WindowsServiceController (WATCH_DOG_32_SERVICE_NAME);
       try {
         await controlSC.StopServiceAsync ();
         return true;
@@ -646,7 +653,7 @@ namespace LemoineServiceMonitoring
 
     async Task StartWatchDog32ServiceAsync ()
     {
-      var controlSC = new WindowsServiceController ("Lem_WatchDog32Service");
+      var controlSC = new WindowsServiceController (WATCH_DOG_32_SERVICE_NAME);
       try {
         await controlSC.StartServiceAsync ();
       }
@@ -1108,7 +1115,7 @@ namespace LemoineServiceMonitoring
         .Select (x => x.Item2);
       InvokeUpdateButtons (selectedServiceControllers);
     }
-    #endregion
+#endregion
 
     async void ButtonStopAllClick (object sender, EventArgs e)
     {
