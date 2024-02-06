@@ -44,6 +44,7 @@
     <ProjectReference Include="..\Lemoine.Plugin.ReasonDefaultManagement\Lemoine.Plugin.ReasonDefaultManagement.csproj" />
     <ProjectReference Include="..\Lemoine.Plugin.SetupSwitcher\Lemoine.Plugin.SetupSwitcher.csproj" />
     <ProjectReference Include="..\Lemoine.Plugin.ShortPeriodRemoval\Lemoine.Plugin.ShortPeriodRemoval.csproj" />
+    <ProjectReference Include="..\Pulse.PluginImplementation\Pulse.PluginImplementation.csproj" />
   </ItemGroup>
   
 </Project>

@@ -38,19 +38,11 @@ namespace Lemoine.Plugin.StampDetection
 
     public TransactionLevel RestrictedTransactionLevel { get; set; }
 
-    public int OperationDetectionStatusPriority
-    {
-      get {
-        return m_operationDetectionStatus.OperationDetectionStatusPriority;
-      }
-    }
+    public int OperationDetectionStatusPriority => m_operationDetectionStatus.OperationDetectionStatusPriority;
 
-    public int CycleDetectionStatusPriority
-    {
-      get {
-        return m_cycleDetectionStatus.CycleDetectionStatusPriority;
-      }
-    }
+    public int CycleDetectionStatusPriority => m_cycleDetectionStatus.CycleDetectionStatusPriority;
+
+    public bool UseUniqueSerializableTransaction (IMachineModuleDetection _) => false;
 
     public bool Initialize (IMachineModule machineModule, IOperationDetection operationDetection, IOperationCycleDetection operationCycleDetection, ISequenceDetection sequenceDetection, ISequenceMilestoneDetection sequenceMilestoneDetection)
     {

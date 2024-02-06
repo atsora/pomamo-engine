@@ -373,7 +373,7 @@ namespace Lemoine.Analysis
         log.Debug ($"TryRunOnDetection: machine module detection id={machineModuleDetection.Id} attempt={attempt}");
       }
 
-      var useUniqueSerializableTransaction = m_extensions.Any (i => i.UseUniqueSerializableTransaction (machineModuleDetection));
+      var useUniqueSerializableTransaction = m_extensions.Any (i => i.UseUniqueSerializableTransaction (machineModuleDetection)) || GetExtensionsByMachineModule (machineModule).Any (i => i.UseUniqueSerializableTransaction (machineModuleDetection));
       if (log.IsDebugEnabled) {
         log.Debug ($"TryRunOnDetection: useUniqueSerializableTransaction={useUniqueSerializableTransaction} for machine module detection id {machineModuleDetection.Id}");
       }
@@ -485,8 +485,9 @@ namespace Lemoine.Analysis
 
       IEnumerable<IDetectionAnalysisByMachineModuleExtension> extensions;
       if (!m_extensionsByMachineModule.TryGetValue (machineModule.Id, out extensions)) {
-        log.DebugFormat ("GetExtensionsByMachineModule: get the extensions by machine module for machinemoduleid={0} (cache not set)",
-          machineModule.Id);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetExtensionsByMachineModule: get the extensions by machine module for machinemoduleid={machineModule.Id} (cache not set)");
+        }
         SequenceDetection sequenceDetection = GetSequenceDetection (machineModule);
         var sequenceMilestoneDetection = GetSequenceMilestoneDetection (machineModule);
         extensions = Lemoine.Extensions.ExtensionManager
@@ -496,8 +497,9 @@ namespace Lemoine.Analysis
         foreach (var extension in extensions) {
           extension.RestrictedTransactionLevel = m_restrictedTransactionLevel;
         }
-        log.DebugFormat ("GetExtensionsByMachineModule: {0} extensions initialized for machine module {1}",
-          extensions.Count (), machineModule.Id);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetExtensionsByMachineModule: {extensions.Count ()} extensions initialized for machine module {machineModule.Id}");
+        }
         m_extensionsByMachineModule[machineModule.Id] = extensions;
       }
       Debug.Assert (null != extensions);

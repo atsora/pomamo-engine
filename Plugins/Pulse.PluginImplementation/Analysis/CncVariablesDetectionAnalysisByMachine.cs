@@ -1,12 +1,11 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using Lemoine.Extensions.Analysis;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Lemoine.Extensions.Analysis.Detection;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
@@ -118,7 +117,7 @@ namespace Pulse.PluginImplementation.Analysis
 
       if (!Initialize (m_monitoredMachine)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Initialize: initialize with IMachine failed => return false (skip)");
+          log.Debug ("Initialize: initialize with IMachine failed => return false (skip)");
         }
         return false;
       }
@@ -145,7 +144,7 @@ namespace Pulse.PluginImplementation.Analysis
     /// ProcessDetection implementation
     /// </summary>
     /// <param name="detection"></param>
-    public void ProcessDetection (IMachineModuleDetection detection)
+    public virtual void ProcessDetection (IMachineModuleDetection detection)
     {
       // Note: if no plugin returns true for IDetectionAnalysisExtension.UseUniqueSerializableTransaction,
       // then this is not run in a transaction
@@ -164,7 +163,7 @@ namespace Pulse.PluginImplementation.Analysis
             if (cncVariableKeys.Contains (EndCycleVariableKey)) {
               var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
                 .FindAt (detection.MachineModule, EndCycleVariableKey, detection.DateTime);
-              if (null == newCncVariable) {
+              if (newCncVariable is null) {
                 log.ErrorFormat ("ProcessDetection: no cnc variable {0} at {1}",
                   EndCycleVariableKey, detection.DateTime);
               }
@@ -172,7 +171,7 @@ namespace Pulse.PluginImplementation.Analysis
                 var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
                   .FindAt (detection.MachineModule, EndCycleVariableKey, detection.DateTime.AddSeconds (-1));
                 if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
-                  log.DebugFormat ("ProcessDetection: no cnc variable change");
+                  log.Debug ("ProcessDetection: no cnc variable change");
                 }
                 else {
                   try {
@@ -194,7 +193,7 @@ namespace Pulse.PluginImplementation.Analysis
             if (cncVariableKeys.Contains (StartCycleVariableKey)) {
               var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
                 .FindAt (detection.MachineModule, StartCycleVariableKey, detection.DateTime);
-              if (null == newCncVariable) {
+              if (newCncVariable is null) {
                 log.ErrorFormat ("ProcessDetection: no cnc variable {0} at {1}",
                   StartCycleVariableKey, detection.DateTime);
               }
@@ -202,7 +201,7 @@ namespace Pulse.PluginImplementation.Analysis
                 var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
                   .FindAt (detection.MachineModule, StartCycleVariableKey, detection.DateTime.AddSeconds (-1));
                 if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
-                  log.DebugFormat ("ProcessDetection: no cnc variable change");
+                  log.Debug ("ProcessDetection: no cnc variable change");
                 }
                 else {
                   try {
@@ -275,10 +274,7 @@ namespace Pulse.PluginImplementation.Analysis
     /// </summary>
     /// <param name="detection"></param>
     /// <returns></returns>
-    public virtual bool UseUniqueSerializableTransaction (IMachineModuleDetection detection)
-    {
-      return true;
-    }
+    public virtual bool UseUniqueSerializableTransaction (IMachineModuleDetection detection) => true;
 
     #region ICycleDetectionStatusExtension
     /// <summary>
@@ -290,13 +286,11 @@ namespace Pulse.PluginImplementation.Analysis
     {
       Debug.Assert (null != machine);
 
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                 this.GetType ().FullName,
-                                                 machine.Id));
+      log = LogManager.GetLogger ($"{this.GetType ().FullName}.{machine.Id}");
 
       TConfiguration configuration;
       if (!base.LoadConfiguration (out configuration)) {
-        log.ErrorFormat ("Initialize: bad configuration, skip this instance");
+        log.Error ("Initialize: bad configuration, skip this instance");
         return false;
       }
 
@@ -309,7 +303,7 @@ namespace Pulse.PluginImplementation.Analysis
 
       if (!InitializeProperties (machine, configuration)) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("Initialize: InitializeProperties returned false");
+          log.Error ("Initialize: InitializeProperties returned false");
         }
         return false;
       }
@@ -334,7 +328,7 @@ namespace Pulse.PluginImplementation.Analysis
       m_cycleDetectionStatus = new CycleDetectionStatusFromAnalysisStatus (configuration.CycleDetectionStatusPriority);
       if (!m_cycleDetectionStatus.Initialize (machine)) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("InitializeProperties: initialization of cycle detection status failed");
+          log.Error ("InitializeProperties: initialization of cycle detection status failed");
         }
         return false;
       }
@@ -375,13 +369,11 @@ namespace Pulse.PluginImplementation.Analysis
             int machineFilterId = configuration.MachineFilterId;
             machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
               .FindById (machineFilterId);
-            if (null == machineFilter) {
-              log.ErrorFormat ("Initialize: " +
-                               "machine filter id {0} does not exist",
-                               machineFilterId);
+            if (machineFilter is null) {
+              log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
               return false;
             }
-            else {
+            else { // machineFilter is not null
               if (!machineFilter.IsMatch (machine)) {
                 return false;
               }

@@ -1,4 +1,5 @@
 ﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies, 2023 Nicolas Relange
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -41,6 +42,8 @@ namespace Pulse.PluginImplementation.Analysis
     IOperationDetectionStatusExtension m_operationDetectionStatus;
     ISequenceDetection m_sequenceDetection;
     ISequenceMilestoneDetection m_sequenceMilestoneDetection;
+    string m_startCycleVariableKey;
+    string m_endCycleVariableKey;
     string m_sequenceVariableKey;
     string m_milestoneVariableKey;
     SequenceKind m_previousSequenceKind = SequenceKind.Machining; // default
@@ -48,74 +51,54 @@ namespace Pulse.PluginImplementation.Analysis
     /// <summary>
     /// Associated configuration
     /// </summary>
-    protected TConfiguration Configuration
-    {
-      get { return m_configuration; }
-    }
+    protected TConfiguration Configuration => m_configuration;
 
     /// <summary>
     /// Associated machine module
     /// </summary>
-    protected IMachineModule MachineModule
-    {
-      get { return m_machineModule; }
-    }
+    protected IMachineModule MachineModule => m_machineModule;
 
     /// <summary>
     /// Associated monitored machine
     /// </summary>
-    protected IMonitoredMachine Machine
-    {
-      get { return m_machineModule.MonitoredMachine; }
-    }
+    protected IMonitoredMachine Machine => m_machineModule.MonitoredMachine;
+
+    /// <summary>
+    /// Start cycle variable key
+    /// </summary>
+    protected virtual string StartCycleVariableKey => m_startCycleVariableKey;
+
+    protected virtual string EndCycleVariableKey => m_endCycleVariableKey;
 
     /// <summary>
     /// Sequence variable key
     /// </summary>
-    protected virtual string SequenceVariableKey
-    {
-      get { return m_sequenceVariableKey; }
-    }
+    protected virtual string SequenceVariableKey => m_sequenceVariableKey;
 
     /// <summary>
     /// Milestone variable key
     /// </summary>
-    protected virtual string MilestoneVariableKey
-    {
-      get { return m_milestoneVariableKey; }
-    }
+    protected virtual string MilestoneVariableKey => m_milestoneVariableKey;
 
     /// <summary>
     /// Associated operation detection
     /// </summary>
-    protected IOperationDetection OperationDetection
-    {
-      get { return m_operationDetection; }
-    }
+    protected IOperationDetection OperationDetection => m_operationDetection;
 
     /// <summary>
     /// Associated operation cycle detection
     /// </summary>
-    protected IOperationCycleDetection OperationCycleDetection
-    {
-      get { return m_operationCycleDetection; }
-    }
+    protected IOperationCycleDetection OperationCycleDetection => m_operationCycleDetection;
 
     /// <summary>
     /// Associated sequence detection
     /// </summary>
-    protected ISequenceDetection SequenceDetection
-    {
-      get { return m_sequenceDetection; }
-    }
+    protected ISequenceDetection SequenceDetection => m_sequenceDetection;
 
     /// <summary>
     /// Associated sequence milestone detection
     /// </summary>
-    protected ISequenceMilestoneDetection SequenceMilestoneDetection
-    {
-      get { return m_sequenceMilestoneDetection; }
-    }
+    protected ISequenceMilestoneDetection SequenceMilestoneDetection => m_sequenceMilestoneDetection;
 
     /// <summary>
     /// Restricted transaction level
@@ -128,12 +111,14 @@ namespace Pulse.PluginImplementation.Analysis
     /// <summary>
     /// Cycle detection status priority
     /// </summary>
-    public int CycleDetectionStatusPriority
-    {
-      get {
-        return m_cycleDetectionStatus.CycleDetectionStatusPriority;
-      }
-    }
+    public int CycleDetectionStatusPriority => m_cycleDetectionStatus.CycleDetectionStatusPriority;
+
+    /// <summary>
+    /// Use a unique serializable transaction here
+    /// </summary>
+    /// <param name="detection"></param>
+    /// <returns></returns>
+    public virtual bool UseUniqueSerializableTransaction (IMachineModuleDetection detection) => false;
 
     /// <summary>
     /// Logger
@@ -167,10 +152,8 @@ namespace Pulse.PluginImplementation.Analysis
         log.Debug ("Initialize: initialize with IMachine failed => return false (skip)");
         return false;
       }
-      if (!LoadConfiguration (out m_configuration)) {
-        log.Error ("Initialize: bad configuration, skip this instance");
-        return false;
-      }
+      m_startCycleVariableKey = machineModule.StartCycleVariable;
+      m_endCycleVariableKey = machineModule.CycleVariable;
       m_sequenceVariableKey = machineModule.SequenceVariable;
       m_milestoneVariableKey = machineModule.MilestoneVariable;
       return true;
@@ -310,7 +293,7 @@ namespace Pulse.PluginImplementation.Analysis
     /// </summary>
     /// <param name="machine"></param>
     /// <returns></returns>
-    public bool Initialize (IMachine machine)
+    public virtual bool Initialize (IMachine machine)
     {
       log = LogManager.GetLogger (string.Format ("{0}.{1}",
                                                  this.GetType ().FullName,

@@ -30,6 +30,12 @@ namespace Lemoine.Extensions.Analysis
     ModelDAO.TransactionLevel RestrictedTransactionLevel { get; set; }
 
     /// <summary>
+    /// Should the detection analysis be run in a unique serializable transaction ?
+    /// </summary>
+    /// <param name="detection"></param>
+    bool UseUniqueSerializableTransaction (IMachineModuleDetection detection);
+
+    /// <summary>
     /// Extension to DetectionAnalysis: process a specific detection
     /// </summary>
     /// <param name="detection"></param>

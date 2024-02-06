@@ -742,7 +742,7 @@ namespace Lemoine.Cnc.DataRepository
       IEnumerable<Tuple<string, Dictionary<string, string>>> result = null;
       result = GetCncFileRepoExtensions ()
         .Select (extension => extension.GetIncludedXmlTemplate (extensionName))
-        .Where (configXml => null != configXml);
+        .Where (configXml => null != configXml && (null != configXml.Item1));
 
       return result;
     }

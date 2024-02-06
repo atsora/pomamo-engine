@@ -1,9 +1,9 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using System.Xml;
 using Lemoine.Extensions.Cnc;
 using Lemoine.Model;
 using System.Diagnostics;
@@ -22,7 +22,7 @@ namespace Pulse.PluginImplementation.Cnc
   public abstract class CncFileRepoMachineModuleVariables<TConfiguration>
     : Lemoine.Extensions.MultipleInstanceConfigurableExtension<TConfiguration>
     , ICncFileRepoExtension
-    where TConfiguration : ConfigurationWithMachineFilter, new ()
+    where TConfiguration : ConfigurationWithMachineFilter, new()
   {
     ILog log = LogManager.GetLogger (typeof (CncFileRepoMachineModuleVariables<TConfiguration>).FullName);
 
@@ -60,8 +60,7 @@ namespace Pulse.PluginImplementation.Cnc
                                                  cncAcquisition.Id));
 
       if (!LoadConfiguration (out var configuration)) {
-        log.ErrorFormat ("Initialize: " +
-                         "configuration error, skip this instance");
+        log.Error ("Initialize: configuration error, skip this instance");
         return false;
       }
 
@@ -75,10 +74,8 @@ namespace Pulse.PluginImplementation.Cnc
               int machineFilterId = configuration.MachineFilterId;
               m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
                 .FindById (machineFilterId);
-              if (null == m_machineFilter) {
-                log.ErrorFormat ("Initialize: " +
-                                 "machine filter id {0} does not exist",
-                                 machineFilterId);
+              if (m_machineFilter is null) {
+                log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
                 return false;
               }
               else { // null != m_machineFilter
@@ -101,12 +98,6 @@ namespace Pulse.PluginImplementation.Cnc
     public virtual IEnumerable<string> GetCncVariableKeys (IMachineModule machineModule)
     {
       var result = new List<string> ();
-      if ((null == m_machineFilter) && IsMachineFilterRequired ()) {
-        return result;
-      }
-      if ((null != m_machineFilter) && !m_machineFilter.IsMatch (machineModule.MonitoredMachine)) { // Machine filter does not match
-        return result;
-      }
       if (!string.IsNullOrEmpty (machineModule.CycleVariable)) {
         result.Add (machineModule.CycleVariable);
       }
@@ -127,10 +118,7 @@ namespace Pulse.PluginImplementation.Cnc
     /// </summary>
     /// <param name="machineModule"></param>
     /// <returns></returns>
-    public virtual DetectionMethod? GetDefaultDetectionMethod (IMachineModule machineModule)
-    {
-      return null;
-    }
+    public virtual DetectionMethod? GetDefaultDetectionMethod (IMachineModule machineModule) => null;
 
     /// <summary>
     /// Is a machine filter required ? (to override)
@@ -143,20 +131,14 @@ namespace Pulse.PluginImplementation.Cnc
     /// </summary>
     /// <param name="extensionName"></param>
     /// <returns></returns>
-    public string GetIncludePath (string extensionName)
-    {
-      return null;
-    }
+    public virtual string GetIncludePath (string extensionName) => null;
 
     /// <summary>
     /// Get include XM implementation (default: return null, nothing)
     /// </summary>
     /// <param name="extensionName"></param>
     /// <returns></returns>
-    public Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName)
-    {
-      return null;
-    }
+    public virtual Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName) => null;
   }
 }
 
