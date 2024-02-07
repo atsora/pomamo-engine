@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -27,7 +28,7 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
       get { return m_machine; }
     }
 
-    public void AddOperation (IOperation operation, UtcDateTimeRange range)
+    public void AddOperation (IOperation operation, UtcDateTimeRange range, bool autoOperation = true)
     {
       if (range.Lower.HasValue) {
         OperationDetectionNotifier.NotifyOperationDetection (m_machine, range.Lower.Value);
@@ -49,6 +50,11 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
     }
 
     public void StartOperation (IOperation operation, DateTime dateTime)
+    {
+      OperationDetectionNotifier.NotifyOperationDetection (m_machine, dateTime);
+    }
+
+    public void StopOperation (DateTime dateTime)
     {
       OperationDetectionNotifier.NotifyOperationDetection (m_machine, dateTime);
     }

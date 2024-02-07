@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -71,9 +72,7 @@ namespace Lemoine.Plugin.SetupSwitcher
       Debug.Assert (machine.Equals (m_machine));
 
       if (null == m_setupMachineStateTemplate) {
-        log.ErrorFormat ("AddOperation: " +
-                         "the Setup Machine State Template is null " +
-                         "=> return");
+        log.ErrorFormat ("AddOperation: the Setup Machine State Template is null => return");
         return;
       }
       
@@ -83,9 +82,7 @@ namespace Lemoine.Plugin.SetupSwitcher
       }
       
       if (!effectiveBegin.HasValue) {
-        log.ErrorFormat ("AddOperation: " +
-                         "unexpected effective begin (-oo) " +
-                         "=> return");
+        log.Error ("AddOperation: unexpected effective begin (-oo) => return");
         return;
       }
       
@@ -104,6 +101,11 @@ namespace Lemoine.Plugin.SetupSwitcher
           transaction.Commit ();
         }
       }
+    }
+
+    public void StopOperation (Lemoine.Model.IMonitoredMachine machine, DateTime dateTime)
+    {
+      // No new operation => nothing to do
     }
 
     void InitializeMachine (IMonitoredMachine machine)

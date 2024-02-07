@@ -736,18 +736,17 @@ namespace Lemoine.Analysis.Detection
       Debug.Assert (null != operation);
       Debug.Assert (!range.IsEmpty ());
 
-      log.DebugFormat ("AddOperation: " +
-                       "operation={0} in period {1}",
-                       operation, range);
-
-      m_operationDetection.AddOperation (operation, range, autoOperation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"AddOperation: operation={operation} in period {range}");
+      }
+      m_operationDetection.AddOperationOnly (operation, range, autoOperation);
     }
 
     void StopOperation (DateTime dateTime)
     {
-      log.DebugFormat ("StopOperation: " +
-                       "at {0}",
-                       dateTime);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"StopOperation: at {dateTime}");
+      }
 
       var association =
         new Lemoine.GDBPersistentClasses.OperationMachineAssociation (m_machineModule.MonitoredMachine,

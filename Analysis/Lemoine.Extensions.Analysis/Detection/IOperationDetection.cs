@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -46,6 +47,13 @@ namespace Lemoine.Extensions.Analysis.Detection
     /// </summary>
     /// <param name="operation">not null</param>
     /// <param name="range"></param>
-    void AddOperation (IOperation operation, UtcDateTimeRange range);
+    /// <param name="autoOperation">use auto-operation, set false to optimize the process if it is not   
+    void AddOperation (IOperation operation, UtcDateTimeRange range, bool autoOperation = true);
+
+    /// <summary>
+    /// Stop the operation at the specified UTC date/time
+    /// </summary>
+    /// <param name="dateTime"></param>
+    void StopOperation (DateTime dateTime);
   }
 }

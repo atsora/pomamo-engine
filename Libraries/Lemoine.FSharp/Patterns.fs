@@ -24,6 +24,16 @@ let (|RegexGroup|_|) ((regex,group):Regex * string) (s:string) =
   match regex.Match s with
   | m when m.Success ->
     match m.Groups[group] with
-    | g when g.Success -> Some(g.Value)
+    | g when g.Success -> Some g.Value
     | _ -> None
+  | _ -> None
+
+let (|Integer|_|) (str:string) =
+  match System.Int32.TryParse str with
+  | true,i -> Some i
+  | _ -> None
+
+let (|Float|_|) (str:string) =
+  match System.Double.TryParse str with
+  | true,f -> Some f
   | _ -> None

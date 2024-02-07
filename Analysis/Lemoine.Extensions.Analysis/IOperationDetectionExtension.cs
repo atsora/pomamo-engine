@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -30,5 +31,12 @@ namespace Lemoine.Extensions.Analysis
     void AddOperation (IMonitoredMachine machine, IOperation operation, UtcDateTimeRange range,
                        LowerBound<DateTime> effectiveBegin,
                        IOperationSlot previousOperationSlot);
+
+    /// <summary>
+    /// Stop an operation
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="dateTime"></param>
+    void StopOperation (IMonitoredMachine machine, DateTime dateTime);
   }
 }

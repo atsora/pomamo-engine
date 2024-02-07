@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies
+﻿// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -97,6 +97,126 @@ namespace Lemoine.Plugins.UnitTests
                 .Single ();
               Assert.That (part, Is.Not.Null);
               Assert.That (part.Code, Is.EqualTo ("P234"));
+            }
+          }
+          finally {
+            transaction.Rollback ();
+          }
+        }
+      }
+    }
+
+    [Test]
+    public void TestGetOp1Op2 ()
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (var transaction = session.BeginTransaction ()) {
+          try {
+            var regex = new Regex ("Part=(?<partName>\\w+) Op=(?<op1Name>\\w+)/(?<op2Name>\\w+) Qty=(?<qty1>\\d+)/(?<qty2>\\d+)");
+            {
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2");
+              var operation = programCommentParser.GetOperation ();
+              ModelDAOHelper.DAOFactory.Flush ();
+              Assert.That (operation, Is.Not.Null);
+              Assert.That (operation.Name, Is.EqualTo ("Op1/Op2"));
+              Assert.That (operation.IntermediateWorkPieces, Has.Count.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.First ().Name, Is.EqualTo ("Op1"));
+              Assert.That (operation.IntermediateWorkPieces.First ().OperationQuantity, Is.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.Last ().Name, Is.EqualTo ("Op2"));
+              Assert.That (operation.IntermediateWorkPieces.Last ().OperationQuantity, Is.EqualTo (2));
+              var part = operation
+                .IntermediateWorkPieces
+                .SelectMany (x => x.ComponentIntermediateWorkPieces)
+                .Select (x => x.Component.Part)
+                .Distinct ()
+                .Single ();
+              Assert.That (part, Is.Not.Null);
+              Assert.That (part.Name, Is.EqualTo ("P123"));
+            }
+            {
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2");
+              var operation = programCommentParser.GetOperation ();
+              ModelDAOHelper.DAOFactory.Flush ();
+              Assert.That (operation, Is.Not.Null);
+              Assert.That (operation.Name, Is.EqualTo ("Op1/Op2"));
+              Assert.That (operation.IntermediateWorkPieces, Has.Count.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.First ().Name, Is.EqualTo ("Op1"));
+              Assert.That (operation.IntermediateWorkPieces.First ().OperationQuantity, Is.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.Last ().Name, Is.EqualTo ("Op2"));
+              Assert.That (operation.IntermediateWorkPieces.Last ().OperationQuantity, Is.EqualTo (2));
+              var part = operation
+                .IntermediateWorkPieces
+                .SelectMany (x => x.ComponentIntermediateWorkPieces)
+                .Select (x => x.Component.Part)
+                .Distinct ()
+                .Single ();
+              Assert.That (part, Is.Not.Null);
+              Assert.That (part.Name, Is.EqualTo ("P123"));
+            }
+          }
+          finally {
+            transaction.Rollback ();
+          }
+        }
+      }
+    }
+
+    [Test]
+    public void TestGetOp1Op2withSequences ()
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (var transaction = session.BeginTransaction ()) {
+          try {
+            var regex = new Regex ("Part=(?<partName>\\w+) Op=(?<op1Name>\\w+)/(?<op2Name>\\w+) Qty=(?<qty1>\\d+)/(?<qty2>\\d+)");
+            {
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2") {
+                CreateSequences = true
+              };
+              var operation = programCommentParser.GetOperation ();
+              ModelDAOHelper.DAOFactory.Flush ();
+              Assert.That (operation, Is.Not.Null);
+              Assert.That (operation.Name, Is.EqualTo ("Op1/Op2"));
+              Assert.That (operation.IntermediateWorkPieces, Has.Count.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.First ().Name, Is.EqualTo ("Op1"));
+              Assert.That (operation.IntermediateWorkPieces.First ().OperationQuantity, Is.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.Last ().Name, Is.EqualTo ("Op2"));
+              Assert.That (operation.IntermediateWorkPieces.Last ().OperationQuantity, Is.EqualTo (2));
+              var part = operation
+                .IntermediateWorkPieces
+                .SelectMany (x => x.ComponentIntermediateWorkPieces)
+                .Select (x => x.Component.Part)
+                .Distinct ()
+                .Single ();
+              Assert.That (part, Is.Not.Null);
+              Assert.That (part.Name, Is.EqualTo ("P123"));
+              Assert.That (operation.Sequences, Has.Count.EqualTo (2));
+              Assert.That (operation.Sequences.First ().Name, Is.EqualTo ("Op1"));
+              Assert.That (operation.Sequences.Last ().Name, Is.EqualTo ("Op2"));
+            }
+            {
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2") {
+                CreateSequences = true
+              };
+              var operation = programCommentParser.GetOperation ();
+              ModelDAOHelper.DAOFactory.Flush ();
+              Assert.That (operation, Is.Not.Null);
+              Assert.That (operation.Name, Is.EqualTo ("Op1/Op2"));
+              Assert.That (operation.IntermediateWorkPieces, Has.Count.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.First ().Name, Is.EqualTo ("Op1"));
+              Assert.That (operation.IntermediateWorkPieces.First ().OperationQuantity, Is.EqualTo (2));
+              Assert.That (operation.IntermediateWorkPieces.Last ().Name, Is.EqualTo ("Op2"));
+              Assert.That (operation.IntermediateWorkPieces.Last ().OperationQuantity, Is.EqualTo (2));
+              var part = operation
+                .IntermediateWorkPieces
+                .SelectMany (x => x.ComponentIntermediateWorkPieces)
+                .Select (x => x.Component.Part)
+                .Distinct ()
+                .Single ();
+              Assert.That (part, Is.Not.Null);
+              Assert.That (part.Name, Is.EqualTo ("P123"));
+              Assert.That (operation.Sequences, Has.Count.EqualTo (2));
+              Assert.That (operation.Sequences.First ().Name, Is.EqualTo ("Op1"));
+              Assert.That (operation.Sequences.Last ().Name, Is.EqualTo ("Op2"));
             }
           }
           finally {

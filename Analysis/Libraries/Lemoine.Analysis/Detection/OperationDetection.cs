@@ -133,7 +133,7 @@ namespace Lemoine.Analysis.Detection
         }
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ())
         using (var transaction = session.BeginTransaction ("Detection.StartOperation", notTop: true)) {
-          AddOperation (operation, new UtcDateTimeRange (dateTime, dateTime.AddSeconds (1)), true);
+          AddOperationOnly (operation, new UtcDateTimeRange (dateTime, dateTime.AddSeconds (1)), true);
           transaction.Commit ();
         }
       }
@@ -160,7 +160,8 @@ namespace Lemoine.Analysis.Detection
     /// </summary>
     /// <param name="operation">not null</param>
     /// <param name="range"></param>
-    public void AddOperation (IOperation operation, UtcDateTimeRange range)
+    /// <param name="autoOperation">use auto-operation, set false to optimize the process if it is not required</param>
+    public void AddOperation (IOperation operation, UtcDateTimeRange range, bool autoOperation = true)
     {
       try {
         if (log.IsDebugEnabled) {
@@ -168,7 +169,7 @@ namespace Lemoine.Analysis.Detection
         }
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
         using (IDAOTransaction transaction = session.BeginTransaction ("Detection.AddOperation", notTop: true)) {
-          AddOperation (operation, range, true);
+          AddOperationOnly (operation, range, autoOperation);
           transaction.Commit ();
         }
       }
@@ -179,7 +180,7 @@ namespace Lemoine.Analysis.Detection
 
       try {
         foreach (var extension in m_afterExtensions) {
-          extension.AddOperation (operation, range);
+          extension.AddOperation (operation, range, autoOperation);
         }
       }
       catch (Exception ex) {
@@ -189,7 +190,7 @@ namespace Lemoine.Analysis.Detection
     }
 
     /// <summary>
-    /// Add an operation
+    /// Add an operation (without calling the extension point afterwards)
     /// 
     /// Note:
     /// - for multi-machine module machines, the call of AddOperation is not always chronological
@@ -200,13 +201,13 @@ namespace Lemoine.Analysis.Detection
     /// <param name="begin"></param>
     /// <param name="end"></param>
     /// <param name="autoOperation"></param>
-    internal void AddOperation (IOperation operation, DateTime begin, UpperBound<DateTime> end, bool autoOperation)
+    internal void AddOperationOnly (IOperation operation, DateTime begin, UpperBound<DateTime> end, bool autoOperation)
     {
-      AddOperation (operation, new UtcDateTimeRange (begin, end), autoOperation);
+      AddOperationOnly (operation, new UtcDateTimeRange (begin, end), autoOperation);
     }
 
     /// <summary>
-    /// Add an operation
+    /// Add an operation (without calling the extension point afterwards)
     /// 
     /// Note:
     /// - for multi-machine module machines, the call of AddOperation is not always chronological
@@ -216,7 +217,7 @@ namespace Lemoine.Analysis.Detection
     /// <param name="operation">Not null</param>
     /// <param name="range"></param>
     /// <param name="autoOperation"></param>
-    internal void AddOperation (IOperation operation, UtcDateTimeRange range, bool autoOperation)
+    internal void AddOperationOnly (IOperation operation, UtcDateTimeRange range, bool autoOperation)
     {
       Debug.Assert (null != operation);
       Debug.Assert (!range.IsEmpty ());
@@ -789,6 +790,65 @@ namespace Lemoine.Analysis.Detection
           }
         }
       } // session / transaction
+    }
+
+    /// <summary>
+    /// Stop an operation at a specific date/time
+    /// 
+    /// The top transaction must be created by the parent function
+    /// </summary>
+    /// <param name="range"></param>
+    public void StopOperation (DateTime dateTime)
+    {
+      if (log.IsDebugEnabled) {
+        log.Debug ($"StopOperation: stop operation at {dateTime}");
+      }
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ("Detection.StopOperation", notTop: true)) {
+        try {
+          // Extension
+          foreach (var extension in GetExtensions ()) {
+            extension.StopOperation (m_monitoredMachine, dateTime);
+          }
+
+          if (log.IsDebugEnabled) {
+            log.Debug ($"StopOperation: stop operation at {dateTime}");
+          }
+          var association =
+            new Lemoine.GDBPersistentClasses.OperationMachineAssociation (m_monitoredMachine,
+                                                                          new UtcDateTimeRange (dateTime),
+                                                                          null, // Transient !
+                                                                          true);
+          association.Operation = null;
+          association.Option = AssociationOption.Detected;
+          association.Caller = m_caller;
+          association.Apply ();
+        }
+        catch (Exception ex) {
+          if (ExceptionTest.IsStale (ex, log)) {
+            log.Warn ($"StopOperation: stale object state exception", ex);
+            transaction.Rollback (); // To remove some error logs that are associated to an implicit rollback
+          }
+          else if (ExceptionTest.IsTemporary (ex, log)) {
+            log.Warn ($"StopOperation: temporary (serialization) failure", ex);
+            transaction.Rollback (); // To remove some error logs that are associated to an implicit rollback
+          }
+          else {
+            log.Error ($"StopOperation: ", ex);
+          }
+          throw;
+        }
+      }
+
+      try {
+        foreach (var extension in m_afterExtensions) {
+          extension.StopOperation (dateTime);
+        }
+      }
+      catch (Exception ex) {
+        log.Error ("StopOperation: extension exception", ex);
+        throw;
+      }
     }
 
     /// <summary>
