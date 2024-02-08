@@ -15,6 +15,11 @@ namespace Lemoine.Extensions.Cnc
   public interface ICncFileRepoExtension : Lemoine.Extensions.IExtension
   {
     /// <summary>
+    /// Order in which the extension points must be processed
+    /// </summary>
+    double XmlExtensionOrder { get; }
+
+    /// <summary>
     /// Initialize the plugin. Return true if it is applicable for this cnc acquisition, else false
     /// </summary>
     /// <param name="cncAcquisition"></param>
@@ -49,8 +54,14 @@ namespace Lemoine.Extensions.Cnc
     /// If not applicable, a null string is returned
     /// </summary>
     /// <param name="extensionName"></param>
-    /// <returns></returns>
+    /// <returns>the path and the replacement strings</returns>
     Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName);
 
+    /// <summary>
+    /// Add in the extension points, an XML string directly
+    /// </summary>
+    /// <param name="extensionName"></param>
+    /// <returns></returns>
+    string GetExtensionAsXmlString (string extensionName);
   }
 }

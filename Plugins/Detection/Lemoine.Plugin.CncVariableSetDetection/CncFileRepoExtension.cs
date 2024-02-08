@@ -44,6 +44,7 @@ namespace Lemoine.Plugin.CncVariableSetDetection
     {
     }
 
+    public virtual double XmlExtensionOrder => 100; // Any value since no extension point is set here
 
     /// <summary>
     /// Initialize the extension
@@ -150,10 +151,17 @@ namespace Lemoine.Plugin.CncVariableSetDetection
     {
       return null;
     }
-	
-	public Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName)
+
+    public Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName)
     {
       return null;
-    }	
+    }
+
+    /// <summary>
+    /// <see cref="ICncFileRepoExtension"/>
+    /// </summary>
+    /// <param name="extensionName"></param>
+    /// <returns></returns>
+    public string GetExtensionAsXmlString (string extensionName) => null;
   }
 }

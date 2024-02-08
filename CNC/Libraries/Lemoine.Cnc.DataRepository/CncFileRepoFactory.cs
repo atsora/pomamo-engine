@@ -214,10 +214,10 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
-    void InsertXml (XmlDocument xmlDocument, XmlElement includeElement, Dictionary<string, string> configParameters, string xmlTemplatePath, CancellationToken cancellationToken)
+    void InsertXmlTemplate (XmlDocument xmlDocument, XmlElement includeElement, Dictionary<string, string> configParameters, string xmlTemplatePath, CancellationToken cancellationToken)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("InsertXml: about to add sub config template");
+        log.DebugFormat ("InsertXmlTemplate: about to add sub config template");
       }
       CncFileRepoFactory subRepoFactory = new CncFileRepoFactory (m_extensionsLoader,
         m_cncAcquisition, xmlTemplatePath, m_checkedThread);
@@ -227,7 +227,7 @@ namespace Lemoine.Cnc.DataRepository
         configXml = subRepoFactory.GetData (null, cancellationToken);
       }
       catch (Exception ex) {
-        log.Error ($"InsertXml: {xmlTemplatePath} could not be loaded and it is required", ex);
+        log.Error ($"InsertXmlTemplate: {xmlTemplatePath} could not be loaded and it is required", ex);
         throw new FileRepoException ("SubConfig load error", ex);
       }
 
@@ -248,6 +248,32 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
+    void InsertXmlString (XmlDocument xmlDocument, XmlElement includeElement, string xmlString, CancellationToken cancellationToken)
+    {
+      if (log.IsDebugEnabled) {
+        log.DebugFormat ("InsertXmlString: about to add xml string");
+      }
+
+      var insertedXmlDoc = new XmlDocument ();
+      try {
+        insertedXmlDoc.LoadXml (xmlString);
+      }
+      catch (Exception ex) {
+        log.Error ($"InsertXmlString: {xmlString} could not be loaded", ex);
+        throw new FileRepoException ("SubConfig load error", ex);
+      }
+
+      XmlElement parent = includeElement.ParentNode as XmlElement;
+      XmlNode lastNode = includeElement;
+      foreach (XmlNode node in insertedXmlDoc.DocumentElement.ChildNodes) {
+        if (!(node is XmlElement)) {
+          continue;
+        }
+        XmlNode importedNode = xmlDocument.ImportNode (node, true);
+        parent.InsertAfter (importedNode, lastNode);
+        lastNode = importedNode;
+      }
+    }
 
     /// <summary>
     /// Specialized method to build the DOMDocument
@@ -364,6 +390,7 @@ namespace Lemoine.Cnc.DataRepository
         m_cncFileRepoExtensions = m_extensionsLoader.ExtensionsProvider
           .GetExtensions<Lemoine.Extensions.Cnc.ICncFileRepoExtension> (checkedThread: m_checkedThread)
           .Where (i => CncFileRepoExtensionInitialize (i))
+          .OrderBy (x => x.XmlExtensionOrder)
           .ToList ();
       }
       catch (Exception ex) {
@@ -443,7 +470,7 @@ namespace Lemoine.Cnc.DataRepository
         }
         else { // extensionExtension not null or empty
           // extensions with config parameters
-          log.DebugFormat ("ProcessExtensionElements: GetIncludedXmlTemplate");
+          log.Debug ("ProcessExtensionElements: GetIncludedXmlTemplate");
           var xmlTemplates = GetIncludedXmlTemplates (extensionName);
           if (!xmlTemplates.Any ()) {
             log.Debug ($"ProcessExtensionElements: no extension sets the include XML for extension {extensionName}, skip it");
@@ -453,7 +480,7 @@ namespace Lemoine.Cnc.DataRepository
               log.Debug ($"ProcessExtensionElements: insert {xmlTemplate.Item1} for extension {extensionName}");
               cancellationToken.ThrowIfCancellationRequested ();
 
-              InsertXml (xmlDocument, extensionElement, xmlTemplate.Item2, xmlTemplate.Item1, cancellationToken);
+              InsertXmlTemplate (xmlDocument, extensionElement, xmlTemplate.Item2, xmlTemplate.Item1, cancellationToken);
             }
           }
 
@@ -465,10 +492,24 @@ namespace Lemoine.Cnc.DataRepository
           }
           else {
             foreach (var path in subConfigPaths) {
-              log.DebugFormat ($"ProcessExtensionElements: insert {path} for extension {extensionName}");
+              log.Debug ($"ProcessExtensionElements: insert {path} for extension {extensionName}");
               cancellationToken.ThrowIfCancellationRequested ();
               InsertPath (xmlDocument, extensionElement, keyParams, path, cancellationToken);
             }
+          }
+
+          // extensions as XmlString
+          log.Debug ($"ProcessExtensionElements: GetExtensionAsXmlString");
+          var xmlStrings = GetExtensionAsXmlStrings (extensionName);
+          if (xmlStrings.Any ()) {
+            foreach (var xmlString in xmlStrings) {
+              log.Debug ($"ProcessExtensionElements: for extension {extensionName}, add {xmlString}");
+              cancellationToken.ThrowIfCancellationRequested ();
+              
+            }
+          }
+          else if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessExtensionElements: no xml string defined for extension {extensionName}");
           }
         }
       }
@@ -736,7 +777,6 @@ namespace Lemoine.Cnc.DataRepository
         .Where (path => !string.IsNullOrEmpty (path));
     }
 
-
     IEnumerable<Tuple<string, Dictionary<string, string>>> GetIncludedXmlTemplates (string extensionName)
     {
       IEnumerable<Tuple<string, Dictionary<string, string>>> result = null;
@@ -746,6 +786,11 @@ namespace Lemoine.Cnc.DataRepository
 
       return result;
     }
+
+    IEnumerable<string> GetExtensionAsXmlStrings (string extensionName) =>
+      GetCncFileRepoExtensions ()
+        .Select (ext => ext.GetExtensionAsXmlString (extensionName))
+        .Where (s => !string.IsNullOrEmpty (s));
 
     string GetQueueConfiguration (IMonitoredMachine machine, IMachineModule machineModule)
     {
@@ -1008,7 +1053,7 @@ namespace Lemoine.Cnc.DataRepository
           if (log.IsDebugEnabled) {
             log.Debug ($"GetKeyParams: add Param{i + 1} = {l[i]} from parameters");
           }
-          keyParams[$"Param{i+1}"] = l[i];
+          keyParams[$"Param{i + 1}"] = l[i];
         }
       }
 

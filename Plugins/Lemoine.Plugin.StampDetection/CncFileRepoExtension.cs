@@ -22,6 +22,8 @@ namespace Lemoine.Plugin.StampDetection
     IMachineFilter m_machineFilter = null;
     DetectionMethod m_detectionMethod = DetectionMethod.SequenceStamp | DetectionMethod.StartCycleStamp | DetectionMethod.EndCycleStamp;
 
+    public virtual double XmlExtensionOrder => 100; // Any value since no extension point is set here
+
     public bool Initialize (ICncAcquisition cncAcquisition)
     {
       Debug.Assert (null != cncAcquisition);
@@ -84,14 +86,10 @@ namespace Lemoine.Plugin.StampDetection
       }
     }
 
-    public string GetIncludePath (string extensionName)
-    {
-      return null;
-    }
-    
-    public Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName)
-    {
-      return null;
-    }
+    public string GetIncludePath (string extensionName) => null;
+
+    public Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName) => null;
+
+    public string GetExtensionAsXmlString (string extensionName) => null;
   }
 }

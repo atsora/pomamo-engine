@@ -27,6 +27,12 @@ namespace Pulse.PluginImplementation.Cnc
     ILog log = LogManager.GetLogger (typeof (CncFileRepoMachineModuleVariables<TConfiguration>).FullName);
 
     IMachineFilter m_machineFilter = null;
+    TConfiguration m_configuration;
+
+    /// <summary>
+    /// Associated configuration
+    /// </summary>
+    public virtual TConfiguration Configuration => m_configuration;
 
     /// <summary>
     /// Constructor
@@ -45,6 +51,10 @@ namespace Pulse.PluginImplementation.Cnc
     {
     }
 
+    /// <summary>
+    /// <see cref="ICncFileRepoExtension"/>
+    /// </summary>
+    public virtual double XmlExtensionOrder => 100; // 100 as a reference
 
     /// <summary>
     /// Initialize the extension
@@ -59,19 +69,19 @@ namespace Pulse.PluginImplementation.Cnc
                                                  this.GetType ().FullName,
                                                  cncAcquisition.Id));
 
-      if (!LoadConfiguration (out var configuration)) {
+      if (!LoadConfiguration (out m_configuration)) {
         log.Error ("Initialize: configuration error, skip this instance");
         return false;
       }
 
-      if (0 == configuration.MachineFilterId) { // Machine filter
+      if (0 == m_configuration.MachineFilterId) { // Machine filter
         return !IsMachineFilterRequired ();
       }
       else { // Machine filter
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Plugin.StampDetection.CncFileRepoExtension.Initialize")) {
             foreach (IMachineModule machineModule in cncAcquisition.MachineModules) {
-              int machineFilterId = configuration.MachineFilterId;
+              int machineFilterId = m_configuration.MachineFilterId;
               m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
                 .FindById (machineFilterId);
               if (m_machineFilter is null) {
@@ -139,6 +149,12 @@ namespace Pulse.PluginImplementation.Cnc
     /// <param name="extensionName"></param>
     /// <returns></returns>
     public virtual Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName) => null;
+
+    /// <summary>
+    /// <see cref="ICncFileRepoExtension"/>
+    /// </summary>
+    /// <param name="extensionName"></param>
+    /// <returns></returns>
+    public virtual string GetExtensionAsXmlString (string extensionName) => null;
   }
 }
-
