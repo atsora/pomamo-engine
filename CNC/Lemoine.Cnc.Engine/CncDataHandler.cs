@@ -232,14 +232,15 @@ namespace Lemoine.CncEngine
 #if NETSTANDARD || NET48 || NETCOREAPP
       // Check if there is no deprecated field
       foreach (XmlNode node in this.m_configuration.Document.GetElementsByTagName ("deprecated")) {
-        log.DebugFormat ("CncDataHandler: process a deprecated element");
+        log.Debug ("CncDataHandler: process a deprecated element");
         SetActive ();
         XmlElement element = node as XmlElement;
         System.Diagnostics.Debug.Assert (null != element);
         if (element.HasAttribute ("file")) {
           string configFile = element.GetAttribute ("file");
           string configParameters = element.GetAttribute ("parameters");
-          log.Info ($"CncDataHandler: deprecated node with file {configFile} parameters {configParameters}");
+          string configNamedParameters = element.GetAttribute ("configNamedParameters");
+          log.Info ($"CncDataHandler: deprecated node with file {configFile} parameters {configParameters} namedParameters={configNamedParameters}");
           bool configReload = false;
           try {
             using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
@@ -248,6 +249,7 @@ namespace Lemoine.CncEngine
                   .FindById (m_cncAcquisitionId);
                 cncAcquisition.ConfigFile = configFile;
                 cncAcquisition.ConfigParameters = configParameters;
+                cncAcquisition.ConfigKeyParams = Lemoine.Collections.EnumerableString.ParseDictionaryString (configNamedParameters);
                 if (element.HasAttribute ("useprocess")) {
                   string useProcess = element.GetAttribute ("useprocess");
                   cncAcquisition.UseProcess = useProcess.Equals ("true", StringComparison.InvariantCultureIgnoreCase);
@@ -259,7 +261,7 @@ namespace Lemoine.CncEngine
             configReload = true;
           }
           catch (Exception ex) {
-            log.Error ($"CncDataHandler: error while updating the configuration of file {configFile} parameters {configParameters}", ex);
+            log.Error ($"CncDataHandler: error while updating the configuration of file {configFile} parameters {configParameters} namedParameters {configNamedParameters}", ex);
           }
           if (configReload) {
             if (log.IsDebugEnabled) {
@@ -463,7 +465,9 @@ namespace Lemoine.CncEngine
       }
 
       string typeName = moduleElement.GetAttribute ("type");
-      log.DebugFormat ("LoadModule: about to load module of type {0}", typeName);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"LoadModule: about to load module of type {typeName}");
+      }
       var module = LoadModule (typeName);
 
       // Check if a license is required
@@ -639,15 +643,13 @@ namespace Lemoine.CncEngine
             return true;
           }
           else {
-            log.ErrorFormat ("IsLicenseOk: " +
-                             "no license available for {0}",
-                             module);
+            log.Error ($"IsLicenseOk: no license available for {module}");
             return false;
           }
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("IsLicenseOk: exception {0} occurred => fallback to true", ex);
+        log.Error ($"IsLicenseOk: exception occurred => fallback to true", ex);
         return true;
       }
     }

@@ -128,10 +128,7 @@ namespace Lemoine.Plugin.CncVariableSetDetection
     /// </summary>
     /// <param name="machineModule"></param>
     /// <returns></returns>
-    public virtual DetectionMethod? GetDefaultDetectionMethod (IMachineModule machineModule)
-    {
-      return DetectionMethod.CncVariableSet;
-    }
+    public virtual DetectionMethod? GetDefaultDetectionMethod (IMachineModule machineModule) => DetectionMethod.CncVariableSet;
 
     /// <summary>
     /// Is a machine filter required ? (to override)

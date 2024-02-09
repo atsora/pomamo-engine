@@ -106,6 +106,29 @@ namespace Lemoine.Collections
 
     /// <summary>
     /// Parse a ListString, where the first character is the separator character between the elements
+    /// Set the maximum number of elements to return
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static string[] ParseListString (string s, int maxElements)
+    {
+      if (string.IsNullOrEmpty (s)) {
+        return new string[] { };
+      }
+      else {
+        var separator = s[0];
+        var subString = s.Substring (1);
+        if (string.IsNullOrEmpty (subString)) {
+          return new string[] { };
+        }
+        else {
+          return subString.Split (new char[] { separator }, maxElements);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Parse a ListString, where the first character is the separator character between the elements
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>

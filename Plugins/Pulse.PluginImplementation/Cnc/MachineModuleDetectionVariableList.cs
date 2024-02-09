@@ -52,7 +52,7 @@ namespace Pulse.PluginImplementation.Cnc
         }
         else { // Machine filter
           using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-            using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Plugin.StampDetection.CncFileRepoExtension.Initialize")) {
+            using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Plugin.MachineModuleDetectionVariableList.Initialize")) {
               int machineFilterId = configuration.MachineFilterId;
               m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
                 .FindById (machineFilterId);
@@ -81,7 +81,7 @@ namespace Pulse.PluginImplementation.Cnc
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (IDAOTransaction transaction = session
-          .BeginTransaction ("MachineModuleDetectionVariableList.AfterImportCncVariables", TransactionLevel.ReadCommitted)) {
+          .BeginTransaction ("Plugin.MachineModuleDetectionVariableList.AfterImportCncVariables", TransactionLevel.ReadCommitted)) {
           // Read-committed because it is run after several transactions
           transaction.SynchronousCommitOption = SynchronousCommit.Off; // This is ok because it may be replayed
 

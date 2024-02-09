@@ -28,6 +28,16 @@ let (|RegexGroup|_|) ((regex,group):Regex * string) (s:string) =
     | _ -> None
   | _ -> None
 
+let (|NotNullNOrEmpty|_|) (str:string) =
+  match str with
+  | null | "" -> Some str
+  | _ -> None
+
+let (|NullOrEmpty|_|) (str:string) =
+  match str with
+  | null | "" -> Some str
+  | _ -> None
+
 let (|Integer|_|) (str:string) =
   match System.Int32.TryParse str with
   | true,i -> Some i
