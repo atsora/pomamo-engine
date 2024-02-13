@@ -12,6 +12,7 @@ using Lemoine.Core.Log;
 using System.Collections.Generic;
 using Lemoine.Extensions.Configuration;
 using Pulse.Extensions.Configuration.Implementation;
+using System.Linq;
 
 namespace Pulse.PluginImplementation.Cnc
 {
@@ -80,23 +81,21 @@ namespace Pulse.PluginImplementation.Cnc
       else { // Machine filter
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Plugin.StampDetection.CncFileRepoExtension.Initialize")) {
-            foreach (IMachineModule machineModule in cncAcquisition.MachineModules) {
-              int machineFilterId = m_configuration.MachineFilterId;
-              m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
-                .FindById (machineFilterId);
-              if (m_machineFilter is null) {
-                log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
-                return false;
-              }
-              else { // null != m_machineFilter
-                if (m_machineFilter.IsMatch (machineModule.MonitoredMachine)) {
-                  return true;
-                }
-              }
+            if (!cncAcquisition.MachineModules.Any ()) {
+              log.Debug ($"Initialize: no machine module is associated to cnc acquisition {cncAcquisition.Id}");
+              return false;
             }
+            int machineFilterId = m_configuration.MachineFilterId;
+            m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
+              .FindById (machineFilterId);
+            if (m_machineFilter is null) {
+              log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
+              return false;
+            }
+            return cncAcquisition.MachineModules
+              .Any (x => m_machineFilter.IsMatch (x.MonitoredMachine));
           }
         }
-        return false; // No machine module matches
       }
     }
 

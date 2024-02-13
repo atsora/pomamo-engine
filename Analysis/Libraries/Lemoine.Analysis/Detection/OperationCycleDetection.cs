@@ -67,7 +67,8 @@ namespace Lemoine.Analysis.Detection
       m_operationCycleFullDetectionExtensions = extensions.OfType<Lemoine.Extensions.Analysis.IOperationCycleFullDetectionExtension> ();
       m_caller = caller;
       m_afterExtensions = ServiceProvider
-        .Get<IEnumerable<IAfterCycleDetectionExtension>> (new Lemoine.Business.Extension.MonitoredMachineExtensions<IAfterCycleDetectionExtension> (monitoredMachine, (ext, m) => ext.Initialize (m)));
+        .Get<IEnumerable<IAfterCycleDetectionExtension>> (new Lemoine.Business.Extension.MonitoredMachineExtensions<IAfterCycleDetectionExtension> (monitoredMachine, (ext, m) => ext.Initialize (m)))
+        .ToList ();
 
       log = LogManager.GetLogger (string.Format ("{0}.{1}",
                                                  this.GetType ().FullName,
