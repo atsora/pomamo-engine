@@ -1,4 +1,4 @@
-﻿module Lemoine.String
+﻿module Lemoine.FSharp.String
 
 let nullorempty s =
   System.String.IsNullOrEmpty s

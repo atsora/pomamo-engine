@@ -1,5 +1,6 @@
-﻿module Lemoine.Patterns
+﻿module Lemoine.FSharp.Patterns
 
+open Lemoine.FSharp.String
 open System.Text.RegularExpressions
 
 let (|Prefix|_|) (p:string) (s:string) =
@@ -19,6 +20,12 @@ let (|SingleChar|_|) (s:string) =
     Some(s[0])
   else
     None
+
+let (|CaseInsensitive|_|) (a:string) (s:string) =
+  if s.iequals a then
+    Some(a)
+  else
+    None  
 
 let (|RegexGroup|_|) ((regex,group):Regex * string) (s:string) =
   match regex.Match s with

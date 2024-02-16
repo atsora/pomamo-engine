@@ -10,7 +10,7 @@ namespace Lemoine.FSharp.UnitTests
 open System
 open NUnit.Framework
 
-open Lemoine.Math
+open Lemoine.FSharp.Math
 
 [<TestFixture>]
 type Math_UnitTest () =

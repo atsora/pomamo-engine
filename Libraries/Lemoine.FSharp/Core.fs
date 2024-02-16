@@ -1,4 +1,4 @@
-﻿module Lemoine.Core
+﻿module Lemoine.FSharp.Core
 
 let (|??>) a f =
   match a with

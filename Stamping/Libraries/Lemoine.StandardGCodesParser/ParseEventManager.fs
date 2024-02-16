@@ -8,7 +8,7 @@ namespace Lemoine.StandardGCodesParser
 
 open System.Collections.Generic
 open Lemoine.Core.Log
-open Lemoine.Math
+open Lemoine.FSharp.Math
 open Lemoine.Stamping
 open NcProgram
 open GCode

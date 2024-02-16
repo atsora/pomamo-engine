@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *)
 
-module Lemoine.Math
+module Lemoine.FSharp.Math
 
 open Lemoine.Core.Log
 

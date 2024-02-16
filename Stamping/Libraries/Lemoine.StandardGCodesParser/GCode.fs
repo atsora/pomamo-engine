@@ -8,7 +8,7 @@ module Lemoine.StandardGCodesParser.GCode
 
 open NcProgram
 open Lemoine.Core.Log
-open Lemoine.Math
+open Lemoine.FSharp.Math
 
 let log = LogManager.GetLogger ("Lemoine.StandardGCodesParser.GCode")
 

@@ -8,7 +8,7 @@ module Lemoine.Stamping.Heidenhain.Programming
 
 open NcProgram
 open Lemoine.Core.Log
-open Lemoine.Math
+open Lemoine.FSharp.Math
 
 let log = LogManager.GetLogger ("Lemoine.Stamping.Heidenhain.Programming")
 
