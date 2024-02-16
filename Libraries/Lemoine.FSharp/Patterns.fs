@@ -47,3 +47,8 @@ let (|Float|_|) (str:string) =
   match System.Double.TryParse str with
   | true,f -> Some f
   | _ -> None
+
+let (|Boolean|_|) (str:string) =
+  match System.Boolean.TryParse str with
+  | true,i -> Some i
+  | _ -> None
