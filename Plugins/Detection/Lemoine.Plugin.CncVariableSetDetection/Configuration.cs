@@ -34,11 +34,8 @@ namespace Lemoine.Plugin.CncVariableSetDetection
     [PluginConf ("Int", "Milestone part", Description = "Decimal part to consider as a milestone in a sequence variable", Parameters = "10")]
     [DefaultValue (4)]
     public int MilestonePart { get; set; } = 4;
-    
-    protected override bool IsMachineFilterRequired ()
-    {
-      return false;
-    }
+
+    protected override bool IsMachineFilterRequired () => false;
 
   }
 }
