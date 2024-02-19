@@ -178,8 +178,7 @@ namespace Lemoine.Database.Persistent
     /// <returns>a new transaction was created</returns>
     internal bool InitializeTransaction (string transactionName, bool readOnly = false)
     {
-      Debug.Assert (null != m_session);
-      Debug.Assert (m_valid);
+      Debug.Assert (null != m_session, "Unexpected null internal session");
 
       try {
         if (!m_valid) {
@@ -248,7 +247,6 @@ namespace Lemoine.Database.Persistent
     IDAOTransaction BeginTransaction (string name = "", TransactionLevel transactionLevel = TransactionLevel.Default, bool transactionLevelOptional = false, IEnumerable<ILockTableToPartition> lockedTables = null, bool notTop = false, bool readOnly = false)
     {
       try {
-        Debug.Assert (m_valid);
         if (!m_valid) {
           log.Fatal ($"BeginTransaction: name={name} try to initialize a transaction in a not valid session");
         }
@@ -396,21 +394,14 @@ WHERE table_type='LOCAL TEMPORARY'
         // m_session is reset to null only after being disposed
         Debug.Assert (null != m_session);
         if (null == m_session) {
-          log.FatalFormat ("Dispose: " +
-                           "DAOSession has already been disposed. " +
-                           "\n{0}",
-                           System.Environment.StackTrace);
+          log.Fatal ($"Dispose: DAOSession has already been disposed: at {System.Environment.StackTrace}");
           CurrentSessionContext.Unbind (NHibernateHelper.SessionFactory); // Just in case
           return;
         }
 
         // Check there is no remaining active transaction
         if (m_session.GetCurrentTransaction ()?.IsActive ?? false) {
-          log.FatalFormat ("Dispose: " +
-                           "there is still one active transaction, " +
-                           "try to rollback it" +
-                           "\n{0}",
-                           System.Environment.StackTrace);
+          log.Fatal ($"Dispose: there is still one active transaction, try to rollback it: at {System.Environment.StackTrace}");
           try {
             RollbackTransaction ();
           }
@@ -439,7 +430,6 @@ WHERE table_type='LOCAL TEMPORARY'
 
     internal void CommitTransaction (string transactionName, bool readOnly)
     {
-      Debug.Assert (m_valid);
       if (!m_valid) {
         log.Fatal ("CommitTransaction: try to commit a transaction in a not valid session");
       }
@@ -487,7 +477,7 @@ WHERE table_type='LOCAL TEMPORARY'
         ITransaction transaction = m_session.GetCurrentTransaction ();
         if (transaction is null) {
           log.Fatal ($"CommitTransaction: the transaction associated to session {m_session} is null after {transactionDuration} => can't commit the transaction");
-          transactionLog.FatalFormat ($"Commit - null transaction - duration={transactionDuration}");
+          transactionLog.Fatal ($"Commit - null transaction - duration={transactionDuration}");
           m_valid = false;
           foreach (var sessionAccumulator in NHibernateHelper.SessionAccumulators) {
             sessionAccumulator.Clear (m_session);
@@ -706,13 +696,11 @@ WHERE table_type='LOCAL TEMPORARY'
       if (m_rolledBack) {
         if (implicitRollback) {
           log.Info ("RollbackTransaction: (implicit) the transaction has already been rolled back");
-          transactionLog.InfoFormat ("Rollback - (implicit) already rolled back - duration={0}",
-                                     transactionDuration);
+          transactionLog.Info ($"Rollback - (implicit) already rolled back - duration={transactionDuration}");
         }
         else {
           log.Warn ("RollbackTransaction: (not implicit) the transaction has already been rolled back");
-          transactionLog.WarnFormat ("Rollback - (not implicit) already rolled back - duration={0}",
-                                     transactionDuration);
+          transactionLog.Warn ($"Rollback - (not implicit) already rolled back - duration={transactionDuration}");
         }
         return;
       }
@@ -732,8 +720,7 @@ WHERE table_type='LOCAL TEMPORARY'
       if (transaction is null) {
         m_valid = false;
         log.Error ("RollbackTransaction: the transaction associated to session is null => can't rollback the transaction");
-        transactionLog.ErrorFormat ("Rollback - null session - duration={0}",
-                                    transactionDuration);
+        transactionLog.Error ($"Rollback - null session - duration={transactionDuration}");
         var exn = new InvalidOperationException ("RollbackTransaction with a null internal session");
         if (!readOnly) {
           foreach (var transactionExtension in GetTransactionExtensions ()) {
@@ -743,31 +730,23 @@ WHERE table_type='LOCAL TEMPORARY'
         throw exn;
       }
       if (transaction.WasRolledBack) {
-        log.DebugFormat ("RollbackTransaction: " +
-                         "the transaction has already been rolled back once. " +
-                         "\n{0}",
-                         System.Environment.StackTrace);
-        transactionLog.DebugFormat ("Rollback - already rolled back - duration={0}",
-                                    transactionDuration);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RollbackTransaction: the transaction has already been rolled back once. at {System.Environment.StackTrace}");
+        }
+        if (transactionLog.IsDebugEnabled) {
+          transactionLog.Debug ($"Rollback - already rolled back - duration={transactionDuration}");
+        }
       }
       if (!transaction.IsActive) {
         if (implicitRollback) {
-          log.InfoFormat ("RollbackTransaction: " +
-                          "(implicit) the transaction is already not active any more. " +
-                          "This is probably ok because usually the implicit rollback occur " +
-                          "with an exception and there was already a automatic rollback in database" +
-                          "\n{0}",
-                          System.Environment.StackTrace);
+          if (log.IsInfoEnabled) {
+            log.Info ($"RollbackTransaction: (implicit) the transaction is already not active any more. This is probably ok because usually the implicit rollback occur with an exception and there was already a automatic rollback in database at {System.Environment.StackTrace}");
+          }
           transactionLog.InfoFormat ("Rollback - (implicit) inactive transaction - duration={0}",
                                      transactionDuration);
         }
         else {
-          log.FatalFormat ("RollbackTransaction: " +
-                           "try to rollback a transaction while it is not active any more. " +
-                           "Has it already been rolled back and no exception raised ? " +
-                           "=> do not try to roll it back once again" +
-                           "\n{0}",
-                           System.Environment.StackTrace);
+          log.Fatal ($"RollbackTransaction: try to rollback a transaction while it is not active any more. Has it already been rolled back and no exception raised ? => do not try to roll it back once again at {System.Environment.StackTrace}");
           transactionLog.Fatal ($"Rollback - inactive transaction - duration={transactionDuration}");
         }
       }
