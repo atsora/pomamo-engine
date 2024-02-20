@@ -363,8 +363,8 @@ namespace Lemoine.Info
           return path;
         }
         else {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"PfrDataDir: {path} does not exist");
+          if (log.IsWarnEnabled) {
+            log.Warn ($"PfrDataDir: {path} does not exist");
           }
           return null;
         }

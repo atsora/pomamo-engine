@@ -55,10 +55,11 @@ namespace Lemoine.Analysis.Detection
       Debug.Assert (null != extensions);
 
       m_monitoredMachine = monitoredMachine;
-      m_operationDetectionExtensions = extensions;
+      m_operationDetectionExtensions = extensions.ToList ();
       m_caller = caller;
       m_afterExtensions = ServiceProvider
-        .Get<IEnumerable<IAfterOperationDetectionExtension>> (new Lemoine.Business.Extension.MonitoredMachineExtensions<IAfterOperationDetectionExtension> (monitoredMachine, (ext, m) => ext.Initialize (m)));
+        .Get<IEnumerable<IAfterOperationDetectionExtension>> (new Lemoine.Business.Extension.MonitoredMachineExtensions<IAfterOperationDetectionExtension> (monitoredMachine, (ext, m) => ext.Initialize (m)))
+        .ToList ();
 
       log = LogManager.GetLogger ($"{this.GetType ().FullName}.{monitoredMachine.Id}");
     }

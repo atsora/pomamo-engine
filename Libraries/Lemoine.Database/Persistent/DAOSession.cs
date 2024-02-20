@@ -392,7 +392,7 @@ WHERE table_type='LOCAL TEMPORARY'
         }
 
         // m_session is reset to null only after being disposed
-        Debug.Assert (null != m_session);
+        Debug.Assert (null != m_session, "internal session is null before Dispose");
         if (null == m_session) {
           log.Fatal ($"Dispose: DAOSession has already been disposed: at {System.Environment.StackTrace}");
           CurrentSessionContext.Unbind (NHibernateHelper.SessionFactory); // Just in case
