@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,13 +13,15 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-using System.Threading;
 using Lemoine.Cnc.Data;
 using Lemoine.Collections;
 using Lemoine.Info;
 using Lemoine.Info.ConfigReader;
 using Lemoine.Threading;
 using Lemoine.Core.Log;
+using System.Text.Json;
+using MessagePack;
+using MessagePack.Resolvers;
 
 namespace Lemoine.Cnc.SQLiteQueue
 {
@@ -38,6 +41,10 @@ namespace Lemoine.Cnc.SQLiteQueue
 
     static readonly string ENQUEUE_ATTEMPT_SLEEP_KEY = "SQLiteQueue.Enqueue.AttemptSleep";
     static readonly TimeSpan ENQUEUE_ATTEMPT_SLEEP_DEFAULT = TimeSpan.FromMilliseconds (100);
+
+    static readonly string SERIALIZER_KEY = "SQLiteQueue.Serializer";
+    static readonly string SERIALIZER_MESSAGEPACK = "MessagePack";
+    static readonly string SERIALIZER_DEFAULT = SERIALIZER_MESSAGEPACK; // MessagePack / BinaryFormatter
 
     readonly string MACHINE_ID_KEY = "MachineId";
     readonly string MACHINE_MODULE_ID_KEY = "MachineModuleId";
@@ -79,8 +86,7 @@ namespace Lemoine.Cnc.SQLiteQueue
     /// </summary>
     public int MachineId
     {
-      get
-      {
+      get {
         try {
           var machineId = m_configReader.Get<int> (MACHINE_ID_KEY);
           if (0 == machineId) {
@@ -93,8 +99,7 @@ namespace Lemoine.Cnc.SQLiteQueue
           throw;
         }
       }
-      set
-      {
+      set {
         if (value < 0) {
           log.ErrorFormat ("MachineId.set: " +
                            "negative value {0}, a positive value is expected",
@@ -110,8 +115,7 @@ namespace Lemoine.Cnc.SQLiteQueue
     /// </summary>
     public int MachineModuleId
     {
-      get
-      {
+      get {
         try {
           var machineModuleId = m_configReader.Get<int> (MACHINE_MODULE_ID_KEY);
           if (0 == machineModuleId) {
@@ -124,8 +128,7 @@ namespace Lemoine.Cnc.SQLiteQueue
           throw;
         }
       }
-      set
-      {
+      set {
         if (value < 0) {
           log.ErrorFormat ("MachineModuleId.set: " +
                            "negative value {0}, a positive value is expected",
@@ -141,8 +144,7 @@ namespace Lemoine.Cnc.SQLiteQueue
     /// </summary>
     public string Name
     {
-      get
-      {
+      get {
         Initialize ();
 
         return (null == m_fileName) ? null : "SQLiteQueue" + m_fileName;
@@ -195,16 +197,16 @@ namespace Lemoine.Cnc.SQLiteQueue
 
       try {
         switch (m_configReader.Get<string> ("SynchroMode")) {
-        case "Full":
-          m_synchroMode = SQLiteSynchroMode.Full;
-          break;
-        case "Off":
-          m_synchroMode = SQLiteSynchroMode.Off;
-          break;
-        case "Normal":
-        default:
-          m_synchroMode = SQLiteSynchroMode.Normal;
-          break;
+          case "Full":
+            m_synchroMode = SQLiteSynchroMode.Full;
+            break;
+          case "Off":
+            m_synchroMode = SQLiteSynchroMode.Off;
+            break;
+          case "Normal":
+          default:
+            m_synchroMode = SQLiteSynchroMode.Normal;
+            break;
         }
       }
       catch (Exception ex) {
@@ -292,15 +294,15 @@ namespace Lemoine.Cnc.SQLiteQueue
       SetActive ();
 
       switch (m_synchroMode) {
-      case SQLiteSynchroMode.Full:
-        connBuilder.SyncMode = SynchronizationModes.Full;
-        break;
-      case SQLiteSynchroMode.Normal:
-        connBuilder.SyncMode = SynchronizationModes.Normal;
-        break;
-      case SQLiteSynchroMode.Off:
-        connBuilder.SyncMode = SynchronizationModes.Off;
-        break;
+        case SQLiteSynchroMode.Full:
+          connBuilder.SyncMode = SynchronizationModes.Full;
+          break;
+        case SQLiteSynchroMode.Normal:
+          connBuilder.SyncMode = SynchronizationModes.Normal;
+          break;
+        case SQLiteSynchroMode.Off:
+          connBuilder.SyncMode = SynchronizationModes.Off;
+          break;
       }
       string connString = connBuilder.ToString ();
 
@@ -522,8 +524,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {0}FirstId)",
     /// </summary>
     public int Count
     {
-      get
-      {
+      get {
         Initialize ();
 
         DbDataReader reader = null;
@@ -743,15 +744,13 @@ WHERE (SELECT FirstId FROM {0}FirstId) >= (SELECT COALESCE (MIN(Id), 0) FROM {0}
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
           SetActive ();
           try {
-            log.Debug ("Enqueue: " +
-                       "about to clean the data");
+            log.Debug ("TryEnqueue: about to clean the data");
             command.ExecuteNonQuery ();
             m_lastDelete = refTime;
-            log.Debug ("Enqueue: " +
-                       "data cleaned");
+            log.Debug ("TryEnqueue: data cleaned");
           }
           catch (Exception ex) {
-            log.Warn ($"Enqueue: DELETE FROM {m_tableName} ... failed, but try to continue", ex);
+            log.Warn ($"TryEnqueue: DELETE FROM {m_tableName} ... failed, but try to continue", ex);
           }
         }
       }
@@ -840,23 +839,58 @@ VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}')",
                                                      Escape (data.Value.ToString ()));
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
               }
-              else { // binary
-                IFormatter formatter = new BinaryFormatter ();
-                using (MemoryStream stream = new MemoryStream ()) {
-                  formatter.Serialize (stream, data.Value);
-                  string hex = BitConverter.ToString (stream.ToArray ());
+              else {
+                var typeElements = valueType.AssemblyQualifiedName.Split ([", "], StringSplitOptions.None);
+                string qualifiedType;
+                if (typeElements[1].Equals ("mscorlib")) {
+                  qualifiedType = typeElements[0];
+                }
+                else {
+                  qualifiedType = $"{typeElements[0]}, {typeElements[1]}";
+                }
+                try {
+                  // Try Json
+                  JsonSerializerOptions jsonSerializerOptions = new (JsonSerializerOptions.Default) {
+                    WriteIndented = false
+                  };
+                  var json = JsonSerializer.Serialize (data.Value, jsonSerializerOptions);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"TryEnqueue: json is {json}");
+                  }
+                  command.CommandText = $"""
+                  INSERT INTO {m_tableName} (MachineId, MachineModuleId, DateTime, Command, Key, ValueType, ValueString)
+                  VALUES ({data.MachineId}, {data.MachineModuleId}, '{dateTimeString}', '{data.Command}', '{data.Key}', '{qualifiedType}', '{json}') 
+                  """;
+                }
+                catch (Exception ex) {
+                  log.Error ($"TryEnqueue: could not serialize {data.Value} in Json => try binary instead", ex);
+                  string hex;
+                  using (MemoryStream stream = new MemoryStream ()) {
+                    var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
+                    if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
+                      MessagePackSerializer.Serialize (stream, data.Value, ContractlessStandardResolver.Options);
+                    }
+                    else {
+                      IFormatter formatter = new BinaryFormatter ();
+                      formatter.Serialize (stream, data.Value);
+                    }
+                    hex = BitConverter.ToString (stream.ToArray ());
+                  }
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"TryEnqueue: binary serialization instead");
+                  }
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                   command.CommandText = string.Format (@"
 INSERT INTO {0} (MachineId, MachineModuleId, DateTime, Command, Key, ValueType, ValueBinary)
 VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', x'{7:x2}')",
-                                                       m_tableName,
-                                                       data.MachineId,
-                                                       data.MachineModuleId,
-                                                       dateTimeString,
-                                                       data.Command.ToString (),
-                                                       data.Key,
-                                                       valueType.ToString (),
-                                                       hex.Replace ("-", ""));
+                                                     m_tableName,
+                                                     data.MachineId,
+                                                     data.MachineModuleId,
+                                                     dateTimeString,
+                                                     data.Command.ToString (),
+                                                     data.Key,
+                                                     qualifiedType,
+                                                     hex.Replace ("-", ""));
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
                 }
               }
@@ -865,7 +899,7 @@ VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', x'{7:x2}')",
           }
         }
         catch (Exception ex) {
-          log.Error ($"Enqueue: INSERT INTO {m_tableName} {data} failed", ex);
+          log.Error ($"TryEnqueue: INSERT INTO {m_tableName} {data} failed", ex);
           throw;
         }
       }
@@ -1039,9 +1073,29 @@ LIMIT {1}",
               val = (string)reader[6];
             }
             else {
-              BinaryFormatter formatter = new BinaryFormatter ();
-              using (MemoryStream stream = new MemoryStream ((byte[])reader[9])) {
-                val = formatter.Deserialize (stream);
+              var json = reader[6]?.ToString ();
+              if (!string.IsNullOrEmpty (json)) { // Json
+                var t = Type.GetType (valueType);
+                if (t is null && log.IsErrorEnabled) {
+                  log.Error ($"Peek: type {valueType} is unknown");
+                }
+                val = JsonSerializer.Deserialize (json, t);
+              }
+              else {
+                try {
+                  using (MemoryStream stream = new MemoryStream ((byte[])reader[9])) {
+                    val = MessagePackSerializer.Deserialize (Type.GetType (valueType), stream, ContractlessStandardResolver.Options);
+                  }
+                }
+                catch (Exception ex) {
+                  if (log.IsInfoEnabled) {
+                    log.Info ($"Peek: MessagePack deserialize failed with exception => switch to BinaryFormatter", ex);
+                  }
+                  BinaryFormatter formatter = new BinaryFormatter ();
+                  using (MemoryStream stream = new MemoryStream ((byte[])reader[9])) {
+                    val = formatter.Deserialize (stream);
+                  }
+                }
               }
             }
 

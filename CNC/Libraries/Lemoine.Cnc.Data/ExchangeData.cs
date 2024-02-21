@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -8,6 +9,9 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using Lemoine.Core.Log;
+using System.Text.Json;
+using MessagePack;
+using MessagePack.Resolvers;
 
 namespace Lemoine.Cnc.Data
 {
@@ -57,7 +61,7 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     SequenceMilestone = 11,
   }
-  
+
   /// <summary>
   /// Exchange data structure that is created by the Lem_CncService
   /// and read by the Lem_CncDataService
@@ -98,44 +102,49 @@ namespace Lemoine.Cnc.Data
     /// For the command MachineMode, the given value corresponds to the Translation Key or Name
     /// </summary>
     public static readonly string MACHINE_MODE_TRANSLATION_KEY_OR_NAME = "TranslationKeyOrName";
-    
+
+    static readonly string SERIALIZER_KEY = "Cnc.ExchangeData.Serializer";
+    static readonly string SERIALIZER_MESSAGEPACK = "MessagePack";
+    static readonly string SERIALIZER_DEFAULT = SERIALIZER_MESSAGEPACK; // MessagePack / BinaryFormatter
+
     #region Members
     DateTime m_dateTime = DateTime.UtcNow;
     #endregion // Members
 
     #region Helper Method
-    static DateTime TruncateToSeconds(DateTime dt)
+    static DateTime TruncateToSeconds (DateTime dt)
     {
-      return new DateTime(dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond), dt.Kind);
+      return new DateTime (dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond), dt.Kind);
     }
     #endregion // Helper Method
-    
-    static readonly ILog log = LogManager.GetLogger(typeof (ExchangeData).FullName);
+
+    static readonly ILog log = LogManager.GetLogger (typeof (ExchangeData).FullName);
 
     #region Getters / Setters
     /// <summary>
     /// Machine Id
     /// </summary>
     public int MachineId { get; set; }
-    
+
     /// <summary>
     /// Machine module Id
     /// </summary>
     public int MachineModuleId { get; set; }
-    
+
     /// <summary>
     /// Date/time of the data
     /// </summary>
-    public DateTime DateTime {
-      get { return TruncateToSeconds(m_dateTime); }
+    public DateTime DateTime
+    {
+      get { return TruncateToSeconds (m_dateTime); }
       set { m_dateTime = value; }
     }
-    
+
     /// <summary>
     /// Command
     /// </summary>
     public ExchangeDataCommand Command { get; set; }
-    
+
     /// <summary>
     /// Key
     /// 
@@ -145,7 +154,7 @@ namespace Lemoine.Cnc.Data
     /// <item>StartCycle, StopCycle, StopIsoFile in case the command is Action</item>
     /// </summary>
     public string Key { get; set; }
-    
+
     /// <summary>
     /// Value
     /// </summary>
@@ -156,7 +165,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// Private constructor
     /// </summary>
-    ExchangeData () {}
+    ExchangeData () { }
     #endregion // Constructors
 
     #region Methods
@@ -169,16 +178,16 @@ namespace Lemoine.Cnc.Data
       return string.Format ("[ExchangeData MachineModuleId={0} Command={1} Key={2} Value={3} Date={4}]",
                             MachineModuleId, Command, Key, Value, DateTime);
     }
-    
+
     /// <summary>
     ///   Determines whether the specified Object
     ///   is equal to the current Object
     /// </summary>
     /// <param name="obj">The object to compare with the current object</param>
     /// <returns>true if the specified Object is equal to the current Object; otherwise, false</returns>
-    public override bool Equals(object obj)
+    public override bool Equals (object obj)
     {
-      if (object.ReferenceEquals(this,obj)) {
+      if (object.ReferenceEquals (this, obj)) {
         return true;
       }
 
@@ -197,16 +206,16 @@ namespace Lemoine.Cnc.Data
         && object.Equals (other.Key, this.Key)
         && object.Equals (other.Value, this.Value);
     }
-    
+
     /// <summary>
     ///   Serves as a hash function for a particular type
     /// </summary>
     /// <returns>A hash code for the current Object</returns>
-    public override int GetHashCode()
+    public override int GetHashCode ()
     {
       int hashCode = 0;
       unchecked {
-        hashCode += 1000000007 * MachineModuleId.GetHashCode();
+        hashCode += 1000000007 * MachineModuleId.GetHashCode ();
         hashCode += 1000000011 * Command.GetHashCode ();
         hashCode += 1000000013 * DateTime.GetHashCode ();
         hashCode += 1000000015 * Key.GetHashCode ();
@@ -216,7 +225,7 @@ namespace Lemoine.Cnc.Data
       }
       return hashCode;
     }
-    
+
     /// <summary>
     /// Generic builder for ExchangeData
     /// </summary>
@@ -227,14 +236,14 @@ namespace Lemoine.Cnc.Data
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static ExchangeData BuildExchangeData(int machineId,
+    public static ExchangeData BuildExchangeData (int machineId,
                                                  int machineModuleId,
                                                  DateTime dateTime,
                                                  ExchangeDataCommand command,
                                                  string key,
                                                  object value)
     {
-      var data = new ExchangeData();
+      var data = new ExchangeData ();
       data.MachineId = machineId;
       if (0 != machineModuleId) {
         data.MachineModuleId = machineModuleId;
@@ -245,7 +254,7 @@ namespace Lemoine.Cnc.Data
       data.Value = value;
       return data;
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to a start of cyle
     /// </summary>
@@ -253,16 +262,16 @@ namespace Lemoine.Cnc.Data
     /// <param name="machineModuleId"></param>
     /// <param name="dateTime"></param>
     /// <returns></returns>
-    public static ExchangeData BuildStartCycleExchangeData(int machineId,
+    public static ExchangeData BuildStartCycleExchangeData (int machineId,
                                                            int machineModuleId,
                                                            DateTime dateTime)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.Action,
                                ExchangeData.ACTION_START_CYCLE,
                                null);
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to a start of cyle
     /// </summary>
@@ -272,17 +281,17 @@ namespace Lemoine.Cnc.Data
     /// <param name="operationCode"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildStartCycleExchangeDataWithOperationCode(int machineId,
+      BuildStartCycleExchangeDataWithOperationCode (int machineId,
                                                    int machineModuleId,
                                                    DateTime dateTime,
                                                    string operationCode)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.Action,
                                ExchangeData.ACTION_START_CYCLE,
                                operationCode);
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to an end of cyle
     /// </summary>
@@ -291,11 +300,11 @@ namespace Lemoine.Cnc.Data
     /// <param name="dateTime"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildStopCycleExchangeData(int machineId,
+      BuildStopCycleExchangeData (int machineId,
                                  int machineModuleId,
                                  DateTime dateTime)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.Action,
                                ExchangeData.ACTION_STOP_CYCLE,
                                null);
@@ -310,12 +319,12 @@ namespace Lemoine.Cnc.Data
     /// <param name="operationCode"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildStopCycleExchangeDataWithOperationCode(int machineId,
+      BuildStopCycleExchangeDataWithOperationCode (int machineId,
                                                   int machineModuleId,
                                                   DateTime dateTime,
                                                   string operationCode)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.Action,
                                ExchangeData.ACTION_STOP_CYCLE,
                                operationCode);
@@ -335,7 +344,7 @@ namespace Lemoine.Cnc.Data
                                                            DateTime dateTime,
                                                            int operationCodeQuantity)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.Action,
                                ExchangeData.ACTION_OPERATIONCODE_QUANTITY,
                                operationCodeQuantity);
@@ -355,7 +364,7 @@ namespace Lemoine.Cnc.Data
                                                            DateTime dateTime,
                                                            string operationCodeQuantity)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.Action,
                                ExchangeData.ACTION_OPERATIONCODE_QUANTITY,
                                operationCodeQuantity);
@@ -370,17 +379,17 @@ namespace Lemoine.Cnc.Data
     /// <param name="quantity"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildQuantityExchangeData(int machineId,
+      BuildQuantityExchangeData (int machineId,
                                 int machineModuleId,
                                 DateTime dateTime,
                                 int quantity)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.Action,
                                ExchangeData.ACTION_QUANTITY,
                                quantity);
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to a detection time stamp
     /// </summary>
@@ -389,16 +398,16 @@ namespace Lemoine.Cnc.Data
     /// <param name="dateTime"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildDetectionTimeStampExchangeData(int machineId,
+      BuildDetectionTimeStampExchangeData (int machineId,
                                           int machineModuleId,
                                           DateTime dateTime)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.DetectionTimeStamp,
                                null,
                                null);
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to a stamp
     /// </summary>
@@ -409,14 +418,14 @@ namespace Lemoine.Cnc.Data
     /// <param name="key"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildStampExchangeData(int machineId,
+      BuildStampExchangeData (int machineId,
                              int machineModuleId,
                              DateTime dateTime,
                              string key,
                              double stampId)
     {
       if (0 == stampId) {
-        return BuildExchangeData(machineId, machineModuleId, dateTime,
+        return BuildExchangeData (machineId, machineModuleId, dateTime,
                                  ExchangeDataCommand.Action,
                                  ExchangeData.ACTION_STOP_ISO_FILE,
                                  null);
@@ -425,14 +434,14 @@ namespace Lemoine.Cnc.Data
         log.DebugFormat ("BuildStampExchangeData: " +
                          "negative stamp value {0}, turn into a positive value",
                          stampId);
-        return BuildExchangeData(machineId, machineModuleId, dateTime,
+        return BuildExchangeData (machineId, machineModuleId, dateTime,
                                  ExchangeDataCommand.Stamp,
                                  key,
                                  -stampId);
       }
       else { // 0 < stampId
         Debug.Assert (0 < stampId);
-        return BuildExchangeData(machineId, machineModuleId, dateTime,
+        return BuildExchangeData (machineId, machineModuleId, dateTime,
                                  ExchangeDataCommand.Stamp,
                                  key,
                                  stampId);
@@ -453,7 +462,7 @@ namespace Lemoine.Cnc.Data
     {
       return BuildExchangeData (machineId, machineModuleId, dateTime, ExchangeDataCommand.SequenceMilestone, key, sequenceMilestone.TotalSeconds);
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to a CNC value
     /// </summary>
@@ -464,17 +473,17 @@ namespace Lemoine.Cnc.Data
     /// <param name="v"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildCncValueExchangeData(int machineId,
+      BuildCncValueExchangeData (int machineId,
                                 int machineModuleId,
                                 DateTime dateTime,
                                 string key,
                                 object v)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.CncValue,
                                key, v);
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to stop of CNC value
     /// </summary>
@@ -484,12 +493,12 @@ namespace Lemoine.Cnc.Data
     /// <param name="key"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildStopCncValueExchangeData(int machineId,
+      BuildStopCncValueExchangeData (int machineId,
                                     int machineModuleId,
                                     DateTime dateTime,
                                     string key)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.StopCncValue,
                                key, null);
     }
@@ -521,12 +530,12 @@ namespace Lemoine.Cnc.Data
     /// <param name="dateTime"></param>
     /// <param name="v"></param>
     /// <returns></returns>
-    public static ExchangeData BuildCncAlarmExchangeData(int machineId, int machineModuleId,
+    public static ExchangeData BuildCncAlarmExchangeData (int machineId, int machineModuleId,
                                                          DateTime dateTime, object v)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime, ExchangeDataCommand.CncAlarm, "", v);
+      return BuildExchangeData (machineId, machineModuleId, dateTime, ExchangeDataCommand.CncAlarm, "", v);
     }
-    
+
     /// <summary>
     /// Build an exchange data corresponding to a MachineModeId
     /// </summary>
@@ -535,16 +544,16 @@ namespace Lemoine.Cnc.Data
     /// <param name="dateTime"></param>
     /// <param name="v"></param>
     /// <returns></returns>
-    public static ExchangeData BuildMachineModeIDExchangeData(int machineId,
+    public static ExchangeData BuildMachineModeIDExchangeData (int machineId,
                                                               int machineModuleId,
                                                               DateTime dateTime, object v)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.MachineMode,
                                ExchangeData.MACHINE_MODE_ID, v);
     }
-    
-    
+
+
     /// <summary>
     /// Build an exchange data corresponding to a MachineMode translation key or name
     /// </summary>
@@ -554,12 +563,12 @@ namespace Lemoine.Cnc.Data
     /// <param name="v"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildMachineModeTranslationKeyOrNameExchangeData(int machineId,
+      BuildMachineModeTranslationKeyOrNameExchangeData (int machineId,
                                                        int machineModuleId,
                                                        DateTime dateTime,
                                                        object v)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.MachineMode,
                                ExchangeData.MACHINE_MODE_TRANSLATION_KEY_OR_NAME, v);
     }
@@ -573,17 +582,17 @@ namespace Lemoine.Cnc.Data
     /// <param name="v"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildMachineModuleActivityIDExchangeData(int machineId,
+      BuildMachineModuleActivityIDExchangeData (int machineId,
                                                int machineModuleId,
                                                DateTime dateTime,
                                                object v)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.MachineModuleActivity,
                                ExchangeData.MACHINE_MODE_ID, v);
     }
-    
-    
+
+
     /// <summary>
     /// Build an exchange data corresponding to a MachineModuleActivity / MachineMode translation key or name
     /// </summary>
@@ -593,30 +602,31 @@ namespace Lemoine.Cnc.Data
     /// <param name="v"></param>
     /// <returns></returns>
     public static ExchangeData
-      BuildMachineModuleActivityTranslationKeyOrNameExchangeData(int machineId,
+      BuildMachineModuleActivityTranslationKeyOrNameExchangeData (int machineId,
                                                                  int machineModuleId,
                                                                  DateTime dateTime,
                                                                  object v)
     {
-      return BuildExchangeData(machineId, machineModuleId, dateTime,
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.MachineModuleActivity,
                                ExchangeData.MACHINE_MODE_TRANSLATION_KEY_OR_NAME, v);
     }
     #endregion // Methods
-    
-    
+
+
     #region ISerializable interface
     /// <summary>
     /// GetBytesFromHexString (revert of BitConverter.ToString)
     /// </summary>
     /// <param name="str"></param>
     /// <returns></returns>
-    static byte[] GetBytesFromHexString(string str) {
-      string[] splittedStr = str.Split('-');
+    static byte[] GetBytesFromHexString (string str)
+    {
+      string[] splittedStr = str.Split ('-');
       byte[] bytes = new byte[splittedStr.Length];
       int index = 0;
-      foreach(string b in splittedStr) {
-        bytes[index] = Convert.ToByte(b, 16);
+      foreach (string b in splittedStr) {
+        bytes[index] = Convert.ToByte (b, 16);
         index++;
       }
       return bytes;
@@ -629,76 +639,119 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     /// <param name="info"></param>
     /// <param name="context"></param>
-    public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+    public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
     {
-      info.AddValue("M", this.MachineId, typeof(int));
-      info.AddValue("MM", this.MachineModuleId, typeof(int));
-      info.AddValue("DT", this.DateTime, typeof(DateTime));
-      info.AddValue("CO", this.Command.ToString(), typeof(ExchangeDataCommand));
-      info.AddValue("K", this.Key, typeof(string));
-      
+      info.AddValue ("M", this.MachineId, typeof (int));
+      info.AddValue ("MM", this.MachineModuleId, typeof (int));
+      info.AddValue ("DT", this.DateTime, typeof (DateTime));
+      info.AddValue ("CO", this.Command.ToString (), typeof (ExchangeDataCommand));
+      info.AddValue ("K", this.Key, typeof (string));
+
       if (this.Value != null) {
-        Type valueType = this.Value.GetType();
-        
-        info.AddValue("T", this.Value.GetType().ToString(), typeof(string));
-        
-        if ((valueType.IsValueType) || (valueType == typeof(string))) {
-          info.AddValue("V", this.Value, valueType);
+        var valueType = this.Value.GetType ();
+        var typeElements = valueType.AssemblyQualifiedName.Split ([", "], StringSplitOptions.None);
+        string qualifiedType;
+        if (typeElements[1].Equals ("mscorlib")) {
+          qualifiedType = typeElements[0];
         }
         else {
-          IFormatter formatter = new BinaryFormatter ();
-          using (MemoryStream stream = new MemoryStream ())
-          {
-            formatter.Serialize (stream, this.Value);
-            string hex = BitConverter.ToString (stream.ToArray ());
-            info.AddValue("V", hex, typeof(string));
+          qualifiedType = $"{typeElements[0]}, {typeElements[1]}";
+        }
+        info.AddValue ("T", qualifiedType, typeof (string));
+
+        if ((valueType.IsValueType) || (valueType == typeof (string))) {
+          info.AddValue ("V", this.Value, valueType);
+        }
+        else {
+          try {
+            // Try Json
+            JsonSerializerOptions jsonSerializerOptions = new (JsonSerializerOptions.Default) {
+              WriteIndented = false
+            };
+            var json = JsonSerializer.Serialize (this.Value, jsonSerializerOptions);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetObjectData: json is {json}");
+            }
+            info.AddValue ("V", json, valueType);
+          }
+          catch (Exception ex) {
+            log.Error ($"TryEnqueue: could not serialize {this.Value} in Json => use binary", ex);
+            using (MemoryStream stream = new MemoryStream ()) {
+              var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
+              if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
+                MessagePackSerializer.Serialize (stream, this.Value, ContractlessStandardResolver.Options);
+              }
+              else {
+                IFormatter formatter = new BinaryFormatter ();
+                formatter.Serialize (stream, this.Value);
+              }
+              string hex = BitConverter.ToString (stream.ToArray ());
+              info.AddValue ("V", hex, typeof (string));
+            }
           }
         }
       }
     }
-    
+
     /// <summary>
     /// ExchangeData: ISerializable interface
     /// </summary>
     /// <param name="info"></param>
     /// <param name="context"></param>
-    protected ExchangeData(SerializationInfo info, StreamingContext context)
+    protected ExchangeData (SerializationInfo info, StreamingContext context)
     {
-      this.MachineId = info.GetInt32("M");
-      this.MachineModuleId = info.GetInt32("MM");
-      this.DateTime = info.GetDateTime("DT");
-      this.Command  = (ExchangeDataCommand) ExchangeDataCommand.Parse(typeof(ExchangeDataCommand), info.GetString("CO"));
-      this.Key = info.GetString("K");
+      this.MachineId = info.GetInt32 ("M");
+      this.MachineModuleId = info.GetInt32 ("MM");
+      this.DateTime = info.GetDateTime ("DT");
+      this.Command = (ExchangeDataCommand)ExchangeDataCommand.Parse (typeof (ExchangeDataCommand), info.GetString ("CO"));
+      this.Key = info.GetString ("K");
       try {
-        string valueType = info.GetString("T");
+        string valueType = info.GetString ("T");
         if (valueType.Equals (typeof (int).ToString ())) {
-          this.Value = info.GetInt32("V");
+          this.Value = info.GetInt32 ("V");
         }
         else if (valueType.Equals (typeof (Int16).ToString ())) {
-          this.Value = info.GetInt16("V");
+          this.Value = info.GetInt16 ("V");
         }
         else if (valueType.Equals (typeof (Int64).ToString ())) {
-          this.Value = info.GetInt64("V");
+          this.Value = info.GetInt64 ("V");
         }
         else if (valueType.Equals (typeof (bool).ToString ())) {
-          this.Value = info.GetBoolean("V");
+          this.Value = info.GetBoolean ("V");
         }
         else if (valueType.Equals (typeof (double).ToString ())) {
-          this.Value = info.GetDouble("V");
+          this.Value = info.GetDouble ("V");
         }
         else if (valueType.Equals (typeof (string).ToString ())) {
-          this.Value = info.GetString("V");
+          this.Value = info.GetString ("V");
         }
         else {
-          BinaryFormatter formatter = new BinaryFormatter ();
-          using (MemoryStream stream =
-                 new MemoryStream (GetBytesFromHexString(info.GetString("V"))))
-          {
-            this.Value = formatter.Deserialize (stream);
+          try {
+            var json = info.GetString ("V");
+            this.Value = JsonSerializer.Deserialize (json, Type.GetType (valueType));
+          }
+          catch (Exception ex) {
+            log.Info ($"ExchangeData: json deserialization exception", ex);
+            try {
+              using (MemoryStream stream = new MemoryStream (GetBytesFromHexString (info.GetString ("V")))) {
+                this.Value = MessagePackSerializer.Deserialize (Type.GetType (valueType), stream, ContractlessStandardResolver.Options);
+              }
+            }
+            catch (Exception ex1) {
+              if (log.IsInfoEnabled) {
+                log.Info ($"ExchangeData: MessagePack deserialize failed with exception => switch to BinaryFormatter", ex1);
+              }
+              BinaryFormatter formatter = new BinaryFormatter ();
+              using (MemoryStream stream =
+                     new MemoryStream (GetBytesFromHexString (info.GetString ("V")))) {
+                this.Value = formatter.Deserialize (stream);
+              }
+            }
           }
         }
       }
-      catch (Exception) {
+      catch (Exception ex2) {
+        log.Error ($"ExchangeData: exception", ex2);
         this.Value = null;
       }
     }

@@ -5,9 +5,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>preview</LangVersion>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="MessagePack" />
     <PackageReference Include="System.Data.SQLite.Core" />
   </ItemGroup>
   

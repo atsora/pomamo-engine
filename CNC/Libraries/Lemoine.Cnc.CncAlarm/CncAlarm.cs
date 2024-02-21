@@ -38,7 +38,7 @@ namespace Lemoine.Cnc
     /// <summary>
     /// Alarm Number
     /// </summary>
-    public string Number { get; private set; } = "";
+    public string Number { get; set; } = "";
 
     /// <summary>
     /// Alarm Message
@@ -57,7 +57,7 @@ namespace Lemoine.Cnc
     /// Can be empty but not null
     /// Warning: using Dictionary with string / object will create a parsing bug in LemDataService (Fifo) 
     /// </summary>
-    public IDictionary<string, string> Properties { get; private set; } = new Dictionary<string, string> ();
+    public IDictionary<string, string> Properties { get; set; } = new Dictionary<string, string> ();
 
     /// <summary>
     /// Default constructor for serialization

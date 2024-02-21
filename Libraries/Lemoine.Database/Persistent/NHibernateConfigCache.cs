@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Lemoine.Core.Log;
+using MessagePack;
 using System.Reflection;
 using System.IO;
 using Lemoine.Info;
 using System.Runtime.Serialization.Formatters.Binary;
 using NHibernate.Cfg;
 using Lemoine.Extensions.Database;
+using MessagePack.Resolvers;
 
 namespace Lemoine.Database.Persistent
 {
@@ -39,6 +41,11 @@ namespace Lemoine.Database.Persistent
 
     static readonly string STORE_MAPPING_CACHE_KEY = "Database.StoreMappingCache";
     static readonly bool STORE_MAPPING_CACHE_DEFAULT = true;
+
+    static readonly string SERIALIZER_KEY = "Database.MappingCache.Serializer"; // MessagePack / BinaryFormatter
+    static readonly string SERIALIZER_MESSAGEPACK = "MessagePack";
+    static readonly string SERIALIZER_BINARYFORMATTER = "BinaryFormatter"; // Soon obsolete
+    static readonly string SERIALIZER_DEFAULT = SERIALIZER_BINARYFORMATTER;
 
     const string DEFAULT_GDB_CONFIG_CACHE_FILE = "GDBConfigCache";
 
@@ -78,17 +85,25 @@ namespace Lemoine.Database.Persistent
     {
       var configCachePath = GetConfigCachePath ();
 
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-      BinaryFormatter binaryFormatter = new BinaryFormatter ();
-#pragma warning restore SYSLIB0011 // Type or member is obsolete
       try {
-        // Note: binary serialization is obsolete
-        // This code is still active but not really required. If absolutely needed this could be removed in the future
-        using (Stream configCacheFile = File.Open (configCachePath, FileMode.Open)) {
+        var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
+        if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
+          using (Stream configCacheFile = File.Open (configCachePath, FileMode.Open)) {
+            m_configuration = MessagePackSerializer.Deserialize<NHibernate.Cfg.Configuration> (configCacheFile, ContractlessStandardResolver.Options);
+          }
+        }
+        else {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-          m_configuration = binaryFormatter.Deserialize (configCacheFile)
+          BinaryFormatter binaryFormatter = new BinaryFormatter ();
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
-            as NHibernate.Cfg.Configuration;
+          // Note: binary serialization is obsolete
+          // This code is still active but not really required. If absolutely needed this could be removed in the future
+          using (Stream configCacheFile = File.Open (configCachePath, FileMode.Open)) {
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+            m_configuration = binaryFormatter.Deserialize (configCacheFile)
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+              as NHibernate.Cfg.Configuration;
+          }
         }
       }
       catch (Exception ex) {
@@ -103,9 +118,7 @@ namespace Lemoine.Database.Persistent
       }
 
       if (log.IsInfoEnabled) {
-        log.InfoFormat ("Load: " +
-                        "pre-load the configuration with file {0}",
-                        configCachePath);
+        log.Info ($"Load: pre-load the configuration with file {configCachePath}");
       }
       return m_configuration;
     }
@@ -114,23 +127,29 @@ namespace Lemoine.Database.Persistent
     {
       var configCachePath = GetConfigCachePath ();
 
-      // Note: binary serialization is obsolete
-      // This code is still active but not really required. If absolutely needed this could be removed in the future
+      var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
+      if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
+        using (Stream configCacheFile = File.Open (configCachePath, FileMode.Open)) {
+          m_configuration = await MessagePackSerializer.DeserializeAsync<NHibernate.Cfg.Configuration> (configCacheFile, ContractlessStandardResolver.Options);
+        }
+      }
+      else {
+        // Note: binary serialization is obsolete
+        // This code is still active but not really required. If absolutely needed this could be removed in the future
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-      BinaryFormatter binaryFormatter = new BinaryFormatter ();
+        BinaryFormatter binaryFormatter = new BinaryFormatter ();
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
-                                  // TODO: Async deserialization using a memory stream
-      using (Stream configCacheFile = File.Open (configCachePath, FileMode.Open)) {
+        // TODO: Async deserialization using a memory stream
+        using (Stream configCacheFile = File.Open (configCachePath, FileMode.Open)) {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-        m_configuration = await System.Threading.Tasks.Task.Run<Configuration> (() => binaryFormatter.Deserialize (configCacheFile)
+          m_configuration = await System.Threading.Tasks.Task.Run<Configuration> (() => binaryFormatter.Deserialize (configCacheFile)
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
-          as NHibernate.Cfg.Configuration);
+            as NHibernate.Cfg.Configuration);
+        }
       }
 
       if (log.IsInfoEnabled) {
-        log.InfoFormat ("Load: " +
-                        "pre-load the configuration with file {0}",
-                        configCachePath);
+        log.Info ($"LoadAsync: pre-load the configuration with file {configCachePath}");
       }
       return m_configuration;
     }
@@ -193,15 +212,23 @@ namespace Lemoine.Database.Persistent
 
     void Store (Configuration configuration, IEnumerable<INHibernateExtension> extensions)
     {
-      // Note: binary serialization is obsolete
-      // This code is still active but not really required. If absolutely needed this could be removed in the future
+      var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
+      if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
+        using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
+          MessagePackSerializer.Serialize (configCacheFile, configuration, ContractlessStandardResolver.Options);
+        }
+      }
+      else {
+        // Note: binary serialization is obsolete
+        // This code is still active but not really required. If absolutely needed this could be removed in the future
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-      BinaryFormatter binaryFormatter = new BinaryFormatter ();
+        BinaryFormatter binaryFormatter = new BinaryFormatter ();
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
-      using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
+        using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-        binaryFormatter.Serialize (configCacheFile, configuration);
+          binaryFormatter.Serialize (configCacheFile, configuration);
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
+        }
       }
       // Extensions
       var extensionString = GetExtensionsString (extensions);
@@ -211,16 +238,24 @@ namespace Lemoine.Database.Persistent
 
     async System.Threading.Tasks.Task StoreAsync (Configuration configuration, IEnumerable<INHibernateExtension> extensions)
     {
-      // Note: binary serialization is obsolete
-      // This code is still active but not really required. If absolutely needed this could be removed in the future
+      var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
+      if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
+        using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
+          await MessagePackSerializer.SerializeAsync (configCacheFile, configuration, ContractlessStandardResolver.Options);
+        }
+      }
+      else {
+        // Note: binary serialization is obsolete
+        // This code is still active but not really required. If absolutely needed this could be removed in the future
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-      BinaryFormatter binaryFormatter = new BinaryFormatter ();
+        BinaryFormatter binaryFormatter = new BinaryFormatter ();
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
-                                  // TODO: async serialize with a MemoryStream
-      using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
+        // TODO: async serialize with a MemoryStream
+        using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-        binaryFormatter.Serialize (configCacheFile, configuration);
+          binaryFormatter.Serialize (configCacheFile, configuration);
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
+        }
       }
       // Extensions
       var extensionString = GetExtensionsString (extensions);
@@ -298,8 +333,7 @@ namespace Lemoine.Database.Persistent
           await StoreAsync (configuration, extensions);
         }
         catch (Exception ex) {
-          log.Error ("TryStore: " +
-                     "serializing the configuration failed", ex);
+          log.Error ("TryStore: serializing the configuration failed", ex);
           try {
             File.Delete (GetConfigCachePath ());
           }
@@ -321,16 +355,16 @@ namespace Lemoine.Database.Persistent
       string extensionsCachePath = GetExtensionsCachePath ();
 
       if (!File.Exists (configCachePath)) {
-        log.DebugFormat ("IsConfigurationFileValid: " +
-                         "the file {0} does not exist",
-                         configCachePath);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsConfigurationFileValid: the file {configCachePath} does not exist");
+        }
         return false;
       }
 
       if (!File.Exists (extensionsCachePath)) {
-        log.DebugFormat ("IsConfigurationFileValid: " +
-                         "the file {0} does not exist",
-                         extensionsCachePath);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsConfigurationFileValid: the file {extensionsCachePath} does not exist");
+        }
         return false;
       }
 
@@ -372,10 +406,8 @@ namespace Lemoine.Database.Persistent
           return false;
         }
       }
-      catch (Exception) {
-        log.ErrorFormat ("IsConfigurationFileValid: " +
-                         "error reading {0}",
-                         extensionsCachePath);
+      catch (Exception ex) {
+        log.Error ($"IsConfigurationFileValid: error reading {extensionsCachePath}", ex);
         return false;
       }
 
@@ -453,10 +485,8 @@ namespace Lemoine.Database.Persistent
           return false;
         }
       }
-      catch (Exception) {
-        log.ErrorFormat ("IsConfigurationFileValid: " +
-                         "error reading {0}",
-                         extensionsCachePath);
+      catch (Exception ex) {
+        log.Error ($"IsConfigurationFileValid: error reading {extensionsCachePath}", ex);
         return false;
       }
 

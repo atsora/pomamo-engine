@@ -7,6 +7,8 @@
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <AssemblyVersion>18.0.0.0</AssemblyVersion>
     <NoWarn>0649</NoWarn>
+    <LangVersion>preview</LangVersion>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" />
     <PackageReference Include="Iesi.Collections" />
+    <PackageReference Include="MessagePack" />
     <!-- Implicit dependency, required. See: #175243612 -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
     <!-- Not required any more with .NET Standard 2.1 or .NET Core 3.1, but required in .NET Standard 2.0-->
@@ -35,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Business\Lemoine.Business.csproj" />
     <ProjectReference Include="..\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Lemoine.Extensions\Lemoine.Extensions.csproj" />

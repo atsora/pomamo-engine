@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Lemoine.GDBPersistentClasses\StampingConfigByName.hbm.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="NHibernate">
       <HintPath>..\..\..\pomamo-extern\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
     </Reference>
