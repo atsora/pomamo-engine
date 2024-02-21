@@ -92,9 +92,7 @@ namespace Lemoine.CncDataImport
     /// </summary>
     public void SetActive ()
     {
-      if (null != m_caller) {
-        m_caller.SetActive ();
-      }
+      m_caller?.SetActive ();
     }
 
     /// <summary>
@@ -102,9 +100,7 @@ namespace Lemoine.CncDataImport
     /// </summary>
     public void PauseCheck ()
     {
-      if (null != m_caller) {
-        m_caller.PauseCheck ();
-      }
+      m_caller?.PauseCheck ();
     }
 
     /// <summary>
@@ -112,9 +108,7 @@ namespace Lemoine.CncDataImport
     /// </summary>
     public void ResumeCheck ()
     {
-      if (null != m_caller) {
-        m_caller.ResumeCheck ();
-      }
+      m_caller?.ResumeCheck ();
     }
     #endregion // Lemoine.Threading.IChecked implementation
 

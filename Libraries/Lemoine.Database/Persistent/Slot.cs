@@ -235,9 +235,7 @@ namespace Lemoine.Database.Persistent
     /// </summary>
     public virtual void SetActive ()
     {
-      if (null != m_caller) {
-        m_caller.SetActive ();
-      }
+      m_caller?.SetActive ();
     }
 
     /// <summary>
@@ -245,9 +243,7 @@ namespace Lemoine.Database.Persistent
     /// </summary>
     public virtual void PauseCheck()
     {
-      if (null != m_caller) {
-        m_caller.PauseCheck ();
-      }
+      m_caller?.PauseCheck ();
     }
 
     /// <summary>
@@ -255,9 +251,7 @@ namespace Lemoine.Database.Persistent
     /// </summary>
     public virtual void ResumeCheck()
     {
-      if (null != m_caller) {
-        m_caller.ResumeCheck ();
-      }
+      m_caller?.ResumeCheck ();
     }
     #endregion
     

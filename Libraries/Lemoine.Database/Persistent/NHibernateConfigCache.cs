@@ -49,7 +49,7 @@ namespace Lemoine.Database.Persistent
 
     const string DEFAULT_GDB_CONFIG_CACHE_FILE = "GDBConfigCache";
 
-    string m_applicationName;
+    readonly string m_applicationName;
     Configuration m_configuration = null;
 
     #region Getters / Setters

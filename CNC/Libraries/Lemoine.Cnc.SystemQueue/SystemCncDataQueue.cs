@@ -201,9 +201,7 @@ namespace Lemoine.Cnc.SystemQueue
     /// </summary>
     public void SetActive ()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.SetActive();
-      }
+      m_checkedCaller?.SetActive ();
     }
 
     /// <summary>
@@ -211,9 +209,7 @@ namespace Lemoine.Cnc.SystemQueue
     /// </summary>
     public void PauseCheck()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.PauseCheck();
-      }
+      m_checkedCaller?.PauseCheck ();
     }
 
     /// <summary>
@@ -221,9 +217,7 @@ namespace Lemoine.Cnc.SystemQueue
     /// </summary>
     public void ResumeCheck()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.ResumeCheck();
-      }
+      m_checkedCaller?.ResumeCheck ();
     }
     
     /// <summary>
@@ -460,9 +454,7 @@ namespace Lemoine.Cnc.SystemQueue
         // and unmanaged resources.
         if (disposing) {
           // Dispose managed resources
-          if (m_queue != null) {
-            m_queue.Close ();
-          }
+          m_queue?.Close ();
         }
 
         // Call the appropriate methods to clean up

@@ -132,9 +132,7 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     public void SetActive ()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.SetActive ();
-      }
+      m_checkedCaller?.SetActive ();
     }
 
     /// <summary>
@@ -142,9 +140,7 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     public void PauseCheck ()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.PauseCheck ();
-      }
+      m_checkedCaller?.PauseCheck ();
     }
 
     /// <summary>
@@ -152,9 +148,7 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     public void ResumeCheck ()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.ResumeCheck ();
-      }
+      m_checkedCaller?.ResumeCheck ();
     }
 
     /// <summary>

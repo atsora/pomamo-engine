@@ -37,18 +37,14 @@ namespace Lemoine.Core.AsyncProcess
         }
         var processResult = new ProcessResult (process.ExitCode, standardOutputString, standardErrorString);
         taskCompletionSource.SetResult (processResult);
-        if (null != errStreamWriter) {
-          errStreamWriter.WriteAsync (standardErrorString);
-        }
+        errStreamWriter?.WriteAsync (standardErrorString);
         process.Dispose ();
       };
       if (processStartInfo.RedirectStandardOutput) {
         process.OutputDataReceived += (sender, outLine) => {
           log.Debug ($"RunProcessAsync: received output data {outLine.Data}");
           if (null != outLine.Data) {
-            if (null != outStreamWriter) {
-              outStreamWriter.WriteLineAsync (outLine.Data);
-            }
+            outStreamWriter?.WriteLineAsync (outLine.Data);
             standardOutput.WriteLine (outLine.Data);
           }
         };

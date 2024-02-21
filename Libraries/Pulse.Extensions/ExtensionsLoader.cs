@@ -109,9 +109,7 @@ namespace Pulse.Extensions
       }
 
       try {
-        if (null != m_connectionInitializer) {
-          m_connectionInitializer.Initialize ();
-        }
+        m_connectionInitializer?.Initialize ();
         var isLctr = m_lctrChecker.IsLctr ();
         if (!isLctr) {
           m_fileRepoClientFactory.InitializeFileRepoClient (); // Required for the plugins synchronization

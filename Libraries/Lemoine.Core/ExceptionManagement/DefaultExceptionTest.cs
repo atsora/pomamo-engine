@@ -23,30 +23,22 @@ namespace Lemoine.Core.ExceptionManagement
     public bool RequiresExit (Exception ex, ILog logger)
     {
       if (ex is OutOfMemoryException) {
-        if (null != logger) {
-          logger.Error ("RequiresExit: out of memory exception", ex);
-        }
+        logger?.Error ("RequiresExit: out of memory exception", ex);
         return true;
       }
 
       if (ex is System.Threading.ThreadStateException) {
-        if (null != logger) {
-          logger.Error ("RequiresExit: thread state exception", ex);
-        }
+        logger?.Error ("RequiresExit: thread state exception", ex);
         return true;
       }
 
       if (ex is Lemoine.Threading.AbortException) {
-        if (null != logger) {
-          logger.Error ("RequiresExit: Lemoine.Threading.AbortException", ex);
-        }
+        logger?.Error ("RequiresExit: Lemoine.Threading.AbortException", ex);
         return true;
       }
 
       if (ex?.Message?.ToLowerInvariant ()?.Contains ("out of memory") ?? false) {
-        if (null != logger) {
-          logger.Error ("RequiresExit: exception with message out of memory", ex);
-        }
+        logger?.Error ("RequiresExit: exception with message out of memory", ex);
         return true;
       }
 
@@ -132,9 +124,7 @@ namespace Lemoine.Core.ExceptionManagement
         // WSAETIMEDOUT 10060: Connection timed out.
         var errorCode = socketException.ErrorCode;
         if (errorCode == (int)System.Net.Sockets.SocketError.TimedOut) {
-          if (null != logger) {
-            logger.Warn ("IsTimeoutFailure: socket timeout", socketException);
-          }
+          logger?.Warn ("IsTimeoutFailure: socket timeout", socketException);
           return true;
         }
       }

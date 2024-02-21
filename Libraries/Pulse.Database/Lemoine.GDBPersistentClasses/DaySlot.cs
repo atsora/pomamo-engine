@@ -418,9 +418,7 @@ namespace Lemoine.GDBPersistentClasses
 
           currentDay = currentDay.AddDays (1);
 
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
 
           if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
             GetLogger ().WarnFormat ("ProcessTemplate: " +

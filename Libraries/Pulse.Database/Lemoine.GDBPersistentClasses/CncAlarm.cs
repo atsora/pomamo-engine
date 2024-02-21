@@ -65,7 +65,7 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     public virtual string Color
     {
-      get { return (this.Severity != null) ? this.Severity.Color : null; }
+      get { return this.Severity?.Color; }
     }
 
     /// <summary>

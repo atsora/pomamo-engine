@@ -92,7 +92,7 @@ namespace Lemoine.NHibernateTypes
     /// <inheritdoc />
     public override string ToLoggableString (object value, ISessionFactoryImplementor factory)
     {
-      return (value == null) ? null : value.ToString ();
+      return value?.ToString ();
     }
 
     public override void NullSafeSet (DbCommand st, object value, int index, bool[] settable, ISessionImplementor session)

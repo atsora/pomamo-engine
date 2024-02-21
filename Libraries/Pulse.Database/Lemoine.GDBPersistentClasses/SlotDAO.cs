@@ -67,9 +67,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual void SetActive ()
     {
-      if (null != m_caller) {
-        m_caller.SetActive ();
-      }
+      m_caller?.SetActive ();
     }
 
     /// <summary>
@@ -77,9 +75,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public void PauseCheck ()
     {
-      if (null != m_caller) {
-        m_caller.PauseCheck ();
-      }
+      m_caller?.PauseCheck ();
     }
 
     /// <summary>
@@ -87,9 +83,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public void ResumeCheck ()
     {
-      if (null != m_caller) {
-        m_caller.ResumeCheck ();
-      }
+      m_caller?.ResumeCheck ();
     }
     #endregion // IChecked implementation
 
@@ -220,9 +214,7 @@ namespace Lemoine.GDBPersistentClasses
                 extension.RemoveSlot (impactedSlot);
               }
               MakeTransient (impactedSlot);
-              if (null != preFetchedSlots) {
-                preFetchedSlots.Remove (impactedSlot);
-              }
+              preFetchedSlots?.Remove (impactedSlot);
               continue;
             }
           }
@@ -246,9 +238,7 @@ namespace Lemoine.GDBPersistentClasses
               extension.RemoveSlot (impactedSlot);
             }
             MakeTransient (impactedSlot);
-            if (null != preFetchedSlots) {
-              preFetchedSlots.Remove (impactedSlot);
-            }
+            preFetchedSlots?.Remove (impactedSlot);
           }
           else {
             // 3> Association    xxxxxx
@@ -264,9 +254,7 @@ namespace Lemoine.GDBPersistentClasses
                   extension.RemoveSlot (impactedSlot);
                 }
                 MakeTransient (impactedSlot);
-                if (null != preFetchedSlots) {
-                  preFetchedSlots.Remove (impactedSlot);
-                }
+                preFetchedSlots?.Remove (impactedSlot);
               }
               else if ((default (TSlot) != extendedSlot)
                 && IsMergeApplicableWithNext (extendedSlot, impactedSlot, association)) { // 2nd merge
@@ -276,9 +264,7 @@ namespace Lemoine.GDBPersistentClasses
                   extension.RemoveSlot (impactedSlot);
                 }
                 MakeTransient (impactedSlot);
-                if (null != preFetchedSlots) {
-                  preFetchedSlots.Remove (impactedSlot);
-                }
+                preFetchedSlots?.Remove (impactedSlot);
                 // - Extend extendedSlot: to do next
                 extendedSlot.MergeWithNextSlot<TSlot> (impactedSlot);
                 // Note: ModifySlot process is postponed as much as possible because of the accumulators
@@ -343,9 +329,7 @@ namespace Lemoine.GDBPersistentClasses
                   extension.RemoveSlot (impactedSlot);
                 }
                 MakeTransient (impactedSlot);
-                if (null != preFetchedSlots) {
-                  preFetchedSlots.Remove (impactedSlot);
-                }
+                preFetchedSlots?.Remove (impactedSlot);
               }
               else { // impactedSlot.BeginDateTime < range.Lower => make it shorter
                 Debug.Assert (Bound.Compare<DateTime> (impactedSlot.BeginDateTime, range.Lower) < 0);
@@ -389,9 +373,7 @@ namespace Lemoine.GDBPersistentClasses
                                           impactedSlot.DateTimeRange.Lower)) { // Remove the left slot
                 impactedSlot.HandleRemovedSlot ();
                 MakeTransient (impactedSlot);
-                if (null != preFetchedSlots) {
-                  preFetchedSlots.Remove (impactedSlot);
-                }
+                preFetchedSlots?.Remove (impactedSlot);
                 // Right slot
                 if (!Bound.Equals<DateTime> (range.Upper,
                                              oldSlot.DateTimeRange.Upper)) {

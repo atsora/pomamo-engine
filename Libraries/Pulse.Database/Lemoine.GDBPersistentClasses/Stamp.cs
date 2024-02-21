@@ -67,13 +67,9 @@ namespace Lemoine.GDBPersistentClasses
           // Nothing to do
           return;
         }
-        if (null != m_isoFile) {
-          m_isoFile.Stamps.Remove (this);
-        }
+        m_isoFile?.Stamps.Remove (this);
         m_isoFile = value;
-        if (null != m_isoFile) {
-          m_isoFile.Stamps.Add (this);
-        }
+        m_isoFile?.Stamps.Add (this);
       }
     }
     

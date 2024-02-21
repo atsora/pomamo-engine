@@ -559,9 +559,7 @@ namespace Lemoine.GDBPersistentClasses
       int maxNumberOfSteps = maxNumberOfModifications / itemNumberByStep;
 
       for (int i = 0; i < maxNumberOfSteps; ++i) {
-        if (null != checkedThread) {
-          checkedThread.SetActive ();
-        }
+        checkedThread?.SetActive ();
         IList<long> modificationIds = NHibernateHelper.GetCurrentSession ()
           .CreateSQLQuery (@"SELECT modificationid FROM machinemodificationstatus
 WHERE machinemodificationstatusmachineid=:MachineId
@@ -580,9 +578,7 @@ LIMIT :Number")
           return true;
         }
         foreach (var modificationId in modificationIds) {
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           NHibernateHelper.GetCurrentSession ()
             .CreateSQLQuery (@"DELETE FROM machinemodificationstatus
 WHERE machinemodificationstatusmachineid=:MachineId
@@ -590,9 +586,7 @@ WHERE machinemodificationstatusmachineid=:MachineId
             .SetParameter ("MachineId", machine.Id)
             .SetParameter ("ModificationId", modificationId, NHibernate.NHibernateUtil.Int64)
             .ExecuteUpdate ();
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           NHibernateHelper.GetCurrentSession ()
             .CreateSQLQuery (@"DELETE FROM machinemodification
 WHERE machinemodificationmachineid=:MachineId
@@ -632,9 +626,7 @@ WHERE machinemodificationmachineid=:MachineId
       int maxNumberOfSteps = maxNumberOfModifications / itemNumberByStep;
 
       for (int i = 0; i < maxNumberOfSteps; ++i) {
-        if (null != checkedThread) {
-          checkedThread.SetActive ();
-        }
+        checkedThread?.SetActive ();
         IList<long> modificationIds = NHibernateHelper.GetCurrentSession ()
           .CreateSQLQuery (@"SELECT modificationid FROM machinemodificationstatus
 WHERE machinemodificationstatusmachineid=:MachineId
@@ -656,9 +648,7 @@ LIMIT :Number")
           return true;
         }
         foreach (var modificationId in modificationIds) {
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           NHibernateHelper.GetCurrentSession ()
             .CreateSQLQuery (@"DELETE FROM machinemodificationstatus
 WHERE machinemodificationstatusmachineid=:MachineId
@@ -666,9 +656,7 @@ WHERE machinemodificationstatusmachineid=:MachineId
             .SetParameter ("MachineId", machine.Id)
             .SetParameter ("ModificationId", modificationId, NHibernate.NHibernateUtil.Int64)
             .ExecuteUpdate ();
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           NHibernateHelper.GetCurrentSession ()
             .CreateSQLQuery (@"DELETE FROM machinemodification
 WHERE machinemodificationmachineid=:MachineId

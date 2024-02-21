@@ -736,9 +736,7 @@ namespace Lemoine.GDBPersistentClasses
               return false;
             }
 
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
 
             // Is it still ok to run it ?
             if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
@@ -813,9 +811,7 @@ namespace Lemoine.GDBPersistentClasses
               transaction.Commit (); // Because it is ok to return a commit here
               return false;
             }
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
 
             // Check the day slot was processed
             if (!daySlot.Day.HasValue) {
@@ -835,9 +831,7 @@ namespace Lemoine.GDBPersistentClasses
               return false;
             } // Day slot process
 
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
 
             // Is it still ok to run it ?
             if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
@@ -889,12 +883,10 @@ namespace Lemoine.GDBPersistentClasses
 
               // Apply the full day item or cancel first any existing slot if such full day item does not exist
               ApplyShift (daySlot.Day.Value,
-                          (null == fullDayItem) ? null : fullDayItem.Shift,
+                          fullDayItem?.Shift,
                           adjustedRange,
                           mainModification, partOfDetectionAnalysis, checkedThread);
-              if (null != checkedThread) {
-                checkedThread.SetActive ();
-              }
+              checkedThread?.SetActive ();
 
               if (!onlyFullDayItem) {
                 // Process then the item one after each other
@@ -915,9 +907,7 @@ namespace Lemoine.GDBPersistentClasses
                                   date, item.TimePeriod, item.Shift,
                                   localRange,
                                   mainModification, partOfDetectionAnalysis, checkedThread);
-                      if (null != checkedThread) {
-                        checkedThread.SetActive ();
-                      }
+                      checkedThread?.SetActive ();
                     }
                   } // End loop on specific date items
 

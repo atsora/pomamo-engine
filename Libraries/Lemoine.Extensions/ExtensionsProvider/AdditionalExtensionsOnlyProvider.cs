@@ -76,9 +76,7 @@ namespace Lemoine.Extensions.ExtensionsProvider
         .Distinct ()) {
         IExtension extension = (IExtension)Activator.CreateInstance (additionalExtensionType);
         extensions.Add ((T)extension);
-        if (null != checkedThread) {
-          checkedThread.SetActive ();
-        }
+        checkedThread?.SetActive ();
       }
       return extensions;
     }

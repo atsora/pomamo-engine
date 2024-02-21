@@ -116,8 +116,9 @@ namespace Lemoine.Cnc
     /// <returns></returns>
     public CncAlarm Clone ()
     {
-      var other = new CncAlarm (this.CncInfo, this.Type, this.Number);
-      other.Message = this.Message;
+      var other = new CncAlarm (this.CncInfo, this.Type, this.Number) {
+        Message = this.Message
+      };
       foreach (var key in this.Properties.Keys) {
         other.Properties[key] = this.Properties[key];
       }
@@ -137,8 +138,7 @@ namespace Lemoine.Cnc
         return true;
       }
 
-      var other = obj as CncAlarm;
-      if (other == null) {
+      if (!(obj is CncAlarm other)) {
         return false;
       }
 

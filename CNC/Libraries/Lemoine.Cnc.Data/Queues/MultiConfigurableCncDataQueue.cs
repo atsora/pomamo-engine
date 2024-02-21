@@ -479,9 +479,7 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     public void SetActive ()
     {
-      if (m_checkedCaller != null) {
-        m_checkedCaller.SetActive ();
-      }
+      m_checkedCaller?.SetActive ();
     }
 
     /// <summary>
@@ -489,9 +487,7 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     public void PauseCheck ()
     {
-      if (m_checkedCaller != null) {
-        m_checkedCaller.PauseCheck ();
-      }
+      m_checkedCaller?.PauseCheck ();
     }
 
     /// <summary>
@@ -499,9 +495,7 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     public void ResumeCheck ()
     {
-      if (m_checkedCaller != null) {
-        m_checkedCaller.ResumeCheck ();
-      }
+      m_checkedCaller?.ResumeCheck ();
     }
     #endregion // IDisposable implementation
 

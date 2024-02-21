@@ -118,15 +118,11 @@ namespace Lemoine.GDBPersistentClasses
           // Nothing to do
           return;
         }
-        if (null != m_revision) {
-          // Remote the modification from the previous revision
-          m_revision.MachineModifications.Remove (this);
-        }
+        // Remote the modification from the previous revision
+        m_revision?.MachineModifications.Remove (this);
         m_revision = value;
-        if (null != m_revision) {
-          // Add the modification to the new revision
-          m_revision.MachineModifications.Add (this);
-        }
+        // Add the modification to the new revision
+        m_revision?.MachineModifications.Add (this);
       }
     }
 

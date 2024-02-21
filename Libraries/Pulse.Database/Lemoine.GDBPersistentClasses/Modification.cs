@@ -788,9 +788,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual void SetActive ()
     {
-      if (null != m_caller) {
-        m_caller.SetActive ();
-      }
+      m_caller?.SetActive ();
 
       if (null != this.MainModification) {
         this.MainModification.CheckStepTimeout ();
@@ -805,9 +803,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual void PauseCheck ()
     {
-      if (null != m_caller) {
-        m_caller.PauseCheck ();
-      }
+      m_caller?.PauseCheck ();
     }
 
     /// <summary>
@@ -815,9 +811,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual void ResumeCheck ()
     {
-      if (null != m_caller) {
-        m_caller.ResumeCheck ();
-      }
+      m_caller?.ResumeCheck ();
     }
     #endregion // IChecked implementation
 

@@ -1432,9 +1432,7 @@ namespace Lemoine.GDBPersistentClasses
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         IList<IDaySlot> daySlots = GetNotProcessTemplate (effectiveRange);
         foreach (IDaySlot daySlot in daySlots) {
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           ((DaySlot)daySlot).ProcessTemplate (cancellationToken, effectiveRange, checkedThread);
         }
       }

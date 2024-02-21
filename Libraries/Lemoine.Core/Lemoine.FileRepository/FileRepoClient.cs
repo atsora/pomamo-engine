@@ -741,9 +741,7 @@ namespace Lemoine.FileRepository
       }
       var fatalLogSet = false;
       while (!token.IsCancellationRequested && (!timeoutDateTime.HasValue || (DateTime.UtcNow < timeoutDateTime.Value))) {
-        if (null != checkedThread) {
-          checkedThread.SetActive ();
-        }
+        checkedThread?.SetActive ();
         var advancedStatus = TrySynchronize (distantDirectory, localDirectory, filter);
         if (advancedStatus.HasFlag (SynchronizationAdvancedStatus.NoImplementation)) {
           log.Fatal ("ForceSynchronize: no FileRepo implementation was set => give up");
@@ -771,9 +769,7 @@ namespace Lemoine.FileRepository
             fatalLogSet = true;
           }
           log.Error ("ForceSynchronize: synchronization could not get a possibly valid directory, retry in 1s");
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           token.WaitHandle.WaitOne (1000); // 1s
         }
       }

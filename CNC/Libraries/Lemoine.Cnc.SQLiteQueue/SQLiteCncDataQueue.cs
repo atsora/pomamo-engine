@@ -22,6 +22,7 @@ using Lemoine.Core.Log;
 using System.Text.Json;
 using MessagePack;
 using MessagePack.Resolvers;
+using System.Linq;
 
 namespace Lemoine.Cnc.SQLiteQueue
 {
@@ -286,9 +287,10 @@ namespace Lemoine.Cnc.SQLiteQueue
       m_tableName = tableName;
 
       string filePath = Path.Combine (directory, fileName);
-      var connBuilder = new SQLiteConnectionStringBuilder ();
-      connBuilder.DataSource = filePath;
-      connBuilder.JournalMode = SQLiteJournalModeEnum.Default; // for WAL mode, use SQLiteJournalModeEnum.Wal
+      var connBuilder = new SQLiteConnectionStringBuilder {
+        DataSource = filePath,
+        JournalMode = SQLiteJournalModeEnum.Default // for WAL mode, use SQLiteJournalModeEnum.Wal
+      };
       // connBuilder.Pooling = true; // problem with unit test TestMalformedDiskImage (corrupt file remains locked despite connection failed)
 
       SetActive ();
@@ -325,9 +327,7 @@ namespace Lemoine.Cnc.SQLiteQueue
     /// </summary>
     public void SetActive ()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.SetActive ();
-      }
+      m_checkedCaller?.SetActive ();
     }
 
     /// <summary>
@@ -335,9 +335,7 @@ namespace Lemoine.Cnc.SQLiteQueue
     /// </summary>
     public void PauseCheck ()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.PauseCheck ();
-      }
+      m_checkedCaller?.PauseCheck ();
     }
 
     /// <summary>
@@ -345,9 +343,7 @@ namespace Lemoine.Cnc.SQLiteQueue
     /// </summary>
     public void ResumeCheck ()
     {
-      if (null != m_checkedCaller) {
-        m_checkedCaller.ResumeCheck ();
-      }
+      m_checkedCaller?.ResumeCheck ();
     }
 
     void OpenAndCreate (string filePath)
@@ -510,9 +506,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {0}FirstId)",
     /// </summary>
     public void Dispose ()
     {
-      if (null != m_connection) {
-        m_connection.Close ();
-      }
+      m_connection?.Close ();
 
       GC.SuppressFinalize (this);
     }
@@ -842,11 +836,11 @@ VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}')",
               else {
                 var typeElements = valueType.AssemblyQualifiedName.Split ([", "], StringSplitOptions.None);
                 string qualifiedType;
-                if (typeElements[1].Equals ("mscorlib")) {
+                if (typeElements[typeElements.Length - 4].Equals ("mscorlib")) {
                   qualifiedType = typeElements[0];
                 }
                 else {
-                  qualifiedType = $"{typeElements[0]}, {typeElements[1]}";
+                  qualifiedType = string.Join (", ", typeElements.Take (typeElements.Length - 3));
                 }
                 try {
                   // Try Json

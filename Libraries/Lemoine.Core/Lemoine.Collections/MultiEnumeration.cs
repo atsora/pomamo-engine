@@ -65,9 +65,7 @@ namespace Lemoine.Collections
     /// </summary>
     public void Dispose ()
     {
-      if (null != m_currentEnumerator) {
-        m_currentEnumerator.Dispose ();
-      }
+      m_currentEnumerator?.Dispose ();
       GC.SuppressFinalize (this);
     }
     

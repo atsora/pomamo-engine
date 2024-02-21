@@ -51,9 +51,7 @@ namespace Lemoine.Core.Cache
     /// </summary>
     public void Dispose ()
     {
-      if (null != m_cacheClient) {
-        m_cacheClient.Dispose ();
-      }
+      m_cacheClient?.Dispose ();
     }
     #endregion // IDisposable implementation
 

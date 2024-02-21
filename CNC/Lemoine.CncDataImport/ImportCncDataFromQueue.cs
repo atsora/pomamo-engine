@@ -597,9 +597,7 @@ namespace Lemoine.CncDataImport
       }
 
       if (disposing) {
-        if (null != m_cncDataQueue) {
-          m_cncDataQueue.Dispose ();
-        }
+        m_cncDataQueue?.Dispose ();
         m_cancellationTokenSource.Dispose ();
       }
 

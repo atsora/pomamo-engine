@@ -50,9 +50,7 @@ namespace Lemoine.Core.Performance
     /// <param name="duration"></param>
     public static void Record (string key, TimeSpan duration)
     {
-      if (null != Instance.m_perfRecorder) {
-        Instance.m_perfRecorder.Record (key, duration);
-      }
+      Instance.m_perfRecorder?.Record (key, duration);
     }
 
     #region Instance

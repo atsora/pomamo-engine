@@ -339,9 +339,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null != m_caller) {
         m_caller.SetActive ();
-        if (null != m_operationSlot) {
-          m_operationSlot.SetActive ();
-        }
+        m_operationSlot?.SetActive ();
       }
     }
 
@@ -352,9 +350,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null != m_caller) {
         m_caller.PauseCheck ();
-        if (null != m_operationSlot) {
-          m_operationSlot.PauseCheck ();
-        }
+        m_operationSlot?.PauseCheck ();
       }
     }
 
@@ -365,9 +361,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null != m_caller) {
         m_caller.ResumeCheck ();
-        if (null != m_operationSlot) {
-          m_operationSlot.ResumeCheck ();
-        }
+        m_operationSlot?.ResumeCheck ();
       }
     }
     #endregion

@@ -319,9 +319,7 @@ namespace Lemoine.DataRepository
     {
       int attempt = 1;
       while (!cancellationToken.IsCancellationRequested) {
-        if (null != checkedThread) {
-          checkedThread.SetActive ();
-        }
+        checkedThread?.SetActive ();
         try {
           ReadData (cancellationToken);
           if (log.IsDebugEnabled) {

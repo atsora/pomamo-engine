@@ -96,13 +96,9 @@ namespace Lemoine.GDBPersistentClasses
           // Nothing to do
           return;
         }
-        if (null != m_cadModel) {
-          m_cadModel.Sequences.Remove (this);
-        }
+        m_cadModel?.Sequences.Remove (this);
         m_cadModel = value;
-        if (null != m_cadModel) {
-          m_cadModel.Sequences.Add (this);
-        }
+        m_cadModel?.Sequences.Add (this);
       }
     }
 

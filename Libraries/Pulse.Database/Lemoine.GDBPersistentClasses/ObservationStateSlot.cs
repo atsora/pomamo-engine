@@ -390,9 +390,7 @@ namespace Lemoine.GDBPersistentClasses
             log.DebugFormat ("ProcessTemplate: " +
                              "process item for long period {0}",
                              itemWithLongPeriod);
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
             UpperBound<DateTime> endDateTime = UpperBound.GetMinimum<DateTime> (applicableRange.Upper, limitSpecifiedDateTime);
             IShift shift = itemWithLongPeriod.Shift ?? currentShift;
             Debug.Assert (BoundType.Lower == utcBeginDateTime.BoundType);
@@ -408,9 +406,7 @@ namespace Lemoine.GDBPersistentClasses
                 for (var limitMin = upperOrNow.Subtract (limitTimeSpan);
                      Bound.Compare<DateTime> (range.Lower, limitMax) < 0;
                      limitMin = limitMin.Subtract (limitTimeSpan) ) {
-                  if (null != checkedThread) {
-                    checkedThread.SetActive ();
-                  }
+                  checkedThread?.SetActive ();
                   UtcDateTimeRange limitedRange =
                     new UtcDateTimeRange (range.Intersects (new UtcDateTimeRange (limitMin, limitMax)));
                   if (limitedRange.IsEmpty ()) {
@@ -459,9 +455,7 @@ namespace Lemoine.GDBPersistentClasses
           }
           transaction.Commit ();
         } // The process is completed now until beginDateTime
-        if (null != checkedThread) {
-          checkedThread.SetActive ();
-        }
+        checkedThread?.SetActive ();
         if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
           log.WarnFormat ("ProcessTemplate: " +
                           "maxAnalysisDateTime {0} is reached, return false " +
@@ -482,9 +476,7 @@ namespace Lemoine.GDBPersistentClasses
               ProcessTemplateItem (machine, machineStateTemplate, user, currentShift, item,
                                    utcBeginDateTime.Value, applicableRange.Upper.Value,
                                    mainModification, partOfDetectionAnalysis, checkedThread, log);
-              if (null != checkedThread) {
-                checkedThread.SetActive ();
-              }
+              checkedThread?.SetActive ();
               if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
                 log.WarnFormat ("ProcessTemplate: " +
                                 "maxAnalysisDateTime {0} is reached, return false, " +
@@ -615,9 +607,7 @@ namespace Lemoine.GDBPersistentClasses
                           mainModification, partOfDetectionAnalysis, log, checkedThread);
           }
           currentDay = currentDay.AddDays (1);
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
         }
       }
       else { // long period

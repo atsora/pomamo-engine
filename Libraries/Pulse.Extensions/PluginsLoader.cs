@@ -95,9 +95,7 @@ namespace Pulse.Extensions
         else {
           log.DebugFormat ("Clear: waiting for completion");
           while (1 == m_loadStatus) { // Still in progress
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
             System.Threading.Thread.Sleep (100);
           }
           Clear (checkedThread);
@@ -115,9 +113,7 @@ namespace Pulse.Extensions
           if (pluginStatusLog.IsDebugEnabled) {
             pluginStatusLog.Debug ($"Clear of the plugins requested by {System.Environment.StackTrace}");
           }
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           m_activePlugins.Clear ();
           m_loadErrorPlugins.Clear ();
         }
@@ -216,9 +212,7 @@ namespace Pulse.Extensions
 
     void InstanceLoad (bool pluginUserDirectoryActive, IPluginFilter pluginFilter, Lemoine.Threading.IChecked checkedThread)
     {
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
 
       var loadStatus = System.Threading.Interlocked.CompareExchange (ref m_loadStatus, 1, 0);
       switch (loadStatus) {
@@ -234,9 +228,7 @@ namespace Pulse.Extensions
           if (pluginStatusLog.IsDebugEnabled) {
             pluginStatusLog.Debug ($"Load of the plugins requested by {System.Environment.StackTrace}");
           }
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           LoadPlugins (pluginUserDirectoryActive, pluginFilter, checkedThread);
         }
         catch (Exception ex) {
@@ -260,9 +252,7 @@ namespace Pulse.Extensions
             log.Debug ($"InstanceLoad: waiting for completion, status={m_loadStatus}");
           }
           while (1 == m_loadStatus) { // Still in progress
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
             System.Threading.Thread.Sleep (100);
           }
           if (log.IsDebugEnabled) {
@@ -281,9 +271,7 @@ namespace Pulse.Extensions
 
     async Task InstanceLoadAsync (CancellationToken cancellationToken, bool pluginUserDirectoryActive, IPluginFilter pluginFilter, Lemoine.Threading.IChecked checkedThread)
     {
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
 
       var loadStatus = System.Threading.Interlocked.CompareExchange (ref m_loadStatus, 1, 0);
       switch (loadStatus) {
@@ -300,9 +288,7 @@ namespace Pulse.Extensions
           if (pluginStatusLog.IsDebugEnabled) {
             pluginStatusLog.Debug ($"Load of the plugins requested by {System.Environment.StackTrace}");
           }
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           await LoadPluginsAsync (cancellationToken, pluginUserDirectoryActive, pluginFilter, checkedThread);
         }
         catch (Exception ex) {

@@ -129,15 +129,11 @@ namespace Lemoine.Cnc.SQLiteQueue
       if (ex is System.Data.SQLite.SQLiteException) {
         System.Data.SQLite.SQLiteException sqliteException = ex as System.Data.SQLite.SQLiteException;
         if (sqliteException.ErrorCode.Equals (SQLiteErrorCode.ReadOnly)) {
-          if (logger != null) {
-            logger.Fatal ("IsUnauthorized: exception with error code ReadOnly in SQLite", sqliteException);
-          }
+          logger?.Fatal ("IsUnauthorized: exception with error code ReadOnly in SQLite", sqliteException);
           return true;
         }
         else {
-          if (logger != null) {
-            logger.Info ("IsUnauthorized: not a SQLite ReadOnly exception", sqliteException);
-          }
+          logger?.Info ("IsUnauthorized: not a SQLite ReadOnly exception", sqliteException);
         }
       }
 
@@ -287,22 +283,16 @@ namespace Lemoine.Cnc.SQLiteQueue
       if (ex is System.Data.SQLite.SQLiteException) {
         System.Data.SQLite.SQLiteException sqliteException = ex as System.Data.SQLite.SQLiteException;
         if (sqliteException.ResultCode.Equals (SQLiteErrorCode.NoMem)) { 
-          if (logger != null) {
-            logger.Fatal ("IsOutOfMemory: exception with code NoMem in SQLite", sqliteException);
-          }
+          logger?.Fatal ("IsOutOfMemory: exception with code NoMem in SQLite", sqliteException);
           return true;
         }
         else {
-          if (logger != null) {
-            logger.Info ("IsOutOfMemory: not a SQLite NoMem exception", sqliteException);
-          }
+          logger?.Info ("IsOutOfMemory: not a SQLite NoMem exception", sqliteException);
         }
       }
 
       if (ex?.Message?.Contains ("out of memory") ?? false) {
-        if (logger != null) {
-          logger.Fatal ("IsOutOfMemory: out of memory  message in SQLite exception ", ex);
-        }
+        logger?.Fatal ("IsOutOfMemory: out of memory  message in SQLite exception ", ex);
         return true;
       }
 

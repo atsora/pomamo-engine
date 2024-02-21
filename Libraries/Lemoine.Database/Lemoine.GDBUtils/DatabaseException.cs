@@ -527,9 +527,7 @@ namespace Lemoine.GDBUtils
       if (ex is Npgsql.PostgresException) {
         Npgsql.PostgresException postgresException = ex as Npgsql.PostgresException;
         if (postgresException is null) {
-          if (logger != null) {
-            logger.Fatal ("IsDatabaseConnectionError: not a valid PostgresException", ex);
-          }
+          logger?.Fatal ("IsDatabaseConnectionError: not a valid PostgresException", ex);
         }
         else { // postgresException is not null
           if (postgresException.SqlState.StartsWith ("57P", StringComparison.InvariantCultureIgnoreCase)) {
@@ -580,9 +578,7 @@ namespace Lemoine.GDBUtils
       else if (ex is Npgsql.NpgsqlException) {
         Npgsql.NpgsqlException npgsqlException = ex as Npgsql.NpgsqlException;
         if (npgsqlException is null) {
-          if (logger != null) {
-            logger.Fatal ("IsDatabaseConnectionError: not a valid NpgsqlException", ex);
-          }
+          logger?.Fatal ("IsDatabaseConnectionError: not a valid NpgsqlException", ex);
         }
         else { // npgsqlException is not null
           if (message.ToLowerInvariant ().Contains ("Failed to establish a connection".ToLowerInvariant ())) {
@@ -640,9 +636,7 @@ at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
         if (ex is System.Net.Sockets.SocketException) {
           var socketException = ex as System.Net.Sockets.SocketException;
           if (socketException is null) {
-            if (logger != null) {
-              logger.Fatal ("IsDatabaseConnectionError: not a valid SocketException", ex);
-            }
+            logger?.Fatal ("IsDatabaseConnectionError: not a valid SocketException", ex);
           }
           else { // socketException is not null
             if (socketException.ErrorCode == (int)System.Net.Sockets.SocketError.ConnectionReset) {
@@ -663,9 +657,7 @@ at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
         if (ex is System.IO.IOException) {
           var ioException = ex as System.IO.IOException;
           if (ioException is null) {
-            if (logger != null) {
-              logger.Fatal ("IsDatabaseConnectionError: not a valid IOException", ex);
-            }
+            logger?.Fatal ("IsDatabaseConnectionError: not a valid IOException", ex);
           }
           else { // postgresException is not null
             if (message.ToLowerInvariant ().Contains ("Unable to read data from the transport connection".ToLowerInvariant ())) {
@@ -745,11 +737,9 @@ at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
       if (ex is Npgsql.PostgresException) {
         Npgsql.PostgresException postgresException = ex as Npgsql.PostgresException;
         if (postgresException.SqlState.StartsWith ("53", StringComparison.InvariantCultureIgnoreCase)) {
-          if (logger != null) {
-            logger.FatalFormat ("IsDatabaseInsufficientResources: " +
+          logger?.FatalFormat ("IsDatabaseInsufficientResources: " +
                                "error code {0} in PostgresException {1}",
                                postgresException.SqlState, postgresException);
-          }
           return true;
         }
       }
@@ -785,16 +775,12 @@ at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
       if (ex is Npgsql.PostgresException) {
         Npgsql.PostgresException postgresException = ex as Npgsql.PostgresException;
         if (postgresException.SqlState.Equals ("53200")) { // out_of_memory
-          if (logger != null) {
-            logger.Error ("IsOutOfMemory: out_of_memory in PostgresException", postgresException);
-          }
+          logger?.Error ("IsOutOfMemory: out_of_memory in PostgresException", postgresException);
 
           return true;
         }
         else {
-          if (logger != null) {
-            logger.Info ("IsOutOfMemory: not a PostgreSQL out_of_memory exception, PostgresException", postgresException);
-          }
+          logger?.Info ("IsOutOfMemory: not a PostgreSQL out_of_memory exception, PostgresException", postgresException);
         }
       }
 

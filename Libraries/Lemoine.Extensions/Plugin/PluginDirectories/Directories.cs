@@ -121,9 +121,7 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
         return;
       }
 
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
 
       using (var semaphoreHolder = Lemoine.Threading.SemaphoreSlimHolder.Create (m_pluginDirectoriesSemaphore)) {
         if (m_pluginDirectoriesLoaded) {
@@ -206,9 +204,7 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
         m_pluginDirectoriesLoaded = true;
       }
 
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
     }
 
     /// <summary>
@@ -280,9 +276,7 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
 
     void SynchronizePluginUserDirectory (bool pluginUserDirectoryActive, IEnumerable<string> pluginNames, Lemoine.Threading.IChecked checkedThread = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null)
     {
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
 
       if (!pluginUserDirectoryActive) {
         if (GetLogger ().IsDebugEnabled) {
@@ -295,9 +289,7 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
       switch (synchronizationStatus) {
       case 0: // Not done, do it
         try {
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           // Plugin user directory section
           // Synchronize it if it has not been initialized yet
           var pluginUserDirectoryPath = GetLocalSyncPluginsDirectory ();
@@ -326,9 +318,7 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
       case 1: // In progress, wait for the completion
         GetLogger ().DebugFormat ("SynchronizePluginUserDirectory: waiting for completion");
         while (1 == m_synchronizationStatus) { // Still in progress
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           System.Threading.Thread.Sleep (100);
         }
         return;

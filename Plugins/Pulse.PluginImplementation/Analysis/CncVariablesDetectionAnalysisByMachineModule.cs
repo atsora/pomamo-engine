@@ -235,7 +235,7 @@ namespace Pulse.PluginImplementation.Analysis
               log.DebugFormat ("ProcessMilestoneDetection: no cnc variable change");
             }
             else {
-              var oldSequenceVariableValue = (null != oldCncVariable) ? oldCncVariable.Value : null;
+              var oldSequenceVariableValue = oldCncVariable?.Value;
               ICncVariable sequenceVariable = null;
               if (includeSequenceVariable) {
                 sequenceVariable = ModelDAOHelper.DAOFactory.CncVariableDAO

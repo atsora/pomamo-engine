@@ -164,9 +164,7 @@ namespace Lemoine.Extensions
 
     void InstanceLoad (bool pluginUserDirectoryActive, IPluginFilter pluginFilter, Lemoine.Threading.IChecked checkedThread)
     {
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
 
       var loadStatus = System.Threading.Interlocked.CompareExchange (ref m_loadStatus, 1, 0);
       switch (loadStatus) {
@@ -179,9 +177,7 @@ namespace Lemoine.Extensions
         try {
           pluginStatusLog.Info ("Load the plugins requested without the database connection");
           pluginStatusLog.DebugFormat ("Load of the plugins without the database connection requested by {0}", System.Environment.StackTrace);
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           var directories = m_pluginDirectories.GetDirectories (pluginUserDirectoryActive, checkedThread: checkedThread)
             .Select (directory => directory.FullName);
           LoadPlugins (directories, pluginFilter);
@@ -206,9 +202,7 @@ namespace Lemoine.Extensions
             log.Debug ($"InstanceLoad: waiting for completion, status={m_loadStatus}");
           }
           while (1 == m_loadStatus) { // Still in progress
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
             System.Threading.Thread.Sleep (100);
           }
           if (log.IsDebugEnabled) {
@@ -226,9 +220,7 @@ namespace Lemoine.Extensions
 
     async System.Threading.Tasks.Task InstanceLoadAsync (CancellationToken cancellationToken, bool pluginUserDirectoryActive, IPluginFilter pluginFilter, Lemoine.Threading.IChecked checkedThread)
     {
-      if (null != checkedThread) {
-        checkedThread.SetActive ();
-      }
+      checkedThread?.SetActive ();
 
       var loadStatus = System.Threading.Interlocked.CompareExchange (ref m_loadStatus, 1, 0);
       switch (loadStatus) {
@@ -242,9 +234,7 @@ namespace Lemoine.Extensions
         try {
           pluginStatusLog.Info ("Load the plugins requested without the database connection");
           pluginStatusLog.DebugFormat ("Load of the plugins without the database connection requested by {0}", System.Environment.StackTrace);
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           var directories = m_pluginDirectories.GetDirectories (pluginUserDirectoryActive, checkedThread: checkedThread)
             .Select (directory => directory.FullName);
           await LoadPluginsAsync (directories, pluginFilter);
@@ -271,9 +261,7 @@ namespace Lemoine.Extensions
             log.Debug ($"InstanceLoadAsync: waiting for completion, status={m_loadStatus} at {System.Environment.StackTrace}");
           }
           while (1 == m_loadStatus) { // Still in progress
-            if (null != checkedThread) {
-              checkedThread.SetActive ();
-            }
+            checkedThread?.SetActive ();
             await System.Threading.Tasks.Task.Delay (100);
           }
           if (log.IsDebugEnabled) {

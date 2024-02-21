@@ -251,9 +251,7 @@ namespace Lemoine.GDBPersistentClasses
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         IList<IShiftSlot> shiftSlots = GetNotProcessTemplate (effectiveRange);
         foreach (IShiftSlot shiftSlot in shiftSlots) {
-          if (null != checkedThread) {
-            checkedThread.SetActive ();
-          }
+          checkedThread?.SetActive ();
           ((ShiftSlot)shiftSlot).ProcessTemplate (cancellationToken, effectiveRange, checkedThread);
         }
       }

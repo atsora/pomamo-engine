@@ -299,9 +299,7 @@ namespace Lemoine.DataRepository
           throw;
         }
         finally {
-          if (null != transaction) {
-            transaction.Dispose ();
-          }
+          transaction?.Dispose ();
         }
       }
     }
@@ -383,9 +381,7 @@ namespace Lemoine.DataRepository
               if (false == ProcessElement (ref elementObject, element, parent)) {
                 // notfound
                 log.Warn ($"DeserializeAndProcessElement: element {element.Name} was not found in ProcessElement => return false");
-                if (null != transaction) {
-                  transaction.Commit ();
-                }
+                transaction?.Commit ();
                 return false;
               }
             } // type != null
@@ -426,9 +422,7 @@ namespace Lemoine.DataRepository
           foreach (XmlElement childElementToRemove in childElementsToRemove) {
             element.RemoveChild (childElementToRemove);
           }
-          if (null != transaction) {
-            transaction.Commit ();
-          }
+          transaction?.Commit ();
         }
         finally {
           if (null != transaction) {

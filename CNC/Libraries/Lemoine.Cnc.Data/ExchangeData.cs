@@ -12,6 +12,7 @@ using Lemoine.Core.Log;
 using System.Text.Json;
 using MessagePack;
 using MessagePack.Resolvers;
+using System.Linq;
 
 namespace Lemoine.Cnc.Data
 {
@@ -195,8 +196,7 @@ namespace Lemoine.Cnc.Data
         return false;
       }
 
-      var other = obj as ExchangeData;
-      if (null == other) {
+      if (obj is not ExchangeData other) {
         return false;
       }
       return object.Equals (other.Command, this.Command)
@@ -651,11 +651,11 @@ namespace Lemoine.Cnc.Data
         var valueType = this.Value.GetType ();
         var typeElements = valueType.AssemblyQualifiedName.Split ([", "], StringSplitOptions.None);
         string qualifiedType;
-        if (typeElements[1].Equals ("mscorlib")) {
+        if (typeElements[typeElements.Length - 4].Equals ("mscorlib")) {
           qualifiedType = typeElements[0];
         }
         else {
-          qualifiedType = $"{typeElements[0]}, {typeElements[1]}";
+          qualifiedType = string.Join (", ", typeElements.Take (typeElements.Length - 3));
         }
         info.AddValue ("T", qualifiedType, typeof (string));
 
