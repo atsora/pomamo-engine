@@ -7,6 +7,7 @@
     <OutputType>Exe</OutputType>
     <Platforms>x86;x64</Platforms>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
   </PropertyGroup>
 
   <ItemGroup>

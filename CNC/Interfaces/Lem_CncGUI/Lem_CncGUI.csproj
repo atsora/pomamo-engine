@@ -11,6 +11,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RootNamespace>Lem_CncGUI</RootNamespace>
     <AssemblyName>Lem_CncGUI</AssemblyName>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
   </PropertyGroup>
 
   <ItemGroup>

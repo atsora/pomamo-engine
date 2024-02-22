@@ -215,7 +215,7 @@ namespace Lemoine.Database.Persistent
       var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
       if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
         using (Stream configCacheFile = File.Open (GetConfigCachePath (), FileMode.Create)) {
-          MessagePackSerializer.Serialize (configCacheFile, configuration, ContractlessStandardResolver.Options);
+          MessagePackSerializer.Serialize (configCacheFile, configuration, ContractlessStandardResolverAllowPrivate.Options);
         }
       }
       else {

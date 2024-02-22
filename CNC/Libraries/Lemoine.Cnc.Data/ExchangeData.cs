@@ -679,7 +679,7 @@ namespace Lemoine.Cnc.Data
             using (MemoryStream stream = new MemoryStream ()) {
               var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
               if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
-                MessagePackSerializer.Serialize (stream, this.Value, ContractlessStandardResolver.Options);
+                MessagePackSerializer.Serialize (stream, this.Value, ContractlessStandardResolverAllowPrivate.Options);
               }
               else {
                 IFormatter formatter = new BinaryFormatter ();

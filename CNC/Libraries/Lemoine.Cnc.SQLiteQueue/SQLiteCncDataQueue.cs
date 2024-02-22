@@ -862,7 +862,7 @@ VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}')",
                   using (MemoryStream stream = new MemoryStream ()) {
                     var serializer = Lemoine.Info.ConfigSet.LoadAndGet (SERIALIZER_KEY, SERIALIZER_DEFAULT);
                     if (serializer.Equals (SERIALIZER_MESSAGEPACK)) {
-                      MessagePackSerializer.Serialize (stream, data.Value, ContractlessStandardResolver.Options);
+                      MessagePackSerializer.Serialize (stream, data.Value, ContractlessStandardResolverAllowPrivate.Options);
                     }
                     else {
                       IFormatter formatter = new BinaryFormatter ();
@@ -1036,13 +1036,26 @@ LIMIT {1}",
 
         while (reader.Read ()) {
           SetActive ();
+          int machineId;
+          int machineModuleId;
+          DateTime dateTime;
+          ExchangeDataCommand dataCommand;
+          string key;
+          string valueType;
           try {
-            int machineId = Convert.ToInt32 (reader[0]); // reader [0] is an Int64
-            int machineModuleId = (null != reader[1]) ? Convert.ToInt32 (reader[1]) : 0;
-            DateTime dateTime = DateTime.Parse ((string)reader[2], null, DateTimeStyles.RoundtripKind);
-            ExchangeDataCommand dataCommand = (ExchangeDataCommand)Enum.Parse (typeof (ExchangeDataCommand), (string)reader[3]);
-            string key = (string)reader[4];
-            string valueType = (string)reader[5];
+            machineId = Convert.ToInt32 (reader[0]); // reader [0] is an Int64
+            machineModuleId = (null != reader[1]) ? Convert.ToInt32 (reader[1]) : 0;
+            dateTime = DateTime.Parse ((string)reader[2], null, DateTimeStyles.RoundtripKind);
+            dataCommand = (ExchangeDataCommand)Enum.Parse (typeof (ExchangeDataCommand), (string)reader[3]);
+            key = (string)reader[4];
+            valueType = (string)reader[5];
+          }
+          catch (Exception ex) {
+            log.Error ($"Peek: exception getting data properties", ex);
+            throw;
+          }
+
+          try {
             object val = null;
 
             if (valueType.Equals (NULL_TYPE_KEYWORD)) {
@@ -1078,7 +1091,7 @@ LIMIT {1}",
               else {
                 try {
                   using (MemoryStream stream = new MemoryStream ((byte[])reader[9])) {
-                    val = MessagePackSerializer.Deserialize (Type.GetType (valueType), stream, ContractlessStandardResolver.Options);
+                    val = MessagePackSerializer.Deserialize (Type.GetType (valueType), stream, ContractlessStandardResolverAllowPrivate.Options);
                   }
                 }
                 catch (Exception ex) {
@@ -1099,8 +1112,7 @@ LIMIT {1}",
             datas.Add (data);
           }
           catch (Exception ex) {
-            log.Error ("Peek: error while getting the data ", ex);
-            throw;
+            log.Error ($"Peek.{machineId}.{machineModuleId}: error while getting the data key={key} at={dateTime}, skip it", ex);
           }
         }
       }
