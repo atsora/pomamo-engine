@@ -14,6 +14,7 @@ namespace Lemoine.NHibernateTypes
   /// <summary>
   /// JsonAsStringStringMapType
   /// </summary>
+  [Serializable]
   public class JsonAsStringStringMapType: JsonAsT<IDictionary<string, string>>
   {
   }

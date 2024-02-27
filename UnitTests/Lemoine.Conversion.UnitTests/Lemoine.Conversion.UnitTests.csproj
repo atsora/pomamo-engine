@@ -28,6 +28,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\CNC\Lemoine.Cnc.ICncModule\Lemoine.Cnc.ICncModule.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
+    <ProjectReference Include="..\..\CNC\Libraries\Lemoine.Cnc.CncAlarm\Lemoine.Cnc.CncAlarm.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
   </ItemGroup>

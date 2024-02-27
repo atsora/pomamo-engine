@@ -18,7 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     #region Members
     string m_key = "";
-    object m_value = null;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncVariable).FullName);
@@ -35,11 +34,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Variable value
     /// </summary>
-    public virtual object Value
-    {
-      get { return m_value; }
-      set { m_value = value; }
-    }
+    public virtual object Value { get; set; }
     #endregion // Getters / Setters
 
     #region Constructors
@@ -55,13 +50,14 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="range"></param>
     /// <param name="key">not null</param>
     /// <param name="v">not null</param>
-    public CncVariable (IMachineModule machineModule, UtcDateTimeRange range, string key, object v) : base (false, machineModule, range)
+    public CncVariable (IMachineModule machineModule, UtcDateTimeRange range, string key, object v)
+      : base (false, machineModule, range)
     {
       Debug.Assert (null != key);
       Debug.Assert (null != v);
 
       m_key = key;
-      m_value = v;
+      this.Value = v;
     }
     #endregion // Constructors
 

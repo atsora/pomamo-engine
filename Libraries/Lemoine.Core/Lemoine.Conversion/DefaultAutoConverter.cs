@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+#if !NET40
+using System.Text.Json;
+#endif // !NET40
 using Lemoine.Core.Log;
 
 namespace Lemoine.Conversion
@@ -90,14 +93,68 @@ namespace Lemoine.Conversion
       }
 
       // Newtonsoft json object
-      if (datavalue is Newtonsoft.Json.Linq.JObject) {
+      if (datavalue is Newtonsoft.Json.Linq.JObject jobject) {
         try {
-          return ((Newtonsoft.Json.Linq.JObject)datavalue).ToObject (type);
+          return jobject.ToObject (type);
         }
         catch (Exception ex) {
           log.Warn ($"ConvertAuto: Newtonsoft Jobject deserialization error for {datavalue} into type {type}", ex);
         }
       }
+
+#if !NET40
+      if (datavalue is System.Text.Json.JsonElement jsonElement) {
+        try {
+          if (type == typeof (double)) {
+            return jsonElement.GetDouble ();
+          }
+          else if (type == typeof (long)) {
+            return jsonElement.GetInt64 ();
+          }
+          else if (type == typeof (int)) {
+            return jsonElement.GetInt32 ();
+          }
+          else if (type == typeof (short)) {
+            return jsonElement.GetInt16 ();
+          }
+          else if (type == typeof (byte)) {
+            return jsonElement.GetByte ();
+          }
+          else if (type == typeof (bool)) {
+            return jsonElement.GetBoolean ();
+          }
+          else if (type == typeof (decimal)) {
+            return jsonElement.GetDecimal ();
+          }
+          else if (type == typeof (string)) {
+            if (jsonElement.ValueKind.Equals (JsonValueKind.String)) {
+              return jsonElement.GetString ();
+            }
+            else if (jsonElement.ValueKind.Equals (JsonValueKind.Number)) {
+              return jsonElement.GetRawText ();
+            }
+          }
+          else if (type == typeof (DateTime)) {
+            return jsonElement.GetDateTime ();
+          }
+          else if (type == typeof (ushort)) {
+            return jsonElement.GetUInt16 ();
+          }
+          else if (type == typeof (uint)) {
+            return jsonElement.GetUInt32 ();
+          }
+          else if (type == typeof (ulong)) {
+            return jsonElement.GetUInt64 ();
+          }
+          else if (type == typeof (float)){
+            return jsonElement.GetSingle ();
+          }
+        }
+        catch (Exception ex) {
+          log.Warn ($"ConvertAuto: JsonElement conversion, exception", ex);
+        }
+      }
+#endif // !NET40
 
       if (datavalue.GetType ().Equals (typeof (Nullable<int>))) {
         try {
@@ -459,7 +516,7 @@ namespace Lemoine.Conversion
         return false;
       }
     }
-    #endregion // IAutoConverter implementation
+#endregion // IAutoConverter implementation
 
   }
 }

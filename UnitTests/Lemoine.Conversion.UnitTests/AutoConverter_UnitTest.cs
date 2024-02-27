@@ -8,6 +8,7 @@ using System.Linq;
 
 using NUnit.Framework;
 using Lemoine.Core.Log;
+using System.Text.Json;
 
 namespace Lemoine.Conversion.UnitTests
 {
@@ -58,6 +59,40 @@ namespace Lemoine.Conversion.UnitTests
       var doubleList = new List<double> { 2.5 };
       var converted = converter.ConvertAuto<IEnumerable<int>> (doubleList);
       Assert.That (converted.First (), Is.EqualTo (2));
+    }
+
+    [Test]
+    public void TestJsonElement ()
+    {
+      {
+        var converter = new DefaultAutoConverter ();
+        object d = 123.4;
+        var jsonElement = JsonSerializer.Deserialize<object> (JsonSerializer.Serialize (d));
+        var converted = converter.ConvertAuto<double> (jsonElement);
+        Assert.That (converted, Is.EqualTo (d));
+        var convertedString = converter.ConvertAuto<string> (jsonElement);
+        Assert.That (convertedString, Is.EqualTo ("123.4"));
+      }
+      {
+        var converter = new DefaultAutoConverter ();
+        object n = 123;
+        var jsonElement = JsonSerializer.Deserialize<object> (JsonSerializer.Serialize (n));
+        var converted = converter.ConvertAuto<double> (jsonElement);
+        Assert.That (converted, Is.EqualTo (n));
+        var converted2 = converter.ConvertAuto<long> (jsonElement);
+        Assert.That (converted2, Is.EqualTo (n));
+        var convertedString = converter.ConvertAuto<string> (jsonElement);
+        Assert.That (convertedString, Is.EqualTo ("123"));
+      }
+      {
+        var converter = new DefaultAutoConverter ();
+        object s = "123";
+        var jsonElement = JsonSerializer.Deserialize<object> (JsonSerializer.Serialize (s));
+        var converted = converter.ConvertAuto<string> (jsonElement);
+        Assert.That (converted, Is.EqualTo (s));
+        Assert.Throws<InvalidCastException> (() => converter.ConvertAuto<double> (jsonElement));
+        Assert.Throws<InvalidCastException> (() => converter.ConvertAuto<long> (jsonElement));
+      }
     }
   }
 }

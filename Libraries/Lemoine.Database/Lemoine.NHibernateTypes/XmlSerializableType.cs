@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -10,7 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using Lemoine.Core.Log;
-using NHibernate;
+
 using NHibernate.Engine;
 using NHibernate.SqlTypes;
 using NHibernate.Type;
@@ -93,21 +94,12 @@ namespace Lemoine.NHibernateTypes
     /// <summary>
     /// Implements MutableType
     /// </summary>
-    public override System.Type ReturnedClass
-    {
-      get { return m_serializableClass; }
-    }
+    public override System.Type ReturnedClass => m_serializableClass;
 
     /// <summary>
     /// Implements MutableType
     /// </summary>
-    public override string Name
-    {
-      get
-      {
-        return m_serializableClass == typeof (IXmlSerializable) ? "serializable" : m_serializableClass.FullName;
-      }
-    }
+    public override string Name => m_serializableClass == typeof (IXmlSerializable) ? "serializable" : m_serializableClass.FullName;
 
     /// <summary>
     /// Implements MutableType
@@ -121,7 +113,7 @@ namespace Lemoine.NHibernateTypes
 
     private string ToXml (object obj)
     {
-      if (null == obj) {
+      if (obj is null) {
         return NULL_VALUE;
       }
 
@@ -131,24 +123,25 @@ namespace Lemoine.NHibernateTypes
           return $"<TimeSpan>{timeSpan}</TimeSpan>";
         }
         else {
-          XmlSerializer xmlSerializer = new XmlSerializer (obj.GetType ());
-          TextWriter stream = new StringWriter ();
-          XmlWriterSettings settings = new XmlWriterSettings ();
-          settings.OmitXmlDeclaration = true;
-          settings.NewLineChars = "\n";
-          XmlWriter writer = XmlWriter.Create (stream, settings);
-          try {
-            xmlSerializer.Serialize (writer, obj);
-          }
-          catch (Exception serializeException) {
-            if (TrySanitizeAndSerialize (serializeException, obj, xmlSerializer, writer)) {
-              log.Error ($"ToXml: obj {obj} had to be sanitized before being serialized", serializeException);
+          var xmlSerializer = new XmlSerializer (obj.GetType ());
+          using (TextWriter stream = new StringWriter ()) {
+            XmlWriterSettings settings = new XmlWriterSettings ();
+            settings.OmitXmlDeclaration = true;
+            settings.NewLineChars = "\n";
+            XmlWriter writer = XmlWriter.Create (stream, settings);
+            try {
+              xmlSerializer.Serialize (writer, obj);
             }
-            else {
-              throw;
+            catch (Exception serializeException) {
+              if (TrySanitizeAndSerialize (serializeException, obj, xmlSerializer, writer)) {
+                log.Error ($"ToXml: obj {obj} had to be sanitized before being serialized", serializeException);
+              }
+              else {
+                throw;
+              }
             }
+            return stream.ToString ();
           }
-          return stream.ToString ();
         }
       }
       catch (Exception ex) {
@@ -166,7 +159,7 @@ namespace Lemoine.NHibernateTypes
             // Check if it is an invalid string and if it can sanitized
             if (obj is string) {
               string s = (string)obj;
-              log.DebugFormat ("TrySanitizeAndSerialize: try to sanitize string {0}", s);
+              log.Debug ($"TrySanitizeAndSerialize: try to sanitize string {s}");
               var sanitized = Sanitize (s);
               xmlSerializer.Serialize (writer, sanitized);
               log.WarnFormat ("TrySanitizeAndSerialize: string {0} was successfully sanitized in {1}",
@@ -206,43 +199,63 @@ namespace Lemoine.NHibernateTypes
         XmlDocument document = new XmlDocument ();
         document.LoadXml (xml);
 
-        string documentElement = document.DocumentElement.Name;
-        if (documentElement.Equals ("TimeSpan")) { // Work around for TimeSpan
+        string elementName = document.DocumentElement.Name;
+        if (elementName.Equals ("TimeSpan")) { // Work around for TimeSpan
           return TimeSpan.Parse (document.DocumentElement.InnerText);
         }
         else { // Not a TimeSpan
           Type type;
-          if (documentElement.Equals ("int")) {
+          if (elementName.Equals ("int")) {
             type = typeof (int);
           }
-          else if (documentElement.Equals ("long")) {
+          else if (elementName.Equals ("long")) {
             type = typeof (long);
           }
+          else if (elementName.Equals ("JsonElement")) {
+            var text = document.DocumentElement.InnerText;
+            if (log.IsDebugEnabled) {
+              log.Debug ($"FromXml: JsonElement {text}");
+            }
+            if (long.TryParse (text, out var l)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"FromXml: JsonElement is long");
+              }
+              return l;
+            }
+            if (double.TryParse (text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var d)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"FromXml: JsonElement is double");
+              }
+              return d;
+            }
+            log.Debug ($"FromXml: JsonElement is text");
+            return text;
+          }
           else {
-            type = Type.GetType (documentElement,
+            type = Type.GetType (elementName,
                                  false, true);
-            if (null == type) {
+            if (type is null) {
               // this won't work for int / System.Int32 but works for boolean/System.Boolean
-              type = Type.GetType ("System." + documentElement,
+              type = Type.GetType ("System." + elementName,
                                    false, true);
               // TODO: this should be moved into Pulse.Database
-              if (null == type) {
-                type = Type.GetType ($"Lemoine.GDBPersistentClasses.{documentElement}, Pulse.Database",
+              if (type is null) {
+                type = Type.GetType ($"Lemoine.GDBPersistentClasses.{elementName}, Pulse.Database",
                                      false, true);
               }
-              if (null == type) {
-                type = Type.GetType ($"Lemoine.Model.{documentElement}, Lemoine.ModelDAO",
+              if (type is null) {
+                type = Type.GetType ($"Lemoine.Model.{elementName}, Lemoine.ModelDAO",
                                      false, true);
               }
-              if (null == type) {
-                type = Type.GetType ($"Lemoine.ModelDAO.{documentElement}, Lemoine.ModelDAO",
+              if (type is null) {
+                type = Type.GetType ($"Lemoine.ModelDAO.{elementName}, Lemoine.ModelDAO",
                                      false, true);
               }
             }
           }
 
           if (null == type) {
-            log.Error ($"FromXml: unknown type {documentElement}");
+            log.Error ($"FromXml: unsupported type {elementName} inner={document.DocumentElement.InnerText} at {System.Environment.StackTrace}");
             return null;
           }
 

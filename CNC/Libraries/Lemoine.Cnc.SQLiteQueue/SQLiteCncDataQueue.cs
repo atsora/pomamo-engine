@@ -23,6 +23,7 @@ using System.Text.Json;
 using MessagePack;
 using MessagePack.Resolvers;
 using System.Linq;
+using Lemoine.Conversion;
 
 namespace Lemoine.Cnc.SQLiteQueue
 {
@@ -834,13 +835,9 @@ VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}')",
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
               }
               else {
-                var typeElements = valueType.AssemblyQualifiedName.Split ([", "], StringSplitOptions.None);
-                string qualifiedType;
-                if (typeElements[typeElements.Length - 4].Equals ("mscorlib")) {
-                  qualifiedType = typeElements[0];
-                }
-                else {
-                  qualifiedType = string.Join (", ", typeElements.Take (typeElements.Length - 3));
+                var qualifiedType = valueType.GetLightQualifiedName ();
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"TryEnqueue: use {qualifiedType} for {valueType}");
                 }
                 try {
                   // Try Json
@@ -849,7 +846,7 @@ VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}')",
                   };
                   var json = JsonSerializer.Serialize (data.Value, jsonSerializerOptions);
                   if (log.IsDebugEnabled) {
-                    log.Debug ($"TryEnqueue: json is {json}");
+                    log.Debug ($"TryEnqueue: json is {json} type={qualifiedType}");
                   }
                   command.CommandText = $"""
                   INSERT INTO {m_tableName} (MachineId, MachineModuleId, DateTime, Command, Key, ValueType, ValueString)

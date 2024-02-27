@@ -13,6 +13,7 @@ using System.Text.Json;
 using MessagePack;
 using MessagePack.Resolvers;
 using System.Linq;
+using Lemoine.Conversion;
 
 namespace Lemoine.Cnc.Data
 {
@@ -649,13 +650,9 @@ namespace Lemoine.Cnc.Data
 
       if (this.Value != null) {
         var valueType = this.Value.GetType ();
-        var typeElements = valueType.AssemblyQualifiedName.Split ([", "], StringSplitOptions.None);
-        string qualifiedType;
-        if (typeElements[typeElements.Length - 4].Equals ("mscorlib")) {
-          qualifiedType = typeElements[0];
-        }
-        else {
-          qualifiedType = string.Join (", ", typeElements.Take (typeElements.Length - 3));
+        var qualifiedType = valueType.GetLightQualifiedName ();
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetObjectData: use {qualifiedType} for {valueType}");
         }
         info.AddValue ("T", qualifiedType, typeof (string));
 

@@ -25,7 +25,7 @@ let (|CaseInsensitive|_|) (a:string) (s:string) =
   if s.iequals a then
     Some(a)
   else
-    None  
+    None
 
 let (|RegexGroup|_|) ((regex,group):Regex * string) (s:string) =
   match regex.Match s with

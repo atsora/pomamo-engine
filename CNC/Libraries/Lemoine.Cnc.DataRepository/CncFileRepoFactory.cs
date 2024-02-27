@@ -248,7 +248,7 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
-    void InsertXmlString (XmlDocument xmlDocument, XmlElement includeElement, string xmlString, CancellationToken cancellationToken)
+    void InsertXmlString (XmlDocument xmlDocument, XmlElement includeElement, string xmlContent, CancellationToken cancellationToken)
     {
       if (log.IsDebugEnabled) {
         log.DebugFormat ("InsertXmlString: about to add xml string");
@@ -256,16 +256,22 @@ namespace Lemoine.Cnc.DataRepository
 
       var insertedXmlDoc = new XmlDocument ();
       try {
-        insertedXmlDoc.LoadXml (xmlString);
+        var xml = $"""
+          <xml>
+            {xmlContent}
+          </xml>
+          """;
+        insertedXmlDoc.LoadXml (xml);
       }
       catch (Exception ex) {
-        log.Error ($"InsertXmlString: {xmlString} could not be loaded", ex);
+        log.Error ($"InsertXmlString: {xmlContent} could not be loaded", ex);
         throw new FileRepoException ("SubConfig load error", ex);
       }
 
       XmlElement parent = includeElement.ParentNode as XmlElement;
       XmlNode lastNode = includeElement;
       foreach (XmlNode node in insertedXmlDoc.DocumentElement.ChildNodes) {
+        cancellationToken.ThrowIfCancellationRequested ();
         if (!(node is XmlElement)) {
           continue;
         }
@@ -505,7 +511,7 @@ namespace Lemoine.Cnc.DataRepository
             foreach (var xmlString in xmlStrings) {
               log.Debug ($"ProcessExtensionElements: for extension {extensionName}, add {xmlString}");
               cancellationToken.ThrowIfCancellationRequested ();
-              
+              InsertXmlString (xmlDocument, extensionElement, xmlString, cancellationToken);
             }
           }
           else if (log.IsDebugEnabled) {

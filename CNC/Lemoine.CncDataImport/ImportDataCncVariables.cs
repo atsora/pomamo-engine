@@ -15,6 +15,7 @@ using Lemoine.Core.Log;
 using Lemoine.Extensions.Cnc;
 using Lemoine.Extensions;
 using System.Threading;
+using System.Text.Json;
 
 namespace Lemoine.CncDataImport
 {
@@ -103,8 +104,38 @@ namespace Lemoine.CncDataImport
     {
       IDictionary<string, object> changedVariables = new Dictionary<string, object> ();
       foreach (var item in cncVariableSet) {
-        if (TryImportSingleCncVariable (item.Key, item.Value, startDatetime)) {
-          changedVariables[item.Key] = item.Value;
+        if (item.Key is null) {
+          log.Fatal ($"ImportCncVariableSet: key is null at {startDatetime}");
+        }
+        else { // Key is not null
+          if (item.Value is null) {
+            log.Warn ($"ImportCncVariableSet: null data for {item.Key} at {startDatetime}");
+            if (TryStopSingleCncVariable (item.Key, startDatetime)) {
+              changedVariables.Remove (item.Key);
+            }
+          }
+          else {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ImportCncVariableSet: {item.Key}={item.Value} at {startDatetime}");
+            }
+            object v = item.Value;
+            if (v is JsonElement jsonElement) {
+              if (jsonElement.ValueKind.Equals (JsonValueKind.Number)) {
+                if (jsonElement.TryGetInt64 (out var n)) {
+                  v = n;
+                }
+                else if (jsonElement.TryGetDouble (out var d)) {
+                  v = d;
+                }
+              }
+              else if (jsonElement.ValueKind.Equals (JsonValueKind.String)) {
+                v = jsonElement.GetString ();
+              }
+            }
+            if (TryImportSingleCncVariable (item.Key, v, startDatetime)) {
+              changedVariables[item.Key] = v;
+            }
+          }
         }
       }
       foreach (var extension in m_extensions) {
@@ -114,6 +145,9 @@ namespace Lemoine.CncDataImport
 
     bool TryImportSingleCncVariable (string key, object v, DateTime startDateTime)
     {
+      Debug.Assert (!string.IsNullOrEmpty (key), "key must be not null");
+      Debug.Assert (v != null, "v must be not null");
+
       try {
         return ImportSingleCncVariable (key, v, startDateTime);
       }
@@ -121,8 +155,7 @@ namespace Lemoine.CncDataImport
         log.Error ("TryImportSingleCncVariable: exception in ImportSingleCncVariable", ex);
         if (ex.Message.ToLowerInvariant ().Contains ("serializ")) {
           // This is unexpected... but not blocking... just skip the data
-          log.FatalFormat ("TryImportSingleCncVariable: serialization failure of {0} for key {1} at {2}, but continue",
-            v, key, startDateTime);
+          log.Fatal ($"TryImportSingleCncVariable: serialization failure of {v} for key {key} at {startDateTime}, but continue", ex);
           return false;
         }
         throw;
@@ -131,9 +164,12 @@ namespace Lemoine.CncDataImport
 
     bool ImportSingleCncVariable (string key, object v, DateTime startDateTime)
     {
+      Debug.Assert (!string.IsNullOrEmpty (key), "key must be not null");
+      Debug.Assert (v != null, "v must be not null");
+
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (IDAOTransaction transaction = session.BeginTransaction ("CncData.ImportCncVariables.SingleCncVariable", TransactionLevel.ReadCommitted)) {
-          ICncVariable cncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO.FindAt (m_machineModule, key, startDateTime);
+          var cncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO.FindAt (m_machineModule, key, startDateTime);
           if (null == cncVariable) {
             cncVariable = ModelDAOHelper.ModelFactory.CreateCncVariable (m_machineModule, new UtcDateTimeRange (startDateTime), key, v);
             ModelDAOHelper.DAOFactory.CncVariableDAO.MakePersistent (cncVariable);
@@ -157,6 +193,7 @@ namespace Lemoine.CncDataImport
                 m_machineModule.MonitoredMachine,
                 m_machineModule);
               ModelDAOHelper.DAOFactory.CncDataImportLogDAO.MakePersistent (cncDataImportLog);
+              ModelDAOHelper.DAOFactory.Flush ();
             }
             if (!object.Equals (cncVariable.Value, v)) { // update it
               if (Bound.Equals (cncVariable.DateTimeRange.Lower, startDateTime)) { // It will become empty
@@ -180,6 +217,65 @@ namespace Lemoine.CncDataImport
               transaction.Commit ();
               return false;
             }
+          }
+        }
+      }
+    }
+
+    bool TryStopSingleCncVariable (string key, DateTime startDateTime)
+    {
+      try {
+        return StopSingleCncVariable (key, startDateTime);
+      }
+      catch (Exception ex) {
+        log.Error ("TryStopSingleCncVariable: exception in StopSingleCncVariable", ex);
+        if (ex.Message.ToLowerInvariant ().Contains ("serializ")) {
+          // This is unexpected... but not blocking... just skip the data
+          log.Fatal ($"TryStopSingleCncVariable: serialization failure of key {key} at {startDateTime}, but continue", ex);
+          return false;
+        }
+        throw;
+      }
+    }
+
+    bool StopSingleCncVariable (string key, DateTime startDateTime)
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginTransaction ("CncData.ImportCncVariables.StopSingleCncVariable", TransactionLevel.ReadCommitted)) {
+          ICncVariable cncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO.FindAt (m_machineModule, key, startDateTime);
+          if (cncVariable is null) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StopSingleCncVariable: nothing to do");
+            }
+            transaction.Commit ();
+            return true;
+          }
+          else { // null != cncVariable
+            if (cncVariable.DateTimeRange.Upper.HasValue) {
+              var timeLag = cncVariable.DateTimeRange.Upper.Value.Subtract (startDateTime);
+              log.FatalFormat ("StopSingleCncVariable: cnc variable id={0} has an upper bound, which is unexpected, this is probably due by a time change => remove the future data as well, after {1}, time lag={2}", cncVariable.Id, cncVariable.DateTimeRange.Upper.Value, timeLag);
+              var futureRange = new UtcDateTimeRange (cncVariable.DateTimeRange.Upper.Value);
+              var futureCncVariables = ModelDAOHelper.DAOFactory.CncVariableDAO
+                .FindOverlapsRange (m_machineModule, key, futureRange);
+              foreach (var futureCncVariable in futureCncVariables) {
+                ModelDAOHelper.DAOFactory.CncVariableDAO.MakeTransient (futureCncVariable);
+              }
+              var message = $"StopSingleCncVariable: time lag of {timeLag} in the past - {futureCncVariables.Count} future data items removed";
+              var cncDataImportLog = ModelDAOHelper.ModelFactory.CreateCncDataImportLog (LogLevel.WARN,
+                message,
+                m_machineModule.MonitoredMachine,
+                m_machineModule);
+              ModelDAOHelper.DAOFactory.CncDataImportLogDAO.MakePersistent (cncDataImportLog);
+            }
+            if (Bound.Equals (cncVariable.DateTimeRange.Lower, startDateTime)) { // It will become empty
+              ModelDAOHelper.DAOFactory.CncVariableDAO.MakeTransient (cncVariable);
+            }
+            else {
+              cncVariable.Stop (startDateTime);
+              ModelDAOHelper.DAOFactory.CncVariableDAO.MakePersistent (cncVariable);
+            }
+            transaction.Commit ();
+            return true;
           }
         }
       }
