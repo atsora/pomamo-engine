@@ -84,11 +84,11 @@ namespace Lemoine.CncDataImport
     /// <returns></returns>
     public bool IsMergeable (ExchangeData data, ExchangeData otherData)
     {
-      if (data == null) {
+      if (data is null) {
         log.Error ("ImportDataCncAlarm.IsMergeable: data is null");
         return false;
       }
-      if (otherData == null) {
+      if (otherData is null) {
         log.Error ("ImportDataCncAlarm.IsMergeable: otherData is null");
         return false;
       }
@@ -104,7 +104,12 @@ namespace Lemoine.CncDataImport
       // Both values must be ICollection
       var alarmList1 = GetAlarmList (data.Value);
       var alarmList2 = GetAlarmList (otherData.Value);
-      if (alarmList1 == null || alarmList2 == null) {
+
+      if ((alarmList1 is null) && (alarmList2 is null)) {
+        return true;
+      }
+
+      if ((alarmList1 is null) || (alarmList2 is null)) {
         return false;
       }
 
@@ -119,6 +124,13 @@ namespace Lemoine.CncDataImport
         if (!alarmList1[i].Equals (alarmList2[i])) {
           return false;
         }
+      }
+
+      if (MaxAlarmGap < data.DateTime.Subtract (otherData.DateTime)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsMergeable: there is a too big gap between the new data {data} and {otherData} => not compatible");
+        }
+        return false;
       }
 
       return true;
@@ -157,7 +169,7 @@ namespace Lemoine.CncDataImport
 
       // Get the list of alarms 
       var list = GetAlarmList (datas[0].Value);
-      if (list == null || list.Count == 0) {
+      if (list is null || list.Count == 0) {
         // Currently no alarms, the cache is cleared
         m_cache.Clear (null);
       }
@@ -189,7 +201,7 @@ namespace Lemoine.CncDataImport
     /// <returns></returns>
     List<CncAlarm> GetAlarmList (object v)
     {
-      if (v == null) {
+      if (v is null) {
         log.Error ("ImportDataCncAlarm.GetAlarmList: v is null");
         return null;
       }
@@ -198,10 +210,10 @@ namespace Lemoine.CncDataImport
       var list = new List<CncAlarm> ();
 
       // Already a collection?
-      if (collection == null) {
+      if (collection is null) {
         // Is it a cnc alarm?
         var alarm = v as CncAlarm;
-        if (alarm == null) {
+        if (alarm is null) {
           log.Error ("ImportDataCncAlarm.GetAlarmList: v was not a collection and not a cncalarm");
         }
         else {
@@ -211,12 +223,11 @@ namespace Lemoine.CncDataImport
       else {
         if (collection.Count > 0) {
           foreach (object obj in collection) {
-            var alarm = obj as CncAlarm;
-            if (alarm == null) {
-              log.ErrorFormat ("ImportDataCncAlarm.GetAlarmList: a value of the collection was not a cncalarm ({0})", obj);
+            if (obj is CncAlarm alarm) {
+              list.Add (alarm);
             }
             else {
-              list.Add (alarm);
+              log.Error ($"ImportDataCncAlarm.GetAlarmList: a value of the collection was not a cncalarm ({obj})");
             }
           }
         }
@@ -281,7 +292,7 @@ namespace Lemoine.CncDataImport
         log.Error ($"ImportAlarms: exception => try to reload m_cncAlarms", ex);
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
-          log.FatalFormat ("ImportAlarms: the session is still active before reloading m_cncAlarms");
+          log.Fatal ("ImportAlarms: the session is still active before reloading m_cncAlarms", ex);
         }
 
         // Reload the cache (new values have been removed)

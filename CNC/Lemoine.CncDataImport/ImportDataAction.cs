@@ -59,8 +59,7 @@ namespace Lemoine.CncDataImport
     /// <returns></returns>
     public bool IsMergeable(ExchangeData data, ExchangeData otherData)
     {
-      log.DebugFormat ("IsDataCompatible: " +
-                       "Action datas are never compatible (occur once)");
+      log.Debug ("IsDataCompatible: Action datas are never compatible (occur once)");
       return false;
     }
     

@@ -81,6 +81,7 @@ namespace Lemoine.CncDataImport
 
       var set1 = data.Value as IDictionary<string, object>;
       var set2 = otherData.Value as IDictionary<string, object>;
+
       return object.Equals (set1, set2);
     }
 

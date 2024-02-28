@@ -109,10 +109,8 @@ namespace Lemoine.Cnc.Data
     static readonly string SERIALIZER_MESSAGEPACK = "MessagePack";
     static readonly string SERIALIZER_DEFAULT = SERIALIZER_MESSAGEPACK; // MessagePack / BinaryFormatter
 
-    #region Members
     DateTime m_dateTime = DateTime.UtcNow;
-    #endregion // Members
-
+    
     #region Helper Method
     static DateTime TruncateToSeconds (DateTime dt)
     {
@@ -163,12 +161,10 @@ namespace Lemoine.Cnc.Data
     public object Value { get; set; }
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Private constructor
     /// </summary>
     ExchangeData () { }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>
@@ -432,9 +428,9 @@ namespace Lemoine.Cnc.Data
                                  null);
       }
       else if (stampId < 0) {
-        log.DebugFormat ("BuildStampExchangeData: " +
-                         "negative stamp value {0}, turn into a positive value",
-                         stampId);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"BuildStampExchangeData: negative stamp value {stampId}, turn into a positive value");
+        }
         return BuildExchangeData (machineId, machineModuleId, dateTime,
                                  ExchangeDataCommand.Stamp,
                                  key,
@@ -613,7 +609,6 @@ namespace Lemoine.Cnc.Data
                                ExchangeData.MACHINE_MODE_TRANSLATION_KEY_OR_NAME, v);
     }
     #endregion // Methods
-
 
     #region ISerializable interface
     /// <summary>

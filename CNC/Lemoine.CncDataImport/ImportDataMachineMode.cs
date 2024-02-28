@@ -64,24 +64,24 @@ namespace Lemoine.CncDataImport
       // Key + Value must be the same
       if (!otherData.Key.Equals (data.Key) || !otherData.Value.Equals (data.Value)) {
         if (log.IsDebugEnabled) {
-          log.Debug ($"IsDataCompatible: the new MachineMode data {data} does not contain the same key/value than {otherData} => not compatible");
+          log.Debug ($"IsMergeable: the new MachineMode data {data} does not contain the same key/value than {otherData} => not compatible");
         }
         return false;
       }
       if (data.DateTime < otherData.DateTime) {
-        log.Fatal ($"IsDataCompatible: new data {data} is before the last data {otherData} => this should not happen");
+        log.Fatal ($"IsMergeable: new data {data} is before the last data {otherData} => this should not happen");
         Debug.Assert (false);
         return false;
       }
 
       if (MaxFactGap < data.DateTime.Subtract (otherData.DateTime)) {
         if (log.IsDebugEnabled) {
-          log.Debug ($"IsDataCompatible: there is a too big gap between the new data {data} and {otherData} => not compatible");
+          log.Debug ($"IsMergeable: there is a too big gap between the new data {data} and {otherData} => not compatible");
         }
         return false;
       }
       if (log.IsDebugEnabled) {
-        log.Debug ($"IsDataCompatible: MachineMode data {data} is compatible with {otherData}");
+        log.Debug ($"IsMergeable: MachineMode data {data} is compatible with {otherData}");
       }
       return true;
     }

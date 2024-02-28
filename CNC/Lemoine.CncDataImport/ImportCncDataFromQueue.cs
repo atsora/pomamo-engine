@@ -291,7 +291,7 @@ namespace Lemoine.CncDataImport
     /// </summary>
     internal void ImportAllInQueue (CancellationToken cancellationToken)
     {
-      while ( (null == m_cncDataQueue) && !cancellationToken.IsCancellationRequested) {
+      while ((null == m_cncDataQueue) && !cancellationToken.IsCancellationRequested) {
         InitializeQueue (cancellationToken);
         if (null == m_cncDataQueue) {
           log.Error ("ImportAllInQueue: the queue could not be initialized, try again in a few seconds");
@@ -319,8 +319,7 @@ namespace Lemoine.CncDataImport
                                                       defaultConfigReader);
         }
         catch (Exception ex) {
-          log.Error ("InitializeQueue: the queue could not be created probably the configuration could not be loaded",
-            ex);
+          log.Error ("InitializeQueue: the queue could not be created probably the configuration could not be loaded", ex);
           Debug.Assert (null == m_cncDataQueue);
           return;
         }
@@ -527,18 +526,18 @@ namespace Lemoine.CncDataImport
 
       // The targeted machine module must be the same so that the data is compatible
       if (!object.Equals (lastData.MachineModuleId, data.MachineModuleId)) {
-        log.DebugFormat ("IsDataCompatible: " +
-                         "the targeted machine module is different " +
-                         "=> not compatible");
+        log.Debug ("IsDataCompatible: the targeted machine module is different => not compatible");
         return false;
       }
 
       // Check it is the same command
       if (!lastData.Command.Equals (data.Command)) {
-        log.DebugFormat ("IsDataCompatible: " +
-                         "the new data {0} does not contain the same command than {1} " +
-                         "=> not compatible",
-                         data, lastData);
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("IsDataCompatible: " +
+                           "the new data {0} does not contain the same command than {1} " +
+                           "=> not compatible",
+                           data, lastData);
+        }
         return false;
       }
 
@@ -549,9 +548,11 @@ namespace Lemoine.CncDataImport
     void CleanDetections ()
     {
       if (DEFAULT_CLEAN_DETECTIONS_FREQUENCY < DateTime.UtcNow.Subtract (m_lastCleanDetections)) {
-        log.DebugFormat ("CleanDetections: " +
-                         "clean the detections because the last process was at {0} (older than {1})",
-                         m_lastCleanDetections, DEFAULT_CLEAN_DETECTIONS_FREQUENCY);
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("CleanDetections: " +
+                           "clean the detections because the last process was at {0} (older than {1})",
+                           m_lastCleanDetections, DEFAULT_CLEAN_DETECTIONS_FREQUENCY);
+        }
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           // - Get MachineModuleAnalysisStatus
           IMachineModuleAnalysisStatus analysisStatus;

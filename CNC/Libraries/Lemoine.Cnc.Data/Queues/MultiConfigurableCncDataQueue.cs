@@ -282,20 +282,16 @@ namespace Lemoine.Cnc.Data
     {
       Initialize ();
 
-      bool ok = false;
       if (m_prioritizedWriteQueues.ContainsKey (item.Command)) {
         foreach (var triple in m_prioritizedWriteQueues[item.Command]) {
           if (triple.Item2.IsMatch (item.Key ?? "")) {
             triple.Item3.Enqueue (item);
-            ok = true;
-            break;
+            return;
           }
         }
       }
 
-      if (!ok) {
-        log.Warn ($"No queues configured for storing {item}");
-      }
+      log.Warn ($"No queues configured for storing {item}");
     }
 
     /// <summary>

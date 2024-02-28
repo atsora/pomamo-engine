@@ -16,51 +16,49 @@ namespace Lemoine.Cnc.Data
   public class CncDataQueue<T>
     : ICncDataQueue
     , IConfigurable
-    where T: IExtendedQueue<ExchangeData>
+    where T : IExtendedQueue<ExchangeData>
   {
     readonly string MACHINE_ID_KEY = "MachineId";
     readonly string MACHINE_MODULE_ID_KEY = "MachineModuleId";
     readonly string QUEUE_NAME_KEY = "QueueName";
-    
+
     readonly IExtendedQueue<ExchangeData> m_extendedQueue;
     readonly MemoryConfigReader m_machineConfigReader = new MemoryConfigReader ();
     int m_machineId;
     int m_machineModuleId;
-    
-    ILog log = LogManager.GetLogger(typeof (CncDataQueue<T>).FullName);
+
+    ILog log = LogManager.GetLogger (typeof (CncDataQueue<T>).FullName);
 
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public int MachineId {
-      get
-      {
+    public int MachineId
+    {
+      get {
         return m_machineId;
       }
-      set
-      {
+      set {
         m_machineId = value;
         m_machineConfigReader.Add (MACHINE_ID_KEY, m_machineId, true);
         m_machineConfigReader.Add (QUEUE_NAME_KEY, GetQueueName (), true);
       }
     }
-    
+
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public int MachineModuleId {
-      get
-      {
+    public int MachineModuleId
+    {
+      get {
         return m_machineModuleId;
       }
-      set
-      {
+      set {
         m_machineModuleId = value;
         m_machineConfigReader.Add (MACHINE_MODULE_ID_KEY, m_machineModuleId, true);
         m_machineConfigReader.Add (QUEUE_NAME_KEY, GetQueueName (), true);
       }
     }
-    
+
     string GetQueueName ()
     {
       if (0 < m_machineModuleId) {
@@ -70,7 +68,7 @@ namespace Lemoine.Cnc.Data
         return m_machineId.ToString ();
       }
     }
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -79,11 +77,11 @@ namespace Lemoine.Cnc.Data
       try {
         var typeLoader = new Lemoine.Core.Plugin.TypeLoader ();
         m_extendedQueue = typeLoader.Load<IExtendedQueue<ExchangeData>, T> ();
-        
+
         if (null == m_extendedQueue) {
           string message = $"CncDataQueue: Unknown queue used: {typeof (T)}";
           log.Error ($"CncDataQueue: queue is null, {message}");
-          throw new Exception(message);
+          throw new Exception (message);
         }
       }
       catch (Exception ex) {
@@ -91,7 +89,7 @@ namespace Lemoine.Cnc.Data
         throw;
       }
     }
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -104,7 +102,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public IList<ExchangeData> Peek(int nbElements)
+    public IList<ExchangeData> Peek (int nbElements)
     {
       return m_extendedQueue.Peek (nbElements);
     }
@@ -112,7 +110,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public void UnsafeDequeue()
+    public void UnsafeDequeue ()
     {
       m_extendedQueue.UnsafeDequeue ();
     }
@@ -120,7 +118,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public void UnsafeDequeue(int n)
+    public void UnsafeDequeue (int n)
     {
       m_extendedQueue.UnsafeDequeue (n);
     }
@@ -128,7 +126,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public bool VacuumIfNeeded()
+    public bool VacuumIfNeeded ()
     {
       return m_extendedQueue.VacuumIfNeeded ();
     }
@@ -136,7 +134,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public void Dispose()
+    public void Dispose ()
     {
       m_extendedQueue.Dispose ();
     }
@@ -144,7 +142,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public void Clear()
+    public void Clear ()
     {
       m_extendedQueue.Clear ();
     }
@@ -152,7 +150,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public ExchangeData Dequeue()
+    public ExchangeData Dequeue ()
     {
       return m_extendedQueue.Dequeue ();
     }
@@ -160,7 +158,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public void Enqueue(ExchangeData item)
+    public void Enqueue (ExchangeData item)
     {
       m_extendedQueue.Enqueue (item);
     }
@@ -168,7 +166,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public ExchangeData Peek()
+    public ExchangeData Peek ()
     {
       return m_extendedQueue.Peek ();
     }
@@ -184,7 +182,7 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public void Delete()
+    public void Delete ()
     {
       m_extendedQueue.Delete ();
     }
@@ -192,18 +190,14 @@ namespace Lemoine.Cnc.Data
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
-    public int Count {
-      get {
-        return m_extendedQueue.Count;
-      }
-    }
+    public int Count => m_extendedQueue.Count;
 
     #region IConfigurable implementation
     /// <summary>
     /// <see cref="IConfigurable" />
     /// </summary>
     /// <param name="configReader"></param>
-    public void SetConfigReader(IGenericConfigReader configReader)
+    public void SetConfigReader (IGenericConfigReader configReader)
     {
       if (m_extendedQueue is IConfigurable) {
         IConfigurable configurableQueue = m_extendedQueue as IConfigurable;

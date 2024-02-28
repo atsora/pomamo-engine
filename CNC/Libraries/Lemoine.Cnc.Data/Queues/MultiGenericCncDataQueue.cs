@@ -237,9 +237,7 @@ namespace Lemoine.Cnc.Data
           continue;
         }
         catch (Exception ex) {
-          log.ErrorFormat ("Dequeue: " +
-                           "an unexpected exception occurred {0}",
-                           ex);
+          log.Error ("Dequeue: an unexpected exception occurred", ex);
           throw;
         }
       }
@@ -318,9 +316,7 @@ namespace Lemoine.Cnc.Data
 
       IList<ExchangeData> datas = Peek (1);
       if (0 == datas.Count) {
-        log.InfoFormat ("Peek: " +
-                        "the queue is empty " +
-                        "=> throw InvalidOperationException");
+        log.Info ("Peek: the queue is empty => throw InvalidOperationException");
         throw new InvalidOperationException ();
       }
       else {

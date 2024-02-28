@@ -16,13 +16,13 @@ namespace Lemoine.CncDataImport
   /// <summary>
   /// Description of ImportDataDetectionTimestamp.
   /// </summary>
-  internal sealed class ImportDataDetectionTimestamp: IImportData
+  internal sealed class ImportDataDetectionTimestamp : IImportData
   {
     #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
     #endregion // Members
-    
+
     #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
@@ -30,7 +30,7 @@ namespace Lemoine.CncDataImport
     /// </summary>
     public DateTime LastVisitDateTime { get; set; }
     #endregion // Getters / Setters
-    
+
     #region Constructors
     /// <summary>
     /// Constructor
@@ -39,7 +39,7 @@ namespace Lemoine.CncDataImport
     public ImportDataDetectionTimestamp (IMachineModule machineModule)
     {
       Debug.Assert (null != machineModule);
-      
+
       m_machineModule = machineModule;
       log = LogManager.GetLogger (string.Format ("{0}.{1}.{2}",
                                                  typeof (ImportDataDetectionTimestamp).FullName,
@@ -47,7 +47,7 @@ namespace Lemoine.CncDataImport
                                                  machineModule.Id));
     }
     #endregion // Constructors
-    
+
     #region IImportData implementation
     /// <summary>
     /// Return true if otherData can be merged with data
@@ -55,37 +55,37 @@ namespace Lemoine.CncDataImport
     /// <param name="data"></param>
     /// <param name="otherData"></param>
     /// <returns></returns>
-    public bool IsMergeable(ExchangeData data, ExchangeData otherData)
+    public bool IsMergeable (ExchangeData data, ExchangeData otherData)
     {
-      log.DebugFormat ("IsDataCompatible: " +
-                       "DetectionTimeStamp several times now={0} previously={1} " +
-                       "=> compatible",
-                       data, otherData);
+      if (log.IsDebugEnabled) {
+        log.DebugFormat ("IsDataCompatible: " +
+                         "DetectionTimeStamp several times now={0} previously={1} " +
+                         "=> compatible",
+                         data, otherData);
+      }
       return true;
     }
-    
+
     /// <summary>
     /// Import data that has been previously merged
     /// </summary>
     /// <param name="datas"></param>
-    public void ImportDatas(IList<ExchangeData> datas, CancellationToken cancellationToken = default)
+    public void ImportDatas (IList<ExchangeData> datas, CancellationToken cancellationToken = default)
     {
       // Last datetime
       var dateTime = datas[datas.Count - 1].DateTime;
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        DateTime effectiveDateTime = NullableDateTime.TruncateToSeconds(dateTime);
-        using (IDAOTransaction transaction = session.BeginTransaction(
-          "CncData.ImportDataDetectionTimeStamp", TransactionLevel.ReadCommitted))
-        {
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        DateTime effectiveDateTime = NullableDateTime.TruncateToSeconds (dateTime);
+        using (IDAOTransaction transaction = session.BeginTransaction (
+          "CncData.ImportDataDetectionTimeStamp", TransactionLevel.ReadCommitted)) {
           var detectionTimeStamp = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (m_machineModule, AcquisitionStateKey.Detection);
           if (null == detectionTimeStamp) {
             detectionTimeStamp = ModelDAOHelper.ModelFactory.CreateAcquisitionState (m_machineModule, AcquisitionStateKey.Detection);
           }
           detectionTimeStamp.DateTime = effectiveDateTime;
-          ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent(detectionTimeStamp);
-          transaction.Commit();
+          ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent (detectionTimeStamp);
+          transaction.Commit ();
         }
       }
     }
