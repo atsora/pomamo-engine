@@ -15,7 +15,7 @@ namespace Lemoine.JobControls
     ///   Update state of this observer according to the change 
     ///   on observable
     /// </summary>
-    void UpdateInfo(ITreeViewObservable observable);
+    void UpdateInfo (ITreeViewObservable observable);
   }
 
 }

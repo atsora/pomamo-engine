@@ -36,7 +36,7 @@ namespace Lemoine.JobControls
       /// </summary>
       CREATE = 2
     };
-    
+
     #region Members
     IOperation m_operation;
     IOperationType[] m_operationTypeArray;
@@ -45,56 +45,55 @@ namespace Lemoine.JobControls
     ITreeViewObservable m_observable;
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (OperationControl).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (OperationControl).FullName);
 
     #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
-    public OperationControl(DisplayMode displayMode)
+    public OperationControl (DisplayMode displayMode)
     {
-      InitializeComponent();
+      InitializeComponent ();
 
-      nameLbl.Text = PulseCatalog.GetString("Name");
-      typeLbl.Text = PulseCatalog.GetString("Type");
-      codeLbl.Text = PulseCatalog.GetString("Code");
-      documentLinkLbl.Text = PulseCatalog.GetString("DocumentLink");
-      estimatedMachiningHoursLbl.Text = PulseCatalog.GetString("EstimatedMachiningHours");
-      estimatedSetupHoursLbl.Text = PulseCatalog.GetString("EstimatedSetupHours");
-      estimatedTearDownhoursLbl.Text = PulseCatalog.GetString("EstimatedTearDownHours");
+      nameLbl.Text = PulseCatalog.GetString ("Name");
+      typeLbl.Text = PulseCatalog.GetString ("Type");
+      codeLbl.Text = PulseCatalog.GetString ("Code");
+      documentLinkLbl.Text = PulseCatalog.GetString ("DocumentLink");
+      estimatedMachiningHoursLbl.Text = PulseCatalog.GetString ("EstimatedMachiningHours");
+      estimatedSetupHoursLbl.Text = PulseCatalog.GetString ("EstimatedSetupHours");
+      estimatedTearDownhoursLbl.Text = PulseCatalog.GetString ("EstimatedTearDownHours");
       loadingTimeLabel.Text = PulseCatalog.GetString ("LoadingDuration");
       unloadingTimeLabel.Text = PulseCatalog.GetString ("UnloadingDuration");
-      nameTextBox.Clear();
-      codeTextBox.Clear();
-      documentLinkTextBox.Clear();
+      nameTextBox.Clear ();
+      codeTextBox.Clear ();
+      documentLinkTextBox.Clear ();
 
       this.m_operation = null;
       this.m_displayMode = displayMode;
       switch (displayMode) {
-        case DisplayMode.VIEW :
-          saveBtn.Text = PulseCatalog.GetString("Save");
+        case DisplayMode.VIEW:
+          saveBtn.Text = PulseCatalog.GetString ("Save");
           saveBtn.Enabled = false;
-          resetBtn.Text = PulseCatalog.GetString("Reset");
+          resetBtn.Text = PulseCatalog.GetString ("Reset");
           baseLayout.RowStyles[12].Height = 32;
           baseLayout.RowStyles[13].Height = 0;
           break;
-        case DisplayMode.CREATE :
-          cancelBtn.Text = PulseCatalog.GetString("Cancel");
-          createBtn.Text = PulseCatalog.GetString("Create");
+        case DisplayMode.CREATE:
+          cancelBtn.Text = PulseCatalog.GetString ("Cancel");
+          createBtn.Text = PulseCatalog.GetString ("Create");
           baseLayout.RowStyles[12].Height = 0;
           baseLayout.RowStyles[13].Height = 32;
           break;
       }
-      typeComboBox.Items.Clear();
+      typeComboBox.Items.Clear ();
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (var daoSession = daoFactory.OpenSession ())
-      {
-        IList<IOperationType> operationTypes = daoFactory.OperationTypeDAO.FindAllOrderByName();
+      using (var daoSession = daoFactory.OpenSession ()) {
+        IList<IOperationType> operationTypes = daoFactory.OperationTypeDAO.FindAllOrderByName ();
         m_operationTypeArray = new IOperationType[operationTypes.Count];
         int i = 0;
         foreach (IOperationType operationType in operationTypes) {
           m_operationTypeArray[i++] = operationType;
-          typeComboBox.Items.Add((operationType.Display == null)?"":operationType.Display);
+          typeComboBox.Items.Add ((operationType.Display == null) ? "" : operationType.Display);
         }
         if (operationTypes.Count > 0) {
           typeComboBox.SelectedIndex = 0;
@@ -105,7 +104,7 @@ namespace Lemoine.JobControls
     /// <summary>
     ///   Default constructor without argument
     /// </summary>
-    public OperationControl() : this(DisplayMode.VIEW)
+    public OperationControl () : this (DisplayMode.VIEW)
     {
     }
     #endregion // Constructors
@@ -153,18 +152,18 @@ namespace Lemoine.JobControls
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void SaveBtnClick(object sender, EventArgs e)
+    void SaveBtnClick (object sender, EventArgs e)
     {
-      if (!ValidateData()) { // If entered values are not correct
-        return ;
+      if (!ValidateData ()) { // If entered values are not correct
+        return;
       }
       m_operation.Name = nameTextBox.Text;
       m_operation.Code = codeTextBox.Text;
       m_operation.DocumentLink = documentLinkTextBox.Text;
       m_operation.Type = m_operationTypeArray[typeComboBox.SelectedIndex];
-      
+
       TimeSpan? oldMachiningDuration = m_operation.MachiningDuration;
-      
+
       m_operation.MachiningDuration = machiningTimeSpanPicker.Value;
       m_operation.SetUpDuration = setupTimeSpanPicker.Value;
       m_operation.TearDownDuration = teardownTimeSpanPicker.Value;
@@ -176,37 +175,36 @@ namespace Lemoine.JobControls
       // Archive state
       if (!checkBoxArchive.Checked) {
         m_operation.ArchiveDateTime = null;
-      } else if (!m_operation.ArchiveDateTime.HasValue) {
+      }
+      else if (!m_operation.ArchiveDateTime.HasValue) {
         m_operation.ArchiveDateTime = DateTime.Now;
         checkBoxArchive.Text = "(" + m_operation.ArchiveDateTime.Value.ToString () + ")";
       }
 
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
-        using (var transaction = daoSession.BeginTransaction ())
-        {
-          daoFactory.OperationDAO.MakePersistent(m_operation);
-          CreateOperationInformation(m_operation, oldMachiningDuration);
-          transaction.Commit();
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
+        using (var transaction = daoSession.BeginTransaction ()) {
+          daoFactory.OperationDAO.MakePersistent (m_operation);
+          CreateOperationInformation (m_operation, oldMachiningDuration);
+          transaction.Commit ();
         }
       }
       if (!Lemoine.WebClient.Request.ClearDomain ("operationinformationchange")) {
         log.ErrorFormat ("SaveBtnClick: clear domain failed");
       }
-      m_observable.ReloadTreeNodes(m_node);
+      m_observable.ReloadTreeNodes (m_node);
       m_node.TreeView.SelectedNode = m_node;
-      m_node.TreeView.Focus();
-      m_observable.NotifyObservers();
+      m_node.TreeView.Focus ();
+      m_observable.NotifyObservers ();
       saveBtn.Enabled = false;
     }
-    
+
     /// <summary>
     /// Discard change and put current values in fields
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void ResetBtnClick(object sender, EventArgs e)
+    void ResetBtnClick (object sender, EventArgs e)
     {
       saveBtn.Enabled = false;
       if (m_operation == null) {
@@ -228,11 +226,12 @@ namespace Lemoine.JobControls
       if (m_operation.ArchiveDateTime.HasValue) {
         checkBoxArchive.Text = "(" + m_operation.ArchiveDateTime.Value.ToString () + ")";
         checkBoxArchive.Checked = true;
-      } else {
+      }
+      else {
         checkBoxArchive.Text = "";
         checkBoxArchive.Checked = false;
       }
-        
+
       IOperationType operationType;
       for (int i = 0; i < m_operationTypeArray.Length; i++) {
         operationType = m_operationTypeArray[i];
@@ -242,21 +241,21 @@ namespace Lemoine.JobControls
         }
       }
     }
-    
+
     /// <summary>
     /// Create an Operation
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void CreateBtnClick(object sender, EventArgs e)
+    void CreateBtnClick (object sender, EventArgs e)
     {
       // If values entered is not correct, exit
-      if (!ValidateData()) {
+      if (!ValidateData ()) {
         return;
       }
 
       IOperation operation = ModelDAOHelper.ModelFactory
-        .CreateOperation(m_operationTypeArray[typeComboBox.SelectedIndex]);
+        .CreateOperation (m_operationTypeArray[typeComboBox.SelectedIndex]);
       operation.Name = nameTextBox.Text;
       operation.Code = codeTextBox.Text;
       operation.DocumentLink = documentLinkTextBox.Text;
@@ -271,51 +270,48 @@ namespace Lemoine.JobControls
         checkBoxArchive.Text = operation.ArchiveDateTime.Value.ToString ();
       }
 
-      if (this.FindForm() is CreateItemForm) {
+      if (this.FindForm () is CreateItemForm) {
         // created Operation must be attached to current selected node
         // if CreateFItemForm.Goal==BIND
-        CreateItemForm createItemForm = this.FindForm() as CreateItemForm;
+        CreateItemForm createItemForm = this.FindForm () as CreateItemForm;
         IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-        if(createItemForm.Goal == CreateItemForm.GoalType.BIND) {
+        if (createItemForm.Goal == CreateItemForm.GoalType.BIND) {
           TreeNode parentNode = createItemForm.OperationTreeView.TreeView.SelectedNode;
           IIntermediateWorkPiece intermediateWorkPiece = ((Tuple<bool, IIntermediateWorkPiece>)parentNode.Tag).Item2;
-          using (IDAOSession daoSession = daoFactory.OpenSession ())
-          {
-            daoFactory.IntermediateWorkPieceDAO.Lock(intermediateWorkPiece);
-            intermediateWorkPiece.PossibleNextOperations.Add(operation);
-            operation.IntermediateWorkPieces.Add(intermediateWorkPiece);
-            using (IDAOTransaction transaction = daoSession.BeginTransaction()) {
-              daoFactory.OperationDAO.MakePersistent(operation);
-              CreateOperationInformation(operation, null);
-              daoFactory.IntermediateWorkPieceDAO.MakePersistent(intermediateWorkPiece);
-              transaction.Commit();
+          using (IDAOSession daoSession = daoFactory.OpenSession ()) {
+            daoFactory.IntermediateWorkPieceDAO.Lock (intermediateWorkPiece);
+            intermediateWorkPiece.PossibleNextOperations.Add (operation);
+            operation.IntermediateWorkPieces.Add (intermediateWorkPiece);
+            using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+              daoFactory.OperationDAO.MakePersistent (operation);
+              CreateOperationInformation (operation, null);
+              daoFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
+              transaction.Commit ();
             }
             this.m_operation = operation;
-            
-            createItemForm.OperationTreeView.BuildTreeNodes(parentNode);
+
+            createItemForm.OperationTreeView.BuildTreeNodes (parentNode);
             foreach (TreeNode childNode in parentNode.Nodes) {
-              if (childNode.Name == ((Lemoine.Collections.IDataWithId)operation).Id.ToString()) {
+              if (childNode.Name == ((Lemoine.Collections.IDataWithId)operation).Id.ToString ()) {
                 parentNode.TreeView.SelectedNode = childNode;
                 break;
               }
             }
-            parentNode.TreeView.Focus();
-            createItemForm.OperationTreeView.NotifyObservers();
+            parentNode.TreeView.Focus ();
+            createItemForm.OperationTreeView.NotifyObservers ();
           }
         }
         else if (createItemForm.Goal == CreateItemForm.GoalType.NEW) {
-          using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ())
-          {
-            using (IDAOTransaction transaction = daoSession.BeginTransaction ())
-            {
-              daoFactory.OperationDAO.MakePersistent(operation);
-              CreateOperationInformation(operation, null);
-              transaction.Commit();
+          using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ()) {
+            using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+              daoFactory.OperationDAO.MakePersistent (operation);
+              CreateOperationInformation (operation, null);
+              transaction.Commit ();
             }
           }
         }
       }
-      this.FindForm().Close();
+      this.FindForm ().Close ();
     }
 
     /// <summary>
@@ -323,21 +319,21 @@ namespace Lemoine.JobControls
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void CancelBtnClick(object sender, EventArgs e) {
-      this.FindForm().Close();
-    }
-    
-    void DocumentLinkBtnClick(object sender, EventArgs e)
+    void CancelBtnClick (object sender, EventArgs e)
     {
-      if (openFileDialog.ShowDialog() == DialogResult.OK)
-      {
+      this.FindForm ().Close ();
+    }
+
+    void DocumentLinkBtnClick (object sender, EventArgs e)
+    {
+      if (openFileDialog.ShowDialog () == DialogResult.OK) {
         this.documentLinkTextBox.Text = openFileDialog.FileName;
       }
     }
-    
-    void DocumentLinkTextBoxKeyDown(object sender, KeyEventArgs e)
+
+    void DocumentLinkTextBoxKeyDown (object sender, KeyEventArgs e)
     {
-      if ((e.KeyCode != Keys.Left)&&(e.KeyCode != Keys.Right)) {
+      if ((e.KeyCode != Keys.Left) && (e.KeyCode != Keys.Right)) {
         e.Handled = true;
         e.SuppressKeyPress = true;
       }
@@ -357,7 +353,7 @@ namespace Lemoine.JobControls
       nameTextBox.Text = operation.Name;
       codeTextBox.Text = operation.Code;
       documentLinkTextBox.Text = operation.DocumentLink;
-        
+
       machiningTimeSpanPicker.Value = operation.MachiningDuration;
       setupTimeSpanPicker.Value = operation.SetUpDuration;
       teardownTimeSpanPicker.Value = operation.TearDownDuration;
@@ -370,11 +366,12 @@ namespace Lemoine.JobControls
       if (operation.ArchiveDateTime.HasValue) {
         checkBoxArchive.Text = "(" + operation.ArchiveDateTime.Value.ToString () + ")";
         checkBoxArchive.Checked = true;
-      } else {
+      }
+      else {
         checkBoxArchive.Text = "";
         checkBoxArchive.Checked = false;
       }
-        
+
       for (int i = 0; i < m_operationTypeArray.Length; i++) {
         if (operation.Type.Id == m_operationTypeArray[i].Id) {
           typeComboBox.SelectedIndex = i;
@@ -384,35 +381,33 @@ namespace Lemoine.JobControls
       resetBtn.Enabled = true;
       saveBtn.Enabled = false;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         ModelDAOHelper.DAOFactory.OperationDAO.Lock (operation);
         this.m_operation = operation;
-        NHibernate.NHibernateUtil.Initialize(this.m_operation.Type);
+        NHibernate.NHibernateUtil.Initialize (this.m_operation.Type);
       }
-        
+
       // Fill list of associated IntermediateWorkPiece with this Operation
       int row = 0;
-      tableLayoutPanel.RowStyles.Clear();
-      tableLayoutPanel.ColumnStyles.Clear();
-      tableLayoutPanel.Controls.Clear();
+      tableLayoutPanel.RowStyles.Clear ();
+      tableLayoutPanel.ColumnStyles.Clear ();
+      tableLayoutPanel.Controls.Clear ();
       tableLayoutPanel.RowCount = 1;
       tableLayoutPanel.AutoSize = true;
-      Label titleLbl = new Label();
-      titleLbl.Text = PulseCatalog.GetString("ListOfAssociatedIntermediateWorkPiece");
+      Label titleLbl = new Label ();
+      titleLbl.Text = PulseCatalog.GetString ("ListOfAssociatedIntermediateWorkPiece");
       titleLbl.AutoSize = true;
-      titleLbl.Padding = new Padding(titleLbl.Padding.Left,titleLbl.Padding.Top,titleLbl.Padding.Right,5);
+      titleLbl.Padding = new Padding (titleLbl.Padding.Left, titleLbl.Padding.Top, titleLbl.Padding.Right, 5);
       titleLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      titleLbl.Font = new Font(titleLbl.Font, titleLbl.Font.Style | FontStyle.Bold | FontStyle.Underline);
-      tableLayoutPanel.Controls.Add(titleLbl,0,row);
-      tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-      tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+      titleLbl.Font = new Font (titleLbl.Font, titleLbl.Font.Style | FontStyle.Bold | FontStyle.Underline);
+      tableLayoutPanel.Controls.Add (titleLbl, 0, row);
+      tableLayoutPanel.ColumnStyles.Add (new ColumnStyle (SizeType.AutoSize));
+      tableLayoutPanel.RowStyles.Add (new RowStyle (SizeType.AutoSize));
       row++;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
-        daoFactory.OperationDAO.Lock(operation);
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
+        daoFactory.OperationDAO.Lock (operation);
         foreach (IIntermediateWorkPiece intermediateWorkPiece in operation.IntermediateWorkPieces) {
-          LinkLabel linkLabel = new LinkLabel();
+          LinkLabel linkLabel = new LinkLabel ();
           linkLabel.AutoSize = true;
           if (intermediateWorkPiece.Display.Length == 0) {
             linkLabel.Text = "___";
@@ -425,18 +420,18 @@ namespace Lemoine.JobControls
           linkLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
           linkLabel.Tag = intermediateWorkPiece;
           linkLabel.LinkClicked += linkLabelClicked;
-          tableLayoutPanel.Controls.Add(linkLabel);
-          tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+          tableLayoutPanel.Controls.Add (linkLabel);
+          tableLayoutPanel.RowStyles.Add (new RowStyle (SizeType.AutoSize));
           row++;
         }
       }
     }
-    
-    private void linkLabelClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+
+    private void linkLabelClicked (object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
       e.Link.Visited = true;
       IIntermediateWorkPiece intermediateWorkPiece = (IIntermediateWorkPiece)((LinkLabel)sender).Tag;
-      m_observable.GiveFocusToAllNodeInstances(typeof (IIntermediateWorkPiece), intermediateWorkPiece);
+      m_observable.GiveFocusToAllNodeInstances (typeof (IIntermediateWorkPiece), intermediateWorkPiece);
     }
 
     void lockCheckBox_CheckedChanged (object sender, EventArgs e)
@@ -454,18 +449,18 @@ namespace Lemoine.JobControls
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void NameTextBoxTextChanged(object sender, EventArgs e)
+    void NameTextBoxTextChanged (object sender, EventArgs e)
     {
       CheckHasChanged ();
     }
-    
+
     /// <summary>
     ///   Get whether a field has been changed
     /// </summary>
     /// <returns>True if a fields has been changed, false otherwise</returns>
-    bool HasBeenChanged()
+    bool HasBeenChanged ()
     {
-      return !nameTextBox.Text.Equals(m_operation.Name ?? "") ||
+      return !nameTextBox.Text.Equals (m_operation.Name ?? "") ||
         !codeTextBox.Text.Equals (m_operation.Code ?? "") ||
         !documentLinkTextBox.Text.Equals (m_operation.DocumentLink ?? "") ||
         !m_operation.MachiningDuration.Equals (machiningTimeSpanPicker.Value) ||
@@ -478,28 +473,28 @@ namespace Lemoine.JobControls
         !object.Equals (m_operation.Lock, lockCheckBox.Checked) ||
         checkBoxArchive.Checked != m_operation.ArchiveDateTime.HasValue;
     }
-    
+
     /// <summary>
     /// Tell whether input values are corrects. If not a messagebox
     /// is displayed to tell incorrects fields.
     /// </summary>
     /// <returns>true if all fields have corrects input, false otherwise.</returns>
-    bool ValidateData()
+    bool ValidateData ()
     {
-      String msg = PulseCatalog.GetString("FollowingFieldsHaveIncorrectValues");
+      String msg = PulseCatalog.GetString ("FollowingFieldsHaveIncorrectValues");
       bool valid = true;
-      
+
       if (typeComboBox.SelectedIndex == -1) {
-        msg = msg + "\n\t"+ typeLbl.Text;
+        msg = msg + "\n\t" + typeLbl.Text;
         valid = false;
       }
-      
+
       // no need to validate timePickerControls
-      
+
       if (!valid) {
-        MessageBox.Show (msg, "",MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show (msg, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
-      
+
       return valid;
     }
 

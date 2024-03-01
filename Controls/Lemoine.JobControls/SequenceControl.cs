@@ -65,8 +65,7 @@ namespace Lemoine.JobControls
     public Type ParentType
     {
       get { return m_parentType; }
-      set
-      {
+      set {
         m_parentType = value;
         if (m_parentType != null) {
           if (m_parentType.Equals (typeof (IOperation))) {
@@ -85,8 +84,7 @@ namespace Lemoine.JobControls
     public IPath Path
     {
       get { return m_path; }
-      set
-      {
+      set {
         m_path = value;
         if (m_path != null) {
           pathTextBox.Text = m_path.Number.ToString ();
@@ -103,8 +101,7 @@ namespace Lemoine.JobControls
     public IOperation Operation
     {
       get { return m_operation; }
-      set
-      {
+      set {
         m_operation = value;
         if (m_operation != null) {
           operationTextBox.Text = m_operation.Name;
@@ -144,8 +141,7 @@ namespace Lemoine.JobControls
     public bool ShowPath
     {
       get { return m_showPath; }
-      set
-      {
+      set {
         m_showPath = value;
         this.pathLbl.Visible = m_showPath;
         this.pathTextBox.Visible = m_showPath;
@@ -292,7 +288,12 @@ namespace Lemoine.JobControls
       if (selectedNode != null) {
         if (selectedNode.Tag is Tuple<bool, ISequence>) {
           m_node = selectedNode;
-          observable.ReloadTreeNodes (m_node);
+          try {
+            observable.ReloadTreeNodes (m_node);
+          }
+          catch (Exception ex) {
+            log.Error ($"UpdateInfo: ReloadTreeNodes for sequence={m_node.Tag}", ex);
+          }
           LoadData (((Tuple<bool, ISequence>)m_node.Tag).Item2);
         }
       }
@@ -346,12 +347,18 @@ namespace Lemoine.JobControls
 
         IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
         using (IDAOSession daoSession = daoFactory.OpenSession ()) {
-          ModelDAOHelper.DAOFactory.SequenceDAO.Lock (sequence);
+          if (ModelDAOHelper.DAOFactory.IsInitialized (sequence)) {
+            ModelDAOHelper.DAOFactory.SequenceDAO.Lock (sequence);
+          }
+          else { 
+            ModelDAOHelper.DAOFactory.Initialize (sequence);
+          }
           this.m_sequence = sequence;
           NHibernate.NHibernateUtil.Initialize (this.m_sequence.CadModel);
           NHibernate.NHibernateUtil.Initialize (this.m_sequence.Tool);
           NHibernate.NHibernateUtil.Initialize (this.m_sequence.Operation);
           NHibernate.NHibernateUtil.Initialize (this.m_sequence.StampingValues);
+          NHibernate.NHibernateUtil.Initialize (this.m_sequence.Detail);
 
           if (m_sequence.CadModel != null) {
             cadModelTextBox.Text = m_sequence.CadModel.Name;
@@ -552,6 +559,7 @@ namespace Lemoine.JobControls
           NHibernate.NHibernateUtil.Initialize (this.m_sequence.Tool);
           NHibernate.NHibernateUtil.Initialize (this.m_sequence.Operation);
           NHibernate.NHibernateUtil.Initialize (this.m_sequence.StampingValues);
+          NHibernate.NHibernateUtil.Initialize (this.m_sequence.Detail);
 
           if (m_sequence.CadModel != null) {
             cadModelTextBox.Text = m_sequence.CadModel.Name;

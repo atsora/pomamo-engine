@@ -22,6 +22,7 @@
                  access="nosetter.camelcase-m-underscore"
                  column="sequenceid"
                  class="Sequence"
+                 entity-name="opseq"
                  cascade="none"
                  not-found="ignore" />
     <many-to-one name="Operation"

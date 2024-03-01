@@ -13,9 +13,6 @@ using Lemoine.ModelDAO;
 
 using Lemoine.Core.Log;
 
-//using System.ComponentModel;
-
-
 namespace Lemoine.JobControls
 {
   /// <summary>
@@ -28,7 +25,8 @@ namespace Lemoine.JobControls
     /// <summary>
     /// Accepted types for display mode
     /// </summary>
-    public enum DisplayMode {
+    public enum DisplayMode
+    {
       /// <summary>
       /// Display UserControl to view or/and modify WorkOrder
       /// </summary>
@@ -38,7 +36,7 @@ namespace Lemoine.JobControls
       /// </summary>
       CREATE = 2
     };
-    
+
     #region Members
     ISimpleOperation m_simpleOperation;
     IOperationType[] m_operationTypeArray;
@@ -47,59 +45,59 @@ namespace Lemoine.JobControls
     ITreeViewObservable m_observable;
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (SimpleOperationControl).FullName);
- 
+    static readonly ILog log = LogManager.GetLogger (typeof (SimpleOperationControl).FullName);
+
     #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
-    public SimpleOperationControl(DisplayMode displayMode)
+    public SimpleOperationControl (DisplayMode displayMode)
     {
-      InitializeComponent();
+      InitializeComponent ();
 
-      nameLbl.Text = PulseCatalog.GetString("Name");
-      typeLbl.Text = PulseCatalog.GetString("Type");
-      codeLbl.Text = PulseCatalog.GetString("Code");
-      weightLbl.Text = PulseCatalog.GetString("Weight");
-      documentLinkLbl.Text = PulseCatalog.GetString("DocumentLink");
-      estimatedMachiningHoursLbl.Text = PulseCatalog.GetString("EstimatedMachiningHours");
-      estimatedSetupHoursLbl.Text = PulseCatalog.GetString("EstimatedSetupHours");
-      estimatedTearDownhoursLbl.Text = PulseCatalog.GetString("EstimatedTearDownHours");
+      nameLbl.Text = PulseCatalog.GetString ("Name");
+      typeLbl.Text = PulseCatalog.GetString ("Type");
+      codeLbl.Text = PulseCatalog.GetString ("Code");
+      weightLbl.Text = PulseCatalog.GetString ("Weight");
+      documentLinkLbl.Text = PulseCatalog.GetString ("DocumentLink");
+      estimatedMachiningHoursLbl.Text = PulseCatalog.GetString ("EstimatedMachiningHours");
+      estimatedSetupHoursLbl.Text = PulseCatalog.GetString ("EstimatedSetupHours");
+      estimatedTearDownhoursLbl.Text = PulseCatalog.GetString ("EstimatedTearDownHours");
       loadingTimeLabel.Text = PulseCatalog.GetString ("LoadingDuration");
       unloadingTimeLabel.Text = PulseCatalog.GetString ("UnloadingDuration");
-      nameTextBox.Clear();
-      codeTextBox.Clear();
-      documentLinkTextBox.Clear();
-      weightTextBox.Clear();
+      nameTextBox.Clear ();
+      codeTextBox.Clear ();
+      documentLinkTextBox.Clear ();
+      weightTextBox.Clear ();
       // quantityTextBox.Clear();
       quantityTextBox.Text = "1";
-      
+
       this.m_simpleOperation = null;
       this.m_displayMode = displayMode;
       switch (displayMode) {
-        case DisplayMode.VIEW :
-          saveBtn.Text = PulseCatalog.GetString("Save");
+        case DisplayMode.VIEW:
+          saveBtn.Text = PulseCatalog.GetString ("Save");
           saveBtn.Enabled = false;
-          resetBtn.Text = PulseCatalog.GetString("Reset");
+          resetBtn.Text = PulseCatalog.GetString ("Reset");
           baseLayout.RowStyles[14].Height = 32;
           baseLayout.RowStyles[15].Height = 0;
           break;
-        case DisplayMode.CREATE :
-          createBtn.Text = PulseCatalog.GetString("Create");
-          cancelBtn.Text = PulseCatalog.GetString("Cancel");
+        case DisplayMode.CREATE:
+          createBtn.Text = PulseCatalog.GetString ("Create");
+          cancelBtn.Text = PulseCatalog.GetString ("Cancel");
           baseLayout.RowStyles[14].Height = 0;
           baseLayout.RowStyles[15].Height = 32;
           break;
       }
 
-      typeComboBox.Items.Clear();
+      typeComboBox.Items.Clear ();
       using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        IList<IOperationType> operationTypes = ModelDAOHelper.DAOFactory.OperationTypeDAO.FindAllOrderByName();
+        IList<IOperationType> operationTypes = ModelDAOHelper.DAOFactory.OperationTypeDAO.FindAllOrderByName ();
         m_operationTypeArray = new IOperationType[operationTypes.Count];
         int i = 0;
         foreach (IOperationType operationType in operationTypes) {
           m_operationTypeArray[i++] = operationType;
-          typeComboBox.Items.Add((operationType.Display == null)? "":operationType.Display);
+          typeComboBox.Items.Add ((operationType.Display == null) ? "" : operationType.Display);
         }
         if (operationTypes.Count > 0) {
           typeComboBox.SelectedIndex = 0;
@@ -109,7 +107,7 @@ namespace Lemoine.JobControls
     /// <summary>
     ///   Default constructor without argument
     /// </summary>
-    public SimpleOperationControl() : this(DisplayMode.VIEW)
+    public SimpleOperationControl () : this (DisplayMode.VIEW)
     {
     }
     #endregion // Constructors
@@ -123,7 +121,7 @@ namespace Lemoine.JobControls
     public void UpdateInfo (ITreeViewObservable observable)
     {
       this.m_observable = observable;
-      TreeNode selectedNode = observable.GetSelectedNode();
+      TreeNode selectedNode = observable.GetSelectedNode ();
       if (selectedNode != null) {
         if (selectedNode.Tag is Tuple<bool, ISimpleOperation>) {
           m_node = selectedNode;
@@ -152,15 +150,15 @@ namespace Lemoine.JobControls
         ModelDAOHelper.DAOFactory.OperationInformationDAO.MakePersistent (operationInformation);
       }
     }
-    
+
     /// <summary>
     /// Save all changes
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void SaveBtnClick(object sender, EventArgs e)
+    void SaveBtnClick (object sender, EventArgs e)
     {
-      if (!ValidateData()) {
+      if (!ValidateData ()) {
         return;
       }
 
@@ -187,18 +185,18 @@ namespace Lemoine.JobControls
       // Archive state
       if (!checkBoxArchive.Checked) {
         m_simpleOperation.ArchiveDateTime = null;
-      } else if (!m_simpleOperation.ArchiveDateTime.HasValue) {
+      }
+      else if (!m_simpleOperation.ArchiveDateTime.HasValue) {
         m_simpleOperation.ArchiveDateTime = DateTime.Now;
         checkBoxArchive.Text = "(" + m_simpleOperation.ArchiveDateTime.Value.ToString () + ")";
       }
 
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
-        using (IDAOTransaction transaction = daoSession.BeginTransaction()) {
-          daoFactory.SimpleOperationDAO.MakePersistent(m_simpleOperation);
-          CreateOperationInformation(m_simpleOperation.Operation, oldMachiningDuration);
-          transaction.Commit();
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          daoFactory.SimpleOperationDAO.MakePersistent (m_simpleOperation);
+          CreateOperationInformation (m_simpleOperation.Operation, oldMachiningDuration);
+          transaction.Commit ();
         }
       }
 
@@ -206,20 +204,20 @@ namespace Lemoine.JobControls
         log.ErrorFormat ("SaveBtnClick: clear domain failed");
       }
 
-      m_observable.ReloadTreeNodes(m_node);
-      m_node.TreeView.Sort(); // necessary here
+      m_observable.ReloadTreeNodes (m_node);
+      m_node.TreeView.Sort (); // necessary here
       m_node.TreeView.SelectedNode = m_node;
-      m_node.TreeView.Focus();
-      m_observable.NotifyObservers();
+      m_node.TreeView.Focus ();
+      m_observable.NotifyObservers ();
       saveBtn.Enabled = false;
     }
-    
+
     /// <summary>
     /// Discard change and put current values in fields
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void ResetBtnClick(object sender, EventArgs e)
+    void ResetBtnClick (object sender, EventArgs e)
     {
       saveBtn.Enabled = false;
       if (m_simpleOperation == null) {
@@ -229,8 +227,8 @@ namespace Lemoine.JobControls
       nameTextBox.Text = m_simpleOperation.Name;
       codeTextBox.Text = m_simpleOperation.Code;
       documentLinkTextBox.Text = m_simpleOperation.DocumentLink;
-      weightTextBox.Text = (m_simpleOperation.Weight.HasValue) ? m_simpleOperation.Weight.Value.ToString(): "";
-        
+      weightTextBox.Text = (m_simpleOperation.Weight.HasValue) ? m_simpleOperation.Weight.Value.ToString () : "";
+
       machiningTimeSpanPicker.Value = m_simpleOperation.MachiningDuration;
       setupTimeSpanPicker.Value = m_simpleOperation.SetUpDuration;
       teardownTimeSpanPicker.Value = m_simpleOperation.TearDownDuration;
@@ -239,13 +237,14 @@ namespace Lemoine.JobControls
       machineFilterSelection.SelectedMachineFilter = m_simpleOperation.Operation.MachineFilter;
       lockCheckBox.Checked = m_simpleOperation.Operation.Lock;
 
-      quantityTextBox.Text = m_simpleOperation.Quantity.ToString();
+      quantityTextBox.Text = m_simpleOperation.Quantity.ToString ();
 
       // Archive state
       if (m_simpleOperation.ArchiveDateTime.HasValue) {
         checkBoxArchive.Text = "(" + m_simpleOperation.ArchiveDateTime.Value.ToString () + ")";
         checkBoxArchive.Checked = true;
-      } else {
+      }
+      else {
         checkBoxArchive.Text = "";
         checkBoxArchive.Checked = false;
       }
@@ -259,17 +258,17 @@ namespace Lemoine.JobControls
         }
       }
     }
-    
+
 
     /// <summary>
     ///   Create a SimpleOperation
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void CreateBtnClick(object sender, EventArgs e)
+    void CreateBtnClick (object sender, EventArgs e)
     {
       // If values entered is not correct, exit
-      if (!ValidateData()) {
+      if (!ValidateData ()) {
         return;
       }
 
@@ -293,20 +292,20 @@ namespace Lemoine.JobControls
         checkBoxArchive.Text = simpleOperation.ArchiveDateTime.Value.ToString ();
       }
 
-      if (this.FindForm() is CreateItemForm) {
+      if (this.FindForm () is CreateItemForm) {
         // created Operation must be attached to current selected node
         // if CreateFItemForm.Goal==BIND
-        CreateItemForm createItemForm = this.FindForm() as CreateItemForm;
+        CreateItemForm createItemForm = this.FindForm () as CreateItemForm;
         IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
         if (createItemForm.Goal == CreateItemForm.GoalType.BIND) {
           TreeNode parentNode = createItemForm.OperationTreeView.TreeView.SelectedNode;
-          
-          using (IDAOSession daoSession = daoFactory.OpenSession ())
-          {
+
+          using (IDAOSession daoSession = daoFactory.OpenSession ()) {
             IComponent component;
             if (parentNode.Tag is Tuple<bool, IComponent>) {
               component = ((Tuple<bool, IComponent>)parentNode.Tag).Item2;
-            } else if(parentNode.Tag is Tuple<bool, IPart>) {
+            }
+            else if (parentNode.Tag is Tuple<bool, IPart>) {
               component = ((Tuple<bool, IPart>)parentNode.Tag).Item2.Component;
             }
             else {
@@ -314,85 +313,82 @@ namespace Lemoine.JobControls
             }
             ModelDAOHelper.DAOFactory.ComponentDAO.Lock (component);
             Lemoine.Model.IComponentIntermediateWorkPiece ciwp = component.AddIntermediateWorkPiece (simpleOperation.IntermediateWorkPiece);
-            using (IDAOTransaction transaction = daoSession.BeginTransaction()) {
-              daoFactory.SimpleOperationDAO.MakePersistent(simpleOperation);
-              CreateOperationInformation(simpleOperation.Operation, null);
-              daoFactory.ComponentDAO.MakePersistent(component);
-              daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent(ciwp);
-              transaction.Commit();
+            using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+              daoFactory.SimpleOperationDAO.MakePersistent (simpleOperation);
+              CreateOperationInformation (simpleOperation.Operation, null);
+              daoFactory.ComponentDAO.MakePersistent (component);
+              daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (ciwp);
+              transaction.Commit ();
             }
             this.m_simpleOperation = simpleOperation;
-            
-            createItemForm.OperationTreeView.BuildTreeNodes(parentNode);
+
+            createItemForm.OperationTreeView.BuildTreeNodes (parentNode);
             foreach (TreeNode childNode in parentNode.Nodes) {
-              if (childNode.Name == simpleOperation.IntermediateWorkPieceId.ToString()) {
+              if (childNode.Name == simpleOperation.IntermediateWorkPieceId.ToString ()) {
                 parentNode.TreeView.SelectedNode = childNode;
                 break;
               }
             }
-            parentNode.TreeView.Focus();
-            createItemForm.OperationTreeView.NotifyObservers();
+            parentNode.TreeView.Focus ();
+            createItemForm.OperationTreeView.NotifyObservers ();
           }
         }
-        else if(createItemForm.Goal == CreateItemForm.GoalType.NEW){
-          using (IDAOSession daoSession = daoFactory.OpenSession ())
-          {
-            using (IDAOTransaction transaction = daoSession.BeginTransaction ())
-            {
-              daoFactory.SimpleOperationDAO.MakePersistent(simpleOperation);
-              CreateOperationInformation(simpleOperation.Operation, null);
-              transaction.Commit();
+        else if (createItemForm.Goal == CreateItemForm.GoalType.NEW) {
+          using (IDAOSession daoSession = daoFactory.OpenSession ()) {
+            using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+              daoFactory.SimpleOperationDAO.MakePersistent (simpleOperation);
+              CreateOperationInformation (simpleOperation.Operation, null);
+              transaction.Commit ();
             }
             OrphanedItemsTreeView orphanedItemsTreeView = createItemForm.OperationTreeView.OrphanedItemsTreeView;
             if (orphanedItemsTreeView != null) {
-              TreeNode rootNode = orphanedItemsTreeView.TreeView.Nodes.Find("SimpleOperation",false)[0];
-              TreeNode childNode = new TreeNode(simpleOperation.Display,(int)TreeViewImageIndex.SimpleOperation,(int)TreeViewImageIndex.SimpleOperation);
-              childNode.Name = simpleOperation.IntermediateWorkPieceId.ToString();
+              TreeNode rootNode = orphanedItemsTreeView.TreeView.Nodes.Find ("SimpleOperation", false)[0];
+              TreeNode childNode = new TreeNode (simpleOperation.Display, (int)TreeViewImageIndex.SimpleOperation, (int)TreeViewImageIndex.SimpleOperation);
+              childNode.Name = simpleOperation.IntermediateWorkPieceId.ToString ();
               childNode.Tag = new Tuple<bool, ISimpleOperation> (false, simpleOperation);
-              rootNode.Nodes.Add(childNode);
+              rootNode.Nodes.Add (childNode);
               rootNode.TreeView.SelectedNode = childNode;
-              rootNode.TreeView.Focus();
+              rootNode.TreeView.Focus ();
             }
           }
         }
       }
-      this.FindForm().Close();
+      this.FindForm ().Close ();
     }
-    
-    
+
+
     /// <summary>
     /// Close form
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void CancelBtnClick(object sender, EventArgs e)
+    void CancelBtnClick (object sender, EventArgs e)
     {
-      this.FindForm().Close();
+      this.FindForm ().Close ();
     }
-    
-    void DocumentLinkTextBoxKeyDown(object sender, KeyEventArgs e)
+
+    void DocumentLinkTextBoxKeyDown (object sender, KeyEventArgs e)
     {
-      if ((e.KeyCode != Keys.Left)&&(e.KeyCode != Keys.Right)) {
+      if ((e.KeyCode != Keys.Left) && (e.KeyCode != Keys.Right)) {
         e.Handled = true;
         e.SuppressKeyPress = true;
       }
     }
-    
-    void DocumentLinkBtnClick(object sender, EventArgs e)
+
+    void DocumentLinkBtnClick (object sender, EventArgs e)
     {
-      if (openFileDialog.ShowDialog() == DialogResult.OK)
-      {
+      if (openFileDialog.ShowDialog () == DialogResult.OK) {
         this.documentLinkTextBox.Text = openFileDialog.FileName;
       }
     }
-    
+
     #endregion
 
     #region Methods
     /// <summary>
     /// Use informations in SimpleOperation to fill text in box
     /// </summary>
-    public void LoadData(ISimpleOperation simpleOperation)
+    public void LoadData (ISimpleOperation simpleOperation)
     {
       if (simpleOperation == null) {
         return;
@@ -401,7 +397,7 @@ namespace Lemoine.JobControls
       nameTextBox.Text = simpleOperation.Name;
       codeTextBox.Text = simpleOperation.Code;
       documentLinkTextBox.Text = simpleOperation.DocumentLink;
-      weightTextBox.Text = (simpleOperation.Weight == null)?"" : simpleOperation.Weight.Value.ToString();
+      weightTextBox.Text = (simpleOperation.Weight == null) ? "" : simpleOperation.Weight.Value.ToString ();
       machiningTimeSpanPicker.Value = simpleOperation.MachiningDuration;
       setupTimeSpanPicker.Value = simpleOperation.SetUpDuration;
       teardownTimeSpanPicker.Value = simpleOperation.TearDownDuration;
@@ -414,7 +410,8 @@ namespace Lemoine.JobControls
       if (simpleOperation.ArchiveDateTime.HasValue) {
         checkBoxArchive.Text = "(" + simpleOperation.ArchiveDateTime.Value.ToString () + ")";
         checkBoxArchive.Checked = true;
-      } else {
+      }
+      else {
         checkBoxArchive.Text = "";
         checkBoxArchive.Checked = false;
       }
@@ -429,43 +426,42 @@ namespace Lemoine.JobControls
       resetBtn.Enabled = true;
       saveBtn.Enabled = false;
       this.m_simpleOperation = simpleOperation;
-        
+
       // Fill list of Component or Part associated with this IntermediateWorkPiece
       int row = 0;
-      tableLayoutPanel.RowStyles.Clear();
-      tableLayoutPanel.ColumnStyles.Clear();
-      tableLayoutPanel.Controls.Clear();
+      tableLayoutPanel.RowStyles.Clear ();
+      tableLayoutPanel.ColumnStyles.Clear ();
+      tableLayoutPanel.Controls.Clear ();
       tableLayoutPanel.RowCount = 1;
       tableLayoutPanel.AutoSize = true;
-      Label titleLbl = new Label();
+      Label titleLbl = new Label ();
       bool isComponent = true;
       if (m_node.Parent.Tag is Tuple<bool, IComponent>) {
-        titleLbl.Text = PulseCatalog.GetString("ListOfAssociatedComponent");
+        titleLbl.Text = PulseCatalog.GetString ("ListOfAssociatedComponent");
         isComponent = true;
       }
       else if (m_node.Parent.Tag is Tuple<bool, IPart>) {
-        titleLbl.Text = PulseCatalog.GetString("ListOfAssociatedPart");
+        titleLbl.Text = PulseCatalog.GetString ("ListOfAssociatedPart");
         isComponent = false;
       }
       titleLbl.AutoSize = true;
-      titleLbl.Padding = new Padding(titleLbl.Padding.Left,titleLbl.Padding.Top,titleLbl.Padding.Right,5);
+      titleLbl.Padding = new Padding (titleLbl.Padding.Left, titleLbl.Padding.Top, titleLbl.Padding.Right, 5);
       titleLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      titleLbl.Font = new Font(titleLbl.Font, titleLbl.Font.Style | FontStyle.Bold | FontStyle.Underline);
-      tableLayoutPanel.Controls.Add(titleLbl,0,row);
-      tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-      tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+      titleLbl.Font = new Font (titleLbl.Font, titleLbl.Font.Style | FontStyle.Bold | FontStyle.Underline);
+      tableLayoutPanel.Controls.Add (titleLbl, 0, row);
+      tableLayoutPanel.ColumnStyles.Add (new ColumnStyle (SizeType.AutoSize));
+      tableLayoutPanel.RowStyles.Add (new RowStyle (SizeType.AutoSize));
       row++;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         ModelDAOHelper.DAOFactory.SimpleOperationDAO.Lock (simpleOperation);
         IIntermediateWorkPiece intermediateWorkPiece = simpleOperation.IntermediateWorkPiece;
         m_simpleOperation.Quantity = intermediateWorkPiece.OperationQuantity;
-        quantityTextBox.Text = m_simpleOperation.Quantity.ToString();
-          
+        quantityTextBox.Text = m_simpleOperation.Quantity.ToString ();
+
         foreach (Lemoine.Model.IComponentIntermediateWorkPiece componentIntermediateWorkPiece in intermediateWorkPiece.ComponentIntermediateWorkPieces) {
           Lemoine.Model.IComponent component = componentIntermediateWorkPiece.Component;
-          LinkLabel linkLabel = new LinkLabel();
+          LinkLabel linkLabel = new LinkLabel ();
           linkLabel.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
           linkLabel.Height = 20;
           linkLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -486,23 +482,23 @@ namespace Lemoine.JobControls
             linkLabel.Text = display;
           }
           linkLabel.LinkClicked += linkLabelClicked;
-          tableLayoutPanel.Controls.Add(linkLabel,0,row);
-          tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+          tableLayoutPanel.Controls.Add (linkLabel, 0, row);
+          tableLayoutPanel.RowStyles.Add (new RowStyle (SizeType.AutoSize));
           row++;
         }
       }
     }
-    
-    private void linkLabelClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+
+    private void linkLabelClicked (object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
       e.Link.Visited = true;
       if (((LinkLabel)sender).Tag is Lemoine.Model.IComponent) {
         IComponent component = (IComponent)(((LinkLabel)sender).Tag);
-        m_observable.GiveFocusToAllNodeInstances(typeof(IComponent), component);
+        m_observable.GiveFocusToAllNodeInstances (typeof (IComponent), component);
       }
-      else if (((LinkLabel)sender).Tag is IPart){
+      else if (((LinkLabel)sender).Tag is IPart) {
         IPart part = ((IPart)((LinkLabel)sender).Tag);
-        m_observable.GiveFocusToAllNodeInstances(typeof(IPart), part);
+        m_observable.GiveFocusToAllNodeInstances (typeof (IPart), part);
       }
     }
 
@@ -510,72 +506,73 @@ namespace Lemoine.JobControls
     /// Tell whether input values are correct. If not a messagebox is displayed to tell incorrects fields.
     /// </summary>
     /// <returns>true if all fields have corrects input, false otherwise.</returns>
-    bool ValidateData()
+    bool ValidateData ()
     {
-      String msg = PulseCatalog.GetString("FollowingFieldsHaveIncorrectValues");
+      String msg = PulseCatalog.GetString ("FollowingFieldsHaveIncorrectValues");
       bool valid = true;
-      
+
       if (typeComboBox.SelectedIndex == -1) {
-        msg = msg + "\n\t"+ typeLbl.Text;
+        msg = msg + "\n\t" + typeLbl.Text;
         valid = false;
       }
-      
+
       try {
-        if (weightTextBox.Text.Trim().Length != 0) {
-          double.Parse(weightTextBox.Text.Trim());
+        if (weightTextBox.Text.Trim ().Length != 0) {
+          double.Parse (weightTextBox.Text.Trim ());
         }
       }
       catch (Exception) {
-        msg = msg + "\n\t"+ weightLbl.Text;
+        msg = msg + "\n\t" + weightLbl.Text;
         valid = false;
       }
 
       // no need to validate time picker controls
-      
+
       try {
-        QuantityTextBoxAsInt();
-      } catch (System.FormatException) {
+        QuantityTextBoxAsInt ();
+      }
+      catch (System.FormatException) {
         msg = msg + "\n\t" + quantityLbl.Text;
         valid = false;
       }
-      
+
       if (!valid) {
-        MessageBox.Show (msg,"",MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show (msg, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       return valid;
     }
-    
+
     /// <summary>
     /// Test if a change on field occurs and then enable or disable save button
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void NameTextBoxTextChanged(object sender, EventArgs e)
+    void NameTextBoxTextChanged (object sender, EventArgs e)
     {
       CheckHasChanged ();
     }
-    
+
     /// <summary>
     /// return Quantity Textbox as an integer may raise a FormatException
     /// </summary>
     /// <returns></returns>
-    int QuantityTextBoxAsInt()
+    int QuantityTextBoxAsInt ()
     {
-      return Int32.Parse(quantityTextBox.Text);
+      return Int32.Parse (quantityTextBox.Text);
     }
-    
-    void QuantityTextBoxTextChanged(object sender, System.EventArgs e)
+
+    void QuantityTextBoxTextChanged (object sender, System.EventArgs e)
     {
-      
+
     }
-    
+
     /// <summary>
     /// Get whether a field has been changed
     /// </summary>
     /// <returns>True if a fields has been changed, false otherwise</returns>
-    bool HasBeenChanged()
+    bool HasBeenChanged ()
     {
-      if (!nameTextBox.Text.Equals(m_simpleOperation.Name ?? "") ||
+      if (!nameTextBox.Text.Equals (m_simpleOperation.Name ?? "") ||
         !codeTextBox.Text.Equals (m_simpleOperation.Code ?? "") ||
         !documentLinkTextBox.Text.Equals (m_simpleOperation.DocumentLink ?? "") ||
         !m_simpleOperation.MachiningDuration.Equals (machiningTimeSpanPicker.Value) ||
@@ -590,14 +587,15 @@ namespace Lemoine.JobControls
         return true;
       }
 
-      String s = (m_simpleOperation.Weight == null) ? "" : m_simpleOperation.Weight.ToString();
-      if (!weightTextBox.Text.Trim().Equals(s)) {
+      String s = (m_simpleOperation.Weight == null) ? "" : m_simpleOperation.Weight.ToString ();
+      if (!weightTextBox.Text.Trim ().Equals (s)) {
         return true;
       }
 
       try {
-        return (m_simpleOperation.Quantity != QuantityTextBoxAsInt());
-      } catch (FormatException) {
+        return (m_simpleOperation.Quantity != QuantityTextBoxAsInt ());
+      }
+      catch (FormatException) {
         return true;
       }
     }

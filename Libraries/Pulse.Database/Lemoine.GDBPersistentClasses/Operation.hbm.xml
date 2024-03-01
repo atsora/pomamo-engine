@@ -88,7 +88,7 @@
          inverse="true" lazy="true"
          cascade="none">
       <key column="operationid" on-delete="cascade" />
-      <one-to-many class="Sequence" />
+      <one-to-many class="Sequence" entity-name="opseq" />
     </set>
     <set name="Stamps"
          access="nosetter.camelcase-m-underscore"

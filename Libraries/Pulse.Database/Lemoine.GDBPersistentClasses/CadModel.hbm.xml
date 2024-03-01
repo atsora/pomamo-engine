@@ -32,7 +32,7 @@
          inverse="true" lazy="true"
          cascade="none">
       <key column="cadmodelid" />
-      <one-to-many class="Sequence" />
+      <one-to-many class="Sequence" entity-name="opseq" />
     </set>
   </class>
 </hibernate-mapping>

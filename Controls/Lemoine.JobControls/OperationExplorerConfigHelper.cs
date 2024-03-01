@@ -31,8 +31,7 @@ namespace Lemoine.JobControls
     /// <returns></returns>
     public static bool PartAtTheTop
     {
-      get
-      {
+      get {
         string configKey = ConfigKeys.GetOperationExplorerConfigKey (OperationExplorerConfigKey.PartAtTheTop);
         return Lemoine.Info.ConfigSet
           .LoadAndGet<bool> (configKey,

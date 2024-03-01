@@ -2,7 +2,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
   namespace="Lemoine.GDBPersistentClasses"
   assembly="Pulse.Database">
-  <class name="Sequence" table="sequence">
+  <class name="Sequence" table="sequence" entity-name="opseq">
     <id name="Id" column="sequenceid"
         access="nosetter.camelcase-m-underscore">
       <generator class="native">

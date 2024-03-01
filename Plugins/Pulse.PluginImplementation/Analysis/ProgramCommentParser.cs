@@ -268,6 +268,7 @@ namespace Pulse.PluginImplementation.Analysis
           operation = ModelDAOHelper.ModelFactory.CreateOperation (operationType);
           operation.Name = opName;
           operation.Code = opCode;
+          operation.Lock = false;
           ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation);
           if (op1op2) {
             var iwp1 = ModelDAOHelper.ModelFactory.CreateIntermediateWorkPiece (operation);
@@ -277,7 +278,8 @@ namespace Pulse.PluginImplementation.Analysis
               iwp1.OperationQuantity = qty1;
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (iwp1);
-            part.AddIntermediateWorkPiece (iwp1);
+            var l1 = part.AddIntermediateWorkPiece (iwp1);
+            ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l1);
             var iwp2 = ModelDAOHelper.ModelFactory.CreateIntermediateWorkPiece (operation);
             iwp2.Name = op2Name;
             iwp2.Code = op2Code;
@@ -285,7 +287,8 @@ namespace Pulse.PluginImplementation.Analysis
               iwp2.OperationQuantity = qty2;
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (iwp2);
-            part.AddIntermediateWorkPiece (iwp2);
+            var l2 = part.AddIntermediateWorkPiece (iwp2);
+            ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l2);
             ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
           }
           else { // !op1op2
@@ -296,7 +299,8 @@ namespace Pulse.PluginImplementation.Analysis
               intermediateWorkPiece.OperationQuantity = qty;
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
-            part.AddIntermediateWorkPiece (intermediateWorkPiece);
+            var l = part.AddIntermediateWorkPiece (intermediateWorkPiece);
+            ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l);
             ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
           }
           if (this.CreateSequences) {

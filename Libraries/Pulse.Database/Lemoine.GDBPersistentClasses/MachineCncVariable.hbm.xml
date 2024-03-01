@@ -32,6 +32,7 @@
                  not-found="exception" />
     <many-to-one name="Sequence" column="sequenceid"
                  class="Sequence"
+                 entity-name="opseq"
                  cascade="none"
                  not-found="exception" />
 

@@ -19,6 +19,7 @@
               column="sequencemilestonedatetime"
               not-null="true" />
     <many-to-one name="Sequence" column="sequenceid" class="Sequence"
+                 entity-name="opseq"
                  access="nosetter.camelcase-m-underscore"
                  cascade="none" />
     <property name="Milestone" column="sequencemilestoneseconds"

@@ -20,19 +20,20 @@ namespace Lemoine.GDBPersistentClasses
     : VersionableNHibernateDAO<Stamp, IStamp, int>
     , IStampDAO
   {
-    
+
     /// <summary>
     /// FindAll stamps for a given IsoFile
     /// </summary>
     /// <returns>list of stamps of an IsoFile</returns>
-    public IList<IStamp> FindAllWithIsoFile (IIsoFile isoFile)  {
+    public IList<IStamp> FindAllWithIsoFile (IIsoFile isoFile)
+    {
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<Stamp> ()
-        .Add(Restrictions.Eq("IsoFile", isoFile))
-        .AddOrder(Order.Asc ("Id"))
+        .Add (Restrictions.Eq ("IsoFile", isoFile))
+        .AddOrder (Order.Asc ("Id"))
         .List<IStamp> ();
     }
-    
+
     /// <summary>
     /// Get all the stamps which have an associated position
     /// for a given IsoFile
@@ -40,27 +41,37 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="isoFileId"></param>
     /// <returns></returns>
-    public IList<IStamp> GetAllWithAscendingPosition (int isoFileId) {
+    public IList<IStamp> GetAllWithAscendingPosition (int isoFileId)
+    {
       return NHibernateHelper.GetCurrentSession ()
-        .CreateCriteria<Stamp>  ()
+        .CreateCriteria<Stamp> ()
         .Add (Expression.Eq ("IsoFile.Id", isoFileId))
         .Add (Expression.IsNotNull ("Position"))
         .AddOrder (Order.Asc ("Position"))
-        .List <IStamp> ();
+        .List<IStamp> ();
     }
-    
+
     /// <summary>
     /// FindAll stamps for a given sequence
     /// </summary>
     /// <param name="sequence"></param>
     /// <returns></returns>
-    public IList<IStamp> FindAllWithSequence (ISequence sequence) {
-      return NHibernateHelper.GetCurrentSession ()
-        .CreateCriteria<Stamp>  ()
-        .Add (Expression.Eq ("Sequence", sequence))
-        .List <IStamp> ();
+    public IList<IStamp> FindAllWithSequence (ISequence sequence)
+    {
+      if (sequence is null) {
+        return NHibernateHelper.GetCurrentSession ()
+          .CreateCriteria<Stamp> ()
+          .Add (Restrictions.IsNull ("Sequence"))
+          .List<IStamp> ();
+      }
+      else {
+        return NHibernateHelper.GetCurrentSession ()
+          .CreateCriteria<Stamp> ()
+          .Add (Expression.Eq ("Sequence.Id", sequence.Id))
+          .List<IStamp> ();
+      }
     }
-    
+
     /// <summary>
     /// Find all the stamps for a specified component
     /// </summary>

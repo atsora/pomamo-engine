@@ -12,7 +12,9 @@
     <version name="Version" column="stampingvalueversion"
              access="nosetter.camelcase-m-underscore" />
     <many-to-one name="Sequence"
-                 column="sequenceid" class="Sequence"
+                 column="sequenceid"
+                 class="Sequence"
+                 entity-name="opseq"
                  cascade="none"
                  not-null="true"
                  not-found="exception" />

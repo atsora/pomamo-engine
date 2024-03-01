@@ -21,8 +21,8 @@ namespace Lemoine.JobControls
   /// </summary>
   internal class TreeViewBasicsOperations
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (TreeViewBasicsOperations).FullName);
-    
+    static readonly ILog log = LogManager.GetLogger (typeof (TreeViewBasicsOperations).FullName);
+
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -32,8 +32,8 @@ namespace Lemoine.JobControls
     }
 
     #endregion // Constructors
-    
-    
+
+
     #region MoveNode Methods
     /// <summary>
     ///   Move dragged node from his parent node to a target node
@@ -46,15 +46,15 @@ namespace Lemoine.JobControls
     /// <param name="dropNode">Drop node</param>
     /// <param name="levelToType">Array of type contained in TreeView for each level</param>
     /// <returns>True if move has succeeded, false otherwise</returns>
-    public static bool MoveNode(BaseOperationTreeView dragTreeView, TreeNode dragNode,
+    public static bool MoveNode (BaseOperationTreeView dragTreeView, TreeNode dragNode,
                                 BaseOperationTreeView dropTreeView, TreeNode dropNode, Type[] levelToType)
     {
       Debug.Assert (null != dropNode);
       Debug.Assert (null != dragNode);
-      
+
       TreeNode parentDragNode = dragNode.Parent;
       Debug.Assert (null != parentDragNode);
-      
+
       bool result = false;
       try {
         if (dropNode.Tag is Tuple<bool, IWorkOrder>) {
@@ -83,12 +83,12 @@ namespace Lemoine.JobControls
       }
       catch (Exception e) {
         Cursor.Current = Cursors.Default;
-        MessageBox.Show("Exception : \n"+e.Message+"\n"+e.StackTrace,"",MessageBoxButtons.OK,
+        MessageBox.Show ("Exception : \n" + e.Message + "\n" + e.StackTrace, "", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
         return false;
       }
     }
-    
+
     /// <summary>
     ///   Call when drop node represents WorkOrder
     /// </summary>
@@ -98,17 +98,16 @@ namespace Lemoine.JobControls
     /// <param name="dropTreeView"></param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if move has succeeded, false otherwise</returns>
-    private static bool MoveNodeOnWorkOrder(BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
+    private static bool MoveNodeOnWorkOrder (BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
                                             BaseOperationTreeView dropTreeView, TreeNode dropNode)
     {
       IWorkOrder targetWorkOrder;
       IWorkOrder formerWorkOrder;
       IProject project = null;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         if (dragNode.Tag is Tuple<bool, IProject>) {
           project = ((Tuple<bool, IProject>)dragNode.Tag).Item2;
         }
@@ -125,26 +124,26 @@ namespace Lemoine.JobControls
         foreach (IProject projectInTargetWorkOrder in targetWorkOrder.Projects) {
           if (((Lemoine.Collections.IDataWithId<int>)projectInTargetWorkOrder).Id == ((Lemoine.Collections.IDataWithId)project).Id) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,
+            MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
             return false;
           }
         }
 
-        using (IDAOTransaction tx = daoSession.BeginTransaction()) {
-          project.RemoveWorkOrder(formerWorkOrder);
-          project.AddWorkOrder(targetWorkOrder);
-          DateTime dateTime = DateTime.Now.ToUniversalTime();
-          IWorkOrderProjectUpdate updateRemove = ModelDAOHelper.ModelFactory.CreateWorkOrderProjectUpdate(formerWorkOrder,project,WorkOrderProjectUpdateModificationType.DELETE);
+        using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
+          project.RemoveWorkOrder (formerWorkOrder);
+          project.AddWorkOrder (targetWorkOrder);
+          DateTime dateTime = DateTime.Now.ToUniversalTime ();
+          IWorkOrderProjectUpdate updateRemove = ModelDAOHelper.ModelFactory.CreateWorkOrderProjectUpdate (formerWorkOrder, project, WorkOrderProjectUpdateModificationType.DELETE);
           updateRemove.DateTime = dateTime;
-          IWorkOrderProjectUpdate updateAdd = ModelDAOHelper.ModelFactory.CreateWorkOrderProjectUpdate(targetWorkOrder,project,WorkOrderProjectUpdateModificationType.NEW);
+          IWorkOrderProjectUpdate updateAdd = ModelDAOHelper.ModelFactory.CreateWorkOrderProjectUpdate (targetWorkOrder, project, WorkOrderProjectUpdateModificationType.NEW);
           updateAdd.DateTime = dateTime;
-          daoFactory.WorkOrderProjectUpdateDAO.MakePersistent(updateRemove);
-          daoFactory.WorkOrderProjectUpdateDAO.MakePersistent(updateAdd);
-          daoFactory.ProjectDAO.MakePersistent(project);
-          daoFactory.WorkOrderDAO.MakePersistent(targetWorkOrder);
-          daoFactory.WorkOrderDAO.MakePersistent(formerWorkOrder);
-          tx.Commit();
+          daoFactory.WorkOrderProjectUpdateDAO.MakePersistent (updateRemove);
+          daoFactory.WorkOrderProjectUpdateDAO.MakePersistent (updateAdd);
+          daoFactory.ProjectDAO.MakePersistent (project);
+          daoFactory.WorkOrderDAO.MakePersistent (targetWorkOrder);
+          daoFactory.WorkOrderDAO.MakePersistent (formerWorkOrder);
+          tx.Commit ();
         }
       }
       Cursor.Current = Cursors.Default;
@@ -160,46 +159,44 @@ namespace Lemoine.JobControls
     /// <param name="dropTreeView"></param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if move has succeeded, false otherwise</returns>
-    private static bool MoveNodeOnProject(BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
+    private static bool MoveNodeOnProject (BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
                                           BaseOperationTreeView dropTreeView, TreeNode dropNode)
     {
       IProject targetProject;
       IComponent component;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetProject = ((Tuple<bool, IProject>)dropNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.ProjectDAO.Lock (targetProject);
         component = ((Tuple<bool, IComponent>)dragNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (component);
-        
+
         foreach (var componentInTargetProject in targetProject.Components) {
           if (((Lemoine.Collections.IDataWithId)componentInTargetProject).Id == ((Lemoine.Collections.IDataWithId)component).Id) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,
+            MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
             return false;
           }
           if ((componentInTargetProject.Code != null) && (componentInTargetProject.Code == component.Code)) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("ThereIsAnotherItemWithSameNameThatBelongsToThisProject")+"\n"+PulseCatalog.GetString("YouCanNotMoveThisItem"),"",MessageBoxButtons.OK,
+            MessageBox.Show (PulseCatalog.GetString ("ThereIsAnotherItemWithSameNameThatBelongsToThisProject") + "\n" + PulseCatalog.GetString ("YouCanNotMoveThisItem"), "", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
             return false;
           }
           if ((componentInTargetProject.Name != null) && (componentInTargetProject.Name == component.Name)) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("ThereIsAnotherItemWithSameNameThatBelongsToThisProject")+"\n"+PulseCatalog.GetString("YouCanNotMoveThisItem"),"",MessageBoxButtons.OK,
+            MessageBox.Show (PulseCatalog.GetString ("ThereIsAnotherItemWithSameNameThatBelongsToThisProject") + "\n" + PulseCatalog.GetString ("YouCanNotMoveThisItem"), "", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
             return false;
           }
         }
-        
-        using (IDAOTransaction tx = daoSession.BeginTransaction())
-        {
+
+        using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
           ModelDAOHelper.DAOFactory.ComponentDAO.ChangeProject (component, targetProject);
-          tx.Commit();
+          tx.Commit ();
         }
       }
       Cursor.Current = Cursors.Default;
@@ -215,16 +212,16 @@ namespace Lemoine.JobControls
     /// <param name="dropTreeView"></param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if move has succeeded, false otherwise</returns>
-    private static bool MoveNodeOnJob(BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
-                                      BaseOperationTreeView dropTreeView, TreeNode dropNode){
+    private static bool MoveNodeOnJob (BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
+                                      BaseOperationTreeView dropTreeView, TreeNode dropNode)
+    {
       IProject targetProject;
       IProject formerProject;
       IComponent component;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetProject = ((Tuple<bool, IJob>)dropNode.Tag).Item2.Project;
         ModelDAOHelper.DAOFactory.ProjectDAO.Lock (targetProject);
         formerProject = ((Tuple<bool, IJob>)parentDragNode.Tag).Item2.Project;
@@ -232,38 +229,38 @@ namespace Lemoine.JobControls
         component = ((Tuple<bool, IComponent>)dragNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (component);
         ModelDAOHelper.DAOFactory.ProjectDAO.InitializeComponents (targetProject);
-        
+
         foreach (var componentInTarget in targetProject.Components) {
           if (((Lemoine.Collections.IDataWithId)componentInTarget).Id == ((Lemoine.Collections.IDataWithId)component).Id) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
           }
           if ((componentInTarget.Code != null) && (componentInTarget.Code == component.Code)) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("ThereIsAnotherItemWithSameCodeThatBelongsToThisJob")+"\n"+PulseCatalog.GetString("YouCanNotMoveThisItem"),"",MessageBoxButtons.OK,
+            MessageBox.Show (PulseCatalog.GetString ("ThereIsAnotherItemWithSameCodeThatBelongsToThisJob") + "\n" + PulseCatalog.GetString ("YouCanNotMoveThisItem"), "", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
             return false;
           }
           if ((componentInTarget.Name != null) && (componentInTarget.Name == component.Name)) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("ThereIsAnotherItemWithSameNameThatBelongsToThisJob")+"\n"+PulseCatalog.GetString("YouCanNotMoveThisItem"),"",MessageBoxButtons.OK,
+            MessageBox.Show (PulseCatalog.GetString ("ThereIsAnotherItemWithSameNameThatBelongsToThisJob") + "\n" + PulseCatalog.GetString ("YouCanNotMoveThisItem"), "", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
             return false;
           }
         }
-        
-        using (IDAOTransaction tx = daoSession.BeginTransaction()) {
-          DateTime dateTime = DateTime.Now.ToUniversalTime();
-          IProjectComponentUpdate update = ModelDAOHelper.ModelFactory.CreateProjectComponentUpdate(component,formerProject,targetProject);
+
+        using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
+          DateTime dateTime = DateTime.Now.ToUniversalTime ();
+          IProjectComponentUpdate update = ModelDAOHelper.ModelFactory.CreateProjectComponentUpdate (component, formerProject, targetProject);
           update.DateTime = dateTime;
-          formerProject.RemoveComponent(component);
-          targetProject.AddComponent(component);
-          daoFactory.ProjectDAO.MakePersistent(targetProject);
-          daoFactory.ProjectDAO.MakePersistent(formerProject);
-          daoFactory.ComponentDAO.MakePersistent(component);
-          daoFactory.ProjectComponentUpdateDAO.MakePersistent(update);
-          tx.Commit();
+          formerProject.RemoveComponent (component);
+          targetProject.AddComponent (component);
+          daoFactory.ProjectDAO.MakePersistent (targetProject);
+          daoFactory.ProjectDAO.MakePersistent (formerProject);
+          daoFactory.ComponentDAO.MakePersistent (component);
+          daoFactory.ProjectComponentUpdateDAO.MakePersistent (update);
+          tx.Commit ();
         }
       }
       Cursor.Current = Cursors.Default;
@@ -279,23 +276,22 @@ namespace Lemoine.JobControls
     /// <param name="dropTreeView"></param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if move has succeeded, false otherwise</returns>
-    private static bool MoveNodeOnComponent(BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
+    private static bool MoveNodeOnComponent (BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
                                             BaseOperationTreeView dropTreeView, TreeNode dropNode)
     {
       IComponent targetComponent;
       IComponent formerComponent;
       IIntermediateWorkPiece intermediateWorkPiece = null;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetComponent = ((Tuple<bool, IComponent>)dropNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (targetComponent);
         formerComponent = ((Tuple<bool, IComponent>)parentDragNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (formerComponent);
         ModelDAOHelper.DAOFactory.ComponentDAO.InitializeComponentIntermediateWorkPieces (targetComponent);
-        
+
         if (dragNode.Tag is Tuple<bool, IIntermediateWorkPiece>) {
           intermediateWorkPiece = ((Tuple<bool, IIntermediateWorkPiece>)dragNode.Tag).Item2;
         }
@@ -303,35 +299,34 @@ namespace Lemoine.JobControls
           intermediateWorkPiece = ((Tuple<bool, ISimpleOperation>)dragNode.Tag).Item2.IntermediateWorkPiece;
         }
         ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.Lock (intermediateWorkPiece);
-        
+
         foreach (IComponentIntermediateWorkPiece componentIntermediateWorkPieceInTarget in targetComponent.ComponentIntermediateWorkPieces) {
           IIntermediateWorkPiece intermediateWorkPieceInTarget = componentIntermediateWorkPieceInTarget.IntermediateWorkPiece;
           if (((Lemoine.Collections.IDataWithId)intermediateWorkPieceInTarget).Id == ((Lemoine.Collections.IDataWithId)intermediateWorkPiece).Id) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
           }
         }
 
-        using (IDAOTransaction tx = daoSession.BeginTransaction())
-        {
-          IList<IComponentIntermediateWorkPiece> listciwp = formerComponent.RemoveIntermediateWorkPiece(intermediateWorkPiece);
-          Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece(intermediateWorkPiece);
-          DateTime dateTime = DateTime.Now.ToUniversalTime();
-          IComponentIntermediateWorkPieceUpdate updateRemove = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate(formerComponent,intermediateWorkPiece,ComponentIntermediateWorkPieceUpdateModificationType.DELETE);
+        using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
+          IList<IComponentIntermediateWorkPiece> listciwp = formerComponent.RemoveIntermediateWorkPiece (intermediateWorkPiece);
+          Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece (intermediateWorkPiece);
+          DateTime dateTime = DateTime.Now.ToUniversalTime ();
+          IComponentIntermediateWorkPieceUpdate updateRemove = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate (formerComponent, intermediateWorkPiece, ComponentIntermediateWorkPieceUpdateModificationType.DELETE);
           updateRemove.DateTime = dateTime;
-          IComponentIntermediateWorkPieceUpdate updateAdd = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate(targetComponent,intermediateWorkPiece, ComponentIntermediateWorkPieceUpdateModificationType.NEW);
+          IComponentIntermediateWorkPieceUpdate updateAdd = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate (targetComponent, intermediateWorkPiece, ComponentIntermediateWorkPieceUpdateModificationType.NEW);
           updateAdd.DateTime = dateTime;
-          daoFactory.ComponentDAO.MakePersistent(targetComponent);
-          daoFactory.ComponentDAO.MakePersistent(formerComponent);
-          daoFactory.IntermediateWorkPieceDAO.MakePersistent(intermediateWorkPiece);
-          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent(updateRemove);
-          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent(updateAdd);
-          daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent(ciwp);
+          daoFactory.ComponentDAO.MakePersistent (targetComponent);
+          daoFactory.ComponentDAO.MakePersistent (formerComponent);
+          daoFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
+          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent (updateRemove);
+          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent (updateAdd);
+          daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (ciwp);
           foreach (IComponentIntermediateWorkPiece ciwpelt in listciwp) {
-            daoFactory.ComponentIntermediateWorkPieceDAO.MakeTransient(ciwpelt);
+            daoFactory.ComponentIntermediateWorkPieceDAO.MakeTransient (ciwpelt);
           }
-          tx.Commit();
+          tx.Commit ();
         }
       }
       Cursor.Current = Cursors.Default;
@@ -347,23 +342,22 @@ namespace Lemoine.JobControls
     /// <param name="dropTreeView"></param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if move has succeeded, false otherwise</returns>
-    private static bool MoveNodeOnPart(BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
+    private static bool MoveNodeOnPart (BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
                                        BaseOperationTreeView dropTreeView, TreeNode dropNode)
     {
       IComponent targetComponent;
       IComponent formerComponent;
       IIntermediateWorkPiece intermediateWorkPiece = null;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetComponent = ((Tuple<bool, IPart>)dropNode.Tag).Item2.Component;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (targetComponent);
         formerComponent = ((Tuple<bool, IPart>)parentDragNode.Tag).Item2.Component;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (formerComponent);
         ModelDAOHelper.DAOFactory.ComponentDAO.InitializeComponentIntermediateWorkPieces (targetComponent);
-        
+
         if (dragNode.Tag is Tuple<bool, IIntermediateWorkPiece>) {
           intermediateWorkPiece = ((Tuple<bool, IIntermediateWorkPiece>)dragNode.Tag).Item2;
         }
@@ -376,37 +370,36 @@ namespace Lemoine.JobControls
           IIntermediateWorkPiece intermediateWorkPieceInTarget = componentIntermediateWorkPieceInTarget.IntermediateWorkPiece;
           if (((Lemoine.Collections.IDataWithId)intermediateWorkPieceInTarget).Id == ((Lemoine.Collections.IDataWithId)intermediateWorkPiece).Id) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
           }
         }
 
-        using (IDAOTransaction tx = daoSession.BeginTransaction())
-        {
+        using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
           DateTime dateTime = DateTime.UtcNow;
-          IComponentIntermediateWorkPieceUpdate updateRemove = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate(formerComponent,intermediateWorkPiece,ComponentIntermediateWorkPieceUpdateModificationType.DELETE);
+          IComponentIntermediateWorkPieceUpdate updateRemove = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate (formerComponent, intermediateWorkPiece, ComponentIntermediateWorkPieceUpdateModificationType.DELETE);
           updateRemove.DateTime = dateTime;
-          IComponentIntermediateWorkPieceUpdate updateAdd = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate(targetComponent,intermediateWorkPiece,ComponentIntermediateWorkPieceUpdateModificationType.NEW);
+          IComponentIntermediateWorkPieceUpdate updateAdd = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate (targetComponent, intermediateWorkPiece, ComponentIntermediateWorkPieceUpdateModificationType.NEW);
           updateAdd.DateTime = dateTime;
-          Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece(intermediateWorkPiece);
-          IList<IComponentIntermediateWorkPiece> listciwp = formerComponent.RemoveIntermediateWorkPiece(intermediateWorkPiece);
-          daoFactory.ComponentDAO.MakePersistent(targetComponent);
-          daoFactory.ComponentDAO.MakePersistent(formerComponent);
-          daoFactory.IntermediateWorkPieceDAO.MakePersistent(intermediateWorkPiece);
-          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent(updateRemove);
-          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent(updateAdd);
-          daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent(ciwp);
+          Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece (intermediateWorkPiece);
+          IList<IComponentIntermediateWorkPiece> listciwp = formerComponent.RemoveIntermediateWorkPiece (intermediateWorkPiece);
+          daoFactory.ComponentDAO.MakePersistent (targetComponent);
+          daoFactory.ComponentDAO.MakePersistent (formerComponent);
+          daoFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
+          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent (updateRemove);
+          daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent (updateAdd);
+          daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (ciwp);
           foreach (IComponentIntermediateWorkPiece ciwpelt in listciwp) {
-            daoFactory.ComponentIntermediateWorkPieceDAO.MakeTransient(ciwpelt);
+            daoFactory.ComponentIntermediateWorkPieceDAO.MakeTransient (ciwpelt);
           }
-          tx.Commit();
+          tx.Commit ();
         }
       }
       Cursor.Current = Cursors.Default;
       return true;
     }
 
-    
+
     /// <summary>
     ///   Call when drop node represents IntermediateWorkPiece
     /// </summary>
@@ -416,17 +409,16 @@ namespace Lemoine.JobControls
     /// <param name="dropTreeView"></param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if move has succeeded, false otherwise</returns>
-    private static bool MoveNodeOnIntermediateWorkPiece(BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
+    private static bool MoveNodeOnIntermediateWorkPiece (BaseOperationTreeView dragTreeView, TreeNode dragNode, TreeNode parentDragNode,
                                                         BaseOperationTreeView dropTreeView, TreeNode dropNode)
     {
       IIntermediateWorkPiece targetIntermediateWorkPiece;
       IIntermediateWorkPiece formerIntermediateWorkPiece;
       IOperation operation;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetIntermediateWorkPiece = ((Tuple<bool, IIntermediateWorkPiece>)dropNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.Lock (targetIntermediateWorkPiece);
         formerIntermediateWorkPiece = ((Tuple<bool, IIntermediateWorkPiece>)parentDragNode.Tag).Item2;
@@ -438,13 +430,13 @@ namespace Lemoine.JobControls
         foreach (IOperation operationInTarget in targetIntermediateWorkPiece.PossibleNextOperations) {
           if (((Lemoine.Collections.IDataWithId<int>)operationInTarget).Id == ((Lemoine.Collections.IDataWithId)operation).Id) {
             Cursor.Current = Cursors.Default;
-            MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
           }
         }
 
-        using (IDAOTransaction tx = daoSession.BeginTransaction()) {
-          DateTime dateTime = DateTime.Now.ToUniversalTime();
+        using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
+          DateTime dateTime = DateTime.Now.ToUniversalTime ();
           IIntermediateWorkPieceOperationUpdate updateRemove =
             ModelDAOHelper.ModelFactory
             .CreateIntermediateWorkPieceOperationUpdate (formerIntermediateWorkPiece,
@@ -457,14 +449,14 @@ namespace Lemoine.JobControls
                                                          null,
                                                          operation);
           updateAdd.DateTime = dateTime;
-          formerIntermediateWorkPiece.RemovePossibleNextOperation(operation);
-          targetIntermediateWorkPiece.AddPossibleNextOperation(operation);
-          daoFactory.IntermediateWorkPieceDAO.MakePersistent(targetIntermediateWorkPiece);
-          daoFactory.IntermediateWorkPieceDAO.MakePersistent(formerIntermediateWorkPiece);
-          daoFactory.OperationDAO.MakePersistent(operation);
-          daoFactory.IntermediateWorkPieceOperationUpdateDAO.MakePersistent(updateRemove);
-          daoFactory.IntermediateWorkPieceOperationUpdateDAO.MakePersistent(updateAdd);
-          tx.Commit();
+          formerIntermediateWorkPiece.RemovePossibleNextOperation (operation);
+          targetIntermediateWorkPiece.AddPossibleNextOperation (operation);
+          daoFactory.IntermediateWorkPieceDAO.MakePersistent (targetIntermediateWorkPiece);
+          daoFactory.IntermediateWorkPieceDAO.MakePersistent (formerIntermediateWorkPiece);
+          daoFactory.OperationDAO.MakePersistent (operation);
+          daoFactory.IntermediateWorkPieceOperationUpdateDAO.MakePersistent (updateRemove);
+          daoFactory.IntermediateWorkPieceOperationUpdateDAO.MakePersistent (updateAdd);
+          tx.Commit ();
         }
       }
       Cursor.Current = Cursors.Default;
@@ -473,10 +465,10 @@ namespace Lemoine.JobControls
 
 
     #endregion
-    
-    
+
+
     #region CopyNode Methods
-    
+
     //Return true if copying succeed, false otherwise
     /// <summary>
     ///   Copy dragged node to drop node.
@@ -487,8 +479,9 @@ namespace Lemoine.JobControls
     /// <param name="dropNode">Drop node</param>
     /// <param name="levelToType">Array of type contained in TreeView for each level</param>
     /// <returns>True if copy succeeded, false otherwise</returns>
-    public static bool CopyNode(BaseOperationTreeView dragTreeView, TreeNode dragNode,
-                                BaseOperationTreeView dropTreeView, TreeNode dropNode, Type[] levelToType){
+    public static bool CopyNode (BaseOperationTreeView dragTreeView, TreeNode dragNode,
+                                BaseOperationTreeView dropTreeView, TreeNode dropNode, Type[] levelToType)
+    {
       bool result = false;
       try {
         if (dropNode.Tag is Tuple<bool, IWorkOrder>) {
@@ -514,17 +507,17 @@ namespace Lemoine.JobControls
           result = CopyNodeToPart (dragNode, dropNode);
         }
         if (result) {
-          dropTreeView.UpdateTreeNode(dropNode);
+          dropTreeView.UpdateTreeNode (dropNode);
         }
         return result;
       }
       catch (Exception e) {
         Cursor.Current = Cursors.Default;
-        MessageBox.Show(PulseCatalog.GetString("ExceptionCaught")+"\n"+e.Message+"\n"+PulseCatalog.GetString("StackTrace")+"\n"+e.StackTrace,"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+        MessageBox.Show (PulseCatalog.GetString ("ExceptionCaught") + "\n" + e.Message + "\n" + PulseCatalog.GetString ("StackTrace") + "\n" + e.StackTrace, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return false;
       }
     }
-    
+
 
     /// <summary>
     ///   Copy method used when drop node represents WorkOrder
@@ -532,11 +525,11 @@ namespace Lemoine.JobControls
     /// <param name="dragNode">Dragged node</param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if copy succeeded, false otherwise</returns>
-    private static bool CopyNodeToWorkOrder(TreeNode dragNode, TreeNode dropNode)
+    private static bool CopyNodeToWorkOrder (TreeNode dragNode, TreeNode dropNode)
     {
       IWorkOrder targetWorkOrder;
       IProject project = null;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       using (IDAOSession daoSession = daoFactory.OpenSession ()) {
@@ -560,45 +553,44 @@ namespace Lemoine.JobControls
           }
         }
         if (!found) { // Dragged Project node do not exist in target WorkOrder node
-          using (IDAOTransaction tx = daoSession.BeginTransaction()) {
-            DateTime dateTime = DateTime.Now.ToUniversalTime();
-            IWorkOrderProjectUpdate update = ModelDAOHelper.ModelFactory.CreateWorkOrderProjectUpdate(targetWorkOrder,project,WorkOrderProjectUpdateModificationType.NEW);
+          using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
+            DateTime dateTime = DateTime.Now.ToUniversalTime ();
+            IWorkOrderProjectUpdate update = ModelDAOHelper.ModelFactory.CreateWorkOrderProjectUpdate (targetWorkOrder, project, WorkOrderProjectUpdateModificationType.NEW);
             update.DateTime = dateTime;
-            project.AddWorkOrder(targetWorkOrder);
-            daoFactory.WorkOrderProjectUpdateDAO.MakePersistent(update);
-            daoFactory.WorkOrderDAO.MakePersistent(targetWorkOrder);
-            daoFactory.ProjectDAO.MakePersistent(project);
-            tx.Commit();
+            project.AddWorkOrder (targetWorkOrder);
+            daoFactory.WorkOrderProjectUpdateDAO.MakePersistent (update);
+            daoFactory.WorkOrderDAO.MakePersistent (targetWorkOrder);
+            daoFactory.ProjectDAO.MakePersistent (project);
+            tx.Commit ();
             Cursor.Current = Cursors.Default;
             return true;
           }
         }
 
-        else{ // Dragged node already exist in children of target node
+        else { // Dragged node already exist in children of target node
           Cursor.Current = Cursors.Default;
-          MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+          MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return false;
         }
       }
-      
+
     }
 
-    
+
     /// <summary>
     ///   Copy method used when drop node represents Component
     /// </summary>
     /// <param name="dragNode">Dragged node</param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if copy succeeded, false otherwise</returns>
-    private static bool CopyNodeToComponent(TreeNode dragNode, TreeNode dropNode)
+    private static bool CopyNodeToComponent (TreeNode dragNode, TreeNode dropNode)
     {
       IComponent targetComponent;
       IIntermediateWorkPiece intermediateWorkPiece = null;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetComponent = ((Tuple<bool, IComponent>)dropNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (targetComponent);
         if (dragNode.Tag is Tuple<bool, IIntermediateWorkPiece>) {
@@ -620,43 +612,42 @@ namespace Lemoine.JobControls
           }
         }
         if (!found) {
-          using (IDAOTransaction tx = daoSession.BeginTransaction()) {
+          using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
             DateTime dateTime = DateTime.UtcNow;
-            IComponentIntermediateWorkPieceUpdate update = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate(targetComponent,intermediateWorkPiece,ComponentIntermediateWorkPieceUpdateModificationType.NEW);
+            IComponentIntermediateWorkPieceUpdate update = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate (targetComponent, intermediateWorkPiece, ComponentIntermediateWorkPieceUpdateModificationType.NEW);
             update.DateTime = dateTime;
-            Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece(intermediateWorkPiece);
-            daoFactory.ComponentDAO.MakePersistent(targetComponent);
-            daoFactory.IntermediateWorkPieceDAO.MakePersistent(intermediateWorkPiece);
-            daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent(update);
-            daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent(ciwp);
-            tx.Commit();
+            Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece (intermediateWorkPiece);
+            daoFactory.ComponentDAO.MakePersistent (targetComponent);
+            daoFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
+            daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent (update);
+            daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (ciwp);
+            tx.Commit ();
           }
           Cursor.Current = Cursors.Default;
           return true;
         }
         else {// Dragged node already exist in children of target node
           Cursor.Current = Cursors.Default;
-          MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+          MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return false;
         }
       }
-      
+
     }
-    
+
     /// <summary>
     ///   Copy method used when drop node represents IntermediateWorkPiece
     /// </summary>
     /// <param name="dragNode">Dragged node</param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if copy succeeded, false otherwise</returns>
-    private static bool CopyNodeToIntermediateWorkPiece(TreeNode dragNode, TreeNode dropNode)
+    private static bool CopyNodeToIntermediateWorkPiece (TreeNode dragNode, TreeNode dropNode)
     {
       IIntermediateWorkPiece targetIntermediateWorkPiece;
       IOperation operation;
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetIntermediateWorkPiece = ((Tuple<bool, IIntermediateWorkPiece>)dropNode.Tag).Item2;
         ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.Lock (targetIntermediateWorkPiece);
         operation = ((Tuple<bool, IOperation>)dragNode.Tag).Item2;
@@ -672,7 +663,7 @@ namespace Lemoine.JobControls
           }
         }
         if (!found) {
-          using (IDAOTransaction tx = daoSession.BeginTransaction()) {
+          using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
             DateTime dateTime = DateTime.UtcNow;
             IIntermediateWorkPieceOperationUpdate update =
               ModelDAOHelper.ModelFactory
@@ -680,39 +671,38 @@ namespace Lemoine.JobControls
                                                            null,
                                                            operation);
             update.DateTime = dateTime;
-            targetIntermediateWorkPiece.AddPossibleNextOperation(operation);
-            daoFactory.IntermediateWorkPieceDAO.MakePersistent(targetIntermediateWorkPiece);
-            daoFactory.OperationDAO.MakePersistent(operation);
-            daoFactory.IntermediateWorkPieceOperationUpdateDAO.MakePersistent(update);
-            tx.Commit();
+            targetIntermediateWorkPiece.AddPossibleNextOperation (operation);
+            daoFactory.IntermediateWorkPieceDAO.MakePersistent (targetIntermediateWorkPiece);
+            daoFactory.OperationDAO.MakePersistent (operation);
+            daoFactory.IntermediateWorkPieceOperationUpdateDAO.MakePersistent (update);
+            tx.Commit ();
           }
           Cursor.Current = Cursors.Default;
           return true;
         }
-        else{// Dragged node already exist in children of target node
+        else {// Dragged node already exist in children of target node
           Cursor.Current = Cursors.Default;
-          MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+          MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return false;
         }
       }
     }
-    
-    
+
+
     /// <summary>
     ///   Copy method used when drop node represents Part
     /// </summary>
     /// <param name="dragNode">Dragged node</param>
     /// <param name="dropNode">Drop node</param>
     /// <returns>True if copy succeeded, false otherwise</returns>
-    private static bool CopyNodeToPart(TreeNode dragNode, TreeNode dropNode)
+    private static bool CopyNodeToPart (TreeNode dragNode, TreeNode dropNode)
     {
       IComponent targetComponent;
       IIntermediateWorkPiece intermediateWorkPiece = null;
-      
+
       Cursor.Current = Cursors.WaitCursor;
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
-      using (IDAOSession daoSession = daoFactory.OpenSession ())
-      {
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
         targetComponent = ((Tuple<bool, IPart>)dropNode.Tag).Item2.Component;
         ModelDAOHelper.DAOFactory.ComponentDAO.Lock (targetComponent);
         if (dragNode.Tag is Tuple<bool, IIntermediateWorkPiece>) {
@@ -734,31 +724,31 @@ namespace Lemoine.JobControls
           }
         }
         if (!found) {
-          using (IDAOTransaction tx = daoSession.BeginTransaction()) {
-            DateTime dateTime = DateTime.Now.ToUniversalTime();
-            IComponentIntermediateWorkPieceUpdate update = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate(targetComponent,intermediateWorkPiece,ComponentIntermediateWorkPieceUpdateModificationType.NEW);
+          using (IDAOTransaction tx = daoSession.BeginTransaction ()) {
+            DateTime dateTime = DateTime.Now.ToUniversalTime ();
+            IComponentIntermediateWorkPieceUpdate update = ModelDAOHelper.ModelFactory.CreateComponentIntermediateWorkPieceUpdate (targetComponent, intermediateWorkPiece, ComponentIntermediateWorkPieceUpdateModificationType.NEW);
             update.DateTime = dateTime;
-            Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece(intermediateWorkPiece);
-            daoFactory.ComponentDAO.MakePersistent(targetComponent);
-            daoFactory.IntermediateWorkPieceDAO.MakePersistent(intermediateWorkPiece);
-            daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent(update);
-            daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent(ciwp);
-            tx.Commit();
+            Lemoine.Model.IComponentIntermediateWorkPiece ciwp = targetComponent.AddIntermediateWorkPiece (intermediateWorkPiece);
+            daoFactory.ComponentDAO.MakePersistent (targetComponent);
+            daoFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
+            daoFactory.ComponentIntermediateWorkPieceUpdateDAO.MakePersistent (update);
+            daoFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (ciwp);
+            tx.Commit ();
           }
           Cursor.Current = Cursors.Default;
           return true;
         }
         else {// Dragged node already exist in children of target node
           Cursor.Current = Cursors.Default;
-          MessageBox.Show(PulseCatalog.GetString("DraggedNodeAlreadyExistsInTheTargetNode"),"",MessageBoxButtons.OK,MessageBoxIcon.Error);
+          MessageBox.Show (PulseCatalog.GetString ("DraggedNodeAlreadyExistsInTheTargetNode"), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return false;
         }
       }
     }
-    
+
     #endregion
-    
-    
+
+
     #region MergeNode Methods
     /// <summary>
     ///   Merge data associated with each tag contained in dragged and target nodes
@@ -770,11 +760,11 @@ namespace Lemoine.JobControls
     /// <param name="dropTreeView"></param>
     /// <param name="dropNode">Target node</param>
     /// <param name="levelToType">Array of type contained in TreeView for each level</param>
-    public static void MergeNode(BaseOperationTreeView dragTreeView, TreeNode dragNode,
+    public static void MergeNode (BaseOperationTreeView dragTreeView, TreeNode dragNode,
                                  BaseOperationTreeView dropTreeView, TreeNode dropNode, Type[] levelToType)
     {
       bool result = false;
-      
+
       if (dropNode.Tag is Tuple<bool, IWorkOrder>) {
         result = MergeNode<IWorkOrder, IWorkOrderDAO> (dragTreeView, dragNode, dropNode, ModelDAOHelper.DAOFactory.WorkOrderDAO);
       }
@@ -800,11 +790,11 @@ namespace Lemoine.JobControls
         result = MergeNode<ISimpleOperation, ISimpleOperationDAO> (dragTreeView, dragNode, dropNode, ModelDAOHelper.DAOFactory.SimpleOperationDAO);
       }
       // paths and sequences are non mergeable
-      
+
       if (result) {
         if (0 == dropNode.Level) {
           dropTreeView.UpdateTreeNode (dropNode);
-          dragNode.Remove();
+          dragNode.Remove ();
         }
         else {
           // rebuild parents of nodes with name/level equivalent to dragged node
@@ -815,29 +805,27 @@ namespace Lemoine.JobControls
         }
       }
     }
-    
+
     static bool MergeNode<I, IDAO> (ITreeViewObservable treeView, TreeNode dragNode, TreeNode dropNode, IDAO dao)
-      where I: class, IVersionable
-      where IDAO: IMergeDAO<I>, IGenericUpdateDAO<I, int>
+      where I : class, IVersionable
+      where IDAO : IMergeDAO<I>, IGenericUpdateDAO<I, int>
     {
       Cursor.Current = Cursors.WaitCursor;
       I drag = ((Tuple<bool, I>)dragNode.Tag).Item2;
       I drop = ((Tuple<bool, I>)dropNode.Tag).Item2;
-      
+
       if (object.Equals (drag, drop)) {
         // Nothing to do
         return false;
       }
-      
+
       try {
-        using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ())
-        {
+        using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ()) {
           TreeNode[] impactedNodes = ((OperationTreeView)treeView).TreeView.Nodes.Find (dropNode.Name, true);
-          
-          using (IDAOTransaction transaction = daoSession.BeginTransaction ())
-          {
+
+          using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
             I merged = dao.Merge (drag, drop, ConflictResolution.Keep);
-            transaction.Commit();
+            transaction.Commit ();
             dropNode.Tag = new Tuple<bool, I> (((Tuple<bool, I>)dropNode.Tag).Item1, merged);
           }
           foreach (TreeNode impactedNode in impactedNodes) {
@@ -853,12 +841,11 @@ namespace Lemoine.JobControls
         Cursor.Current = Cursors.Default;
         string errorMessage = string.Format (@"{0}
 {1}",
-                                             PulseCatalog.GetString("ExceptionCaught"),
+                                             PulseCatalog.GetString ("ExceptionCaught"),
                                              ex.Message);
-        MessageBox.Show(errorMessage, PulseCatalog.GetString ("ExceptionCaught") ,MessageBoxButtons.OK,MessageBoxIcon.Error);
+        MessageBox.Show (errorMessage, PulseCatalog.GetString ("ExceptionCaught"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         // Reload the data
-        using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ())
-        {
+        using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ()) {
           treeView.ReloadTreeNodes (dragNode);
           treeView.ReloadTreeNodes (dropNode);
         }

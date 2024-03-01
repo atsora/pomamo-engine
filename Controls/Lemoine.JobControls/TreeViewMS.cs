@@ -24,30 +24,28 @@ namespace Lemoine.JobControls
     /// <summary>
     /// Multiple selection of nodes allowed
     /// </summary>
-    [DescriptionAttribute("Multiple selection of nodes allowed")]
+    [DescriptionAttribute ("Multiple selection of nodes allowed")]
     public bool MultiSelect
     {
       get { return multiSelect; }
       set {
         if (!value) {
-          this.ClearPreviousSelection();
+          this.ClearPreviousSelection ();
         }
 
         multiSelect = value;
       }
     }
 
-    private List<TreeNode> selectedNodes = new List<TreeNode>();
+    private List<TreeNode> selectedNodes = new List<TreeNode> ();
     /// <summary>
     /// Currently selected nodes
     /// </summary>
-    [DescriptionAttribute("Currently selected nodes")]
+    [DescriptionAttribute ("Currently selected nodes")]
     public TreeNode[] SelectedNodes
     {
-      get
-      {
-        if (!MultiSelect)
-        {
+      get {
+        if (!MultiSelect) {
           if (this.SelectedNode == null) {
             return new TreeNode[0];
           }
@@ -55,102 +53,89 @@ namespace Lemoine.JobControls
           return new TreeNode[] { this.SelectedNode };
         }
 
-        foreach (TreeNode treeNode in this.selectedNodes)
-        {
+        foreach (TreeNode treeNode in this.selectedNodes) {
           if (treeNode.TreeView == null) {
-            this.selectedNodes.Remove(treeNode);
+            this.selectedNodes.Remove (treeNode);
           }
         }
 
         TreeNode[] treeNodes = null;
         treeNodes = new TreeNode[selectedNodes.Count];
-        selectedNodes.CopyTo(treeNodes);
+        selectedNodes.CopyTo (treeNodes);
         return treeNodes;
       }
-      set
-      {
-        this.ClearPreviousSelection();
-        this.ReleaseCurrentSelection();
+      set {
+        this.ClearPreviousSelection ();
+        this.ReleaseCurrentSelection ();
 
-        for (int i = 0; i < value.Length; i++)
-        {
-          if (i == 0)
-          {
+        for (int i = 0; i < value.Length; i++) {
+          if (i == 0) {
             this.SelectedNode = value[i];
             this.ShiftStartTreeNode = value[i];
           }
-          else
-          {
-            this.AddToPreviousSelection(value[i]);
+          else {
+            this.AddToPreviousSelection (value[i]);
           }
         }
 
-        base.OnAfterSelect(new TreeViewEventArgs(this.SelectedNode));
+        base.OnAfterSelect (new TreeViewEventArgs (this.SelectedNode));
       }
     }
     #endregion
 
     #region Private methods for manipulating the tree
-    private void ShowSelectionState(TreeNode treeNode, bool selected)
+    private void ShowSelectionState (TreeNode treeNode, bool selected)
     {
       if (treeNode.TreeView == null) {
         return;
       }
 
-      if (selected)
-      {
+      if (selected) {
         treeNode.ForeColor = System.Drawing.SystemColors.Window;
         treeNode.BackColor = System.Drawing.SystemColors.Highlight;
       }
-      else
-      {
+      else {
         treeNode.ForeColor = System.Drawing.SystemColors.WindowText;
         treeNode.BackColor = System.Drawing.SystemColors.Window;
       }
     }
 
-    private void ClearPreviousSelection()
+    private void ClearPreviousSelection ()
     {
-      foreach (TreeNode treeNode in this.selectedNodes)
-      {
-        this.ShowSelectionState(treeNode, false);
+      foreach (TreeNode treeNode in this.selectedNodes) {
+        this.ShowSelectionState (treeNode, false);
       }
-      this.selectedNodes.Clear();
+      this.selectedNodes.Clear ();
     }
 
-    private void AddToPreviousSelection(TreeNode treeNode)
+    private void AddToPreviousSelection (TreeNode treeNode)
     {
-      if (!this.selectedNodes.Contains(treeNode))
-      {
-        this.selectedNodes.Add(treeNode);
-        this.ShowSelectionState(treeNode, true);
+      if (!this.selectedNodes.Contains (treeNode)) {
+        this.selectedNodes.Add (treeNode);
+        this.ShowSelectionState (treeNode, true);
       }
     }
 
-    private void RemoveFromPreviousSelection(TreeNode treeNode)
+    private void RemoveFromPreviousSelection (TreeNode treeNode)
     {
-      if (this.selectedNodes.Contains(treeNode))
-      {
-        this.selectedNodes.Remove(treeNode);
-        this.ShowSelectionState(treeNode, false);
+      if (this.selectedNodes.Contains (treeNode)) {
+        this.selectedNodes.Remove (treeNode);
+        this.ShowSelectionState (treeNode, false);
       }
     }
 
     private TreeNode ShiftStartTreeNode = null;
 
-    private void AddFromShiftStartToPreviousSelection(TreeNode treeNode)
+    private void AddFromShiftStartToPreviousSelection (TreeNode treeNode)
     {
-      if (ShiftStartTreeNode == null)
-      {
-        this.AddToPreviousSelection(treeNode);
+      if (ShiftStartTreeNode == null) {
+        this.AddToPreviousSelection (treeNode);
       }
-      else
-      {
-        int direction = this.ComparePosition(ShiftStartTreeNode, treeNode);
+      else {
+        int direction = this.ComparePosition (ShiftStartTreeNode, treeNode);
         TreeNode tempTreeNode = ShiftStartTreeNode;
-        while (tempTreeNode != treeNode)
-        {
-          this.AddToPreviousSelection(tempTreeNode);
+        while (tempTreeNode != treeNode) {
+          this.AddToPreviousSelection (tempTreeNode);
           if (direction > 0) {
             tempTreeNode = tempTreeNode.NextVisibleNode;
           }
@@ -158,7 +143,7 @@ namespace Lemoine.JobControls
             tempTreeNode = tempTreeNode.PrevVisibleNode;
           }
         }
-        this.AddToPreviousSelection(tempTreeNode);
+        this.AddToPreviousSelection (tempTreeNode);
       }
     }
 
@@ -171,7 +156,7 @@ namespace Lemoine.JobControls
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    private int ComparePosition(TreeNode x, TreeNode y)
+    private int ComparePosition (TreeNode x, TreeNode y)
     {
       if (x == y) {
         return 0;
@@ -179,9 +164,8 @@ namespace Lemoine.JobControls
 
       int ret = 0;
 
-      if (y.Level > x.Level)
-      {
-        ret = this.ComparePosition(x, y.Parent);
+      if (y.Level > x.Level) {
+        ret = this.ComparePosition (x, y.Parent);
         if (ret == 0) {
           return 1;
         }
@@ -189,9 +173,8 @@ namespace Lemoine.JobControls
         return ret;
       }
 
-      if (x.Level > y.Level)
-      {
-        ret = this.ComparePosition(x.Parent, y);
+      if (x.Level > y.Level) {
+        ret = this.ComparePosition (x.Parent, y);
         if (ret == 0) {
           return -1;
         }
@@ -200,7 +183,7 @@ namespace Lemoine.JobControls
       }
 
       if (x.Parent != y.Parent) {
-        return this.ComparePosition(x.Parent, y.Parent);
+        return this.ComparePosition (x.Parent, y.Parent);
       }
 
       if (x.Index < y.Index) {
@@ -210,50 +193,50 @@ namespace Lemoine.JobControls
       return -1;
     }
 
-    private void ReleaseCurrentSelection()
+    private void ReleaseCurrentSelection ()
     {
       this.SelectedNode = null;
     }
 
-    private void SetCurrentSelection(TreeNode treeNode)
+    private void SetCurrentSelection (TreeNode treeNode)
     {
       this.SelectedNode = treeNode;
     }
     #endregion
 
     #region Event reactions
-    private void SelectionWithoutStrgAndShift()
+    private void SelectionWithoutStrgAndShift ()
     {
-      this.SuspendLayout();
-      this.ClearPreviousSelection();
-      this.AddToPreviousSelection(this.SelectedNode);
+      this.SuspendLayout ();
+      this.ClearPreviousSelection ();
+      this.AddToPreviousSelection (this.SelectedNode);
       this.ShiftStartTreeNode = this.SelectedNode;
-      this.ResumeLayout();
+      this.ResumeLayout ();
     }
 
-    private void SelectionWithShiftWithoutStrg()
+    private void SelectionWithShiftWithoutStrg ()
     {
-      this.SuspendLayout();
-      this.ClearPreviousSelection();
-      this.AddFromShiftStartToPreviousSelection(this.SelectedNode);
-      this.ResumeLayout();
+      this.SuspendLayout ();
+      this.ClearPreviousSelection ();
+      this.AddFromShiftStartToPreviousSelection (this.SelectedNode);
+      this.ResumeLayout ();
     }
 
-    private void SelectionWithStrgToUnselected()
+    private void SelectionWithStrgToUnselected ()
     {
-      this.SuspendLayout();
-      this.AddToPreviousSelection(this.SelectedNode);
+      this.SuspendLayout ();
+      this.AddToPreviousSelection (this.SelectedNode);
       this.ShiftStartTreeNode = this.SelectedNode;
-      this.ResumeLayout();
+      this.ResumeLayout ();
     }
 
-    private void SelectionWithStrgToSelected()
+    private void SelectionWithStrgToSelected ()
     {
-      this.SuspendLayout();
-      this.RemoveFromPreviousSelection(this.SelectedNode);
+      this.SuspendLayout ();
+      this.RemoveFromPreviousSelection (this.SelectedNode);
       this.ShiftStartTreeNode = this.SelectedNode;
-      this.ReleaseCurrentSelection();
-      this.ResumeLayout();
+      this.ReleaseCurrentSelection ();
+      this.ResumeLayout ();
     }
     #endregion
 
@@ -262,50 +245,45 @@ namespace Lemoine.JobControls
     /// Override method associated with after select event
     /// </summary>
     /// <param name="e"></param>
-    protected override void OnAfterSelect(TreeViewEventArgs e)
+    protected override void OnAfterSelect (TreeViewEventArgs e)
     {
-      if (this.MultiSelect)
-      {
-        if ((Control.ModifierKeys & Keys.Control) != 0)
-        {
-          if (this.selectedNodes.Contains(this.SelectedNode)) {
-            this.SelectionWithStrgToSelected();
+      if (this.MultiSelect) {
+        if ((Control.ModifierKeys & Keys.Control) != 0) {
+          if (this.selectedNodes.Contains (this.SelectedNode)) {
+            this.SelectionWithStrgToSelected ();
           }
           else {
-            this.SelectionWithStrgToUnselected();
+            this.SelectionWithStrgToUnselected ();
           }
         }
         else if ((Control.ModifierKeys & Keys.Shift) != 0) {
-          this.SelectionWithShiftWithoutStrg();
+          this.SelectionWithShiftWithoutStrg ();
         }
         else {
-          this.SelectionWithoutStrgAndShift();
+          this.SelectionWithoutStrgAndShift ();
         }
-      }      
-      base.OnAfterSelect(e);
+      }
+      base.OnAfterSelect (e);
     }
-    
-    
+
+
     /// <summary>
     /// Override methods associated with mouse down event
     /// </summary>
     /// <param name="e"></param>
-    protected override void OnMouseDown(MouseEventArgs e)
+    protected override void OnMouseDown (MouseEventArgs e)
     {
-      base.OnMouseDown(e);
+      base.OnMouseDown (e);
 
       TreeViewHitTestInfo treeViewHitTestInfo = null;
-      switch (e.Button)
-      {
+      switch (e.Button) {
         case MouseButtons.Right:
 
-          treeViewHitTestInfo = this.HitTest(e.Location);
+          treeViewHitTestInfo = this.HitTest (e.Location);
           if (treeViewHitTestInfo.Location == TreeViewHitTestLocations.Label ||
-              treeViewHitTestInfo.Location == TreeViewHitTestLocations.RightOfLabel)
-          {
-            if (!this.selectedNodes.Contains(treeViewHitTestInfo.Node))
-            {
-              this.ClearPreviousSelection();
+              treeViewHitTestInfo.Location == TreeViewHitTestLocations.RightOfLabel) {
+            if (!this.selectedNodes.Contains (treeViewHitTestInfo.Node)) {
+              this.ClearPreviousSelection ();
               this.SelectedNode = treeViewHitTestInfo.Node;
             }
           }
@@ -313,9 +291,8 @@ namespace Lemoine.JobControls
 
         case MouseButtons.Left:
 
-          treeViewHitTestInfo = this.HitTest(e.Location);
-          if (treeViewHitTestInfo.Location == TreeViewHitTestLocations.RightOfLabel)
-          {
+          treeViewHitTestInfo = this.HitTest (e.Location);
+          if (treeViewHitTestInfo.Location == TreeViewHitTestLocations.RightOfLabel) {
             this.SelectedNode = treeViewHitTestInfo.Node;
           }
           break;

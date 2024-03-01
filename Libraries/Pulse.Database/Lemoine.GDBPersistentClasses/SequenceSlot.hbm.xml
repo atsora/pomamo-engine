@@ -26,6 +26,7 @@
                  secondary-key="true"
                  not-null="true" />
     <many-to-one name="Sequence" column="sequenceid" class="Sequence"
+                 entity-name="opseq"
                  access="nosetter.camelcase-m-underscore"
                  cascade="none" />
     <property name="BeginDateTime"
