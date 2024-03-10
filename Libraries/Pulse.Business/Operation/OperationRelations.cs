@@ -291,50 +291,36 @@ namespace Lemoine.Business.Operation
     /// <returns></returns>
     public static IComponent GuessUniqueComponentFromOperation (IOperation operation)
     {
-      if (null == operation) {
-        log.Warn ("GuessUniqueComponentFromOperation: " +
-                  "null operation ! " +
-                  "=> return null");
+      if (operation is null) {
+        log.Warn ("GuessUniqueComponentFromOperation: null operation! => return null");
         return null;
       }
 
       // 1. Try to get the intermediate work piece
       ICollection<IIntermediateWorkPiece> intermediateWorkPieces =
         operation.IntermediateWorkPieces;
-      if (intermediateWorkPieces.Count > 0) {
-        Debug.Assert (1 == intermediateWorkPieces.Count);
-        if (intermediateWorkPieces.Count > 1) {
-          log.WarnFormat ("GuessUniqueComponentFromOperation: " +
-                          "there are more than one intermediate work piece " +
-                          "that is associated to operation {0} " +
-                          "although the data structure does not allow this",
-                          operation);
+      if (intermediateWorkPieces.Any ()) {
+        if (log.IsDebugEnabled && (intermediateWorkPieces.Count > 1)) {
+          log.Debug ($"GuessUniqueComponentFromOperation: there are more than one intermediate work piece that is associated to operation {operation} although the data structure does not allow this");
         }
         // 2. Try to get the component
-        IIntermediateWorkPiece intermediateWorkPiece = intermediateWorkPieces.FirstOrDefault ();
-        ICollection<IComponentIntermediateWorkPiece> componentIntermediateWorkPieces =
-          intermediateWorkPiece.ComponentIntermediateWorkPieces;
-        if (componentIntermediateWorkPieces.Count > 0) {
-          Debug.Assert (1 == componentIntermediateWorkPieces.Count);
-          if (componentIntermediateWorkPieces.Count > 1) {
-            log.WarnFormat ("GuessUniqueComponentFromOperation: " +
-                            "there are more than one component " +
-                            "that is associated to operation {0} " +
-                            "although the data structure does not allow this",
-                            operation);
+        var componentIntermediateWorkPieces = intermediateWorkPieces.SelectMany (x => x.ComponentIntermediateWorkPieces);
+        var components = componentIntermediateWorkPieces.Select (x => x.Component).Distinct ();
+        if (components.Any ()) {
+          if (components.Count () > 1) {
+            log.Warn ($"GuessUniqueComponentFromOperation: there are more than one component that is associated to operation {operation} although the data structure does not allow this");
           }
-          IComponent component =
-            componentIntermediateWorkPieces.First ().Component;
-          log.DebugFormat ("GuessUniqueComponentFromOperation: " +
-                           "get Component {0} from operation {1}",
-                           component, operation);
+          var component = components.First ();
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GuessUniqueComponentFromOperation: get Component {component} from operation {operation}");
+          }
           return component;
         }
       }
 
-      log.DebugFormat ("GuessUniqueComponentFromOperation: " +
-                       "no component could be determined from operation {0}",
-                       operation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GuessUniqueComponentFromOperation: o component could be determined from operation {operation}");
+      }
       return null;
     }
 
