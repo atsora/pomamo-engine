@@ -115,7 +115,7 @@
       class="Lemoine.GDBPersistentClasses.Role, Pulse.Database"
       usage="read-only" />
     <class-cache
-      class="Lemoine.GDBPersistentClasses.Sequence, Pulse.Database"
+      class="opseq"
       usage="read-only" />
     <!--class-cache
         class="Lemoine.GDBPersistentClasses.Service, Pulse.Database"

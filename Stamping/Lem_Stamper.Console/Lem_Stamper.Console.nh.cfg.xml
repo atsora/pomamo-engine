@@ -31,7 +31,7 @@
         class="Lemoine.GDBPersistentClasses.OperationType, Pulse.Database"
         usage="read-only" /-->
     <class-cache
-      class="Lemoine.GDBPersistentClasses.Sequence, Pulse.Database"
+      class="opseq"
       usage="read-write" />
     <class-cache
       class="Lemoine.GDBPersistentClasses.Stamp, Pulse.Database"
