@@ -1042,6 +1042,10 @@ namespace Lemoine.Cnc.DataRepository
 
     IDictionary<string, string> GetKeyParams (XmlDocument xmlDocument)
     {
+      if (m_cncAcquisition.ConfigKeyParams is null) { 
+        return new Dictionary<string, string> ();
+      }
+
       var keyParams = m_cncAcquisition.ConfigKeyParams
         .ToDictionary (kv => kv.Key, kv => kv.Value); // Clone it
       if (log.IsDebugEnabled) {

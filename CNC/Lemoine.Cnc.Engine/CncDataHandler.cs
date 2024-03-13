@@ -239,7 +239,7 @@ namespace Lemoine.CncEngine
         if (element.HasAttribute ("file")) {
           string configFile = element.GetAttribute ("file");
           string configParameters = element.GetAttribute ("parameters");
-          string configNamedParameters = element.GetAttribute ("configNamedParameters");
+          string configNamedParameters = element.GetAttribute ("namedparameters");
           log.Info ($"CncDataHandler: deprecated node with file {configFile} parameters {configParameters} namedParameters={configNamedParameters}");
           bool configReload = false;
           try {

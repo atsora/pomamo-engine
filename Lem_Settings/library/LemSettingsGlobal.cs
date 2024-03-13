@@ -15,6 +15,9 @@ namespace Lemoine.Settings
     static readonly string SYNC_SETTINGS_DIRECTORY_DEFAULT = "settings_synchronized";
     static readonly string SYNC_SETTINGS_DIRECTORY_KEY = "Settings.SyncItemsDirectory";
 
+    static readonly string WIKI_ADDRESS_KEY = "Settings.WikiAddress";
+    static readonly string WIKI_ADDRESS_DEFAULT = "/pmwiki.php?n=Use.LemSettings";
+
     /// <summary>
     /// Name of the directory that contains the LemSettings items, in pfrdata or user directory
     /// </summary>
@@ -43,11 +46,12 @@ namespace Lemoine.Settings
     /// Depth of the search when dll and ini files are listed
     /// </summary>
     public static readonly int SEARCH_DIRECTORY_DEPTH = 5;
-    
+
     /// <summary>
-    /// Web address of the lemoine wiki for LemSettings
+    /// Web address of the wiki for LemSettings
     /// </summary>
-    public static readonly string LEMOINE_WIKI_ADDRESS = "http://doc.lemoineautomation.com/pmwiki.php?n=Use.LemSettings";
+    public static readonly string WIKI_ADDRESS = Lemoine.Info.ConfigSet
+      .LoadAndGet (WIKI_ADDRESS_KEY, WIKI_ADDRESS_DEFAULT);
     
     #region Colors
     /// <summary>

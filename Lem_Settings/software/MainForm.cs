@@ -587,7 +587,7 @@ namespace Lem_Settings
 
     void OnlinehelpToolStripMenuItemClick (object sender, EventArgs e)
     {
-      Process.Start (LemSettingsGlobal.LEMOINE_WIKI_ADDRESS);
+      Process.Start (LemSettingsGlobal.WIKI_ADDRESS);
     }
 
     /// <summary>

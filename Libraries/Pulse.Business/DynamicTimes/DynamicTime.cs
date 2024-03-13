@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -149,7 +150,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Get a dynamic end given a dynamic time name
     /// </summary>
-    /// <param name="name">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="name">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="machine"></param>
     /// <param name="range">The dynamic time is after the lower bound of the range by default, or the upper bound of the range in case the name contains the suffix '+'</param>
     /// <returns>not null</returns>
@@ -167,7 +168,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Get a dynamic time given a dynamic time name
     /// </summary>
-    /// <param name="name">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="name">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="machine"></param>
     /// <param name="range">The dynamic time considers the lower bound of the range by default, or the upper bound of the range in case the name contains the suffix '+'</param>
     /// <param name="hint"></param>
@@ -189,7 +190,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Get a dynamic time given a dynamic time name
     /// </summary>
-    /// <param name="name">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="name">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="machine"></param>
     /// <param name="dateTime">The dynamic time is after this UTC date/time</param>
     /// <param name="notApplicableExpected">A NotApplicable answer is possible / expected</param>
@@ -225,7 +226,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Get a dynamic time given a dynamic time name
     /// </summary>
-    /// <param name="name">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="name">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="machine"></param>
     /// <param name="dateTime">Start UTC date/time</param>
     /// <param name="hint"></param>
@@ -284,7 +285,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Get a dynamic time given a dynamic time name
     /// </summary>
-    /// <param name="nameWithoutParameter">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="nameWithoutParameter">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="parameter"></param>
     /// <param name="machine"></param>
     /// <param name="dateTime">Start UTC date/time</param>
@@ -419,7 +420,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Check if a dynamic time is applicable, without specifying any date/time
     /// </summary>
-    /// <param name="name">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="name">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="machine"></param>
     /// <returns></returns>
     public static bool IsApplicable (string name, IMachine machine)
@@ -431,7 +432,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Check if a dynamic time is applicable, without specifying any date/time
     /// </summary>
-    /// <param name="nameWithoutParameter">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="nameWithoutParameter">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="parameter"></param>
     /// <param name="machine"></param>
     /// <returns></returns>
@@ -481,7 +482,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Check if a dynamic time is applicable at a specified date/time
     /// </summary>
-    /// <param name="name">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="name">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="machine"></param>
     /// <param name="at"></param>
     /// <returns></returns>
@@ -494,7 +495,7 @@ namespace Lemoine.Business.DynamicTimes
     /// <summary>
     /// Check if a dynamic time is applicable at a specified date/time
     /// </summary>
-    /// <param name="nameWithoutParameter">Name of the dynamic time (See http://doc.lemoineautomation.com/pmwiki.php?n=Devel.StandardDynamicTimes for standard dynamic times)</param>
+    /// <param name="nameWithoutParameter">Name of the dynamic time (See Devel.StandardDynamicTimes for standard dynamic times)</param>
     /// <param name="parameter"></param>
     /// <param name="machine"></param>
     /// <param name="at"></param>
