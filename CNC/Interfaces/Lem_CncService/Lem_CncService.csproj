@@ -15,10 +15,14 @@
     <Reference Include="IIOPChannel">
       <HintPath>..\..\..\..\pomamo-extern\IIOP.NET\IIOPChannel.dll</HintPath>
     </Reference>
+    <Reference Include="Lemoine.Corba.Cnc">
+      <HintPath>..\..\..\..\pomamo-cnc-extern\Corba\Lemoine.Corba.Cnc.dll</HintPath>
+    </Reference>
     <Reference Include="Lemoine.Corba.Fidia">
       <HintPath>..\..\..\..\pomamo-cnc-extern\Fidia\Lemoine.Corba.Fidia.dll</HintPath>
     </Reference>
     <ProjectReference Include="..\..\..\Libraries\Lemoine.CorbaHelper\Lemoine.CorbaHelper.csproj" />
+    <PackageReference Include="FluentFTP" />
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />

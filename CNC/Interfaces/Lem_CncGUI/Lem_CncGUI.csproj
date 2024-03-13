@@ -28,6 +28,7 @@
   
   <!-- CNC Module and plugin dependencies -->
   <ItemGroup>
+    <PackageReference Include="FluentFTP" />
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
