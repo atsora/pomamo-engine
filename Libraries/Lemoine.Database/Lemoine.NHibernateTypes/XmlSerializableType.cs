@@ -108,7 +108,8 @@ namespace Lemoine.NHibernateTypes
     /// <returns></returns>
     public override object DeepCopyNotNull (object value)
     {
-      return FromXml (ToXml (value));
+      var xml = ToXml (value);
+      return FromXml (xml);
     }
 
     private string ToXml (object obj)

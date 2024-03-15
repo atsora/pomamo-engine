@@ -132,6 +132,12 @@ namespace Lemoine.CncDataImport
               else if (jsonElement.ValueKind.Equals (JsonValueKind.String)) {
                 v = jsonElement.GetString ();
               }
+              else if (jsonElement.ValueKind.Equals (JsonValueKind.True)) {
+                v = true;
+              }
+              else if (jsonElement.ValueKind.Equals (JsonValueKind.False)) {
+                v = false;
+              }
             }
             if (TryImportSingleCncVariable (item.Key, v, startDatetime)) {
               changedVariables[item.Key] = v;

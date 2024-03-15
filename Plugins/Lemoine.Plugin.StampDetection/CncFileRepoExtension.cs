@@ -34,8 +34,7 @@ namespace Lemoine.Plugin.StampDetection
 
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.ErrorFormat ("Initialize: " +
-                         "wrong configuration, skip this instance");
+        log.Error ("Initialize: wrong configuration, skip this instance");
         return false;
       }
 
