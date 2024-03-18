@@ -66,7 +66,7 @@ namespace Lemoine.Cnc
     /// 
     /// It is used to compute the feedrate
     /// </summary>
-    public DateTime Time { get; set; }
+    public DateTime Time { get; set; } = DateTime.UtcNow;
 
     static readonly ILog log = LogManager.GetLogger(typeof (Position).FullName);
 
