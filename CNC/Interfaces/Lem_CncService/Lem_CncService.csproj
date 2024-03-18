@@ -100,6 +100,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\pomamo-cncmodules\Lemoine.Cnc.Brother\alarms_brother_B0.csv" Link="alarms_brother_B0.csv" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="app.config" />
     <None Include="Lem_CncService.exe.log4net" CopyToOutputDirectory="Always" />
     <None Include="Lem_CncService.exe.defaultoptions" CopyToOutputDirectory="Always" />
