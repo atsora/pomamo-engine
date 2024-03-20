@@ -100,24 +100,47 @@ namespace Lemoine.Stamping.StampingEventHandlers
         try {
           using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
             if (!m_stampingData.TryGet ("PartCode", out string? partCode)) {
-              log.Error ("StartSequence: PartCode is unknown");
+              log.Warn ("StartSequence: PartCode is unknown");
             }
             else if (partCode is null || string.IsNullOrEmpty (partCode)) {
               log.Error ("StartSequence: PartCode is null or empty");
+              partCode = null;
             }
-            else {
+            if (!m_stampingData.TryGet ("PartName", out string? partName)) {
+              log.Debug ($"StartSequence: PartName is unknown");
+            }
+            else if (partName is null || string.IsNullOrEmpty (partName)) {
+              log.Error ($"StartSequence: PartName is null or empty");
+              partName = null;
+            }
+            if (!string.IsNullOrEmpty (partCode) || !string.IsNullOrEmpty (partName)) {
               var componentType = ModelDAOHelper.DAOFactory.ComponentTypeDAO.FindById (1);
               if (componentType is null) {
                 log.Error ("StartSequence: component type is null for Id=1");
               }
               else {
                 if (m_part is null) {
-                  m_part = ModelDAOHelper.DAOFactory.PartDAO
-                    .FindByCode (partCode);
+                  if (partCode is not null) {
+                    m_part = ModelDAOHelper.DAOFactory.PartDAO
+                      .FindByCode (partCode);
+                    if (partName is not null && (!string.Equals (m_part.Name, partName))) {
+                      if (m_part.Name is null) {
+                        m_part.Name = partName;
+                      }
+                      else if (log.IsErrorEnabled) {
+                        log.Error ($"StartSequence: part name stored={m_part.Name} VS {partName} for code={m_part.Code}");
+                      }
+                    }
+                  }
+                  else if (partName is not null) {
+                    m_part = ModelDAOHelper.DAOFactory.PartDAO
+                      .FindByName (partName);
+                  }
                 }
                 if (m_part is null) {
                   m_part = ModelDAOHelper.ModelFactory.CreatePart (componentType);
                   m_part.Code = partCode;
+                  m_part.Name = partName;
                   ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (m_part);
                 }
                 var operationType = ModelDAOHelper.DAOFactory.OperationTypeDAO.FindById (1);

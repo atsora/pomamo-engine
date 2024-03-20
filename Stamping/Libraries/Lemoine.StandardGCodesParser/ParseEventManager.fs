@@ -10,6 +10,7 @@ namespace Lemoine.StandardGCodesParser
 open System.Collections.Generic
 open Lemoine.Core.Log
 open Lemoine.FSharp.Math
+open Lemoine.FSharp.Patterns
 open Lemoine.Stamping
 open NcProgram
 open GCode
@@ -39,6 +40,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
   let mutable distance = 0.
   let mutable blockNumber = 0
   let mutable headerSection = true
+  let mutable isFirstHeaderComment = true
 
   let mmOfIn x = 25.4 * x
 
@@ -550,7 +552,18 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
 
   let rec addHeaderComments = function
   | [] -> ()
-  | Comment(c)::_ -> stampingData.Add("ProgramComment", c.Trim())
+  | Comment("")::q -> addHeaderComments q
+  | Comment(c)::q ->
+    let comment = c.Trim () in
+    if isFirstHeaderComment then
+      stampingData.Add("ProgramComment", comment)
+      isFirstHeaderComment <- false
+    stampingEventHandler.SetComment (comment)
+    match stampingData.TryGet ("ProgramHeader") with
+    | (true, previousProgramHeader) ->
+      stampingData.Add ("ProgramHeader", $"{previousProgramHeader}\n{comment}")
+    | (false, _) ->
+      stampingData.Add ("ProgramHeader", comment)
   | _::q -> addHeaderComments q
 
   let rec addBlockInstructions blockNumber = function

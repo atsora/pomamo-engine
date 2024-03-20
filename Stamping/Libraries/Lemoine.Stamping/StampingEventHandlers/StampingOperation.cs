@@ -194,6 +194,9 @@ namespace Lemoine.Stamping.StampingEventHandlers
         if (toolNumber is not null) {
           sequence.ToolNumber = toolNumber;
         }
+        if (m_stampingData.TryGet ("SequenceDescription", out string? sequenceDescription)) {
+          sequence.Description = sequenceDescription;
+        }
         ModelDAOHelper.DAOFactory.SequenceDAO.MakePersistent (sequence);
         m_stampingData.Sequence = sequence;
         return sequence;
