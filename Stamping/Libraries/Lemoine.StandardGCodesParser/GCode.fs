@@ -1,5 +1,6 @@
 (*
 * Copyright (C) 2009-2023 Lemoine Automation Technologies
+* Copyright (C) 2024 Atsora Solutions
 *
 * SPDX-License-Identifier: Apache-2.0
 *)
@@ -386,6 +387,8 @@ let isParameterOfGCode g x k i =
   | ('G', 65., _) when 1 < i -> true
   | ('M', 98., 'P') when i = 1 -> true
   | ('M', 98., _) when 1 < i -> true
+  | ('M', 198., 'P') when i = 1 -> true
+  | ('M', 198., _) when 1 < i -> true
   | (_, _, 'G') | (_, _, 'M') -> false
   | (_, _, k) when (isAxis k) -> false
   | _ -> true

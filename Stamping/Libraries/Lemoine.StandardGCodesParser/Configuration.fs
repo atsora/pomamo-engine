@@ -1,5 +1,6 @@
 (*
 * Copyright (C) 2009-2023 Lemoine Automation Technologies
+* Copyright (C) 2024 Atsora Solutions
 *
 * SPDX-License-Identifier: Apache-2.0
 *)
@@ -33,6 +34,11 @@ type Configuration () =
 
   /// Does any g-code trigger some machining action?
   member val AnyGCodeMachining = false with get, set
+
+  /// Should G65, M98 and M198 be considered as a machining macro when the macro is unknown?
+  member val UnknownMacroMachining = true with get, set
+
+  // TODO: define macros that should be considered as a machining macro
 
   /// Standard tool change time in seconds
   member val StandardToolChangeTime = 5. with get, set

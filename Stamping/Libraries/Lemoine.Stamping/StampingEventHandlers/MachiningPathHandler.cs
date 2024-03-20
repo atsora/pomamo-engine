@@ -105,36 +105,36 @@ namespace Lemoine.Stamping.StampingEventHandlers
     public void SetData (string key, object v)
     {
       switch (key) {
-      case "PathFunction":
-        m_pathFunction = (string)v;
-        break;
-      case "PathParameter":
-        m_parameter = (string)v;
-        break;
-      case "PathRapidTraverse":
-        m_rapidTraverse = (bool)v;
-        break;
-      case "PathNonMachining":
-        m_nonMachining = (bool)v;
-        break;
-      case "PathFeedRate":
-        m_feedRate = (double)v;
-        break;
-      case "Unit":
-        m_unit = (MachiningUnit)v;
-        break;
-      case "PathSpindleSpeed":
-        m_spindleSpeed = (double)v;
-        break;
-      case "Distance":
-        m_distance = (m_distance ?? 0.0) + (double)v;
-        break;
-      case "DirectionChange":
-        m_directionChange = true;
-        break;
-      case "Angle":
-        m_angle = (double)v;
-        break;
+        case "PathFunction":
+          m_pathFunction = (string)v;
+          break;
+        case "PathParameter":
+          m_parameter = (string)v;
+          break;
+        case "PathRapidTraverse":
+          m_rapidTraverse = (bool)v;
+          break;
+        case "PathNonMachining":
+          m_nonMachining = (bool)v;
+          break;
+        case "PathFeedRate":
+          m_feedRate = (double)v;
+          break;
+        case "Unit":
+          m_unit = (MachiningUnit)v;
+          break;
+        case "PathSpindleSpeed":
+          m_spindleSpeed = (double)v;
+          break;
+        case "Distance":
+          m_distance = (m_distance ?? 0.0) + (double)v;
+          break;
+        case "DirectionChange":
+          m_directionChange = true;
+          break;
+        case "Angle":
+          m_angle = (double)v;
+          break;
       }
       this.Next?.SetData (key, v);
     }
@@ -245,7 +245,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
       if (!object.Equals (m_sequence, m_activeSequence)) {
         return true;
       }
-        if (!string.IsNullOrEmpty (m_activePathFunction)) {
+      if (!string.IsNullOrEmpty (m_activePathFunction)) {
         if (!object.Equals (m_activePathFunction, m_pathFunction)) { // pathFunction update
           return true;
         }
@@ -262,8 +262,8 @@ namespace Lemoine.Stamping.StampingEventHandlers
           return true;
         }
 
-          var isRapidTraverse = m_activeRapidTraverse ?? false;
-          var isNonMachining = m_activeNonMachining ?? false;
+        var isRapidTraverse = m_activeRapidTraverse ?? false;
+        var isNonMachining = m_activeNonMachining ?? false;
         if (!isNonMachining) {
           if ((m_activeUnit is not null) && !object.Equals (m_activeUnit, m_unit)) { // unit update
             return true;
@@ -292,7 +292,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
       if (m_activeSequence is null) {
         if (log.IsDebugEnabled) {
           log.Debug ($"RecordNewMachiningPath: no active sequence => do nothing");
-          }
+        }
         return;
       }
       var isRapidTraverse = m_activeRapidTraverse ?? false;
@@ -300,84 +300,84 @@ namespace Lemoine.Stamping.StampingEventHandlers
 
       if (m_activeSequence.Detail is null) {
         m_activeSequence.Detail = new SequenceDetail ();
-            }
-            if (m_activeUnit is null) {
-              m_activeUnit = this.StampingData.Unit;
-            }
-            var unit = isNonMachining ? null : m_activeUnit;
-            var spindleSpeed = isNonMachining ? null : m_activeSpindleSpeed;
-            bool? rapid = isNonMachining ? null : isRapidTraverse;
+      }
+      if (m_activeUnit is null) {
+        m_activeUnit = this.StampingData.Unit;
+      }
+      var unit = isNonMachining ? null : m_activeUnit;
+      var spindleSpeed = isNonMachining ? null : m_activeSpindleSpeed;
+      bool? rapid = isNonMachining ? null : isRapidTraverse;
       var detail = m_activeSequence.Detail;
-            var machiningPath = new MachiningPath () {
-              Function = m_activePathFunction,
-              Params = m_activeParameter,
-              Rapid = rapid,
-              Feed = m_activeFeedRate,
-              Unit = unit,
-              Distance = m_activeDistance,
-              SpindleSpeed = spindleSpeed,
-              DirectionChanges = m_activeDirectionChanges,
-              Angles = m_activeAngles,
+      var machiningPath = new MachiningPath () {
+        Function = m_activePathFunction,
+        Params = m_activeParameter,
+        Rapid = rapid,
+        Feed = m_activeFeedRate,
+        Unit = unit,
+        Distance = m_activeDistance,
+        SpindleSpeed = spindleSpeed,
+        DirectionChanges = m_activeDirectionChanges,
+        Angles = m_activeAngles,
         Time = m_activeTime?.TotalSeconds,
-            };
-            detail.Paths.Add (machiningPath);
-            if (m_activeTime.HasValue) {
-              if (isRapidTraverse) { // Rapid traverse only
+      };
+      detail.Paths.Add (machiningPath);
+      if (m_activeTime.HasValue) {
+        if (isRapidTraverse) { // Rapid traverse only
           detail.RapidTime = (detail.RapidTime ?? 0.0) + m_activeTime.Value.TotalSeconds;
-              }
-              else if (isNonMachining) {
+        }
+        else if (isNonMachining) {
           detail.NonMachiningTime = (detail.NonMachiningTime ?? 0.0) + m_activeTime.Value.TotalSeconds;
-              }
-              else {
+        }
+        else {
           detail.MachiningTime = (detail.MachiningTime ?? 0.0) + m_activeTime.Value.TotalSeconds;
-              }
-            }
-            if (m_activeUnit.HasValue && !isNonMachining) {
-              if (!detail.Unit.HasValue || detail.Unit.Value.Equals (MachiningUnit.Unknown)) {
-                if (m_activeUnit.Value.HasFlag (MachiningUnit.In)) {
-                  detail.Unit = MachiningUnit.In;
-                }
-                else if (m_activeUnit.Value.HasFlag (MachiningUnit.Mm)) {
-                  detail.Unit = MachiningUnit.Mm;
-                }
-              }
-              else if (m_activeUnit.Value.HasFlag (MachiningUnit.In) && (detail.Unit.Value.Equals (MachiningUnit.Mm))) { // From Mm to In
-                if (detail.Distance.HasValue) {
-                  detail.Distance = Lemoine.Conversion.Converter.ConvertToInches (detail.Distance.Value);
-                }
-                if (detail.RapidDistance.HasValue) {
-                  detail.RapidDistance = Lemoine.Conversion.Converter.ConvertToInches (detail.RapidDistance.Value);
-                }
-                detail.Unit = MachiningUnit.In;
-              }
-              else if (m_activeUnit.Value.HasFlag (MachiningUnit.Mm) && (detail.Unit.Value.Equals (MachiningUnit.In))) { // From In to Mm
-                if (detail.Distance.HasValue) {
-                  detail.Distance = Lemoine.Conversion.Converter.ConvertToMetric (detail.Distance.Value, false);
-                }
-                if (detail.RapidDistance.HasValue) {
-                  detail.RapidDistance = Lemoine.Conversion.Converter.ConvertToMetric (detail.RapidDistance.Value, false);
-                }
-                detail.Unit = MachiningUnit.Mm;
-              }
-            }
-            if (m_activeDistance.HasValue) {
-              if (isRapidTraverse) { // Rapid traverse only
-                detail.RapidDistance = (detail.RapidDistance ?? 0.0) + m_activeDistance.Value;
-              }
-              else {
-                detail.Distance = (detail.Distance ?? 0.0) + m_activeDistance.Value;
-              }
-            }
-            if (m_activeDirectionChanges.HasValue) {
-              detail.DirectionChanges = (detail.DirectionChanges ?? 0) + m_activeDirectionChanges.Value;
-            }
-            m_activeParameter = null;
-            m_activeNonMachining = false;
-            m_activeTime = null;
-            m_activeDistance = null;
-            m_activeAngles = null;
-            m_activeDirectionChanges = null;
+        }
+      }
+      if (m_activeUnit.HasValue && !isNonMachining) {
+        if (!detail.Unit.HasValue || detail.Unit.Value.Equals (MachiningUnit.Unknown)) {
+          if (m_activeUnit.Value.HasFlag (MachiningUnit.In)) {
+            detail.Unit = MachiningUnit.In;
           }
+          else if (m_activeUnit.Value.HasFlag (MachiningUnit.Mm)) {
+            detail.Unit = MachiningUnit.Mm;
+          }
+        }
+        else if (m_activeUnit.Value.HasFlag (MachiningUnit.In) && (detail.Unit.Value.Equals (MachiningUnit.Mm))) { // From Mm to In
+          if (detail.Distance.HasValue) {
+            detail.Distance = Lemoine.Conversion.Converter.ConvertToInches (detail.Distance.Value);
+          }
+          if (detail.RapidDistance.HasValue) {
+            detail.RapidDistance = Lemoine.Conversion.Converter.ConvertToInches (detail.RapidDistance.Value);
+          }
+          detail.Unit = MachiningUnit.In;
+        }
+        else if (m_activeUnit.Value.HasFlag (MachiningUnit.Mm) && (detail.Unit.Value.Equals (MachiningUnit.In))) { // From In to Mm
+          if (detail.Distance.HasValue) {
+            detail.Distance = Lemoine.Conversion.Converter.ConvertToMetric (detail.Distance.Value, false);
+          }
+          if (detail.RapidDistance.HasValue) {
+            detail.RapidDistance = Lemoine.Conversion.Converter.ConvertToMetric (detail.RapidDistance.Value, false);
+          }
+          detail.Unit = MachiningUnit.Mm;
+        }
+      }
+      if (m_activeDistance.HasValue) {
+        if (isRapidTraverse) { // Rapid traverse only
+          detail.RapidDistance = (detail.RapidDistance ?? 0.0) + m_activeDistance.Value;
+        }
+        else {
+          detail.Distance = (detail.Distance ?? 0.0) + m_activeDistance.Value;
+        }
+      }
+      if (m_activeDirectionChanges.HasValue) {
+        detail.DirectionChanges = (detail.DirectionChanges ?? 0) + m_activeDirectionChanges.Value;
+      }
+      m_activeParameter = null;
+      m_activeNonMachining = false;
+      m_activeTime = null;
+      m_activeDistance = null;
+      m_activeAngles = null;
+      m_activeDirectionChanges = null;
+    }
 
     void UpdateActiveData ()
     {
@@ -418,12 +418,12 @@ namespace Lemoine.Stamping.StampingEventHandlers
           m_activeTime = m_time;
         }
         m_time = null;
-        }
+      }
       if (m_distance.HasValue) {
         if (m_activeDistance.HasValue) {
           m_activeDistance = m_activeDistance.Value + m_distance.Value;
-      }
-      else {
+        }
+        else {
           m_activeDistance = m_distance;
         }
         m_distance = null;

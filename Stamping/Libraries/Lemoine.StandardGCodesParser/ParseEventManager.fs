@@ -1,5 +1,6 @@
 (*
 * Copyright (C) 2009-2023 Lemoine Automation Technologies
+* Copyright (C) 2024 Atsora Solutions
 *
 * SPDX-License-Identifier: Apache-2.0
 *)
@@ -341,7 +342,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
 
   let isMachining () =
     match modalGroupValues.Get MotionGroup with
-    | Some(0.) | Some(4.) -> false
+    | Some(0.) | Some(4.) | Some(80.) -> false
     | None -> false
     | _ -> true
 
@@ -383,9 +384,11 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
         in
       callPath path e p
     with
-      | ex ->
-        log.Debug($"callMacro: exception", ex)
-        stampingEventHandler.SetData("Macro", n)
+    | ex ->
+      log.Debug($"callMacro: exception", ex)
+      if configuration.UnknownMacroMachining then
+        stampingEventHandler.TriggerMachining ()
+      stampingEventHandler.SetData("Macro", n)
 
   let callFile f e p =
     if log.IsTraceEnabled then log.Trace $"callFile: f={f} edit={e} parameters={p}"
@@ -413,7 +416,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
     begin
       if isGCodeGroupModal group then modalGroupValues.Set group x
       match group with
-      | MotionGroup when x = 0. -> stampingEventHandler.SetData("G-Motion", x)
+      | MotionGroup when x = 0. || x = 80. -> stampingEventHandler.SetData("G-Motion", x)
       | MotionGroup when x <> 0. ->
         begin
           stampingEventHandler.SetData("G-Motion", x)
@@ -438,7 +441,13 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
           let homePosition = 
             match x with
             | 28. -> { unknownCoordinates with X = distanceOfFloat 0.; Y = distanceOfFloat 0.; Z = distanceOfFloat 0. } // Not sure for I, J, K, R
-            | 30. -> getSecondaryHomePosition (extractNamedParameter p 'P')
+            | 30. ->
+              try
+                getSecondaryHomePosition (extractNamedParameter p 'P')
+              with
+              | UndefinedParameterException 'P' ->
+                if log.IsDebugEnabled then log.Debug $"runGCode: no P parameter for G30"
+                { unknownCoordinates with X = distanceOfFloat 0.; Y = distanceOfFloat 0.; Z = distanceOfFloat 0. } // Not sure for I, J, K, R
             | _ ->
               begin
                 log.Error $"runGCode: invalid reference location group value {x}"
@@ -503,7 +512,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
         match extractNamedParameter p 'P' with
         | Number (x) -> callMacro (int x) false (List.filter (fun (c,_) -> c <> 'P') p)
         | Undefined (_) -> failwith (sprintf "Missing parameter P for macro call G65")
-      | ('M', 98.) ->
+      | ('M', 98.) | ('M', 198.) ->
         if file.IsSome
         then
           callFile file.Value false []
@@ -520,7 +529,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
                 callMacro (int x) false [] (* false: edit *)
             with
             | UndefinedParameterException _ -> callMacro (int x) false []
-          | Undefined (_) -> failwith "Missing parameter P for M98"
+          | Undefined (_) -> failwith "Missing parameter P for M98 or M198"
       | _ -> ()
     end
 

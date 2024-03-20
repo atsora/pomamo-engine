@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -50,7 +51,9 @@ namespace Lemoine.Stamping.StampingEventHandlers
     public void NotifyNewBlock (bool edit, int level)
     {
       if (m_toolChange) {
-        m_stampingData.Add ("ToolName", m_activeComment);
+        if (!string.IsNullOrEmpty (m_activeComment)) {
+          m_stampingData.Add ("ToolName", m_activeComment);
+        }
         this.Next?.TriggerToolChange (toolNumber: m_toolNumber);
         m_toolNumber = "";
         m_toolChange = false;
@@ -89,6 +92,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
     /// </summary>
     public void SetNextToolNumber (string toolNumber)
     {
+      m_toolNumber = toolNumber;
       this.Next?.SetNextToolNumber (toolNumber);
     }
 
@@ -162,7 +166,9 @@ namespace Lemoine.Stamping.StampingEventHandlers
     public void TriggerToolChange (string toolNumber = "")
     {
       // Delay it
-      m_toolNumber = toolNumber;
+      if (!string.IsNullOrEmpty (toolNumber)) {
+        m_toolNumber = toolNumber;
+      }
       m_toolChange = true;
     }
   }
