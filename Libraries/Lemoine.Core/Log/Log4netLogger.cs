@@ -77,12 +77,12 @@ namespace Lemoine.Core.Log
       if (string.IsNullOrEmpty (applicationName)) {
         var programPath = Lemoine.Info.ProgramInfo.AbsolutePath;
         if (null == programPath) { // Fallback
-          SetProperties ("PulseApplication");
+          SetProperties ("AtsoraApplication");
         }
         else { // null != programPath
           var fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension (programPath);
           if (string.IsNullOrEmpty (fileNameWithoutExtension)) {
-            SetProperties ("PulseApplication");
+            SetProperties ("AtsoraApplication");
           }
           else {
             SetProperties (fileNameWithoutExtension);

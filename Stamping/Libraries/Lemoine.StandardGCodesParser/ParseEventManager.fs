@@ -548,7 +548,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
   | [] -> ()
   | h::q -> begin runParameter h; runParameters q end
 
-  let emptyBlock = { N = None; GCodes = []; Parameters = []; SetVariables = []; Comment = None; StampVariable = false; File = None; Escapes = [] }
+  let emptyBlock = { N = None; GCodes = []; Parameters = []; SetVariables = []; Comment = None; StampVariable = false; File = None; Escapes = []; Print = None }
 
   let rec addHeaderComments = function
   | [] -> ()
@@ -612,9 +612,25 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
         { b with SetVariables = (vx,vy)::b.SetVariables }
       end
     | Escape(n)::q ->
+      begin
         log.Info $"addBlockInstructions: escape {n}"
         let b = addBlockInstructions blockNumber q in
         { b with Escapes = n::b.Escapes }
+      end
+    | POpen::q -> addBlockInstructions blockNumber q
+    | PClos::q -> addBlockInstructions blockNumber q
+    | DPrint(s)::q when stampVariablesGetter.StartWithStampVariable (s, "-") ->
+      begin
+        if log.IsTraceEnabled then log.Trace $"addBlockInstructions: StampVariable detected in DPRINT {s}"
+        let b = addBlockInstructions blockNumber q in
+        { b with StampVariable = true }
+      end
+    | DPrint(s)::q ->
+      begin
+        let b = addBlockInstructions blockNumber q in
+        { b with Print = Some(s) }
+      end
+      
   and processGCodeWithParameters blockNumber g x p q i =
     if log.IsTraceEnabled then log.Trace $"processGCodeWithParameters: g={g} x={x} p={p} q={q} i={i}"
     match q with

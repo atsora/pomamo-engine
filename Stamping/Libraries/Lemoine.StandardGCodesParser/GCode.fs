@@ -25,6 +25,7 @@ type Block =
     StampVariable: bool
     File: string option
     Escapes: float list
+    Print: string option
   }
 
 type GCodeGroup =

@@ -31,6 +31,9 @@ let number2 = '.'digit+
 let newline = "\r\n" | '\n' | '\r'
 
 rule main = parse
+| "POPEN" { POPEN }
+| "PCLOS" { PCLOS }
+| "DPRNT[" { dprntrule lexbuf }
 | whitespace { main lexbuf }
 | newline { NEWLINE (lexbuf.StartPos.AbsoluteOffset) }
 | number { lexeme lexbuf |> parseDouble |> NUMBER }
@@ -55,7 +58,7 @@ rule main = parse
 | eof { EOF (lexbuf.StartPos.AbsoluteOffset) }
 | _ { failwith (sprintf "SyntaxError: Unexpected char: '%s' Line: %d Column: %d" (lexeme lexbuf) (lexbuf.StartPos.Line+1) lexbuf.StartPos.Column) }
 and comment = parse
-| [^')']+ { COMMENT (lexeme lexbuf) }
+| [^')']+ { log.Trace ("Comment"); COMMENT (lexeme lexbuf) }
 | ")" { main lexbuf }
 | eof { failwith "Comment is not terminated" }
 and comment2 = parse
@@ -70,3 +73,7 @@ and file = parse
 | [^'>']+ { FILE (lexeme lexbuf) }
 | ">" { main lexbuf }
 | eof { failwith "File is not terminated" }
+and dprntrule = parse
+| [^']']* { log.Trace("DPRNT"); DPRINT (lexeme lexbuf) }
+| "]" { main lexbuf }
+| eof { failwith "End of file reached in DPRNT command" }

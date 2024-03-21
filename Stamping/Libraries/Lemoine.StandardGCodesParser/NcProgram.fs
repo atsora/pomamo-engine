@@ -17,7 +17,7 @@ type XCode = char * Value
 
 type SetVariable = Value * Value
 
-type Instruction = XCode of XCode | SetVariable of SetVariable | Comment of string | File of string | Extra of string | Escape of float
+type Instruction = XCode of XCode | SetVariable of SetVariable | Comment of string | File of string | Extra of string | Escape of float | POpen | PClos | DPrint of string
 
 exception InvalidGCodeException of char
 

@@ -28,6 +28,10 @@ let mutable eventManager: ParseEventManager option = None
 %token <string> OP
 %token <string> FUNC
 
+%token POPEN
+%token PCLOS
+%token <string> DPRINT
+
 %start start
 %type <unit> start
 
@@ -66,12 +70,18 @@ blocks:
 ;
 
 blockwithend:
-    block NEWLINE { eventManager.Value.NotifyNewBlock $1 $2 }
+    block newlines { eventManager.Value.NotifyNewBlock $1 $2 }
   | block EOF { eventManager.Value.NotifyNewBlock $1 $2; eventManager.Value.NotifyEndOfFile $2 }
 ;
 
 block:
-    instructions { eventManager.Value.AddBlock (List.rev $1) }
+    dprintblock { eventManager.Value.AddBlock [ $1 ] }
+  | instructions { eventManager.Value.AddBlock (List.rev $1) }
+;
+
+newlines:
+    NEWLINE { $1 }
+  | newlines NEWLINE { $2 }
 ;
 
 instructions:
@@ -86,6 +96,9 @@ instruction:
   | comment { $1 }
   | extra { $1 }
   | file { $1 }
+  | POPEN { POpen }
+  | PCLOS { PClos }
+  | dprintcommand { $1 }
 ;
 
 escape:
@@ -138,5 +151,14 @@ op:
   | op OP op { eventManager.Value.ApplyOperator $1 $2 $3 }
   | op ESCAPE op { eventManager.Value.ApplyOperator $1 "/" $3 }
   | FUNC LBRACKET op RBRACKET { eventManager.Value.ApplyFunction $1 $3 }
+;
+
+dprintcommand:
+    DPRINT RBRACKET { DPrint($1) }
+;
+
+dprintblock:
+    POPEN NEWLINE dprintcommand NEWLINE PCLOS { $3 }
+;
 
 %%

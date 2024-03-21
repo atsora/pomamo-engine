@@ -194,7 +194,7 @@
 
   <root>
     <level value="INFO" />
-    <!--appender-ref ref="dbgviewAp" /-->
+    <appender-ref ref="dbgviewAp" />
     <!--appender-ref ref="debugRollingAp" /-->
     <appender-ref ref="critRollingAp" />
     <appender-ref ref="errorRollingAp" />

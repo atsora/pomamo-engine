@@ -68,5 +68,33 @@ namespace Lemoine.Stamping
       }
       return false;
     }
+
+    /// <summary>
+    /// Test if a string starts with one of the stamp variable
+    /// </summary>
+    /// <param name="stampVariablesGetter"></param>
+    /// <param name="s"></param>
+    /// <param name="sep">separator</param>
+    /// <returns></returns>
+    public static bool StartWithStampVariable (this IStampVariablesGetter stampVariablesGetter, string s, string sep = "")
+    {
+      var p = s.Trim ();
+      if (string.IsNullOrEmpty (p)) {
+        return false;
+      }
+      if (p.StartsWith (stampVariablesGetter.SequenceStampVariable + sep, StringComparison.InvariantCultureIgnoreCase)) {
+        return true;
+      }
+      if (p.StartsWith (stampVariablesGetter.StartCycleStampVariable + sep, StringComparison.InvariantCultureIgnoreCase)) {
+        return true;
+      }
+      if (p.StartsWith (stampVariablesGetter.StopCycleStampVariable + sep, StringComparison.InvariantCultureIgnoreCase)) {
+        return true;
+      }
+      if (p.StartsWith (stampVariablesGetter.MilestoneStampVariable + sep, StringComparison.InvariantCultureIgnoreCase)) {
+        return true;
+      }
+      return false;
+    }
   }
 }
