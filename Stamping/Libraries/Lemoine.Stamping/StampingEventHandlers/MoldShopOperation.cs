@@ -164,6 +164,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
                 else if (m_stampingData.TryGet ("FileName", out string? fileName)) {
                   m_simpleOperation.Name = fileName;
                 }
+                m_simpleOperation.Operation.Lock = false;
                 ModelDAOHelper.DAOFactory.SimpleOperationDAO.MakePersistent (m_simpleOperation);
                 var componentIntermediateWorkPiece = m_component.AddIntermediateWorkPiece (m_simpleOperation.IntermediateWorkPiece);
                 ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (componentIntermediateWorkPiece);

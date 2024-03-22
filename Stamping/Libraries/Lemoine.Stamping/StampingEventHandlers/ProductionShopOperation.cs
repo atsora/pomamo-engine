@@ -145,7 +145,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
                 }
                 var operationType = ModelDAOHelper.DAOFactory.OperationTypeDAO.FindById (1);
                 if (operationType is null) {
-                  log.Error ("StartSequence: operation type is null for Id=1");
+                  log.Fatal ("StartSequence: operation type is null for Id=1");
                 }
                 else {
                   m_simpleOperation = ModelDAOHelper.ModelFactory.CreateSimpleOperation (operationType);
@@ -155,6 +155,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
                   else if (m_stampingData.TryGet ("FileName", out string? fileName)) {
                     m_simpleOperation.Name = fileName;
                   }
+                  m_simpleOperation.Operation.Lock = false;
                   ModelDAOHelper.DAOFactory.SimpleOperationDAO.MakePersistent (m_simpleOperation);
                   var componentIntermediateWorkPiece = m_part.AddIntermediateWorkPiece (m_simpleOperation.IntermediateWorkPiece);
                   ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (componentIntermediateWorkPiece);
