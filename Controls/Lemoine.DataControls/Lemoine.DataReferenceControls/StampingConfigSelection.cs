@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -8,6 +9,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -86,6 +88,20 @@ namespace Lemoine.DataReferenceControls
       set {
         if (value != null && value.Count >= 1) {
           this.m_stampingConfigs = value;
+          if (this.Nullable) {
+            this.nullCheckBox.Checked = true;
+          }
+          for (int i = 0; i < listBox.Items.Count; i++) {
+            listBox.SetSelected (i, false);
+          }
+        }
+        else {
+          this.nullCheckBox.Checked = false;
+          for (int i = 0; i < listBox.Items.Count; i++) {
+            var item = listBox.Items[i];
+            var c = item as IStampingConfigByName;
+            listBox.SetSelected (i, value.Select (x => x.Id).Contains (c.Id));
+          }
         }
       }
     }
@@ -108,6 +124,25 @@ namespace Lemoine.DataReferenceControls
       }
       set {
         this.m_stampingConfig = value;
+        if (value is null) {
+          if (this.Nullable) {
+            this.nullCheckBox.Checked = true;
+          }
+          for (int i = 0; i < listBox.Items.Count; i++) {
+            listBox.SetSelected (i, false);
+          }
+        }
+        else {
+          this.nullCheckBox.Checked = false;
+          foreach (var item in listBox.Items) {
+            if (item is IStampingConfigByName c) {
+              if (c.Id == value.Id) {
+                listBox.SelectedItem = item;
+                break;
+              }
+            }
+          }
+        }
       }
     }
 
