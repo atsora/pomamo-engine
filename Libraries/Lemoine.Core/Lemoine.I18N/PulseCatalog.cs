@@ -65,10 +65,7 @@ namespace Lemoine.I18N
       Debug.Assert (!string.IsNullOrEmpty (s));
 
       if (null == Instance.m_implementation) {
-        log.WarnFormat ("GetString: " +
-                        "no implementation set " +
-                        "=> return key {0}",
-                        s);
+        log.Warn ($"GetString: no implementation set => return key {s}");
         return s;
       }
       else {
@@ -78,9 +75,9 @@ namespace Lemoine.I18N
         try {
           string translation = Instance.m_implementation.GetString (s, cultureInfo);
           if (null == translation) {
-            log.DebugFormat ("GetString: " +
-                             "no translation found for {0}, return the key",
-                            s);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetString: no translation found for {s}, return the key");
+            }
             return s;
           }
           else {
@@ -88,7 +85,7 @@ namespace Lemoine.I18N
           }
         }
         catch (Exception ex) {
-          log.ErrorFormat ("GetString: return the key {0} because i18n implementation returned the error {1}", s, ex);
+          log.Error ($"GetString: return the key {s} because i18n implementation returned an exception", ex);
           return s;
         }
       }
@@ -106,10 +103,7 @@ namespace Lemoine.I18N
       Debug.Assert (null != d);
 
       if (null == Instance.m_implementation) {
-        log.WarnFormat ("GetString: " +
-                        "no implementation set " +
-                        "=> return {0} for key {1}",
-                        d, s);
+        log.Warn ($"GetString: no implementation set => return {d} for key {s}");
         return d;
       }
       else {
@@ -129,7 +123,7 @@ namespace Lemoine.I18N
           }
         }
         catch (Exception ex) {
-          log.ErrorFormat ("GetString: return the default {0} for key {1} because i18n implementation returned the error {2}", d, s, ex);
+          log.Error ($"GetString: return the default {d} for key {s} because i18n implementation returned an exception", ex);
           return d;
         }
       }
