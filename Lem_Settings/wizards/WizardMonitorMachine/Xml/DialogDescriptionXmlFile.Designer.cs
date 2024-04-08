@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Drawing;
+
 namespace WizardMonitorMachine
 {
   partial class DialogDescriptionXmlFile
@@ -219,7 +221,7 @@ namespace WizardMonitorMachine
       this.ClientSize = new System.Drawing.Size(461, 341);
       this.Controls.Add(this.baseLayout);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.Icon = new Icon ("descriptionDialog.ico");
       this.Name = "DialogDescriptionXmlFile";
       this.Text = "Xml file description";
       this.baseLayout.ResumeLayout(false);

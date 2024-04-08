@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Drawing;
+
 namespace WizardMonitorMachine
 {
   partial class FileSelectorFallback
@@ -27,73 +29,71 @@ namespace WizardMonitorMachine
       }
       base.Dispose(disposing);
     }
-    
+
     /// <summary>
     /// This method is required for Windows Forms designer support.
     /// Do not change the method contents inside the source code editor. The Forms designer might
     /// not be able to load this method if it was changed manually.
     /// </summary>
-    private void InitializeComponent()
+    private void InitializeComponent ()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileSelectorFallback));
-      this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
-      this.pictureBox = new System.Windows.Forms.PictureBox();
-      this.textBox = new System.Windows.Forms.TextBox();
-      this.baseLayout.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-      this.SuspendLayout();
+      baseLayout = new System.Windows.Forms.TableLayoutPanel ();
+      pictureBox = new System.Windows.Forms.PictureBox ();
+      textBox = new System.Windows.Forms.TextBox ();
+      baseLayout.SuspendLayout ();
+      ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit ();
+      SuspendLayout ();
       // 
       // baseLayout
       // 
-      this.baseLayout.ColumnCount = 2;
-      this.baseLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this.baseLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-      this.baseLayout.Controls.Add(this.pictureBox, 1, 0);
-      this.baseLayout.Controls.Add(this.textBox, 0, 0);
-      this.baseLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.baseLayout.Location = new System.Drawing.Point(0, 0);
-      this.baseLayout.Margin = new System.Windows.Forms.Padding(0);
-      this.baseLayout.Name = "baseLayout";
-      this.baseLayout.RowCount = 1;
-      this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this.baseLayout.Size = new System.Drawing.Size(150, 22);
-      this.baseLayout.TabIndex = 0;
+      baseLayout.ColumnCount = 2;
+      baseLayout.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Percent, 100F));
+      baseLayout.ColumnStyles.Add (new System.Windows.Forms.ColumnStyle (System.Windows.Forms.SizeType.Absolute, 30F));
+      baseLayout.Controls.Add (pictureBox, 1, 0);
+      baseLayout.Controls.Add (textBox, 0, 0);
+      baseLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+      baseLayout.Location = new System.Drawing.Point (0, 0);
+      baseLayout.Margin = new System.Windows.Forms.Padding (0);
+      baseLayout.Name = "baseLayout";
+      baseLayout.RowCount = 1;
+      baseLayout.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.Percent, 100F));
+      baseLayout.Size = new System.Drawing.Size (175, 25);
+      baseLayout.TabIndex = 0;
       // 
       // pictureBox
       // 
-      this.pictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox.BackgroundImage")));
-      this.pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-      this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.pictureBox.Location = new System.Drawing.Point(124, 0);
-      this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
-      this.pictureBox.Name = "pictureBox";
-      this.pictureBox.Size = new System.Drawing.Size(26, 22);
-      this.pictureBox.TabIndex = 0;
-      this.pictureBox.TabStop = false;
+      pictureBox.BackgroundImage = new Bitmap ("fallback.png");
+      pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+      pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      pictureBox.Location = new System.Drawing.Point (145, 0);
+      pictureBox.Margin = new System.Windows.Forms.Padding (0);
+      pictureBox.Name = "pictureBox";
+      pictureBox.Size = new System.Drawing.Size (30, 25);
+      pictureBox.TabIndex = 0;
+      pictureBox.TabStop = false;
       // 
       // textBox
       // 
-      this.textBox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.textBox.Location = new System.Drawing.Point(0, 0);
-      this.textBox.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
-      this.textBox.Name = "textBox";
-      this.textBox.Size = new System.Drawing.Size(121, 20);
-      this.textBox.TabIndex = 1;
+      textBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      textBox.Location = new System.Drawing.Point (0, 0);
+      textBox.Margin = new System.Windows.Forms.Padding (0, 0, 4, 0);
+      textBox.Name = "textBox";
+      textBox.Size = new System.Drawing.Size (141, 23);
+      textBox.TabIndex = 1;
       // 
       // FileSelectorFallback
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.baseLayout);
-      this.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
-      this.MinimumSize = new System.Drawing.Size(0, 22);
-      this.Name = "FileSelectorFallback";
-      this.Size = new System.Drawing.Size(150, 22);
-      this.baseLayout.ResumeLayout(false);
-      this.baseLayout.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-      this.ResumeLayout(false);
-
+      AutoScaleDimensions = new System.Drawing.SizeF (7F, 15F);
+      AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      Controls.Add (baseLayout);
+      Margin = new System.Windows.Forms.Padding (4, 0, 4, 0);
+      MinimumSize = new System.Drawing.Size (0, 25);
+      Name = "FileSelectorFallback";
+      Size = new System.Drawing.Size (175, 25);
+      baseLayout.ResumeLayout (false);
+      baseLayout.PerformLayout ();
+      ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit ();
+      ResumeLayout (false);
     }
   }
 }

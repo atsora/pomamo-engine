@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Drawing;
+
 namespace WizardMonitorMachine
 {
   partial class MachineModuleCell
@@ -43,7 +45,6 @@ namespace WizardMonitorMachine
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MachineModuleCell));
       this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
       this.labelAcquisitionName = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
@@ -147,7 +148,7 @@ namespace WizardMonitorMachine
       // 
       this.buttonMenu.Dock = System.Windows.Forms.DockStyle.Fill;
       this.buttonMenu.Enabled = false;
-      this.buttonMenu.Image = ((System.Drawing.Image)(resources.GetObject("buttonMenu.Image")));
+      this.buttonMenu.Image = new Bitmap ("menu.png");
       this.buttonMenu.Location = new System.Drawing.Point(287, 50);
       this.buttonMenu.Margin = new System.Windows.Forms.Padding(0, 0, 2, 2);
       this.buttonMenu.Name = "buttonMenu";

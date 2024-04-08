@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Drawing;
+
 namespace WizardMonitorMachine
 {
   partial class FileSelector
@@ -36,7 +38,6 @@ namespace WizardMonitorMachine
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileSelector));
       this.combobox = new Lemoine.BaseControls.ComboboxTextValue();
       this.layout = new System.Windows.Forms.TableLayoutPanel();
       this.buttonUpload = new System.Windows.Forms.Button();
@@ -77,7 +78,7 @@ namespace WizardMonitorMachine
       // 
       this.buttonUpload.Dock = System.Windows.Forms.DockStyle.Fill;
       this.buttonUpload.Enabled = false;
-      this.buttonUpload.Image = ((System.Drawing.Image)(resources.GetObject("buttonUpload.Image")));
+      this.buttonUpload.Image = new Bitmap ("upload.png");
       this.buttonUpload.Location = new System.Drawing.Point(98, 0);
       this.buttonUpload.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
       this.buttonUpload.Name = "buttonUpload";
@@ -90,7 +91,7 @@ namespace WizardMonitorMachine
       // 
       this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Fill;
       this.buttonDelete.Enabled = false;
-      this.buttonDelete.Image = ((System.Drawing.Image)(resources.GetObject("buttonDelete.Image")));
+      this.buttonDelete.Image = new Bitmap ("delete.png");
       this.buttonDelete.Location = new System.Drawing.Point(126, 0);
       this.buttonDelete.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
       this.buttonDelete.Name = "buttonDelete";
