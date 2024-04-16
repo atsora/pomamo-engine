@@ -44,12 +44,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="down-arrow.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="right-arrow.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="down-arrow.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="right-arrow.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="delete.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="descriptionDialog.ico" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="fallback.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="menu.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="upload.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
 </Project>
