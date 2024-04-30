@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies 2023 Nicolas Relange
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -7,11 +8,11 @@ using System.IO;
 using System.Threading;
 using Lemoine.Threading;
 using Lemoine.Core.Log;
-using Lemoine.Core.TargetSpecific.FileRepository;
 using System.Collections.Generic;
 using Lemoine.Collections;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Pomamo.Stamping.FileDetection
 {
@@ -20,6 +21,8 @@ namespace Pomamo.Stamping.FileDetection
   /// </summary>
   public class IndexFileDetection : ThreadClass, IThreadClass
   {
+    static readonly int MAX_RESET_ATTEMPT = 20;
+
     /// <summary>
     /// Config set to be used when a list of directories is targeted
     /// </summary>
@@ -43,8 +46,8 @@ namespace Pomamo.Stamping.FileDetection
     readonly TimeSpan m_daxDelayForISOFileCreation;
     readonly TimeSpan m_delayBeforeStamping;
     readonly ConcurrentDictionary<string, bool> m_processingPaths = new ConcurrentDictionary<string, bool> ();
+    readonly ConcurrentDictionary<string, FileSystemWatcher> m_watchers = new ConcurrentDictionary<string, FileSystemWatcher> ();
     CancellationToken m_cancellationToken = CancellationToken.None;
-    DateTime m_lastReadTime = DateTime.MinValue;
 
     static readonly ILog log = LogManager.GetLogger (typeof (IndexFileDetection).FullName);
 
@@ -85,49 +88,13 @@ namespace Pomamo.Stamping.FileDetection
     {
       m_cancellationToken = cancellationToken;
 
-      foreach (var indexFilesDirectory in m_indexFilesDirectories) {
-        log.Info ($"Run: initializing {indexFilesDirectory}");
-        // check directory exists
-        if (!Directory.Exists (indexFilesDirectory)) {
-          log.Info ($"Run: Directory {indexFilesDirectory} does not exists, try to create it");
-          try {
-            log.Info ($"Run: create folder {indexFilesDirectory}");
-            Directory.CreateDirectory (indexFilesDirectory);
-            log.Info ($"Run: Directory {indexFilesDirectory} created");
-          }
-          catch (Exception ex) {
-            log.Fatal ($"Run: unable to create folder {indexFilesDirectory}", ex);
-            log.Fatal ($"Run: Directory {indexFilesDirectory} does not exists, exiting");
-            this.SetExitRequested ();
-            return;
-          }
-        }
-
-        // create directory watcher
-        try {
-          var directoryWatcher = new FileSystemWatcher (indexFilesDirectory);
-
-          directoryWatcher.Changed += OnChanged;
-          directoryWatcher.Created += OnCreated;
-          directoryWatcher.Renamed += OnRenamed;
-          directoryWatcher.Deleted += OnDeleted;
-
-          // start monitoring directory
-          directoryWatcher.EnableRaisingEvents = true;
-
-          // Parse the existing files
-          foreach (var indexFilePath in Directory.GetFiles (indexFilesDirectory)) {
-            await ProcessIndexFileAsync (indexFilePath);
-          }
-        }
-        catch (Exception ex) {
-          log.Error ("Run: exception", ex);
-          this.SetExitRequested ();
-          return;
-        }
-      }
-
       try {
+        foreach (var directory in m_indexFilesDirectories.Distinct ()) {
+          log.Info ($"Run: initializing {directory}");
+          cancellationToken.ThrowIfCancellationRequested ();
+          await StartWatchDirectoryAsync (directory, cancellationToken);
+        }
+
         // to keep thread alive
         while (!cancellationToken.IsCancellationRequested && !this.ExitRequested) {
           SetActive ();
@@ -141,45 +108,76 @@ namespace Pomamo.Stamping.FileDetection
       }
     }
 
-    /// <summary>
-    /// Directory monitoring change event watcher
-    /// </summary>
-    async void OnChanged (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async Task StartWatchDirectoryAsync (string directory, CancellationToken cancellationToken)
     {
-      await ProcessOnChangedAsync (sender, fileSystemEventArgs);
+      // check directory exists
+      if (!Directory.Exists (directory)) {
+        log.Info ($"StartWatchDirectoryAsync: Directory {directory} does not exists, try to create it");
+        try {
+          log.Info ($"StartWatchDirectoryAsync: create folder {directory}");
+          Directory.CreateDirectory (directory);
+          log.Info ($"StartWatchDirectoryAsync: Directory {directory} created");
+        }
+        catch (Exception ex) {
+          log.Fatal ($"StartWatchDirectoryAsync: unable to create folder {directory}", ex);
+          log.Fatal ($"StartWatchDirectoryAsync: Directory {directory} does not exists, exiting");
+          this.SetExitRequested ();
+          throw;
+        }
+      }
+      cancellationToken.ThrowIfCancellationRequested ();
+
+      // create directory watcher
+      try {
+        CreateWatcher (directory, cancellationToken);
+
+        // Parse the existing files
+        await ProcessDirectoryAsync (directory, cancellationToken);
+      }
+      catch (Exception ex) {
+        log.Error ("StartWatchDirectoryAsync: exception", ex);
+        this.SetExitRequested ();
+        throw;
+      }
     }
 
-    /// <summary>
-    /// Directory monitoring change event watcher
-    /// </summary>
-    async void OnCreated (object sender, FileSystemEventArgs fileSystemEventArgs)
+    async Task ProcessDirectoryAsync (string indexFilesDirectory, CancellationToken cancellationToken)
     {
-      log.Info ($"OnCreated {fileSystemEventArgs.FullPath}");
-      await ProcessOnChangedAsync (sender, fileSystemEventArgs);
+      // Parse the existing files
+      foreach (var indexFilePath in Directory.GetFiles (indexFilesDirectory)) {
+        cancellationToken.ThrowIfCancellationRequested ();
+        await ProcessIndexFileAsync (indexFilePath);
+      }
     }
 
-    /// <summary>
-    /// Directory monitoring change event watcher
-    /// </summary>
-    void OnDeleted (object sender, FileSystemEventArgs fileSystemEventArgs)
+    void CreateWatcher (string directory, CancellationToken cancellationToken)
     {
-      log.Info ($"OnDeleted {fileSystemEventArgs.FullPath}");
-    }
+      var watcher = new FileSystemWatcher (directory) {
+        IncludeSubdirectories = false,
+        InternalBufferSize = 32768, // 32 KB instead of default 8 KB (Max is 64 KB)
+        NotifyFilter = NotifyFilters.CreationTime
+      | NotifyFilters.FileName
+      | NotifyFilters.LastWrite
+      | NotifyFilters.Size
+      };
 
-    /// <summary>
-    /// Directory monitoring change event watcher
-    /// </summary>
-    void OnError (object sender, FileSystemEventArgs fileSystemEventArgs)
-    {
-      log.Info ($"OnError {fileSystemEventArgs.FullPath}");
-    }
+      watcher.Changed += async (object sender, FileSystemEventArgs fileSystemEventArgs) =>
+        await ProcessOnChangedAsync (sender, fileSystemEventArgs); ;
+      watcher.Created += async (object sender, FileSystemEventArgs fileSystemEventArgs) =>
+        await ProcessOnChangedAsync (sender, fileSystemEventArgs);
+      watcher.Renamed += (object sender, RenamedEventArgs fileSystemEventArgs) =>
+        log.Info ($"OnRenamed {fileSystemEventArgs.FullPath}");
+      watcher.Deleted += (object sender, FileSystemEventArgs fileSystemEventArgs) =>
+        log.Info ($"OnDeleted {fileSystemEventArgs.FullPath}");
+      watcher.Error += async (object sender, ErrorEventArgs e) =>
+        await ProcessOnErrorAsync (sender, e);
 
-    /// <summary>
-    /// Directory monitoring change event watcher
-    /// </summary>
-    void OnRenamed (object sender, FileSystemEventArgs fileSystemEventArgs)
-    {
-      log.Info ($"OnRenamed {fileSystemEventArgs.FullPath}");
+      // start monitoring directory
+      while (!m_watchers.TryAdd (directory, watcher) && !cancellationToken.IsCancellationRequested) {
+        log.Error ($"CreateWatcher: try add watcher for {directory} in dictionary failed");
+        this.Sleep (TimeSpan.FromSeconds (2), cancellationToken);
+      }
+      watcher.EnableRaisingEvents = true;
     }
 
     /// <summary>
@@ -193,6 +191,51 @@ namespace Pomamo.Stamping.FileDetection
         log.Debug ($"ProcessOnChangedAsync: File={indexFilePath}, {watcherChangeType}");
       }
       await ProcessIndexFileImpersonatedAsync (indexFilePath);
+    }
+
+    /// <summary>
+    /// Directory monitoring error event watcher
+    /// </summary>
+    async Task ProcessOnErrorAsync (object sender, ErrorEventArgs e)
+    {
+      log.Error ($"ProcessOnErrorAsync: exception", e.GetException ());
+      try {
+        var watcher = (FileSystemWatcher)sender;
+        var path = watcher.Path;
+        await ResetWatcherAsync (path);
+      }
+      catch (Exception ex) {
+        log.Error ($"ProcessOnErrorAsync: ResetWatcherAsync failed", ex);
+      }
+    }
+
+    async Task ResetWatcherAsync (string path, int attempt = 0)
+    {
+      if (attempt > MAX_RESET_ATTEMPT) {
+        log.Error ($"ResetWatcherAsync: max attempt for reset reached for {path}");
+        this.SetExitRequested ();
+        throw new Exception ("Max attempt for reset reached");
+      }
+
+      try {
+        if (m_watchers.TryGetValue (path, out var oldWatcher)) {
+          oldWatcher.EnableRaisingEvents = false;
+          while (!m_watchers.TryRemove (path, out _)) {
+            log.Error ($"ResetWatcher: TryRemove failed");
+            this.Sleep (TimeSpan.FromSeconds (2));
+          }
+          oldWatcher.Dispose ();
+        }
+        CreateWatcher (path, CancellationToken.None);
+      }
+      catch (Exception ex) {
+        log.Error ($"ResetWatcher: exception => try again in 2 seconds", ex);
+        this.Sleep (TimeSpan.FromSeconds (2));
+        await ResetWatcherAsync (path, attempt++);
+        return;
+      }
+
+      await ProcessDirectoryAsync (path, CancellationToken.None);
     }
 
     async Task ProcessIndexFileImpersonatedAsync (string indexFilePath)

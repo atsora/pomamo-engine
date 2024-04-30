@@ -135,7 +135,7 @@ namespace Lemoine.DataReferenceControls
       //
       InitializeComponent();
       
-      nullCheckBox.Text = PulseCatalog.GetString ("MonitoredMachineNull");
+      nullCheckBox.Text = PulseCatalog.GetString ("MonitoredMachineNull", "No monitored machine");
       
       this.Nullable = false;
     }
