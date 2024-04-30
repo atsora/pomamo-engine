@@ -138,7 +138,13 @@ namespace Lemoine.Stamping.StampingParsers
 
       switch (s.First ()) {
         case '[': {
-            var comment = s.Substring (1).TrimEnd (']', ' ').Trim ();
+            var comment = s.Substring (1).Trim ();
+            if (comment.EndsWith ("]]")) {
+              comment = comment.Substring (0, comment.Length - 1);
+            }
+            else {
+              comment = comment.TrimEnd (']');
+            }
             stampingEventHandler.SetComment (comment);
           }
           break;
