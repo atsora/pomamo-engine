@@ -132,10 +132,7 @@ namespace Lemoine.Settings
     /// <summary>
     /// Flags that characterize the item
     /// </summary>
-    public virtual LemSettingsGlobal.ItemFlag ItemFlags
-    {
-      get { return LemSettingsGlobal.ItemFlag.NONE; }
-    }
+    public virtual LemSettingsGlobal.ItemFlag ItemFlags => LemSettingsGlobal.ItemFlag.NONE;
 
     /// <summary>
     /// Context of the application
@@ -176,7 +173,6 @@ namespace Lemoine.Settings
     }
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -185,7 +181,6 @@ namespace Lemoine.Settings
       ID = this.GetType ().Namespace;
       SubID = this.GetType ().Name;
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>

@@ -53,7 +53,7 @@ namespace ConfiguratorAlarmFocus
     public override ICollection<string> Keywords
     {
       get {
-        return new String[] { "alarm", "alert", "alarms", "alerts", "cnc", "reports",
+        return new String[] { "alarm", "alarms", "cnc", "reports",
           "warnings", "errors", "severities", "severity", "focus" };
       }
     }
@@ -90,7 +90,7 @@ namespace ConfiguratorAlarmFocus
     /// <summary>
     /// Flags that characterize the item
     /// </summary>
-    public override LemSettingsGlobal.ItemFlag ItemFlags => LemSettingsGlobal.ItemFlag.ONLY_ADMIN_AND_SUPER_ADMIN;
+    public override LemSettingsGlobal.ItemFlag ItemFlags => LemSettingsGlobal.ItemFlag.NONE;
 
     /// <summary>
     /// All pages provided by the configurator

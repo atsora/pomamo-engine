@@ -22,17 +22,12 @@ namespace ConfiguratorAlarmFocus
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
-    public override string Title { get { return "View alarms"; } }
+    public override string Title => "View alarms";
 
     /// <summary>
     /// Description of the item (appears as a help text)
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Display all alarms associated with their corresponding severity and focus state.";
-      }
-    }
+    public override string Description => "Display all alarms associated with their corresponding severity and focus state.";
 
     /// <summary>
     /// List of keywords, allowing an easy search of the item
@@ -74,11 +69,6 @@ namespace ConfiguratorAlarmFocus
         return dic;
       }
     }
-
-    /// <summary>
-    /// Flags that characterize the item
-    /// </summary>
-    public override LemSettingsGlobal.ItemFlag ItemFlags => LemSettingsGlobal.ItemFlag.ONLY_ADMIN_AND_SUPER_ADMIN;
 
     /// <summary>
     /// All pages provided by the configurator
