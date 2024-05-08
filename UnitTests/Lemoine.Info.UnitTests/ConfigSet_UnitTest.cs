@@ -94,6 +94,13 @@ A:11
 
 """.ReplaceLineEndings ()));
       });
+      var o = persistentCacheConfigReader.Get<object> ("A");
+      var s = o?.ToString ();
+      Assert.Multiple (() => {
+        Assert.That (o, Is.EqualTo (11));
+        Assert.That (o, Is.TypeOf<int> ());
+        Assert.That (s, Is.EqualTo ("11"));
+      });
       File.Delete (path);
     }
   }

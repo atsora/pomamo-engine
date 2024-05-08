@@ -1006,7 +1006,13 @@ namespace Lemoine.Cnc.DataRepository
         }
       }
       else { // Else use by default Lemoine.Info.ConfigSet
-        return Lemoine.Info.ConfigSet.LoadAndGet (key, "");
+        var v = Lemoine.Info.ConfigSet.LoadAndGet<object> (key, null);
+        if (v is not null && v is double d) {
+          return d.ToString (System.Globalization.CultureInfo.InvariantCulture);
+        }
+        else {
+          return v?.ToString () ?? "";
+        }
       }
     }
 
