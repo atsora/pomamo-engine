@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2023 Atsora Solutions
+// Copyright (C) 2023-2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1042,12 +1042,17 @@ namespace Lemoine.Cnc.DataRepository
 
     IDictionary<string, string> GetKeyParams (XmlDocument xmlDocument)
     {
-      if (m_cncAcquisition.ConfigKeyParams is null) { 
+      if (m_cncAcquisition.ConfigKeyParams is null
+        && string.IsNullOrEmpty (m_cncAcquisition.ConfigParameters)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetKeyParams: no parameter is set for cnc acquisition id={m_cncAcquisition.Id}");
+        }
         return new Dictionary<string, string> ();
       }
 
       var keyParams = m_cncAcquisition.ConfigKeyParams
-        .ToDictionary (kv => kv.Key, kv => kv.Value); // Clone it
+        ?.ToDictionary (kv => kv.Key, kv => kv.Value)
+        ?? new Dictionary<string, string> (); // Clone it
       if (log.IsDebugEnabled) {
         foreach (var kv in keyParams) {
           log.Debug ($"GetKeyParams: add {kv.Key}={kv.Value} from ConfigKeyParams");
