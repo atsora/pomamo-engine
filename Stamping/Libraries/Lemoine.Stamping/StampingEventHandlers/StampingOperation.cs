@@ -115,6 +115,10 @@ namespace Lemoine.Stamping.StampingEventHandlers
         if (m_operation is null) {
           var operationType = ModelDAO.ModelDAOHelper.DAOFactory.OperationTypeDAO.FindById (1);
           var operation = ModelDAO.ModelDAOHelper.ModelFactory.CreateOperation (operationType);
+          var operationMachiningDuration = m_stampingData.OperationMachiningDuration;
+          if (operationMachiningDuration is not null) {
+            operation.MachiningDuration = operationMachiningDuration;
+          }
           ModelDAO.ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation);
           m_operation = operation;
         }

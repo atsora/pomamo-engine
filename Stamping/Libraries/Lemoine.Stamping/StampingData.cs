@@ -107,6 +107,17 @@ namespace Lemoine.Stamping
     }
 
     /// <summary>
+    /// Operation machining duration
+    /// </summary>
+    public TimeSpan? OperationMachiningDuration
+    {
+      get => Get<TimeSpan> ("OperationMachiningDuration");
+      set {
+        Add ("OperationMachiningDuration", value);
+      }
+    }
+
+    /// <summary>
     /// Associated path
     /// </summary>
     public IPath? OperationPath

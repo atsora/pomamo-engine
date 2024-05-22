@@ -32,9 +32,6 @@ namespace Lemoine.BaseControls
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DisclosurePanel));
-      this.imageList = new System.Windows.Forms.ImageList(this.components);
       this.headerPanel = new System.Windows.Forms.Panel();
       this.TitleLbl = new System.Windows.Forms.Label();
       this.pictureBox = new System.Windows.Forms.PictureBox();
@@ -42,13 +39,6 @@ namespace Lemoine.BaseControls
       this.headerPanel.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
       this.SuspendLayout();
-      // 
-      // imageList
-      // 
-      this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-      this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList.Images.SetKeyName(0, "right-arrow.png");
-      this.imageList.Images.SetKeyName(1, "down-arrow.png");
       // 
       // headerPanel
       // 
@@ -111,6 +101,5 @@ namespace Lemoine.BaseControls
     private System.Windows.Forms.Panel headerPanel;
     private System.Windows.Forms.PictureBox pictureBox;
     private System.Windows.Forms.Label TitleLbl;
-    private System.Windows.Forms.ImageList imageList;
   }
 }

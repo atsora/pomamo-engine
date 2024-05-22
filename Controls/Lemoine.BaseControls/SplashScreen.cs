@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Lemoine.Core.Log;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lemoine.BaseControls
 {
@@ -27,8 +26,13 @@ namespace Lemoine.BaseControls
   /// <summary>
   /// Splash screen options
   /// </summary>
-  public struct SplashScreenOptions
+  public class SplashScreenOptions
   {
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public SplashScreenOptions () { }
+
     /// <summary>
     /// Use identification ?
     /// </summary>
@@ -91,7 +95,7 @@ namespace Lemoine.BaseControls
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <param name="options"></param>
-    public SplashScreen (IServiceProvider serviceProvider, SplashScreenOptions? options)
+    public SplashScreen (IServiceProvider serviceProvider, SplashScreenOptions options)
       : this ((o) => serviceProvider.GetService<IFormFactory> ().GetMainForm (), serviceProvider.GetService<IGuiInitializer> () ?? new BasicGuiInitializer (null), options ?? serviceProvider.GetService<SplashScreenOptions> ())
     { 
     }
@@ -99,21 +103,13 @@ namespace Lemoine.BaseControls
     /// <summary>
     /// Default constructor
     /// </summary>
-    public SplashScreen (Func<object, Form> createForm, Action applicationInitialization = null, SplashScreenOptions options = new SplashScreenOptions ())
-      : this (createForm, new BasicGuiInitializer (applicationInitialization), options)
-    {
-    }
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public SplashScreen (Func<object, Form> createForm, IGuiInitializer guiInitializer, SplashScreenOptions options = new SplashScreenOptions ())
+    public SplashScreen (Func<object, Form> createForm, IGuiInitializer guiInitializer, SplashScreenOptions options = null)
     {
       m_guiInitializer = guiInitializer;
-      m_options = options;
+      m_options = options ?? new SplashScreenOptions ();
       m_createForm = createForm;
-      m_loginRequired = options.LoginRequired;
-      m_rememberActive = options.RememberActive;
+      m_loginRequired = m_options.LoginRequired;
+      m_rememberActive = m_options.RememberActive;
 
       // Database connexion and load extensions
       m_workingWorkers++;
@@ -127,10 +123,10 @@ namespace Lemoine.BaseControls
 
       // Preparation of interface
       InitializeComponent ();
-      if (options.Identification) {
-        var login = options.DefaultLogin;
+      if (m_options.Identification) {
+        var login = m_options.DefaultLogin;
         textLogin.Text = login;
-        textPassword.Text = options.DefaultPassword;
+        textPassword.Text = m_options.DefaultPassword;
         checkRememberMe.Checked = (login != "");
         if (m_loginRequired && string.IsNullOrEmpty (textLogin.Text)) {
           buttonGo.Enabled = false;
@@ -143,6 +139,14 @@ namespace Lemoine.BaseControls
         this.Height = 220;
         m_buttonGoClicked = true;
       }
+    }
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public SplashScreen (Func<object, Form> createForm, Action applicationInitialization = null, SplashScreenOptions options = null)
+      : this (createForm, new BasicGuiInitializer (applicationInitialization), options)
+    {
     }
     #endregion // Constructors
 

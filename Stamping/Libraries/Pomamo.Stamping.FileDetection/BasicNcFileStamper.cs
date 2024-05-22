@@ -34,7 +34,7 @@ namespace Pomamo.Stamping.FileDetection
     /// Run the stamping process
     /// </summary>
     /// <returns>exit code</returns>
-    public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", CancellationToken cancellationToken = default)
+    public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", TimeSpan? operationMachiningDuration = null, CancellationToken cancellationToken = default)
     {
       try {
         if (!Directory.Exists (outputFolder)) {
@@ -61,6 +61,10 @@ namespace Pomamo.Stamping.FileDetection
         if (!string.IsNullOrEmpty (machineName)) {
           arguments += $" -s MachineName={machineName}";
         }
+        if (operationMachiningDuration is not null) {
+          arguments += $" -s OperationMachiningDuration={operationMachiningDuration}";
+        }
+        // TODO: component name
         var additionalOptions = Lemoine.Info.ConfigSet.LoadAndGet (STAMPER_OPTIONS_KEY, STAMPER_OPTIONS_DEFAULT);
         if (!string.IsNullOrEmpty (additionalOptions)) {
           arguments += " " + additionalOptions;

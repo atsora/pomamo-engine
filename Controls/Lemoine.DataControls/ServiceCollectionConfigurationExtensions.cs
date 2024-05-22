@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -7,10 +8,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Lemoine.BaseControls;
-using Lemoine.Core.Hosting;
 using Lemoine.Core.Log;
 using Lemoine.Extensions;
-using Lemoine.FileRepository;
 using Lemoine.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Pulse.Hosting;
@@ -39,7 +38,7 @@ namespace Lemoine.DataControls
         .ConfigureFileRepoClientFactoryDefault ()
         .ConfigureDatabaseWithNoExtension (effectiveApplicationName)
         .ConfigureCatalog (effectiveApplicationName)
-        .AddSingleton<IGuiInitializer> ((IServiceProvider sp) => new GuiInitializer.GuiInitializer (sp.GetRequiredService<IApplicationInitializer> (), sp.GetService<IFileRepoClientFactory> ()));
+        .AddSingleton<IGuiInitializer, GuiInitializer.GuiInitializer> ();
     }
 
     /// <summary>
@@ -57,7 +56,7 @@ namespace Lemoine.DataControls
         .ConfigureFileRepoClientFactoryDefault ()
         .ConfigureDatabaseWithExtensions (pluginFlag, interfaceProviders, effectiveApplicationName)
         .ConfigureCatalog (effectiveApplicationName)
-        .AddSingleton<IGuiInitializer> ((IServiceProvider sp) => new GuiInitializer.GuiInitializer (sp.GetRequiredService<IApplicationInitializer> (), sp.GetService<IFileRepoClientFactory> ()));
+        .AddSingleton<IGuiInitializer, GuiInitializer.GuiInitializer> ();
     }
 
     /// <summary>
@@ -75,7 +74,7 @@ namespace Lemoine.DataControls
         .ConfigureFileRepoClientFactoryDefault ()
         .ConfigureDatabaseWithNoNHibernateExtension (pluginFlag, interfaceProviders, effectiveApplicationName)
         .ConfigureCatalog (effectiveApplicationName)
-        .AddSingleton<IGuiInitializer> ((IServiceProvider sp) => new GuiInitializer.GuiInitializer (sp.GetRequiredService<IApplicationInitializer> (), sp.GetService<IFileRepoClientFactory> ()));
+        .AddSingleton<IGuiInitializer, GuiInitializer.GuiInitializer> ();
     }
 
     /// <summary>
@@ -93,7 +92,7 @@ namespace Lemoine.DataControls
         .ConfigureFileRepoClientFactoryDefault ()
         .ConfigureDataAccessFromConfigSet (effectiveApplicationName)
         .ConfigureCatalog (effectiveApplicationName)
-        .AddSingleton<IGuiInitializer> ((IServiceProvider sp) => new GuiInitializer.GuiInitializer (sp.GetRequiredService<IApplicationInitializer> (), sp.GetService<IFileRepoClientFactory> ()));
+        .AddSingleton<IGuiInitializer, GuiInitializer.GuiInitializer> ();
     }
 
   }

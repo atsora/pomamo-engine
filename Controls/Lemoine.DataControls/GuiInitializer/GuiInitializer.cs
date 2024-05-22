@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -31,12 +32,20 @@ namespace Lemoine.DataControls.GuiInitializer
     /// <summary>
     /// Constructor
     /// </summary>
-    public GuiInitializer (IApplicationInitializer applicationInitializer, IFileRepoClientFactory fileRepoClientFactory = null)
+    public GuiInitializer (IApplicationInitializer applicationInitializer, IFileRepoClientFactory fileRepoClientFactory)
     {
       Debug.Assert (null != applicationInitializer);
 
       m_applicationInitializer = applicationInitializer;
       m_fileRepoClientFactory = fileRepoClientFactory;
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public GuiInitializer (IApplicationInitializer applicationInitializer)
+      : this (applicationInitializer, null)
+    { 
     }
 
     /// <summary>

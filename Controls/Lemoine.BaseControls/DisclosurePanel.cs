@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -115,7 +116,7 @@ namespace Lemoine.BaseControls
     
     void DisclosurePanelLoad(object sender, EventArgs e)
     {
-      pictureBox.Image = imageList.Images[0];
+      pictureBox.Image = new Bitmap ("right-arrow.png");
       State = false;
     }
     
@@ -140,12 +141,12 @@ namespace Lemoine.BaseControls
     {
       if (State)
       {
-        pictureBox.Image = imageList.Images[0];
+        pictureBox.Image = new Bitmap ("right-arrow.png");
         State = false;
       }
       else
       {
-        pictureBox.Image = imageList.Images[1];
+        pictureBox.Image = new Bitmap ("down-arrow.png");
         State = true;
       }
     }
