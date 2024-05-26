@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<FileList>
+  <File Reference = "Lemoine.BaseControls.dll">
+    <ToolboxItems UIFramework="WinForms" VSCategory="Atsora" BlendCategory="Atsora">
+      <Item Type="Lemoine.BaseControls.DurationPicker" />
+    </ToolboxItems>
+  </File>
+</FileList>
