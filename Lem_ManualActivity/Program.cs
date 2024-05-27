@@ -5,13 +5,8 @@
 using System;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
-using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
-using Lemoine.DataControls;
-using Lemoine.I18N;
 using Lemoine.Info.ConfigReader.TargetSpecific;
-using Microsoft.Extensions.DependencyInjection;
-using Pulse.Hosting.ApplicationInitializer;
 
 namespace Lem_ManualActivity
 {
@@ -34,7 +29,7 @@ namespace Lem_ManualActivity
       Application.EnableVisualStyles ();
       Application.SetCompatibleTextRenderingDefault (false);
 
-      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateServices ());
+      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateLemManualActivityServices ());
       var host = builder.Build ();
 
       var serviceProvider = host.Services;
@@ -49,13 +44,7 @@ namespace Lem_ManualActivity
       Application.Run (splashScreen);
     }
 
-    static IServiceCollection CreateServices (this IServiceCollection services)
-    {
-      return services
-        .CreateGuiServicesDatabaseNoExtension ()
-        .SetApplicationInitializer<ApplicationInitializerWithDatabaseNoExtension, PulseCatalogInitializer> ()
-        .AddTransient<MainForm> ();
-    }
+
 
   }
 }

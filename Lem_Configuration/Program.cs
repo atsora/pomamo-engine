@@ -10,10 +10,7 @@ using Lemoine.I18N;
 using Lemoine.Core.Log;
 using CommandLine.Text;
 using Lemoine.Info.ConfigReader.TargetSpecific;
-using Lemoine.FileRepository;
 using System.Threading.Tasks;
-using Lemoine.DataControls.GuiInitializer;
-using Microsoft.Extensions.DependencyInjection;
 using Lemoine.Core.Extensions.Hosting;
 using Lemoine.DataControls;
 using Pulse.Hosting.ApplicationInitializer;
@@ -76,7 +73,7 @@ namespace Lem_Configuration
       Application.EnableVisualStyles ();
       Application.SetCompatibleTextRenderingDefault (false);
 
-      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, options, services => services.CreateServices ());
+      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, options, services => services.CreateLemConfigurationServices ());
       var host = builder.Build ();
 
       var serviceProvider = host.Services;
@@ -98,13 +95,6 @@ namespace Lem_Configuration
         log.Error ($"Main: exception raised in splash screen", ex);
         throw;
       }
-    }
-
-    static IServiceCollection CreateServices (this IServiceCollection services)
-    {
-      return services
-        .CreateGuiServicesDatabaseNoExtension ()
-        .SetApplicationInitializer<ApplicationInitializerWithDatabaseNoExtension, PulseCatalogInitializer> ();
     }
 
     static void RaiseArgumentError (string usage, string additionalText)

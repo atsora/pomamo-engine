@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Drawing;
+
 namespace Lemoine.BaseControls
 {
   partial class SplashScreen
@@ -32,7 +34,6 @@ namespace Lemoine.BaseControls
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
       this.logoPictureBox = new System.Windows.Forms.PictureBox();
       this.panel1 = new System.Windows.Forms.Panel();
       this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
@@ -99,7 +100,7 @@ namespace Lemoine.BaseControls
       // buttonGo
       // 
       this.buttonGo.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonGo.Image = ((System.Drawing.Image)(resources.GetObject("buttonGo.Image")));
+      this.buttonGo.Image = new Bitmap ("go.png");
       this.buttonGo.Location = new System.Drawing.Point(233, 252);
       this.buttonGo.Margin = new System.Windows.Forms.Padding(0);
       this.buttonGo.Name = "buttonGo";
@@ -191,7 +192,7 @@ namespace Lemoine.BaseControls
       // buttonCancel
       // 
       this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonCancel.Image = ((System.Drawing.Image)(resources.GetObject("buttonCancel.Image")));
+      this.buttonCancel.Image = new Bitmap ("cancel.png");
       this.buttonCancel.Location = new System.Drawing.Point(5, 252);
       this.buttonCancel.Margin = new System.Windows.Forms.Padding(0);
       this.buttonCancel.Name = "buttonCancel";
@@ -219,7 +220,6 @@ namespace Lemoine.BaseControls
       this.ClientSize = new System.Drawing.Size(290, 300);
       this.Controls.Add(this.panel1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SplashScreen";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Lemoine Settings";

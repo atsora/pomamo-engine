@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <ProjectReference Include="..\..\..\atsora-libs\Atsora.FsCore\Atsora.FsCore.fsproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
     <ProjectReference Include="..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
     <ProjectReference Include="..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />

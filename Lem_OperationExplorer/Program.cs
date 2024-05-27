@@ -6,16 +6,8 @@
 using System;
 using System.Windows.Forms;
 using Lemoine.BaseControls;
-using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
-using Lemoine.DataControls;
-using Lemoine.Extensions.Interfaces;
-using Lemoine.Extensions.Plugin;
-using Lemoine.I18N;
 using Lemoine.Info.ConfigReader.TargetSpecific;
-using Microsoft.Extensions.DependencyInjection;
-using Pulse.Hosting;
-using Pulse.Hosting.ApplicationInitializer;
 
 namespace Lem_OperationExplorer
 {
@@ -25,8 +17,6 @@ namespace Lem_OperationExplorer
   public static class Program
   {
     static readonly ILog log = LogManager.GetLogger(typeof (Program).FullName);
-
-    static readonly TimeSpan? PLUGIN_SYNCHRONIZATION_TIMEOUT_DEFAULT = TimeSpan.FromSeconds (1);
 
     /// <summary>
     /// Program entry point.
@@ -43,7 +33,7 @@ namespace Lem_OperationExplorer
       Application.EnableVisualStyles ();
       Application.SetCompatibleTextRenderingDefault (false);
 
-      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateServices ());
+      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateLemOperationExplorerServices ());
       var host = builder.Build ();
 
       var serviceProvider = host.Services;
@@ -56,16 +46,6 @@ namespace Lem_OperationExplorer
       };
       var splashScreen = new SplashScreen (x => serviceProvider.GetRequiredService<MainForm> (), guiInitializer, splashScreenOptions);
       Application.Run (splashScreen);
-    }
-
-    static IServiceCollection CreateServices (this IServiceCollection services)
-    {
-      return services
-        .AddSingleton<IPluginSynchronizationTimeoutProvider> ((IServiceProvider sp) => new PluginSynchronizationTimeoutProviderFromConfigSet (PLUGIN_SYNCHRONIZATION_TIMEOUT_DEFAULT))
-        .CreateGuiServicesDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.OperationExplorer, Pulse.Extensions.Business.ExtensionInterfaceProvider.GetInterfaceProviders ())
-        .ConfigureBusinessLruCache ()
-        .SetApplicationInitializer<ApplicationInitializerWithExtensions, BusinessApplicationInitializer, PulseCatalogInitializer> ()
-        .AddTransient<MainForm> ();
     }
   }
 }

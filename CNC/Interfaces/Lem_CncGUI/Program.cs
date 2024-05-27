@@ -15,7 +15,6 @@ using Lemoine.Extensions;
 using Lemoine.Info;
 using Lemoine.Info.ApplicationNameProvider;
 using Lemoine.Info.ConfigReader.TargetSpecific;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lem_CncGUI
 {
@@ -39,7 +38,7 @@ namespace Lem_CncGUI
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
 
-      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateServices ());
+      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateLemCncGUIServices ());
       var host = builder.Build ();
 
       var serviceProvider = host.Services;
@@ -53,17 +52,5 @@ namespace Lem_CncGUI
       var splashScreen = new SplashScreen (x => serviceProvider.GetRequiredService<MainForm> (), guiInitializer, splashScreenOptions);
       Application.Run (splashScreen);
     }
-
-    static IServiceCollection CreateServices (this IServiceCollection services)
-    {
-      return services
-        .AddSingleton<ICncEngineConfig, CncEngineConfig> ()
-        .AddSingleton<IApplicationNameProvider, ApplicationNameProviderFromProgramInfo> ()
-        .CreateGuiServicesDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, GetInterfaceProviders ())
-        .SetApplicationInitializer<ApplicationInitializerCncAcquisition> ()
-        .AddTransient<MainForm> ();
-    }
-
-    static IEnumerable<IExtensionInterfaceProvider> GetInterfaceProviders () => Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders ().Union (new List<IExtensionInterfaceProvider> { new Pulse.Extensions.Database.ExtensionInterfaceProvider () });
   }
 }

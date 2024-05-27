@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Drawing;
+
 namespace Lemoine.BaseControls.Inputs
 {
   partial class ColorPicker
@@ -58,7 +60,7 @@ namespace Lemoine.BaseControls.Inputs
       // 
       this.buttonChangeColor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
       this.buttonChangeColor.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonChangeColor.Image = ((System.Drawing.Image)(resources.GetObject("buttonChangeColor.Image")));
+      this.buttonChangeColor.Image = new Bitmap ("changeColor.png");
       this.buttonChangeColor.Location = new System.Drawing.Point(85, 0);
       this.buttonChangeColor.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
       this.buttonChangeColor.MinimumSize = new System.Drawing.Size(18, 18);

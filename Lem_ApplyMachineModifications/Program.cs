@@ -7,17 +7,10 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 using CommandLine;
-using Lemoine.I18N;
-using Lemoine.Model;
-using Lemoine.ModelDAO;
-using Lemoine.Core.Extensions.Hosting;
 using Lemoine.Core.Log;
 using CommandLine.Text;
 using System.Linq;
 using Lemoine.Info.ConfigReader.TargetSpecific;
-using Microsoft.Extensions.DependencyInjection;
-using Lemoine.DataControls;
-using Pulse.Hosting.ApplicationInitializer;
 using Lemoine.BaseControls;
 
 namespace Lem_ApplyMachineModifications
@@ -73,7 +66,7 @@ namespace Lem_ApplyMachineModifications
       Application.EnableVisualStyles ();
       Application.SetCompatibleTextRenderingDefault (false);
 
-      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateServices (options));
+      var builder = Pulse.Hosting.HostBuilder.CreatePulseGuiHostBuilder (args, services => services.CreateLemApplyMachineModificationsServices (options));
       var host = builder.Build ();
 
       var serviceProvider = host.Services;
@@ -86,14 +79,6 @@ namespace Lem_ApplyMachineModifications
       };
       var splashScreen = new SplashScreen (x => serviceProvider.GetRequiredService<MainForm> (), guiInitializer, splashScreenOptions);
       Application.Run (splashScreen);
-    }
-
-    static IServiceCollection CreateServices (this IServiceCollection services, Options options)
-    {
-      return services
-        .CreateGuiServicesDataAccessFromConfigSet ()
-        .SetApplicationInitializer<ApplicationInitializerWithDatabaseNoExtension, PulseCatalogInitializer> ()
-        .AddTransient<MainForm> ((IServiceProvider sp) => new MainForm (options));
     }
 
     static void RaiseArgumentError (string usage, string additionalText)

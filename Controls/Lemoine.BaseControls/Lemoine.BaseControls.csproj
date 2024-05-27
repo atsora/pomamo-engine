@@ -28,13 +28,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="cancel.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="changeColor.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="down-arrow.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="right-arrow.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="delete.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="descriptionDialog.ico" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="fallback.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="go.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="menu.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="next.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="previous.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="upload.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="zoom-in.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="zoom-out.png" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

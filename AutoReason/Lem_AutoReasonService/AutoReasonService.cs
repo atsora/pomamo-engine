@@ -11,6 +11,7 @@ using Lemoine.Core.Log;
 using Lemoine.Threading;
 using Lemoine.Core.Hosting;
 using Pulse.Business.Computer;
+using Atsora.FsCore;
 
 namespace Lem_AutoReasonService
 {
@@ -42,6 +43,8 @@ namespace Lem_AutoReasonService
     {
       Debug.Assert (null != applicationInitializer);
       Debug.Assert (null != lctrChecker);
+
+      SystemKeyChecker.CheckFeature ("AutoReason");
 
       m_applicationInitializer = applicationInitializer;
       m_lctrChecker = lctrChecker;

@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Drawing;
+
 namespace Lemoine.BaseControls
 {
   partial class TimelinesWidget
@@ -117,7 +119,7 @@ namespace Lemoine.BaseControls
       // buttonNext
       // 
       this.buttonNext.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonNext.Image = ((System.Drawing.Image)(resources.GetObject("buttonNext.Image")));
+      this.buttonNext.Image = new Bitmap ("next.png");
       this.buttonNext.Location = new System.Drawing.Point(377, 181);
       this.buttonNext.Margin = new System.Windows.Forms.Padding(1, 1, 1, 0);
       this.buttonNext.Name = "buttonNext";
@@ -129,7 +131,7 @@ namespace Lemoine.BaseControls
       // buttonPrevious
       // 
       this.buttonPrevious.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonPrevious.Image = ((System.Drawing.Image)(resources.GetObject("buttonPrevious.Image")));
+      this.buttonPrevious.Image = new Bitmap ("previous.png");
       this.buttonPrevious.Location = new System.Drawing.Point(350, 181);
       this.buttonPrevious.Margin = new System.Windows.Forms.Padding(1, 1, 0, 0);
       this.buttonPrevious.Name = "buttonPrevious";
@@ -152,7 +154,7 @@ namespace Lemoine.BaseControls
       // buttonZoomIn
       // 
       this.buttonZoomIn.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("buttonZoomIn.Image")));
+      this.buttonZoomIn.Image = new Bitmap ("zoom-in.png");
       this.buttonZoomIn.Location = new System.Drawing.Point(27, 181);
       this.buttonZoomIn.Margin = new System.Windows.Forms.Padding(0, 1, 1, 0);
       this.buttonZoomIn.Name = "buttonZoomIn";
@@ -164,7 +166,7 @@ namespace Lemoine.BaseControls
       // buttonZoomOut
       // 
       this.buttonZoomOut.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("buttonZoomOut.Image")));
+      this.buttonZoomOut.Image = new Bitmap ("zoom-out.png");
       this.buttonZoomOut.Location = new System.Drawing.Point(1, 181);
       this.buttonZoomOut.Margin = new System.Windows.Forms.Padding(1, 1, 1, 0);
       this.buttonZoomOut.Name = "buttonZoomOut";

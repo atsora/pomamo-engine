@@ -32,7 +32,6 @@ namespace Lemoine.BaseControls
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChangePeriodDialog));
       this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
@@ -68,7 +67,7 @@ namespace Lemoine.BaseControls
       this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
       this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-      this.baseLayout.Size = new System.Drawing.Size(224, 77);
+      this.baseLayout.Size = new System.Drawing.Size(224, 76);
       this.baseLayout.TabIndex = 0;
       // 
       // label1
@@ -93,9 +92,7 @@ namespace Lemoine.BaseControls
       // 
       // date1
       // 
-      this.date1.CustomFormat = "dd/MM/yyyy";
       this.date1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.date1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
       this.date1.Location = new System.Drawing.Point(46, 3);
       this.date1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
       this.date1.Name = "date1";
@@ -112,7 +109,7 @@ namespace Lemoine.BaseControls
       this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 1, 0);
       this.tableLayoutPanel1.Controls.Add(this.buttonOk, 2, 0);
       this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 47);
+      this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 46);
       this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
       this.tableLayoutPanel1.Name = "tableLayoutPanel1";
       this.tableLayoutPanel1.RowCount = 1;
@@ -144,9 +141,7 @@ namespace Lemoine.BaseControls
       // 
       // date2
       // 
-      this.date2.CustomFormat = "dd/MM/yyyy";
       this.date2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.date2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
       this.date2.Location = new System.Drawing.Point(46, 27);
       this.date2.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
       this.date2.Name = "date2";
@@ -156,22 +151,20 @@ namespace Lemoine.BaseControls
       // time1
       // 
       this.time1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.time1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
       this.time1.Location = new System.Drawing.Point(150, 3);
       this.time1.Name = "time1";
-      this.time1.ShowUpDown = true;
       this.time1.Size = new System.Drawing.Size(71, 20);
       this.time1.TabIndex = 8;
+      this.time1.Time = System.TimeSpan.Parse("23:17:58.5292520");
       // 
       // time2
       // 
       this.time2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.time2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
       this.time2.Location = new System.Drawing.Point(150, 27);
       this.time2.Name = "time2";
-      this.time2.ShowUpDown = true;
       this.time2.Size = new System.Drawing.Size(71, 20);
       this.time2.TabIndex = 9;
+      this.time2.Time = System.TimeSpan.Parse("23:17:58.5357901");
       // 
       // ChangePeriodDialog
       // 
@@ -179,10 +172,9 @@ namespace Lemoine.BaseControls
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(224, 77);
+      this.ClientSize = new System.Drawing.Size(224, 76);
       this.Controls.Add(this.baseLayout);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.MaximumSize = new System.Drawing.Size(240, 115);
       this.MinimizeBox = false;
