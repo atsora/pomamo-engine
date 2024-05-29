@@ -11,6 +11,7 @@ using Lem_ServiceMonitoring;
 using Lemoine.BaseControls;
 using Lemoine.Core.Log;
 using Lemoine.Info.ConfigReader.TargetSpecific;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LemoineServiceMonitoring
 {

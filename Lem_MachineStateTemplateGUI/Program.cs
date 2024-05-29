@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Lemoine.BaseControls;
 using Lemoine.Core.Log;
 using Lemoine.Info.ConfigReader.TargetSpecific;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lem_MachineStateTemplateGUI
 {

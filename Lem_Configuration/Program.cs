@@ -15,6 +15,7 @@ using Lemoine.Core.Extensions.Hosting;
 using Lemoine.DataControls;
 using Pulse.Hosting.ApplicationInitializer;
 using Lemoine.Info;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lem_Configuration
 {

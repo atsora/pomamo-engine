@@ -12,6 +12,7 @@ using CommandLine.Text;
 using System.Linq;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Lemoine.BaseControls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lem_ApplyMachineModifications
 {

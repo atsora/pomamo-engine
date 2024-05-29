@@ -13,6 +13,7 @@ using Lemoine.Core.Log;
 using Lemoine.Info;
 using Lemoine.Info.ConfigReader.TargetSpecific;
 using Lemoine.Settings;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lem_Settings
 {

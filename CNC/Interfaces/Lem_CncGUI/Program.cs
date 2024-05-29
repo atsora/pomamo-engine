@@ -15,6 +15,7 @@ using Lemoine.Extensions;
 using Lemoine.Info;
 using Lemoine.Info.ApplicationNameProvider;
 using Lemoine.Info.ConfigReader.TargetSpecific;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lem_CncGUI
 {

@@ -12,6 +12,7 @@ using Lemoine.Extensions.Interfaces;
 using Lemoine.Extensions.Plugin;
 using Lemoine.I18N;
 using Lemoine.Info.ConfigReader.TargetSpecific;
+using Microsoft.Extensions.DependencyInjection;
 using Pulse.Hosting;
 using Pulse.Hosting.ApplicationInitializer;
 

@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Lemoine.Core.Log;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lemoine.BaseControls
 {

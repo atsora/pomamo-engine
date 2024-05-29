@@ -19,7 +19,6 @@
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="Microsoft.WinForms.Designer.SDK" />
   </ItemGroup>
 
   <ItemGroup>

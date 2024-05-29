@@ -13,7 +13,6 @@
   
   <ItemGroup>
     <PackageReference Include="System.Resources.Extensions" />
-    <PackageReference Include="Microsoft.WinForms.Designer.SDK" />
   </ItemGroup>
   
   <ItemGroup>
