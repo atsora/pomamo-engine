@@ -35,6 +35,7 @@
 
   <!-- CNC Module and plugin dependencies -->
   <ItemGroup>
+    <None Include="..\..\..\..\pomamo-cnc-extern\EthernetIP\plctag.dll" Visible="False" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <PackageReference Include="FluentFTP" />
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.CSharp" />

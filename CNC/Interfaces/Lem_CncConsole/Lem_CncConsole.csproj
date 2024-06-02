@@ -35,6 +35,7 @@
     <Reference Include="Lemoine.Corba.Fidia">
       <HintPath>..\..\..\..\pomamo-cnc-extern\Fidia\Lemoine.Corba.Fidia.dll</HintPath>
     </Reference>
+    <None Include="..\..\..\..\pomamo-cnc-extern\EthernetIP\plctag.dll" Visible="False" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.CorbaHelper\Lemoine.CorbaHelper.csproj" />
     <PackageReference Include="FluentFTP" />
     <PackageReference Include="FSharp.Core" />
