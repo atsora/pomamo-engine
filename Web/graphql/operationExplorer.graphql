@@ -4,7 +4,6 @@ schema {
 }
 
 type Query {
-  machine(id: ID!): Machine!
   workOrderStatuses: [WorkOrderStatus!]!
   componentTypes: [ComponentType!]!
   operationTypes: [OperationType!]!
@@ -19,10 +18,6 @@ type Query {
   operationRevision(id: ID!): OperationRevision!
   operationModel(id: ID!): OperationModel!
   sequences(operationModel: ID!, pathNumber: Int): [Sequence!]!
-  cncConfigs: [CncConfig!]!
-  cncConfig(name: String!): CncConfig!
-  cncAcquisitions: [CncAcquisition!]!
-  cncAcquisition(id: ID!): CncAcquisition!
 }
 
 type Mutation {
@@ -44,18 +39,12 @@ type Mutation {
   createComponentIntermediateWorkPiece(componentIntermediateWorkPiece: NewComponentIntermediateWorkPiece!): ComponentIntermediateWorkPiece!
   createOperation(operation: NewOperation!): Operation!
   updateOperation(operation: UpdateOperation!): Operation!
-  testCncAcquisition(cncAcquisition: TestCncAcquisition!): CncAcquisitionTest!
-  createCncAcquisition(cncAcquisition: NewCncAcquisition!): CncAcquisitionChange!
-  updateCncAcquisition(cncAcquisition: UpdateCncAcquisition!): CncAcquisitionChange!
-  removeCncAcquisition(cncAcquisitionId: ID!): Boolean!
 }
 
 scalar Color
 scalar Picture
 scalar UtcDateTime
 scalar UtcDateTimeRange
-scalar CncConfigUnit # metric / inches / other
-scalar CncConfigParamType # ip / url / path / host / string / int / integer / double / list / bool / boolean / file
 
 interface IDisplayable {
   display: String!
@@ -547,105 +536,4 @@ type OperationTool {
   toolName: String
   toolDiameter: Float
   toolRadius: Float
-}
-
-type CncConfig {
-  name: String!
-  description: String
-  supportedMachines: [CncConfigMachine!]
-  supportedControls: [CncConfigControl!]
-  supportedProtocols: [CncConfigProtocol!]
-  unit: Unit
-  parameters: [CncConfigParam!]
-}
-
-type CncConfigMachine {
-  text: String!
-  model: String
-}
-
-type CncConfigControl {
-  text: String!
-  version: String
-}
-
-type CncConfigProtocol {
-  text: String!
-  version: String
-}
-
-type CncConfigParam {
-  name: String! # currently ParamX
-  label: String
-  help: String
-  description: String
-  type: CncConfigParamType
-  optional: Boolean
-  min: Int # if type=int or integer or double
-  max: Int # if type=int or integer or double
-  default: String
-  advanced: Boolean
-  values: [String!] # if type=list or file
-  decimal: Int # if type=double
-  regex: String
-}
-
-type CncConfigParamValue {
-  name: String!
-  value: String
-}
-
-type CncAcquisitionTest {
-  cncConfig: CncConfig!
-  parameters: [CncConfigParamValue!]!
-  loadError: Boolean
-  missingParameters: [String!]
-  invalidParameters: [String!]
-  additionalParameters: [String!]
-  cncData: String!
-  exitCode: Int # if the console test application was run
-}
-
-interface ICncAcquisition {
-  id: ID
-  cncConfig: CncConfig!
-  parameters: [CncConfigParamValue!]!  
-}
-
-type CncAcquisition implements ICncAcquisition {
-  id: ID!
-  cncConfig: CncConfig!
-  parameters: [CncConfigParamValue!]!
-}
-
-type CncAcquisitionChange implements ICncAcquisition {
-  id: ID
-  cncConfig: CncConfig!
-  parameters: [CncConfigParamValue!]!
-  loadError: Boolean
-  missingParameters: [string!]
-  invalidParameters: [string!]
-  additionalParameters: [string!]
-  aborted: Boolean
-}
-
-input CncConfigParamValueInput {
-  name: String!
-  value: String
-}
-
-input TestCncAcquisition {
-  cncConfigName: String!
-  parameters: [CncConfigParamValueInput!]!   
-}
-
-input NewCncAcquisition {
-  cncConfigName: String!
-  parameters: [CncConfigParamValueInput!]!   
-}
-
-input UpdateCncAcquisition {
-  id: ID!
-  cncConfigName: String
-  parameters: [CncConfigParamValueInput!]
 }
