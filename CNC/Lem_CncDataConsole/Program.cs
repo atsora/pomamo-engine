@@ -13,6 +13,7 @@ using Lemoine.Info.ConfigReader.TargetSpecific;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pulse.Hosting;
+using Pulse.Hosting.ApplicationInitializer;
 
 namespace Lem_CncDataConsole
 {
@@ -88,7 +89,7 @@ namespace Lem_CncDataConsole
     {
       return services
         .ConfigureFileRepoClientFactoryDefault ()
-        .ConfigureDatabaseWithNoNHibernateExtensionDefaultInitializer (Lemoine.Model.PluginFlag.CncData, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true)
+        .ConfigureDatabaseWithExtensions<ApplicationInitializerWithExtensionsFileRepoClient> (Lemoine.Model.PluginFlag.CncData, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true)
         .AddSingleton<IConsoleRunner<Options>, CncDataConsole> ();
     }
   }

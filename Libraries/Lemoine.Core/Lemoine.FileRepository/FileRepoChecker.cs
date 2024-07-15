@@ -21,17 +21,12 @@ namespace Lemoine.FileRepository
     bool m_fileRepoAvailableAtStart = false;
     object m_lock = new object ();
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public FileRepoChecker ()
     {
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Check at start if the file repo is available

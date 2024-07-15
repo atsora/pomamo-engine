@@ -43,7 +43,7 @@ namespace Pulse.Hosting.ApplicationInitializer
     /// <see cref="IApplicationInitializer"/>
     /// </summary>
     /// <param name="cancellationToken"></param>
-    public void InitializeApplication (CancellationToken cancellationToken = default)
+    public virtual void InitializeApplication (CancellationToken cancellationToken = default)
     {
       try {
         Lemoine.Core.Plugin.AssemblyLoaderProvider.AssemblyLoader = m_assemblyLoader;
@@ -85,7 +85,7 @@ namespace Pulse.Hosting.ApplicationInitializer
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task InitializeApplicationAsync (CancellationToken cancellationToken = default)
+    public async virtual Task InitializeApplicationAsync (CancellationToken cancellationToken = default)
     {
       try {
         Lemoine.Core.Plugin.AssemblyLoaderProvider.AssemblyLoader = m_assemblyLoader;

@@ -4,6 +4,7 @@
 
 using Lemoine.Collections;
 using Lemoine.Core.Log;
+using Lemoine.Extensions.Analysis.Detection;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using System;
@@ -36,20 +37,25 @@ namespace Pulse.PluginImplementation.Analysis
 
     readonly Regex m_regex;
     readonly string m_programComment;
+    readonly ISequenceCreatorExtension m_sequenceCreator;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="regex"></param>
     /// <param name="programComment"></param>
-    public ProgramCommentParser (Regex regex, string programComment)
+    public ProgramCommentParser (Regex regex, string programComment, ISequenceCreatorExtension sequenceCreator = null)
     {
       m_regex = regex;
       m_programComment = programComment;
+      m_sequenceCreator = sequenceCreator;
     }
 
     /// <summary>
-    /// Create the sequence(s)
+    /// Create the sequence(s):
+    /// one by pallet
+    /// 
+    /// Deprecated: use ISequenceCreateExtension now
     /// </summary>
     public bool CreateSequences { get; set; } = false;
 
@@ -232,8 +238,19 @@ namespace Pulse.PluginImplementation.Analysis
           .Where (x => string.IsNullOrEmpty (opCode) || string.Equals (x.Code, opCode, StringComparison.InvariantCultureIgnoreCase))
           .SingleOrDefault ();
         if (null != operation) {
-          ModelDAOHelper.DAOFactory.Initialize (operation.Sequences);
           ModelDAOHelper.DAOFactory.Initialize (operation.IntermediateWorkPieces);
+          ModelDAOHelper.DAOFactory.Initialize (operation.Sequences);
+          if ((null != m_sequenceCreator) && !operation.Sequences.Any ()) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: create sequences");
+            }
+            try {
+              m_sequenceCreator.CreateSequences (operation, match);
+            }
+            catch (Exception ex) {
+              log.Error ($"GetOperation: exception in CreateSequences", ex);
+            }
+          }
         }
         else { // operation is null
           if (log.IsDebugEnabled) {
@@ -303,7 +320,18 @@ namespace Pulse.PluginImplementation.Analysis
             ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l);
             ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
           }
-          if (this.CreateSequences) {
+          if (null != m_sequenceCreator) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: create sequences");
+            }
+            try {
+              m_sequenceCreator.CreateSequences (operation, match);
+            }
+            catch (Exception ex) {
+              log.Error ($"GetOperation: exception in CreateSequences", ex);
+            }
+          }
+          else if (this.CreateSequences) {
             var path = ModelDAOHelper.ModelFactory.CreatePath (operation);
             path.Number = 1;
             ModelDAOHelper.DAOFactory.PathDAO.MakePersistent (path);

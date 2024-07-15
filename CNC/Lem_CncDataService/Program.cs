@@ -11,6 +11,7 @@ using Lemoine.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pulse.Hosting;
+using Pulse.Hosting.ApplicationInitializer;
 
 namespace Lem_CncDataService
 {
@@ -67,7 +68,7 @@ namespace Lem_CncDataService
         }
 
         var applicationName = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Name;
-        var builder = Pulse.Hosting.HostBuilder.CreatePulseServiceHostBuilder<Lem_CncDataService> (args, options, services => services.ConfigureFileRepoClientFactoryDefault ().ConfigureDatabaseWithNoNHibernateExtensionDefaultInitializer (Lemoine.Model.PluginFlag.CncData, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true));
+        var builder = Pulse.Hosting.HostBuilder.CreatePulseServiceHostBuilder<Lem_CncDataService> (args, options, services => services.ConfigureFileRepoClientFactoryDefault ().ConfigureDatabaseWithExtensions<ApplicationInitializerWithExtensionsFileRepoClient> (Lemoine.Model.PluginFlag.CncData, Lemoine.Extensions.Cnc.ExtensionInterfaceProvider.GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true));
         if (options.Interactive) {
           await builder.RunConsoleAsync ();
         }
