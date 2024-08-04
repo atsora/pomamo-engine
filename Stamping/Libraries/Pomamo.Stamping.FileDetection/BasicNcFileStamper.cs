@@ -15,12 +15,15 @@ using System.Runtime.InteropServices;
 namespace Pomamo.Stamping.FileDetection
 {
   /// <summary>
-  /// Stamp a file that contains a [PPR] line
+  /// Stamp a file after specifying the config name
   /// </summary>
   public static class BasicNcFileStamper
   {
     static readonly string STAMPER_PROCESS_NAME_KEY = "Stamping.BasicNcFileStamper.StamperProcess";
     static readonly string STAMPER_PROCESS_NAME_DEFAULT = "Lem_Stamper.Console.exe"; // relative to the program directory, or $@"C:\Program Files\{PulseInfo.ProductFolderName}\Lem_Stamper.Console.exe";
+
+    static readonly string USE_CURRENT_USER_KEY = "BasicNcFileStamper.UseCurrentUser";
+    static readonly bool USE_CURRENT_USER_DEFAULT = false;
 
     /// <summary>
     /// Additional options to set to Lem_Stamper.Console.exe
@@ -34,13 +37,18 @@ namespace Pomamo.Stamping.FileDetection
     /// Run the stamping process
     /// </summary>
     /// <returns>exit code</returns>
-    public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", TimeSpan? operationMachiningDuration = null, CancellationToken cancellationToken = default)
+    public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", TimeSpan? operationMachiningDuration = null, int operationId = 0, CancellationToken cancellationToken = default)
     {
       try {
         if (!Directory.Exists (outputFolder)) {
           Directory.CreateDirectory (outputFolder);
         }
         cancellationToken.ThrowIfCancellationRequested ();
+
+        var useCurrentUser = Lemoine.Info.ConfigSet
+          .LoadAndGet<bool> (USE_CURRENT_USER_KEY, USE_CURRENT_USER_DEFAULT);
+
+        // TODO: useCurrentUser:  await Lemoine.Core.Security.Identity.RunImpersonatedAsExplorerUserAsync (async () => await ProcessIndexFileAsync (indexFilePath));
 
         var stampingProcess = Lemoine.Info.ConfigSet.LoadAndGet<string> (STAMPER_PROCESS_NAME_KEY, STAMPER_PROCESS_NAME_DEFAULT);
         if (!Path.IsPathRooted (stampingProcess)) {
@@ -63,6 +71,9 @@ namespace Pomamo.Stamping.FileDetection
         }
         if (operationMachiningDuration is not null) {
           arguments += $" -s OperationMachiningDuration={operationMachiningDuration}";
+        }
+        if (0 < operationId) {
+          arguments += $" -s OperationId={operationId}";
         }
         // TODO: component name
         var additionalOptions = Lemoine.Info.ConfigSet.LoadAndGet (STAMPER_OPTIONS_KEY, STAMPER_OPTIONS_DEFAULT);

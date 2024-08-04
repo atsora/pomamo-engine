@@ -12,7 +12,7 @@ using Lemoine.Model;
 namespace Lemoine.Stamping.StampingEventHandlers
 {
   /// <summary>
-  /// MachiningSequenceFromTool
+  /// Delay a machining sequence to the next machining operation
   /// </summary>
   public class DelayMachiningSequence
     : IStampingEventHandler

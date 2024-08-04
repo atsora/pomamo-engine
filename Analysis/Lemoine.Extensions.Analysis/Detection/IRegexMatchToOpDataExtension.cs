@@ -9,9 +9,9 @@ using System.Text.RegularExpressions;
 namespace Lemoine.Extensions.Analysis.Detection
 {
   /// <summary>
-  /// Extension to get a file path from a regex match in the program comment
+  /// Extension to get operation data from a regex match in the program comment
   /// </summary>
-  public interface IRegexMatchToFileExtension
+  public interface IRegexMatchToFileOpDataExtension
     : Lemoine.Extensions.IExtension
     , IInitializedByMachineExtension
   {
@@ -21,10 +21,17 @@ namespace Lemoine.Extensions.Analysis.Detection
     int Priority { get; }
 
     /// <summary>
-    /// Get the file path from a regex match
+    /// Get operation data for a specific data name, for example opName, partName, opCode
+    /// Raise an exception if not applicable
+    /// 
+    /// Here are some possible data names:
+    /// <item>partName</item>
+    /// <item>partCode</item>
+    /// <item>opName</item>
+    /// <item>opCode</item>
     /// </summary>
     /// <param name="match"></param>
     /// <returns></returns>
-    string GetPath (Match match);
+    string GetOpData (Match match, string dataName);
   }
 }

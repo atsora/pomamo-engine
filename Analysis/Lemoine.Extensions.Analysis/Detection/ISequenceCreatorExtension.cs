@@ -12,7 +12,9 @@ namespace Lemoine.Extensions.Analysis.Detection
   /// <summary>
   /// Extension to create sequences
   /// </summary>
-  public interface ISequenceCreatorExtension : Lemoine.Extensions.IExtension, IInitializedByMachineExtension
+  public interface ISequenceCreatorExtension
+    : Lemoine.Extensions.IExtension
+    , IInitializedByMachineExtension
   {
     /// <summary>
     /// Priority

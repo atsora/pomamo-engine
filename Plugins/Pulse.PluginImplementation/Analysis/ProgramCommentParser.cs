@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Pulse.PluginImplementation.Analysis
 {
@@ -37,6 +38,7 @@ namespace Pulse.PluginImplementation.Analysis
 
     readonly Regex m_regex;
     readonly string m_programComment;
+    readonly IEnumerable<IRegexMatchToFileOpDataExtension> m_regexMatchToOpDatas;
     readonly ISequenceCreatorExtension m_sequenceCreator;
 
     /// <summary>
@@ -44,11 +46,25 @@ namespace Pulse.PluginImplementation.Analysis
     /// </summary>
     /// <param name="regex"></param>
     /// <param name="programComment"></param>
-    public ProgramCommentParser (Regex regex, string programComment, ISequenceCreatorExtension sequenceCreator = null)
+    public ProgramCommentParser (Regex regex, string programComment, IEnumerable<IRegexMatchToFileOpDataExtension> regexMatchToOpDatas, ISequenceCreatorExtension sequenceCreator = null)
     {
       m_regex = regex;
       m_programComment = programComment;
+      m_regexMatchToOpDatas = regexMatchToOpDatas;
       m_sequenceCreator = sequenceCreator;
+    }
+
+    bool TryGetOpData (Match match, string dataName, out string opData)
+    {
+      foreach (var regexMatchToOpData in m_regexMatchToOpDatas) {
+        try {
+          opData = regexMatchToOpData.GetOpData (match, dataName);
+          return true;
+        }
+        catch { }
+      }
+      opData = null;
+      return false;
     }
 
     /// <summary>
@@ -63,10 +79,14 @@ namespace Pulse.PluginImplementation.Analysis
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
 
-        { // Check first partName, then partCode
+        // Check first partName, then partCode
+        if (!TryGetOpData (match, "partName", out var partName)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetPart: no valid regexMatchToOpData for partName");
+          }
           var partNameGroup = match.Groups["partName"];
           if (partNameGroup.Success) {
-            var partName = partNameGroup.Value.Trim ();
+            partName = partNameGroup.Value.Trim ();
             if (string.IsNullOrEmpty (partName)) {
               log.Warn ($"GetPart: partName is empty in {m_programComment} for regex {m_regex}");
             }
@@ -74,26 +94,17 @@ namespace Pulse.PluginImplementation.Analysis
               if (log.IsDebugEnabled) {
                 log.Debug ($"GetPart: partName={partName} in {m_programComment} for {m_regex}");
               }
-              var part = ModelDAOHelper.DAOFactory.PartDAO.FindByName (partName);
-              if (part is null) {
-                if (log.IsDebugEnabled) {
-                  log.Debug ($"GetPart: partName={partName} does not exist, create it");
-                }
-                var componentType = ModelDAOHelper.DAOFactory.ComponentTypeDAO
-                  .FindById (1); // 1: undefined
-                part = ModelDAOHelper.ModelFactory.CreatePart (componentType);
-                part.Name = partName;
-                ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
-              }
-              return part;
             }
           }
         }
 
-        { // Try with partCode
+        if (!TryGetOpData (match, "partCode", out var partCode)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetPart: no valid regexMatchToOpData for partCode");
+          }
           var partCodeGroup = match.Groups["partCode"];
           if (partCodeGroup.Success) {
-            var partCode = partCodeGroup.Value.Trim ();
+            partCode = partCodeGroup.Value.Trim ();
             if (string.IsNullOrEmpty (partCode)) {
               log.Warn ($"GetPart: partCode is empty in {m_programComment} for regex {m_regex}");
             }
@@ -101,24 +112,42 @@ namespace Pulse.PluginImplementation.Analysis
               if (log.IsDebugEnabled) {
                 log.Debug ($"GetPart: partCode={partCode} in {m_programComment} for regex {m_regex}");
               }
-              var part = ModelDAOHelper.DAOFactory.PartDAO.FindByCode (partCode);
-              if (part is null) {
-                if (log.IsDebugEnabled) {
-                  log.Debug ($"GetPart: partCode={partCode} does not exist, create it");
-                }
-                var componentType = ModelDAOHelper.DAOFactory.ComponentTypeDAO
-                  .FindById (1); // 1: undefined
-                part = ModelDAOHelper.ModelFactory.CreatePart (componentType);
-                part.Code = partCode;
-                ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
-              }
-              return part;
             }
           }
         }
 
-        log.Error ($"GetPart: no part information in {m_programComment}, regex={m_regex}");
-        return null;
+        partName = partName?.Trim ();
+        partCode = partCode?.Trim ();
+        if (string.IsNullOrEmpty (partName) && string.IsNullOrEmpty (partCode)) {
+          log.Error ($"GetPart: no part information in {m_programComment}, regex={m_regex}");
+          return null;
+        }
+
+        IPart part = null;
+        if (!string.IsNullOrEmpty (partName)) {
+          part = ModelDAOHelper.DAOFactory.PartDAO.FindByName (partName);
+          if ((null != part)
+            && !string.IsNullOrEmpty (partCode)
+            && (!part.Code.Equals (partCode, StringComparison.InvariantCultureIgnoreCase))) {
+            log.Warn ($"GetPart: part with name {partName} has a code {part.Code} that does not match {partCode}");
+          }
+        }
+        else if (!string.IsNullOrEmpty (partCode)) {
+          part = ModelDAOHelper.DAOFactory.PartDAO.FindByCode (partCode);
+        }
+        if (part is null) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetPart: partName={partName} does not exist, create it");
+          }
+          var componentType = ModelDAOHelper.DAOFactory.ComponentTypeDAO
+            .FindById (1); // 1: undefined
+          part = ModelDAOHelper.ModelFactory.CreatePart (componentType);
+          part.Name = partName;
+          part.Code = partCode;
+          ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
+        }
+
+        return part;
       }
     }
 
@@ -144,84 +173,92 @@ namespace Pulse.PluginImplementation.Analysis
         bool op1op2 = false;
 
         // opName / op1Name / op2Name
-        string opName = null;
         string op1Name = null;
         string op2Name = null;
-        var opNameGroup = match.Groups["opName"];
-        if (opNameGroup.Success) {
-          opName = opNameGroup.Value.Trim ();
-        }
-        var op1NameGroup = match.Groups["op1Name"];
-        if (op1NameGroup.Success) {
-          op1Name = op1NameGroup.Value.Trim ();
-        }
-        var op2NameGroup = match.Groups["op2Name"];
-        if (op2NameGroup.Success) {
-          op2Name = op2NameGroup.Value.Trim ();
-        }
-        if (string.IsNullOrEmpty (opName)) {
-          if (string.IsNullOrEmpty (op1Name)) {
-            log.Debug ($"GetOperation: nor opName, nor op1Name is defined");
+        if (!TryGetOpData (match, "opName", out var opName)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetOperation: no valid regexMatchToOperationName for opName");
           }
-          else if (string.IsNullOrEmpty (op2Name)) {
-            if (log.IsDebugEnabled) {
-              log.Debug ($"GetOperation: op op2Name => opName=op1Name={op1Name}");
-            }
-            opName = op1Name;
+          var opNameGroup = match.Groups["opName"];
+          if (opNameGroup.Success) {
+            opName = opNameGroup.Value.Trim ();
           }
-          else if (string.Equals (op1Name, op2Name, StringComparison.InvariantCultureIgnoreCase)) {
-            if (log.IsDebugEnabled) {
-              log.Debug ($"GetOperation: op1Name=op2Name=opName={op1Name}");
-            }
-            opName = op1Name;
+          var op1NameGroup = match.Groups["op1Name"];
+          if (op1NameGroup.Success) {
+            op1Name = op1NameGroup.Value.Trim ();
           }
-          else {
-            if (log.IsDebugEnabled) {
-              log.Debug ($"GetOperation: op1Name={op1Name} op2Name={op2Name}");
+          var op2NameGroup = match.Groups["op2Name"];
+          if (op2NameGroup.Success) {
+            op2Name = op2NameGroup.Value.Trim ();
+          }
+          if (string.IsNullOrEmpty (opName)) {
+            if (string.IsNullOrEmpty (op1Name)) {
+              log.Debug ($"GetOperation: nor opName, nor op1Name is defined");
             }
-            op1op2 = true;
-            opName = $"{op1Name}/{op2Name}";
+            else if (string.IsNullOrEmpty (op2Name)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetOperation: op op2Name => opName=op1Name={op1Name}");
+              }
+              opName = op1Name;
+            }
+            else if (string.Equals (op1Name, op2Name, StringComparison.InvariantCultureIgnoreCase)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetOperation: op1Name=op2Name=opName={op1Name}");
+              }
+              opName = op1Name;
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetOperation: op1Name={op1Name} op2Name={op2Name}");
+              }
+              op1op2 = true;
+              opName = $"{op1Name}/{op2Name}";
+            }
           }
         }
 
         // opCode / op1Code / op2Code
-        string opCode = null;
         string op1Code = null;
         string op2Code = null;
-        var opCodeGroup = match.Groups["opCode"];
-        if (opCodeGroup.Success) {
-          opCode = opCodeGroup.Value.Trim ();
-        }
-        var op1CodeGroup = match.Groups["op1Code"];
-        if (op1CodeGroup.Success) {
-          op1Code = op1CodeGroup.Value.Trim ();
-        }
-        var op2CodeGroup = match.Groups["op2Code"];
-        if (op2CodeGroup.Success) {
-          op2Code = op2CodeGroup.Value.Trim ();
-        }
-        if (string.IsNullOrEmpty (opCode)) {
-          if (string.IsNullOrEmpty (op1Code)) {
-            log.Debug ($"GetOperation: nor opCode, nor op1Code is defined");
+        if (!TryGetOpData (match, "opCode", out var opCode)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetOperation: no valid regexMatchToOperationName for opCode");
           }
-          else if (string.IsNullOrEmpty (op2Code)) {
-            if (log.IsDebugEnabled) {
-              log.Debug ($"GetOperation: op op2Code => opCode=op1Code={op1Code}");
-            }
-            opCode = op1Code;
+          var opCodeGroup = match.Groups["opCode"];
+          if (opCodeGroup.Success) {
+            opCode = opCodeGroup.Value.Trim ();
           }
-          else if (string.Equals (op1Code, op2Code, StringComparison.InvariantCultureIgnoreCase)) {
-            if (log.IsDebugEnabled) {
-              log.Debug ($"GetOperation: op1Code=op2Code=opCode={op1Code}");
-            }
-            opCode = op1Code;
+          var op1CodeGroup = match.Groups["op1Code"];
+          if (op1CodeGroup.Success) {
+            op1Code = op1CodeGroup.Value.Trim ();
           }
-          else {
-            if (log.IsDebugEnabled) {
-              log.Debug ($"GetOperation: op1Code={op1Code} op2Code={op2Code}");
+          var op2CodeGroup = match.Groups["op2Code"];
+          if (op2CodeGroup.Success) {
+            op2Code = op2CodeGroup.Value.Trim ();
+          }
+          if (string.IsNullOrEmpty (opCode)) {
+            if (string.IsNullOrEmpty (op1Code)) {
+              log.Debug ($"GetOperation: nor opCode, nor op1Code is defined");
             }
-            op1op2 = true;
-            opCode = $"{op1Code}/{op2Code}";
+            else if (string.IsNullOrEmpty (op2Code)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetOperation: op op2Code => opCode=op1Code={op1Code}");
+              }
+              opCode = op1Code;
+            }
+            else if (string.Equals (op1Code, op2Code, StringComparison.InvariantCultureIgnoreCase)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetOperation: op1Code=op2Code=opCode={op1Code}");
+              }
+              opCode = op1Code;
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetOperation: op1Code={op1Code} op2Code={op2Code}");
+              }
+              op1op2 = true;
+              opCode = $"{op1Code}/{op2Code}";
+            }
           }
         }
 

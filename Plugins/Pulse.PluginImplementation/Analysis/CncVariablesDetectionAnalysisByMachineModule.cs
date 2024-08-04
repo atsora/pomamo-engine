@@ -295,9 +295,7 @@ namespace Pulse.PluginImplementation.Analysis
     /// <returns></returns>
     public virtual bool Initialize (IMachine machine)
     {
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                 this.GetType ().FullName,
-                                                 machine.Id));
+      log = LogManager.GetLogger ($"{this.GetType ().FullName}.{machine.Id}");
       if (!LoadConfiguration (out m_configuration)) {
         log.Error ("Initialize: bad configuration, skip this instance");
         return false;
