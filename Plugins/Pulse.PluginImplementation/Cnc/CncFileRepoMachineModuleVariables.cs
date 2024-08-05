@@ -21,19 +21,11 @@ namespace Pulse.PluginImplementation.Cnc
   /// </summary>
   /// <typeparam name="TConfiguration"></typeparam>
   public abstract class CncFileRepoMachineModuleVariables<TConfiguration>
-    : Lemoine.Extensions.MultipleInstanceConfigurableExtension<TConfiguration>
+    : FilteredByMachineCncFileRepo<TConfiguration>
     , ICncFileRepoExtension
     where TConfiguration : ConfigurationWithMachineFilter, new()
   {
     ILog log = LogManager.GetLogger (typeof (CncFileRepoMachineModuleVariables<TConfiguration>).FullName);
-
-    IMachineFilter m_machineFilter = null;
-    TConfiguration m_configuration;
-
-    /// <summary>
-    /// Associated configuration
-    /// </summary>
-    public virtual TConfiguration Configuration => m_configuration;
 
     /// <summary>
     /// Constructor
@@ -53,58 +45,11 @@ namespace Pulse.PluginImplementation.Cnc
     }
 
     /// <summary>
-    /// <see cref="ICncFileRepoExtension"/>
-    /// </summary>
-    public virtual double XmlExtensionOrder => 100; // 100 as a reference
-
-    /// <summary>
-    /// Initialize the extension
-    /// </summary>
-    /// <param name="cncAcquisition"></param>
-    /// <returns></returns>
-    public bool Initialize (ICncAcquisition cncAcquisition)
-    {
-      Debug.Assert (null != cncAcquisition);
-
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                 this.GetType ().FullName,
-                                                 cncAcquisition.Id));
-
-      if (!LoadConfiguration (out m_configuration)) {
-        log.Error ("Initialize: configuration error, skip this instance");
-        return false;
-      }
-
-      if (0 == m_configuration.MachineFilterId) { // Machine filter
-        return !IsMachineFilterRequired ();
-      }
-      else { // Machine filter
-        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Plugin.StampDetection.CncFileRepoExtension.Initialize")) {
-            if (!cncAcquisition.MachineModules.Any ()) {
-              log.Debug ($"Initialize: no machine module is associated to cnc acquisition {cncAcquisition.Id}");
-              return false;
-            }
-            int machineFilterId = m_configuration.MachineFilterId;
-            m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
-              .FindById (machineFilterId);
-            if (m_machineFilter is null) {
-              log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
-              return false;
-            }
-            return cncAcquisition.MachineModules
-              .Any (x => m_machineFilter.IsMatch (x.MonitoredMachine));
-          }
-        }
-      }
-    }
-
-    /// <summary>
     /// Return the cnc variables that are set in the database
     /// </summary>
     /// <param name="machineModule"></param>
     /// <returns></returns>
-    public virtual IEnumerable<string> GetCncVariableKeys (IMachineModule machineModule)
+    public override IEnumerable<string> GetCncVariableKeys (IMachineModule machineModule)
     {
       var result = new List<string> ();
       if (!string.IsNullOrEmpty (machineModule.CycleVariable)) {
@@ -121,39 +66,5 @@ namespace Pulse.PluginImplementation.Cnc
       }
       return result;
     }
-
-    /// <summary>
-    /// No detection method is returned
-    /// </summary>
-    /// <param name="machineModule"></param>
-    /// <returns></returns>
-    public virtual DetectionMethod? GetDefaultDetectionMethod (IMachineModule machineModule) => null;
-
-    /// <summary>
-    /// Is a machine filter required ? (to override)
-    /// </summary>
-    /// <returns></returns>
-    protected abstract bool IsMachineFilterRequired ();
-
-    /// <summary>
-    /// Get include path implementation (default: return null, nothing)
-    /// </summary>
-    /// <param name="extensionName"></param>
-    /// <returns></returns>
-    public virtual string GetIncludePath (string extensionName) => null;
-
-    /// <summary>
-    /// Get include XM implementation (default: return null, nothing)
-    /// </summary>
-    /// <param name="extensionName"></param>
-    /// <returns></returns>
-    public virtual Tuple<string, Dictionary<string, string>> GetIncludedXmlTemplate (string extensionName) => null;
-
-    /// <summary>
-    /// <see cref="ICncFileRepoExtension"/>
-    /// </summary>
-    /// <param name="extensionName"></param>
-    /// <returns></returns>
-    public virtual string GetExtensionAsXmlString (string extensionName) => null;
   }
 }
