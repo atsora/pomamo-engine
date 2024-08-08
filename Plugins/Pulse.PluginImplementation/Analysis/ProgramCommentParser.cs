@@ -46,7 +46,7 @@ namespace Pulse.PluginImplementation.Analysis
     /// </summary>
     /// <param name="regex"></param>
     /// <param name="programComment"></param>
-    public ProgramCommentParser (Regex regex, string programComment, IEnumerable<IRegexMatchToFileOpDataExtension> regexMatchToOpDatas, ISequenceCreatorExtension sequenceCreator = null)
+    public ProgramCommentParser (Regex regex, string programComment, IEnumerable<IRegexMatchToFileOpDataExtension> regexMatchToOpDatas = null, ISequenceCreatorExtension sequenceCreator = null)
     {
       m_regex = regex;
       m_programComment = programComment;
@@ -56,12 +56,14 @@ namespace Pulse.PluginImplementation.Analysis
 
     bool TryGetOpData (Match match, string dataName, out string opData)
     {
-      foreach (var regexMatchToOpData in m_regexMatchToOpDatas) {
-        try {
-          opData = regexMatchToOpData.GetOpData (match, dataName);
-          return true;
+      if (null != m_regexMatchToOpDatas) {
+        foreach (var regexMatchToOpData in m_regexMatchToOpDatas) {
+          try {
+            opData = regexMatchToOpData.GetOpData (match, dataName);
+            return true;
+          }
+          catch { }
         }
-        catch { }
       }
       opData = null;
       return false;

@@ -14,6 +14,7 @@ using Pulse.Extensions.Extension;
 using System.Text.RegularExpressions;
 using Pulse.PluginImplementation.Analysis;
 using System.Linq;
+using Lemoine.Extensions.Analysis.Detection;
 
 namespace Lemoine.Plugins.UnitTests
 {
@@ -38,7 +39,7 @@ namespace Lemoine.Plugins.UnitTests
           try {
             var regex = new Regex ("Part=(?<partName>[0-9A-Za-z]+) Op=(?<opName>[0-9A-Za-z]+) Qty=(?<qty>[0-9]+)");
             {
-              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op123 Qty=2");
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op123 Qty=2", new List<IRegexMatchToFileOpDataExtension> ());
               var operation = programCommentParser.GetOperation ();
               ModelDAOHelper.DAOFactory.Flush ();
               Assert.That (operation, Is.Not.Null);
@@ -53,7 +54,7 @@ namespace Lemoine.Plugins.UnitTests
               Assert.That (part.Name, Is.EqualTo ("P123"));
             }
             {
-              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op123 Qty=2");
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op123 Qty=2", new List<IRegexMatchToFileOpDataExtension> ());
               var operation = programCommentParser.GetOperation ();
               ModelDAOHelper.DAOFactory.Flush ();
               Assert.That (operation, Is.Not.Null);
@@ -69,7 +70,7 @@ namespace Lemoine.Plugins.UnitTests
             }
             var regex2 = new Regex ("Part=(?<partCode>[0-9A-Za-z]+) Op=(?<opCode>[0-9A-Za-z]+) Qty=(?<qty1>[0-9]+)/(?<qty2>\\d+)");
             {
-              var programCommentParser = new ProgramCommentParser (regex2, "Part=P234 Op=Op234 Qty=2/3");
+              var programCommentParser = new ProgramCommentParser (regex2, "Part=P234 Op=Op234 Qty=2/3", new List<IRegexMatchToFileOpDataExtension> ());
               var operation = programCommentParser.GetOperation ();
               ModelDAOHelper.DAOFactory.Flush ();
               Assert.That (operation, Is.Not.Null);
@@ -84,7 +85,7 @@ namespace Lemoine.Plugins.UnitTests
               Assert.That (part.Code, Is.EqualTo ("P234"));
             }
             {
-              var programCommentParser = new ProgramCommentParser (regex2, "Part=P234 Op=Op234 Qty=2/3");
+              var programCommentParser = new ProgramCommentParser (regex2, "Part=P234 Op=Op234 Qty=2/3", new List<IRegexMatchToFileOpDataExtension> ());
               var operation = programCommentParser.GetOperation ();
               ModelDAOHelper.DAOFactory.Flush ();
               Assert.That (operation, Is.Not.Null);
@@ -114,7 +115,7 @@ namespace Lemoine.Plugins.UnitTests
           try {
             var regex = new Regex ("Part=(?<partName>\\w+) Op=(?<op1Name>\\w+)/(?<op2Name>\\w+) Qty=(?<qty1>\\d+)/(?<qty2>\\d+)");
             {
-              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2");
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2", new List<IRegexMatchToFileOpDataExtension> ());
               var operation = programCommentParser.GetOperation ();
               ModelDAOHelper.DAOFactory.Flush ();
               Assert.That (operation, Is.Not.Null);
@@ -134,7 +135,7 @@ namespace Lemoine.Plugins.UnitTests
               Assert.That (part.Name, Is.EqualTo ("P123"));
             }
             {
-              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2");
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2", new List<IRegexMatchToFileOpDataExtension> ());
               var operation = programCommentParser.GetOperation ();
               ModelDAOHelper.DAOFactory.Flush ();
               Assert.That (operation, Is.Not.Null);
@@ -169,7 +170,7 @@ namespace Lemoine.Plugins.UnitTests
           try {
             var regex = new Regex ("Part=(?<partName>\\w+) Op=(?<op1Name>\\w+)/(?<op2Name>\\w+) Qty=(?<qty1>\\d+)/(?<qty2>\\d+)");
             {
-              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2") {
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2", new List<IRegexMatchToFileOpDataExtension> ()) {
                 CreateSequences = true
               };
               var operation = programCommentParser.GetOperation ();
@@ -194,7 +195,7 @@ namespace Lemoine.Plugins.UnitTests
               Assert.That (operation.Sequences.Last ().Name, Is.EqualTo ("Op2"));
             }
             {
-              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2") {
+              var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2", new List<IRegexMatchToFileOpDataExtension> ()) {
                 CreateSequences = true
               };
               var operation = programCommentParser.GetOperation ();
