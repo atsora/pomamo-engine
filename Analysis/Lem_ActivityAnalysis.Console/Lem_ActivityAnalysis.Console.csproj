@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
     <ProjectReference Include="..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
     <ProjectReference Include="..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
+    <ProjectReference Include="..\..\Plugins\Pulse.PluginImplementation\Pulse.PluginImplementation.csproj" />
     <ProjectReference Include="..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
     <ProjectReference Include="..\..\Web\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" />
   </ItemGroup>

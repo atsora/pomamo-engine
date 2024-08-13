@@ -55,7 +55,7 @@ namespace Lem_Stamper.Console
     [Option ('i', "input", HelpText = "Input NC program path")]
     public string Input { get; set; } = "";
 
-    [Option ('o', "output", HelpText = "Output directory path")]
+    [Option ('o', "output", Required = false, HelpText = "Output directory path")]
     public string Output { get; set; } = "";
 
     /// <summary>

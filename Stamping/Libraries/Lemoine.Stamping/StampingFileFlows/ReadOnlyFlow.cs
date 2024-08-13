@@ -35,6 +35,10 @@ namespace Lemoine.Stamping.StampingFileFlows
     /// </summary>
     public ReadOnlyFlow (string inputFilePath, string outputFilePath)
     {
+      if (!string.IsNullOrWhiteSpace (outputFilePath)) {
+        log.Warn ($"ReadOnlyFlow: not an empty output file path {outputFilePath}");
+      } 
+
       m_inputFilePath = inputFilePath;
       m_outputFilePath = outputFilePath;
     }

@@ -38,6 +38,11 @@ namespace Lemoine.Stamping.StampingFileFlows
     /// </summary>
     public RemoveOnSuccessMoveOnFailure (string inputFilePath, string outputFilePath)
     {
+      if (string.IsNullOrWhiteSpace (outputFilePath)) {
+        log.Error ($"DirectFileFlow: empty outputFilePath");
+        throw new ArgumentException ("Empty string", "outputFilePath");
+      }
+
       m_inputFilePath = inputFilePath;
       m_outputFilePath = outputFilePath;
       m_tempFilePath = Path.GetTempFileName ();

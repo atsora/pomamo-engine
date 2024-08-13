@@ -40,7 +40,7 @@ namespace Pomamo.Stamping.FileDetection
     public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", TimeSpan? operationMachiningDuration = null, int operationId = 0, CancellationToken cancellationToken = default)
     {
       try {
-        if (!Directory.Exists (outputFolder)) {
+        if (!string.IsNullOrWhiteSpace (outputFolder) && !Directory.Exists (outputFolder)) {
           Directory.CreateDirectory (outputFolder);
         }
         cancellationToken.ThrowIfCancellationRequested ();
@@ -65,9 +65,12 @@ namespace Pomamo.Stamping.FileDetection
         process.StartInfo.RedirectStandardError = false;
         process.StartInfo.RedirectStandardOutput = false;
         process.StartInfo.CreateNoWindow = true;
-        var arguments = $"-i \"{inputFile}\" -o \"{outputFolder}\" -n \"{configName}\"";
+        var arguments = $"-i \"{inputFile}\" -n \"{configName}\"";
         if (!string.IsNullOrEmpty (machineName)) {
           arguments += $" -s MachineName={machineName}";
+        }
+        if (!string.IsNullOrWhiteSpace (outputFolder)) {
+          arguments += $" -o \"{outputFolder}\"";
         }
         if (operationMachiningDuration is not null) {
           arguments += $" -s OperationMachiningDuration={operationMachiningDuration}";

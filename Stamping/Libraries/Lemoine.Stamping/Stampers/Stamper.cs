@@ -76,6 +76,10 @@ namespace Lemoine.Stamping.Stampers
     public Stamper (string sourceFilePath, string destinationFilePath)
       : this (new StreamReader (sourceFilePath), new StreamWriter (destinationFilePath))
     {
+      if (string.IsNullOrWhiteSpace (destinationFilePath)) {
+        log.Error ($"Stamper: empty destinationFilePath");
+        throw new ArgumentException ("Empty string", "destinationFilePath");
+      }
     }
 
     /// <summary>
