@@ -43,8 +43,8 @@ namespace Lemoine.Stamping.Stampers
     /// <summary>
     /// Default constructor
     /// </summary>
-    /// <param name="stamperParametersProvider"></param>
-    public ReadOnlyStamper (IStampingFileFlow stamperFileFlow)
+    /// <param name="stamperParametersProvider">To give this constructor a higher priority in dependency injection</param>
+    public ReadOnlyStamper (IStampingFileFlow stamperFileFlow, IStamperParametersProvider? stamperParametersProvider = null)
       : this (stamperFileFlow.StamperInputFilePath)
     {
     }

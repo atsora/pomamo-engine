@@ -31,7 +31,7 @@ namespace Pomamo.Stamping.FileDetection
     static readonly string STAMPER_OPTIONS_KEY = "Stamping.BasicNcFileStamper.StamperOptions";
     static readonly string STAMPER_OPTIONS_DEFAULT = "";
 
-    static readonly ILog log = LogManager.GetLogger (typeof (PprFileStamper).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (BasicNcFileStamper).FullName);
 
     /// <summary>
     /// Run the stamping process
@@ -39,9 +39,15 @@ namespace Pomamo.Stamping.FileDetection
     /// <returns>exit code</returns>
     public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", TimeSpan? operationMachiningDuration = null, int operationId = 0, CancellationToken cancellationToken = default)
     {
+      string arguments = "";
       try {
-        if (!string.IsNullOrWhiteSpace (outputFolder) && !Directory.Exists (outputFolder)) {
-          Directory.CreateDirectory (outputFolder);
+        if (!string.IsNullOrEmpty (outputFolder) && !Directory.Exists (outputFolder)) {
+          try {
+            Directory.CreateDirectory (outputFolder);
+          }
+          catch (Exception ex1) {
+            log.Fatal ($"RunStampingProcessFromConfigName: CreateDirectory {outputFolder} failed", ex1);
+          }
         }
         cancellationToken.ThrowIfCancellationRequested ();
 
@@ -65,7 +71,7 @@ namespace Pomamo.Stamping.FileDetection
         process.StartInfo.RedirectStandardError = false;
         process.StartInfo.RedirectStandardOutput = false;
         process.StartInfo.CreateNoWindow = true;
-        var arguments = $"-i \"{inputFile}\" -n \"{configName}\"";
+        arguments = $"-i \"{inputFile}\" -n \"{configName}\"";
         if (!string.IsNullOrEmpty (machineName)) {
           arguments += $" -s MachineName={machineName}";
         }
@@ -95,12 +101,12 @@ namespace Pomamo.Stamping.FileDetection
           Thread.Sleep (100);
         }
         if (process.ExitCode != 0) {
-          log.Error ($"RunStampingProcess: exitCode={process.ExitCode}");
+          log.Error ($"RunStampingProcess: exitCode={process.ExitCode} for arguments={arguments}");
         }
         return process.ExitCode;
       }
       catch (Exception ex) {
-        log.Error ($"RunStampingProcess: exception {ex}");
+        log.Error ($"RunStampingProcess: exception for arguments={arguments}", ex);
         throw;
       }
     }

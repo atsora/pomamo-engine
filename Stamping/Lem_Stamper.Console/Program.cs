@@ -89,13 +89,19 @@ namespace Lem_Stamper.Console
       var assemblyLoader = new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader ();
 
       StampingConfig stampingConfig;
-      if (!string.IsNullOrWhiteSpace (options.Output) && !Directory.Exists (options.Output)) {
-        log.Info ($"Main: create directory {options.Output}");
-        Directory.CreateDirectory (options.Output);
+      var outputPath = options.Output?.Trim ()?.Trim ('"');
+      if (!string.IsNullOrWhiteSpace (outputPath) && !Directory.Exists (outputPath)) {
+        log.Info ($"Main: create directory {outputPath}");
+        try {
+          Directory.CreateDirectory (outputPath);
+        }
+        catch (Exception ex1) {
+          log.Fatal ($"Main: exception in creating directoring {outputPath}", ex1);
+        }
       }
-      var outputFilePath = string.IsNullOrWhiteSpace (options.Output)
+      var outputFilePath = string.IsNullOrWhiteSpace (outputPath)
         ? ""
-        : Path.Combine (options.Output, Path.GetFileName (options.Input));
+        : Path.Combine (outputPath, Path.GetFileName (options.Input));
       try {
         var stampingConfigFactory = GetStampingConfigFactory (options);
         stampingConfig = stampingConfigFactory.CreateStampingConfig ();
