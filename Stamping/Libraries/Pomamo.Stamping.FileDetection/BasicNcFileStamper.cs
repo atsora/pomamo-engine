@@ -11,6 +11,8 @@ using Lemoine.Threading;
 using Lemoine.Core.Log;
 using Lemoine.Info;
 using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Pomamo.Stamping.FileDetection
 {
@@ -37,7 +39,7 @@ namespace Pomamo.Stamping.FileDetection
     /// Run the stamping process
     /// </summary>
     /// <returns>exit code</returns>
-    public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", TimeSpan? operationMachiningDuration = null, int operationId = 0, CancellationToken cancellationToken = default)
+    public static int RunStampingProcessFromConfigName (string inputFile, string outputFolder, string configName, string machineName = "", TimeSpan? operationMachiningDuration = null, int operationId = 0, IDictionary<string, string>? stampingData = null, CancellationToken cancellationToken = default)
     {
       string arguments = "";
       try {
@@ -84,7 +86,11 @@ namespace Pomamo.Stamping.FileDetection
         if (0 < operationId) {
           arguments += $" -s OperationId={operationId}";
         }
-        // TODO: component name
+        if (null != stampingData) {
+          foreach (var kv in stampingData) {
+            arguments += $" -s {kv.Key}={kv.Value}";
+          }
+        }
         var additionalOptions = Lemoine.Info.ConfigSet.LoadAndGet (STAMPER_OPTIONS_KEY, STAMPER_OPTIONS_DEFAULT);
         if (!string.IsNullOrEmpty (additionalOptions)) {
           arguments += " " + additionalOptions;
