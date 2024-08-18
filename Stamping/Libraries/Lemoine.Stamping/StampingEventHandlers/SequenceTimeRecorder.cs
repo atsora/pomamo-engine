@@ -208,7 +208,7 @@ namespace Lemoine.Stamping.StampingEventHandlers
     /// </summary>
     public void EndProgram (bool edit, int level, bool endOfFile)
     {
-      if (edit) {
+      if (edit || (0 == level)) {
         RecordSequenceDuration ();
       }
       this.Next?.EndProgram (edit, level, endOfFile);

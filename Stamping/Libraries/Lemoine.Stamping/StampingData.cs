@@ -147,7 +147,12 @@ namespace Lemoine.Stamping
     {
       get => GetTimeSpan ("SequenceDuration");
       set {
-        Add ("SequenceDuration", value);
+        if (value.HasValue) {
+          Add ("SequenceDuration", value);
+        }
+        else {
+          Remove ("SequenceDuration");
+        }
       }
     }
 
@@ -181,7 +186,12 @@ namespace Lemoine.Stamping
         if (!value.Equals (MachiningUnit.Mm) && !value.Equals (MachiningUnit.In)) {
           log.Warn ($"Unit.set: Set unit {value} is not Mm or In, which is not recommended");
         }
-        Add ("Unit", value);
+        if (value.HasValue) {
+          Add ("Unit", value);
+        }
+        else {
+          Remove ("Unit");
+        }
       }
     }
 
