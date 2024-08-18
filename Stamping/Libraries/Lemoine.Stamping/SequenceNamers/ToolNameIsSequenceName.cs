@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -36,8 +37,8 @@ namespace Lemoine.Stamping.SequenceNamers
     {
       var toolName = m_stampingData.GetString ("ToolName");
       if (toolName is null) {
-        var toolDiameter = m_stampingData.Get<double?> ("ToolDiameter");
-        var toolRadius = m_stampingData.Get<double?> ("ToolRadius");
+        var toolDiameter = m_stampingData.GetDouble ("ToolDiameter");
+        var toolRadius = m_stampingData.GetDouble ("ToolRadius");
         if (toolDiameter.HasValue) {
           if (toolRadius.HasValue) {
             return $"({toolDiameter.Value} {toolRadius.Value})";

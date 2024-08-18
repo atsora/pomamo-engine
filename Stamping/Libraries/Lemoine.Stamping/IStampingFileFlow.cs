@@ -20,6 +20,7 @@ namespace Lemoine.Stamping
 
     /// <summary>
     /// Output file path if any
+    /// Else return null String.Empty
     /// </summary>
     public string OutputFilePath { get; }
 

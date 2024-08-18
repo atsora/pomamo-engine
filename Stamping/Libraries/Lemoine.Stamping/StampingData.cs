@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -111,7 +112,7 @@ namespace Lemoine.Stamping
     /// </summary>
     public TimeSpan? OperationMachiningDuration
     {
-      get => Get<TimeSpan> ("OperationMachiningDuration");
+      get => GetTimeSpan ("OperationMachiningDuration");
       set {
         Add ("OperationMachiningDuration", value);
       }
@@ -144,7 +145,7 @@ namespace Lemoine.Stamping
     /// </summary>
     public TimeSpan? SequenceDuration
     {
-      get => Get<TimeSpan> ("SequenceDuration");
+      get => GetTimeSpan ("SequenceDuration");
       set {
         Add ("SequenceDuration", value);
       }
@@ -168,7 +169,14 @@ namespace Lemoine.Stamping
     /// </summary>
     public MachiningUnit? Unit
     {
-      get => Get<MachiningUnit?> ("Unit");
+      get {
+        if (TryGet<MachiningUnit> ("Unit", out var v)) {
+          return v;
+        }
+        else {
+          return null;
+        }
+      }
       set {
         if (!value.Equals (MachiningUnit.Mm) && !value.Equals (MachiningUnit.In)) {
           log.Warn ($"Unit.set: Set unit {value} is not Mm or In, which is not recommended");
@@ -253,12 +261,30 @@ namespace Lemoine.Stamping
     /// <param name="key"></param>
     /// <returns></returns>
     public T? Get<T> (string key)
+      where T: class
     {
       if (TryGet<T> (key, out var v)) {
         return v;
       }
       else {
-        return default (T?);
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Get the data for a specified key
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public T? GetStruct<T> (string key)
+      where T : struct
+    {
+      if (TryGet<T> (key, out var v)) {
+        return v;
+      }
+      else {
+        return null;
       }
     }
 
@@ -270,6 +296,36 @@ namespace Lemoine.Stamping
     public string? GetString (string key)
     {
       if (TryGet<string> (key, out var v)) {
+        return v;
+      }
+      else {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Get a time span
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public TimeSpan? GetTimeSpan (string key)
+    {
+      if (TryGet<TimeSpan> (key, out var v)) {
+        return v;
+      }
+      else {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Get a double
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public double? GetDouble (string key)
+    {
+      if (TryGet<double> (key, out var v)) {
         return v;
       }
       else {

@@ -158,8 +158,17 @@ namespace Lemoine.Stamping.StampingEventHandlers
         var isoFile = ModelDAO.ModelDAOHelper.ModelFactory.CreateIsoFile (fileName);
         isoFile.SourceDirectory = directoryName ?? ""; // SourceDirectory is mandatory
         if (m_stampingData.Destination is null) {
-          log.Warn ($"CreateIsoFile: stamping directory is not set");
-          isoFile.StampingDirectory = "";
+          if (m_stampingData.Source is null) {
+            log.Error ($"CreateIsoFile: no stamping directory is set (both source and destination)");
+            isoFile.StampingDirectory = "-";
+          }
+          else {
+            var sourceDirectoryName = System.IO.Path.GetDirectoryName (m_stampingData.Source);
+            if (log.IsInfoEnabled) {
+              log.Info ($"CreateIsoFile: stamping destination directory is not set (read-only), use the source directory {sourceDirectoryName}");
+            }
+            isoFile.StampingDirectory = sourceDirectoryName;
+          }
         }
         else { // m_stampingData.Destination is not null
           var destinationDirectoryName = System.IO.Path.GetDirectoryName (m_stampingData.Destination);

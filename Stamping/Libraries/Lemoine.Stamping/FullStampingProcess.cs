@@ -60,7 +60,9 @@ namespace Lemoine.Stamping
       cancellationToken.ThrowIfCancellationRequested ();
 
       m_stampingData.Source = m_stampingFileFlow.InputFilePath; // Adds also FileName
-      m_stampingData.Destination = m_stampingFileFlow.OutputFilePath;
+      if (!string.IsNullOrEmpty (m_stampingFileFlow.OutputFilePath)) {
+        m_stampingData.Destination = m_stampingFileFlow.OutputFilePath;
+      }
 
       m_stamper.LineFeed = m_stampingParser.LineFeed;
 

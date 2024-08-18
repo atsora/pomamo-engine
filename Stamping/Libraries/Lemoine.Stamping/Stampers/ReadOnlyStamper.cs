@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -42,15 +43,6 @@ namespace Lemoine.Stamping.Stampers
 
     /// <summary>
     /// Default constructor
-    /// </summary>
-    /// <param name="stamperParametersProvider">To give this constructor a higher priority in dependency injection</param>
-    public ReadOnlyStamper (IStampingFileFlow stamperFileFlow, IStamperParametersProvider? stamperParametersProvider = null)
-      : this (stamperFileFlow.StamperInputFilePath)
-    {
-    }
-
-    /// <summary>
-    /// Alternative constructor
     /// </summary>
     /// <param name="stamperParametersProvider"></param>
     public ReadOnlyStamper (IStamperParametersProvider stamperParametersProvider)

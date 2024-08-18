@@ -759,7 +759,7 @@ type ParseEventManager(ncProgramReaderWriter: IStamper, stampingEventHandler: IS
           let newVector = Vector (position, pos) in
           if vector.IsSome then recordNewVector newVector
           position <- pos
-          if newVector.Empty then log.Error $"AddBlock: newVector {newVector} is empty"
+          if newVector.Empty && log.IsDebugEnabled then log.Debug $"AddBlock: newVector {newVector} is empty"
           vector <- Some newVector
       block
     end
