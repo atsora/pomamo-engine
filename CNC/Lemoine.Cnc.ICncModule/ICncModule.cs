@@ -42,10 +42,10 @@ namespace Lemoine.Cnc
       }
       else {
         string p;
-        p = Path.Combine (Lemoine.Info.PulseInfo.LocalConfigurationDirectory, "cnc_resources", $"acquisition-{module.CncAcquisitionId}", name);
+        p = Path.Combine (Lemoine.Info.PulseInfo.LocalConfigurationDirectory, "cnc_resources", "shared", name);
         if (File.Exists (p)) {
           if (log.IsDebugEnabled) {
-            log.Debug ($"GetCncResourcePath: consider {p} with acquisition id");
+            log.Debug ($"GetCncResourcePath: consider {p} with program name");
           }
           return p;
         }
@@ -56,10 +56,10 @@ namespace Lemoine.Cnc
           }
           return p;
         }
-        p = Path.Combine (Lemoine.Info.PulseInfo.LocalConfigurationDirectory, "cnc_resources", "shared", name);
+        p = Path.Combine (Lemoine.Info.PulseInfo.LocalConfigurationDirectory, "cnc_resources", $"acquisition-{module.CncAcquisitionId}", name);
         if (File.Exists (p)) {
           if (log.IsDebugEnabled) {
-            log.Debug ($"GetCncResourcePath: consider {p} with program name");
+            log.Debug ($"GetCncResourcePath: consider {p} with acquisition id");
           }
           return p;
         }
