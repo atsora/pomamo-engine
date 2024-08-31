@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using Lemoine.Core.Log;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lemoine.FileRepository
 {
@@ -107,6 +108,10 @@ namespace Lemoine.FileRepository
     const string SYNCHRONIZATION_ERROR_FILE_NAME = "synchronization.error";
     const string SYNCHRONIZATION_WARN_FILE_NAME = "synchronization.warn";
     const string SYNCHRONIZATION_COMPLETION_FILE_NAME = "synchronization.completion";
+    const string SYNCHRONIZATION_IN_PROGRESS = "synchronization.inprogress";
+
+    const string IN_PROGRESS_FILE_TIMEOUT_KEY = "FileRepo.Synchronization.InProgressTimeout";
+    static readonly TimeSpan IN_PROGRESS_FILE_TIMEOUT_DEFAULT = TimeSpan.FromMinutes (5);
 
     #region Members
     IFileRepoClient m_implementation = null;
@@ -552,10 +557,21 @@ namespace Lemoine.FileRepository
       }
       token.ThrowIfCancellationRequested ();
 
+      // Missing local directories
+      var missingDirectories = srcDirectories
+        .Where (d => !destDirectories.Contains (d));
+      foreach (var missingDirectory in missingDirectories) {
+        try {
+          var localDirectoryPath = Path.Combine (localDirectory, missingDirectory);
+          Directory.CreateDirectory (localDirectoryPath);
+        }
+        catch (Exception ex) {
+          log.Error ($"SynchronizeDirectoriesOnly: exception while creating missing directory {missingDirectory}", ex);
+        }
+      }
+
       // Synchronize sub-directories
-      var toSynchronizeDirectories = destDirectories
-        .Where (d => srcDirectories.Contains (d));
-      foreach (var toSynchronizeDirectory in toSynchronizeDirectories) {
+      foreach (var toSynchronizeDirectory in srcDirectories) {
         token.ThrowIfCancellationRequested ();
         try {
           var localDirectoryPath = Path.Combine (localDirectory, toSynchronizeDirectory);
@@ -588,7 +604,7 @@ namespace Lemoine.FileRepository
     /// <param name="warnings"></param>
     /// <param name="cancellationToken">Optional</param>
     /// <returns></returns>
-    static SynchronizationAdvancedStatus SynchronizeDirectory (string distantDirectory, string localDirectory, Func<IEnumerable<string>, string, bool> filter, ref IList<string> errors, ref IList<string> warnings, CancellationToken? cancellationToken = null)
+    static SynchronizationAdvancedStatus SynchronizeDirectory (string distantDirectory, string localDirectory, Func<IEnumerable<string>, string, bool> filter, ref IList<string> errors, ref IList<string> warnings, CancellationToken cancellationToken = default)
     {
       log.Info ($"SynchronizeDirectory: synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}");
       SynchronizationAdvancedStatus result = SynchronizationAdvancedStatus.None;
@@ -616,7 +632,7 @@ namespace Lemoine.FileRepository
     /// <param name="localDirectory"></param>
     /// <param name="cancellationToken">Optional</param>
     /// <returns></returns>
-    public static SynchronizationAdvancedStatus TrySynchronize (string distantDirectory, string localDirectory, CancellationToken? cancellationToken = null)
+    public static SynchronizationAdvancedStatus TrySynchronize (string distantDirectory, string localDirectory, CancellationToken cancellationToken = default)
     {
       return TrySynchronize (distantDirectory, localDirectory, null, cancellationToken: cancellationToken);
     }
@@ -629,9 +645,9 @@ namespace Lemoine.FileRepository
     /// <param name="filter">If not null, filter the files to synchronize</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static SynchronizationAdvancedStatus TrySynchronize (string distantDirectory, string localDirectory, Func<IEnumerable<string>, string, bool> filter, CancellationToken? cancellationToken = null)
+    public static SynchronizationAdvancedStatus TrySynchronize (string distantDirectory, string localDirectory, Func<IEnumerable<string>, string, bool> filter, CancellationToken cancellationToken = default)
     {
-      var token = cancellationToken ?? CancellationToken.None;
+      var token = cancellationToken;
 
       if (null == Instance.m_implementation) {
         log.Error ("TrySynchronize: no implementation was set => return FAILURE");
@@ -641,70 +657,138 @@ namespace Lemoine.FileRepository
       log.Info ($"TrySynchronize: synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}");
       IList<string> errors = new List<string> ();
       IList<string> warnings = new List<string> ();
+      var inProgressPath = Path.Combine (localDirectory, SYNCHRONIZATION_IN_PROGRESS);
 
-      string completionFilePath = Path.Combine (localDirectory, SYNCHRONIZATION_COMPLETION_FILE_NAME);
-      bool previousCompletion = File.Exists (completionFilePath);
       try {
-        if (File.Exists (completionFilePath)) {
-          File.Delete (completionFilePath);
+        var inProgressTimeout = Lemoine.Info.ConfigSet
+          .LoadAndGet (IN_PROGRESS_FILE_TIMEOUT_KEY, IN_PROGRESS_FILE_TIMEOUT_DEFAULT);
+        if (File.Exists (inProgressPath)) {
+          var creationDateTime = new FileInfo (inProgressPath).CreationTimeUtc;
+          if (creationDateTime < DateTime.UtcNow.Add (inProgressTimeout)) {
+            if (log.IsInfoEnabled) {
+              log.Info ($"TrySynchronize: in progress file is too old (creation={creationDateTime}), remove it");
+            }
+            try {
+              File.Delete (inProgressPath);
+            }
+            catch (Exception ex) {
+              log.Fatal ($"TrySynchronize: in progress file {inProgressPath} could not be removed", ex);
+              return SynchronizationAdvancedStatus.Error;
+            }
+          }
+          else { // Wait before it is removed
+            if (Lemoine.Threading.WaitMethods.Sleep (inProgressTimeout, token, () => !File.Exists (inProgressPath))) {
+              token.ThrowIfCancellationRequested ();
+              log.Info ($"TrySynchronize: in progress file {inProgressPath} was removed, continue");
+            }
+            else {
+              log.Warn ($"TrySyncronize: timeout was reached while waiting {inProgressPath} to be removed, remove it manually");
+              try {
+                File.Delete (inProgressPath);
+              }
+              catch (Exception ex) {
+                log.Fatal ($"TrySynchronize: in progress file {inProgressPath} could not be removed", ex);
+                return SynchronizationAdvancedStatus.Error;
+              }
+            }
+          }
         }
-      }
-      catch (Exception ex) {
-        log.Error ($"TrySynchronize: completion file {completionFilePath} could not be removed", ex);
-      }
-      token.ThrowIfCancellationRequested ();
-      string warnFilePath = null;
-      try {
-        warnFilePath = Path.Combine (localDirectory, SYNCHRONIZATION_WARN_FILE_NAME);
-        File.Delete (warnFilePath);
-      }
-      catch (Exception ex) {
-        log.Error ($"TrySynchronize: warn file {warnFilePath} could not be removed", ex);
-      }
-      token.ThrowIfCancellationRequested ();
-      string errorFilePath = null;
-      try {
-        errorFilePath = Path.Combine (localDirectory, SYNCHRONIZATION_ERROR_FILE_NAME);
-        File.Delete (errorFilePath);
-      }
-      catch (Exception ex) {
-        log.Error ($"TrySynchronize: error file {errorFilePath} could not be removed", ex);
-      }
+        token.ThrowIfCancellationRequested ();
+        try {
+          using (File.Create (inProgressPath)) { }
+        }
+        catch (Exception ex) {
+          log.Error ($"TrySynchronize: error while creating in progress file {inProgressPath}, is it requrested by another process/thread? Try again in 500ms", ex);
+          System.Threading.Thread.Sleep (500);
+          if (File.Exists (inProgressPath)) {
+            log.Warn ($"TrySynchronize: in progress path was created in the meantime, probably by another process/thread, give up for now (the synchronization was done by another process/thread)");
+            return SynchronizationAdvancedStatus.PossiblyValid;
+          }
+          else { // ! File.Exists
+            try {
+              using (File.Create (inProgressPath)) { }
+            }
+            catch (Exception ex1) {
+              log.Error ($"TrySynchronize: error while creating in progress file {inProgressPath} for the second time, give up", ex1);
+              return SynchronizationAdvancedStatus.PossiblyValid;
+            }
+          }
+        }
 
-      token.ThrowIfCancellationRequested ();
-      var advancedStatus = SynchronizeDirectory (distantDirectory, localDirectory, filter, ref errors, ref warnings);
-      if (!advancedStatus.HasFlag (SynchronizationAdvancedStatus.Error)
-        || (previousCompletion && !advancedStatus.HasFlag (SynchronizationAdvancedStatus.NotValid))) {
-        advancedStatus |= SynchronizationAdvancedStatus.PossiblyValid;
-      }
-      if (advancedStatus.HasFlag (SynchronizationAdvancedStatus.PossiblyValid)) {
+        var completionFilePath = Path.Combine (localDirectory, SYNCHRONIZATION_COMPLETION_FILE_NAME);
+        bool previousCompletion = File.Exists (completionFilePath);
         try {
-          File.WriteAllText (completionFilePath, "");
+          if (File.Exists (completionFilePath)) {
+            File.Delete (completionFilePath);
+          }
         }
         catch (Exception ex) {
-          log.Error ($"TrySynchronize: completion file {completionFilePath} could not be written", ex);
+          log.Error ($"TrySynchronize: completion file {completionFilePath} could not be removed", ex);
         }
-      }
-      if (warnings.Any ()) {
-        log.Warn ($"TrySynchronize: there is at least one warning in the synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}");
+        token.ThrowIfCancellationRequested ();
+        string warnFilePath = null;
         try {
-          File.WriteAllLines (warnFilePath, warnings.ToArray ());
+          warnFilePath = Path.Combine (localDirectory, SYNCHRONIZATION_WARN_FILE_NAME);
+          File.Delete (warnFilePath);
         }
         catch (Exception ex) {
-          log.Error ($"TrySynchronize: warn file {warnFilePath} could not be written", ex);
+          log.Error ($"TrySynchronize: warn file {warnFilePath} could not be removed", ex);
         }
-      }
-      if (errors.Any ()) {
-        log.Error ($"TrySynchronize: there is at least one error in the synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}, return SYNCHRONIZATION_FAILED");
+        token.ThrowIfCancellationRequested ();
+        string errorFilePath = null;
         try {
-          File.WriteAllLines (errorFilePath, errors.ToArray ());
+          errorFilePath = Path.Combine (localDirectory, SYNCHRONIZATION_ERROR_FILE_NAME);
+          File.Delete (errorFilePath);
         }
         catch (Exception ex) {
-          log.Error ($"TrySynchronize: error file {errorFilePath} could not be written", ex);
+          log.Error ($"TrySynchronize: error file {errorFilePath} could not be removed", ex);
+        }
+
+        token.ThrowIfCancellationRequested ();
+        var advancedStatus = SynchronizeDirectory (distantDirectory, localDirectory, filter, ref errors, ref warnings);
+        if (!advancedStatus.HasFlag (SynchronizationAdvancedStatus.Error)
+          || (previousCompletion && !advancedStatus.HasFlag (SynchronizationAdvancedStatus.NotValid))) {
+          advancedStatus |= SynchronizationAdvancedStatus.PossiblyValid;
+        }
+        if (advancedStatus.HasFlag (SynchronizationAdvancedStatus.PossiblyValid)) {
+          try {
+            File.WriteAllText (completionFilePath, "");
+          }
+          catch (Exception ex) {
+            log.Error ($"TrySynchronize: completion file {completionFilePath} could not be written", ex);
+          }
+        }
+        if (warnings.Any ()) {
+          log.Warn ($"TrySynchronize: there is at least one warning in the synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}");
+          try {
+            File.WriteAllLines (warnFilePath, warnings.ToArray ());
+          }
+          catch (Exception ex) {
+            log.Error ($"TrySynchronize: warn file {warnFilePath} could not be written", ex);
+          }
+        }
+        if (errors.Any ()) {
+          log.Error ($"TrySynchronize: there is at least one error in the synchronization of distantDirectory={distantDirectory} to localDirectory={localDirectory}, return SYNCHRONIZATION_FAILED");
+          try {
+            File.WriteAllLines (errorFilePath, errors.ToArray ());
+          }
+          catch (Exception ex) {
+            log.Error ($"TrySynchronize: error file {errorFilePath} could not be written", ex);
+          }
+          return advancedStatus;
         }
         return advancedStatus;
       }
-      return advancedStatus;
+      finally {
+        try {
+          if (File.Exists (inProgressPath)) {
+            File.Delete (inProgressPath);
+          }
+        }
+        catch (Exception ex) {
+          log.Error ($"TrySynchronize: exception in removing {inProgressPath}", ex);
+        }
+      }
     }
 
     /// <summary>

@@ -109,7 +109,7 @@ namespace Lem_CncConsole
 
       var copyDistantResources = false;
       if (copyDistantResources) { // May be for later
-        var resourceDir = new DirectoryInfo (Path.Combine (PulseInfo.LocalConfigurationDirectory, "cnc_resources"));
+        var resourceDir = new DirectoryInfo (Path.Combine (PulseInfo.LocalConfigurationDirectory, "cnc_resources", "shared"));
         if (!resourceDir.Exists) {
           resourceDir.Create ();
         }

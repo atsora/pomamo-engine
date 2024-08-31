@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -8,6 +9,7 @@ using System.IO;
 using Lemoine.Core.Log;
 using static Lemoine.FileRepository.FileRepoPath;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lemoine.FileRepository
 {
@@ -32,7 +34,7 @@ namespace Lemoine.FileRepository
       Debug.Assert (!string.IsNullOrEmpty (rootPath));
 
       if (string.IsNullOrEmpty (rootPath)) {
-        log.ErrorFormat ("FileRepoClientDirectory: empty root path {0}", rootPath);
+        log.Error ($"FileRepoClientDirectory: empty root path {rootPath}");
         throw new ArgumentNullException (nameof (rootPath), "the root path must be defined (not null or empty)");
       }
       m_rootPath = rootPath;
@@ -51,9 +53,7 @@ namespace Lemoine.FileRepository
           return true;
         }
         else {
-          log.ErrorFormat ("Test: " +
-                          "Root directory {0} cannot be found",
-                          m_rootPath);
+          log.Error ($"Test: Root directory {m_rootPath} cannot be found");
           return false;
         }
       }
@@ -71,31 +71,23 @@ namespace Lemoine.FileRepository
     /// <returns></returns>
     public ICollection<string> ListFilesInDirectory (string nspace, string path)
     {
-      string dir = GetOsPath (nspace, path);
-      IList<string> files = new List<string> ();
+      var sourceDirectoryPath = GetOsPath (nspace, path);
 
       try {
-        ICollection<string> filesFull = null;
-        if (Directory.Exists (dir)) {
-          filesFull = Directory.GetFiles (dir);
-        }
-        else {
-          log.ErrorFormat ("Directory {0} cannot be found", dir);
+        if (!Directory.Exists (sourceDirectoryPath)) {
+          log.Error ($"ListFilesInDirectory: directory {sourceDirectoryPath} cannot be found");
+          return new List<string> ();
         }
 
-        if (filesFull != null) {
-          foreach (string fileFull in filesFull) {
-            var fi = new FileInfo (fileFull);
-            files.Add (fi.Name);
-          }
-        }
+        return Directory
+          .GetFiles (sourceDirectoryPath)
+          .Select (x => new FileInfo (x).Name)
+          .ToList ();
       }
       catch (Exception ex) {
         log.Error ("ListFilesInDirectory: got exception", ex);
         throw;
       }
-
-      return files;
     }
 
     /// <summary>
@@ -106,31 +98,23 @@ namespace Lemoine.FileRepository
     /// <returns></returns>
     public ICollection<string> ListDirectoriesInDirectory (string nspace, string path)
     {
-      string dir = GetOsPath (nspace, path);
-      ICollection<string> directories = new List<string> ();
+      string sourceDirectoryPath = GetOsPath (nspace, path);
 
       try {
-        ICollection<string> directoriesFull = null;
-        if (Directory.Exists (dir)) {
-          directoriesFull = Directory.GetDirectories (dir);
-        }
-        else {
-          log.ErrorFormat ("Directory {0} cannot be found", dir);
+        if (!Directory.Exists (sourceDirectoryPath)) {
+          log.Error ($"ListDirectoriesInDirectory: directory {sourceDirectoryPath} cannot be found");
+          return new List<string> ();
         }
 
-        if (directoriesFull != null) {
-          foreach (string dirFull in directoriesFull) {
-            var di = new DirectoryInfo (dirFull);
-            directories.Add (di.Name);
-          }
-        }
+        return Directory
+          .GetDirectories (sourceDirectoryPath)
+          .Select (x => new DirectoryInfo (x).Name)
+          .ToList ();
       }
       catch (Exception ex) {
         log.Error ("ListDirectoriesInDirectory: got exception", ex);
         throw;
       }
-
-      return directories;
     }
 
     /// <summary>
@@ -153,11 +137,7 @@ namespace Lemoine.FileRepository
         throw new MissingFileException (nspace, path, ex);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetFile:" +
-                         "nspace={0} path={1} localPath={2} " +
-                         "got exception {3}",
-                         nspace, path, localPath,
-                         ex);
+        log.Error ($"GetFile: nspace={nspace} path={path} localPath={localPath} got exception", ex);
         throw;
       }
     }

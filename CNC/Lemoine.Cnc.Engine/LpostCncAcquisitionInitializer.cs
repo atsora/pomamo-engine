@@ -50,7 +50,7 @@ namespace Lemoine.CncEngine
     public void CopyDistantResources (CancellationToken cancellationToken)
     {
       // Directory for the copy of distant resources
-      var resourceDir = new DirectoryInfo (Path.Combine (PulseInfo.LocalConfigurationDirectory, "cnc_resources"));
+      var resourceDir = new DirectoryInfo (Path.Combine (PulseInfo.LocalConfigurationDirectory, "cnc_resources", "shared"));
       if (!resourceDir.Exists) {
         resourceDir.Create ();
       }

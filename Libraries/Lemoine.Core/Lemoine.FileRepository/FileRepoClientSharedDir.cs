@@ -1,10 +1,12 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Lemoine.Core.Log;
 using static Lemoine.FileRepository.FileRepoPath;
 
@@ -60,9 +62,7 @@ namespace Lemoine.FileRepository
           return true;
         }
         else {
-          log.ErrorFormat ("Test: " +
-                          "Root directory {0} cannot be found",
-                          m_rootPath);
+          log.Error ($"Test: Root directory {m_rootPath} cannot be found");
           return false;
         }
       }
@@ -80,31 +80,24 @@ namespace Lemoine.FileRepository
     /// <returns></returns>
     public ICollection<string> ListFilesInDirectory (string nspace, string path)
     {
-      string dir = GetOsPath (nspace, path);
+      var sourceDirectoryPath = GetOsPath (nspace, path);
       IList<string> files = new List<string> ();
 
       try {
-        ICollection<string> filesFull = null;
-        if (Directory.Exists (dir)) {
-          filesFull = Directory.GetFiles (dir);
-        }
-        else {
-          log.ErrorFormat ("Directory {0} cannot be found", dir);
+        if (!Directory.Exists (sourceDirectoryPath)) {
+          log.Error ($"ListFilesInDirectory: directory {sourceDirectoryPath} cannot be found");
+          return new List<string> ();
         }
 
-        if (filesFull != null) {
-          foreach (string fileFull in filesFull) {
-            var fi = new FileInfo (fileFull);
-            files.Add (fi.Name);
-          }
-        }
+        return Directory
+          .GetFiles (sourceDirectoryPath)
+          .Select (x => new FileInfo (x).Name)
+          .ToList ();
       }
       catch (Exception ex) {
         log.Error ("ListFilesInDirectory: got exception", ex);
         throw;
       }
-
-      return files;
     }
 
     /// <summary>
@@ -115,31 +108,23 @@ namespace Lemoine.FileRepository
     /// <returns></returns>
     public ICollection<string> ListDirectoriesInDirectory (string nspace, string path)
     {
-      string dir = GetOsPath (nspace, path);
-      ICollection<string> directories = new List<string> ();
+      var sourceDirectoryPath = GetOsPath (nspace, path);
 
       try {
-        ICollection<string> directoriesFull = null;
-        if (Directory.Exists (dir)) {
-          directoriesFull = Directory.GetDirectories (dir);
-        }
-        else {
-          log.ErrorFormat ("Directory {0} cannot be found", dir);
+        if (!Directory.Exists (sourceDirectoryPath)) {
+          log.Error ($"ListDirectoriesInDirectory: directory {sourceDirectoryPath} cannot be found");
+          return new List<string> ();
         }
 
-        if (directoriesFull != null) {
-          foreach (string dirFull in directoriesFull) {
-            var di = new DirectoryInfo (dirFull);
-            directories.Add (di.Name);
-          }
-        }
+        return Directory
+          .GetDirectories (sourceDirectoryPath)
+          .Select (x => new DirectoryInfo (x).Name)
+          .ToList ();
       }
       catch (Exception ex) {
         log.Error ("ListDirectoriesInDirectory: got exception", ex);
         throw;
       }
-
-      return directories;
     }
 
     /// <summary>
@@ -162,7 +147,7 @@ namespace Lemoine.FileRepository
       }
       catch (FileNotFoundException ex) {
         if (log.IsDebugEnabled) {
-          log.Debug ("GetString: FileNotFound exception", ex);
+          log.Debug ("GetFile: FileNotFound exception", ex);
         }
         throw new MissingFileException (nspace, path, ex);
       }
