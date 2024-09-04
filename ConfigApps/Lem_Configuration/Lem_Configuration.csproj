@@ -7,7 +7,7 @@
     <OutputType>WinExe</OutputType>
     <Platforms>x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
-    <AssemblyOriginatorKeyFile>..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
     <ApplicationIcon>Lem_Configuration.ico</ApplicationIcon>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
