@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <Platforms>x64</Platforms>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <ApplicationIcon>resources\lem_settings.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='VS'">
+    <StartAction>Project</StartAction>
+    <StartArguments>-lcr</StartArguments>
+    <StartProgram>..\..\..\..\..\..\build\ex\Lem_Settings.exe</StartProgram>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" />
+  </ItemGroup>
+
+    <!-- Plugin dependencies -->
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.DataRepository\Lemoine.DataRepository.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+  </ItemGroup>
+  
+  <!-- Additional items dependencies -->
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" />
+    <PackageReference Include="System.Resources.Extensions" />
+  </ItemGroup>
+
+  <!-- Projet dependencies -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Business\Lemoine.Extensions.Business.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions.Database\Lemoine.Extensions.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Extensions\Lemoine.Extensions.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\..\Web\Pulse.Extensions.Web\Pulse.Extensions.Web.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\library\Lemoine.Settings.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Lem_Settings.dll.options" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
+    <None Include="Lem_Settings.dll.log4net" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='VS'">
+    <!-- include plugins .dll files for tests (instead of ProjectReference) - projects must be compiled in sln -->
+    <None Include="..\configurators\ConfiguratorPlugins\bin\$(Configuration)\net8.0-windows\ConfiguratorPlugins.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\configurators\ConfiguratorAlarms\bin\$(Configuration)\net8.0-windows\ConfiguratorAlarms.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\wizards\WizardCreateMachine\bin\$(Configuration)\net8.0-windows\WizardCreateMachine.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\wizards\WizardMonitorMachine\bin\$(Configuration)\net8.0-windows\WizardMonitorMachine.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\wizards\WizardCreateStampingConfig\bin\$(Configuration)\net8.0-windows\WizardCreateStampingConfig.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+</Project>
