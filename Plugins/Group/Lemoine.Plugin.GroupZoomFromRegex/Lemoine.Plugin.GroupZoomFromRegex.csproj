@@ -19,16 +19,16 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="..\..\..\Packages\Group\groups_department_cell.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\groups_department_cell.json">
       <Link>groups_department_cell.json</Link>
     </None>
-    <None Include="..\..\..\Packages\Group\groups_department_machine_category.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\groups_department_machine_category.json">
       <Link>groups_department_machine_category.json</Link>
     </None>
-    <None Include="..\..\..\Packages\Group\groups_department_machine_category_cell.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\groups_department_machine_category_cell.json">
       <Link>groups_department_machine_category_cell.json</Link>
     </None>
-    <None Include="..\..\..\Packages\Group\groups_department_machine_category_subcategory.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\groups_department_machine_category_subcategory.json">
       <Link>groups_department_machine_category_subcategory.json</Link>
     </None>
   </ItemGroup>

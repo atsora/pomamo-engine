@@ -56,7 +56,6 @@ namespace Lemoine.Core.Hosting.ApplicationInitializer
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public Task InitializeApplicationAsync (CancellationToken cancellationToken = default)
     {
       try {

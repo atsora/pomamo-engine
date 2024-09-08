@@ -19,7 +19,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="..\..\..\Packages\Group\groups_department_machine_category_subcategory.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\groups_department_machine_category_subcategory.json">
       <Link>groups_department_machine_category_subcategory.json</Link>
     </None>
   </ItemGroup>

@@ -43,7 +43,6 @@ namespace Pulse.Hosting.ApplicationInitializer
     /// Not implemented
     /// </summary>
     /// <param name="cancellationToken"></param>
-    /// <exception cref="NotImplementedException"></exception>
     public void InitializeApplication (CancellationToken cancellationToken = default)
     {
       try {

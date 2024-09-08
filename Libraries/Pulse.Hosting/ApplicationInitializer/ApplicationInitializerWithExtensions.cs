@@ -84,7 +84,6 @@ namespace Pulse.Hosting.ApplicationInitializer
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public async virtual Task InitializeApplicationAsync (CancellationToken cancellationToken = default)
     {
       try {

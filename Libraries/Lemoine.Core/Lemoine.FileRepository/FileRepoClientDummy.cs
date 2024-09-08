@@ -32,10 +32,7 @@ namespace Lemoine.FileRepository
     /// <param name="nspace"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public ICollection<string> ListFilesInDirectory(string nspace, string path)
-    {
-      throw new NotImplementedException ();
-    }
+    public ICollection<string> ListFilesInDirectory(string nspace, string path) => throw new NotImplementedException ();
 
     /// <summary>
     /// Return an empty list
@@ -43,10 +40,7 @@ namespace Lemoine.FileRepository
     /// <param name="nspace"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public System.Collections.Generic.ICollection<string> ListDirectoriesInDirectory(string nspace, string path)
-    {
-      throw new NotImplementedException ();
-    }
+    public System.Collections.Generic.ICollection<string> ListDirectoriesInDirectory(string nspace, string path) => throw new NotImplementedException ();
 
     /// <summary>
     /// Raise an exception

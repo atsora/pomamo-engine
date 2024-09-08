@@ -19,7 +19,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="..\..\..\Packages\Group\group_expired_tools.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\group_expired_tools.json">
       <Link>group_expired_tools.json</Link>
     </None>
   </ItemGroup>

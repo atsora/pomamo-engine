@@ -80,10 +80,7 @@ namespace Lemoine.Extensions.DummyImplementations
     /// <param name="identifyingName"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IPluginDll GetPlugin (string identifyingName)
-    {
-      throw new NotImplementedException ();
-    }
+    public IPluginDll GetPlugin (string identifyingName) => throw new NotImplementedException ();
 
     /// <summary>
     /// <see cref="IExtensionsProvider"/>

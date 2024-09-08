@@ -38,7 +38,6 @@ namespace Lemoine.I18N
     /// <see cref="IApplicationInitializer"/>
     /// </summary>
     /// <param name="cancellationToken"></param>
-    /// <exception cref="NotImplementedException"></exception>
     public void InitializeApplication (CancellationToken cancellationToken = default)
     {
       m_catalog.SetAsPulseCatalog ();
@@ -49,7 +48,6 @@ namespace Lemoine.I18N
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public Task InitializeApplicationAsync (CancellationToken cancellationToken = default)
     {
       InitializeApplication (cancellationToken);

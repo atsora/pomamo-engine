@@ -379,10 +379,7 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
-    public string ModificationType
-    {
-      get { throw new NotImplementedException (); }
-    }
+    public string ModificationType => throw new NotImplementedException ();
 
     public AnalysisStatus? NextAnalysisStatus
     {

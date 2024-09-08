@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,7 +22,7 @@ namespace Lemoine.Plugin.GroupZoomPartOperation
 
     Configuration m_configuration;
 
-    public bool Dynamic => throw new NotImplementedException ();
+    public bool Dynamic => false;
 
     public bool Initialize ()
     {

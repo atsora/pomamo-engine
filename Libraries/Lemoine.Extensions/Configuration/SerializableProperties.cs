@@ -98,9 +98,7 @@ namespace Lemoine.Extensions.Configuration
         throw new NotImplementedException ();
       }
       else {
-        log.ErrorFormat ("LoadFromText: " +
-                         "unknown format in {0}",
-                         text);
+        log.Error ($"LoadFromText: unknown format in {text}");
         throw new InvalidOperationException ("Unknown format");
       }
     }

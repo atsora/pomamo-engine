@@ -27,8 +27,7 @@ namespace Lemoine.Database.Persistent
     /// <returns></returns>
     public override I MakePersistent (I entity)
     {
-      log.FatalFormat ("MakePersistent: " +
-                       "An abstract class can be made persistent");
+      log.Fatal ("MakePersistent: an abstract class can't be made persistent");
       Debug.Assert (false);
       throw new NotImplementedException ();
     }
@@ -40,8 +39,7 @@ namespace Lemoine.Database.Persistent
     /// <returns></returns>
     public override async Task<I> MakePersistentAsync (I entity)
     {
-      log.FatalFormat ("MakePersistent: " +
-                       "An abstract class can be made persistent");
+      log.Fatal ("MakePersistent: an abstract class can't be made persistent");
       Debug.Assert (false);
       return await System.Threading.Tasks.Task.FromException<I> (new NotImplementedException ());
     }

@@ -223,7 +223,6 @@ namespace Lemoine.Model
     /// <param name="typeToConvert"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public override StackLight Read (ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
       var stackLightJson = System.Text.Json.JsonSerializer.Deserialize<StackLightJson> (ref reader, options);
@@ -236,7 +235,6 @@ namespace Lemoine.Model
     /// <param name="writer"></param>
     /// <param name="value"></param>
     /// <param name="options"></param>
-    /// <exception cref="NotImplementedException"></exception>
     public override void Write (Utf8JsonWriter writer, StackLight value, JsonSerializerOptions options)
     {
       var stackLightJson = new StackLightJson (value);

@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\package_definitions\Group\group_part.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\group_part.json">
       <Link>group_part.json</Link>
     </None>
-    <None Include="..\..\package_definitions\Group\group_part_operation.json">
+    <None Include="..\..\..\..\pomamo-packages\Group\group_part_operation.json">
       <Link>group_part_operation.json</Link>
     </None>
   </ItemGroup>

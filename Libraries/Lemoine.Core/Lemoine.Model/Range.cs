@@ -281,9 +281,7 @@ namespace Lemoine.Model
     /// <returns></returns>
     protected virtual T ParseBound (string s)
     {
-      log.ErrorFormat ("ParseBound: " +
-                       "not implemented " +
-                       "=> the constructor from a string argument can't be used");
+      log.Error ("ParseBound: not implemented => the constructor from a string argument can't be used");
       throw new NotImplementedException ();
     }
 
