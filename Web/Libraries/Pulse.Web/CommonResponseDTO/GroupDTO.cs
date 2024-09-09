@@ -101,25 +101,31 @@ namespace Pulse.Web.CommonResponseDTO
     {
       Debug.Assert (null != group);
 
-      this.Id = group.Id;
-      this.Display = group.Name;
-      this.TreeName = group.TreeName;
-      this.SingleMachine = group.SingleMachine;
-      if (this.SingleMachine) {
-        this.MachineId = group.GetMachines ().Single ().Id;
+      try {
+        this.Id = group.Id;
+        this.Display = group.Name;
+        this.TreeName = group.TreeName;
+        this.SingleMachine = group.SingleMachine;
+        if (this.SingleMachine) {
+          this.MachineId = group.GetMachines ().Single ().Id;
+        }
+        this.Dynamic = group.Dynamic;
+        this.SortKind = group.SortKind;
+        if (2 <= group.SortKind) {
+          this.SortKindTip = "sorted";
+        }
+        else if (1 <= group.SortKind) {
+          this.SortKindTip = "minor";
+        }
+        else {
+          this.SortKindTip = "unsorted";
+        }
+        this.SortPriority = group.SortPriority ?? 0.0;
       }
-      this.Dynamic = group.Dynamic;
-      this.SortKind = group.SortKind;
-      if (2 <= group.SortKind) {
-        this.SortKindTip = "sorted";
+      catch (Exception ex) {
+        log.Error ($"GroupDTO.ctr: exception", ex);
+        throw;
       }
-      else if (1 <= group.SortKind) {
-        this.SortKindTip = "minor";
-      }
-      else {
-        this.SortKindTip = "unsorted";
-      }
-      this.SortPriority = group.SortPriority ?? 0.0;
     }
 
     /// <summary>
@@ -131,33 +137,38 @@ namespace Pulse.Web.CommonResponseDTO
     public GroupDTO (IGroup group, bool zoom, Func<IMachine, bool> filter = null)
       : this (group)
     {
-      if (zoom && group.ZoomInMachineSelection) {
-        var businessRequest = new Lemoine.Business.Machine.GroupZoomIn (group.Id);
-        var businessResponse = Lemoine.Business.ServiceProvider
-          .Get (businessRequest);
-        if (null == businessResponse) {
-          log.FatalFormat ("GetWithoutCache: unexpected null business response");
-          return;
-        }
-        if (!businessResponse.Dynamic.HasValue) {
-          if (log.IsWarnEnabled) {
-            log.WarnFormat ($"GetWithoutCache: dynamic is not set, no zoom is implemented for {group.Id}, return");
+      try {
+        if (zoom && group.ZoomInMachineSelection) {
+          var businessRequest = new Lemoine.Business.Machine.GroupZoomIn (group.Id);
+          var businessResponse = Lemoine.Business.ServiceProvider
+            .Get (businessRequest);
+          if (null == businessResponse) {
+            log.FatalFormat ("GetWithoutCache: unexpected null business response");
+            return;
           }
-          return;
-        }
-        if (businessResponse.Dynamic.Value) {
-          if (log.IsDebugEnabled) {
-            log.Info ($"GetWithoutCache: dynamic zoom for {group.Id}, skip it");
+          if (!businessResponse.Dynamic.HasValue) {
+            if (log.IsWarnEnabled) {
+              log.WarnFormat ($"GetWithoutCache: dynamic is not set, no zoom is implemented for {group.Id}, return");
+            }
+            return;
           }
-          return;
+          if (businessResponse.Dynamic.Value) {
+            if (log.IsDebugEnabled) {
+              log.Info ($"GetWithoutCache: dynamic zoom for {group.Id}, skip it");
+            }
+            return;
+          }
+          var subGroups = businessResponse.Children
+            .Select (x => GetGroupFromId (x))
+            .Where (x => FilterSubGroup (x, filter));
+          this.Zoom = subGroups
+            .Select (g => new GroupDTO (g, zoom, filter))
+            .ToList ();
         }
-        var subGroups = businessResponse.Children
-          .Select (x => GetGroupFromId (x))
-          .Where (x => FilterSubGroup (x, filter));
-        this.Zoom = subGroups
-          .Select (g => new GroupDTO (g, zoom, filter))
-          .ToList ();
-
+      }
+      catch (Exception ex) {
+        log.Error ($"GroupDTO.ctr: exception", ex);
+        throw;
       }
     }
 

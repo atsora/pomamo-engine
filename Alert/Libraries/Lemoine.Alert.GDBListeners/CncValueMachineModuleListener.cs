@@ -84,8 +84,7 @@ namespace Lemoine.Alert.GDBListeners
       }
 
       if (!m_fetched.Any ()) { // No data any more to process
-        log.DebugFormat ("GetData: " +
-                         "no data");
+        log.Debug ("GetData: no data");
         return null;
       }
       else { // 0 < m_fetched.Count

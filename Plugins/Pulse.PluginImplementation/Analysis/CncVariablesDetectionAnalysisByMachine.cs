@@ -164,8 +164,7 @@ namespace Pulse.PluginImplementation.Analysis
               var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
                 .FindAt (detection.MachineModule, EndCycleVariableKey, detection.DateTime);
               if (newCncVariable is null) {
-                log.ErrorFormat ("ProcessDetection: no cnc variable {0} at {1}",
-                  EndCycleVariableKey, detection.DateTime);
+                log.Error ($"ProcessDetection: no cnc variable {EndCycleVariableKey} at {detection.DateTime}");
               }
               else if (TriggerEndCycleVariableAction (newCncVariable.Value)) {
                 var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
@@ -194,8 +193,7 @@ namespace Pulse.PluginImplementation.Analysis
               var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
                 .FindAt (detection.MachineModule, StartCycleVariableKey, detection.DateTime);
               if (newCncVariable is null) {
-                log.ErrorFormat ("ProcessDetection: no cnc variable {0} at {1}",
-                  StartCycleVariableKey, detection.DateTime);
+                log.Error ($"ProcessDetection: no cnc variable {StartCycleVariableKey} at {detection.DateTime}");
               }
               else if (TriggerStartCycleVariableAction (newCncVariable.Value)) {
                 var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
@@ -208,7 +206,7 @@ namespace Pulse.PluginImplementation.Analysis
                     RunStartCycleVariableAction (newCncVariable.Value, detection.DateTime);
                   }
                   catch (Exception ex) {
-                    log.Error ("ProcessDetection: exceptionin RunStartCycleVariableAction", ex);
+                    log.Error ("ProcessDetection: exception in RunStartCycleVariableAction", ex);
                     throw;
                   }
                 }

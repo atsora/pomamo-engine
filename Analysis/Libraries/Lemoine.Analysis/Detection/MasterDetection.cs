@@ -28,7 +28,7 @@ namespace Lemoine.Analysis.Detection
   {
     static readonly string CREATE_OPERATION_FROM_CODE_KEY = "Detection.CreateOperationFromCode";
     static readonly bool CREATE_OPERATION_FROM_CODE_DEFAULT = true;
-    
+
     ILog log;
 
     #region Members
@@ -367,16 +367,15 @@ namespace Lemoine.Analysis.Detection
                               operationCode);
               IOperation operation;
               using (IDAOTransaction transaction = daoSession.BeginTransaction ("Detection.CreateOperationFromCode",
-                                                                                RestrictedTransactionLevel))
-              {
+                                                                                RestrictedTransactionLevel)) {
                 transaction.SynchronousCommitOption = SynchronousCommit.Off;
-                
+
                 IOperationType operationType = ModelDAOHelper.DAOFactory.OperationTypeDAO
                   .FindById (1); // Default
                 operation = ModelDAOHelper.ModelFactory.CreateOperation (operationType);
                 operation.Code = operationCode;
                 ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation);
-                
+
                 transaction.Commit ();
               }
               return operation;
@@ -737,8 +736,9 @@ namespace Lemoine.Analysis.Detection
 
           // Cycle begin/end
           if (stamp.OperationCycleBegin) {
-            log.DebugFormat ("StartStamp: stamp {0} is a cycle start",
-                            ((Lemoine.Collections.IDataWithId)stamp).Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} is a cycle start");
+            }
             using (IDAOTransaction transaction = session.BeginTransaction ("Detection.Master.StartStampStartCycle",
                                                                            RestrictedTransactionLevel)) {
               transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -747,8 +747,9 @@ namespace Lemoine.Analysis.Detection
             }
           }
           if (stamp.OperationCycleEnd) {
-            log.DebugFormat ("StartStamp: stamp {0} is a cycle end",
-                            ((Lemoine.Collections.IDataWithId)stamp).Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} is a cycle end");
+            }
             using (IDAOTransaction transaction = session.BeginTransaction ("Detection.Master.StartStampStopCycle",
                                                                            RestrictedTransactionLevel)) {
               transaction.SynchronousCommitOption = SynchronousCommit.Off;

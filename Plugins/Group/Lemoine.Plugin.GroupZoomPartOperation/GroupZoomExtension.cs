@@ -43,21 +43,28 @@ namespace Lemoine.Plugin.GroupZoomPartOperation
         return false;
       }
 
-      var componentId = this.ExtractIdAfterPrefix (m_configuration.PartPrefix, parentGroupId);
-      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        var part = ModelDAOHelper.DAOFactory.PartDAO
-          .FindById (componentId);
-        if (part is null) {
-          log.Error ($"ZoomIn: part with componentId={componentId} does not exist");
-          children = new List<string> ();
-          return false;
+      try {
+        var componentId = this.ExtractIdAfterPrefix (m_configuration.PartPrefix, parentGroupId);
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          var part = ModelDAOHelper.DAOFactory.PartDAO
+            .FindById (componentId);
+          if (part is null) {
+            log.Error ($"ZoomIn: part with componentId={componentId} does not exist");
+            children = new List<string> ();
+            return false;
+          }
+          children = part.Component.ComponentIntermediateWorkPieces
+            .Select (x => x.IntermediateWorkPiece.Operation)
+            .Where (x => (null != x))
+            .Select (x => $"{m_configuration.OperationPrefix}{x.Id}")
+            .Distinct ()
+            .ToList ();
+          return true;
         }
-        children = part.Component.ComponentIntermediateWorkPieces
-          .Select (x => x.IntermediateWorkPiece.Operation)
-          .Where (x => (null != x))
-          .Select (x => $"{m_configuration.OperationPrefix}{x.Id}")
-          .Distinct ();
-        return true;
+      }
+      catch (Exception ex) {
+        log.Error ($"ZoomIn: exception", ex);
+        throw;
       }
     }
 
