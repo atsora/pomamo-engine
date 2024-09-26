@@ -62,6 +62,25 @@ namespace Lemoine.Conversion.UnitTests
     }
 
     [Test]
+    public void TestAutoConvertDictionary ()
+    {
+      {
+        var converter = new DefaultAutoConverter ();
+        IDictionary<string, double> a = new Dictionary<string, double> ();
+        a["test"] = 1.2;
+        var converted = converter.ConvertAuto<IDictionary<string, object>> (a);
+        Assert.That (converted["test"], Is.EqualTo (1.2));
+      }
+      {
+        var converter = new DefaultAutoConverter ();
+        var a = new Dictionary<string, double> ();
+        a["test"] = 1.2;
+        var converted = converter.ConvertAuto<IDictionary<string, object>> (a);
+        Assert.That (converted["test"], Is.EqualTo (1.2));
+      }
+    }
+
+    [Test]
     public void TestJsonElement ()
     {
       {

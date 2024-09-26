@@ -272,10 +272,17 @@ namespace Pulse.PluginImplementation.Analysis
         if (log.IsDebugEnabled) {
           log.Debug ($"GetOperation: opName={opName}, opCode={opCode} in {m_programComment} for {m_regex}");
         }
-        operation = operations
+        var matchingOperations = operations
           .Where (x => string.IsNullOrEmpty (opName) || string.Equals (x.Name, opName, StringComparison.InvariantCultureIgnoreCase))
           .Where (x => string.IsNullOrEmpty (opCode) || string.Equals (x.Code, opCode, StringComparison.InvariantCultureIgnoreCase))
-          .SingleOrDefault ();
+          .Where (x => !x.ArchiveDateTime.HasValue);
+        if (2 <= matchingOperations.Count ()) {
+          log.Warn ($"GetOperation: more than one operation with opName={opName} opCode={opCode} in {m_programComment} for {m_regex} => take the first one");
+          operation = matchingOperations.FirstOrDefault ();
+        }
+        else {
+          operation = matchingOperations.SingleOrDefault ();
+        }
         if (null != operation) {
           ModelDAOHelper.DAOFactory.Initialize (operation.IntermediateWorkPieces);
           ModelDAOHelper.DAOFactory.Initialize (operation.Sequences);
