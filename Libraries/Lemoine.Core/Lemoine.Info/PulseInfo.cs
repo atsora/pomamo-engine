@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2023 Atsora Solutions
+// Copyright (C) 2023-2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -37,6 +37,10 @@ namespace Lemoine.Info
     static readonly string MAIN_SERVER_INSTALL_DIR_KEY = "MainServerInstallDir";
     static readonly string COMPANY_CONFIG_DIRECTORY_KEY = "CompanyConfigDirectory";
     static readonly string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
+
+    static readonly string REPORTS_INSTALL_DIR_KEY = "ReportsInstallDir";
+    static readonly string TOMCAT_INSTALL_DIR_KEY = "TomcatInstallDir";
+    static readonly string REPORTWEBAPP_INSTALL_DIR_KEY = "ReportWebAppInstallDir";
 
 #if ATSORA
     static readonly string COMPANY_NAME = "Atsora";
@@ -99,6 +103,93 @@ namespace Lemoine.Info
         }
         catch (KeyNotFoundException ex) {
           log.Fatal ($"MainServerInstallationDirectory: (with deprecated KeyNotFoundException) config key {MAIN_SERVER_INSTALL_DIR_KEY} was not defined", ex);
+          return null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Installation directory of the reports
+    /// 
+    /// This corresponds to config key "ReportsInstallDir"
+    /// 
+    /// Return null if it was not defined
+    /// </summary>
+    public static string ReportsInstallationDirectory
+    {
+      get {
+        try {
+          var result = Lemoine.Info.ConfigSet.Get<string> (REPORTS_INSTALL_DIR_KEY);
+          if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
+            log.Error ("ReportsInstallationDirectory: not defined");
+          }
+          result = result.Replace (" (x86)", ""); // To replace "Program Files (x86)" by "Program Files" in case the registry key is badly set
+          return result;
+        }
+        catch (ConfigKeyNotFoundException ex) {
+          log.Error ($"ReportsInstallationDirectory: config key {REPORTS_INSTALL_DIR_KEY} was not defined", ex);
+          return null;
+        }
+        catch (KeyNotFoundException ex) {
+          log.Fatal ($"ReportsInstallationDirectory: (with deprecated KeyNotFoundException) config key {REPORTS_INSTALL_DIR_KEY} was not defined", ex);
+          return null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Installation directory of Tomcat
+    /// 
+    /// This corresponds to config key "TomcatInstallDir"
+    /// 
+    /// Return null if it was not defined
+    /// </summary>
+    public static string TomcatInstallationDirectory
+    {
+      get {
+        try {
+          var result = Lemoine.Info.ConfigSet.Get<string> (TOMCAT_INSTALL_DIR_KEY);
+          if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
+            log.Error ("TomcatInstallationDirectory: not defined");
+          }
+          result = result.Replace (" (x86)", ""); // To replace "Program Files (x86)" by "Program Files" in case the registry key is badly set
+          return result;
+        }
+        catch (ConfigKeyNotFoundException ex) {
+          log.Error ($"TomcatInstallationDirectory: config key {TOMCAT_INSTALL_DIR_KEY} was not defined", ex);
+          return null;
+        }
+        catch (KeyNotFoundException ex) {
+          log.Fatal ($"TomcatInstallationDirectory: (with deprecated KeyNotFoundException) config key {TOMCAT_INSTALL_DIR_KEY} was not defined", ex);
+          return null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Installation directory of ReportWebApp
+    /// 
+    /// This corresponds to config key "ReportWebAppInstallDir"
+    /// 
+    /// Return null if it was not defined
+    /// </summary>
+    public static string ReportWebAppInstallationDirectory
+    {
+      get {
+        try {
+          var result = Lemoine.Info.ConfigSet.Get<string> (REPORTWEBAPP_INSTALL_DIR_KEY);
+          if (log.IsErrorEnabled && string.IsNullOrEmpty (result)) {
+            log.Error ("ReportWebAppInstallationDirectory: not defined");
+          }
+          result = result.Replace (" (x86)", ""); // To replace "Program Files (x86)" by "Program Files" in case the registry key is badly set
+          return result;
+        }
+        catch (ConfigKeyNotFoundException ex) {
+          log.Error ($"ReportWebAppInstallationDirectory: config key {REPORTWEBAPP_INSTALL_DIR_KEY} was not defined", ex);
+          return null;
+        }
+        catch (KeyNotFoundException ex) {
+          log.Fatal ($"ReportWebAppInstallationDirectory: (with deprecated KeyNotFoundException) config key {REPORTWEBAPP_INSTALL_DIR_KEY} was not defined", ex);
           return null;
         }
       }

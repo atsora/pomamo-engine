@@ -14,7 +14,6 @@ namespace Lemoine.Plugin.ReportCategory
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the file to configure
     /// </summary>
@@ -64,7 +63,6 @@ namespace Lemoine.Plugin.ReportCategory
     {
       get; set;
     } = false;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

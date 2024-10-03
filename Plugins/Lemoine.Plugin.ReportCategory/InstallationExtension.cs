@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -38,12 +39,11 @@ namespace Lemoine.Plugin.ReportCategory
       var reportsDirectory = Lemoine.Info.ConfigSet
         .LoadAndGet (REPORTS_DIRECTORY_KEY, REPORTS_DIRECTORY_DEFAULT);
       if (string.IsNullOrEmpty (reportsDirectory)) {
-        var pfrDataDirectory = Lemoine.Info.PulseInfo.PfrDataDir;
-        if (!Directory.Exists (pfrDataDirectory)) {
-          log.Error ($"Initialize: directory {pfrDataDirectory} does not exist => return false");
+        reportsDirectory = Lemoine.Info.PulseInfo.ReportsInstallationDirectory;
+        if (!Directory.Exists (reportsDirectory)) {
+          log.Error ($"Initialize: directory {reportsDirectory} does not exist => return false");
           return false;
         }
-        reportsDirectory = Path.Combine (pfrDataDirectory, "report_templates");
       }
 
       m_configurationFilePath = Path.Combine (reportsDirectory, m_configuration.ReportCategoriesFileName);

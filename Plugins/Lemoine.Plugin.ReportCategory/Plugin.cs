@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,42 +20,23 @@ namespace Lemoine.Plugin.ReportCategory
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "ReportCategory"; } }
+    public override string Name => "ReportCategory";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Plugin to set a report category";
-      }
-    }
+    public override string Description => "Plugin to set a report category";
 
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Config;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Config;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 2;
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

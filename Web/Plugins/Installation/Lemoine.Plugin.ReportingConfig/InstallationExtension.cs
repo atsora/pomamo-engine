@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -159,14 +160,13 @@ namespace Lemoine.Plugin.ReportingConfig
 
     IEnumerable<string> GetRootDirectories ()
     {
-      // TODO: alternative directories
-      var serverInstallDir = Lemoine.Info.PulseInfo.MainServerInstallationDirectory;
-      if (serverInstallDir is null) {
-        log.Error ("GetRootDirectories: Pulse Server installation directory is not set => return an empty list");
+      var reportWebAppInstallDir = Lemoine.Info.PulseInfo.ReportWebAppInstallationDirectory;
+      if (reportWebAppInstallDir is null) {
+        log.Error ("GetRootDirectories: ReportWebApp installation directory is not set => return an empty list");
         yield break;
       }
-      var wwwroot = Path.Combine (serverInstallDir, "apache-tomcat", "webapps");
-      var directories = Directory.GetDirectories (wwwroot);
+      var webappsDirectory = Directory.GetParent (reportWebAppInstallDir); // webapps directory
+      var directories = Directory.GetDirectories (webappsDirectory.FullName);
       foreach (var directory in directories) {
         var directoryInfo = new DirectoryInfo (directory);
         var directoryName = directoryInfo.Name;

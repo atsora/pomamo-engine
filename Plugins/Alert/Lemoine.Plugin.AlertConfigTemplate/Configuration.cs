@@ -18,7 +18,6 @@ namespace Lemoine.Plugin.AlertConfigTemplate
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Directory
     /// </summary>
@@ -46,9 +45,7 @@ namespace Lemoine.Plugin.AlertConfigTemplate
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -79,6 +76,5 @@ namespace Lemoine.Plugin.AlertConfigTemplate
       errors = errorList;
       return !errors.Any ();
     }
-    #endregion // Constructors
   }
 }

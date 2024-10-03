@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -72,7 +73,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     /// <returns></returns>
     protected override object Get (string key)
     {
-      // Note: they are also defined on Linux in file $"{PulseInfo.LinuxPackageName}.directories" (see OsConfigReader)
+      // Note: they may be also defined on Linux in file $"{PulseInfo.LinuxPackageName}.directories" (see OsConfigReader)
 
       switch (key) {
       case COMMON_CONFIG_DIRECTORY_KEY:

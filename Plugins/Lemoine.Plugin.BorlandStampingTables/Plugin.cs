@@ -22,11 +22,8 @@ namespace Lemoine.Plugin.BorlandStampingTables
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -63,9 +60,7 @@ namespace Lemoine.Plugin.BorlandStampingTables
         return m_database;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -85,7 +80,6 @@ namespace Lemoine.Plugin.BorlandStampingTables
       }
     }
 
-    #region Migration
     /// <summary>
     /// Uninstall the plugin
     /// (delete tables if necessary, ...)
@@ -100,8 +94,5 @@ namespace Lemoine.Plugin.BorlandStampingTables
         Database.RemoveTable (TableName.SFK_MACHTYPE);
       }
     }
-    #endregion // Migration
-
-    #endregion // Methods
   }
 }
