@@ -40,7 +40,12 @@ namespace Lemoine.Plugin.ReportCategory
         .LoadAndGet (REPORTS_DIRECTORY_KEY, REPORTS_DIRECTORY_DEFAULT);
       if (string.IsNullOrEmpty (reportsDirectory)) {
         reportsDirectory = Lemoine.Info.PulseInfo.ReportsInstallationDirectory;
-        if (!Directory.Exists (reportsDirectory)) {
+        if (string.IsNullOrEmpty (reportsDirectory)) {
+          log.Info ($"Initialize: no directory is set");
+          m_configurationFilePath = "";
+          return true;
+        }
+        else if (!Directory.Exists (reportsDirectory)) {
           log.Error ($"Initialize: directory {reportsDirectory} does not exist => return false");
           return false;
         }
@@ -65,12 +70,17 @@ namespace Lemoine.Plugin.ReportCategory
           log.Error ("CheckConfigAsync: Initialized failed");
           return false;
         }
-
-        if (m_configuration.UniqueCategory) {
-          await RemoveInstructionLineAsync (m_configurationFilePath);
+        if (string.IsNullOrEmpty (m_configurationFilePath)) {
+          log.Info ($"CheckConfigAsync: no path is set, this is not applicable (reports not installed)");
+          return true;
         }
-        await SetInstructionLineAsync (m_configurationFilePath);
-        return true;
+        else { // m_configurationFilePath not empty
+          if (m_configuration.UniqueCategory) {
+            await RemoveInstructionLineAsync (m_configurationFilePath);
+          }
+          await SetInstructionLineAsync (m_configurationFilePath);
+          return true;
+        }
       }
       catch (Exception ex) {
         log.Error ("CheckConfigAsync: exception", ex);
@@ -90,9 +100,14 @@ namespace Lemoine.Plugin.ReportCategory
           log.Error ("RemoveConfigAsync: Initialized failed");
           return false;
         }
-
-        await RemoveInstructionLineAsync (m_configurationFilePath);
-        return true;
+        if (string.IsNullOrEmpty (m_configurationFilePath)) {
+          log.Info ($"RemoveConfigAsync: no path is set, this is not applicable (reports not installed)");
+          return true;
+        }
+        else { // m_configurationFilePath not empty
+          await RemoveInstructionLineAsync (m_configurationFilePath);
+          return true;
+        }
       }
       catch (Exception ex) {
         log.Error ("RemoveConfigAsync: exception", ex);

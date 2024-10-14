@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -58,13 +59,12 @@ namespace Lemoine.Plugin.ReportCategory
     /// 
     /// </summary>
     [PluginConf ("Bool", "Unique category", Description = "Should a unique category be considered for this report ? If true any other associated category is removed. Default: false", Optional = true, Multiple = false)]
-    [DefaultValue(false)]
+    [DefaultValue (false)]
     public bool UniqueCategory
     {
       get; set;
     } = false;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -92,6 +92,5 @@ namespace Lemoine.Plugin.ReportCategory
       errors = errorList;
       return true;
     }
-    #endregion // Constructors
   }
 }
