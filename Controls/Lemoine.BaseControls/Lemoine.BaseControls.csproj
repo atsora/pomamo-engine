@@ -6,7 +6,7 @@
     <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>3.0.1.0</AssemblyVersion>
+    <AssemblyVersion>3.0.3.0</AssemblyVersion>
     <Platforms>AnyCPU;x64</Platforms>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>

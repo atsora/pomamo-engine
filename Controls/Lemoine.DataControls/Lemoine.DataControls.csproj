@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-    <AssemblyVersion>2.3.1.0</AssemblyVersion>
+    <AssemblyVersion>2.3.4.0</AssemblyVersion>
     <Platform>x64</Platform>
   </PropertyGroup>
   
