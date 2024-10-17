@@ -155,7 +155,8 @@ namespace Lemoine.BaseControls
       this.time1.Name = "time1";
       this.time1.Size = new System.Drawing.Size(71, 20);
       this.time1.TabIndex = 8;
-      this.time1.Time = System.TimeSpan.Parse("23:17:58.5292520");
+      this.time1.Time = System.TimeSpan.Parse("23:17:58.5290000");
+      this.time1.Value = new System.DateTime(2024, 10, 17, 23, 17, 58, 529);
       // 
       // time2
       // 
@@ -164,7 +165,8 @@ namespace Lemoine.BaseControls
       this.time2.Name = "time2";
       this.time2.Size = new System.Drawing.Size(71, 20);
       this.time2.TabIndex = 9;
-      this.time2.Time = System.TimeSpan.Parse("23:17:58.5357901");
+      this.time2.Time = System.TimeSpan.Parse("23:17:58.5350000");
+      this.time2.Value = new System.DateTime(2024, 10, 17, 23, 17, 58, 535);
       // 
       // ChangePeriodDialog
       // 
