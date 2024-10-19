@@ -1,4 +1,8 @@
-﻿module Atsora.CncFSharp
+﻿(*
+* Copyright (C) 2023-2024 Atsora Solutions
+*)
+
+module Atsora.CncFSharp
 
 open Lemoine.Core.Log
 open Lemoine.Threading

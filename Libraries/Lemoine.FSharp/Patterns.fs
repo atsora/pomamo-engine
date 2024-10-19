@@ -1,4 +1,8 @@
-﻿module Lemoine.FSharp.Patterns
+﻿(*
+* Copyright (C) 2023-2024 Atsora Solutions
+*)
+
+module Lemoine.FSharp.Patterns
 
 open Lemoine.FSharp.String
 open System.Text.RegularExpressions

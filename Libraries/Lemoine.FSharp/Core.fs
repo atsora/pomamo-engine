@@ -1,4 +1,8 @@
-﻿module Lemoine.FSharp.Core
+﻿(*
+* Copyright (C) 2023-2024 Atsora Solutions
+*)
+
+module Lemoine.FSharp.Core
 
 let (|??>) a f =
   match a with

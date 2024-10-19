@@ -1,4 +1,8 @@
-﻿module Lemoine.FSharp.String
+﻿(*
+* Copyright (C) 2023-2024 Atsora Solutions
+*)
+
+module Lemoine.FSharp.String
 
 let nullorempty s =
   System.String.IsNullOrEmpty s
