@@ -102,8 +102,8 @@ namespace Lemoine.GDBPersistentClasses
     /// Corresponding sequence for Xml Serialization
     /// </summary>
     [XmlElement("Sequence")]
-    public virtual Sequence XmlSerializationSequence {
-      get { return this.Sequence as Sequence; }
+    public virtual OpSequence XmlSerializationSequence {
+      get { return this.Sequence as OpSequence; }
       set { this.Sequence = value; }
     }
     

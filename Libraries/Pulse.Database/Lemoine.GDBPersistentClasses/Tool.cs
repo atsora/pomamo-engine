@@ -31,6 +31,11 @@ namespace Lemoine.GDBPersistentClasses
 
     static readonly ILog log = LogManager.GetLogger(typeof (Tool).FullName);
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public Tool () { }
+
     #region Getters / Setters
     /// <summary>
     /// Possible identifiers
@@ -165,5 +170,13 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
     #endregion // Getters / Setters
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.ISerializableModel"></see>
+    /// </summary>
+    public virtual void Unproxy ()
+    {
+      // Do nothing for the moment
+    }
   }
 }

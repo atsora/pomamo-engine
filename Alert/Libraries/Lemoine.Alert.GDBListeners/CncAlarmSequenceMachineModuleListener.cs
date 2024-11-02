@@ -14,6 +14,7 @@ using Lemoine.Core.Log;
 using Lemoine.Extensions.Alert;
 using Lemoine.Collections;
 using Lemoine.GDBPersistentClasses;
+using System.Diagnostics;
 
 namespace Lemoine.Alert.GDBListeners
 {
@@ -46,11 +47,19 @@ namespace Lemoine.Alert.GDBListeners
 
       // Create a serializer for the class CncAlarm
       var xmlSerializerBuilder = new Lemoine.Database.Xml.XmlSerializerBuilder ();
-      Type type = Type.GetType ("Lemoine.GDBPersistentClasses.CncAlarm, Pulse.Database");
-      if (type is null) {
-        log.Fatal ("CncAlarmMachineModuleListener: type Lemoine.GDBPersistentClasses.CncAlarm, Pulse.Database does not exist");
+      {
+        var type = Type.GetType ("Lemoine.GDBPersistentClasses.CncAlarm, Pulse.Database");
+        if (type is null) {
+          log.Fatal ("CncAlarmSequenceMachineModuleListener: type Lemoine.GDBPersistentClasses.CncAlarm, Pulse.Database does not exist");
+        }
       }
-      m_xmlSerializer = xmlSerializerBuilder.GetSerializer (typeof (SerializableTuple<CncAlarm, Sequence>));
+      {
+        var type = Type.GetType ("Lemoine.GDBPersistentClasses.OpSequence, Pulse.Database");
+        if (type is null) {
+          log.Fatal ("CncAlarmSequenceMachineModuleListener: type Lemoine.GDBPersistentClasses.OpSequence, Pulse.Database does not exist");
+        }
+      }
+      m_xmlSerializer = xmlSerializerBuilder.GetSerializer<SerializableTuple<CncAlarm, OpSequence>> ();
     }
 
     /// <summary>
@@ -90,8 +99,10 @@ namespace Lemoine.Alert.GDBListeners
 
         var sequenceSlot = ModelDAOHelper.DAOFactory.SequenceSlotDAO
           .FindAtWithSequence (m_machineModule, firstData.DateTimeRange.Lower.Value);
-        var sequence = sequenceSlot?.Sequence;
-        var firstTuple = new SerializableTuple<CncAlarm, Sequence> (firstData as CncAlarm, sequence as Sequence);
+        var sequenceId = sequenceSlot?.Sequence?.Id ?? 0;
+        Debug.Assert (0 != sequenceId);
+        var sequence = ModelDAOHelper.DAOFactory.SequenceDAO.FindByIdForXmlSerialization (sequenceId);
+        var firstTuple = new SerializableTuple<CncAlarm, OpSequence> (firstData as CncAlarm, (sequence as OpSequence).CloneForXmlSerialization ());
 
         // - serialization
         var sw = new StringWriter ();

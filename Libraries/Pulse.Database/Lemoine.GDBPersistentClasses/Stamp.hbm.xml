@@ -21,7 +21,7 @@
     <many-to-one name="Sequence"
                  access="nosetter.camelcase-m-underscore"
                  column="sequenceid"
-                 class="Sequence"
+                 class="OpSequence"
                  entity-name="opseq"
                  cascade="none"
                  not-found="ignore" />

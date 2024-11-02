@@ -210,9 +210,9 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
           Assert.That (operation4, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
 
           // Stamps
@@ -592,13 +592,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (12678);
           Assert.That (operation4, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
-          Sequence sequence3 = session.Get<Sequence> (3);
+          OpSequence sequence3 = session.Get<OpSequence> (3);
           Assert.That (sequence3, Is.Not.Null);
-          Sequence sequence4 = session.Get<Sequence> (4);
+          OpSequence sequence4 = session.Get<OpSequence> (4);
           Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
@@ -737,13 +737,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (12678);
           Assert.That (operation4, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
-          Sequence sequence3 = session.Get<Sequence> (3);
+          OpSequence sequence3 = session.Get<OpSequence> (3);
           Assert.That (sequence3, Is.Not.Null);
-          Sequence sequence4 = session.Get<Sequence> (4);
+          OpSequence sequence4 = session.Get<OpSequence> (4);
           Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
@@ -922,13 +922,13 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (12678);
           Assert.That (operation4, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
-          Sequence sequence3 = session.Get<Sequence> (3);
+          OpSequence sequence3 = session.Get<OpSequence> (3);
           Assert.That (sequence3, Is.Not.Null);
-          Sequence sequence4 = session.Get<Sequence> (4);
+          OpSequence sequence4 = session.Get<OpSequence> (4);
           Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
@@ -1113,14 +1113,14 @@ namespace Lemoine.Analysis.UnitTests
           Operation operation4 = session.Get<Operation> (12678);
           Assert.That (operation4, Is.Not.Null);
           // The two next are 'auto'
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
           // The two next are 'not auto'
-          Sequence sequence3 = session.Get<Sequence> (3);
+          OpSequence sequence3 = session.Get<OpSequence> (3);
           Assert.That (sequence3, Is.Not.Null);
-          Sequence sequence4 = session.Get<Sequence> (4);
+          OpSequence sequence4 = session.Get<OpSequence> (4);
           Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
@@ -1241,7 +1241,7 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
           Assert.That (operation1, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
 
           // Stamps
@@ -1373,7 +1373,7 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (machineModule, Is.Not.Null);
           Operation operation3 = session.Get<Operation> (12708);
           Assert.That (operation3, Is.Not.Null);
-          Sequence sequence3 = session.Get<Sequence> (3);
+          OpSequence sequence3 = session.Get<OpSequence> (3);
           Assert.That (sequence3, Is.Not.Null);
 
           // Stamps
@@ -1530,7 +1530,7 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
           Assert.That (operation1, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
 
           // Stamps
@@ -1599,9 +1599,9 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
           Assert.That (operation1, Is.Not.Null);
-          Sequence sequence3 = session.Get<Sequence> (3);
+          OpSequence sequence3 = session.Get<OpSequence> (3);
           Assert.That (sequence3, Is.Not.Null);
-          Sequence sequence4 = session.Get<Sequence> (4);
+          OpSequence sequence4 = session.Get<OpSequence> (4);
           Assert.That (sequence4, Is.Not.Null);
 
           // Stamps
@@ -1758,7 +1758,7 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (machineModule, Is.Not.Null);
           Operation operation1 = session.Get<Operation> (1);
           Assert.That (operation1, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
 
           // Stamps
@@ -1862,9 +1862,9 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
           Assert.That (operation4, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
 
           // Stamps
@@ -2196,9 +2196,9 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
           Assert.That (operation4, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
           
           // Stamps
@@ -2280,9 +2280,9 @@ namespace Lemoine.Analysis.UnitTests
           Assert.That (operation3, Is.Not.Null);
           Operation operation4 = session.Get<Operation> (11004);
           Assert.That (operation4, Is.Not.Null);
-          Sequence sequence1 = session.Get<Sequence> (1);
+          OpSequence sequence1 = session.Get<OpSequence> (1);
           Assert.That (sequence1, Is.Not.Null);
-          Sequence sequence2 = session.Get<Sequence> (2);
+          OpSequence sequence2 = session.Get<OpSequence> (2);
           Assert.That (sequence2, Is.Not.Null);
           
           // Stamps
@@ -2418,14 +2418,14 @@ namespace Lemoine.Analysis.UnitTests
           Operation operation2 = session.Get<Operation> (1);
           Assert.That (operation2, Is.Not.Null);
           
-          Sequence sequence1 = session.Get<Sequence> (8);
+          OpSequence sequence1 = session.Get<OpSequence> (8);
           Assert.That (sequence1, Is.Not.Null);
           Assert.That (sequence1.Operation, Is.EqualTo (operation1));
-          Sequence sequence2 = session.Get<Sequence> (9);
+          OpSequence sequence2 = session.Get<OpSequence> (9);
           Assert.That (sequence2, Is.Not.Null);
           Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
-          Sequence sequence3 = session.Get<Sequence> (10);
+          OpSequence sequence3 = session.Get<OpSequence> (10);
           Assert.That (sequence3, Is.Not.Null);
           Assert.That (sequence3.Operation, Is.EqualTo (operation1));
           
@@ -2512,14 +2512,14 @@ namespace Lemoine.Analysis.UnitTests
           Operation operation2 = session.Get<Operation> (1);
           Assert.That (operation2, Is.Not.Null);
           
-          Sequence sequence1 = session.Get<Sequence> (8);
+          OpSequence sequence1 = session.Get<OpSequence> (8);
           Assert.That (sequence1, Is.Not.Null);
           Assert.That (sequence1.Operation, Is.EqualTo (operation1));
-          Sequence sequence2 = session.Get<Sequence> (9);
+          OpSequence sequence2 = session.Get<OpSequence> (9);
           Assert.That (sequence2, Is.Not.Null);
           Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
-          Sequence sequence3 = session.Get<Sequence> (10);
+          OpSequence sequence3 = session.Get<OpSequence> (10);
           Assert.That (sequence3, Is.Not.Null);
           Assert.That (sequence3.Operation, Is.EqualTo (operation1));
           
@@ -2606,14 +2606,14 @@ namespace Lemoine.Analysis.UnitTests
             Operation operation2 = session.Get<Operation> (1);
             Assert.That (operation2, Is.Not.Null);
             
-            Sequence sequence1 = session.Get<Sequence> (8);
+            OpSequence sequence1 = session.Get<OpSequence> (8);
             Assert.That (sequence1, Is.Not.Null);
             Assert.That (sequence1.Operation, Is.EqualTo (operation1));
-            Sequence sequence2 = session.Get<Sequence> (9);
+            OpSequence sequence2 = session.Get<OpSequence> (9);
             Assert.That (sequence2, Is.Not.Null);
             Assert.That (sequence2.Operation, Is.EqualTo (operation1));
             
-            Sequence sequenceForOp2 = session.Get<Sequence> (1);
+            OpSequence sequenceForOp2 = session.Get<OpSequence> (1);
             Assert.That (sequenceForOp2, Is.Not.Null);
             Assert.That (sequenceForOp2.Operation, Is.EqualTo (operation2));
             
@@ -2755,14 +2755,14 @@ namespace Lemoine.Analysis.UnitTests
           Operation operation2 = session.Get<Operation> (1);
           Assert.That (operation2, Is.Not.Null);
           
-          Sequence sequence1 = session.Get<Sequence> (8);
+          OpSequence sequence1 = session.Get<OpSequence> (8);
           Assert.That (sequence1, Is.Not.Null);
           Assert.That (sequence1.Operation, Is.EqualTo (operation1));
-          Sequence sequence2 = session.Get<Sequence> (9);
+          OpSequence sequence2 = session.Get<OpSequence> (9);
           Assert.That (sequence2, Is.Not.Null);
           Assert.That (sequence2.Operation, Is.EqualTo (operation1));
           
-          Sequence sequenceForOp2 = session.Get<Sequence> (1);
+          OpSequence sequenceForOp2 = session.Get<OpSequence> (1);
           Assert.That (sequenceForOp2, Is.Not.Null);
           Assert.That (sequenceForOp2.Operation, Is.EqualTo (operation2));
           

@@ -18,10 +18,10 @@ namespace Lemoine.GDBPersistentClasses
   /// <summary>
   /// Implementation of <see cref="Lemoine.ModelDAO.ISequenceDAO">ISequenceDAO</see>
   /// </summary>
-  public class SequenceDAO
+  public class OpSequenceDAO
     : ISequenceDAO
   {
-    ILog log = LogManager.GetLogger<SequenceDAO> ();
+    ILog log = LogManager.GetLogger<OpSequenceDAO> ();
 
     /// <summary>
     /// FindById implementation
@@ -32,6 +32,25 @@ namespace Lemoine.GDBPersistentClasses
     {
       return (ISequence)NHibernateHelper.GetCurrentSession ()
         .Get ("opseq", id);
+    }
+
+    /// <summary>
+    /// FindById for XML serialization
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public virtual ISequence FindByIdForXmlSerialization (int id)
+    {
+      var sequence = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria ("opseq")
+        .Add (Restrictions.IdEq (id))
+        .Fetch (SelectMode.Fetch, "Tool")
+        .Fetch (SelectMode.Fetch, "Operation")
+        .Fetch (SelectMode.Fetch, "Operation.Type")
+        .Fetch (SelectMode.Fetch, "Path")
+        .Fetch (SelectMode.Fetch, "Detail")
+        .UniqueResult<ISequence> ();
+      return sequence;
     }
 
     /// <summary>
@@ -114,20 +133,20 @@ namespace Lemoine.GDBPersistentClasses
       // that can't be converted directly to the right modification (e.g. ReasonMachineAssociation),
       // hence the exception management and the cast try
       try {
-        var entityInCache = (Sequence)NHibernateHelper.GetCurrentSession ()
+        var entityInCache = (OpSequence)NHibernateHelper.GetCurrentSession ()
         .GetPersistentCacheOnly ("opseq", id);
         if ((null != entityInCache)
           && NHibernateUtil.IsInitialized (entityInCache)
           && (entityInCache is ISequence)) {
           var convertedEntity = (ISequence)entityInCache;
           if (log.IsDebugEnabled) {
-            log.Debug ($"TryGetInCache: the entity id={id} type={typeof (Sequence)} is taken from cache");
+            log.Debug ($"TryGetInCache: the entity id={id} type={typeof (OpSequence)} is taken from cache");
           }
           result = convertedEntity;
           return true;
         }
         else {
-          result = default (Sequence);
+          result = default (OpSequence);
           return false;
         }
       }
@@ -135,7 +154,7 @@ namespace Lemoine.GDBPersistentClasses
         if (log.IsWarnEnabled) {
           log.Warn ("TryGetInCache: getting the item in the persistent cache failed", ex);
         }
-        result = default (Sequence);
+        result = default (OpSequence);
         return false;
       }
     }

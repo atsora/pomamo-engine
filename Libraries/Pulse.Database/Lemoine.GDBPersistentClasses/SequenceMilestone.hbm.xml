@@ -18,7 +18,7 @@
               type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
               column="sequencemilestonedatetime"
               not-null="true" />
-    <many-to-one name="Sequence" column="sequenceid" class="Sequence"
+    <many-to-one name="Sequence" column="sequenceid" class="OpSequence"
                  entity-name="opseq"
                  access="nosetter.camelcase-m-underscore"
                  cascade="none" />

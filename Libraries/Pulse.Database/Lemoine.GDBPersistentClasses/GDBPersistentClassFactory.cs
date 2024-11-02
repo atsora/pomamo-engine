@@ -1988,7 +1988,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public IPath CreatePath ()
     {
-      IPath path = new Path ();
+      IPath path = new OpPath ();
       return path;
     }
 
@@ -1999,7 +1999,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public IPath CreatePath (IOperation operation)
     {
-      var path = new Path (operation);
+      var path = new OpPath (operation);
       return path;
     }
 
@@ -2277,7 +2277,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public ISequence CreateSequence (String name)
     {
-      ISequence sequence = new Sequence ();
+      ISequence sequence = new OpSequence ();
       sequence.Name = name;
       return sequence;
     }
@@ -2291,7 +2291,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public ISequence CreateSequence (string name, IOperation operation, IPath path)
     {
-      var sequence = new Sequence (operation, path);
+      var sequence = new OpSequence (operation, path);
       sequence.Name = name;
       return sequence;
     }

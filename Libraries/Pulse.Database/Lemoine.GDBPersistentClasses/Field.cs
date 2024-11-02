@@ -45,7 +45,6 @@ namespace Lemoine.GDBPersistentClasses
 
     static readonly ILog log = LogManager.GetLogger(typeof (Field).FullName);
 
-    #region Constructors
     /// <summary>
     /// Default constructor is forbidden
     /// </summary>
@@ -72,7 +71,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Code = code;
       m_custom = false;
     }
-    #endregion // Constructors
     
     #region Getters / Setters
     /// <summary>

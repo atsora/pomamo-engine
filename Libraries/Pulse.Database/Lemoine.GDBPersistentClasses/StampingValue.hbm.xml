@@ -13,7 +13,7 @@
              access="nosetter.camelcase-m-underscore" />
     <many-to-one name="Sequence"
                  column="sequenceid"
-                 class="Sequence"
+                 class="OpSequence"
                  entity-name="opseq"
                  cascade="none"
                  not-null="true"

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,6 +13,8 @@ using Lemoine.Collections;
 using Lemoine.Model;
 using Lemoine.Core.Log;
 using NHibernate.Type;
+using System.ComponentModel;
+using Lemoine.Database.Persistent;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -23,7 +26,7 @@ namespace Lemoine.GDBPersistentClasses
   /// like the tolerance, the stock...
   /// </summary>
   [Serializable]
-  public class Sequence : DataWithDisplayFunction, ISequence, Lemoine.Collections.IDataWithId
+  public class OpSequence : DataWithDisplayFunction, ISequence, Lemoine.Collections.IDataWithId
   {
     #region Members
     int m_id = 0;
@@ -44,7 +47,7 @@ namespace Lemoine.GDBPersistentClasses
     ICollection<IStampingValue> m_stampingValues = new InitialNullIdSet<IStampingValue, int> ();
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger (typeof (Sequence).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (OpSequence).FullName);
 
     #region Getters / Setters
     /// <summary>
@@ -141,13 +144,13 @@ namespace Lemoine.GDBPersistentClasses
           return;
         }
         if ((null != m_path)
-            && (m_path is Path)) {
-          (m_path as Path).RemoveSequenceForInternalUse (this);
+            && (m_path is OpPath)) {
+          (m_path as OpPath).RemoveSequenceForInternalUse (this);
         }
         m_path = value;
         if ((null != m_path)
-            && (m_path is Path)) {
-          (m_path as Path).AddSequenceForInternalUse (this);
+            && (m_path is OpPath)) {
+          (m_path as OpPath).AddSequenceForInternalUse (this);
           m_operation = m_path.Operation;
         }
       }
@@ -157,9 +160,9 @@ namespace Lemoine.GDBPersistentClasses
     /// Parent Path
     /// </summary>
     [XmlElement ("Path")]
-    public virtual Path XmlSerializationPath
+    public virtual OpPath XmlSerializationPath
     {
-      get { return this.Path as Path; }
+      get { return this.Path as OpPath; }
       set { this.Path = value; }
     }
 
@@ -284,6 +287,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Sequence frequency in operation (default 1 = sequence appears every time operation is executed)
     /// </summary>
+    [XmlAttribute ("Frequency")]
     public virtual int Frequency
     {
       get { return m_frequency; }
@@ -293,6 +297,8 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Operation step if known
     /// </summary>
+    [XmlIgnore]
+    [DefaultValue(null)]
     public virtual int? OperationStep
     {
       get { return m_operationStep; }
@@ -300,8 +306,24 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Operation step if known
+    /// </summary>
+    [XmlAttribute ("OperationStep")]
+    public virtual int XmlSerializationOperationStep
+    {
+      get { return this.OperationStep.Value; }
+      set { this.OperationStep = value; }
+    }
+
+    /// <summary>
+    /// used to serialize OperationStep only when not null
+    /// </summary>
+    public virtual bool XmlSerializationOperationStepSpecified => this.OperationStep.HasValue;
+
+    /// <summary>
     /// Sequence kind
     /// </summary>
+    [XmlAttribute("Kind")]
     public virtual SequenceKind Kind { get; set; }
 
     /// <summary>
@@ -314,23 +336,13 @@ namespace Lemoine.GDBPersistentClasses
     /// Set of stamps (and then ISO files) that are associated to this sequence
     /// </summary>
     [XmlIgnore]
-    public virtual ICollection<IStamp> Stamps
-    {
-      get {
-        return m_stamps;
-      }
-    }
+    public virtual ICollection<IStamp> Stamps => m_stamps;
 
     /// <summary>
     /// Set of stamping values that are associated to this sequence
     /// </summary>
     [XmlIgnore]
-    public virtual ICollection<IStampingValue> StampingValues
-    {
-      get {
-        return m_stampingValues;
-      }
-    }
+    public virtual ICollection<IStampingValue> StampingValues => m_stampingValues;
 
     /// <summary>
     /// Convert a string to a nullable TimeSpan
@@ -357,7 +369,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Default constructor
     /// </summary>
-    public Sequence ()
+    public OpSequence ()
     { }
 
     /// <summary>
@@ -365,7 +377,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="operation">not null</param>
     /// <param name="path">not null</param>
-    public Sequence (IOperation operation, IPath path)
+    public OpSequence (IOperation operation, IPath path)
     {
       Debug.Assert (null != operation);
       Debug.Assert (null != path);
@@ -374,7 +386,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Path = path;
     }
 
-    #region Methods
     /// <summary>
     /// Add a stamp in the member directly
     /// 
@@ -395,6 +406,47 @@ namespace Lemoine.GDBPersistentClasses
     protected internal virtual void RemoveStampForInternalUse (IStamp stamp)
     {
       RemoveFromProxyCollection<IStamp> (m_stamps, stamp);
+    }
+
+    /// <summary>
+    /// Unproxy all the properties
+    /// </summary>
+    public virtual void Unproxy ()
+    {
+      if (m_tool != null) {
+        NHibernateHelper.Unproxy<ITool> (ref m_tool);
+      }
+      if (m_path != null) {
+        NHibernateHelper.Unproxy<IPath> (ref m_path);
+      }
+    }
+
+    /// <summary>
+    /// Make a shallow copy
+    /// <see cref="ICloneable.Clone" />
+    /// </summary>
+    /// <returns></returns>
+    public virtual OpSequence CloneForXmlSerialization ()
+    {
+      var clone = new OpSequence ();
+      clone.m_id = Id;
+      clone.CadModel = CadModel;
+      // Operation is not serialized
+      clone.AutoOnly = AutoOnly;
+      clone.Description = Description;
+      // Detail is not serialized
+      // StampingValues and Stamps are not serialized
+      clone.EstimatedTime = EstimatedTime;
+      clone.Frequency = Frequency;
+      clone.Kind = Kind;
+      clone.Name = Name;
+      clone.OperationStep = OperationStep;
+      clone.Order = Order;
+      clone.Path = Path;
+      clone.Tool = Tool;
+      clone.ToolNumber = ToolNumber;
+      clone.m_version = Version;
+      return clone;
     }
 
     /// <summary>
@@ -440,7 +492,7 @@ namespace Lemoine.GDBPersistentClasses
       // Note: do not use here this.GetType () != obj.GetType
       //       because a Xxx may be compared with a XxxProxy
       //       which may return false although true might be returned
-      Sequence other = obj as Sequence;
+      OpSequence other = obj as OpSequence;
       if (null == other) {
         return false;
       }
@@ -484,14 +536,12 @@ namespace Lemoine.GDBPersistentClasses
       if (obj == null) {
         throw new ArgumentException ("Comparison of a sequence with a null");
       }
-      ISequence other = obj as Sequence;
+      ISequence other = obj as OpSequence;
       if (null == other) {
         throw new ArgumentException ("Comparison of a sequence with another type");
       }
       return this.Order.CompareTo (other.Order);
     }
-
-    #endregion // Methods
   }
 
   /// <summary>

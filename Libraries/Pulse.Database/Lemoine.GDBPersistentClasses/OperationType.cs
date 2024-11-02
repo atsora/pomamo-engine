@@ -72,7 +72,12 @@ namespace Lemoine.GDBPersistentClasses
       set { m_priority = value; }
     }
     #endregion // Getters / Setters
-    
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public OperationType () { }
+
     #region IReferenceData implementation
     /// <summary>
     /// <see cref="IReferenceData.IsUndefined" />

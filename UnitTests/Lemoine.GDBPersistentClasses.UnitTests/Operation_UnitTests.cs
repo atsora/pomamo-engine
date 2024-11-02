@@ -69,7 +69,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           Assert.That (merged.Paths, Has.Count.EqualTo (1), "not a single path");
         });
         bool sequence9found = false;
-        foreach (Sequence sequence in merged.Sequences) {
+        foreach (OpSequence sequence in merged.Sequences) {
           Assert.That (((Lemoine.Collections.IDataWithId)sequence.Operation).Id, Is.EqualTo (1));
           if (9 == sequence.Id) { sequence9found = true; }
         }

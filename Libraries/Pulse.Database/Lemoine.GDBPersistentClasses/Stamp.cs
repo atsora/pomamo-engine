@@ -93,14 +93,14 @@ namespace Lemoine.GDBPersistentClasses
           return;
         }
         if ( (null != m_sequence)
-            && (m_sequence is Sequence)) {
-          (m_sequence as Sequence)
+            && (m_sequence is OpSequence)) {
+          (m_sequence as OpSequence)
             .RemoveStampForInternalUse (this);
         }
         m_sequence = value;
         if ( (null != m_sequence)
-            && (m_sequence is Sequence)) {
-          (m_sequence as Sequence)
+            && (m_sequence is OpSequence)) {
+          (m_sequence as OpSequence)
             .AddStampForInternalUse (this);
         }
       }

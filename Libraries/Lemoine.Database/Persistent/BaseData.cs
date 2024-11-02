@@ -20,16 +20,13 @@ namespace Lemoine.Database.Persistent
   {
     static readonly ILog log = LogManager.GetLogger(typeof (BaseData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Default list of possible identifiers
     /// </summary>
     public abstract string[] Identifiers {
       get;
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Find the persistent class in the database
     /// that corresponds to this object.
@@ -404,7 +401,5 @@ namespace Lemoine.Database.Persistent
       }
     }
     #endregion // Collection utilities
-    
-    #endregion // Methods
   }
 }

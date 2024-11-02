@@ -222,13 +222,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       // test for Sequence (need to build an object that can be persisted)
       // Sequence is ordered, no two sequences mapped in same sorted collection should
       // have same order (otherwise one is lost)
-      ISequence sequence1 = new Sequence ();
+      ISequence sequence1 = new OpSequence ();
       sequence1.Order = 1;
-      ISequence sequence2 = new Sequence ();
+      ISequence sequence2 = new OpSequence ();
       sequence2.Order = 2;
       IOperationType operationType = ModelDAOHelper.DAOFactory.OperationTypeDAO.FindById (1);
       IOperation operation = ModelDAOHelper.ModelFactory.CreateOperation (operationType);
-      IPath path = new Path ();
+      IPath path = new OpPath ();
       path.Operation = operation;
       sequence1.Path = path;
       sequence2.Path = path;
@@ -304,8 +304,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
       // test for StampingValue
 
-      ISequence seqForStampingValue = new Sequence ();
-      IPath pathForStampingValue = new Path ();
+      ISequence seqForStampingValue = new OpSequence ();
+      IPath pathForStampingValue = new OpPath ();
       IOperation opForStampingValue = ModelDAOHelper.ModelFactory.CreateOperation (operationType);
       seqForStampingValue.Path = pathForStampingValue;
       pathForStampingValue.Operation = opForStampingValue;

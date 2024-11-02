@@ -144,6 +144,11 @@ namespace Lemoine.Model
   public class SequenceDetail
   {
     /// <summary>
+    /// Constructor
+    /// </summary>
+    public SequenceDetail () { }
+
+    /// <summary>
     /// Version of the sequence detail data structure
     /// </summary>
     public int Version { get; set; } = 2;
@@ -198,7 +203,7 @@ namespace Lemoine.Model
   /// A sequence is characterized by a tool, some machining parameters
   /// like the tolerance, the stock...
   /// </summary>
-  public interface ISequence : IVersionable, IDisplayable, IDataWithIdentifiers, IComparable, Lemoine.Collections.IDataWithId
+  public interface ISequence : IVersionable, IDisplayable, IDataWithIdentifiers, IComparable, Lemoine.Collections.IDataWithId, ISerializableModel
   {
     /// <summary>
     /// Reference to the CAD Model table

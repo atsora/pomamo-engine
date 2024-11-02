@@ -18,15 +18,10 @@ namespace Lemoine.Database.Xml
   /// </summary>
   public class XmlSerializerBuilder: XmlSerializer
   {
-    #region Members
     IEnumerable<Type> m_extraTypes = new List<Type> ();
-    #endregion // Members
 
     // disable once StaticFieldInGenericType
     static readonly ILog log = LogManager.GetLogger(typeof (XmlSerializerBuilder).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -42,7 +37,6 @@ namespace Lemoine.Database.Xml
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the built XmlSerializer
     /// </summary>
@@ -61,6 +55,5 @@ namespace Lemoine.Database.Xml
       var extraTypesArray = m_extraTypes.ToArray ();
       return new XmlSerializer (type, extraTypesArray);
     }
-    #endregion // Methods
   }
 }

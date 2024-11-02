@@ -1060,7 +1060,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public IPathDAO PathDAO
     {
-      get { return new PathDAO (); }
+      get { return new OpPathDAO (); }
     }
 
     /// <summary>
@@ -1227,7 +1227,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public ISequenceDAO SequenceDAO
     {
-      get { return new SequenceDAO (); }
+      get { return new OpSequenceDAO (); }
     }
 
     /// <summary>

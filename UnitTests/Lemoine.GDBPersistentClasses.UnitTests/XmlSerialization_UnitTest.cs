@@ -1234,14 +1234,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     [Test]
     public void TestSequenceSerializationDeserialization ()
     {
-      Sequence sequence1 = new Sequence ();
+      OpSequence sequence1 = new OpSequence ();
       sequence1.Name = "Seq1";
       sequence1.Order = 0;
-      Sequence sequence2 = new Sequence ();
+      OpSequence sequence2 = new OpSequence ();
       sequence2.Name = "Seq2";
       sequence2.Order = 1;
       // important to have different orders before inserting in path
-      Path path = new Path ();
+      OpPath path = new OpPath ();
       path.Number = 1;
       IOperationType operationType = ModelDAOHelper.ModelFactory.CreateOperationTypeFromName ("Test");
       IOperation operation = ModelDAOHelper.ModelFactory.CreateOperation (operationType);
@@ -1254,16 +1254,16 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       Assert.That (operation, Is.EqualTo (sequence1.Operation));
       Assert.That (operation, Is.EqualTo (sequence2.Operation));
 
-      XmlSerializer serializer = new XmlSerializer (typeof (Sequence));
+      XmlSerializer serializer = new XmlSerializer (typeof (OpSequence));
       TextWriter stringWriter1 = new StringWriter ();
       TextWriter stringWriter2 = new StringWriter ();
       serializer.Serialize (stringWriter1, sequence1);
       serializer.Serialize (stringWriter2, sequence2);
-      XmlSerializer deserializer = new XmlSerializer (typeof (Sequence));
+      XmlSerializer deserializer = new XmlSerializer (typeof (OpSequence));
       TextReader textReader1 = new StringReader (stringWriter1.ToString ());
       TextReader textReader2 = new StringReader (stringWriter2.ToString ());
-      Sequence sequence1bis = (Sequence)deserializer.Deserialize (textReader1);
-      Sequence sequence2bis = (Sequence)deserializer.Deserialize (textReader2);
+      OpSequence sequence1bis = (OpSequence)deserializer.Deserialize (textReader1);
+      OpSequence sequence2bis = (OpSequence)deserializer.Deserialize (textReader2);
 
       Assert.Multiple (() => {
         Assert.That (sequence1bis.Name, Is.EqualTo (sequence1.Name));
@@ -1475,6 +1475,88 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                            s.Length);
 #endif
             }
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Test]
+    public void TestSequenceSerialization ()
+    {
+      IModelFactory modelFactory = ModelDAOHelper.ModelFactory;
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      ISequence sequence;
+      using (IDAOSession daoSession = daoFactory.OpenSession ()) {
+        //        var sequence = ModelDAOHelper.ModelFactory.CreateSequence ("Test");
+        sequence = (OpSequence)ModelDAOHelper.DAOFactory.SequenceDAO.FindByIdForXmlSerialization (1);
+      }
+      var seqToSerialize = (sequence as OpSequence).CloneForXmlSerialization ();
+      var tuple = new SerializableTuple<OpSequence, OpSequence> (seqToSerialize, seqToSerialize);
+      {
+        var xmlSerializerBuilder = new Lemoine.Database.Xml.XmlSerializerBuilder ();
+        {
+          var type = Type.GetType ("Lemoine.GDBPersistentClasses.OpSequence, Pulse.Database");
+          if (type is null) {
+            log.Fatal ("type Lemoine.GDBPersistentClasses.OpSequence, Pulse.Database does not exist");
+          }
+        }
+        var sequenceSerializer = xmlSerializerBuilder.GetSerializer<OpSequence> ();
+        var tupleSerializer = xmlSerializerBuilder.GetSerializer<SerializableTuple<OpSequence, OpSequence>> ();
+        using (var stringWriter = new StringWriter ()) {
+          using (var xmlWriter = XmlWriter.Create (stringWriter, new XmlWriterSettings { Indent = true })) {
+            stringWriter.NewLine = "\n";
+            sequenceSerializer.Serialize (xmlWriter, seqToSerialize);
+            var s = stringWriter.ToString ();
+#if NET6_0_OR_GREATER
+            Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
+<?xml version="1.0" encoding="utf-16"?>
+<OpSequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Order="0" AutoOnly="true" Frequency="1" Kind="Machining">
+  <Path Number="1">
+    <Operation Name="SFKPROCESS1" MachiningDuration="01:00:00" MachiningHours="1" SetUpHours="0" TearDownHours="0" LoadingHours="0" UnloadingHours="0">
+      <Type TranslationKey="UndefinedValue" Display="Undefined" />
+    </Operation>
+  </Path>
+  <Tool Name="autotool" Code="sfkat 1" Diameter="20" Radius="5" />
+</OpSequence>
+""".ReplaceLineEndings ()));
+#else // NET48
+            throw new NotImplementedException ();
+#endif
+          }
+        }
+        using (var stringWriter = new StringWriter ()) {
+          using (var xmlWriter = XmlWriter.Create (stringWriter, new XmlWriterSettings { Indent = true })) {
+            stringWriter.NewLine = "\n";
+            tupleSerializer.Serialize (xmlWriter, tuple);
+            var s = stringWriter.ToString ();
+#if NET6_0_OR_GREATER
+            Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
+<?xml version="1.0" encoding="utf-16"?>
+<SerializableTupleOfOpSequenceOpSequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Item1 Order="0" AutoOnly="true" Frequency="1" Kind="Machining">
+    <Path Number="1">
+      <Operation Name="SFKPROCESS1" MachiningDuration="01:00:00" MachiningHours="1" SetUpHours="0" TearDownHours="0" LoadingHours="0" UnloadingHours="0">
+        <Type TranslationKey="UndefinedValue" Display="Undefined" />
+      </Operation>
+    </Path>
+    <Tool Name="autotool" Code="sfkat 1" Diameter="20" Radius="5" />
+  </Item1>
+  <Item2 Order="0" AutoOnly="true" Frequency="1" Kind="Machining">
+    <Path Number="1">
+      <Operation Name="SFKPROCESS1" MachiningDuration="01:00:00" MachiningHours="1" SetUpHours="0" TearDownHours="0" LoadingHours="0" UnloadingHours="0">
+        <Type TranslationKey="UndefinedValue" Display="Undefined" />
+      </Operation>
+    </Path>
+    <Tool Name="autotool" Code="sfkat 1" Diameter="20" Radius="5" />
+  </Item2>
+</SerializableTupleOfOpSequenceOpSequence>
+""".ReplaceLineEndings ()));
+#else // NET48
+            throw new NotImplementedException ();
+#endif
           }
         }
       }

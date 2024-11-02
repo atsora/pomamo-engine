@@ -2,7 +2,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
   namespace="Lemoine.GDBPersistentClasses"
   assembly="Pulse.Database">
-  <class name="Path" table="pathtable">
+  <class name="OpPath" table="pathtable">
     <id name="Id" column="pathid"
         access="nosetter.camelcase-m-underscore">
       <generator class="native">
@@ -27,7 +27,7 @@
          inverse="true" lazy="true"
          cascade="none">
       <key column="pathid" on-delete="cascade" />
-      <one-to-many class="Sequence" entity-name="opseq" />
+      <one-to-many class="OpSequence" entity-name="opseq" />
     </set>
   </class>
 </hibernate-mapping>

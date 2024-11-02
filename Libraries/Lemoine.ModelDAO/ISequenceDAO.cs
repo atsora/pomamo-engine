@@ -14,6 +14,13 @@ namespace Lemoine.ModelDAO
   public interface ISequenceDAO: IGenericUpdateDAO<ISequence, int>
   {
     /// <summary>
+    /// Find by id for XML serialization
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    ISequence FindByIdForXmlSerialization (int id);
+
+    /// <summary>
     /// FindAll sequences for a given Operation
     /// </summary>
     /// <returns></returns>

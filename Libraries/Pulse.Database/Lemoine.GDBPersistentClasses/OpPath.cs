@@ -11,6 +11,7 @@ using Lemoine.Collections;
 
 using Lemoine.Core.Log;
 using System.Diagnostics;
+using Lemoine.Database.Persistent;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -18,7 +19,7 @@ namespace Lemoine.GDBPersistentClasses
   /// Persistent class of table Path
   /// </summary>
   [Serializable]
-  public class Path: DataWithDisplayFunction, IPath, Lemoine.Collections.IDataWithId
+  public class OpPath: DataWithDisplayFunction, IPath, Lemoine.Collections.IDataWithId
   {
     #region Members
     int m_id = 0;
@@ -28,7 +29,7 @@ namespace Lemoine.GDBPersistentClasses
     ICollection<ISequence> m_sequences = new InitialNullIdSortedSet<ISequence, int>();
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (Path).FullName);
+    static readonly ILog log = LogManager.GetLogger(typeof (OpPath).FullName);
 
     #region Getters / Setters
     /// <summary>
@@ -123,14 +124,14 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Default constructor
     /// </summary>
-    public Path ()
+    public OpPath ()
     { }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="operation">not null</param>
-    public Path (IOperation operation)
+    public OpPath (IOperation operation)
     {
       Debug.Assert (null != operation);
 
@@ -156,6 +157,14 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     #endregion // add/remove methods
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.ISerializableModel"></see>
+    /// </summary>
+    public virtual void Unproxy ()
+    {
+      NHibernateHelper.Unproxy<IOperation> (ref m_operation);
+    }
 
     #region Methods
     /// <summary>
@@ -201,7 +210,7 @@ namespace Lemoine.GDBPersistentClasses
       // Note: do not use here this.GetType () != obj.GetType
       //       because a Xxx may be compared with a XxxProxy
       //       which may return false although true might be returned
-      IPath other = obj as Path;
+      IPath other = obj as OpPath;
       if (null == other) {
         return false;
       }
@@ -244,7 +253,7 @@ namespace Lemoine.GDBPersistentClasses
       if (obj == null) {
         throw new ArgumentException("Comparison of a path with a null");
       }
-      IPath other = obj as Path;
+      IPath other = obj as OpPath;
       if (null == other) {
         throw new ArgumentException ("Comparison of a path with another type");
       }

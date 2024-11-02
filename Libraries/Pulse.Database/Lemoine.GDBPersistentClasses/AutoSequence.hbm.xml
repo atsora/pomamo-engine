@@ -15,7 +15,7 @@
                  secondary-key="true"
                  class="MachineModule" not-null="true" />
     <many-to-one name="Sequence" column="sequenceid"
-                 class="Sequence"
+                 class="OpSequence"
                  entity-name="opseq"
                  access="nosetter.camelcase-m-underscore" />
     <many-to-one name="Operation" column="operationid"

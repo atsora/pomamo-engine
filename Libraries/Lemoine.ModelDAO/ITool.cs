@@ -11,7 +11,7 @@ namespace Lemoine.Model
   /// 
   /// This table lists the tools used in the workshop.
   /// </summary>
-  public interface ITool: IVersionable, IDataWithIdentifiers, IDisplayable
+  public interface ITool: IVersionable, IDataWithIdentifiers, IDisplayable, ISerializableModel
   {
     /// <summary>
     /// Full tool name / description. This is optional

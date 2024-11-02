@@ -15,11 +15,10 @@ namespace Lemoine.GDBPersistentClasses
   /// This allows a set of persistent classes to have a same base set of methods
   /// </summary>
   [Serializable]
-  public abstract class DataWithDisplayFunction: BaseData, IDisplayable
+  public abstract class DataWithDisplayFunction : BaseData, IDisplayable
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (DataWithDisplayFunction).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (DataWithDisplayFunction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Display name that is retrieved with a display function
     /// </summary>
@@ -28,6 +27,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       get; set;
     }
-    #endregion // Getters / Setters
   }
 }

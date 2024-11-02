@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>17.0.0.0</AssemblyVersion>
+    <AssemblyVersion>18.0.0.0</AssemblyVersion>
     <LangVersion>preview</LangVersion>
     <NoWarn>0649</NoWarn>
   </PropertyGroup>
@@ -569,8 +569,8 @@
       <DependentUpon>ObservationStateSlot.cs</DependentUpon>
       <LogicalName>ObservationStateSlot.hbm.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Sequence.hbm.xml">
-      <DependentUpon>Sequence.cs</DependentUpon>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OpSequence.hbm.xml">
+      <DependentUpon>OpSequence.cs</DependentUpon>
       <LogicalName>Sequence.hbm.xml</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OperationSlot.hbm.xml">
@@ -646,8 +646,8 @@
       <DependentUpon>SequenceSlot.cs</DependentUpon>
       <LogicalName>SequenceSlot.hbm.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Path.hbm.xml">
-      <DependentUpon>Path.cs</DependentUpon>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\OpPath.hbm.xml">
+      <DependentUpon>OpPath.cs</DependentUpon>
       <LogicalName>Path.hbm.xml</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Service.hbm.xml">

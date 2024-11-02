@@ -16,8 +16,8 @@ namespace Lemoine.GDBPersistentClasses
   /// <summary>
   /// Implementation of <see cref="Lemoine.ModelDAO.IPathDAO">IPathDAO</see>
   /// </summary>
-  public class PathDAO
-    : VersionableNHibernateDAO<Path, IPath, int>
+  public class OpPathDAO
+    : VersionableNHibernateDAO<OpPath, IPath, int>
     , IPathDAO
   {
     /// <summary>
@@ -27,7 +27,7 @@ namespace Lemoine.GDBPersistentClasses
     public IPath FindByOperationAndNumber (IOperation operation, int pathNumber)
     {
       return NHibernateHelper.GetCurrentSession ()
-        .CreateCriteria<Path> ()
+        .CreateCriteria<OpPath> ()
         .Add(Restrictions.Eq("Operation", operation))
         .Add(Restrictions.Eq("Number", pathNumber))
         .UniqueResult<IPath> ();
@@ -41,7 +41,7 @@ namespace Lemoine.GDBPersistentClasses
     public IList<IPath> FindAllWithOperation (IOperation operation)
     {
       return NHibernateHelper.GetCurrentSession ()
-        .CreateCriteria<Path> ()
+        .CreateCriteria<OpPath> ()
         .Add(Restrictions.Eq("Operation", operation))
         .AddOrder(Order.Asc ("Number"))
         .List<IPath> ();

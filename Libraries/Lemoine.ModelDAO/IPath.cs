@@ -10,7 +10,7 @@ namespace Lemoine.Model
   /// <summary>
   /// Model of table Path.
   /// </summary>
-  public interface IPath : IVersionable, IDataWithIdentifiers, IDisplayable, IComparable, Lemoine.Collections.IDataWithId
+  public interface IPath : IVersionable, IDataWithIdentifiers, IDisplayable, IComparable, Lemoine.Collections.IDataWithId, ISerializableModel
   {
     
     /// <summary>
