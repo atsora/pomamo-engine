@@ -164,15 +164,17 @@ namespace Lemoine.GDBPersistentClasses
     /// which intersects the specified date/time range
     /// and whose sequence is not null
     /// </summary>
-    /// <param name="machineModule"></param>
+    /// <param name="machineModule">not null</param>
     /// <param name="range"></param>
     /// <returns></returns>
     public ISequenceSlot FindLastWithSequence (IMachineModule machineModule,
                                                UtcDateTimeRange range)
     {
+      Debug.Assert (null != machineModule);
+
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<SequenceSlot> ()
-        .Add (Restrictions.Eq ("MachineModule", machineModule))
+        .Add (Restrictions.Eq ("MachineModule.Id", machineModule.Id))
         .Add (InUtcRange (range))
         .Add (Restrictions.IsNotNull ("Sequence"))
         .AddOrder (Order.Desc ("BeginDateTime"))

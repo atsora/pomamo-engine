@@ -1494,6 +1494,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         sequence = (OpSequence)ModelDAOHelper.DAOFactory.SequenceDAO.FindByIdForXmlSerialization (1);
       }
       var seqToSerialize = (sequence as OpSequence).CloneForXmlSerialization ();
+      //seqToSerialize.Unproxy ();
       var tuple = new SerializableTuple<OpSequence, OpSequence> (seqToSerialize, seqToSerialize);
       {
         var xmlSerializerBuilder = new Lemoine.Database.Xml.XmlSerializerBuilder ();

@@ -31,6 +31,7 @@
     <None Include="..\..\..\..\pomamo-cnc-extern\EthernetIP\plctag.dll" Visible="False" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <PackageReference Include="FluentFTP" />
     <PackageReference Include="FSharp.Core" />
+    <PackageReference Include="JmesPath.Net" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
     <PackageReference Include="MQTTnet" />

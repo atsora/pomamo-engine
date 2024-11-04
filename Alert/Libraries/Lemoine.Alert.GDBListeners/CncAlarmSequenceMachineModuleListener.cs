@@ -82,46 +82,59 @@ namespace Lemoine.Alert.GDBListeners
 
       // If no data anymore to process
       if (m_fetched.Count == 0) {
-        log.DebugFormat ("GetData: no data");
+        log.Debug ("GetData: no data");
         return null;
       }
 
-      // Get the first data in the list
-      var firstData = m_fetched[0];
-      XmlElement data;
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        // Note: Lock does not work on the line below.
-        //       This is not fully clear why yet, but it generates a message when the Unproxy() method is called.
-        //       Because the event data is read only, FindById may be used instead of Lock.
-        // TODO: understand what exactly happens with Lock and Unproxy
-        firstData = ModelDAOHelper.DAOFactory.CncAlarmDAO.FindById (firstData.Id, firstData.MachineModule);
-        firstData.Unproxy ();
+      try {
+        // Get the first data in the list
+        var firstData = m_fetched[0];
+        XmlElement data;
+        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          // Note: Lock does not work on the line below.
+          //       This is not fully clear why yet, but it generates a message when the Unproxy() method is called.
+          //       Because the event data is read only, FindById may be used instead of Lock.
+          // TODO: understand what exactly happens with Lock and Unproxy
+          firstData = ModelDAOHelper.DAOFactory.CncAlarmDAO.FindById (firstData.Id, firstData.MachineModule);
+          firstData.Unproxy ();
 
-        var sequenceSlot = ModelDAOHelper.DAOFactory.SequenceSlotDAO
-          .FindAtWithSequence (m_machineModule, firstData.DateTimeRange.Lower.Value);
-        var sequenceId = sequenceSlot?.Sequence?.Id ?? 0;
-        Debug.Assert (0 != sequenceId);
-        var sequence = ModelDAOHelper.DAOFactory.SequenceDAO.FindByIdForXmlSerialization (sequenceId);
-        var firstTuple = new SerializableTuple<CncAlarm, OpSequence> (firstData as CncAlarm, (sequence as OpSequence).CloneForXmlSerialization ());
+          var sequenceSlot = ModelDAOHelper.DAOFactory.SequenceSlotDAO
+            .FindAtWithSequence (m_machineModule, firstData.DateTimeRange.Lower.Value);
+          SerializableTuple<CncAlarm, OpSequence> firstTuple;
+          if (sequenceSlot is null) {
+            firstTuple = new SerializableTuple<CncAlarm, OpSequence> (firstData as CncAlarm, null);
+          }
+          else {
+            var sequenceId = sequenceSlot?.Sequence?.Id ?? 0;
+            Debug.Assert (0 != sequenceId);
+            var sequence = ModelDAOHelper.DAOFactory.SequenceDAO.FindByIdForXmlSerialization (sequenceId);
+            sequence.Unproxy (); // Not necessary, but done just in case
+            firstTuple = new SerializableTuple<CncAlarm, OpSequence> (firstData as CncAlarm, (sequence as OpSequence).CloneForXmlSerialization ());
+          }
 
-        // - serialization
-        var sw = new StringWriter ();
-        m_xmlSerializer.Serialize (sw, firstTuple);
-        var document = new XmlDocument ();
-        document.LoadXml (sw.ToString ());
-        data = document.DocumentElement;
+          // - serialization
+          var sw = new StringWriter ();
+          m_xmlSerializer.Serialize (sw, firstTuple);
+          var document = new XmlDocument ();
+          document.LoadXml (sw.ToString ());
+          data = document.DocumentElement;
 
-        // - Update the application state
-        using (IDAOTransaction transaction = session.BeginTransaction ()) {
-          ModelDAOHelper.DAOFactory.ApplicationStateDAO.Lock (m_cncAlarmSequenceMachineModuleListenerState);
-          m_cncAlarmSequenceMachineModuleListenerState.Value = firstData.Id;
-          ModelDAOHelper.DAOFactory.ApplicationStateDAO.MakePersistent (m_cncAlarmSequenceMachineModuleListenerState);
-          transaction.Commit ();
+          // - Update the application state
+          using (IDAOTransaction transaction = session.BeginTransaction ()) {
+            ModelDAOHelper.DAOFactory.ApplicationStateDAO.Lock (m_cncAlarmSequenceMachineModuleListenerState);
+            m_cncAlarmSequenceMachineModuleListenerState.Value = firstData.Id;
+            ModelDAOHelper.DAOFactory.ApplicationStateDAO.MakePersistent (m_cncAlarmSequenceMachineModuleListenerState);
+            transaction.Commit ();
+          }
         }
-      }
 
-      m_fetched.RemoveAt (0);
-      return data;
+        m_fetched.RemoveAt (0);
+        return data;
+      }
+      catch (Exception ex) {
+        log.Error ($"GetData: exception for machineModule={m_machineModule.Id}", ex);
+        throw;
+      }
     }
 
     /// <summary>

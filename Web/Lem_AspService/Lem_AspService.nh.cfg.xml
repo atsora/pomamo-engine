@@ -114,7 +114,7 @@
       class="Lemoine.GDBPersistentClasses.PackagePluginAssociation, Pulse.Database"
       usage="read-only" />
     <class-cache
-      class="Lemoine.GDBPersistentClasses.Path, Pulse.Database"
+      class="Lemoine.GDBPersistentClasses.OpPath, Pulse.Database"
       usage="read-write" />
     <class-cache
       class="Lemoine.GDBPersistentClasses.Plugin, Pulse.Database"

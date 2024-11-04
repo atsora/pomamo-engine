@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\..\Libraries\Lemoine.CorbaHelper\Lemoine.CorbaHelper.csproj" />
     <PackageReference Include="FluentFTP" />
     <PackageReference Include="FSharp.Core" />
+    <PackageReference Include="JmesPath.Net" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
     <PackageReference Include="MQTTnet" />
