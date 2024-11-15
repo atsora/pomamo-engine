@@ -54,6 +54,16 @@ let (|Integer|_|) (str:string) =
   | true,i -> Some i
   | _ -> None
 
+let (|Round|_|) (str:string) =
+  match System.Double.TryParse str with
+  | true,f -> Some (round f |> int)
+  | _ -> None
+
+let (|Floor|_|) (str:string) =
+  match System.Double.TryParse str with
+  | true,f -> Some (floor f |> int)
+  | _ -> None
+
 let (|Float|_|) (str:string) =
   match System.Double.TryParse str with
   | true,f -> Some f
