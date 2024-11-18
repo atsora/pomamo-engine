@@ -804,8 +804,8 @@ namespace Lemoine.Analysis.Detection
       if (log.IsDebugEnabled) {
         log.Debug ($"StopOperation: stop operation at {dateTime}");
       }
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      using (IDAOTransaction transaction = session.BeginTransaction ("Detection.StopOperation", notTop: true)) {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (var transaction = session.BeginTransaction ("Detection.StopOperation", notTop: true)) {
         try {
           // Extension
           foreach (var extension in GetExtensions ()) {
@@ -835,7 +835,7 @@ namespace Lemoine.Analysis.Detection
             transaction.Rollback (); // To remove some error logs that are associated to an implicit rollback
           }
           else {
-            log.Error ($"StopOperation: ", ex);
+            log.Error ($"StopOperation: exception", ex);
           }
           throw;
         }
