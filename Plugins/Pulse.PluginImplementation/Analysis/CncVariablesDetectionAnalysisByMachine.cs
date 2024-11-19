@@ -158,61 +158,58 @@ namespace Pulse.PluginImplementation.Analysis
           return; // Nothing to do
         }
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          using (var transaction = session.BeginTransaction ("CncVariablesDetectionAnalysis.ProcessDetection")) {
-            // Process first End cycle
-            if (cncVariableKeys.Contains (EndCycleVariableKey)) {
-              var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
-                .FindAt (detection.MachineModule, EndCycleVariableKey, detection.DateTime);
-              if (newCncVariable is null) {
-                log.Error ($"ProcessDetection: no cnc variable {EndCycleVariableKey} at {detection.DateTime}");
+          // Process first End cycle
+          if (cncVariableKeys.Contains (EndCycleVariableKey)) {
+            var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
+              .FindAt (detection.MachineModule, EndCycleVariableKey, detection.DateTime);
+            if (newCncVariable is null) {
+              log.Error ($"ProcessDetection: no cnc variable {EndCycleVariableKey} at {detection.DateTime}");
+            }
+            else if (TriggerEndCycleVariableAction (newCncVariable.Value)) {
+              var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
+                .FindAt (detection.MachineModule, EndCycleVariableKey, detection.DateTime.AddSeconds (-1));
+              if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
+                log.Debug ("ProcessDetection: no cnc variable change");
               }
-              else if (TriggerEndCycleVariableAction (newCncVariable.Value)) {
-                var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
-                  .FindAt (detection.MachineModule, EndCycleVariableKey, detection.DateTime.AddSeconds (-1));
-                if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
-                  log.Debug ("ProcessDetection: no cnc variable change");
+              else {
+                try {
+                  if (null == oldCncVariable) {
+                    RunEndCycleVariableAction (newCncVariable.Value, detection.DateTime);
+                  }
+                  else { // null != oldCncVariable
+                    RunEndCycleVariableAction (oldCncVariable.Value, newCncVariable.Value, detection.DateTime);
+                  }
                 }
-                else {
-                  try {
-                    if (null == oldCncVariable) {
-                      RunEndCycleVariableAction (newCncVariable.Value, detection.DateTime);
-                    }
-                    else { // null != oldCncVariable
-                      RunEndCycleVariableAction (oldCncVariable.Value, newCncVariable.Value, detection.DateTime);
-                    }
-                  }
-                  catch (Exception ex) {
-                    log.Error ("ProcessDetection: exception in RunEndCycleVariableAction", ex);
-                    throw;
-                  }
+                catch (Exception ex) {
+                  log.Error ("ProcessDetection: exception in RunEndCycleVariableAction", ex);
+                  throw;
                 }
               }
             }
-            // Then Start cycle
-            if (cncVariableKeys.Contains (StartCycleVariableKey)) {
-              var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
-                .FindAt (detection.MachineModule, StartCycleVariableKey, detection.DateTime);
-              if (newCncVariable is null) {
-                log.Error ($"ProcessDetection: no cnc variable {StartCycleVariableKey} at {detection.DateTime}");
+          }
+          // Then Start cycle
+          if (cncVariableKeys.Contains (StartCycleVariableKey)) {
+            var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
+              .FindAt (detection.MachineModule, StartCycleVariableKey, detection.DateTime);
+            if (newCncVariable is null) {
+              log.Error ($"ProcessDetection: no cnc variable {StartCycleVariableKey} at {detection.DateTime}");
+            }
+            else if (TriggerStartCycleVariableAction (newCncVariable.Value)) {
+              var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
+                .FindAt (detection.MachineModule, StartCycleVariableKey, detection.DateTime.AddSeconds (-1));
+              if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
+                log.Debug ("ProcessDetection: no cnc variable change");
               }
-              else if (TriggerStartCycleVariableAction (newCncVariable.Value)) {
-                var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
-                  .FindAt (detection.MachineModule, StartCycleVariableKey, detection.DateTime.AddSeconds (-1));
-                if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
-                  log.Debug ("ProcessDetection: no cnc variable change");
+              else {
+                try {
+                  RunStartCycleVariableAction (newCncVariable.Value, detection.DateTime);
                 }
-                else {
-                  try {
-                    RunStartCycleVariableAction (newCncVariable.Value, detection.DateTime);
-                  }
-                  catch (Exception ex) {
-                    log.Error ("ProcessDetection: exception in RunStartCycleVariableAction", ex);
-                    throw;
-                  }
+                catch (Exception ex) {
+                  log.Error ("ProcessDetection: exception in RunStartCycleVariableAction", ex);
+                  throw;
                 }
               }
             }
-            transaction.Commit ();
           }
         }
       }
@@ -247,7 +244,13 @@ namespace Pulse.PluginImplementation.Analysis
     /// <param name="dateTime"></param>
     protected virtual void RunEndCycleVariableAction (object newEndCycleVariableValue, DateTime dateTime)
     {
-      this.OperationCycleDetection.StopCycle (null, dateTime);
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (var transaction = session.BeginTransaction ("Detection.RunEndCycleVariableAction.StopCycle", this.RestrictedTransactionLevel)) {
+          transaction.SynchronousCommitOption = SynchronousCommit.Off;
+          this.OperationCycleDetection.StopCycle (null, dateTime);
+          transaction.Commit ();
+        }
+      }
     }
 
     /// <summary>
@@ -264,7 +267,13 @@ namespace Pulse.PluginImplementation.Analysis
     /// <param name="dateTime"></param>
     protected virtual void RunStartCycleVariableAction (object newStartCncVariableValue, DateTime dateTime)
     {
-      this.OperationCycleDetection.StartCycle (dateTime);
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (var transaction = session.BeginTransaction ("Detection.RunStartCycleVariableAction.StartCycle", this.RestrictedTransactionLevel)) {
+          transaction.SynchronousCommitOption = SynchronousCommit.Off;
+          this.OperationCycleDetection.StartCycle (dateTime);
+          transaction.Commit ();
+        }
+      }
     }
 
     /// <summary>
@@ -272,7 +281,7 @@ namespace Pulse.PluginImplementation.Analysis
     /// </summary>
     /// <param name="detection"></param>
     /// <returns></returns>
-    public virtual bool UseUniqueSerializableTransaction (IMachineModuleDetection detection) => true;
+    public virtual bool UseUniqueSerializableTransaction (IMachineModuleDetection detection) => false;
 
     #region ICycleDetectionStatusExtension
     /// <summary>
