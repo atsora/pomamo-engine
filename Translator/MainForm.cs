@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-using Ionic.Zip;
 using Lemoine.Core.Log;
 using Microsoft.Win32;
 
@@ -705,7 +705,7 @@ namespace Lem_Translator
     void ExportFileDialogFileOk (object sender, System.ComponentModel.CancelEventArgs e)
     {
       try {
-        using (ZipFile zip = new ZipFile ()) {
+        using (var zip = ZipFile.Open (exportFileDialog.FileName, ZipArchiveMode.Create)) {
           string lemInfosPath = installationPath;
           if (!File.Exists (Path.Combine (lemInfosPath, "Lem_Infos.exe"))) {
             lemInfosPath = Path.Combine (lemInfosPath, "share");
@@ -728,21 +728,18 @@ copy /Y ""{Path.GetFileName (birtLocaleFile.FilePath)}"" ""{Lemoine.Info.PulseIn
 echo The installation of translation files was done successfully
 pause";
 
-          zip.AddFile (pulseLocaleFile.FilePath, "");
-          zip.AddFile (birtLocaleFile.FilePath, "");
-          zip.AddFile (dotNetLocaleFile.FilePath, "");
-          zip.AddFile (lemInfosPath, "");
+          zip.CreateEntryFromFile (pulseLocaleFile.FilePath, Path.GetFileName (pulseLocaleFile.FilePath));
+          zip.CreateEntryFromFile (birtLocaleFile.FilePath, Path.GetFileName (birtLocaleFile.FilePath));
+          zip.CreateEntryFromFile (dotNetLocaleFile.FilePath, Path.GetFileName (dotNetLocaleFile.FilePath));
+          zip.CreateEntryFromFile (lemInfosPath, "");
           // TODO: Install.bat in the .zip file
           /*
           zip.AddFileFromString ("Install.bat", "", batScript);
           */
-          zip.Save (exportFileDialog.FileName);
         }
       }
-      catch (Exception exc) {
-        log.ErrorFormat ("Following error occured while trying to export to {0}: {1}",
-                         exportFileDialog.FileName,
-                         exc.ToString ());
+      catch (Exception ex) {
+        log.Error ($"ExportFileDialogFileOk: Following error occured while trying to export to {exportFileDialog.FileName}", ex);
         MessageBox.Show ("The translations files could not be exported",
                          "Translation files export error",
                          MessageBoxButtons.OK,
@@ -769,28 +766,28 @@ pause";
     void ImportFileDialogFileOk (object sender, System.ComponentModel.CancelEventArgs e)
     {
       try {
-        using (ZipFile zip = ZipFile.Read (importFileDialog.FileName)) {
+        using (var zip = ZipFile.OpenRead (importFileDialog.FileName)) {
           // - Import the zip file
           Regex pulseFileRegex =
             new Regex ("pulse_([a-z][a-z](-[A-Z][A-Z])?).txt");
           string localeString = null;
-          foreach (var zipEntry in zip) {
-            var filename = zipEntry.FileName;
+          foreach (var zipEntry in zip.Entries) {
+            var filename = zipEntry.Name;
             Match m = pulseFileRegex.Match (filename);
             if (m.Success) {
               localeString = m.Groups[1].Value;
             }
             if (filename.StartsWith ("pulse_")) {
-              string extractPath = Path.GetDirectoryName (pulseLocaleFile.FilePath);
+              string extractPath = Path.Combine (Path.GetDirectoryName (pulseLocaleFile.FilePath), filename);
               log.InfoFormat ("Extract filename {0} into directory {1}",
                               filename, extractPath);
-              zipEntry.Extract (extractPath, ExtractExistingFileAction.OverwriteSilently);
+              zipEntry.ExtractToFile (extractPath, true);
             }
             else if (filename.StartsWith ("pulsereportsi18n_")) {
-              string extractPath = Path.GetDirectoryName (birtLocaleFile.FilePath);
+              string extractPath = Path.Combine (Path.GetDirectoryName (birtLocaleFile.FilePath), filename);
               log.InfoFormat ("Extract filename {0} into directory {1}",
                               filename, extractPath);
-              zipEntry.Extract (extractPath, ExtractExistingFileAction.OverwriteSilently);
+              zipEntry.ExtractToFile (extractPath, true);
             }
             {
               string extractPath =
