@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -8,7 +9,6 @@ using System.Linq;
 
 namespace Lemoine.Model
 {
-
   /// <summary>
   /// List of supported types for the Kind property of the sequence
   /// </summary>

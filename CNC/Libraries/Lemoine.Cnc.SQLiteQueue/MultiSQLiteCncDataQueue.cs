@@ -70,7 +70,6 @@ namespace Lemoine.Cnc.SQLiteQueue
     }
     #endregion // IConfigurable implementation
 
-    #region Methods
     /// <summary>
     /// Initialize
     /// </summary>
@@ -176,6 +175,5 @@ namespace Lemoine.Cnc.SQLiteQueue
       queue.MachineModuleId = this.MachineModuleId;
       return queue;
     }
-    #endregion // Methods
   }
 }

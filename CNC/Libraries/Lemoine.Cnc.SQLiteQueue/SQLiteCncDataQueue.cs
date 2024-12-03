@@ -909,9 +909,13 @@ VALUES ({1}, {2}, '{3}', '{4}', '{5}', '{6}', x'{7:x2}')",
       if ((initDbSize > MAX_FILESIZE_BEFORE_VACUUM) &&
           (DateTime.UtcNow.Subtract (m_lastVacuum) > MIN_DELAY_BETWEEN_VACUUM)) {
         m_lastVacuum = DateTime.UtcNow;
-        log.DebugFormat ("Start Vacuum of {0} (size {1})", m_filePath, initDbSize);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"VacuumIfNeeded: start Vacuum of {m_filePath} (size {initDbSize})");
+        }
         Vacuum ();
-        log.DebugFormat ("End of Vacuum of {0} (size {1})", m_filePath, GetDbSize ());
+        if (log.IsDebugEnabled) {
+          log.Debug ($"VauumIfNeeded: end of Vacuum of {m_filePath} (size {GetDbSize ()})");
+        }
         return true;
       }
       else {

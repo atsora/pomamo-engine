@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,20 +19,15 @@ namespace Lemoine.CncDataImport
   /// </summary>
   internal sealed class ImportDataStamp : IImportData
   {
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
     /// </summary>
     public DateTime LastVisitDateTime { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -41,12 +37,8 @@ namespace Lemoine.CncDataImport
       Debug.Assert (null != machineModule);
 
       m_machineModule = machineModule;
-      log = LogManager.GetLogger (string.Format ("{0}.{1}.{2}",
-                                                 typeof (ImportDataStamp).FullName,
-                                                 machineModule.MonitoredMachine.Id,
-                                                 machineModule.Id));
+      log = LogManager.GetLogger ($"{typeof (ImportDataStamp).FullName}.{machineModule.MonitoredMachine.Id}.{machineModule.Id}");
     }
-    #endregion // Constructors
 
     #region IImportData implementation
     /// <summary>
@@ -59,19 +51,13 @@ namespace Lemoine.CncDataImport
     {
       if (!otherData.Key.Equals (data.Key) || !otherData.Value.Equals (data.Value)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsMergeable: " +
-                           "the new Stamp data {0} does not contain the same key/value than {1} " +
-                           "=> not compatible",
-                           data, otherData);
+          log.Debug ($"IsMergeable: the new Stamp data {data} does not contain the same key/value than {otherData} => not compatible");
         }
         return false;
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("IsMergeable: " +
-                         "exactly the same stamp data {0} as the previous one {1} " +
-                         "=> compatible",
-                         data, otherData);
+        log.Debug ($"IsMergeable: exactly the same stamp data {data} as the previous one {otherData} => compatible");
       }
       return true;
     }
@@ -83,15 +69,23 @@ namespace Lemoine.CncDataImport
     public void ImportDatas (IList<ExchangeData> datas, CancellationToken cancellationToken = default)
     {
       var firstData = datas[0];
-      ImportStamp (firstData.Key, (double)firstData.Value, firstData.DateTime);
+      try {
+        ImportStamp (firstData.Key, (double)firstData.Value, firstData.DateTime);
+      }
+      catch (Exception ex) {
+        log.Error ($"ImportDatas: exception in ImportStamp", ex);
+        throw;
+      }
     }
     #endregion // IImportData implementation
 
-    #region Private methods
     void ImportStamp (string key, double stampIdMilestone, DateTime dateTime)
     {
       var stampId = (int)Math.Floor (stampIdMilestone);
       var sequenceMilestoneMin = 10000 * (stampIdMilestone - stampId);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ImportStamp: stampIdMilestone={stampIdMilestone} stampId={stampId} sequenceKilestoneMin={sequenceMilestoneMin}");
+      }
 
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         DateTime effectiveDateTime = NullableDateTime.TruncateToSeconds (dateTime);
@@ -99,11 +93,8 @@ namespace Lemoine.CncDataImport
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction (
           "CncData.ImportStamp.CheckStamp", TransactionLevel.ReadCommitted)) {
           stamp = ModelDAOHelper.DAOFactory.StampDAO.FindById (stampId);
-          if (null == stamp) {
-            log.ErrorFormat ("ImportStamp: " +
-                             "stamp with Id={2} does not exist " +
-                             "=> skip the record with machineModuleId={0} key={1} stampId={2} dateTime={3}",
-                             m_machineModule.Id, key, stampId, dateTime);
+          if (stamp is null) {
+            log.Error ($"ImportStamp: stamp with Id={stampId} does not exist => skip the record with machineModuleId={m_machineModule.Id} key={key} stampId={stampId} dateTime={dateTime}");
             // Read-only transaction: nothing to commit
             return;
           }
@@ -122,17 +113,15 @@ namespace Lemoine.CncDataImport
 
           // - DetectionTimeStamp
           var detectionTimeStamp = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (m_machineModule, AcquisitionStateKey.Detection);
-          if (null == detectionTimeStamp) {
+          if (detectionTimeStamp is null) {
             detectionTimeStamp = ModelDAOHelper.ModelFactory.CreateAcquisitionState (m_machineModule, AcquisitionStateKey.Detection);
           }
           detectionTimeStamp.DateTime = effectiveDateTime;
           ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent (detectionTimeStamp);
 
-          // - Commit
           transaction.Commit ();
         }
       }
     }
-    #endregion // Private methods
   }
 }

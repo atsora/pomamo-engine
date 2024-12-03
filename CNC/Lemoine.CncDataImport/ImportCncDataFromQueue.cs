@@ -358,17 +358,19 @@ namespace Lemoine.CncDataImport
         if ((queueDatas.Count < MinNbOfDataToProcess)
             && (queueDatas[0].DateTime <= DateTime.UtcNow)
             && (DateTime.UtcNow.Subtract (queueDatas[0].DateTime) < WhicheverNbOfDataProcessAfter)) {
-          log.InfoFormat ("ImportAllInInitializedQueue: " +
-                          "because the minimum of data {0} is not reached ({1} datas) " +
-                          "and the oldest date {2} is not old enough (limit age is {3}) " +
-                          "=> do not process it right now",
-                          MinNbOfDataToProcess, queueDatas.Count,
-                          queueDatas[0].DateTime, WhicheverNbOfDataProcessAfter);
+          if (log.IsInfoEnabled) {
+            log.InfoFormat ("ImportAllInInitializedQueue: " +
+                            "because the minimum of data {0} is not reached ({1} datas) " +
+                            "and the oldest date {2} is not old enough (limit age is {3}) " +
+                            "=> do not process it right now",
+                            MinNbOfDataToProcess, queueDatas.Count,
+                            queueDatas[0].DateTime, WhicheverNbOfDataProcessAfter);
+          }
           if (m_cncDataQueue is IMultiCncDataQueue multiQueue) {
             Debug.Assert (null != multiQueue);
-            log.DebugFormat ("ImportAllInInitializedQueue: " +
-                             "firstQueueIndex={0} currentQueueIndex={1}",
-                             m_notEnoughDataFirstQueueIndex, multiQueue.CurrentQueueIndex);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ImportAllInInitializedQueue: firstQueueIndex={m_notEnoughDataFirstQueueIndex} currentQueueIndex={multiQueue.CurrentQueueIndex}");
+            }
             if (!m_notEnoughDataFirstQueueIndex.HasValue) {
               m_notEnoughDataFirstQueueIndex = multiQueue.CurrentQueueIndex;
             }
@@ -438,13 +440,7 @@ namespace Lemoine.CncDataImport
           TimeSpan lastMachineModeVisitAge =
             DateTime.UtcNow.Subtract (m_importData[ExchangeDataCommand.MachineMode].LastVisitDateTime);
           if (VisitMachineModesEvery < lastMachineModeVisitAge) {
-            log.InfoFormat ("ImportAllInInitializedQueue: " +
-                            "last visit of machine modes was {0} ago, " +
-                            "which is more than limit {1} " +
-                            "=> give the priority to the machine mode " +
-                            "and reset the queue in case of IMultiCncDataQueue",
-                            lastMachineModeVisitAge,
-                            VisitMachineModesEvery);
+            log.Info ($"ImportAllInInitializedQueue: last visit of machine modes was {lastMachineModeVisitAge} ago, which is more than limit {VisitMachineModesEvery} => give the priority to the machine mode and reset the queue in case of IMultiCncDataQueue");
             m_importData[ExchangeDataCommand.MachineMode].LastVisitDateTime = DateTime.UtcNow;
             Debug.Assert (null != multiQueue1);
             multiQueue1.Reset ();
@@ -533,10 +529,7 @@ namespace Lemoine.CncDataImport
       // Check it is the same command
       if (!lastData.Command.Equals (data.Command)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsDataCompatible: " +
-                           "the new data {0} does not contain the same command than {1} " +
-                           "=> not compatible",
-                           data, lastData);
+          log.Debug ($"IsDataCompatible: the new data {data} does not contain the same command than {lastData} => not compatible");
         }
         return false;
       }
@@ -549,9 +542,7 @@ namespace Lemoine.CncDataImport
     {
       if (DEFAULT_CLEAN_DETECTIONS_FREQUENCY < DateTime.UtcNow.Subtract (m_lastCleanDetections)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("CleanDetections: " +
-                           "clean the detections because the last process was at {0} (older than {1})",
-                           m_lastCleanDetections, DEFAULT_CLEAN_DETECTIONS_FREQUENCY);
+          log.Debug ($"CleanDetections: clean the detections because the last process was at {m_lastCleanDetections} (older than {DEFAULT_CLEAN_DETECTIONS_FREQUENCY})");
         }
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           // - Get MachineModuleAnalysisStatus
@@ -563,9 +554,7 @@ namespace Lemoine.CncDataImport
             transaction.Commit ();
           }
           if (null == analysisStatus) {
-            log.WarnFormat ("CleanDetections: " +
-                            "no analysis status for machine module id={0}",
-                            MachineModule.Id);
+            log.Warn ($"CleanDetections: no analysis status for machine module id={this.MachineModule.Id}");
           }
           else {
             // - Delete the machine module detections that are older than 30 days and that are not processed yet
