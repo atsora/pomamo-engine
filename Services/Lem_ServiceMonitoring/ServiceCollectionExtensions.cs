@@ -16,6 +16,7 @@ using Pulse.Hosting.ApplicationInitializer;
 #if CONNECTOR
 using Atsora.JsonFileData;
 using Lemoine.Core.Hosting;
+using Lemoine.BaseControls;
 using Lemoine.DataControls.GuiInitializer;
 using Lemoine.Extensions.DummyImplementations;
 using Lemoine.Extensions.Interfaces;
