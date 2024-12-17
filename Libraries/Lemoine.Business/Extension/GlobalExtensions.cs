@@ -22,9 +22,7 @@ namespace Lemoine.Business.Extension
     : IRequest<IEnumerable<T>>
     where T : Lemoine.Extensions.IExtension
   {
-    #region Members
     Func<T, bool> m_filter = (x => true);
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GlobalExtensions<T>).FullName);
 

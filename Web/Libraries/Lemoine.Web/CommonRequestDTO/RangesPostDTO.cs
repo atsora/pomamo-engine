@@ -29,7 +29,7 @@ namespace Lemoine.Web.CommonRequestDTO
     /// Convert the string ranges into a list of UtcDateTimeRange
     /// </summary>
     /// <returns></returns>
-    public IList<UtcDateTimeRange> Convert ()
+    public IList<UtcDateTimeRange> ExtractRanges ()
     {
       IList<UtcDateTimeRange> result = new List<UtcDateTimeRange> ();
       foreach (var stringRange in Ranges) {

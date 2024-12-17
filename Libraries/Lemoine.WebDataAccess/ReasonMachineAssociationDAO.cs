@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,6 +19,9 @@ namespace Lemoine.WebDataAccess
   /// </summary>
   public class ReasonMachineAssociationDAO : Lemoine.ModelDAO.IReasonMachineAssociationDAO
   {
+    static readonly string MANUAL_REASON_PRIORITY_KEY = "Reason.Manual.Priority";
+    static readonly int MANUAL_REASON_PRIORITY_DEFAULT = 1000;
+
     #region IGenericByMachineDAO implementation
     public Lemoine.Model.IReasonMachineAssociation FindById (long id, IMachine machine)
     {
@@ -38,10 +42,13 @@ namespace Lemoine.WebDataAccess
     /// <param name="reasonScore"></param>
     /// <param name="details"></param>
     /// <returns></returns>
-    public long InsertManualReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details)
+    public long InsertManualReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details, string jsonData)
     {
       var association = ModelDAO.ModelDAOHelper.ModelFactory.CreateReasonMachineAssociation (machine, range);
-      association.SetManualReason (reason, reasonScore, details);
+      association.SetManualReason (reason, reasonScore, details, jsonData);
+      association.Option = AssociationOption.TrackSlotChanges;
+      association.Priority = Lemoine.Info.ConfigSet
+        .LoadAndGet (MANUAL_REASON_PRIORITY_KEY, MANUAL_REASON_PRIORITY_DEFAULT);
       return Insert (association);
     }
 

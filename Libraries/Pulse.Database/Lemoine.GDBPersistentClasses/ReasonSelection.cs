@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -83,16 +84,17 @@ namespace Lemoine.GDBPersistentClasses
       this.m_detailsRequired = detailsRequired;
     }
     #endregion // Constructors
-    
-    #region Getters / Setters
+
     /// <summary>
     /// MachineModeDefaultReason ID
     /// </summary>
-    public virtual int Id
-    {
-      get { return this.m_id; }
-    }
-    
+    public virtual int Id => m_id;
+
+    /// <summary>
+    /// Additional data
+    /// </summary>
+    public virtual IDictionary<string, object> Data => null;
+
     /// <summary>
     /// Version
     /// </summary>
@@ -164,7 +166,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_machineFilter; }
       set { m_machineFilter = value; }
     }
-    #endregion // Getters / Setters
     
     #region Equals and GetHashCode implementation
     /// <summary>

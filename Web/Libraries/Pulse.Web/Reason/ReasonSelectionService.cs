@@ -120,9 +120,7 @@ namespace Pulse.Web.Reason
         var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -138,7 +136,7 @@ namespace Pulse.Web.Reason
         var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
           .FindOverlapsRange (machine, range);
         if (!reasonSlots.Any ()) {
-          log.ErrorFormat ("GetWithoutCache: no reason slot at {0}", range);
+          log.Error ($"GetWithoutCache: no reason slot at {range}");
           return new ErrorDTO ("No reason slot at the specified range",
             ErrorStatus.ProcessingDelay);
         }
@@ -149,52 +147,6 @@ namespace Pulse.Web.Reason
         return BuildResponseDTO (machine, reasonSelectionKeys, reasonSlots);
       }
     }
-
-#if NSERVICEKIT
-    /// <summary>
-    /// Response to POST request for ReasonSelection service
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="httpRequest"></param>
-    /// <returns></returns>
-    public object Post (ReasonSelectionPostRequestDTO request,
-                        NServiceKit.ServiceHost.IHttpRequest httpRequest)
-    {
-      int machineId = request.MachineId;
-
-      log.Debug ("GetReasonSelectionV3 begin");
-
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonSelection")) {
-        var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
-          .FindById (machineId);
-        if (null == machine) {
-          log.ErrorFormat ("Post: " +
-                           "unknown machine with ID {0}",
-                           machineId);
-          return new ErrorDTO ("No machine with the specified ID",
-                               ErrorStatus.WrongRequestParameter);
-        }
-
-        // 2- Get data (= one period or more )
-        // Ranges
-        RangesPostDTO deserializedResult = PostDTO.Deserialize<RangesPostDTO> (httpRequest);
-        IEnumerable<IReasonSlot> reasonSlots = new List<IReasonSlot> ();
-        IEnumerable<ReasonSelectionKey> reasonSelectionKeys = new List<ReasonSelectionKey> ();
-        foreach (var range in deserializedResult.Convert ()) {
-          var newReasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
-            .FindOverlapsRange (machine, range);
-          reasonSlots = reasonSlots.Union (newReasonSlots);
-          var newReasonSelectionKeys = newReasonSlots
-            .Select (reasonSlot => new ReasonSelectionKey (reasonSlot.MachineMode, reasonSlot.MachineObservationState))
-            .Distinct ();
-          reasonSelectionKeys = reasonSelectionKeys.Union (newReasonSelectionKeys);
-        }
-
-        return BuildResponseDTO (machine, reasonSelectionKeys, reasonSlots);
-      }
-    }
-#else // !NSERVICEKIT
 
     /// <summary>
     /// Post method
@@ -209,10 +161,8 @@ namespace Pulse.Web.Reason
       using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonSelection")) {
         var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (machineId);
-        if (null == machine) {
-          log.ErrorFormat ("Post: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+        if (machine is null) {
+          log.Error ($"Post: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -222,7 +172,7 @@ namespace Pulse.Web.Reason
         RangesPostDTO deserializedResult = PostDTO.Deserialize<RangesPostDTO> (m_body);
         IEnumerable<IReasonSlot> reasonSlots = new List<IReasonSlot> ();
         IEnumerable<ReasonSelectionKey> reasonSelectionKeys = new List<ReasonSelectionKey> ();
-        foreach (var range in deserializedResult.Convert ()) {
+        foreach (var range in deserializedResult.ExtractRanges ()) {
           // TODO: use an asynchronous method for FindOverlapsRange
           var newReasonSlots = await Task.Run ( () => ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindOverlapsRange (machine, range));
@@ -236,7 +186,6 @@ namespace Pulse.Web.Reason
         return BuildResponseDTO (machine, reasonSelectionKeys, reasonSlots);
       }
     }
-#endif // NSERVICEKIT
 
     object BuildResponseDTO (IMonitoredMachine machine, IEnumerable<ReasonSelectionKey> reasonSelectionKeys, IEnumerable<IReasonSlot> reasonSlots)
     {

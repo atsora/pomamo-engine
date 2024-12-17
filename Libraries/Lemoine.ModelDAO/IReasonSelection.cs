@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -26,6 +27,13 @@ namespace Lemoine.Model
     /// ID
     /// </summary>
     int Id { get; }
+
+    /// <summary>
+    /// Additional data
+    /// 
+    /// Nullable
+    /// </summary>
+    IDictionary<string, object> Data { get; }
 
     /// <summary>
     /// Reference to the Machine Mode (not null)

@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Lemoine.Core.Log;
+using Lemoine.I18N;
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lemoine.Model
 {
@@ -127,14 +130,14 @@ namespace Lemoine.Model
     public static ReasonSource ConvertToReasonSource (this ReasonMachineAssociationKind kind)
     {
       switch (kind) {
-      case ReasonMachineAssociationKind.Auto:
-      case ReasonMachineAssociationKind.AutoWithOverwriteRequired:
-        return ReasonSource.Auto;
-      case ReasonMachineAssociationKind.Manual:
-        return ReasonSource.Manual;
-      default:
-        log.ErrorFormat ("ConvertToReasonSource: {0} can't be converted. StackTrace={1}", kind, System.Environment.StackTrace);
-        throw new InvalidCastException ("Invalid cast from ReasonMachineAssociationKind to ReasonSource");
+        case ReasonMachineAssociationKind.Auto:
+        case ReasonMachineAssociationKind.AutoWithOverwriteRequired:
+          return ReasonSource.Auto;
+        case ReasonMachineAssociationKind.Manual:
+          return ReasonSource.Manual;
+        default:
+          log.ErrorFormat ("ConvertToReasonSource: {0} can't be converted. StackTrace={1}", kind, System.Environment.StackTrace);
+          throw new InvalidCastException ("Invalid cast from ReasonMachineAssociationKind to ReasonSource");
       }
     }
 
@@ -146,15 +149,15 @@ namespace Lemoine.Model
     public static ReasonProposalKind ConvertToReasonProposalKind (this ReasonMachineAssociationKind kind)
     {
       switch (kind) {
-      case ReasonMachineAssociationKind.Auto:
-        return ReasonProposalKind.Auto;
-      case ReasonMachineAssociationKind.AutoWithOverwriteRequired:
-        return ReasonProposalKind.AutoWithOverwriteRequired;
-      case ReasonMachineAssociationKind.Manual:
-        return ReasonProposalKind.Manual;
-      default:
-        log.ErrorFormat ("ConvertToReasonProposalKind: {0} can't be converted. StackTrace={1}", kind, System.Environment.StackTrace);
-        throw new InvalidCastException ("Invalid cast from ReasonMachineAssociationKind to ReasonProposalKind");
+        case ReasonMachineAssociationKind.Auto:
+          return ReasonProposalKind.Auto;
+        case ReasonMachineAssociationKind.AutoWithOverwriteRequired:
+          return ReasonProposalKind.AutoWithOverwriteRequired;
+        case ReasonMachineAssociationKind.Manual:
+          return ReasonProposalKind.Manual;
+        default:
+          log.ErrorFormat ("ConvertToReasonProposalKind: {0} can't be converted. StackTrace={1}", kind, System.Environment.StackTrace);
+          throw new InvalidCastException ("Invalid cast from ReasonMachineAssociationKind to ReasonProposalKind");
       }
     }
   }
@@ -194,20 +197,14 @@ namespace Lemoine.Model
     /// <param name="reason">not null</param>
     /// <param name="reasonScore"></param>
     /// <param name="details"></param>
-    void SetManualReason (IReason reason, double? reasonScore, string details);
+    void SetManualReason (IReason reason, double? reasonScore, string details = null, string jsonData = null);
 
     /// <summary>
     /// Set a manual reason
     /// </summary>
     /// <param name="reason">not null</param>
     /// <param name="details"></param>
-    void SetManualReason (IReason reason, string details);
-
-    /// <summary>
-    /// Set a manual reason
-    /// </summary>
-    /// <param name="reason">not null</param>
-    void SetManualReason (IReason reason);
+    void SetManualReason (IReason reason, string details = null, string jsonData = null);
 
     /// <summary>
     /// Reset a manual reason
@@ -221,15 +218,7 @@ namespace Lemoine.Model
     /// <param name="score"></param>
     /// <param name="overwriteRequired"></param>
     /// <param name="details"></param>
-    void SetAutoReason (IReason reason, double score, bool overwriteRequired, string details);
-
-    /// <summary>
-    /// Set an auto reason
-    /// </summary>
-    /// <param name="reason">not null</param>
-    /// <param name="score"></param>
-    /// <param name="overwriteRequired"></param>
-    void SetAutoReason (IReason reason, double score, bool overwriteRequired);
+    void SetAutoReason (IReason reason, double score, bool overwriteRequired, string details = null, string jsonData = null);
 
     /// <summary>
     /// Consider it as a dynamic end tracker
@@ -267,5 +256,12 @@ namespace Lemoine.Model
     /// Dynamic end
     /// </summary>
     string DynamicEnd { get; }
+  }
+
+  /// <summary>
+  /// Extensions to <see cref="IReasonMachineAssociation"/>
+  /// </summary>
+  public static class ReasonMachineAssociationExtension
+  {
   }
 }

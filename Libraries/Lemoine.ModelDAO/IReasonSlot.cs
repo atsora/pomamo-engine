@@ -4,6 +4,7 @@
 
 using Lemoine.Core.Log;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lemoine.Model
@@ -243,6 +244,16 @@ namespace Lemoine.Model
     /// null corresponds to a default reason in IReasonSlot
     /// </summary>
     IReason Reason { get; }
+
+    /// <summary>
+    /// Additional reason data
+    /// </summary>
+    IDictionary<string, object> Data { get; }
+
+    /// <summary>
+    /// Additional reason data in Json format
+    /// </summary>
+    string JsonData { get; }
 
     /// <summary>
     /// Should the operator overwrite the reason

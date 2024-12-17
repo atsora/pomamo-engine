@@ -588,7 +588,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
       var autoReasonProposal = GetAutoReasonProposals (range)
         .Where (a => a.DateTimeRange.ContainsRange (range));
       var extraReasonSelections = autoReasonProposal
-        .Select (a => new ExtraReasonSelection (machineMode, machineObservationState, a.Reason, GetManualScore (machineMode, machineObservationState, a) ?? -1));
+        .Select (a => new ExtraReasonSelection (machineMode, machineObservationState, a.Reason, GetManualScore (machineMode, machineObservationState, a) ?? -1, a.Data));
       return extraReasonSelections
         .Where (s => 0 < s.ReasonScore)
         .Cast<IReasonSelection> ();

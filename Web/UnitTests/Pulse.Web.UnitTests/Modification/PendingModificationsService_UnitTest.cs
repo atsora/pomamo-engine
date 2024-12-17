@@ -14,6 +14,7 @@ using Pulse.Web.CommonResponseDTO;
 using Lemoine.Core.Log;
 using NUnit.Framework;
 using Lemoine.Extensions.Web.Responses;
+using System.Threading.Tasks;
 
 namespace Pulse.Web.UnitTests.Modification
 {
@@ -28,7 +29,7 @@ namespace Pulse.Web.UnitTests.Modification
     Pulse.Web.Modification.PendingModificationsService m_service;
     
     [Test]
-    public void TestPendingModifications()
+    public async Task TestPendingModificationsAsync()
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
         using (IDAOTransaction transaction = session.BeginTransaction())
@@ -45,7 +46,7 @@ namespace Pulse.Web.UnitTests.Modification
           reasonSave.MachineId = machine1.Id;
           reasonSave.Range = "[" + ConvertDTO.DateTimeUtcToIsoString (begin) + "," + ConvertDTO.DateTimeUtcToIsoString (end) + ")";
           reasonSave.ReasonDetails = details;
-          ReasonSaveResponseDTO response = new ReasonSaveService ().GetSync (reasonSave) as ReasonSaveResponseDTO;
+          ReasonSaveResponseDTO response = await new ReasonSaveService ().Get (reasonSave) as ReasonSaveResponseDTO;
           Assert.That (response, Is.Not.Null, "Non OK saveReasonResponse");
           
           int revisionId = (int)response.Revision.Id;
@@ -61,7 +62,7 @@ namespace Pulse.Web.UnitTests.Modification
           }
           
           // save reason a second time
-          ReasonSaveResponseDTO response2 = new ReasonSaveService ().GetSync (reasonSave) as ReasonSaveResponseDTO;
+          ReasonSaveResponseDTO response2 = await new ReasonSaveService ().Get (reasonSave) as ReasonSaveResponseDTO;
           Assert.That (response2, Is.Not.Null, "Non OK saveReasonResponse");
           
           int revisionId2 = (int)response2.Revision.Id;

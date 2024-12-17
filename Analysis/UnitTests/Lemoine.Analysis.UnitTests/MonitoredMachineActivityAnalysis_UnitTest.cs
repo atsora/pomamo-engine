@@ -474,7 +474,7 @@ namespace Lemoine.Analysis.UnitTests
             {
               var range = new UtcDateTimeRange (UtcDateTime.From (2008, 01, 16, 11, 31, 00));
               ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-                .InsertManualReason (machine, range, reasonTV, 100.0, "");
+                .InsertManualReason (machine, range, reasonTV, 100.0, "", null);
               AnalysisUnitTests.RunMakeAnalysis ();
             }
 

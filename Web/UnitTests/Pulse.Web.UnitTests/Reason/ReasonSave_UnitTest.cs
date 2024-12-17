@@ -12,6 +12,7 @@ using Pulse.Web.Reason;
 using Pulse.Web.CommonResponseDTO;
 using Lemoine.Core.Log;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace Pulse.Web.UnitTests.Reason
 {
@@ -26,7 +27,7 @@ namespace Pulse.Web.UnitTests.Reason
     Pulse.Web.Reason.ReasonSaveService m_service;
     
     [Test]
-    public void TestReasonSave()
+    public async Task TestReasonSave()
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
         using (IDAOTransaction transaction = session.BeginTransaction())
@@ -41,7 +42,7 @@ namespace Pulse.Web.UnitTests.Reason
           reasonSave.Range = "[2013-09-06T14:59:00Z,2013-09-06T15:00:00Z)";
           reasonSave.ReasonDetails = details;
           
-          var response = new ReasonSaveService ().GetSync (reasonSave) as ReasonSaveResponseDTO;
+          var response = await new ReasonSaveService ().Get (reasonSave) as ReasonSaveResponseDTO;
 
           Assert.That (response, Is.Not.Null);
           

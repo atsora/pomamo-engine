@@ -11,7 +11,7 @@ namespace Lemoine.ModelDAO
   /// <summary>
   /// DAO interface for IReasonMachineAssociation.
   /// </summary>
-  public interface IReasonMachineAssociationDAO: ISpecificMachineModificationDAO<IReasonMachineAssociation>
+  public interface IReasonMachineAssociationDAO : ISpecificMachineModificationDAO<IReasonMachineAssociation>
   {
     /// <summary>
     /// Insert a new row in database with a new manual reason
@@ -22,7 +22,7 @@ namespace Lemoine.ModelDAO
     /// <param name="reasonScore"></param>
     /// <param name="details"></param>
     /// <returns></returns>
-    long InsertManualReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details);
+    long InsertManualReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details, string jsonData);
 
     /// <summary>
     /// Insert a new row in database to reset a reason
@@ -81,5 +81,12 @@ namespace Lemoine.ModelDAO
     /// <param name="range"></param>
     /// <returns></returns>
     IList<IReasonMachineAssociation> FindAppliedAutoInRange (IMachine machine, UtcDateTimeRange range);
+  }
+
+  /// <summary>
+  /// Extensions to <see cref="IReasonMachineAssociationDAO"/>
+  /// </summary>
+  public static class ReasonMachineAssocationDAOExtensions
+  {
   }
 }

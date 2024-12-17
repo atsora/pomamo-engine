@@ -43,6 +43,10 @@
       <property name="Dynamic"
                 type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
                 column="reasonmachineassociationdynamic" />
+      <property name="JsonData"
+                column="reasondata"
+                access="nosetter.camelcase-m-underscore"
+                type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database" />
     </join>
   </subclass>
 </hibernate-mapping>

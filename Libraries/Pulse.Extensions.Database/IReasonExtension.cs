@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -8,6 +9,7 @@ using System.Diagnostics;
 using Lemoine.Core.Log;
 using System.Collections.Generic;
 using Lemoine.Extensions;
+using System.Text.Json;
 
 namespace Pulse.Extensions.Database
 {
@@ -94,6 +96,16 @@ namespace Pulse.Extensions.Database
     /// Associated reason
     /// </summary>
     public IReason Reason { get; set; }
+
+    /// <summary>
+    /// Additional data in Json format
+    /// </summary>
+    public string JsonData => JsonSerializer.Serialize (this.Data);
+
+    /// <summary>
+    /// Additional data
+    /// </summary>
+    public IDictionary<string, object> Data { get; set; }
 
     /// <summary>
     /// Reason details
@@ -196,6 +208,11 @@ namespace Pulse.Extensions.Database
     }
 
     /// <summary>
+    /// Data
+    /// </summary>
+    public IDictionary<string, object> Data { get; set; }
+
+    /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
     /// </summary>
     public IMachineFilter MachineFilter
@@ -258,13 +275,14 @@ namespace Pulse.Extensions.Database
     /// <param name="machineObservationState"></param>
     /// <param name="reason"></param>
     /// <param name="reasonScore"></param>
-    public ExtraReasonSelection (IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore)
+    public ExtraReasonSelection (IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, IDictionary<string, object> data = null)
     {
       this.MachineMode = machineMode;
       this.MachineObservationState = machineObservationState;
       this.Reason = reason;
       this.ReasonScore = reasonScore;
       this.Selectable = true;
+      this.Data = data;
     }
   }
 

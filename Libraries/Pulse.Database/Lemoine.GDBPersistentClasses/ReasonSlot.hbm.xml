@@ -67,6 +67,9 @@
                  cascade="none" />
     <property name="ProductionRate" column="reasonslotproductionrate"
               access="nosetter.camelcase-m-underscore" />
+    <property name="JsonData"
+              column="reasondata"
+              type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database" />
   </class>
   <query name="ReasonSlotMinBeginDateTime">
     <![CDATA[

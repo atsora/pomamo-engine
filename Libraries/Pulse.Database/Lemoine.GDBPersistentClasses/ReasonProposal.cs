@@ -30,6 +30,7 @@ namespace Lemoine.GDBPersistentClasses
     double m_reasonScore;
     ReasonProposalKind m_kind;
     string m_reasonDetails;
+    string m_jsonData;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ReasonProposal).FullName);
@@ -123,9 +124,19 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return this.Kind.ConvertToReasonSource (); }
     }
+
+    /// <summary>
+    /// Reason data in Json format
+    /// </summary>
+    public virtual string JsonData => m_jsonData;
     #endregion // Getters / Setters
 
     #region IPossibleReason implementation
+    /// <summary>
+    /// <see cref="IPossibleReason"/>
+    /// </summary>
+    public virtual IDictionary<string, object> Data => Pulse.Business.Reason.ReasonData.Deserialize (m_jsonData);
+
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>

@@ -1,15 +1,12 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Core.Log;
 
 using System.Net;
@@ -48,6 +45,19 @@ namespace Pulse.Web.Reason
     /// </summary>
     [ApiMember(Name="ReasonId", Description="If not set, reset the reason", ParameterType="path", DataType="int", IsRequired=false)]
     public int? ReasonId { get; set; }
+
+    /// <summary>
+    /// Reason data key
+    /// </summary>
+    [ApiMember (Name = "ReasonDataKey", Description = "If not set, no reason data", ParameterType = "path", DataType = "int", IsRequired = false)]
+
+    public string ReasonDataKey { get; set; }
+
+    /// <summary>
+    /// Reason data in string format
+    /// </summary>
+    [ApiMember (Name = "ReasonDataValue", Description = "If not set, no reason data", ParameterType = "path", DataType = "object", IsRequired = false)]
+    public object ReasonDataValue { get; set; }
 
     /// <summary>
     /// Reason score to use (default: 100.0)
@@ -99,4 +109,5 @@ namespace Pulse.Web.Reason
     [ApiMember (Name = "ReasonDetails", Description = "Reason details", ParameterType = "path", DataType = "string", IsRequired = false)]
     public string ReasonDetails { get; set; }
   }
+
 }

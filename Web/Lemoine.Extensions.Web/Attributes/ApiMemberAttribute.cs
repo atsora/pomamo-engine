@@ -38,6 +38,7 @@ namespace Lemoine.Extensions.Web.Attributes
     /// <summary>
     /// Parameter type:
     /// <item>path</item>
+    /// <item>json</item>
     /// </summary>
     public string ParameterType { get; set; }
 

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,6 +22,10 @@ using Lemoine.Extensions.Business.DynamicTimes;
 using Lemoine.Business.DynamicTimes;
 using Lemoine.Collections;
 using Pulse.Extensions.Database;
+using Pulse.Business.Reason;
+using System.Text.Json;
+using Lemoine.Business.Extension;
+using Pulse.Extensions.Business.Reason;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -62,26 +67,23 @@ namespace Lemoine.GDBPersistentClasses
       "ReasonMachineAssociation.DynamicEndTracker.Priority";
     static readonly int DYNAMIC_END_TRACKER_PRIORITY_DEFAULT = 10;
 
-    #region Members
     IReason m_reason = null;
     string m_reasonDetails = null;
     double? m_optionalReasonScore = null;
+    string m_jsonData = null;
     ReasonMachineAssociationKind m_kind = ReasonMachineAssociationKind.Consolidate;
     bool m_dataCancelled = false;
 
     IEnumerable<IReasonExtension> m_reasonExtensions;
     IEnumerable<IReasonSelectionExtension> m_reasonSelectionExtensions;
-    #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// UTC date/time range of the association
     /// </summary>
     [XmlIgnore]
     public override UtcDateTimeRange Range
     {
-      get
-      {
+      get {
         if (!string.IsNullOrEmpty (this.Dynamic) && this.Dynamic.EndsWith ("+")) {
           return new UtcDateTimeRange (this.Begin);
         }
@@ -97,8 +99,7 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     UtcDateTimeRange CloneRange
     {
-      get
-      {
+      get {
         return base.Range;
       }
     }
@@ -109,8 +110,7 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     UtcDateTimeRange DynamicTimeRange
     {
-      get
-      {
+      get {
         if (!string.IsNullOrEmpty (this.Dynamic) && this.Dynamic.EndsWith ("+")) {
           return new UtcDateTimeRange (this.Begin, this.End, "[]");
         }
@@ -139,12 +139,30 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Data in Json format
+    /// </summary>
+    [XmlIgnore]
+    public virtual string JsonData => m_jsonData;
+
+    /// <summary>
+    /// <see cref="IReasonMachineAssociation"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual IDictionary<string, object> Data
+    {
+      get => Pulse.Business.Reason.ReasonData.Deserialize (m_jsonData);
+      set {
+        m_jsonData = JsonSerializer.Serialize (value);
+      }
+    }
+
+    /// <summary>
     /// Set a manual reason
     /// </summary>
     /// <param name="reason">not null</param>
     /// <param name="reasonScore"></param>
     /// <param name="details"></param>
-    public virtual void SetManualReason (IReason reason, double? reasonScore, string details)
+    public virtual void SetManualReason (IReason reason, double? reasonScore, string details = null, string jsonData = null)
     {
       double score;
       if (reasonScore.HasValue) {
@@ -153,7 +171,7 @@ namespace Lemoine.GDBPersistentClasses
       else {
         score = Lemoine.Info.ConfigSet.LoadAndGet<double> (DEFAULT_MANUAL_SCORE_KEY, DEFAULT_MANUAL_SCORE_DEFAULT);
       }
-      SetReason (reason, ReasonMachineAssociationKind.Manual, score, details);
+      SetReason (reason, ReasonMachineAssociationKind.Manual, score, details, jsonData);
     }
 
     /// <summary>
@@ -161,19 +179,10 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="reason">not null</param>
     /// <param name="details"></param>
-    public virtual void SetManualReason (IReason reason, string details)
+    public virtual void SetManualReason (IReason reason, string details, string jsonData = null)
     {
       double score = Lemoine.Info.ConfigSet.LoadAndGet<double> (DEFAULT_MANUAL_SCORE_KEY, DEFAULT_MANUAL_SCORE_DEFAULT);
-      SetReason (reason, ReasonMachineAssociationKind.Manual, score, details);
-    }
-
-    /// <summary>
-    /// Set a manual reason
-    /// </summary>
-    /// <param name="reason">not null</param>
-    public virtual void SetManualReason (IReason reason)
-    {
-      SetManualReason (reason, null);
+      SetReason (reason, ReasonMachineAssociationKind.Manual, score, details, jsonData);
     }
 
     /// <summary>
@@ -186,6 +195,7 @@ namespace Lemoine.GDBPersistentClasses
       double score = Lemoine.Info.ConfigSet.LoadAndGet<double> (DEFAULT_MANUAL_SCORE_KEY, DEFAULT_MANUAL_SCORE_DEFAULT);
       m_optionalReasonScore = score;
       m_reasonDetails = null;
+      // TODO: jsonData : check with the extension
     }
 
     /// <summary>
@@ -195,22 +205,11 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="score"></param>
     /// <param name="overwriteRequired"></param>
     /// <param name="details"></param>
-    public virtual void SetAutoReason (IReason reason, double score, bool overwriteRequired, string details)
+    public virtual void SetAutoReason (IReason reason, double score, bool overwriteRequired, string details = null, string jsonData = null)
     {
       SetReason (reason,
         overwriteRequired ? ReasonMachineAssociationKind.AutoWithOverwriteRequired : ReasonMachineAssociationKind.Auto,
-        score, details);
-    }
-
-    /// <summary>
-    /// Set an auto reason
-    /// </summary>
-    /// <param name="reason">not null</param>
-    /// <param name="score"></param>
-    /// <param name="overwriteRequired"></param>
-    public virtual void SetAutoReason (IReason reason, double score, bool overwriteRequired)
-    {
-      SetAutoReason (reason, score, overwriteRequired, null);
+        score, details, jsonData);
     }
 
     /// <summary>
@@ -220,7 +219,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="kind">not Consolidate</param>
     /// <param name="score"></param>
     /// <param name="details"></param>
-    internal protected virtual void SetReason (IReason reason, ReasonMachineAssociationKind kind, double score, string details)
+    internal protected virtual void SetReason (IReason reason, ReasonMachineAssociationKind kind, double score, string details, string jsonData = null)
     {
       Debug.Assert (null != reason);
       Debug.Assert (ReasonMachineAssociationKind.Consolidate != kind);
@@ -229,6 +228,7 @@ namespace Lemoine.GDBPersistentClasses
       m_kind = kind;
       m_optionalReasonScore = score;
       m_reasonDetails = details;
+      m_jsonData = jsonData;
     }
 
     /// <summary>
@@ -287,8 +287,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual string XmlSerializationReasonScore
     {
       get { return m_optionalReasonScore.HasValue ? m_optionalReasonScore.Value.ToString (CultureInfo.InvariantCulture) : ""; }
-      set
-      {
+      set {
         if (string.IsNullOrEmpty (value)) {
           m_optionalReasonScore = null;
         }
@@ -314,8 +313,7 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     public virtual bool OverwriteRequired
     {
-      get
-      {
+      get {
         return m_kind.IsOvewriteRequired ();
       }
     }
@@ -326,8 +324,7 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     public virtual ReasonSource ReasonSource
     {
-      get
-      {
+      get {
         return m_kind.ConvertToReasonSource ();
       }
     }
@@ -358,7 +355,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return null; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -464,30 +460,66 @@ namespace Lemoine.GDBPersistentClasses
 
       if (!(oldSlot is IReasonSlot)) {
         System.Diagnostics.Debug.Assert (false);
-        GetLogger ().FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        GetLogger ().Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         Debug.Assert (false);
         throw new ArgumentException ("Not supported machine slot");
       }
 
       IReasonSlot oldReasonSlot = oldSlot as IReasonSlot;
-      IReasonSlot newReasonSlot = (IReasonSlot)oldReasonSlot.Clone ();
-      ((ReasonSlot)newReasonSlot).SetOldSlotFromModification (oldReasonSlot, this);
-      if (null == this.Reason) { // Reset the reason
+      ReasonSlot newReasonSlot = (ReasonSlot)oldReasonSlot.Clone ();
+      newReasonSlot.SetOldSlotFromModification (oldReasonSlot, this);
+      if (this.Reason is null) { // Reset the reason
+        // Data
+        if (!string.IsNullOrEmpty (this.JsonData)) {
+          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+          if (extensions.Any (x => x.DoReset (oldReasonSlot))) {
+            var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
+            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+            foreach (var extension in extensions.Where (ext => ext.DoReset (oldReasonSlot))) {
+              extension.Reset (data);
+            }
+            newReasonSlot.JsonData = JsonSerializer.Serialize (data);
+          }
+        }
+
         switch (this.Kind) {
-        case ReasonMachineAssociationKind.Consolidate: // Will be deprecated soon...
-          newReasonSlot.SetUnsafeAutoReasonNumber ();
-          newReasonSlot.SetUnsafeManualFlag ();
-          newReasonSlot.SwitchToProcessing ();
-          return newReasonSlot as TSlot;
-        case ReasonMachineAssociationKind.Manual:
-          ((ReasonSlot)newReasonSlot).ResetManualReason ();
-          return newReasonSlot as TSlot;
-        default:
-          GetLogger ().FatalFormat ("MergeDataWithOldSlot: reason null with an invalid kind {0}", this.Kind);
-          Debug.Assert (false);
-          return newReasonSlot as TSlot;
+          case ReasonMachineAssociationKind.Consolidate: // Will be deprecated soon...
+            newReasonSlot.SetUnsafeAutoReasonNumber ();
+            newReasonSlot.SetUnsafeManualFlag ();
+            newReasonSlot.SwitchToProcessing ();
+            return newReasonSlot as TSlot;
+          case ReasonMachineAssociationKind.Manual:
+            ((ReasonSlot)newReasonSlot).ResetManualReason ();
+            return newReasonSlot as TSlot;
+          default:
+            GetLogger ().Fatal ($"MergeDataWithOldSlot: reason null with an invalid kind {this.Kind}");
+            Debug.Assert (false);
+            return newReasonSlot as TSlot;
+        }
+      }
+      else { // Reason is not null
+        // Data
+        if (!string.IsNullOrEmpty (this.JsonData)) {
+          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+          if (extensions.Any (x => x.DoMerge (oldReasonSlot, this))) {
+            var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
+            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+            var newData = Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData, extensions);
+            foreach (var extension in extensions.Where (ext => ext.DoMerge (oldReasonSlot, this))) {
+              var name = extension.Name;
+              object o;
+              if (!newData.TryGetValue (name, out o)) {
+                o = null;
+              }
+              extension.Merge (data, o);
+            }
+            newReasonSlot.JsonData = JsonSerializer.Serialize (data);
+          }
+        }
+        else { // this.JsonData is null or empty => keep the data from ReasonMachineAssociation
+          newReasonSlot.JsonData = this.JsonData;
         }
       }
 
@@ -501,7 +533,7 @@ namespace Lemoine.GDBPersistentClasses
         var isCompatible = reasonExtensions
           .Any (ext => ext.IsCompatible (range, oldReasonSlot.MachineMode, oldReasonSlot.MachineObservationState, this.Reason, this.ReasonScore, this.ReasonSource));
         if (!isCompatible) {
-          string message =$"The new reason {this.Reason?.Id} is not compatible with the MachineObservationState {oldReasonSlot.MachineObservationState?.Id} and MachineMode {oldReasonSlot.MachineMode?.Id} considering {reasonExtensions.Count ()} reason extensions";
+          string message = $"The new reason {this.Reason?.Id} is not compatible with the MachineObservationState {oldReasonSlot.MachineObservationState?.Id} and MachineMode {oldReasonSlot.MachineMode?.Id} considering {reasonExtensions.Count ()} reason extensions";
           if (this.ReasonSource.HasFlag (ReasonSource.Manual)) {
             // For the reason slots in the future, this is a warning,
             // else this is an error
@@ -545,8 +577,7 @@ namespace Lemoine.GDBPersistentClasses
       if (!apply) { // Not a higher score, skip it
         if (oldReasonSlot.ReasonSource.Equals (ReasonSource.Default)) {
           string message = string.Format ("association with a score {0} lower than the current default reason {1}", this.OptionalReasonScore, oldReasonSlot.ReasonScore);
-          GetLogger ().ErrorFormat ("MergeDataWithOldSlot: {0}",
-                          message);
+          GetLogger ().Error ($"MergeDataWithOldSlot: {message}");
           AddAnalysisLog (LogLevel.ERROR, message);
         }
         if (this.Kind.IsAuto ()) {
@@ -1486,8 +1517,7 @@ namespace Lemoine.GDBPersistentClasses
               }
               else {
                 ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-                  .InsertSub (this, afterRestrictedRange, delegate(IReasonMachineAssociation x)
-                  { }, null);
+                  .InsertSub (this, afterRestrictedRange, delegate (IReasonMachineAssociation x) { }, null);
               }
             }
           }
@@ -1855,18 +1885,18 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public virtual IReasonMachineAssociation Clone (UtcDateTimeRange range)
     {
-      IReasonMachineAssociation clone = ModelDAOHelper.ModelFactory
-        .CreateReasonMachineAssociation (this.Machine, range);
+      var clone = new ReasonMachineAssociation (this.Machine, range);
       clone.Option = this.Option;
       clone.Dynamic = this.Dynamic;
       clone.Priority = this.StatusPriority;
       if (null != this.Reason) {
         Debug.Assert (!this.Kind.Equals (ReasonMachineAssociationKind.Consolidate));
         Debug.Assert (this.OptionalReasonScore.HasValue);
-        ((ReasonMachineAssociation)clone).SetReason (this.Reason, this.Kind, this.OptionalReasonScore.Value, this.ReasonDetails);
+        ((ReasonMachineAssociation)clone).SetReason (this.Reason, this.Kind, this.OptionalReasonScore.Value, this.ReasonDetails, this.JsonData);
       }
       else { // null == this.Reason
         Debug.Assert (this.Kind.Equals (ReasonMachineAssociationKind.Manual));
+        clone.m_jsonData = this.JsonData;
         clone.ResetManualReason ();
       }
       return clone;
@@ -1958,9 +1988,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      GetLogger ().DebugFormat ("ComputeNewSpan: " +
-                       "no better end with the observation state slots, " +
-                       "use the base method instead");
+      GetLogger ().Debug ("ComputeNewSpan: no better end with the observation state slots, use the base method instead");
       return base.ComputeNewStepSpan (range);
     }
 
@@ -1982,8 +2010,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null == m_reasonExtensions) { // Initialization
         if (!Lemoine.Extensions.ExtensionManager.IsActive ()) {
-          GetLogger ().WarnFormat ("GetReasonExtensions: " +
-                          "the extensions are not active");
+          GetLogger ().Warn ("GetReasonExtensions: the extensions are not active");
         }
 
         IMonitoredMachine monitoredMachine;
@@ -2014,8 +2041,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null == m_reasonSelectionExtensions) { // Initialization
         if (!Lemoine.Extensions.ExtensionManager.IsActive ()) {
-          GetLogger ().WarnFormat ("GetReasonSelectionExtensions: " +
-                          "the extensions are not active");
+          GetLogger ().Warn ("GetReasonSelectionExtensions: the extensions are not active");
         }
 
         IMonitoredMachine monitoredMachine;

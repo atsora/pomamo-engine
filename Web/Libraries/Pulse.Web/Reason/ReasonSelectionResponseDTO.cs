@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -7,12 +8,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Lemoine.Core.Log;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Model;
 using Pulse.Web.CommonResponseDTO;
 
@@ -28,6 +25,11 @@ namespace Pulse.Web.Reason
     /// reason Id
     /// </summary>
     public int Id { get; set; }
+
+    /// <summary>
+    /// Additional data
+    /// </summary>
+    public IDictionary<string, object> Data { get; set; }
     
     /// <summary>
     /// Text
@@ -145,6 +147,7 @@ namespace Pulse.Web.Reason
       Lemoine.Model.IReason reason = reasonSelection.Reason;
       ReasonSelectionResponseDTO reasonSelectionResponseDTO = new ReasonSelectionResponseDTO();
       reasonSelectionResponseDTO.Id = reason.Id;
+      reasonSelectionResponseDTO.Data = reasonSelection.Data;
       reasonSelectionResponseDTO.Display = reason.Display;
       reasonSelectionResponseDTO.LongDisplay = reason.LongDisplay;
       reasonSelectionResponseDTO.Description = reason.DescriptionOrTranslation;

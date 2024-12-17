@@ -371,7 +371,7 @@ namespace Pulse.Web.Reason
         // Ranges
         RangesPostDTO deserializedResult = PostDTO.Deserialize<RangesPostDTO> (m_body);
         ReasonOnlySlotsResponseDTO response = null;
-        foreach (var range in deserializedResult.Convert ()) {
+        foreach (var range in deserializedResult.ExtractRanges ()) {
           UtcDateTimeRange extendLimitrange;
           if (string.IsNullOrEmpty (request.ExtendLimitRange)) {
             extendLimitrange = new UtcDateTimeRange (new LowerBound<DateTime> (null),

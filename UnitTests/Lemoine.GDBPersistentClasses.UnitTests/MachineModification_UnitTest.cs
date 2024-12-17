@@ -78,7 +78,7 @@ WHERE modificationid={((IDataWithId<long>)association).Id}";
           .FindById (21);
 
         var modificationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-          .InsertManualReason (machine, R (1, 2), reason, 100, "");
+          .InsertManualReason (machine, R (1, 2), reason, 100, "", null);
 
         ModelDAOHelper.DAOFactory.Flush ();
 
@@ -231,7 +231,7 @@ VALUES (1, 10829)";
           .FindById (21);
 
         long associationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-          .InsertManualReason (machine, R (1, 2), reason, 100, null);
+          .InsertManualReason (machine, R (1, 2), reason, 100, null, null);
         
         ModelDAOHelper.DAOFactory.Flush ();
         
@@ -318,7 +318,7 @@ VALUES (1, 10829)";
         }
 
         long associationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-          .InsertManualReason (machine, R (1, 2), reason, 100.0, "");
+          .InsertManualReason (machine, R (1, 2), reason, 100.0, null, null);
         
         ModelDAOHelper.DAOFactory.Flush ();
         

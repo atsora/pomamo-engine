@@ -45,5 +45,9 @@
               type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
               access="nosetter.camelcase-m-underscore"
               column="reasonproposaldetails" />
+    <property name="JsonData"
+              column="reasondata"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database" />
   </class>
 </hibernate-mapping>

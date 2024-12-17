@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -76,7 +77,7 @@ namespace Lemoine.Analysis.UnitTests
               ModelDAOHelper.DAOFactory.ReasonSlotDAO.MakePersistent (reasonSlot);
               ModelDAOHelper.DAOFactory.Flush ();
               var modificationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-                .InsertManualReason (machine, R (1, 300), newReason, 100, "details");
+                .InsertManualReason (machine, R (1, 300), newReason, 100, "details", null);
               ModelDAOHelper.DAOFactory.Flush ();
               var manualModification = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
                 .FindById (modificationId, machine);
@@ -158,7 +159,7 @@ namespace Lemoine.Analysis.UnitTests
               ModelDAOHelper.DAOFactory.Flush ();
               {
                 var modificationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-                  .InsertManualReason (machine, R (1, 300), newReason1, 100, "details");
+                  .InsertManualReason (machine, R (1, 300), newReason1, 100, "details", null);
                 ModelDAOHelper.DAOFactory.Flush ();
                 var manualModification = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
                   .FindById (modificationId, machine);
@@ -167,7 +168,7 @@ namespace Lemoine.Analysis.UnitTests
               }
               {
                 var modificationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-                  .InsertManualReason (machine, R (300, 3600), newReason2, 100, "details");
+                  .InsertManualReason (machine, R (300, 3600), newReason2, 100, "details", null);
                 ModelDAOHelper.DAOFactory.Flush ();
                 var manualModification = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
                   .FindById (modificationId, machine);

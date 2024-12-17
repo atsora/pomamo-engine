@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -350,8 +351,7 @@ namespace Lemoine.GDBPersistentClasses
       if (this.ConsolidationLimit.HasValue
         && (Bound.Compare<DateTime> (this.ConsolidationLimit.Value, newRange.Upper) < 0)) {
         Debug.Assert (false);
-        log.FatalFormat ("Clone: consolidation limit is moved from {0} to {1}. This should be managed before",
-          this.ConsolidationLimit, newRange.Upper);
+        log.Fatal ($"Clone: consolidation limit is moved from {this.ConsolidationLimit} to {newRange.Upper}. This should be managed before");
         newSlot.m_consolidationLimit = newRange.Upper;
       }
 
@@ -406,20 +406,20 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void ResetManualReason ()
     {
       if (!this.ReasonSource.HasFlag (ReasonSource.Manual)) {
-        log.ErrorFormat ("ResetManualReason: no manual reason to reset, the reason source is {0}", this.ReasonSource);
+        log.Error ($"ResetManualReason: no manual reason to reset, the reason source is {this.ReasonSource}");
         return;
       }
 
       using (var modificationTracker = new SlotModificationTracker<IReasonSlot> (this)) {
         switch (this.ReasonSource) {
-        case ReasonSource.Manual:
-          m_reasonSource = this.ReasonSource.ResetManual ();
-          SwitchToProcessing ();
-          m_reasonSlotChange = m_reasonSlotChange.Add (ReasonSlotChange.ResetManual);
-          break;
-        default:
-          m_reasonSource = this.ReasonSource.ResetManual ();
-          break;
+          case ReasonSource.Manual:
+            m_reasonSource = this.ReasonSource.ResetManual ();
+            SwitchToProcessing ();
+            m_reasonSlotChange = m_reasonSlotChange.Add (ReasonSlotChange.ResetManual);
+            break;
+          default:
+            m_reasonSource = this.ReasonSource.ResetManual ();
+            break;
         }
       }
     }
@@ -572,17 +572,13 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_machineObservationState; }
       set {
         Debug.Assert (null != value);
-        if (value == null) {
-          log.ErrorFormat ("MachineObservationState.set: " +
-                           "null value");
+        if (value is null) {
+          log.Error ("MachineObservationState.set: null value");
           throw new ArgumentNullException ();
         }
 
         if (this.DateTimeRange.IsEmpty ()) {
-          log.ErrorFormat ("MachineObservationState.set: " +
-                           "empty range. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Error ($"MachineObservationState.set: empty range. StackTrace: {System.Environment.StackTrace}");
         }
 
         if (object.Equals (m_machineObservationState, value)) {
@@ -766,9 +762,19 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_productionRate; }
       set { m_productionRate = value; }
     }
+
+    /// <summary>
+    /// Reason data in Json format
+    /// </summary>
+    public virtual string JsonData { get; set; } = null;
     #endregion // Getters / Setters
 
     #region IPossibleReason implementation
+    /// <summary>
+    /// <see cref="IPossibleReason"/>
+    /// </summary>
+    public virtual IDictionary<string, object> Data => Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData);
+
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
@@ -794,7 +800,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // IPossibleReason implementation
 
-    #region Methods
     /// <summary>
     /// Get the ProductionStateExtensions (lazy initialization)
     /// 
@@ -838,8 +843,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null == m_reasonExtensions) { // Initialization
         if (!Lemoine.Extensions.ExtensionManager.IsActive ()) {
-          log.WarnFormat ("GetReasonExtensions: " +
-                          "the extensions are not active");
+          log.Warn ("GetReasonExtensions: the extensions are not active");
         }
 
         IMonitoredMachine monitoredMachine;
@@ -1325,8 +1329,7 @@ namespace Lemoine.GDBPersistentClasses
       if (compatibilityCheck) {
         var reasonCompatibilityExtensions = GetReasonExtensions ();
         if (!reasonCompatibilityExtensions.Any (ext => ext.IsCompatible (this.DateTimeRange, this.MachineMode, this.MachineObservationState, reason, score, ReasonSource.Auto))) {
-          log.InfoFormat ("TryAutoReasonInReset: auto reason {0} is not compatible with the reason slot {1} => skip it",
-            reason, this);
+          log.Info ($"TryAutoReasonInReset: auto reason {reason} is not compatible with the reason slot {this} => skip it");
           return false;
         }
       }
@@ -1374,7 +1377,7 @@ namespace Lemoine.GDBPersistentClasses
         if (this.ConsolidationLimit.HasValue
           && (Bound.Compare<DateTime> (this.ConsolidationLimit, this.DateTimeRange.Upper) < 0)) {
           Debug.Assert (false);
-          log.FatalFormat ("UpdateMachineStatusIfApplicable: not a valid consolidation limit (before DateTimeRange.Upper) => invalid it");
+          log.Fatal ("UpdateMachineStatusIfApplicable: not a valid consolidation limit (before DateTimeRange.Upper) => invalid it");
           machineStatus.ConsolidationLimit = this.DateTimeRange.Upper.Value;
         }
         else {
@@ -1519,10 +1522,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void UpdateDateTimeRange (UtcDateTimeRange newRange)
     {
       if (newRange.IsEmpty ()) {
-        log.ErrorFormat ("UpdateDateTimeRange: " +
-                         "empty date/time range. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"UpdateDateTimeRange: empty date/time range. StackTrace: {System.Environment.StackTrace}");
       }
       Debug.Assert (!newRange.IsEmpty ());
 
@@ -1555,7 +1555,6 @@ namespace Lemoine.GDBPersistentClasses
         m_reasonSlotChange = m_reasonSlotChange.Add (ReasonSlotChange.Period);
       }
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Object.ToString()" />

@@ -298,7 +298,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               var association =
                 new ReasonMachineAssociation ();
               association.XmlSerializationMachine = (Machine)machine1;
-              association.SetManualReason (reasonSetup);
+              association.SetManualReason (reasonSetup, (double?)null);
               association.DateTime = UtcDateTime.From (2011, 08, 01, 12, 15, 00);
               association.Begin = UtcDateTime.From (2011, 08, 01, 12, 00, 00);
               association.End = new UpperBound<DateTime> (null);
@@ -475,7 +475,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             var association =
               new ReasonMachineAssociation ();
             association.XmlSerializationMachine = (Machine)machine1;
-            association.SetManualReason (reasonSetup);
+            association.SetManualReason (reasonSetup, (double?)null);
             association.DateTime = T (3);
             association.Begin = T (3);
             association.End = new UpperBound<DateTime> (null);
@@ -620,7 +620,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             var association =
               new ReasonMachineAssociation ();
             association.XmlSerializationMachine = (Machine)machine1;
-            association.SetManualReason (reasonSetup);
+            association.SetManualReason (reasonSetup, (double?)null);
             association.DateTime = T (3);
             association.Begin = T (1);
             association.End = T (3);
@@ -669,7 +669,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             var association =
               new ReasonMachineAssociation ();
             association.XmlSerializationMachine = (Machine)machine1;
-            association.SetManualReason (reasonTv);
+            association.SetManualReason (reasonTv, (double?)null);
             association.DateTime = T (3);
             association.Begin = T (1);
             association.End = T (3);
@@ -715,7 +715,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             var association =
               new ReasonMachineAssociation ();
             association.XmlSerializationMachine = (Machine)machine1;
-            association.SetManualReason (reasonTv);
+            association.SetManualReason (reasonTv, (double?)null);
             association.DateTime = T (3);
             association.Begin = T (1);
             association.End = T (3);

@@ -7,6 +7,11 @@ using System;
 using System.Diagnostics;
 using Lemoine.Model;
 using Lemoine.Core.Log;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Xml.Serialization;
+using System.Text.Json;
 
 namespace Lemoine.WebDataAccess
 {
@@ -265,6 +270,19 @@ namespace Lemoine.WebDataAccess
         return this.OptionalReasonScore ?? -1.0;
       }
     }
+    public string JsonData {
+      get; set;
+    }
+    /// <summary>
+    /// <see cref="IReasonMachineAssociation"/>
+    /// </summary>
+    public virtual IDictionary<string, object> Data
+    {
+      get => Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData);
+      set {
+        this.JsonData = JsonSerializer.Serialize (value);
+      }
+    }
     public void ResetManualReason ()
     {
       this.Reason = null;
@@ -279,34 +297,29 @@ namespace Lemoine.WebDataAccess
       this.OptionalReasonScore = null;
       this.Kind = ReasonMachineAssociationKind.Consolidate;
     }
-    public void SetAutoReason (IReason reason, double score, bool overwriteRequired, string details)
+    public void SetAutoReason (IReason reason, double score, bool overwriteRequired, string details = null, string jsonData = null)
     {
       this.Reason = reason;
       this.Kind = overwriteRequired ? ReasonMachineAssociationKind.AutoWithOverwriteRequired : ReasonMachineAssociationKind.Auto;
       this.OptionalReasonScore = score;
       this.ReasonDetails = details;
+      this.JsonData = jsonData;
     }
-    public void SetAutoReason (IReason reason, double score, bool overwriteRequired)
-    {
-      SetAutoReason (reason, score, overwriteRequired, null);
-    }
-    public void SetManualReason (IReason reason, double? reasonScore, string details)
+    public void SetManualReason (IReason reason, double? reasonScore, string details = null, string jsonData = null)
     {
       this.Reason = reason;
       this.Kind = ReasonMachineAssociationKind.Manual;
       this.OptionalReasonScore = reasonScore ?? 100;
       this.ReasonDetails = details;
+      this.JsonData = jsonData;
     }
-    public void SetManualReason (IReason reason, string details)
+    public void SetManualReason (IReason reason, string details = null, string jsonData = null)
     {
       this.Reason = reason;
       this.Kind = ReasonMachineAssociationKind.Manual;
       this.OptionalReasonScore = 100;
       this.ReasonDetails = details;
-    }
-    public void SetManualReason (IReason reason)
-    {
-      SetManualReason (reason, null);
+      this.JsonData = jsonData;
     }
 
     public bool IsApplicable (IReasonSlot reasonSlot)
