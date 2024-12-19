@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\atracking-netapps\Plugins\Reason\Lemoine.Plugin.TestReasonData\Lemoine.Plugin.TestReasonData.fsproj" />
     <ProjectReference Include="..\..\Analysis\Libraries\Lemoine.Analysis\Lemoine.Analysis.csproj" />
     <ProjectReference Include="..\..\AutoReason\Lemoine.Extensions.AutoReason\Lemoine.Extensions.AutoReason.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />

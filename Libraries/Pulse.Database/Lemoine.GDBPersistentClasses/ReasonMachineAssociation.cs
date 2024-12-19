@@ -563,32 +563,43 @@ namespace Lemoine.GDBPersistentClasses
       // Data
       string newJsonData;
       if (!string.IsNullOrEmpty (this.JsonData)) {
-        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
-        if (extensions.Any (x => x.DoMerge (oldReasonSlot, this) || !x.Keep (oldReasonSlot, this))) {
-          var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
-          data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
-          var newData = Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData, extensions);
-          foreach (var extension in extensions.Where (ext => ext.DoMerge (oldReasonSlot, this) || !ext.Keep (oldReasonSlot, this))) {
-            var name = extension.Name;
-            if (newData.TryGetValue (name, out var o)) {
-              extension.Merge (data, o, this);
-            }
-            else if (!extension.Keep (oldReasonSlot, this)) { // Do not keep the old value
-              data.Remove (name);
-            }
-          }
-          newJsonData = JsonSerializer.Serialize (data);
+        if (string.IsNullOrEmpty (oldReasonSlot.JsonData)) {
           if (log.IsDebugEnabled) {
-            log.Debug ($"MergeDataWithOldSlot: merged data is {newJsonData}");
-          }
-        }
-        else { // No data to merge
-          if (log.IsDebugEnabled) {
-            log.Debug ($"MergeDataWithOldSlot: no IReasonDataExtension with a Merge => keep the data from ReasonMachineAssociation");
+            log.Debug ($"MergeDataWithOldSlot: no existing reason data=> keep the data from ReasonMachineAssociation");
           }
           newJsonData = this.JsonData;
         }
+        else {
+          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+          if (extensions.Any (x => x.DoMerge (oldReasonSlot, this) || !x.Keep (oldReasonSlot, this))) {
+            var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
+            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+            var newData = Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData, extensions);
+            foreach (var extension in extensions.Where (ext => ext.DoMerge (oldReasonSlot, this) || !ext.Keep (oldReasonSlot, this))) {
+              var name = extension.Name;
+              if (newData.TryGetValue (name, out var o)) {
+                extension.Merge (data, o, this);
+              }
+              else if (!extension.Keep (oldReasonSlot, this)) { // Do not keep the old value
+                data.Remove (name);
+              }
+            }
+            newJsonData = JsonSerializer.Serialize (data);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MergeDataWithOldSlot: merged data is {newJsonData}");
+            }
+          }
+          else { // No data to merge
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MergeDataWithOldSlot: no IReasonDataExtension with a Merge => keep the data from ReasonMachineAssociation");
+            }
+            newJsonData = this.JsonData;
+          }
+        }
+      }
+      else if (string.IsNullOrEmpty (oldReasonSlot.JsonData)) { // Both JsonData are null
+        newJsonData = null;
       }
       else { // this.JsonData is null or empty => remove it?
         var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
@@ -843,6 +854,7 @@ namespace Lemoine.GDBPersistentClasses
           association.m_reason = this.Reason;
           association.m_optionalReasonScore = this.OptionalReasonScore;
           association.ReasonDetails = this.ReasonDetails;
+          association.m_jsonData = this.JsonData;
           association.Option = this.Option;
           association.Caller = this;
           association.Analyze ();

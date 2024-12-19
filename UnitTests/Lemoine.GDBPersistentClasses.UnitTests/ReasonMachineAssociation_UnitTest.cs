@@ -513,6 +513,363 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       }
     }
 
+    void InitializeData (string jsonData)
+    {
+      var daoFactory = ModelDAOHelper.DAOFactory;
+
+      // Reference data
+      IUser user1 = daoFactory.UserDAO.FindById (1);
+      IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+      IMachineObservationState attended =
+        daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+
+      IMachineObservationState unattended =
+        daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Unattended);
+      IReason reasonMotion = daoFactory.ReasonDAO.FindById (2);
+      IReason reasonShort = daoFactory.ReasonDAO.FindById (3);
+      IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+      IReason reasonUnattended = daoFactory.ReasonDAO.FindById (5);
+      IReason reasonSetup = daoFactory.ReasonDAO.FindById (16);
+      IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+      IMachineMode active = daoFactory.MachineModeDAO.FindById (2);
+      IMachineMode auto = daoFactory.MachineModeDAO.FindById (3);
+
+      // Existing ReasonSlot
+      {
+        IReasonSlot existingSlot =
+          new ReasonSlot (machine1, R (0, 1));
+        existingSlot.MachineMode = active;
+        existingSlot.MachineObservationState = attended;
+        ((ReasonSlot)existingSlot).SetDefaultReason (reasonMotion, 10.0, true, false);
+        daoFactory.ReasonSlotDAO.MakePersistent (existingSlot);
+      }
+      {
+        var existingSlot = new ReasonSlot (machine1, R (1, 3));
+        existingSlot.MachineMode = inactive;
+        existingSlot.MachineObservationState = attended;
+        existingSlot.SetDefaultReason (reasonUnanswered, 10.0, true, false);
+        existingSlot.JsonData = jsonData;
+        daoFactory.ReasonSlotDAO.MakePersistent (existingSlot);
+      }
+      // Existing MachineActivitySummary
+      {
+        IMachineActivitySummary summary;
+        summary = ModelDAOHelper.ModelFactory.CreateMachineActivitySummary (machine1,
+          T (0).Date,
+                                                                   attended, active);
+        summary.Time = TimeSpan.FromHours (1);
+        daoFactory.MachineActivitySummaryDAO.MakePersistent (summary);
+      }
+      {
+        IMachineActivitySummary summary;
+        summary = ModelDAOHelper.ModelFactory.CreateMachineActivitySummary (machine1,
+          T (0).Date,
+                                                                   attended, inactive);
+        summary.Time = TimeSpan.FromHours (2);
+        daoFactory.MachineActivitySummaryDAO.MakePersistent (summary);
+      }
+      // Existing ReasonSummary
+      {
+        IReasonSummary summary;
+        summary = new ReasonSummary (machine1,
+          T (0).Date,
+                                      null,
+                                      attended, reasonMotion);
+        summary.Time = TimeSpan.FromHours (1);
+        summary.Number = 1;
+        daoFactory.ReasonSummaryDAO.MakePersistent (summary);
+      }
+      {
+        IReasonSummary summary;
+        summary = new ReasonSummary (machine1,
+          T (0).Date,
+                                      null,
+                                      attended, reasonUnanswered);
+        summary.Time = TimeSpan.FromHours (2);
+        summary.Number = 1;
+        daoFactory.ReasonSummaryDAO.MakePersistent (summary);
+      }
+      // MachineStatus
+      {
+        IMachineStatus machineStatus =
+          new MachineStatus (machine1);
+        machineStatus.CncMachineMode = inactive;
+        machineStatus.MachineMode = inactive;
+        machineStatus.MachineObservationState = attended;
+        machineStatus.ManualActivity = false;
+        machineStatus.Reason = reasonUnanswered;
+        machineStatus.ReasonSlotEnd = T (3);
+        daoFactory.MachineStatusDAO.MakePersistent (machineStatus);
+      }
+    }
+
+    /// <summary>
+    /// Test the method MakeAnalysis
+    /// </summary>
+    [Test]
+    public void TestAddReasonData ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (var daoSession = daoFactory.OpenSession ())
+      using (var transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Info.ConfigSet
+            .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+          Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+          Lemoine.Extensions.ExtensionManager.Add<Lemoine.Plugin.TestReasonData.ReasonSelectionExtension> ();
+          Lemoine.Extensions.ExtensionManager.Add<Lemoine.Plugin.TestReasonData.ReasonDataExtension> ();
+
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          // Reference data
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended =
+            daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+
+          IMachineObservationState unattended =
+            daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Unattended);
+          IReason reasonMotion = daoFactory.ReasonDAO.FindById (2);
+          IReason reasonShort = daoFactory.ReasonDAO.FindById (3);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonUnattended = daoFactory.ReasonDAO.FindById (5);
+          IReason reasonSetup = daoFactory.ReasonDAO.FindById (16);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          IMachineMode active = daoFactory.MachineModeDAO.FindById (2);
+          IMachineMode auto = daoFactory.MachineModeDAO.FindById (3);
+
+          InitializeData (null);
+
+          // New association 3 -> oo
+          var jsonData = """
+              {
+                "Test": 1234
+              }
+              """;
+          {
+            var association =
+              new ReasonMachineAssociation ();
+            association.XmlSerializationMachine = (Machine)machine1;
+            association.SetManualReason (reasonSetup, (double?)null, null, jsonData);
+            association.DateTime = T (3);
+            association.Begin = T (1);
+            association.End = new UpperBound<DateTime> (null);
+            association = (ReasonMachineAssociation)new ReasonMachineAssociationDAO ().MakePersistent (association);
+            ModelDAOHelper.DAOFactory.Flush ();
+            association.MakeAnalysis (); // InProgress
+            association.MakeAnalysis ();
+          }
+
+          DAOFactory.EmptyAccumulators ();
+
+          // Check the values
+          {
+            IList<ReasonSlot> slots =
+              session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .AddOrder (Order.Asc ("DateTimeRange"))
+              .List<ReasonSlot> ();
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
+            int i = 1;
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonSetup));
+              Assert.That (slots[i].JsonData, Is.EqualTo (jsonData));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
+          }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the method MakeAnalysis
+    /// </summary>
+    [Test]
+    public void TestRemoveReasonData ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (var daoSession = daoFactory.OpenSession ())
+      using (var transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Info.ConfigSet
+            .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+          Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+          Lemoine.Extensions.ExtensionManager.Add<Lemoine.Plugin.TestReasonData.ReasonSelectionExtension> ();
+          Lemoine.Extensions.ExtensionManager.Add<Lemoine.Plugin.TestReasonData.ReasonDataExtension> ();
+
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          // Reference data
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended =
+            daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+
+          IMachineObservationState unattended =
+            daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Unattended);
+          IReason reasonMotion = daoFactory.ReasonDAO.FindById (2);
+          IReason reasonShort = daoFactory.ReasonDAO.FindById (3);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonUnattended = daoFactory.ReasonDAO.FindById (5);
+          IReason reasonSetup = daoFactory.ReasonDAO.FindById (16);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          IMachineMode active = daoFactory.MachineModeDAO.FindById (2);
+          IMachineMode auto = daoFactory.MachineModeDAO.FindById (3);
+
+          var jsonData = """
+              {
+                "A": 1,
+                "Test": 1234
+              }
+              """;
+          InitializeData (jsonData);
+
+          // New association 3 -> oo
+          {
+            var association =
+              new ReasonMachineAssociation ();
+            association.XmlSerializationMachine = (Machine)machine1;
+            association.SetManualReason (reasonSetup, (double?)null, null, null);
+            association.DateTime = T (3);
+            association.Begin = T (1);
+            association.End = new UpperBound<DateTime> (null);
+            association = (ReasonMachineAssociation)new ReasonMachineAssociationDAO ().MakePersistent (association);
+            ModelDAOHelper.DAOFactory.Flush ();
+            association.MakeAnalysis (); // InProgress
+            association.MakeAnalysis ();
+          }
+
+          DAOFactory.EmptyAccumulators ();
+
+          // Check the values
+          {
+            IList<ReasonSlot> slots =
+              session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .AddOrder (Order.Asc ("DateTimeRange"))
+              .List<ReasonSlot> ();
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
+            int i = 1;
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonSetup));
+              Assert.That (slots[i].JsonData, Is.EqualTo ("{}"));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
+          }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the method MakeAnalysis
+    /// </summary>
+    [Test]
+    public void TestMergeReasonData ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (var daoSession = daoFactory.OpenSession ())
+      using (var transaction = daoSession.BeginTransaction ()) {
+        try {
+          Lemoine.Info.ConfigSet
+            .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+          Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+          Lemoine.Extensions.ExtensionManager.Add<Lemoine.Plugin.TestReasonData.ReasonSelectionExtension> ();
+          Lemoine.Extensions.ExtensionManager.Add<Lemoine.Plugin.TestReasonData.ReasonDataExtension> ();
+
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          // Reference data
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended =
+            daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+
+          IMachineObservationState unattended =
+            daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Unattended);
+          IReason reasonMotion = daoFactory.ReasonDAO.FindById (2);
+          IReason reasonShort = daoFactory.ReasonDAO.FindById (3);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonUnattended = daoFactory.ReasonDAO.FindById (5);
+          IReason reasonSetup = daoFactory.ReasonDAO.FindById (16);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          IMachineMode active = daoFactory.MachineModeDAO.FindById (2);
+          IMachineMode auto = daoFactory.MachineModeDAO.FindById (3);
+
+          var jsonData = """
+              {
+                "A": 1,
+                "Test": 1234
+              }
+              """;
+          InitializeData (jsonData);
+
+          // New association 3 -> oo
+          {
+            var association =
+              new ReasonMachineAssociation ();
+            association.XmlSerializationMachine = (Machine)machine1;
+            association.SetManualReason (reasonSetup, (double?)null, null, """
+              {
+                "Test": 888
+              }
+              """);
+            association.DateTime = T (3);
+            association.Begin = T (1);
+            association.End = new UpperBound<DateTime> (null);
+            association = (ReasonMachineAssociation)new ReasonMachineAssociationDAO ().MakePersistent (association);
+            ModelDAOHelper.DAOFactory.Flush ();
+            association.MakeAnalysis (); // InProgress
+            association.MakeAnalysis ();
+          }
+
+          DAOFactory.EmptyAccumulators ();
+
+          // Check the values
+          {
+            IList<ReasonSlot> slots =
+              session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .AddOrder (Order.Asc ("DateTimeRange"))
+              .List<ReasonSlot> ();
+            Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
+            int i = 1;
+            Assert.Multiple (() => {
+              Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+              Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
+              Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (slots[i].Reason, Is.EqualTo (reasonSetup));
+              Assert.That (slots[i].JsonData, Is.EqualTo ("""{"Test":888}"""));
+              Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
+            });
+          }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+        }
+      }
+    }
+
     /// <summary>
     /// Test the method MakeAnalysis
     /// </summary>

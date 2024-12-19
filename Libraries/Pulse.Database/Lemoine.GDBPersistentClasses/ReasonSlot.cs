@@ -18,6 +18,7 @@ using Pulse.Extensions.Database;
 using Lemoine.Business.Extension;
 using Pulse.Extensions.Business.Reason;
 using System.Text.Json;
+using Pulse.Business.Reason;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -971,6 +972,7 @@ namespace Lemoine.GDBPersistentClasses
         return object.Equals (this.OverwriteRequired, other.OverwriteRequired)
           && NHibernateHelper.EqualsNullable (this.Reason, other.Reason, (a, b) => a.Id == b.Id)
           && object.Equals (this.ReasonDetails, other.ReasonDetails)
+          && Pulse.Business.Reason.ReasonData.AreJsonEqual (this.JsonData, other.JsonData)
           && (this.ReasonScore == other.ReasonScore)
           && (this.ReasonSource.Equals (other.ReasonSource))
           && (this.AutoReasonNumber == other.AutoReasonNumber)
