@@ -5,12 +5,6 @@
 using System;
 using System.Data;
 using Lemoine.Core.Log;
-#if NETCOREAPP3_1_OR_GREATER
-using System.Text.Json;
-using System.Text.Json.Serialization;
-#else // !NETCOREAPP3_1_OR_GREATER
-using Newtonsoft.Json;
-#endif // !NETCOREAPP3_1_OR_GREATER
 using NHibernate.SqlTypes;
 
 namespace Lemoine.NHibernateTypes

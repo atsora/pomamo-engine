@@ -6,12 +6,8 @@
 using System;
 using System.Data;
 using Lemoine.Core.Log;
-#if NETCOREAPP3_1_OR_GREATER
 using System.Text.Json;
 using System.Text.Json.Serialization;
-#else // !NETCOREAPP3_1_OR_GREATER
-using Newtonsoft.Json;
-#endif // !NETCOREAPP3_1_OR_GREATER
 using NHibernate.SqlTypes;
 
 namespace Lemoine.NHibernateTypes
@@ -35,21 +31,10 @@ namespace Lemoine.NHibernateTypes
 
     }
 
-#if NETCOREAPP3_1_OR_GREATER
     JsonSerializerOptions GetSerializerOptions () => new JsonSerializerOptions {
       DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault,
       PropertyNameCaseInsensitive = true,
     };
-#else // !NETCOREAPP3_1_OR_GREATER
-    JsonSerializerSettings GetSerializationSettings ()
-    {
-      return new JsonSerializerSettings () {
-        DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-        NullValueHandling = NullValueHandling.Ignore,
-        MissingMemberHandling = MissingMemberHandling.Ignore,
-      };
-    }
-#endif // !NETCOREAPP3_1_OR_GREATER
 
     /// <summary>
     /// Deserialize a dictionary
@@ -59,11 +44,7 @@ namespace Lemoine.NHibernateTypes
     protected override T Get (object v)
     {
       try {
-#if NETCOREAPP3_1_OR_GREATER
         return JsonSerializer.Deserialize<T> (v.ToString (), GetSerializerOptions ());
-#else // !NETCOREAPP3_1_OR_GREATER
-        return JsonConvert.DeserializeObject<T> (v.ToString (), GetSerializationSettings ());
-#endif // !NETCOREAPP3_1_OR_GREATER
       }
       catch (Exception ex) {
         string message = $"Data {v} is not a Json";
@@ -79,11 +60,7 @@ namespace Lemoine.NHibernateTypes
     /// <returns></returns>
     protected override object Set (T v)
     {
-#if NETCOREAPP3_1_OR_GREATER
       var json = JsonSerializer.Serialize (v, GetSerializerOptions ());
-#else // !NETCOREAPP3_1_OR_GREATER
-      var json = JsonConvert.SerializeObject (v, GetSerializationSettings ());
-#endif // !NETCOREAPP3_1_OR_GREATER
       return json;
     }
 
@@ -96,13 +73,8 @@ namespace Lemoine.NHibernateTypes
     {
       // Serialize and deserialize
       try {
-#if NETCOREAPP3_1_OR_GREATER
         var serializerOptions = GetSerializerOptions ();
         return JsonSerializer.Deserialize<T> (JsonSerializer.Serialize (v, serializerOptions), serializerOptions);
-#else // !NETCOREAPP3_1_OR_GREATER
-        var serializationSettings = GetSerializationSettings ();
-        return JsonConvert.DeserializeObject<T> (JsonConvert.SerializeObject (v, serializationSettings), serializationSettings);
-#endif // !NETCOREAPP3_1_OR_GREATER
       }
       catch (Exception ex) {
         log.Error ("DeepCopyValue: got exception", ex);

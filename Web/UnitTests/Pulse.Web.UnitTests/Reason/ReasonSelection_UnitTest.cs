@@ -73,6 +73,10 @@ namespace Pulse.Web.UnitTests.Reason
           var withDataSelections = response.Where (item => (5 == item.Id) && (item.Data != null));
           Assert.Multiple (() => {
             Assert.That (withDataSelections.ToList (), Has.Count.EqualTo (2));
+            Assert.That (withDataSelections.Select (x => x.Display), Has.One.With.EqualTo ("Test 1"));
+            Assert.That (withDataSelections.Select (x => x.Data), Has.All.With.ContainKey ("Test"));
+            Assert.That (withDataSelections.Select (x => x.Data), Has.One.With.ContainValue (1.0));
+            Assert.That (withDataSelections.Select (x => x.Data), Has.One.With.ContainValue (2.0));
           });
         }
         finally {

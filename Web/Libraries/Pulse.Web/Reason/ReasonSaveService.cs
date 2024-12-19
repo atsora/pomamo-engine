@@ -104,10 +104,10 @@ namespace Pulse.Web.Reason
             jsonData = null;
           }
           else {
-            jsonData =
-              $$"""
+            var reasonDataValue = ((JsonElement)request.ReasonDataValue).GetRawText ();
+            jsonData = $$"""
               {
-                {{request.ReasonDataKey}}: {{((JsonElement)request.ReasonDataValue).GetRawText ()}}
+                "{{request.ReasonDataKey}}": {{reasonDataValue}}
               }
               """;
           }
@@ -194,22 +194,28 @@ namespace Pulse.Web.Reason
             }
           }
 
-          // Ranges
-          var deserializedResult = PostDTO.Deserialize<ReasonSavePostDTO> (m_body);
-          string jsonData;
-          if (deserializedResult.ReasonData is null) {
-            jsonData = null;
+          // Ranges + jsonData
+          try {
+            var deserializedResult = PostDTO.Deserialize<ReasonSavePostDTO> (m_body);
+            string jsonData;
+            if (deserializedResult.ReasonData is null) {
+              jsonData = null;
+            }
+            else {
+              jsonData = deserializedResult.ReasonData.Value.GetRawText ();
+            }
+            foreach (var range in deserializedResult.ExtractRanges ()) {
+              CreateModification (revision,
+                                  machine,
+                                  reason,
+                                  request.ReasonScore,
+                                  request.ReasonDetails,
+                                  range, jsonData);
+            }
           }
-          else {
-            jsonData = deserializedResult.ReasonData.Value.GetRawText ();
-          }
-          foreach (var range in deserializedResult.ExtractRanges ()) {
-            CreateModification (revision,
-                                machine,
-                                reason,
-                                request.ReasonScore,
-                                request.ReasonDetails,
-                                range, jsonData);
+          catch (Exception ex) {
+            log.Error ($"Post: exception in deserialization or modification", ex);
+            throw;
           }
 
           transaction.Commit ();

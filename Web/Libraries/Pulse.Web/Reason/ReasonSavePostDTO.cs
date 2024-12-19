@@ -24,22 +24,4 @@ namespace Pulse.Web.Reason
     [ApiMember (Name = "ReasonData", Description = "Reason data", ParameterType = "post", DataType = "JsonElement", IsRequired = false)]
     public JsonElement? ReasonData { get; set; }
   }
-
-  /// <summary>
-  /// Reason data
-  /// </summary>
-  public class ReasonDataPostDTO
-  {
-    /// <summary>
-    /// Reason data key
-    /// </summary>
-    [ApiMember (Name = "Key", Description = "Reason data key", ParameterType = "post", DataType = "string", IsRequired = true)]
-    public string Key { get; set; }
-
-    /// <summary>
-    /// Reason data value
-    /// </summary>
-    [ApiMember (Name = "Value", Description = "Reason data value", ParameterType = "post", DataType = "object", IsRequired = true)]
-    public object Value { get; set; }
-  }
 }

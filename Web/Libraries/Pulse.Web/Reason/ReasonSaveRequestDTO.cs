@@ -11,6 +11,7 @@ using Lemoine.Core.Log;
 
 using System.Net;
 using Pulse.Web.CommonResponseDTO;
+using System.Text.Json;
 
 
 namespace Pulse.Web.Reason
@@ -56,8 +57,8 @@ namespace Pulse.Web.Reason
     /// <summary>
     /// Reason data in string format
     /// </summary>
-    [ApiMember (Name = "ReasonDataValue", Description = "If not set, no reason data", ParameterType = "path", DataType = "object", IsRequired = false)]
-    public object ReasonDataValue { get; set; }
+    [ApiMember (Name = "ReasonDataValue", Description = "If not set, no reason data", ParameterType = "path", DataType = "JsonElement", IsRequired = false)]
+    public JsonElement? ReasonDataValue { get; set; }
 
     /// <summary>
     /// Reason score to use (default: 100.0)
