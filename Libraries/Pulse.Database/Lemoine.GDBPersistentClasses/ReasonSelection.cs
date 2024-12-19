@@ -91,11 +91,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual int Id => m_id;
 
     /// <summary>
-    /// Additional data
-    /// </summary>
-    public virtual IDictionary<string, object> Data => null;
-
-    /// <summary>
     /// Version
     /// </summary>
     public virtual int Version
@@ -166,7 +161,27 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_machineFilter; }
       set { m_machineFilter = value; }
     }
-    
+
+    /// <summary>
+    /// Additional data
+    /// </summary>
+    public virtual IDictionary<string, object> Data => null;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string AlternativeText => null;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string AlternativeLongText => null;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string AlternativeDescription => null;
+
     #region Equals and GetHashCode implementation
     /// <summary>
     /// <see cref="Object.Equals(object)" />

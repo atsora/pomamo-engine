@@ -147,13 +147,23 @@ namespace Pulse.Web.Reason
       Lemoine.Model.IReason reason = reasonSelection.Reason;
       ReasonSelectionResponseDTO reasonSelectionResponseDTO = new ReasonSelectionResponseDTO();
       reasonSelectionResponseDTO.Id = reason.Id;
-      reasonSelectionResponseDTO.Data = reasonSelection.Data;
-      reasonSelectionResponseDTO.Display = reason.Display;
-      reasonSelectionResponseDTO.LongDisplay = reason.LongDisplay;
-      reasonSelectionResponseDTO.Description = reason.DescriptionOrTranslation;
+      if (!string.IsNullOrEmpty (reasonSelection.AlternativeText)) {
+        reasonSelectionResponseDTO.Display = reasonSelection.AlternativeText;
+        reasonSelectionResponseDTO.LongDisplay = string.IsNullOrEmpty (reasonSelection.AlternativeLongText)
+          ? reasonSelection.AlternativeText
+          : reasonSelection.AlternativeLongText;
+      }
+      else {
+        reasonSelectionResponseDTO.Display = reason.Display;
+        reasonSelectionResponseDTO.LongDisplay = reason.LongDisplay;
+      }
+      reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
+        ? reason.DescriptionOrTranslation
+        : reasonSelection.AlternativeDescription;
       reasonSelectionResponseDTO.Color = reason.Color;
       reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
       reasonSelectionResponseDTO.DetailsRequired = reasonSelection.DetailsRequired;
+      reasonSelectionResponseDTO.Data = reasonSelection.Data;
       reasonSelectionResponseDTO.ReasonGroupDisplay = reason.ReasonGroup.Display;
       reasonSelectionResponseDTO.ReasonGroupId = reason.ReasonGroup.Id;
       reasonSelectionResponseDTO.ReasonGroupLongDisplay = reason.ReasonGroup.LongDisplay;

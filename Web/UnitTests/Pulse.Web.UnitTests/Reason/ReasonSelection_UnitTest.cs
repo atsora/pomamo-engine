@@ -53,6 +53,35 @@ namespace Pulse.Web.UnitTests.Reason
       }
     }
 
+    [Test]
+    public void TestReasonSelectionWithReasonData ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.ExtensionManager.Add<Lemoine.Plugin.TestReasonData.ReasonSelectionExtension> ();
+
+          var request = new ReasonSelectionRequestDTO ();
+          request.MachineId = 1;
+          request.Range = "[2011-11-22T08:30:00Z,2011-11-22T08:30:00Z]";
+
+          var response = m_service.GetWithoutCache (request) as IList<ReasonSelectionResponseDTO>;
+
+          Assert.That (response, Is.Not.Null);
+          Assert.That (response, Has.Count.EqualTo (11));
+
+          var withDataSelections = response.Where (item => (5 == item.Id) && (item.Data != null));
+          Assert.Multiple (() => {
+            Assert.That (withDataSelections.ToList (), Has.Count.EqualTo (2));
+          });
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
     [OneTimeSetUp]
     public void Init()
     {

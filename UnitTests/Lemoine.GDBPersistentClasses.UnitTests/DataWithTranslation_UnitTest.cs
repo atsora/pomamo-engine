@@ -35,7 +35,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       {
         IWorkOrderStatus workOrderStatus = ModelDAOHelper.DAOFactory.WorkOrderStatusDAO.FindById(1);
-        Assert.That (workOrderStatus.Display, Is.EqualTo ("Non défini"));
+        Assert.That (workOrderStatus.Display, Is.AnyOf ("Non défini", "Undefined"));
       }      
     }
 

@@ -208,11 +208,6 @@ namespace Pulse.Extensions.Database
     }
 
     /// <summary>
-    /// Data
-    /// </summary>
-    public IDictionary<string, object> Data { get; set; }
-
-    /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
     /// </summary>
     public IMachineFilter MachineFilter
@@ -261,6 +256,26 @@ namespace Pulse.Extensions.Database
     }
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string AlternativeText { get; set; }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string AlternativeLongText { get; set; }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string AlternativeDescription { get; set; }
+
+    /// <summary>
+    /// Data
+    /// </summary>
+    public IDictionary<string, object> Data { get; set; }
+
+    /// <summary>
     /// Version. Not used (always 0)
     /// </summary>
     public int Version
@@ -275,13 +290,14 @@ namespace Pulse.Extensions.Database
     /// <param name="machineObservationState"></param>
     /// <param name="reason"></param>
     /// <param name="reasonScore"></param>
-    public ExtraReasonSelection (IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, IDictionary<string, object> data = null)
+    public ExtraReasonSelection (IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, string alternativeText = null, IDictionary<string, object> data = null)
     {
       this.MachineMode = machineMode;
       this.MachineObservationState = machineObservationState;
       this.Reason = reason;
       this.ReasonScore = reasonScore;
       this.Selectable = true;
+      this.AlternativeText = alternativeText;
       this.Data = data;
     }
   }

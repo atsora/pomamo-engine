@@ -99,7 +99,7 @@ namespace Pulse.Web.Reason
             }
           }
 
-          string? jsonData;
+          string jsonData;
           if (string.IsNullOrEmpty (request.ReasonDataKey)) {
             jsonData = null;
           }
@@ -196,7 +196,7 @@ namespace Pulse.Web.Reason
 
           // Ranges
           var deserializedResult = PostDTO.Deserialize<ReasonSavePostDTO> (m_body);
-          string? jsonData;
+          string jsonData;
           if (deserializedResult.ReasonData is null) {
             jsonData = null;
           }

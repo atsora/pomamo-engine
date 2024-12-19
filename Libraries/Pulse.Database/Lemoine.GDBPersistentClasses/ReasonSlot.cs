@@ -15,6 +15,9 @@ using Lemoine.Business;
 using Lemoine.Business.Reason;
 using Lemoine.Collections;
 using Pulse.Extensions.Database;
+using Lemoine.Business.Extension;
+using Pulse.Extensions.Business.Reason;
+using System.Text.Json;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -411,6 +414,20 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       using (var modificationTracker = new SlotModificationTracker<IReasonSlot> (this)) {
+        // Data
+        if (!string.IsNullOrEmpty (this.JsonData)) {
+          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+          if (extensions.Any (x => x.DoReset (this))) {
+            var data = Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData, extensions);
+            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+            foreach (var extension in extensions.Where (ext => ext.DoReset (this))) {
+              extension.Reset (data);
+            }
+            this.JsonData = JsonSerializer.Serialize (data);
+          }
+        }
+
         switch (this.ReasonSource) {
           case ReasonSource.Manual:
             m_reasonSource = this.ReasonSource.ResetManual ();
@@ -473,7 +490,8 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="score"></param>
     /// <param name="consolidationLimit"></param>
     /// <param name="reasonDetails">Optional: details</param>
-    protected internal virtual void SetManualReason (IReason reason, double score, UpperBound<DateTime> consolidationLimit, string reasonDetails = null)
+    /// <param name="jsonData">Optional: data in Json format</param>
+    protected internal virtual void SetManualReason (IReason reason, double score, UpperBound<DateTime> consolidationLimit, string reasonDetails = null, string jsonData = null)
     {
       Debug.Assert (null != reason);
 
@@ -484,6 +502,7 @@ namespace Lemoine.GDBPersistentClasses
         m_reasonScore = score;
         m_overwriteRequired = false;
         m_reasonSource = ReasonSource.Manual;
+        this.JsonData = jsonData;
         AddConsolidationLimit (consolidationLimit);
         SetReasonConsolidated (oldReason);
       }
@@ -508,7 +527,8 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="overwriteRequired"></param>
     /// <param name="consolidationLimit"></param>
     /// <param name="reasonDetails">Optional: reason details</param>
-    protected internal virtual void SetMainAutoReason (IReason reason, double score, bool overwriteRequired, UpperBound<DateTime> consolidationLimit, string reasonDetails = null)
+    /// <param name="jsonData">Optional: data in Json format</param>
+    protected internal virtual void SetMainAutoReason (IReason reason, double score, bool overwriteRequired, UpperBound<DateTime> consolidationLimit, string reasonDetails = null, string jsonData = null)
     {
       Debug.Assert (null != reason);
 
@@ -519,6 +539,7 @@ namespace Lemoine.GDBPersistentClasses
         m_reasonScore = score;
         m_overwriteRequired = overwriteRequired;
         m_reasonSource = m_reasonSource.SetMainAuto ();
+        this.JsonData = jsonData;
         ++m_autoReasonNumber;
         AddConsolidationLimit (consolidationLimit);
         SetReasonConsolidated (oldReason);

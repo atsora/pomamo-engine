@@ -469,20 +469,6 @@ namespace Lemoine.GDBPersistentClasses
       ReasonSlot newReasonSlot = (ReasonSlot)oldReasonSlot.Clone ();
       newReasonSlot.SetOldSlotFromModification (oldReasonSlot, this);
       if (this.Reason is null) { // Reset the reason
-        // Data
-        if (!string.IsNullOrEmpty (this.JsonData)) {
-          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
-          if (extensions.Any (x => x.DoReset (oldReasonSlot))) {
-            var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
-            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
-            foreach (var extension in extensions.Where (ext => ext.DoReset (oldReasonSlot))) {
-              extension.Reset (data);
-            }
-            newReasonSlot.JsonData = JsonSerializer.Serialize (data);
-          }
-        }
-
         switch (this.Kind) {
           case ReasonMachineAssociationKind.Consolidate: // Will be deprecated soon...
             newReasonSlot.SetUnsafeAutoReasonNumber ();
@@ -496,30 +482,6 @@ namespace Lemoine.GDBPersistentClasses
             GetLogger ().Fatal ($"MergeDataWithOldSlot: reason null with an invalid kind {this.Kind}");
             Debug.Assert (false);
             return newReasonSlot as TSlot;
-        }
-      }
-      else { // Reason is not null
-        // Data
-        if (!string.IsNullOrEmpty (this.JsonData)) {
-          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
-          if (extensions.Any (x => x.DoMerge (oldReasonSlot, this))) {
-            var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
-            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
-            var newData = Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData, extensions);
-            foreach (var extension in extensions.Where (ext => ext.DoMerge (oldReasonSlot, this))) {
-              var name = extension.Name;
-              object o;
-              if (!newData.TryGetValue (name, out o)) {
-                o = null;
-              }
-              extension.Merge (data, o);
-            }
-            newReasonSlot.JsonData = JsonSerializer.Serialize (data);
-          }
-        }
-        else { // this.JsonData is null or empty => keep the data from ReasonMachineAssociation
-          newReasonSlot.JsonData = this.JsonData;
         }
       }
 
@@ -540,13 +502,11 @@ namespace Lemoine.GDBPersistentClasses
             Debug.Assert (oldReasonSlot.EndDateTime.HasValue);
             if (oldReasonSlot.EndDateTime.HasValue
                 && (Bound.Compare<DateTime> (this.DateTime, oldReasonSlot.EndDateTime.Value) < 0)) {
-              GetLogger ().WarnFormat ("MergeDataWithOldSlot: {0}",
-                              message);
+              GetLogger ().Warn ($"MergeDataWithOldSlot: {message}");
               AddAnalysisLog (LogLevel.WARN, message);
             }
             else {
-              GetLogger ().ErrorFormat ("MergeDataWithOldSlot: {0}",
-                               message);
+              GetLogger ().Error ($"MergeDataWithOldSlot: {message}");
               AddAnalysisLog (LogLevel.ERROR, message);
             }
           }
@@ -576,8 +536,7 @@ namespace Lemoine.GDBPersistentClasses
         || (oldReasonSlot.ReasonScore.Equals (this.OptionalReasonScore) && this.Kind.IsManual ());
       if (!apply) { // Not a higher score, skip it
         if (oldReasonSlot.ReasonSource.Equals (ReasonSource.Default)) {
-          string message = string.Format ("association with a score {0} lower than the current default reason {1}", this.OptionalReasonScore, oldReasonSlot.ReasonScore);
-          GetLogger ().Error ($"MergeDataWithOldSlot: {message}");
+          var message = $"association with a score {this.OptionalReasonScore} lower than the current default reason {oldReasonSlot.ReasonScore}";
           AddAnalysisLog (LogLevel.ERROR, message);
         }
         if (this.Kind.IsAuto ()) {
@@ -601,11 +560,70 @@ namespace Lemoine.GDBPersistentClasses
         GetLogger ().ErrorFormat ("ReasonMachineAssociation: association with a null reason score while reason id is {0} fallback to {1}", this.Reason.Id, score);
       }
 
+      // Data
+      string newJsonData;
+      if (!string.IsNullOrEmpty (this.JsonData)) {
+        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+        if (extensions.Any (x => x.DoMerge (oldReasonSlot, this) || !x.Keep (oldReasonSlot, this))) {
+          var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
+          data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+          var newData = Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData, extensions);
+          foreach (var extension in extensions.Where (ext => ext.DoMerge (oldReasonSlot, this) || !ext.Keep (oldReasonSlot, this))) {
+            var name = extension.Name;
+            if (newData.TryGetValue (name, out var o)) {
+              extension.Merge (data, o, this);
+            }
+            else if (!extension.Keep (oldReasonSlot, this)) { // Do not keep the old value
+              data.Remove (name);
+            }
+          }
+          newJsonData = JsonSerializer.Serialize (data);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MergeDataWithOldSlot: merged data is {newJsonData}");
+          }
+        }
+        else { // No data to merge
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MergeDataWithOldSlot: no IReasonDataExtension with a Merge => keep the data from ReasonMachineAssociation");
+          }
+          newJsonData = this.JsonData;
+        }
+      }
+      else { // this.JsonData is null or empty => remove it?
+        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+        if (extensions.Any (x => !x.Keep (oldReasonSlot, this))) {
+          var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
+          data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+          bool change = false;
+          foreach (var extension in extensions.Where (ext => !ext.Keep (oldReasonSlot, this))) {
+            var name = extension.Name;
+            if (data.ContainsKey (name)) {
+              data.Remove (name);
+              change = true;
+            }
+          }
+          if (change) {
+            newJsonData = JsonSerializer.Serialize (data);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MergeDataWithOldSlot: data is {newJsonData} after purging the data not to keep");
+            }
+          }
+          else {
+            newJsonData = oldReasonSlot.JsonData;
+          }
+        }
+        else { // Keep all the data
+          newJsonData = oldReasonSlot.JsonData;
+        }
+      }
+
       if (this.Kind.IsAuto ()) {
-        ((ReasonSlot)newReasonSlot).SetMainAutoReason (this.Reason, score, this.Kind.Equals (ReasonMachineAssociationKind.AutoWithOverwriteRequired), this.End, this.ReasonDetails);
+        ((ReasonSlot)newReasonSlot).SetMainAutoReason (this.Reason, score, this.Kind.Equals (ReasonMachineAssociationKind.AutoWithOverwriteRequired), this.End, this.ReasonDetails, newJsonData);
       }
       else { // manual
-        ((ReasonSlot)newReasonSlot).SetManualReason (this.Reason, score, this.End, this.ReasonDetails);
+        ((ReasonSlot)newReasonSlot).SetManualReason (this.Reason, score, this.End, this.ReasonDetails, newJsonData);
       }
 
       return newReasonSlot as TSlot;
@@ -726,8 +744,7 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (!this.Kind.Equals (ReasonMachineAssociationKind.Consolidate));
         Debug.Assert (null == this.Parent);
         if (null != this.Parent) {
-          log.ErrorFormat ("MakeAnalysis: TrackSlotChanges option with a parent for modification id {0}",
-            this.Id);
+          log.Error ($"MakeAnalysis: TrackSlotChanges option with a parent for modification id {this.Id}");
         }
         MakeAnalysisDynamicEndAggressive ("NextMachineMode");
         return;
@@ -756,7 +773,7 @@ namespace Lemoine.GDBPersistentClasses
               .GetDynamicTime (this.DynamicEnd, this.Machine, this.DynamicTimeRange, hint, limit);
           }
           catch (NoDynamicTime) {
-            GetLogger ().ErrorFormat ("MakeAnalysis: unknown dynamic end {0}", dynamicEnd);
+            GetLogger ().Error ($"MakeAnalysis: unknown dynamic end {dynamicEnd}");
             CheckNoReasonProposal ();
             SetModificationInError ("Unknown dynamic end");
             return;

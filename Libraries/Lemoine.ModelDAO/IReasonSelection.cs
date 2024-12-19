@@ -29,6 +29,27 @@ namespace Lemoine.Model
     int Id { get; }
 
     /// <summary>
+    /// Alternative text (if null or empty, not taken into account)
+    /// 
+    /// nullable
+    /// </summary>
+    string AlternativeText { get; }
+
+    /// <summary>
+    /// Alternative long text (if null or empty, not taken into account)
+    /// 
+    /// nullable
+    /// </summary>
+    string AlternativeLongText { get; }
+
+    /// <summary>
+    /// Alternative description (if null or empty, not taken into account)
+    /// 
+    /// nullable
+    /// </summary>
+    string AlternativeDescription { get; }
+
+    /// <summary>
     /// Additional data
     /// 
     /// Nullable
@@ -86,7 +107,7 @@ namespace Lemoine.Model
     public static IEnumerable<IReasonSelection> GroupSameReason (this IEnumerable<IReasonSelection> reasonSelections)
     {
       return reasonSelections
-        .GroupBy (s => s.Reason.Id)
+        .GroupBy (s => $"{s.Reason.Id}-{s.AlternativeText ?? ""}")
         .Select (g => g.OrderByDescending (a => a.ReasonScore).First ());
     }
   }
@@ -109,7 +130,7 @@ namespace Lemoine.Model
     public bool Equals (IReasonSelection x, IReasonSelection y)
     {
       return (x.Reason.Id == y.Reason.Id) && (x.ReasonScore == y.ReasonScore)
-        && (x.DetailsRequired == y.DetailsRequired);
+        && (x.DetailsRequired == y.DetailsRequired) && string.Equals (x.AlternativeText, y.AlternativeText, StringComparison.InvariantCultureIgnoreCase);
     }
 
     /// <summary>
@@ -124,6 +145,7 @@ namespace Lemoine.Model
         hashCode += 1000000007 * obj.Reason.Id;
         hashCode += 1000000009 * obj.ReasonScore.GetHashCode ();
         hashCode += 1000000011 * obj.DetailsRequired.GetHashCode ();
+        hashCode += 1000000013 * (obj.AlternativeText?.GetHashCode () ?? 0);
       }
       return hashCode;
     }

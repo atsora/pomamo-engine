@@ -25,6 +25,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\Reason\Lemoine.Plugin.TestReasonData\Lemoine.Plugin.TestReasonData.fsproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />

@@ -165,6 +165,15 @@ namespace Lemoine.Extensions
     }
 
     /// <summary>
+    /// Add an extension manually, for example for the tests or for the specific applications
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public static void Add<T> ()
+    {
+      Add (typeof (T));
+    }
+
+    /// <summary>
     /// Create new extensions that follow the specific interface
     /// </summary>
     /// <param name="packageIdentifier">If set, restrict the extensions to this package identifier</param>
