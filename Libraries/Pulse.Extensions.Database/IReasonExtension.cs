@@ -444,16 +444,14 @@ namespace Pulse.Extensions.Database
     /// </summary>
     /// <param name="t"></param>
     /// <param name="reasonSlot">not null</param>
-    /// <param name="reason">not null</param>
-    /// <param name="score"></param>
-    /// <param name="details"></param>
+    /// <param name="reasonMachineAssociation">not null and reasonMachineAssociation.Reason not null</param>
     /// <param name="consolidationLimit"></param>
     /// <returns>a manual reason was applied</returns>
-    public static bool TryManualReason (this IReasonExtension t, IReasonSlot reasonSlot, IReason reason, double score, string details, UpperBound<DateTime> consolidationLimit)
+    public static bool TryManualReason (this IReasonExtension t, IReasonSlot reasonSlot, IReasonMachineAssociation reasonMachineAssociation, UpperBound<DateTime> consolidationLimit)
     {
       Debug.Assert (null != reasonSlot);
 
-      return reasonSlot.TryManualReasonInReset (reason, score, details, consolidationLimit);
+      return reasonSlot.TryManualReasonInReset (reasonMachineAssociation, consolidationLimit);
     }
 
     /// <summary>
@@ -463,18 +461,15 @@ namespace Pulse.Extensions.Database
     /// </summary>
     /// <param name="t"></param>
     /// <param name="reasonSlot">not null</param>
-    /// <param name="reason">not null</param>
-    /// <param name="score"></param>
-    /// <param name="details"></param>
-    /// <param name="overwriteRequired"></param>
+    /// <param name="reasonProposal">not null and reasonProposal.Reason not null</param>
     /// <param name="consolidationLimit"></param>
     /// <param name="compatibilityCheck">check the compatibility is ok first (false for the reasons from the reasonproposal table)</param>
     /// <returns>a reason was applied</returns>
-    public static bool TryAutoReason (this IReasonExtension t, IReasonSlot reasonSlot, IReason reason, double score, string details, bool overwriteRequired, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck)
+    public static bool TryAutoReason (this IReasonExtension t, IReasonSlot reasonSlot, IReasonProposal reasonProposal, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck)
     {
       Debug.Assert (null != reasonSlot);
 
-      return reasonSlot.TryAutoReasonInReset (reason, score, details, overwriteRequired, consolidationLimit, compatibilityCheck);
+      return reasonSlot.TryAutoReasonInReset (reasonProposal, consolidationLimit, compatibilityCheck);
     }
   }
 }

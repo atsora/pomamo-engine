@@ -410,9 +410,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
           var oldSlot = (reasonSlot.ReasonScore <= manualReasonAssociation.ReasonScore)
             ? (ISlot)reasonSlot.Clone ()
             : null;
-          var manualReasonApplied = this.TryManualReason (reasonSlot,
-            manualReasonAssociation.Reason, manualReasonAssociation.OptionalReasonScore.Value,
-            manualReasonAssociation.ReasonDetails,
+          var manualReasonApplied = this.TryManualReason (reasonSlot, manualReasonAssociation,
             consolidationLimit);
           if (manualReasonApplied) { // Consolidate
             reasonSlot.Consolidate (oldSlot, manualReasonAssociation);

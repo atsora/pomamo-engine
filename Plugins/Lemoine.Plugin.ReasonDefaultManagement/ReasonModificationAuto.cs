@@ -453,10 +453,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
           if (isCurrentActivity) {
             consolidationLimit = autoReasonProposal.DateTimeRange.Upper;
           }
-          autoReasonApplied |= this.TryAutoReason (reasonSlot,
-            autoReasonProposal.Reason, autoReasonProposal.ReasonScore,
-            autoReasonProposal.ReasonDetails,
-            autoReasonProposal.Kind.Equals (ReasonMachineAssociationKind.AutoWithOverwriteRequired),
+          autoReasonApplied |= this.TryAutoReason (reasonSlot, autoReasonProposal,
             consolidationLimit,
             false);
         }

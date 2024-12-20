@@ -2,6 +2,7 @@
 
 using Lemoine.Business.Extension;
 using Lemoine.Core.Log;
+using Lemoine.Model;
 using Pulse.Extensions.Business.Reason;
 using System;
 using System.Collections.Generic;
@@ -104,6 +105,110 @@ namespace Pulse.Business.Reason
         v = null;
         return false;
       }
+    }
+
+    /// <summary>
+    /// Merge the data from reasonSlot with the data from reasonMachineAssociation
+    /// </summary>
+    /// <param name="reasonSlot"></param>
+    /// <param name="possibleReason"></param>
+    /// <returns></returns>
+    public static string Merge (IReasonSlot reasonSlot, IPossibleReason possibleReason)
+    {
+      if (!string.IsNullOrEmpty (possibleReason.JsonData)) {
+        if (string.IsNullOrEmpty (reasonSlot.JsonData)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Merge: no existing reason data=> keep the data from ReasonMachineAssociation");
+          }
+          return possibleReason.JsonData;
+        }
+        else {
+          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+          if (extensions.Any (x => x.DoMerge (reasonSlot, possibleReason) || !x.Keep (reasonSlot, possibleReason))) {
+            var data = Pulse.Business.Reason.ReasonData.Deserialize (reasonSlot.JsonData, extensions);
+            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+            var newData = Pulse.Business.Reason.ReasonData.Deserialize (possibleReason.JsonData, extensions);
+            foreach (var extension in extensions.Where (ext => ext.DoMerge (reasonSlot, possibleReason) || !ext.Keep (reasonSlot, possibleReason))) {
+              var name = extension.Name;
+              if (newData.TryGetValue (name, out var o)) {
+                extension.Merge (data, o, possibleReason);
+              }
+              else if (!extension.Keep (reasonSlot, possibleReason)) { // Do not keep the old value
+                data.Remove (name);
+              }
+            }
+            var newJsonData = JsonSerializer.Serialize (data);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Merge: merged data is {newJsonData}");
+            }
+            return newJsonData;
+          }
+          else { // No data to merge
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Merge: no IReasonDataExtension with a Merge => keep the data from ReasonMachineAssociation");
+            }
+            return possibleReason.JsonData;
+          }
+        }
+      }
+      else if (string.IsNullOrEmpty (reasonSlot.JsonData)) { // Both JsonData are null
+        return null;
+      }
+      else { // reasonMachineAssociation.JsonData is null or empty => remove it?
+        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+        if (extensions.Any (x => !x.Keep (reasonSlot, possibleReason))) {
+          var data = Pulse.Business.Reason.ReasonData.Deserialize (reasonSlot.JsonData, extensions);
+          data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+          bool change = false;
+          foreach (var extension in extensions.Where (ext => !ext.Keep (reasonSlot, possibleReason))) {
+            var name = extension.Name;
+            if (data.ContainsKey (name)) {
+              data.Remove (name);
+              change = true;
+            }
+          }
+          if (change) {
+            var newJsonData = JsonSerializer.Serialize (data);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Merge: data is {newJsonData} after purging the data not to keep");
+            }
+            return newJsonData;
+          }
+          else {
+            return reasonSlot.JsonData;
+          }
+        }
+        else { // Keep all the data
+          return reasonSlot.JsonData;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get the new json data in the case the slot is reset (or switched to processing)
+    /// </summary>
+    /// <param name="reasonSlot"></param>
+    /// <param name="newJsonData"></param>
+    /// <returns></returns>
+    public static bool ResetData (IReasonSlot reasonSlot, out string newJsonData)
+    {
+      if (!string.IsNullOrEmpty (reasonSlot.JsonData)) {
+        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+        if (extensions.Any (x => x.DoReset (reasonSlot))) {
+          var data = Pulse.Business.Reason.ReasonData.Deserialize (reasonSlot.JsonData, extensions);
+          data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
+          foreach (var extension in extensions.Where (ext => ext.DoReset (reasonSlot))) {
+            extension.Reset (data);
+          }
+          newJsonData = JsonSerializer.Serialize (data);
+          return true;
+        }
+      }
+      newJsonData = null;
+      return false;
     }
 
     /// <summary>

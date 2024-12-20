@@ -9,15 +9,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
 using Lemoine.Business;
-using Lemoine.Business.Reason;
 using Lemoine.Database.Persistent;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
-using NHibernate;
-using NHibernate.Criterion;
 using System.Globalization;
-using Lemoine.Extensions.Database;
 using Lemoine.Extensions.Business.DynamicTimes;
 using Lemoine.Business.DynamicTimes;
 using Lemoine.Collections;
@@ -195,7 +191,7 @@ namespace Lemoine.GDBPersistentClasses
       double score = Lemoine.Info.ConfigSet.LoadAndGet<double> (DEFAULT_MANUAL_SCORE_KEY, DEFAULT_MANUAL_SCORE_DEFAULT);
       m_optionalReasonScore = score;
       m_reasonDetails = null;
-      // TODO: jsonData : check with the extension
+      m_jsonData = null;
     }
 
     /// <summary>
@@ -557,78 +553,11 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         score = Lemoine.Info.ConfigSet.LoadAndGet<double> (DEFAULT_MANUAL_SCORE_KEY, DEFAULT_MANUAL_SCORE_DEFAULT);
-        GetLogger ().ErrorFormat ("ReasonMachineAssociation: association with a null reason score while reason id is {0} fallback to {1}", this.Reason.Id, score);
+        GetLogger ().Error ($"ReasonMachineAssociation: association with a null reason score while reason id is {this.Reason.Id} fallback to {score}");
       }
 
       // Data
-      string newJsonData;
-      if (!string.IsNullOrEmpty (this.JsonData)) {
-        if (string.IsNullOrEmpty (oldReasonSlot.JsonData)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"MergeDataWithOldSlot: no existing reason data=> keep the data from ReasonMachineAssociation");
-          }
-          newJsonData = this.JsonData;
-        }
-        else {
-          var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
-          if (extensions.Any (x => x.DoMerge (oldReasonSlot, this) || !x.Keep (oldReasonSlot, this))) {
-            var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
-            data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
-            var newData = Pulse.Business.Reason.ReasonData.Deserialize (this.JsonData, extensions);
-            foreach (var extension in extensions.Where (ext => ext.DoMerge (oldReasonSlot, this) || !ext.Keep (oldReasonSlot, this))) {
-              var name = extension.Name;
-              if (newData.TryGetValue (name, out var o)) {
-                extension.Merge (data, o, this);
-              }
-              else if (!extension.Keep (oldReasonSlot, this)) { // Do not keep the old value
-                data.Remove (name);
-              }
-            }
-            newJsonData = JsonSerializer.Serialize (data);
-            if (log.IsDebugEnabled) {
-              log.Debug ($"MergeDataWithOldSlot: merged data is {newJsonData}");
-            }
-          }
-          else { // No data to merge
-            if (log.IsDebugEnabled) {
-              log.Debug ($"MergeDataWithOldSlot: no IReasonDataExtension with a Merge => keep the data from ReasonMachineAssociation");
-            }
-            newJsonData = this.JsonData;
-          }
-        }
-      }
-      else if (string.IsNullOrEmpty (oldReasonSlot.JsonData)) { // Both JsonData are null
-        newJsonData = null;
-      }
-      else { // this.JsonData is null or empty => remove it?
-        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
-        if (extensions.Any (x => !x.Keep (oldReasonSlot, this))) {
-          var data = Pulse.Business.Reason.ReasonData.Deserialize (oldReasonSlot.JsonData, extensions);
-          data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
-          bool change = false;
-          foreach (var extension in extensions.Where (ext => !ext.Keep (oldReasonSlot, this))) {
-            var name = extension.Name;
-            if (data.ContainsKey (name)) {
-              data.Remove (name);
-              change = true;
-            }
-          }
-          if (change) {
-            newJsonData = JsonSerializer.Serialize (data);
-            if (log.IsDebugEnabled) {
-              log.Debug ($"MergeDataWithOldSlot: data is {newJsonData} after purging the data not to keep");
-            }
-          }
-          else {
-            newJsonData = oldReasonSlot.JsonData;
-          }
-        }
-        else { // Keep all the data
-          newJsonData = oldReasonSlot.JsonData;
-        }
-      }
+      var newJsonData = Pulse.Business.Reason.ReasonData.Merge (oldReasonSlot, this);
 
       if (this.Kind.IsAuto ()) {
         ((ReasonSlot)newReasonSlot).SetMainAutoReason (this.Reason, score, this.Kind.Equals (ReasonMachineAssociationKind.AutoWithOverwriteRequired), this.End, this.ReasonDetails, newJsonData);
@@ -644,9 +573,7 @@ namespace Lemoine.GDBPersistentClasses
     #region Modification implementation
     void SetModificationInError (string message)
     {
-      GetLogger ().ErrorFormat ("SetModificationInError: " +
-        "{0} => finish in error",
-        message);
+      GetLogger ().Error ($"SetModificationInError: {message} => finish in error");
       AddAnalysisLog (LogLevel.ERROR, message);
       MarkAsError ();
     }
@@ -697,16 +624,14 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
-        string message = string.Format ("End={0} before Begin={1}",
-                                        this.End, this.Begin);
+        string message = $"End={this.End} before Begin={this.Begin}";
         SetModificationInError (message);
         return;
       }
 
       if (this.Range.IsEmpty ()) {
         if (GetLogger ().IsInfoEnabled) {
-          GetLogger ().InfoFormat ("MakeAnalysis: empty range => nothing to do for modification id={0}",
-            this.Id);
+          GetLogger ().Info ($"MakeAnalysis: empty range => nothing to do for modification id={this.Id}");
         }
         MarkAsCompleted ("");
         return;
@@ -949,7 +874,7 @@ namespace Lemoine.GDBPersistentClasses
           .Get (this);
         if (null != reasonProposal) {
           if (GetLogger ().IsDebugEnabled) {
-            GetLogger ().DebugFormat ("CancelData: cancel data in range {0}", reasonProposal.DateTimeRange);
+            GetLogger ().Debug ($"CancelData: cancel data in range {reasonProposal.DateTimeRange}");
           }
           Debug.Assert (!reasonProposal.DateTimeRange.IsEmpty ());
           ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakeTransient (reasonProposal);
@@ -972,8 +897,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         if (GetLogger ().IsErrorEnabled) {
-          GetLogger ().ErrorFormat ("CancelData: parent {0} is not a IReasonMachineAssociation, type is {1}",
-            parent, parent.GetType ());
+          GetLogger ().Error ($"CancelData: parent {parent} is not a IReasonMachineAssociation, type is {parent.GetType ()}");
         }
       }
 
@@ -1347,10 +1271,10 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns>true if the data was processed</returns>
     bool CheckMachineStatus ()
     {
-      GetLogger ().DebugFormat ("CheckMachineStatus: " +
-                       "about to get machine status for machine id {0}",
-                       this.Machine.Id);
-      IMachineStatus machineStatus = ModelDAOHelper.DAOFactory.MachineStatusDAO.FindById (this.Machine.Id);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"CheckMachineStatus: about to get machine status for machine id {this.Machine.Id}");
+      }
+      var machineStatus = ModelDAOHelper.DAOFactory.MachineStatusDAO.FindById (this.Machine.Id);
       if (null == machineStatus) {
         string message = string.Format ("no MachineStatus found for {0}, create one",
                                         this.Machine);
@@ -1364,13 +1288,12 @@ namespace Lemoine.GDBPersistentClasses
         ((MachineStatus)machineStatus).SetReasonFromLastReasonSlot ();
       }
       Debug.Assert (null != machineStatus);
-      GetLogger ().DebugFormat ("CheckMachineStatus: " +
-                       "with reason {0} period {1}-{2}",
-                       this.Reason, this.Begin, this.End);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().DebugFormat ("CheckMachineStatus: with reason {0} period {1}-{2}",
+                         this.Reason, this.Begin, this.End);
+      }
       if (Bound.Compare<DateTime> (machineStatus.ReasonSlotEnd, this.Begin) < 0) { // Future
-        GetLogger ().Debug ("CheckMachineStatus: " +
-                   "future reason machine association " +
-                   "=> do it later (status pending)");
+        GetLogger ().Debug ("CheckMachineStatus: future reason machine association => do it later (status pending)");
         MarkAsPending (machineStatus.ReasonSlotEnd);
         return true;
       }

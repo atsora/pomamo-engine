@@ -355,25 +355,20 @@ namespace Lemoine.Model
     /// Try to set a manual reason in the reset process,
     /// meaning check it is applicable first with the reason score
     /// </summary>
-    /// <param name="reason">not null</param>
-    /// <param name="score"></param>
-    /// <param name="details"></param>
+    /// <param name="reasonMachineAssociation">not null</param>
     /// <param name="consolidationLimit"></param>
     /// <returns>a manual reason was applied</returns>
-    bool TryManualReasonInReset (IReason reason, double score, string details, UpperBound<DateTime> consolidationLimit);
+    bool TryManualReasonInReset (IReasonMachineAssociation reasonMachineAssociation, UpperBound<DateTime> consolidationLimit);
 
     /// <summary>
     /// Try to set an auto reason in the reset process,
     /// meaning check it is applicable first with the reason score
     /// </summary>
-    /// <param name="reason">not null</param>
-    /// <param name="score"></param>
-    /// <param name="details"></param>
-    /// <param name="overwriteRequired"></param>
+    /// <param name="reasonProposal">not null, reasonProposal.Reason not null</param>
     /// <param name="consolidationLimit"></param>
     /// <param name="compatibilityCheck"></param>
     /// <returns>a reason was applied</returns>
-    bool TryAutoReasonInReset (IReason reason, double score, string details, bool overwriteRequired, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck);
+    bool TryAutoReasonInReset (IReasonProposal reasonProposal, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck);
 
     /// <summary>
     /// Update the machine status if applicable

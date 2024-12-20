@@ -265,11 +265,7 @@ namespace Lemoine.WebDataAccess
     public double? OptionalReasonScore {
       get; set;
     }
-    public double ReasonScore {
-      get {
-        return this.OptionalReasonScore ?? -1.0;
-      }
-    }
+    public double ReasonScore => this.OptionalReasonScore ?? -1.0;
     public string JsonData {
       get; set;
     }

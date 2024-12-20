@@ -374,8 +374,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null == m_reasonExtensions) { // Initialization
         if (!Lemoine.Extensions.ExtensionManager.IsActive ()) {
-          log.WarnFormat ("GetReasonExtensions: " +
-                          "the extensions are not active");
+          log.Warn ("GetReasonExtensions: the extensions are not active");
         }
 
         IMonitoredMachine monitoredMachine;
