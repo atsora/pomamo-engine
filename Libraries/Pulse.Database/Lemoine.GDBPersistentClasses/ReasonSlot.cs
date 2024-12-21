@@ -1382,6 +1382,7 @@ namespace Lemoine.GDBPersistentClasses
         && (Bound.Compare<DateTime> (machineStatus.ReasonSlotEnd, this.DateTimeRange.Upper) <= 0)) {
         machineStatus.Reason = this.Reason;
         machineStatus.ReasonDetails = this.ReasonDetails;
+        machineStatus.JsonData = this.JsonData;
         machineStatus.ReasonScore = this.ReasonScore;
         machineStatus.ReasonSource = this.ReasonSource;
         machineStatus.MachineMode = this.MachineMode;

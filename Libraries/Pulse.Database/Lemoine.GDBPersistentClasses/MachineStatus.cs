@@ -192,6 +192,11 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Reason data in Json format
+    /// </summary>
+    public virtual string JsonData { get; set; }
+
+    /// <summary>
     /// Reason score
     /// </summary>
     public virtual double ReasonScore
@@ -277,12 +282,13 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (reasonSlot.MachineObservationState.Id == this.MachineObservationState.Id); // may be lazy => use the Id
       Debug.Assert (Bound.Equals<DateTime> (reasonSlot.EndDateTime, this.ReasonSlotEnd)); // Not valid for a new machine status
       */
-      
-      log.DebugFormat ("SetReasonFromLastReasonSlot: " +
-                       "got reason {0} from reasonSlot {1}",
-                       reasonSlot.Reason, reasonSlot);
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"SetReasonFromLastReasonSlot: got reason {reasonSlot.Reason} from reasonSlot {reasonSlot.Id}");
+      }
       this.Reason = reasonSlot.Reason;
       this.ReasonDetails = reasonSlot.ReasonDetails;
+      this.JsonData = reasonSlot.JsonData;
       this.ReasonScore = reasonSlot.ReasonScore;
       this.ReasonSource = reasonSlot.ReasonSource;
       this.AutoReasonNumber = reasonSlot.AutoReasonNumber;

@@ -61,5 +61,8 @@
     <property name="ConsolidationLimit"
               type="Lemoine.NHibernateTypes.UtcUpperBoundDateTimeFullType, Lemoine.Database"
               column="machinestatusconsolidationlimit" />
+    <property name="JsonData"
+              column="reasondata"
+              type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database" />
   </class>
 </hibernate-mapping>

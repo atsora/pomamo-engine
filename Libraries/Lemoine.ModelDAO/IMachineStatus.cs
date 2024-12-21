@@ -66,6 +66,11 @@ namespace Lemoine.Model
     string ReasonDetails { get; set; }
 
     /// <summary>
+    /// Reason data in Json format
+    /// </summary>
+    string JsonData { get; set; }
+
+    /// <summary>
     /// Reason score
     /// </summary>
     double ReasonScore { get; set; }
