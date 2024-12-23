@@ -294,6 +294,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lemoine.Conversion.UnitTest
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lemoine.Plugin.TestReasonData", "..\..\..\atracking-netapps\Plugins\Reason\Lemoine.Plugin.TestReasonData\Lemoine.Plugin.TestReasonData.fsproj", "{DAEA05F6-E9E3-4448-864F-81D6311F5BA6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CustomerPlugins", "CustomerPlugins", "{710E11E4-C3C8-417D-A452-92FED4DA0E5A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lemoine.Plugin.Tycos.MaintenanceWO", "..\..\..\customer-specific\Tycos\Plugins\Lemoine.Plugin.Tycos.MaintenanceWO\Lemoine.Plugin.Tycos.MaintenanceWO.fsproj", "{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1763,6 +1767,18 @@ Global
 		{DAEA05F6-E9E3-4448-864F-81D6311F5BA6}.VS|Any CPU.Build.0 = VS|Any CPU
 		{DAEA05F6-E9E3-4448-864F-81D6311F5BA6}.VS|x64.ActiveCfg = VS|Any CPU
 		{DAEA05F6-E9E3-4448-864F-81D6311F5BA6}.VS|x64.Build.0 = VS|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Debug|x64.Build.0 = Debug|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.Release|x64.Build.0 = Release|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.VS|Any CPU.ActiveCfg = VS|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.VS|Any CPU.Build.0 = VS|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.VS|x64.ActiveCfg = VS|Any CPU
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4}.VS|x64.Build.0 = VS|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1906,6 +1922,7 @@ Global
 		{FCC124D0-68F1-4C1F-9159-B407D4D0586F} = {9FBDDF33-AA52-49C1-B0E2-AD31745375BB}
 		{23792D3B-B48A-4871-819D-BD7EA3A4385A} = {742B192D-6E2B-4CB3-8F33-F40502200BBF}
 		{DAEA05F6-E9E3-4448-864F-81D6311F5BA6} = {39D502B9-22C7-4B44-A0A9-7BF936C6F009}
+		{4AA6B609-2E58-4BC9-BE82-CF9ABB92A7F4} = {710E11E4-C3C8-417D-A452-92FED4DA0E5A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DBCDBA35-0F7A-4F73-AD91-1258F1E99CE7}

@@ -35,6 +35,7 @@
   <ItemGroup> <!-- Plugin dependencies -->
     <PackageReference Include="FSharp.Core" IsImplicitlyDefined="true" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <PackageReference Include="System.Data.Odbc" />
     <ProjectReference Include="..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
     <ProjectReference Include="..\..\Alert\Lemoine.Extensions.Alert\Lemoine.Extensions.Alert.csproj" />
     <ProjectReference Include="..\..\Analysis\Lemoine.Extensions.Analysis\Lemoine.Extensions.Analysis.csproj" />

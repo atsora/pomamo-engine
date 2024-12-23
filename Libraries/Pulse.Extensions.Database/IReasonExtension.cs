@@ -151,6 +151,27 @@ namespace Pulse.Extensions.Database
     /// <param name="source"></param>
     /// <param name="overwriteRequired"></param>
     /// <param name="restrictedRange"></param>
+    public PossibleReason (IReason reason, string details, double score, ReasonSource source, bool overwriteRequired)
+    {
+      this.Reason = reason;
+      this.ReasonDetails = details;
+      this.ReasonScore = score;
+      this.ReasonSource = source;
+      this.OverwriteRequired = overwriteRequired;
+      this.RestrictedRange = new UtcDateTimeRange ("(,)");
+      this.RestrictedMachineMode = null;
+      this.RestrictedMachineObservationState = null;
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="reason"></param>
+    /// <param name="details"></param>
+    /// <param name="score"></param>
+    /// <param name="source"></param>
+    /// <param name="overwriteRequired"></param>
+    /// <param name="restrictedRange"></param>
     public PossibleReason (IReason reason, string details, double score, ReasonSource source, bool overwriteRequired, UtcDateTimeRange restrictedRange)
     {
       this.Reason = reason;

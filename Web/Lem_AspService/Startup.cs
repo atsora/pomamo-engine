@@ -114,6 +114,7 @@ namespace Lem_AspService
       services.AddAsyncInitializer<CatalogInitializer> ();
       services.AddAsyncInitializer<BusinessInitializer> ();
       services.AddAsyncInitializer<LateInitializer> ();
+      services.AddAsyncInitializer<OdbcInitializer> ();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

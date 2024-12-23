@@ -364,11 +364,11 @@ namespace Lemoine.Model
     /// Try to set an auto reason in the reset process,
     /// meaning check it is applicable first with the reason score
     /// </summary>
-    /// <param name="reasonProposal">not null, reasonProposal.Reason not null</param>
+    /// <param name="possibleReason">not null, possibleReason.Reason not null</param>
     /// <param name="consolidationLimit"></param>
     /// <param name="compatibilityCheck"></param>
     /// <returns>a reason was applied</returns>
-    bool TryAutoReasonInReset (IReasonProposal reasonProposal, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck);
+    bool TryAutoReasonInReset (IPossibleReason possibleReason, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck);
 
     /// <summary>
     /// Update the machine status if applicable

@@ -165,5 +165,22 @@ namespace Lemoine.Core.Extensions.Hosting
         .AddSingleton<IApplicationInitializer> ((IServiceProvider sp) => sp.GetRequiredService<IApplicationInitializerCollection> ());
     }
 
+    /// <summary>
+    /// Set only the application initializer collection from siz initializers
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection SetApplicationInitializerCollection<T, U, V, W, X, Y> (this IServiceCollection services)
+      where T : class, IApplicationInitializer
+      where U : class, IApplicationInitializer
+      where V : class, IApplicationInitializer
+      where W : class, IApplicationInitializer
+      where X : class, IApplicationInitializer
+      where Y : class, IApplicationInitializer
+    {
+      return services
+        .AddSingleton<IApplicationInitializerCollection> ((IServiceProvider sp) => new ApplicationInitializerCollection (sp.GetRequiredService<T> (), sp.GetRequiredService<U> (), sp.GetRequiredService<V> (), sp.GetRequiredService<W> (), sp.GetRequiredService<X> (), sp.GetRequiredService<Y> ()))
+        .AddSingleton<IApplicationInitializer> ((IServiceProvider sp) => sp.GetRequiredService<IApplicationInitializerCollection> ());
+    }
   }
 }

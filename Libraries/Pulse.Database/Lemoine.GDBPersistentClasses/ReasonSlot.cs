@@ -1329,33 +1329,33 @@ namespace Lemoine.GDBPersistentClasses
     /// meaning check it is applicable first with the reason score
     /// after checking the reason is compatible in reasonSlot
     /// </summary>
-    /// <param name="reasonProposal">not null and reasonProposal.Reason not null</param>
+    /// <param name="possibleReason">not null and possibleReason.Reason not null</param>
     /// <param name="score"></param>
     /// <param name="details"></param>
     /// <param name="overwriteRequired"></param>
     /// <param name="consolidationLimit"></param>
     /// <param name="compatibilityCheck"></param>
     /// <returns>a reason was applied</returns>
-    public virtual bool TryAutoReasonInReset (IReasonProposal reasonProposal, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck)
+    public virtual bool TryAutoReasonInReset (IPossibleReason possibleReason, UpperBound<DateTime> consolidationLimit, bool compatibilityCheck)
     {
-      Debug.Assert (null != reasonProposal?.Reason);
+      Debug.Assert (null != possibleReason?.Reason);
 
       if (compatibilityCheck) {
         var reasonCompatibilityExtensions = GetReasonExtensions ();
-        if (!reasonCompatibilityExtensions.Any (ext => ext.IsCompatible (this.DateTimeRange, this.MachineMode, this.MachineObservationState, reasonProposal.Reason, reasonProposal.ReasonScore, ReasonSource.Auto))) {
-          log.Info ($"TryAutoReasonInReset: auto reason {reasonProposal.Reason} is not compatible with the reason slot {this} => skip it");
+        if (!reasonCompatibilityExtensions.Any (ext => ext.IsCompatible (this.DateTimeRange, this.MachineMode, this.MachineObservationState, possibleReason.Reason, possibleReason.ReasonScore, ReasonSource.Auto))) {
+          log.Info ($"TryAutoReasonInReset: auto reason {possibleReason.Reason} is not compatible with the reason slot {this} => skip it");
           return false;
         }
       }
 
       AddConsolidationLimit (consolidationLimit);
-      if (this.ReasonScore < reasonProposal.ReasonScore) { // Main for the moment
+      if (this.ReasonScore < possibleReason.ReasonScore) { // Main for the moment
         var oldReason = m_reason;
-        m_reason = reasonProposal.Reason;
-        m_reasonScore = reasonProposal.ReasonScore;
-        m_reasonDetails = reasonProposal.ReasonDetails;
-        this.JsonData = Pulse.Business.Reason.ReasonData.Merge (this, reasonProposal);
-        m_overwriteRequired = reasonProposal.OverwriteRequired;
+        m_reason = possibleReason.Reason;
+        m_reasonScore = possibleReason.ReasonScore;
+        m_reasonDetails = possibleReason.ReasonDetails;
+        this.JsonData = Pulse.Business.Reason.ReasonData.Merge (this, possibleReason);
+        m_overwriteRequired = possibleReason.OverwriteRequired;
         m_reasonSource = m_reasonSource.SetMainAuto ();
         ++m_autoReasonNumber;
         if (!NHibernateHelper.EqualsNullable (m_reason, oldReason, (x, y) => x.Id == y.Id)) {

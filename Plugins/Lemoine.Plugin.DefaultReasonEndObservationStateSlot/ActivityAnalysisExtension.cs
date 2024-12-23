@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -10,6 +11,7 @@ using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Threading;
+using Pulse.Extensions.Database;
 
 namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
 {
@@ -188,10 +190,13 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
                              configuration.ReasonId);
           }
           else {
-            log.DebugFormat ("NotifyReasonSlotAddModify: " +
-                             "apply reason with ID {0}",
-                             reason.Id);
-            slot.TryAutoReasonInReset (reason, configuration.Score, "", configuration.OverwriteRequired, slot.DateTimeRange.Upper, true);
+            if (log.IsDebugEnabled) {
+              log.DebugFormat ("NotifyReasonSlotAddModify: " +
+                               "apply reason with ID {0}",
+                               reason.Id);
+            }
+            var possibleReason = new PossibleReason (reason, "", configuration.Score, ReasonSource.DefaultAuto, configuration.OverwriteRequired);
+            slot.TryAutoReasonInReset (possibleReason, slot.DateTimeRange.Upper, true);
             // TODO: try to propagate on the left...
             return true;
           }

@@ -20,6 +20,7 @@
   <ItemGroup>
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <PackageReference Include="System.Data.Odbc" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" />
     <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
