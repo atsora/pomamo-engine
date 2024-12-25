@@ -137,7 +137,8 @@ namespace LemoineServiceMonitoring
         "Lem_AlertService", // [Optional] Alert Service
         "Lem_AutoReasonService", // [Optional] Auto-reason Service
         "Lem_SynchronizationService", // [Optional] Synchronization
-        "Lem_AspService", // Asp Service
+        "Lem_AspService", // Obsolete Asp Service
+        "AtrackingAspService", // Asp Service
       };
       AddAdditionalServices (lctrServices, ADDITIONAL_LCTR_KEY);
 
@@ -190,7 +191,8 @@ namespace LemoineServiceMonitoring
 
       // 1.c) web
       var webServices = new List<string> {
-        "Lem_AspService" // Asp Service
+        "Lem_AspService", // Obsolete Asp Service
+        "AtrackingAspService" // Asp Service
       };
 
       // 1.d) Stamping
