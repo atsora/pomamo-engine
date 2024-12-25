@@ -198,7 +198,7 @@ namespace Lem_ApplyMachineModifications
                   }
                 }
                 modificationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
-                  .InsertManualReason (machine, range, reason, 100.0, details);
+                  .InsertManualReason (machine, range, reason, 100.0, details, null);
               }
               else {
                 modificationId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO

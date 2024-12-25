@@ -6,7 +6,7 @@
     <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <langVersion>preview</langVersion>
   </PropertyGroup>
 
