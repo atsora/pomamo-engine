@@ -106,7 +106,6 @@ namespace Lem_AspService
       WebMiddlewareServices.RegisterServices (services, serviceProvider);
 
       Pulse.Graphql.GraphQLMiddlewareServices.ConfigureServices (services);
-      Atsora.Graphql.HotChocolateMiddlewareServices.ConfigureServices (services);
 
       services.AddHostedService<FlushCacheWorker> ();
 
