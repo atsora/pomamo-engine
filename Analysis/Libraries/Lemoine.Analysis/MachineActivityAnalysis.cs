@@ -151,7 +151,7 @@ namespace Lemoine.Analysis
     /// <summary>
     /// Restricted transaction level
     /// </summary>
-    internal TransactionLevel RestrictedTransactionLevel => m_restrictedTransactionLevel;
+    public TransactionLevel RestrictedTransactionLevel => m_restrictedTransactionLevel;
 
     /// <summary>
     /// Return the state machine
@@ -248,7 +248,7 @@ namespace Lemoine.Analysis
     /// </summary>
     /// <param name="modificationId">ID of the modification that requests the pause</param>
     /// <returns>The pause could be set</returns>
-    internal bool RequestPause (long modificationId)
+    public bool RequestPause (long modificationId)
     {
       long initialValue = Interlocked.CompareExchange (ref m_pause, modificationId, (long)0);
       if (0 == initialValue) {
@@ -282,7 +282,7 @@ namespace Lemoine.Analysis
     /// Release a pause in the activity analysis
     /// </summary>
     /// <param name="modificationId">ID</param>
-    internal void ReleasePause (long modificationId)
+    public void ReleasePause (long modificationId)
     {
       if (modificationId == Interlocked.CompareExchange (ref m_pause, 0, modificationId)) {
         if (log.IsInfoEnabled) {
@@ -305,7 +305,7 @@ namespace Lemoine.Analysis
     /// </summary>
     /// <param name="modificationId">ID</param>
     /// <returns></returns>
-    internal bool IsInPause (long modificationId)
+    public bool IsInPause (long modificationId)
     {
       return modificationId == Interlocked.CompareExchange (ref m_pause, modificationId, modificationId);
     }

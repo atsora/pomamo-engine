@@ -118,7 +118,7 @@ namespace Lemoine.Analysis
     TimeSpan m_modificationStepTimeout = TimeSpan.FromSeconds (40);
     volatile bool m_exitRequested = false;
 
-    readonly ActivityAnalysis m_activityAnalysis = null;
+    readonly IActivityAnalysis m_activityAnalysis = null;
 
     // Properties for optimization
     bool m_cleanRequired = true; // From a previous partial execution
@@ -151,7 +151,7 @@ namespace Lemoine.Analysis
     /// <summary>
     /// Activity analysis
     /// </summary>
-    protected ActivityAnalysis ActivityAnalysis
+    protected IActivityAnalysis ActivityAnalysis
     {
       get { return m_activityAnalysis; }
     }
@@ -166,7 +166,6 @@ namespace Lemoine.Analysis
     }
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// 
@@ -188,7 +187,7 @@ namespace Lemoine.Analysis
     /// Do not use this constructor in unit tests, because the Rollback hack does not work with it
     /// </summary>
     /// <param name="activityAnalysis"></param>
-    protected PendingModificationAnalysis (ActivityAnalysis activityAnalysis)
+    protected PendingModificationAnalysis (IActivityAnalysis activityAnalysis)
     {
       m_modificationTimeout = AnalysisConfigHelper.ModificationTimeout;
       m_modificationStepTimeout = AnalysisConfigHelper.ModificationStepTimeout;
@@ -227,7 +226,7 @@ namespace Lemoine.Analysis
     /// </summary>
     /// <param name="runInThread"></param>
     /// <param name="activityAnalysis"></param>
-    protected PendingModificationAnalysis (bool runInThread, ActivityAnalysis activityAnalysis)
+    protected PendingModificationAnalysis (bool runInThread, IActivityAnalysis activityAnalysis)
     {
       m_threadExecution = runInThread;
       m_modificationTimeout = AnalysisConfigHelper.ModificationTimeout;
@@ -243,7 +242,6 @@ namespace Lemoine.Analysis
         .GetExtensions<Lemoine.Extensions.Analysis.IPendingModificationAnalysisExtension> (checkedThread: this)
         .ToList (); // ToList is mandatory else the result of the Linq command is not cached
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>

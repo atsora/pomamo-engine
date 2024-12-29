@@ -37,15 +37,11 @@ namespace Lemoine.Analysis
     static readonly string STEP_TIMEOUT_MARGIN_KEY = "Analysis.GlobalModification.StepTimeoutMargin";
     static readonly TimeSpan STEP_TIMEOUT_MARGIN_DEFAULT = TimeSpan.FromSeconds (2); // Give 2 more seconds in the thread check
 
-    #region Members
-    #endregion // Members
-
     readonly ILog log = LogManager.GetLogger (typeof (PendingGlobalModificationAnalysis).FullName);
 
     #region Getters / Setters
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// 
@@ -69,7 +65,7 @@ namespace Lemoine.Analysis
     /// Do not use this constructor in unit tests, because the Rollback hack does not work with it
     /// </summary>
     /// <param name="activityAnalysis"></param>
-    public PendingGlobalModificationAnalysis (ActivityAnalysis activityAnalysis)
+    public PendingGlobalModificationAnalysis (IActivityAnalysis activityAnalysis)
       : base (activityAnalysis)
     {
       foreach (var extension in m_extensions) {
@@ -106,14 +102,13 @@ namespace Lemoine.Analysis
     /// </summary>
     /// <param name="runInThread"></param>
     /// <param name="activityAnalysis"></param>
-    public PendingGlobalModificationAnalysis (bool runInThread, ActivityAnalysis activityAnalysis)
+    public PendingGlobalModificationAnalysis (bool runInThread, IActivityAnalysis activityAnalysis)
       : base (runInThread, activityAnalysis)
     {
       foreach (var extension in m_extensions) {
         extension.Initialize (null);
       }
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>

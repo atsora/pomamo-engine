@@ -21,7 +21,7 @@ namespace Lemoine.Analysis
   /// <summary>
   /// Detection analysis by monitored machine
   /// </summary>
-  internal sealed class DetectionAnalysis : ISingleAnalysis, Lemoine.Threading.IChecked
+  public sealed class DetectionAnalysis : ISingleAnalysis, Lemoine.Threading.IChecked
   {
     /// <summary>
     /// Maximum number of detections that are processed in the same time

@@ -43,7 +43,7 @@ namespace Lemoine.Analysis
     #region Members
     volatile bool m_timeoutInterruption = false;
     readonly IModification m_modification;
-    readonly ActivityAnalysis m_activityAnalysis = null;
+    readonly IActivityAnalysis m_activityAnalysis = null;
     Exception m_exceptionStatus = null;
     volatile bool m_retry = false;
     volatile AnalysisStatus m_analysisStatus = AnalysisStatus.New;
@@ -123,7 +123,7 @@ namespace Lemoine.Analysis
     /// <param name="modification">Not null</param>
     /// <param name="activityAnalysis"></param>
     /// <param name="machine">analysis on a specific machine (nullable)</param>
-    public ModificationAnalysis (IModification modification, ActivityAnalysis activityAnalysis = null, IMachine machine = null)
+    public ModificationAnalysis (IModification modification, IActivityAnalysis activityAnalysis = null, IMachine machine = null)
     {
       Debug.Assert (null != modification);
 

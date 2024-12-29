@@ -26,7 +26,7 @@ namespace Lemoine.Analysis
   /// 
   /// It may be run on a dedicated thread
   /// </summary>
-  public class ActivityAnalysis : ThreadClass, IThreadClass
+  public class ActivityAnalysis : ThreadClass, IThreadClass, IActivityAnalysis
   {
     /// <summary>
     /// Run the global analysis in a thread pool: key
@@ -116,7 +116,7 @@ namespace Lemoine.Analysis
       m_globalAnalysis = new GlobalAnalysis (this);
     }
 
-    public void Initialize ()
+    void Initialize ()
     {
       RegisterCancelCallback (m_globalAnalysis.Interrupt);
 
@@ -190,7 +190,7 @@ namespace Lemoine.Analysis
     /// <param name="machine">Not null</param>
     /// <param name="modificationId"></param>
     /// <returns>The pause could be set</returns>
-    internal bool RequestPause (IMachine machine, long modificationId)
+    public bool RequestPause (IMachine machine, long modificationId)
     {
       Debug.Assert (null != machine);
       if (!machine.IsMonitored ()) {
@@ -224,7 +224,7 @@ namespace Lemoine.Analysis
     /// </summary>
     /// <param name="machine">Not null</param>
     /// <param name="modificationId"></param>
-    internal void ReleasePause (IMachine machine, long modificationId)
+    public void ReleasePause (IMachine machine, long modificationId)
     {
       Debug.Assert (null != machine);
       if (!machine.IsMonitored ()) {
@@ -247,7 +247,7 @@ namespace Lemoine.Analysis
     /// <param name="machine"></param>
     /// <param name="modificationId"></param>
     /// <returns></returns>
-    internal bool IsInPause (IMachine machine, int modificationId)
+    public bool IsInPause (IMachine machine, int modificationId)
     {
       Debug.Assert (null != machine);
       if (!machine.IsMonitored ()) {
@@ -267,7 +267,7 @@ namespace Lemoine.Analysis
     /// <param name="machine"></param>
     /// <param name="modificationId"></param>
     /// <param name="cancellationToken"></param>
-    internal void WaitPause (IMachine machine, long modificationId, CancellationToken cancellationToken)
+    public void WaitPause (IMachine machine, long modificationId, CancellationToken cancellationToken)
     {
       Debug.Assert (null != machine);
       if (!machine.IsMonitored ()) {
@@ -448,7 +448,7 @@ namespace Lemoine.Analysis
     /// <summary>
     /// Run the Activity Analysis on all the machine modules once
     /// </summary>
-    public void RunAnalysis (CancellationToken cancellationToken)
+    void RunAnalysis (CancellationToken cancellationToken)
     {
       int workerThreads;
       int completionPortThreads;

@@ -82,7 +82,7 @@ namespace Lemoine.Analysis
     static readonly TimeSpan MAX_TIME_CLEAN_FLAGGED_MODIFICATIONS_DEFAULT = TimeSpan.FromMinutes (10);
 
     #region Members
-    readonly ActivityAnalysis m_activityAnalysis;
+    readonly IActivityAnalysis m_activityAnalysis;
     bool m_initialized = false;
     readonly Lemoine.ModelDAO.TransactionLevel m_restrictedTransactionLevel = Lemoine.ModelDAO.TransactionLevel.Serializable;
     DayTemplateAnalysis m_dayTemplateAnalysis = null; // Initialized in method Initialize
@@ -140,7 +140,7 @@ namespace Lemoine.Analysis
     /// Description of the constructor
     /// </summary>
     /// <param name="activityAnalysis">Can be null</param>
-    public GlobalAnalysis (ActivityAnalysis activityAnalysis)
+    public GlobalAnalysis (IActivityAnalysis activityAnalysis)
     {
       m_activityAnalysis = activityAnalysis;
 

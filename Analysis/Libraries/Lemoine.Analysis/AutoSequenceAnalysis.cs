@@ -19,7 +19,7 @@ namespace Lemoine.Analysis
   /// <summary>
   /// Description of AutoSequenceAnalysis.
   /// </summary>
-  internal class AutoSequenceAnalysis : Lemoine.Threading.IChecked
+  public sealed class AutoSequenceAnalysis : Lemoine.Threading.IChecked
   {
     /// <summary>
     /// Maximum number of auto-sequences that are processed in the same time
@@ -95,7 +95,7 @@ namespace Lemoine.Analysis
     /// <param name="facts">Previously retrieved facts to check if they can be re-used</param>
     /// <param name="maxAutoSequenceAnalysisDateTime"></param>
     /// <param name="minTimePerMachineModule"></param>
-    internal void ManageAutoSequencePeriods (CancellationToken cancellationToken, IList<IFact> facts, DateTime maxAutoSequenceAnalysisDateTime, TimeSpan minTimePerMachineModule, int? numberOfItems = null)
+    public void ManageAutoSequencePeriods (CancellationToken cancellationToken, IList<IFact> facts, DateTime maxAutoSequenceAnalysisDateTime, TimeSpan minTimePerMachineModule, int? numberOfItems = null)
     {
       var processValidityChecker = new ProcessValidityChecker (m_machineActivityAnalysis, maxAutoSequenceAnalysisDateTime, minTimePerMachineModule, log);
 
