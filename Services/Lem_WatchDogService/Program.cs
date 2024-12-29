@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2024 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -121,7 +122,11 @@ namespace Lem_WatchDogService
 #if CONNECTOR
           new ConnectorServicesProviderOnWindows (),
 #else // !CONNECTOR
+#if ATSORA
+          new TrackingServicesProviderOnWindows (),
+#else // !ATSORA
           new PomamoServicesProviderOnWindows (),
+#endif // !ATSORA
 #endif // !CONNECTOR
           new ConfigServicesProviderOnWindows ()),
         _ => new MultiServicesProvider (new PomamoServicesProviderOnWindows (), new ConnectorServicesProviderOnWindows (), new ConfigServicesProviderOnWindows ())

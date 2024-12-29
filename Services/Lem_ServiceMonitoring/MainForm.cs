@@ -133,7 +133,8 @@ namespace LemoineServiceMonitoring
 
       // 1.a) LCTR
       var lctrServices = new List<string> {
-        "Lem_AnalysisService", // Analysis Service
+        "Lem_AnalysisService", // Obsolete Analysis Service
+        "AtrackingAnalysisService", // Analysis Service
         "Lem_AlertService", // [Optional] Alert Service
         "Lem_AutoReasonService", // [Optional] Auto-reason Service
         "Lem_SynchronizationService", // [Optional] Synchronization
