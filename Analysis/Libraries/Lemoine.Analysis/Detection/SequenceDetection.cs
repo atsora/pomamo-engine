@@ -24,7 +24,7 @@ namespace Lemoine.Analysis.Detection
     ILog log;
 
     #region Members
-    readonly OperationDetection m_operationDetection;
+    readonly Lemoine.Extensions.Analysis.Detection.IOperationDetection m_operationDetection;
     readonly SequenceMilestoneDetection m_sequenceMilestoneDetection;
     readonly IMachineModule m_machineModule;
     DateTime? m_previousDateTime;
@@ -55,7 +55,7 @@ namespace Lemoine.Analysis.Detection
     /// <param name="sequenceMilestoneDetection">not null</param>
     /// <param name="machineModule">not null</param>
     /// <param name="caller"></param>
-    public SequenceDetection (OperationDetection operationDetection, SequenceMilestoneDetection sequenceMilestoneDetection, IMachineModule machineModule, Lemoine.Threading.IChecked caller)
+    public SequenceDetection (Lemoine.Extensions.Analysis.Detection.IOperationDetection operationDetection, SequenceMilestoneDetection sequenceMilestoneDetection, IMachineModule machineModule, Lemoine.Threading.IChecked caller)
     {
       Debug.Assert (null != operationDetection);
       Debug.Assert (null != machineModule);

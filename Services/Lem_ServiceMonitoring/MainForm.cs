@@ -65,18 +65,28 @@ namespace LemoineServiceMonitoring
     static readonly string SEQUENTIAL_KEY = "ServiceMonitoring.Sequential";
     static readonly bool SEQUENTIAL_DEFAULT = false;
 
+    const string WATCH_DOG_SERVICE_NAME =
+#if ATSORA
+      "AtrackingWatchDogService";
+#else !ATSORA
+      "Lem_WatchDogService";
+#endif !ATSORA
+
     const string WATCH_DOG_32_SERVICE_NAME =
 #if CONNECTOR
       "AconnectorWatchDogService";
 #else // !CONNECTOR
+#if ATSORA
+      "AtrackingWatchDog32Service";
+#else // !ATSORA
       "Lem_WatchDog32Service";
+#endif // !ATSORA
 #endif // !CONNECTOR
 
     private static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
     volatile int m_listViewUpdate = 0;
 
-    #region Constructors
     /// <summary>
     /// Main form of the Atsora Service Monitoring application
     /// </summary>
@@ -128,7 +138,7 @@ namespace LemoineServiceMonitoring
 
       // Common service to L_Post, L_Ctr, ...
       var commonServices = new List<string> {
-        "Lem_WatchDogService", // WatchDog Service
+        WATCH_DOG_SERVICE_NAME, // WatchDog Service
       };
 
       // 1.a) LCTR
@@ -150,7 +160,7 @@ namespace LemoineServiceMonitoring
         "AtrackingCncService", // Atracking Cnc Service
         "AtrackingCncCoreService", // Atracking Cnc Core Service
         "Lem_CncDataService", // New Cnc Data Service
-        "Lem_WatchDog32Service", // WatchDog32 Service
+        WATCH_DOG_32_SERVICE_NAME, // WatchDog32 Service
         "MTConnect Agent", // MTConnect agent on LPost
         "MTConnect Agent 1", // MTConnect agent on LPost
         "MTConnect Agent 2", // MTConnect agent on LPost
@@ -443,8 +453,6 @@ namespace LemoineServiceMonitoring
       }
     }
 
-    #endregion
-
     #region Methods
     async Task StopSelectedServicesAsync (ListView listView)
     {
@@ -595,7 +603,7 @@ namespace LemoineServiceMonitoring
     /// <returns></returns>
     async Task<bool> StopWatchingServiceAsync ()
     {
-      var controlSC = new WindowsServiceController ("Lem_WatchDogService");
+      var controlSC = new WindowsServiceController (WATCH_DOG_SERVICE_NAME);
       try {
         await controlSC.StopServiceAsync ();
         return true;
@@ -614,7 +622,7 @@ namespace LemoineServiceMonitoring
 
     async Task StartWatchingServiceAsync ()
     {
-      var controlSC = new WindowsServiceController ("Lem_WatchDogService");
+      var controlSC = new WindowsServiceController (WATCH_DOG_SERVICE_NAME);
       try {
         await controlSC.StartServiceAsync ();
       }
@@ -965,7 +973,8 @@ namespace LemoineServiceMonitoring
           // Consider only the services in the Atsora group here
           continue;
         }
-        if (i.Text.Equals ("Lem_WatchDogService")
+        if (i.Text.Equals (WATCH_DOG_SERVICE_NAME)
+          || i.Text.Equals (WATCH_DOG_32_SERVICE_NAME)
           || i.Text.Equals ("Lem_Control")
           || i.Text.Contains ("Watchdog Service")
           || i.Text.Contains ("WatchDog")
@@ -1129,8 +1138,10 @@ namespace LemoineServiceMonitoring
           // Consider only the services in the Atsora group here
           continue;
         }
-        if (i.Text.Equals ("Lem_WatchDogService")
-          || i.Text.Equals ("Lem_Control")) {
+        if (i.Text.Equals (WATCH_DOG_SERVICE_NAME)
+          || i.Text.Equals (WATCH_DOG_32_SERVICE_NAME)
+          || i.Text.Equals ("Lem_Control")
+          || i.Text.Contains ("WatchDog")) {
           // Skip the watching service for the moment,
           // it will be started only once all the services are started
           continue;
@@ -1188,7 +1199,8 @@ namespace LemoineServiceMonitoring
           // Consider only the services in the Atsora group here
           continue;
         }
-        if (i.Text.Equals ("Lem_WatchDogService")
+        if (i.Text.Equals (WATCH_DOG_SERVICE_NAME)
+          || i.Text.Equals (WATCH_DOG_32_SERVICE_NAME)
           || i.Text.Equals ("Lem_Control")
           || i.Text.Contains ("WatchDog")) {
           // Skip the watching service for the moment,

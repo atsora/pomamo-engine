@@ -26,7 +26,7 @@ namespace Lemoine.Analysis
   /// This class takes care of the activity analysis
   /// of a unique monitored machine
   /// </summary>
-  public sealed class MonitoredMachineActivityAnalysis
+  public class MonitoredMachineActivityAnalysis
     : MachineActivityAnalysis
     , IMonitoredMachineActivityAnalysis
   {
@@ -105,7 +105,7 @@ namespace Lemoine.Analysis
     bool m_initialized = false;
     ProcessingReasonSlotsAnalysis m_processingReasonSlotsAnalysis;
     AutoSequenceAnalysis m_autoSequenceAnalysis;
-    readonly DetectionAnalysis m_detectionAnalysis;
+    readonly IDetectionAnalysis m_detectionAnalysis;
 
     readonly IEnumerable<Lemoine.Extensions.Analysis.IAnalysisExtension> m_analysisExtensions;
 
@@ -119,18 +119,12 @@ namespace Lemoine.Analysis
     /// <summary>
     /// Associated monitored machine
     /// </summary>
-    public IMonitoredMachine MonitoredMachine
-    {
-      get { return m_monitoredMachine; }
-    }
+    public IMonitoredMachine MonitoredMachine => m_monitoredMachine;
 
     /// <summary>
     /// Reference to DetectionAnalysis
     /// </summary>
-    internal DetectionAnalysis DetectionAnalysis
-    {
-      get { return m_detectionAnalysis; }
-    }
+    public IDetectionAnalysis DetectionAnalysis => m_detectionAnalysis;
 
     /// <summary>
     /// <see cref="IMonitoredMachineActivityAnalysis"/>
@@ -138,7 +132,6 @@ namespace Lemoine.Analysis
     public IList<IFact> Facts => m_facts;
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -161,10 +154,33 @@ namespace Lemoine.Analysis
 
       m_processingReasonSlotsAnalysis = new ProcessingReasonSlotsAnalysis (monitoredMachine, this);
       m_autoSequenceAnalysis = new AutoSequenceAnalysis (this);
-      m_detectionAnalysis = new DetectionAnalysis (this, m_analysisExtensions
-                                                   .OfType<Lemoine.Extensions.Analysis.IDetectionExtension> ());
+      m_detectionAnalysis = new DetectionAnalysis (this, m_analysisExtensions.OfType<Lemoine.Extensions.Analysis.IDetectionExtension> ());
     }
-    #endregion // Constructors
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="monitoredMachine">not null</param>
+    public MonitoredMachineActivityAnalysis (IMonitoredMachine monitoredMachine, IDetectionAnalysis detectionAnalysis)
+      : base (monitoredMachine)
+    {
+      Debug.Assert (null != monitoredMachine);
+
+      m_monitoredMachine = monitoredMachine;
+      log = LogManager.GetLogger (string.Format ("{0}.{1}",
+                                                this.GetType ().FullName,
+                                                monitoredMachine.Id));
+
+      // Extension initialization
+      m_analysisExtensions = Lemoine.Extensions.ExtensionManager
+        .GetExtensions<Lemoine.Extensions.Analysis.IAnalysisExtension> (checkedThread: this)
+        .Where (extension => extension.Initialize (monitoredMachine))
+        .ToList (); // ToList is mandatory else the result of the Linq command is not cached
+
+      m_processingReasonSlotsAnalysis = new ProcessingReasonSlotsAnalysis (monitoredMachine, this);
+      m_autoSequenceAnalysis = new AutoSequenceAnalysis (this);
+      m_detectionAnalysis = detectionAnalysis;
+    }
 
     #region Methods
     IEnumerable<Lemoine.Extensions.Analysis.IActivityAnalysisExtension> GetActivityAnalysisExtensions ()

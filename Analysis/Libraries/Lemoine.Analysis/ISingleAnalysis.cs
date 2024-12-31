@@ -10,7 +10,7 @@ namespace Lemoine.Analysis
   /// <summary>
   /// Interface for a single analysis
   /// </summary>
-  internal interface ISingleAnalysis
+  public interface ISingleAnalysis
   {
     /// <summary>
     /// Initalization

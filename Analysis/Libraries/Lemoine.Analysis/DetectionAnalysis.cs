@@ -21,7 +21,7 @@ namespace Lemoine.Analysis
   /// <summary>
   /// Detection analysis by monitored machine
   /// </summary>
-  public sealed class DetectionAnalysis : ISingleAnalysis, Lemoine.Threading.IChecked
+  public class DetectionAnalysis : IDetectionAnalysis, Lemoine.Threading.IChecked
   {
     /// <summary>
     /// Maximum number of detections that are processed in the same time
@@ -54,15 +54,10 @@ namespace Lemoine.Analysis
 
     readonly ILog log = LogManager.GetLogger (typeof (DetectionAnalysis).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to OperationDetection
     /// </summary>
-    internal OperationDetection OperationDetection
-    {
-      get { return m_operationDetection; }
-    }
-    #endregion // Getters / Setters
+    public Lemoine.Extensions.Analysis.Detection.IOperationDetection OperationDetection => m_operationDetection;
 
     #region Constructors
     /// <summary>
@@ -92,7 +87,7 @@ namespace Lemoine.Analysis
         new OperationCycleDetection (machineActivityAnalysis.MonitoredMachine,
                                      m_detectionExtensions, this);
 
-      log.DebugFormat ("DetectionAnalysis: constructor completed");
+      log.Debug ("DetectionAnalysis: constructor completed");
     }
     #endregion // Constructors
 
@@ -130,7 +125,7 @@ namespace Lemoine.Analysis
 
     #region ManageDetections part
     /// <summary>
-    /// ISingleAnalysis implementation
+    /// <see cref="ISingleAnalysis">
     /// </summary>
     public void Initialize ()
     {
@@ -141,8 +136,10 @@ namespace Lemoine.Analysis
       foreach (var extension in m_extensions) {
         extension.RestrictedTransactionLevel = this.m_restrictedTransactionLevel;
       }
-      log.DebugFormat ("Initialize: {0} extensions are loaded for machine {1}",
-        m_extensions.Count (), m_monitoredMachine.Id);
+      if (log.IsDebugEnabled) {
+        log.DebugFormat ("Initialize: {0} extensions are loaded for machine {1}",
+          m_extensions.Count (), m_monitoredMachine.Id);
+      }
     }
 
     /// <summary>
@@ -301,7 +298,7 @@ namespace Lemoine.Analysis
     /// <param name="processValidityChecker"></param>
     /// <param name="nbAttemptSerializationFailure"></param>
     /// <returns>false if the detection analysis must be interrupted</returns>
-    bool RunDetection (IMachineModule machineModule, IMachineModuleDetection machineModuleDetection, CancellationToken cancellationToken, ProcessValidityChecker processValidityChecker, int nbAttemptSerializationFailure, out bool maxAttemptReached)
+    protected virtual bool RunDetection (IMachineModule machineModule, IMachineModuleDetection machineModuleDetection, CancellationToken cancellationToken, ProcessValidityChecker processValidityChecker, int nbAttemptSerializationFailure, out bool maxAttemptReached)
     {
       Debug.Assert (null != machineModuleDetection);
       Debug.Assert (0 < nbAttemptSerializationFailure);

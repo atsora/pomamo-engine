@@ -40,7 +40,7 @@ namespace Lemoine.Analysis
     /// <param name="machineModule">not null</param>
     /// <param name="restrictedTransactionLevel"></param>
     /// <param name="caller"></param>
-    public AutoSequenceMachineModuleAnalysis (Lemoine.Analysis.Detection.OperationDetection operationDetection, IMachineModule machineModule, TransactionLevel restrictedTransactionLevel, Lemoine.Threading.IChecked caller)
+    public AutoSequenceMachineModuleAnalysis (Lemoine.Extensions.Analysis.Detection.IOperationDetection operationDetection, IMachineModule machineModule, TransactionLevel restrictedTransactionLevel, Lemoine.Threading.IChecked caller)
     {
       Debug.Assert (null != operationDetection);
       Debug.Assert (null != machineModule);

@@ -202,7 +202,7 @@ namespace Lemoine.Analysis.Detection
     /// <param name="begin"></param>
     /// <param name="end"></param>
     /// <param name="autoOperation"></param>
-    internal void AddOperationOnly (IOperation operation, DateTime begin, UpperBound<DateTime> end, bool autoOperation)
+    public void AddOperationOnly (IOperation operation, DateTime begin, UpperBound<DateTime> end, bool autoOperation)
     {
       AddOperationOnly (operation, new UtcDateTimeRange (begin, end), autoOperation);
     }
@@ -218,7 +218,7 @@ namespace Lemoine.Analysis.Detection
     /// <param name="operation">Not null</param>
     /// <param name="range"></param>
     /// <param name="autoOperation"></param>
-    internal void AddOperationOnly (IOperation operation, UtcDateTimeRange range, bool autoOperation)
+    public void AddOperationOnly (IOperation operation, UtcDateTimeRange range, bool autoOperation)
     {
       Debug.Assert (null != operation);
       Debug.Assert (!range.IsEmpty ());

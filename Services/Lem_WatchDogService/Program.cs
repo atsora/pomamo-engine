@@ -122,11 +122,7 @@ namespace Lem_WatchDogService
 #if CONNECTOR
           new ConnectorServicesProviderOnWindows (),
 #else // !CONNECTOR
-#if ATSORA
-          new TrackingServicesProviderOnWindows (),
-#else // !ATSORA
           new PomamoServicesProviderOnWindows (),
-#endif // !ATSORA
 #endif // !CONNECTOR
           new ConfigServicesProviderOnWindows ()),
         _ => new MultiServicesProvider (new PomamoServicesProviderOnWindows (), new ConnectorServicesProviderOnWindows (), new ConfigServicesProviderOnWindows ())

@@ -116,7 +116,7 @@ namespace Lemoine.Analysis
       m_globalAnalysis = new GlobalAnalysis (this);
     }
 
-    void Initialize ()
+    public void Initialize ()
     {
       RegisterCancelCallback (m_globalAnalysis.Interrupt);
 

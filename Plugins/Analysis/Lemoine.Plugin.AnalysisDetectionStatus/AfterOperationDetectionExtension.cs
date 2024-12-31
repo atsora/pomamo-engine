@@ -58,5 +58,23 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
     {
       OperationDetectionNotifier.NotifyOperationDetection (m_machine, dateTime);
     }
+
+    /// <summary>
+    /// Add an operation (without calling the extension point afterwards)
+    /// 
+    /// Note:
+    /// - for multi-machine module machines, the call of AddOperation is not always chronological
+    /// - because 'Auto-Only' and 'Not auto-only' sequences are processed separately, the call to AddOperation
+    ///   could not be chronological
+    /// </summary>
+    /// <param name="operation">Not null</param>
+    /// <param name="range"></param>
+    /// <param name="autoOperation"></param>
+    public void AddOperationOnly (IOperation operation, UtcDateTimeRange range, bool autoOperation)
+    {
+      if (range.Lower.HasValue) {
+        OperationDetectionNotifier.NotifyOperationDetection (m_machine, range.Lower.Value);
+      }
+    }
   }
 }

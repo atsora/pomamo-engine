@@ -124,7 +124,7 @@ namespace Pulse.Business.Reason
         }
         else {
           var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+          var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest).ToList ();
           if (extensions.Any (x => x.DoMerge (reasonSlot, possibleReason) || !x.Keep (reasonSlot, possibleReason))) {
             var data = Pulse.Business.Reason.ReasonData.Deserialize (reasonSlot.JsonData, extensions);
             data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
@@ -157,7 +157,7 @@ namespace Pulse.Business.Reason
       }
       else { // reasonMachineAssociation.JsonData is null or empty => remove it?
         var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest).ToList ();
         if (extensions.Any (x => !x.Keep (reasonSlot, possibleReason))) {
           var data = Pulse.Business.Reason.ReasonData.Deserialize (reasonSlot.JsonData, extensions);
           data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
@@ -196,7 +196,7 @@ namespace Pulse.Business.Reason
     {
       if (!string.IsNullOrEmpty (reasonSlot.JsonData)) {
         var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest).ToList ();
         if (extensions.Any (x => x.DoReset (reasonSlot))) {
           var data = Pulse.Business.Reason.ReasonData.Deserialize (reasonSlot.JsonData, extensions);
           data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it

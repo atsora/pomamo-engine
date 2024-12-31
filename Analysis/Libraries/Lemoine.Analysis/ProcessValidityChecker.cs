@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Lemoine.Analysis
 {
-  internal sealed class ProcessValidityChecker
+  public sealed class ProcessValidityChecker
   {
     readonly ILog m_log;
     readonly MonitoredMachineActivityAnalysis m_machineActivityAnalysis;
