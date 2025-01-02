@@ -17,12 +17,10 @@ using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using Microsoft.Win32;
-using Lemoine.Info.ConfigReader.TargetSpecific;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Runtime.Versioning;
 using Lemoine.Collections;
-using Lemoine.Database.Persistent;
 using Lemoine.ServiceTools;
 
 namespace LemoineServiceMonitoring
@@ -66,21 +64,13 @@ namespace LemoineServiceMonitoring
     static readonly bool SEQUENTIAL_DEFAULT = false;
 
     const string WATCH_DOG_SERVICE_NAME =
-#if ATSORA
-      "AtrackingWatchDogService";
-#else !ATSORA
       "Lem_WatchDogService";
-#endif !ATSORA
 
     const string WATCH_DOG_32_SERVICE_NAME =
 #if CONNECTOR
       "AconnectorWatchDogService";
 #else // !CONNECTOR
-#if ATSORA
-      "AtrackingWatchDog32Service";
-#else // !ATSORA
       "Lem_WatchDog32Service";
-#endif // !ATSORA
 #endif // !CONNECTOR
 
     private static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
@@ -143,13 +133,11 @@ namespace LemoineServiceMonitoring
 
       // 1.a) LCTR
       var lctrServices = new List<string> {
-        "Lem_AnalysisService", // Obsolete Analysis Service
-        "AtrackingAnalysisService", // Analysis Service
+        "Lem_AnalysisService", // Analysis Service
         "Lem_AlertService", // [Optional] Alert Service
         "Lem_AutoReasonService", // [Optional] Auto-reason Service
         "Lem_SynchronizationService", // [Optional] Synchronization
-        "Lem_AspService", // Obsolete Asp Service
-        "AtrackingAspService", // Asp Service
+        "Lem_AspService", // Asp Service
       };
       AddAdditionalServices (lctrServices, ADDITIONAL_LCTR_KEY);
 

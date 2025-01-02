@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Configuration.Install;
 using System.ServiceProcess;
 
-namespace Lem_AutoReasonService
+namespace Lem_WatchDogService
 {
   /// <summary>
   /// Installer class of the service
