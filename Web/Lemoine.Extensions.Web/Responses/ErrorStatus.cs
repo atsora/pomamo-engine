@@ -44,7 +44,7 @@ namespace Lemoine.Extensions.Web.Responses
     /// <summary>
     /// A maintenance is in progress
     /// </summary>
-    PulseMaintenance,
+    Maintenance,
     /// <summary>
     /// Database connection error
     /// 

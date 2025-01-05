@@ -107,7 +107,7 @@ namespace Lem_AnalysisService
         .AddSingleton<ApplicationInitializerWithExtensions> ()
         .AddSingleton<BusinessApplicationInitializer> ()
         .AddSingleton<PerfRecorderInitializer> ()
-        .SetApplicationInitializerCollection<ApplicationInitializerWithExtensions, BusinessApplicationInitializer, ValidLctrChecker, PerfRecorderInitializer, OdbcInitializer> ();
+        .SetApplicationInitializerCollection<ApplicationInitializerWithExtensions, BusinessApplicationInitializer, ValidLctrChecker, PerfRecorderInitializer> ();
     }
   }
 }

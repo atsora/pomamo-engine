@@ -11,6 +11,7 @@ using Lemoine.Core.Log;
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
 using Lemoine.Model;
+using Lemoine.ModelDAO;
 using Pulse.Web.CommonResponseDTO;
 
 namespace Pulse.Web.Reason
@@ -18,7 +19,7 @@ namespace Pulse.Web.Reason
   /// <summary>
   /// Reponse DTO for ReasonSelection service
   /// </summary>
-  [Api("ReasonSelection Response DTO")]
+  [Api ("ReasonSelection Response DTO")]
   public class ReasonSelectionResponseDTO
   {
     /// <summary>
@@ -30,7 +31,7 @@ namespace Pulse.Web.Reason
     /// Additional data
     /// </summary>
     public IDictionary<string, object> Data { get; set; }
-    
+
     /// <summary>
     /// Text
     /// </summary>
@@ -60,7 +61,7 @@ namespace Pulse.Web.Reason
     /// Are details required for this reason ?
     /// </summary>
     public bool DetailsRequired { get; set; }
-    
+
     /// <summary>
     /// Display of associated reason group
     /// </summary>
@@ -80,7 +81,7 @@ namespace Pulse.Web.Reason
     /// Id of associated reason group
     /// </summary>
     public int ReasonGroupId { get; set; }
-    
+
     #region IEquatable implementation
     /// <summary>
     ///   Indicates whether the current object
@@ -88,20 +89,20 @@ namespace Pulse.Web.Reason
     /// </summary>
     /// <param name="other">An object to compare with this object</param>
     /// <returns>true if the current object is equal to the other parameter; otherwise, false</returns>
-    public virtual bool Equals(ReasonSelectionResponseDTO other)
+    public virtual bool Equals (ReasonSelectionResponseDTO other)
     {
-      return this.Equals ((object) other);
+      return this.Equals ((object)other);
     }
-    
+
     /// <summary>
     ///   Determines whether the specified Object
     ///   is equal to the current Object
     /// </summary>
     /// <param name="obj">The object to compare with the current object</param>
     /// <returns>true if the specified Object is equal to the current Object; otherwise, false</returns>
-    public override bool Equals(object obj)
+    public override bool Equals (object obj)
     {
-      if (object.ReferenceEquals(this,obj)) {
+      if (object.ReferenceEquals (this, obj)) {
         return true;
       }
 
@@ -122,7 +123,7 @@ namespace Pulse.Web.Reason
     ///   Serves as a hash function for a particular type
     /// </summary>
     /// <returns>A hash code for the current Object</returns>
-    public override int GetHashCode()
+    public override int GetHashCode ()
     {
       int hashCode = 0;
       unchecked {
@@ -143,45 +144,51 @@ namespace Pulse.Web.Reason
     /// </summary>
     /// <param name="reasonSelection"></param>
     /// <returns></returns>
-    public ReasonSelectionResponseDTO Assemble(Lemoine.Model.IReasonSelection reasonSelection) {
-      Lemoine.Model.IReason reason = reasonSelection.Reason;
-      ReasonSelectionResponseDTO reasonSelectionResponseDTO = new ReasonSelectionResponseDTO();
-      reasonSelectionResponseDTO.Id = reason.Id;
-      if (!string.IsNullOrEmpty (reasonSelection.AlternativeText)) {
-        reasonSelectionResponseDTO.Display = reasonSelection.AlternativeText;
-        reasonSelectionResponseDTO.LongDisplay = string.IsNullOrEmpty (reasonSelection.AlternativeLongText)
-          ? reasonSelection.AlternativeText
-          : reasonSelection.AlternativeLongText;
+    public ReasonSelectionResponseDTO Assemble (Lemoine.Model.IReasonSelection reasonSelection)
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        var reason = reasonSelection.Reason;
+        var reasonSelectionResponseDTO = new ReasonSelectionResponseDTO ();
+        reasonSelectionResponseDTO.Id = reason.Id;
+        if (!string.IsNullOrEmpty (reasonSelection.AlternativeText)) {
+          reasonSelectionResponseDTO.Display = reasonSelection.AlternativeText;
+          reasonSelectionResponseDTO.LongDisplay = string.IsNullOrEmpty (reasonSelection.AlternativeLongText)
+            ? reasonSelection.AlternativeText
+            : reasonSelection.AlternativeLongText;
+        }
+        else {
+          reasonSelectionResponseDTO.Display = reason.Display;
+          reasonSelectionResponseDTO.LongDisplay = reason.LongDisplay;
+        }
+        reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
+          ? reason.DescriptionOrTranslation
+          : reasonSelection.AlternativeDescription;
+        reasonSelectionResponseDTO.Color = reason.Color;
+        reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
+        reasonSelectionResponseDTO.DetailsRequired = reasonSelection.DetailsRequired;
+        reasonSelectionResponseDTO.Data = reasonSelection.Data;
+        reasonSelectionResponseDTO.ReasonGroupId = reason.ReasonGroup.Id;
+        // The extensions may not initialize the reason group
+        var reasonGroup = ModelDAOHelper.DAOFactory.ReasonGroupDAO.FindById (reason.ReasonGroup.Id);
+        reasonSelectionResponseDTO.ReasonGroupDisplay = reasonGroup.Display;
+        reasonSelectionResponseDTO.ReasonGroupLongDisplay = reasonGroup.LongDisplay;
+        reasonSelectionResponseDTO.ReasonGroupDescription = reasonGroup.DescriptionOrTranslation;
+        return reasonSelectionResponseDTO;
       }
-      else {
-        reasonSelectionResponseDTO.Display = reason.Display;
-        reasonSelectionResponseDTO.LongDisplay = reason.LongDisplay;
-      }
-      reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
-        ? reason.DescriptionOrTranslation
-        : reasonSelection.AlternativeDescription;
-      reasonSelectionResponseDTO.Color = reason.Color;
-      reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
-      reasonSelectionResponseDTO.DetailsRequired = reasonSelection.DetailsRequired;
-      reasonSelectionResponseDTO.Data = reasonSelection.Data;
-      reasonSelectionResponseDTO.ReasonGroupDisplay = reason.ReasonGroup.Display;
-      reasonSelectionResponseDTO.ReasonGroupId = reason.ReasonGroup.Id;
-      reasonSelectionResponseDTO.ReasonGroupLongDisplay = reason.ReasonGroup.LongDisplay;
-      reasonSelectionResponseDTO.ReasonGroupDescription = reason.ReasonGroup.DescriptionOrTranslation;
-      return reasonSelectionResponseDTO;
     }
-    
+
     /// <summary>
     /// ReasonSelectionDTO list assembler
     /// </summary>
     /// <param name="reasonSelections"></param>
     /// <returns></returns>
-    public IEnumerable<ReasonSelectionResponseDTO> Assemble(IEnumerable<IReasonSelection> reasonSelections) {
-      List<ReasonSelectionResponseDTO> reasonSelectionDTOList = new List<ReasonSelectionResponseDTO>();
+    public IEnumerable<ReasonSelectionResponseDTO> Assemble (IEnumerable<IReasonSelection> reasonSelections)
+    {
+      List<ReasonSelectionResponseDTO> reasonSelectionDTOList = new List<ReasonSelectionResponseDTO> ();
       foreach (IReasonSelection reasonSelection in reasonSelections.GroupSameReason ()) {
-        reasonSelectionDTOList.Add(Assemble(reasonSelection));
+        reasonSelectionDTOList.Add (Assemble (reasonSelection));
       }
       return reasonSelectionDTOList;
     }
-  }  
+  }
 }

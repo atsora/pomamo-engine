@@ -22,7 +22,7 @@ using Lemoine.WebMiddleware;
 namespace Lem_AspService
 {
   /// <summary>
-  /// MaintenanceMiddleware: if an option is active, turn on the maintenance mode returning ErrorStatus.PulseMaintenance
+  /// MaintenanceMiddleware: if an option is active, turn on the maintenance mode returning ErrorStatus.Maintenance
   /// </summary>
   public class MaintenanceMiddleware
   {
@@ -39,9 +39,6 @@ namespace Lem_AspService
 
     readonly RequestDelegate m_next;
     readonly ResponseWriter m_responseWriter;
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor
@@ -80,7 +77,7 @@ namespace Lem_AspService
       var maintenanceActive = Lemoine.Info.ConfigSet
         .LoadAndGet (MAINTENANCE_ACTIVE_KEY, MAINTENANCE_ACTIVE_DEFAULT);
       if (maintenanceActive) {
-        var errorDto = new ErrorDTO ("Pulse maintenance in progress", ErrorStatus.PulseMaintenance);
+        var errorDto = new ErrorDTO ("Maintenance in progress", ErrorStatus.Maintenance);
         await m_responseWriter.WriteToBodyAsync (context, errorDto);
       }
       else {
