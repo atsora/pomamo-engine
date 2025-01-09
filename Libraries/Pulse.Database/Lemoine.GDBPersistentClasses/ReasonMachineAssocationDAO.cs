@@ -180,8 +180,8 @@ INSERT INTO pgfkpart.reasonmachineassociation_p{0} (modificationid, machineid, r
   reasonmachineassociationbegin, reasonmachineassociationend, reasondetails,
   reasonmachineassociationoption, reasonmachineassociationreasonscore,
   reasonmachineassociationkind,
-  reasonmachineassociationdynamic)
-VALUES (:Id, :Machine, :Reason, :Begin, :End, :Details, :Option, :ReasonScore, :Kind, :Dynamic);
+  reasonmachineassociationdynamic, reasondata)
+VALUES (:Id, :Machine, :Reason, :Begin, :End, :Details, :Option, :ReasonScore, :Kind, :Dynamic, CAST(:Data AS jsonb));
 ",
               association.Machine.Id);
             var dynamic = (string.IsNullOrEmpty (association.Dynamic))
@@ -205,6 +205,7 @@ VALUES (:Id, :Machine, :Reason, :Begin, :End, :Details, :Option, :ReasonScore, :
               .SetDouble ("ReasonScore", association.ReasonScore)
               .SetInt32 ("Kind", (int)association.Kind)
               .SetString ("Dynamic", dynamic)
+              .SetString ("Data", association.JsonData)
               .ExecuteUpdate ();
 
             if (fillStatus) {
