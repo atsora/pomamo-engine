@@ -764,7 +764,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               Assert.That (slots[i].MachineMode, Is.EqualTo (inactive));
               Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
               Assert.That (slots[i].Reason, Is.EqualTo (reasonSetup));
-              Assert.That (slots[i].JsonData, Is.EqualTo ("{}"));
+              Assert.That (slots[i].JsonData, Is.Null);
               Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (T (1)));
               Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (T (3)));
             });

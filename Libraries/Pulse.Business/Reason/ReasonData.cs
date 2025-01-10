@@ -42,22 +42,10 @@ namespace Pulse.Business.Reason
     /// <returns></returns>
     public static IDictionary<string, object> Deserialize (string json)
     {
-      try {
-        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
-        var a = JsonSerializer.Deserialize<IDictionary<string, JsonElement>> (json);
-        var d = new Dictionary<string, object> ();
-        foreach (var kv in a) {
-          if (TryDeserializeItem (kv, extensions, out var v)) {
-            d[kv.Key] = v;
-          }
-        }
-        return d;
-      }
-      catch (Exception ex) {
-        log.Error ("Deserialize: exception", ex);
-        throw;
-      }
+      Debug.Assert (null != json);
+      var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+      var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+      return Deserialize (json, extensions);
     }
 
     /// <summary>
@@ -80,7 +68,7 @@ namespace Pulse.Business.Reason
         return d;
       }
       catch (Exception ex) {
-        log.Error ($"Deserialize: exception", ex);
+        log.Error ($"Deserialize: exception for json={json}", ex);
         throw;
       }
     }
@@ -115,34 +103,53 @@ namespace Pulse.Business.Reason
     /// <returns></returns>
     public static string Merge (IReasonSlot reasonSlot, IPossibleReason possibleReason)
     {
-      if (!string.IsNullOrEmpty (possibleReason.JsonData)) {
-        if (string.IsNullOrEmpty (reasonSlot.JsonData)) {
+      if (!IsJsonNullOrEmpty (possibleReason.JsonData)) {
+        if (IsJsonNullOrEmpty (reasonSlot.JsonData)) {
           if (log.IsDebugEnabled) {
-            log.Debug ($"Merge: no existing reason data=> keep the data from ReasonMachineAssociation");
+            log.Debug ($"Merge: no existing reason data => keep the data from ReasonMachineAssociation");
           }
           return possibleReason.JsonData;
         }
-        else {
+        else { // reasonSlot.JsonData not null
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Merge: old={reasonSlot.JsonData}, new={possibleReason.JsonData}");
+          }
           var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
           var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest).ToList ();
           if (extensions.Any (x => x.DoMerge (reasonSlot, possibleReason) || !x.Keep (reasonSlot, possibleReason))) {
             var data = Pulse.Business.Reason.ReasonData.Deserialize (reasonSlot.JsonData, extensions);
             data = data.ToDictionary (x => x.Key, x => x.Value); // Clone it
             var newData = Pulse.Business.Reason.ReasonData.Deserialize (possibleReason.JsonData, extensions);
+            bool change = false;
             foreach (var extension in extensions.Where (ext => ext.DoMerge (reasonSlot, possibleReason) || !ext.Keep (reasonSlot, possibleReason))) {
               var name = extension.Name;
-              if (newData.TryGetValue (name, out var o)) {
+              if (newData.TryGetValue (name, out var o)) { // name is in both structures
                 extension.Merge (data, o, possibleReason);
+                change = true;
               }
               else if (!extension.Keep (reasonSlot, possibleReason)) { // Do not keep the old value
                 data.Remove (name);
+                change = true;
               }
             }
-            var newJsonData = JsonSerializer.Serialize (data);
-            if (log.IsDebugEnabled) {
-              log.Debug ($"Merge: merged data is {newJsonData}");
+            if (change) {
+              if (data.Any ()) {
+                var newJsonData = JsonSerializer.Serialize (data);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Merge: merged data is {newJsonData}");
+                }
+                return newJsonData;
+              }
+              else {
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Merge: no data any more => return null");
+                }
+                return null;
+              }
             }
-            return newJsonData;
+            else {
+              return reasonSlot.JsonData;
+            }
           }
           else { // No data to merge
             if (log.IsDebugEnabled) {
@@ -152,7 +159,7 @@ namespace Pulse.Business.Reason
           }
         }
       }
-      else if (string.IsNullOrEmpty (reasonSlot.JsonData)) { // Both JsonData are null
+      else if (IsJsonNullOrEmpty (reasonSlot.JsonData)) { // Both JsonData are null
         return null;
       }
       else { // reasonMachineAssociation.JsonData is null or empty => remove it?
@@ -170,11 +177,19 @@ namespace Pulse.Business.Reason
             }
           }
           if (change) {
-            var newJsonData = JsonSerializer.Serialize (data);
-            if (log.IsDebugEnabled) {
-              log.Debug ($"Merge: data is {newJsonData} after purging the data not to keep");
+            if (data.Any ()) {
+              var newJsonData = JsonSerializer.Serialize (data);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Merge: data is {newJsonData} after purging the data not to keep");
+              }
+              return newJsonData;
             }
-            return newJsonData;
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Merge: there is no data any more");
+              }
+              return null;
+            }
           }
           else {
             return reasonSlot.JsonData;
@@ -203,7 +218,12 @@ namespace Pulse.Business.Reason
           foreach (var extension in extensions.Where (ext => ext.DoReset (reasonSlot))) {
             extension.Reset (data);
           }
-          newJsonData = JsonSerializer.Serialize (data);
+          if (data.Any ()) {
+            newJsonData = JsonSerializer.Serialize (data);
+          }
+          else {
+            newJsonData = null;
+          }
           return true;
         }
       }
@@ -238,5 +258,7 @@ namespace Pulse.Business.Reason
         }
       }
     }
+
+    public static bool IsJsonNullOrEmpty (string json) => string.IsNullOrEmpty (json) || string.Equals (json.Trim (), "{}") || AreJsonEqual (json, "{}");
   }
 }

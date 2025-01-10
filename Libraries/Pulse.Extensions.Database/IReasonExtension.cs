@@ -223,10 +223,7 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// Id. Not used, always 0
     /// </summary>
-    public int Id
-    {
-      get { return 0; }
-    }
+    public int Id => 0;
 
     /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
@@ -299,10 +296,7 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// Version. Not used (always 0)
     /// </summary>
-    public int Version
-    {
-      get { return 0; }
-    }
+    public int Version => 0;
 
     /// <summary>
     /// Constructor

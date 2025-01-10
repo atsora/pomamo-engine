@@ -791,26 +791,17 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual UtcDateTimeRange RestrictedRange
-    {
-      get { return this.DateTimeRange; }
-    }
+    public virtual UtcDateTimeRange RestrictedRange => this.DateTimeRange;
 
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual IMachineMode RestrictedMachineMode
-    {
-      get { return this.MachineMode; }
-    }
+    public virtual IMachineMode RestrictedMachineMode => this.MachineMode;
 
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual IMachineObservationState RestrictedMachineObservationState
-    {
-      get { return this.MachineObservationState; }
-    }
+    public virtual IMachineObservationState RestrictedMachineObservationState => this.MachineObservationState;
     #endregion // IPossibleReason implementation
 
     /// <summary>
@@ -881,10 +872,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// </summary>
     /// <returns></returns>
-    protected override ILog GetLogger ()
-    {
-      return log;
-    }
+    protected override ILog GetLogger () => log;
 
     /// <summary>
     /// IComparable implementation
@@ -930,10 +918,7 @@ namespace Lemoine.GDBPersistentClasses
     /// to check the equality of the data reference
     /// </summary>
     /// <returns></returns>
-    public override bool IsEarlyConsolidateRequiredForDataReference ()
-    {
-      return true;
-    }
+    public override bool IsEarlyConsolidateRequiredForDataReference () => true;
 
     /// <summary>
     /// <see cref="Slot.ReferenceDataEquals" />
@@ -998,7 +983,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (this.DateTimeRange.IsEmpty ()) {
-        log.ErrorFormat ("IsEmpty: ReasonSlot is empty because of its date/time range");
+        log.Error ("IsEmpty: ReasonSlot is empty because of its date/time range");
         return true;
       }
 
