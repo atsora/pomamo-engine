@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -28,7 +29,6 @@ namespace Pulse.Web.Reason
   {
     static readonly ILog log = LogManager.GetLogger (typeof (ReasonAllAtService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -36,9 +36,7 @@ namespace Pulse.Web.Reason
       : base (Lemoine.Core.Cache.CacheTimeOut.PastShort)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     DateTime ParseDateTime (string s)
     {
       var bound = ConvertDTO.IsoStringToDateTimeUtc (s);
@@ -72,9 +70,11 @@ namespace Pulse.Web.Reason
         cacheTimeSpan = CacheTimeOut.PastShort.GetTimeSpan ();
       }
 
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} for url={1}",
-                       cacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.DebugFormat ("GetCacheTimeOut: " +
+                         "cacheTimeSpan is {0} for url={1}",
+                         cacheTimeSpan, url);
+      }
       return cacheTimeSpan;
     }
 
@@ -91,17 +91,14 @@ namespace Pulse.Web.Reason
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (machineId);
           if (null == machine) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown machine with ID {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
             return new ErrorDTO ("No machine with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
 
           DateTime at;
           if (string.IsNullOrEmpty (request.At)) {
-            log.Error ("GetWithoutCache: " +
-                       "unknown at parameter");
+            log.Error ("GetWithoutCache: unknown at parameter");
             return new ErrorDTO ("No date/time specified",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -131,7 +128,7 @@ namespace Pulse.Web.Reason
           Debug.Assert (slots.Count () <= 1);
 
           if (0 == slots.Count) {
-            log.ErrorFormat ("Get: no reason only slot at {0}", at);
+            log.Error ($"Get: no reason only slot at {at}");
             return result;
           }
           else if (1 == slots.Count) {
@@ -142,7 +139,7 @@ namespace Pulse.Web.Reason
             return result;
           }
           else { // 1 < slots.Count
-            log.FatalFormat ("Get: several slots at range {0}", range);
+            log.Fatal ($"Get: several slots at range {range}");
             throw new Exception ("Several slots at a unique date/time");
           }
         }
@@ -205,6 +202,5 @@ namespace Pulse.Web.Reason
       return Lemoine.Business.ServiceProvider
         .Get (new Lemoine.Business.Extension.MonitoredMachineExtensions<IReasonExtension> (machine, (x, m) => x.Initialize (m)));
     }
-    #endregion // Methods
   }
 }

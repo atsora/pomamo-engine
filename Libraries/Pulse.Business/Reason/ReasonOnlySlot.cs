@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -9,6 +10,7 @@ using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using Lemoine.Business.Common;
+using Pulse.Business.Reason;
 
 namespace Lemoine.Business.Reason
 {
@@ -26,6 +28,7 @@ namespace Lemoine.Business.Reason
     #region Members
     IMachine m_machine;
     IReason m_reason;
+    string m_jsonData;
     bool m_running;
     double m_reasonScore;
     ReasonSource m_reasonSource;
@@ -75,8 +78,7 @@ namespace Lemoine.Business.Reason
     {
       Debug.Assert (null != machine);
       if (null == machine) {
-        log.FatalFormat ("ReasonOnlySlot: " +
-                         "null value");
+        log.Fatal ("ReasonOnlySlot: null value");
         throw new ArgumentNullException ();
       }
       m_machine = machine;
@@ -164,7 +166,12 @@ namespace Lemoine.Business.Reason
     public virtual IReason Reason {
       get { return m_reason; }
     }
-    
+
+    /// <summary>
+    /// Reason data in Json format
+    /// </summary>
+    public virtual string JsonData => m_jsonData;
+
     /// <summary>
     /// Running
     /// </summary>
@@ -271,6 +278,8 @@ namespace Lemoine.Business.Reason
 
       return object.Equals(this.Machine, other.Machine)
         && object.Equals(this.Reason, other.Reason)
+        && ReasonData.AreJsonEqual (this.JsonData, other.JsonData)
+        // TODO: comparing the display would be probably better if the two Json are not equal
         && object.Equals(this.Running, other.Running)
         && (this.ReasonScore == other.ReasonScore)
         && object.Equals(this.ReasonSource, other.ReasonSource)
@@ -295,16 +304,13 @@ namespace Lemoine.Business.Reason
           return this.DateTimeRange.CompareTo (other.DateTimeRange);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare slots " +
-                           "for different machines {0} {1}",
+          log.ErrorFormat ("CompareTo: trying to compare slots for different machines {0} {1}",
                            this, other);
           throw new ArgumentException ("Comparison of slots from different machines");
         }
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
+      log.ErrorFormat ("CompareTo: object {0} of invalid type",
                        obj);
       throw new ArgumentException ("object is not the right slot");
     }
@@ -320,9 +326,7 @@ namespace Lemoine.Business.Reason
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare ReasonOnlySlots " +
-                       "for different machines {0} {1}",
+      log.ErrorFormat ("CompareTo: trying to compare ReasonOnlySlots for different machines {0} {1}",
                        this, other);
       throw new ArgumentException ("Comparison of ReasonOnlySlots from different machines");
     }

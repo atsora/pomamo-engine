@@ -232,6 +232,37 @@ namespace Pulse.Business.Reason
     }
 
     /// <summary>
+    /// Overwrite the display in case some reason data extensions allow to overwrite it
+    /// </summary>
+    public static string OverwriteDisplay (string display, string jsonData, bool longDisplay = false)
+    {
+      var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+      var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest).Where (ext => ext.DoDisplay).ToList ();
+      if (extensions.Any ()) {
+        var d = extensions.Any (ext => ext.OmitReasonDisplay (longDisplay)) ? "" : display;
+        var data = Pulse.Business.Reason.ReasonData.Deserialize (jsonData, extensions);
+        foreach (var extension in extensions.Where (ext => ext.DoDisplay)
+          .OrderByDescending (ext => ext.DisplayPriority)) {
+          if (data.TryGetValue (extension.Name, out var v)) {
+            d = d.TrimEnd ();
+            if (!string.IsNullOrEmpty (d)) {
+              d += " ";
+            }
+            d += extension.Display (v, longDisplay);
+          }
+        }
+        if (string.IsNullOrEmpty (d.Trim ())) {
+          log.Warn ($"OverwriteDisplay: no valid display was returned, fallback to {display}");
+          return display;
+        }
+        return d;
+      }
+      else {
+        return display;
+      }
+    }
+
+    /// <summary>
     /// Test if the two data in Json format are equal
     /// </summary>
     /// <param name="json1"></param>

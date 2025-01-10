@@ -23,6 +23,11 @@ namespace Lemoine.Model
     IReason Reason { get; }
     
     /// <summary>
+    /// Reason data in json format
+    /// </summary>
+    string JsonData { get; }
+
+    /// <summary>
     /// Running property of the machine mode
     /// </summary>
     bool Running { get; }

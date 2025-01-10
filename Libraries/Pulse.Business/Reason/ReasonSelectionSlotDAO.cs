@@ -354,6 +354,7 @@ namespace Lemoine.Business.Reason
 
       IReasonSelectionSlot result = new ReasonSelectionSlot (left.Machine,
                                                              left.Reason,
+                                                             left.JsonData,
                                                              left.Running,
                                                              left.OverwriteRequired,
                                                              left.ReasonDetails,

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,6 +20,7 @@ using Lemoine.Extensions.Web.Responses;
 using System.Threading.Tasks;
 using Lemoine.Extensions.Web.Interfaces;
 using Lemoine.Web;
+using Pulse.Business.Reason;
 
 namespace Pulse.Web.Reason
 {
@@ -36,7 +38,6 @@ namespace Pulse.Web.Reason
 
     Stream m_body;
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -44,9 +45,7 @@ namespace Pulse.Web.Reason
       : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -141,6 +140,10 @@ namespace Pulse.Web.Reason
             slotDto.Id = slot.Reason.Id;
             slotDto.Display = slot.Reason.Display;
             slotDto.LongDisplay = slot.Reason.LongDisplay;
+            if (!ReasonData.IsJsonNullOrEmpty (slot.JsonData)) {
+              slotDto.Display = ReasonData.OverwriteDisplay (slotDto.Display, slot.JsonData, false);
+              slotDto.LongDisplay = ReasonData.OverwriteDisplay (slotDto.LongDisplay, slot.JsonData, true);
+            }
             slotDto.Description = slot.Reason.DescriptionOrTranslation;
             slotDto.Range = slot.DateTimeRange.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
             slotDto.BgColor = slot.Reason.Color;
@@ -193,6 +196,10 @@ namespace Pulse.Web.Reason
             slotDto.Id = slot.Reason.Id;
             slotDto.Display = slot.Reason.Display;
             slotDto.LongDisplay = slot.Reason.LongDisplay;
+            if (!ReasonData.IsJsonNullOrEmpty (slot.JsonData)) {
+              slotDto.Display = ReasonData.OverwriteDisplay (slotDto.Display, slot.JsonData, false);
+              slotDto.LongDisplay = ReasonData.OverwriteDisplay (slotDto.LongDisplay, slot.JsonData, true);
+            }
             slotDto.Description = slot.Reason.DescriptionOrTranslation;
             slotDto.Range = slot.DateTimeRange.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
             slotDto.BgColor = slot.Reason.Color;
@@ -242,6 +249,10 @@ namespace Pulse.Web.Reason
           slotDto.Id = slot.Reason.Id;
           slotDto.Display = slot.Reason.Display;
           slotDto.LongDisplay = slot.Reason.LongDisplay;
+          if (!ReasonData.IsJsonNullOrEmpty (slot.JsonData)) {
+            slotDto.Display = ReasonData.OverwriteDisplay (slotDto.Display, slot.JsonData, false);
+            slotDto.LongDisplay = ReasonData.OverwriteDisplay (slotDto.LongDisplay, slot.JsonData, true);
+          }
           slotDto.Description = slot.Reason.DescriptionOrTranslation;
           slotDto.Range = slot.DateTimeRange.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
           slotDto.BgColor = slot.Reason.Color;
@@ -293,58 +304,6 @@ namespace Pulse.Web.Reason
       return result;
     }
 
-#if NSERVICEKIT
-    /// <summary>
-    /// Response to POST request for ReasonOnlySlots service
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="httpRequest"></param>
-    /// <returns></returns>
-    public object Post (ReasonOnlySlotsPostRequestDTO request,
-                        NServiceKit.ServiceHost.IHttpRequest httpRequest)
-    {
-      int machineId = request.MachineId;
-
-      log.Debug ("GetReasonSelectionV3 begin");
-
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonOnlySlots")) {
-        IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
-          .FindById (machineId);
-        if (null == machine) {
-          log.ErrorFormat ("Post: " +
-                           "unknown machine with ID {0}",
-                           machineId);
-          return new ErrorDTO ("No machine with the specified ID",
-                               ErrorStatus.WrongRequestParameter);
-        }
-
-        // Ranges
-        RangesPostDTO deserializedResult = PostDTO.Deserialize<RangesPostDTO> (httpRequest);
-        ReasonOnlySlotsResponseDTO response = null;
-        foreach (var range in deserializedResult.Convert ()) {
-          UtcDateTimeRange extendLimitrange;
-          if (string.IsNullOrEmpty (request.ExtendLimitRange)) {
-            extendLimitrange = new UtcDateTimeRange (new LowerBound<DateTime> (null),
-                                                     new UpperBound<DateTime> (null));
-          }
-          else {
-            extendLimitrange = new UtcDateTimeRange (request.ExtendLimitRange);
-          }
-
-          if (null == response) {
-            response = Get (machine, range, request.SelectableOption, request.NoPeriodExtension, extendLimitrange);
-          }
-          else { // Merge
-            Merge (response, Get (machine, range, request.SelectableOption, request.NoPeriodExtension, extendLimitrange));
-          }
-        }
-
-        return response;
-      }
-    }
-#else // !NSERVICEKIT
-
     /// <summary>
     /// Post method
     /// </summary>
@@ -393,7 +352,6 @@ namespace Pulse.Web.Reason
         return response;
       }
     }
-#endif // NSERVICEKIT
 
     ReasonOnlySlotsResponseDTO Merge (ReasonOnlySlotsResponseDTO response, ReasonOnlySlotsResponseDTO additional)
     {
@@ -412,7 +370,6 @@ namespace Pulse.Web.Reason
         return response;
       }
     }
-    #endregion // Methods
 
     #region IBodySupport
     /// <summary>

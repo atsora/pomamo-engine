@@ -25,6 +25,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\atracking-netapps\Plugins\Reason\Lemoine.Plugin.TestReasonData\Lemoine.Plugin.TestReasonData.fsproj" />
     <ProjectReference Include="..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
@@ -35,6 +36,7 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" />
     <ProjectReference Include="..\..\Libraries\Pulse.Business\Pulse.Business.csproj" />
     <ProjectReference Include="..\..\Libraries\Pulse.Database\Pulse.Database.csproj" />
+    <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
     <ProjectReference Include="..\..\Web\Lemoine.Extensions.Web\Lemoine.Extensions.Web.csproj" />
     <ProjectReference Include="..\..\Plugins\Group\Lemoine.Plugin.GroupCompany\Lemoine.Plugin.GroupCompany.csproj" />
     <ProjectReference Include="..\..\Plugins\Group\Lemoine.Plugin.GroupDepartment\Lemoine.Plugin.GroupDepartment.csproj" />

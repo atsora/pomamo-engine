@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -87,9 +88,6 @@ namespace Lemoine.Business.Reason
 
     static readonly ILog log = LogManager.GetLogger (typeof (CurrentReason).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -116,9 +114,6 @@ namespace Lemoine.Business.Reason
     }
     #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
     #region IRequest implementation
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
@@ -128,6 +123,7 @@ namespace Lemoine.Business.Reason
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         IReason reason = null;
+        string jsonData = null;
         IMachineMode machineMode = null;
         DateTime dateTime = DateTime.UtcNow;
         double? reasonScore = null;
@@ -139,16 +135,16 @@ namespace Lemoine.Business.Reason
         using (IDAOTransaction transaction = session.BeginReadOnlyDeferrableTransaction ("Web.CurrentReason")) {
 
           // Current reason slot ok ?
-          var machineStatus = GetFromMachineStatus (m_machine, m_period, m_notRunningOnlyDuration, ref reason, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
+          var machineStatus = GetFromMachineStatus (m_machine, m_period, m_notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
 
           // Last reason slots
           if  (reason is null) {
-            GetFromLastReasonSlots (m_machine, m_period, m_notRunningOnlyDuration, ref reason, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
+            GetFromLastReasonSlots (m_machine, m_period, m_notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
           }
 
           // currentMachineMode
           if (reason is null) {
-            var currentMachineMode = GetFromCurrentMachineMode (m_machine, m_period, machineStatus, m_notRunningOnlyDuration, ref reason, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
+            var currentMachineMode = GetFromCurrentMachineMode (m_machine, m_period, machineStatus, m_notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
 
             // Fact
             if (null == machineMode) {
@@ -158,7 +154,7 @@ namespace Lemoine.Business.Reason
               if ((null != machineStatus)
                 && ((null == currentMachineMode)
                     || (Bound.Compare<DateTime> (currentMachineMode.Change, machineStatus.ReasonSlotEnd) < 0))) {
-                FillFromMachineStatusWithMarginCondition (m_machine, m_period, machineStatus, limitMargin, m_notRunningOnlyDuration, ref reason, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
+                FillFromMachineStatusWithMarginCondition (m_machine, m_period, machineStatus, limitMargin, m_notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
               }
               if (null == machineMode) {
                 GetMachineModeFromLastFact (m_machine, m_period, currentMachineMode, limitMargin, m_notRunningOnlyDuration, ref machineMode, ref dateTime, ref periodStart);
@@ -183,6 +179,7 @@ namespace Lemoine.Business.Reason
           response.CurrentDateTime = DateTime.UtcNow;
           response.MachineMode = machineMode;
           response.Reason = reason;
+          response.JsonData = jsonData;
           response.DateTime = dateTime;
           response.ReasonScore = reasonScore;
           response.ReasonSource = reasonSource;
@@ -318,27 +315,27 @@ namespace Lemoine.Business.Reason
     }
 
 
-    IMachineStatus GetFromMachineStatus (IMonitoredMachine machine, CurrentReasonPeriod period, bool notRunningOnlyDuration, ref IReason reason, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
+    IMachineStatus GetFromMachineStatus (IMonitoredMachine machine, CurrentReasonPeriod period, bool notRunningOnlyDuration, ref IReason reason, ref string jsonData, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
     {
       IMachineStatus machineStatus = ModelDAOHelper.DAOFactory.MachineStatusDAO
         .FindByIdWithMachineModeReasonGroup (machine.Id);
       TimeSpan margin = Lemoine.Info.ConfigSet
         .LoadAndGet<TimeSpan> (REASON_SLOT_IS_CURRENT_MARGIN_KEY,
                                REASON_SLOT_IS_CURRENT_MARGIN_DEFAULT);
-      FillFromMachineStatusWithMarginCondition (machine, period, machineStatus, margin, notRunningOnlyDuration, ref reason, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
+      FillFromMachineStatusWithMarginCondition (machine, period, machineStatus, margin, notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
       return machineStatus;
     }
 
-    void FillFromMachineStatusWithMarginCondition (IMonitoredMachine machine, CurrentReasonPeriod period, IMachineStatus machineStatus, TimeSpan margin, bool notRunningOnlyDuration, ref IReason reason, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
+    void FillFromMachineStatusWithMarginCondition (IMonitoredMachine machine, CurrentReasonPeriod period, IMachineStatus machineStatus, TimeSpan margin, bool notRunningOnlyDuration, ref IReason reason, ref string jsonData, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
     {
       if (null != machineStatus) {
         if (DateTime.UtcNow <= machineStatus.ReasonSlotEnd.Add (margin)) {
-          FillFromMachineStatus (machine, period, machineStatus, notRunningOnlyDuration, ref reason, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
+          FillFromMachineStatus (machine, period, machineStatus, notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
         }
       }
     }
 
-    void FillFromMachineStatus (IMonitoredMachine machine, CurrentReasonPeriod period, IMachineStatus machineStatus, bool notRunningOnlyDuration, ref IReason reason, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
+    void FillFromMachineStatus (IMonitoredMachine machine, CurrentReasonPeriod period, IMachineStatus machineStatus, bool notRunningOnlyDuration, ref IReason reason, ref string jsonData, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
     {
       Debug.Assert (null != machineStatus);
       Debug.Assert (null != machineStatus.Reason);
@@ -348,6 +345,7 @@ namespace Lemoine.Business.Reason
       if ((int)ReasonId.Processing != machineStatus.Reason.Id) {
         reason = machineStatus.Reason;
       }
+      jsonData = machineStatus.JsonData;
       machineMode = machineStatus.MachineMode;
       dateTime = machineStatus.ReasonSlotEnd;
       reasonScore = machineStatus.ReasonScore;
@@ -358,7 +356,7 @@ namespace Lemoine.Business.Reason
       }
     }
 
-    void GetFromLastReasonSlots (IMonitoredMachine machine, CurrentReasonPeriod period, bool notRunningOnlyDuration, ref IReason reason, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
+    void GetFromLastReasonSlots (IMonitoredMachine machine, CurrentReasonPeriod period, bool notRunningOnlyDuration, ref IReason reason, ref string jsonData, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
     {
       Debug.Assert (reason is null);
 
@@ -379,6 +377,7 @@ namespace Lemoine.Business.Reason
         }
         if (first || (null != notProcessingReason)) {
           reason = notProcessingReason;
+          jsonData = reasonSlot.JsonData;
           machineMode = reasonSlot.MachineMode;
           dateTime = reasonSlot.EndDateTime.Value;
           reasonScore = reasonSlot.ReasonScore;
@@ -414,7 +413,7 @@ namespace Lemoine.Business.Reason
     /// <param name="autoReasonNumber"></param>
     /// <param name="periodStart"></param>
     /// <returns></returns>
-    ICurrentMachineMode GetFromCurrentMachineMode (IMonitoredMachine machine, CurrentReasonPeriod period, IMachineStatus machineStatus, bool notRunningOnlyDuration, ref IReason reason, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
+    ICurrentMachineMode GetFromCurrentMachineMode (IMonitoredMachine machine, CurrentReasonPeriod period, IMachineStatus machineStatus, bool notRunningOnlyDuration, ref IReason reason, ref string jsonData, ref IMachineMode machineMode, ref DateTime dateTime, ref double? reasonScore, ref ReasonSource? reasonSource, ref int? autoReasonNumber, ref DateTime? periodStart)
     {
       ICurrentMachineMode currentMachineMode = ModelDAOHelper.DAOFactory.CurrentMachineModeDAO
         .FindWithMachineMode (machine);
@@ -425,7 +424,7 @@ namespace Lemoine.Business.Reason
                                  CURRENT_MACHINE_MODE_MARGIN_DEFAULT);
         if (DateTime.UtcNow <= currentMachineMode.DateTime.Add (currentMachineModeMargin)) {
           if ((null != machineStatus) && Bound.Compare<DateTime> (currentMachineMode.Change, machineStatus.ReasonSlotEnd) < 0) {
-            FillFromMachineStatus (machine, period, machineStatus, notRunningOnlyDuration, ref reason, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
+            FillFromMachineStatus (machine, period, machineStatus, notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
           }
           else {
             Debug.Assert (null != currentMachineMode.MachineMode);
@@ -578,6 +577,11 @@ namespace Lemoine.Business.Reason
     /// Associated reason
     /// </summary>
     public IReason Reason { get; internal set; }
+
+    /// <summary>
+    /// Associated reason data in Json format
+    /// </summary>
+    public string JsonData { get; internal set; }
 
     /// <summary>
     /// Associated machine mode

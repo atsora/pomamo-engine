@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -33,7 +34,6 @@ namespace Pulse.Web.Reason
     readonly IDictionary<int, IEnumerable<ICurrentReasonExtension>> m_extensions = new Dictionary<int, IEnumerable<ICurrentReasonExtension>> ();
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1, 1);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -41,9 +41,7 @@ namespace Pulse.Web.Reason
       : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     CurrentReasonPeriod ConvertPeriodParameter (string periodParameter)
     {
       if (string.IsNullOrEmpty (periodParameter)) {
@@ -60,7 +58,7 @@ namespace Pulse.Web.Reason
       case "running_machinemodecategory":
         return CurrentReasonPeriod.Running | CurrentReasonPeriod.MachineModeCategory;
       default:
-        log.ErrorFormat ("ConvertPeriodParameter: {0} is not a supported parameter", periodParameter);
+        log.Error ($"ConvertPeriodParameter: {periodParameter} is not a supported parameter");
         throw new ArgumentException ("Not supported period", "periodParameter");
       }
     }
@@ -94,7 +92,7 @@ namespace Pulse.Web.Reason
         if ((null != currentReasonBusinessResponse) && (null != currentReasonBusinessResponse.Reason)) {
           response.CurrentDateTime = ConvertDTO.DateTimeUtcToIsoString (currentReasonBusinessResponse.CurrentDateTime);
           response.MachineMode = new MachineModeDTOAssembler ().Assemble (currentReasonBusinessResponse.MachineMode);
-          response.Reason = new ReasonDTOAssembler ().Assemble (currentReasonBusinessResponse.Reason);
+          response.Reason = new ReasonDTOAssembler ().Assemble (currentReasonBusinessResponse.Reason, currentReasonBusinessResponse.JsonData);
           response.DateTime = ConvertDTO.DateTimeUtcToIsoString (currentReasonBusinessResponse.DateTime);
           response.ReasonScore = currentReasonBusinessResponse.ReasonScore;
           response.ReasonSource = currentReasonBusinessResponse.ReasonSource.HasValue ? new ReasonSourceDTO (currentReasonBusinessResponse.ReasonSource.Value) : null;
@@ -141,6 +139,5 @@ namespace Pulse.Web.Reason
         return extensions;
       }
     }
-    #endregion // Methods
   }
 }

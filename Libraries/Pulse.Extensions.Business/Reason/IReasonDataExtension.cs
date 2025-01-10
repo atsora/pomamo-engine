@@ -64,6 +64,35 @@ namespace Pulse.Extensions.Business.Reason
     bool Keep (IReasonSlot reasonSlot, IPossibleReason possibleReason);
 
     /// <summary>
+    /// Display the data in web app
+    /// </summary>
+    bool DoDisplay { get; }
+
+    /// <summary>
+    /// If true is set, then the reason display will be omitted, it won't be displayed
+    /// 
+    /// If DoDisplay is false, this function is not considered
+    /// </summary>
+    bool OmitReasonDisplay (bool longDisplay);
+
+    /// <summary>
+    /// Display priority among all the reason data extensions
+    /// 
+    /// Data with a higher priority will be displayed first
+    /// 
+    /// If DoDisplay is false, this property is not considered
+    /// </summary>
+    double DisplayPriority { get; }
+
+    /// <summary>
+    /// Text to display in web app
+    /// 
+    /// If DoDisplay is false, this function is not considered
+    /// </summary>
+    /// <returns></returns>
+    string Display (object data, bool longDisplay);
+
+    /// <summary>
     /// Initialize the extension. Do not activate it if false
     /// </summary>
     /// <returns></returns>

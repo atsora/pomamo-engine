@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -28,6 +29,7 @@ namespace Lemoine.Business.Reason
     #region Members
     readonly IMachine m_machine;
     readonly IReason m_reason;
+    readonly string m_jsonData;
     readonly bool m_running;
     readonly bool m_overwriteRequired;
     readonly string m_reasonDetails;
@@ -61,6 +63,7 @@ namespace Lemoine.Business.Reason
     /// <param name="dayRange"></param>
     protected internal ReasonSelectionSlot (IMachine machine,
                                             IReason reason,
+                                            string jsonData,
                                             bool running,
                                             bool overwriteRequired,
                                             string reasonDetails,
@@ -71,8 +74,7 @@ namespace Lemoine.Business.Reason
     {
       Debug.Assert (null != machine);
       if (null == machine) {
-        log.FatalFormat ("ReasonSelectionSlot: " +
-                         "null value");
+        log.Fatal ("ReasonSelectionSlot: null value");
         throw new ArgumentNullException ();
       }
       m_machine = machine;
@@ -80,6 +82,7 @@ namespace Lemoine.Business.Reason
                                                 this.GetType ().FullName,
                                                 machine.Id));
       m_reason = reason;
+      m_jsonData = jsonData;
       m_running = running;
       m_overwriteRequired = overwriteRequired;
       m_reasonDetails = reasonDetails;
@@ -102,13 +105,14 @@ namespace Lemoine.Business.Reason
     /// <param name="range"></param>
     protected internal ReasonSelectionSlot (IMachine machine,
                                             IReason reason,
+                                            string jsonData,
                                             bool running,
                                             bool overwriteRequired,
                                             string reasonDetails,
                                             bool defaultReason,
                                             HashSet<IReason> selectableReasons,
                                             UtcDateTimeRange range)
-      : this (machine, reason, running, overwriteRequired, reasonDetails, defaultReason, selectableReasons,
+      : this (machine, reason, jsonData, running, overwriteRequired, reasonDetails, defaultReason, selectableReasons,
               range,
               ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (range)))
     {
@@ -119,7 +123,7 @@ namespace Lemoine.Business.Reason
     /// </summary>
     /// <param name="reasonSlot">not null</param>
     protected internal ReasonSelectionSlot (IReasonSlot reasonSlot)
-      : this (reasonSlot.Machine, reasonSlot.Reason, reasonSlot.Running, reasonSlot.OverwriteRequired, reasonSlot.ReasonDetails,
+      : this (reasonSlot.Machine, reasonSlot.Reason, reasonSlot.JsonData, reasonSlot.Running, reasonSlot.OverwriteRequired, reasonSlot.ReasonDetails,
               reasonSlot.DefaultReason, new HashSet<IReason> (),
               reasonSlot.DateTimeRange, reasonSlot.DayRange)
     {
@@ -163,7 +167,12 @@ namespace Lemoine.Business.Reason
     public virtual IReason Reason {
       get { return m_reason; }
     }
-    
+
+    /// <summary>
+    /// Reason data in Json format
+    /// </summary>
+    public virtual string JsonData => m_jsonData;
+
     /// <summary>
     /// Running
     /// </summary>
@@ -256,6 +265,8 @@ namespace Lemoine.Business.Reason
 
       bool test1 = object.Equals(this.Machine, other.Machine)
         && object.Equals(this.Reason, other.Reason)
+        && Pulse.Business.Reason.ReasonData.AreJsonEqual (this.JsonData, other.JsonData)
+        // TODO: it could be finer... design a specific method for that
         && object.Equals(this.Running, other.Running)
         && object.Equals(this.OverwriteRequired, other.OverwriteRequired)
         && object.Equals(this.ReasonDetails, other.ReasonDetails)

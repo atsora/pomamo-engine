@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -6,6 +7,7 @@ using System;
 
 using System.Collections.Generic;
 using Lemoine.Core.Log;
+using Pulse.Business.Reason;
 
 namespace Pulse.Web.CommonResponseDTO
 {
@@ -74,6 +76,22 @@ namespace Pulse.Web.CommonResponseDTO
       return reasonDTO;
     }
 
+
+    /// <summary>
+    /// ReasonDTO assembler
+    /// </summary>
+    /// <param name="reason"></param>
+    /// <returns></returns>
+    public ReasonDTO Assemble (Lemoine.Model.IReason reason, string jsonData)
+    {
+      var reasonDto = Assemble (reason);
+      if (!ReasonData.IsJsonNullOrEmpty (jsonData)) {
+        reasonDto.Display = ReasonData.OverwriteDisplay (reasonDto.Display, jsonData, false);
+        reasonDto.LongDisplay = ReasonData.OverwriteDisplay (reasonDto.LongDisplay, jsonData, true);
+      }
+      return reasonDto;
+    }
+
     /// <summary>
     /// ReasonDTO list assembler
     /// </summary>
@@ -82,7 +100,7 @@ namespace Pulse.Web.CommonResponseDTO
     public IEnumerable<ReasonDTO> Assemble (IEnumerable<Lemoine.Model.IReason> reasonList)
     {
       IList<ReasonDTO> reasonDTOList = new List<ReasonDTO> ();
-      foreach (Lemoine.Model.IReason reason in reasonList) {
+      foreach (var reason in reasonList) {
         reasonDTOList.Add (Assemble (reason));
       }
       return reasonDTOList;

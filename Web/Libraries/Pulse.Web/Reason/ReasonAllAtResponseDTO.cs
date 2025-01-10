@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -7,14 +8,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Lemoine.Core.Log;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Pulse.Web.CommonResponseDTO;
 using Lemoine.Model;
+using Pulse.Business.Reason;
 
 namespace Pulse.Web.Reason
 {
@@ -62,6 +60,9 @@ namespace Pulse.Web.Reason
       this.Source = new ReasonSourceDTO (possibleReason.ReasonSource);
       this.Details = possibleReason.ReasonDetails;
       this.OverwriteRequired = possibleReason.OverwriteRequired;
+      if (!ReasonData.IsJsonNullOrEmpty (possibleReason.JsonData)) {
+        this.Display = ReasonData.OverwriteDisplay (this.Display, possibleReason.JsonData, false);
+      }
     }
 
     /// <summary>
