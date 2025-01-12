@@ -120,19 +120,13 @@ namespace Lemoine.GDBPersistentClasses
     /// <see cref="IModification"/>
     /// </summary>
     [XmlIgnore]
-    public override string ModificationType
-    {
-      get { return "ReasonMachineAssociation"; }
-    }
+    public override string ModificationType => "ReasonMachineAssociation";
 
     /// <summary>
     /// Reference to the Reason
     /// </summary>
     [XmlIgnore]
-    public virtual IReason Reason
-    {
-      get { return m_reason; }
-    }
+    public virtual IReason Reason => m_reason;
 
     /// <summary>
     /// Data in Json format
@@ -262,19 +256,13 @@ namespace Lemoine.GDBPersistentClasses
     /// Possible reason score
     /// </summary>
     [XmlIgnore]
-    public virtual double? OptionalReasonScore
-    {
-      get { return m_optionalReasonScore; }
-    }
+    public virtual double? OptionalReasonScore => m_optionalReasonScore;
 
     /// <summary>
     /// Reason score
     /// </summary>
     [XmlIgnore]
-    public virtual double ReasonScore
-    {
-      get { return m_optionalReasonScore ?? -1.0; }
-    }
+    public virtual double ReasonScore => m_optionalReasonScore ?? -1.0;
 
     /// <summary>
     /// Reason score for XML serialization
@@ -307,50 +295,31 @@ namespace Lemoine.GDBPersistentClasses
     /// IPossibleReason implementation
     /// </summary>
     [XmlIgnore]
-    public virtual bool OverwriteRequired
-    {
-      get {
-        return m_kind.IsOvewriteRequired ();
-      }
-    }
+    public virtual bool OverwriteRequired => m_kind.IsOvewriteRequired ();
 
     /// <summary>
     /// IPossibleReason implementation
     /// </summary>
     [XmlIgnore]
-    public virtual ReasonSource ReasonSource
-    {
-      get {
-        return m_kind.ConvertToReasonSource ();
-      }
-    }
+    public virtual ReasonSource ReasonSource => m_kind.ConvertToReasonSource ();
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
     [XmlIgnore]
-    public virtual UtcDateTimeRange RestrictedRange
-    {
-      get { return this.Range; }
-    }
+    public virtual UtcDateTimeRange RestrictedRange => this.Range;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
     [XmlIgnore]
-    public virtual IMachineMode RestrictedMachineMode
-    {
-      get { return null; }
-    }
+    public virtual IMachineMode RestrictedMachineMode => null;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
     [XmlIgnore]
-    public virtual IMachineObservationState RestrictedMachineObservationState
-    {
-      get { return null; }
-    }
+    public virtual IMachineObservationState RestrictedMachineObservationState => null;
 
     #region Constructors
     /// <summary>

@@ -186,6 +186,7 @@ namespace Lemoine.GDBPersistentClasses
       m_modificationId = ((IDataWithId<long>)reasonMachineAssociation).Id;
       m_dateTimeRange = range;
       m_reason = reasonMachineAssociation.Reason;
+      m_jsonData = reasonMachineAssociation.JsonData;
       m_reasonScore = reasonMachineAssociation.ReasonScore;
       m_kind = reasonMachineAssociation.Kind.ConvertToReasonProposalKind ();
       m_reasonDetails = reasonMachineAssociation.ReasonDetails;

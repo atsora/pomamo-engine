@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\customer-specific\Tycos\Plugins\Lemoine.Plugin.Tycos.MaintenanceWO\Lemoine.Plugin.Tycos.MaintenanceWO.fsproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Abstractions\Lemoine.Abstractions.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />

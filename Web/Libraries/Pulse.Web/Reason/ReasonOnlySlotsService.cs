@@ -76,9 +76,11 @@ namespace Pulse.Web.Reason
       else { // Current or future
         cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
       }
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} for url={1}",
-                       cacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.DebugFormat ("GetCacheTimeOut: " +
+                         "cacheTimeSpan is {0} for url={1}",
+                         cacheTimeSpan, url);
+      }
       return cacheTimeSpan;
     }
 
@@ -94,9 +96,7 @@ namespace Pulse.Web.Reason
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -319,9 +319,8 @@ namespace Pulse.Web.Reason
       using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonOnlySlots")) {
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
-        if (null == machine) {
-          log.ErrorFormat ("Post: " +
-                           "unknown machine with ID {0}",
+        if (machine is null) {
+          log.ErrorFormat ("Post: unknown machine with ID {0}",
                            machineId);
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);

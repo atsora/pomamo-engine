@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -63,8 +64,8 @@ WHERE table_schema='pgfkpart'
 
         var insertQuery = $@"
 INSERT INTO pgfkpart.reasonproposal_p{association.Machine.Id}
-  (machineid, modificationid, reasonproposaldatetimerange, reasonid, reasonproposalscore, reasonproposalkind, reasonproposaldetails)
-VALUES ({association.Machine.Id}, :ModificationId, :Range, :Reason, :ReasonScore, :Kind, :Details)
+  (machineid, modificationid, reasonproposaldatetimerange, reasonid, reasonproposalscore, reasonproposalkind, reasonproposaldetails, reasondata)
+VALUES ({association.Machine.Id}, :ModificationId, :Range, :Reason, :ReasonScore, :Kind, :Details, CAST(:Data AS jsonb))
 RETURNING reasonproposalid;
 ";
         var id = NHibernateHelper.GetCurrentSession ()
@@ -76,6 +77,7 @@ RETURNING reasonproposalid;
           .SetDouble ("ReasonScore", association.ReasonScore)
           .SetInt32 ("Kind", (int)association.Kind)
           .SetString ("Details", association.ReasonDetails)
+          .SetString ("Data", association.JsonData)
           .UniqueResult<int> ();
         return id;
       }

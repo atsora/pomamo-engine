@@ -80,8 +80,7 @@ namespace Lemoine.GDBPersistentClasses
           && (entityInCache is I)) {
           var convertedEntity = (I)entityInCache;
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("FindById: " +
-                            "the entity id={0} machineId={1} type={2} is taken from cache",
+            log.DebugFormat ("FindById: the entity id={0} machineId={1} type={2} is taken from cache",
                             id, machineId, typeof (TSlot));
           }
           return convertedEntity;
@@ -102,8 +101,7 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Eq ("Machine.Id", machineId))
         .UniqueResult<I> ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: " +
-                        "the entity id={0} type={1} was queried",
+        log.DebugFormat ("FindById: the entity id={0} type={1} was queried",
                         id, typeof (TSlot));
       }
       return entity;
@@ -178,8 +176,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public override I FindAt (Bound<DateTime> at)
     {
-      log.FatalFormat ("FindAt: " +
-                       "invalid method for a machine slot");
+      log.Fatal ("FindAt: invalid method for a machine slot");
       throw new InvalidOperationException ("Invalid method for a machine slot");
     }
 
@@ -192,8 +189,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public override async System.Threading.Tasks.Task<I> FindAtAsync (Bound<DateTime> at)
     {
-      log.FatalFormat ("FindAtAsync: " +
-                       "invalid method for a machine slot");
+      log.Fatal ("FindAtAsync: invalid method for a machine slot");
       return await System.Threading.Tasks.Task.FromException<I> (new InvalidOperationException ("Invalid method for a machine slot"));
     }
 
@@ -220,8 +216,7 @@ namespace Lemoine.GDBPersistentClasses
             break;
           case DateTimeKind.Unspecified:
           default:
-            log.ErrorFormat ("FindAt: " +
-                             "date/time {0} is of kind Unspecified",
+            log.ErrorFormat ("FindAt:date/time {0} is of kind Unspecified",
                              at);
             Debug.Assert (DateTimeKind.Unspecified != at.Value.Kind);
             utc = at.Value;
@@ -520,10 +515,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindOverlapsRange: " +
-                           "empty range " +
-                           "=> return an empty list. " +
-                           "StackTrace: {0}",
+          log.DebugFormat ("FindOverlapsRange: empty range => return an empty list. StackTrace: {0}",
                            System.Environment.StackTrace);
         }
         return new List<I> ();

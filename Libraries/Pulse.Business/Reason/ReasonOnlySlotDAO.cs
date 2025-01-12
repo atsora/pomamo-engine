@@ -234,16 +234,12 @@ namespace Lemoine.Business.Reason
     {
       if (left.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!left.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "left range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: left range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       if (right.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!right.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "right range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: right range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       
@@ -270,6 +266,7 @@ namespace Lemoine.Business.Reason
       
       IReasonOnlySlot result = new ReasonOnlySlot (left.Machine,
                                                    left.Reason,
+                                                   left.JsonData,
                                                    left.Running,
                                                    left.ReasonScore,
                                                    left.ReasonSource,
@@ -346,8 +343,7 @@ namespace Lemoine.Business.Reason
                .Reverse ()) {
         if (leftSlot.IsEmpty ()){
           Debug.Assert (false);
-          log.ErrorFormat ("Merge: " +
-                           "empty left reason slot {0}",
+          log.ErrorFormat ("Merge: empty left reason slot {0}",
                            leftSlot);
           continue;
         }
@@ -371,8 +367,7 @@ namespace Lemoine.Business.Reason
                .OrderBy (s => s.DateTimeRange)) {
         if (rightSlot.IsEmpty ()){
           Debug.Assert (false);
-          log.ErrorFormat ("Merge: " +
-                           "empty right reason slot {0}",
+          log.ErrorFormat ("Merge: empty right reason slot {0}",
                            rightSlot);
           continue;
         }
@@ -436,8 +431,7 @@ namespace Lemoine.Business.Reason
         return slot;
       }
       else if (Bound.Compare<DateTime> (slot.DateTimeRange.Lower.Value, lowerLimit) <= 0) {
-        log.DebugFormat ("ExtendLeft: " +
-                         "lower limit {0} reached",
+        log.DebugFormat ("ExtendLeft: lower limit {0} reached",
                          lowerLimit);
         lowerLimitReached = true;
         return slot;
@@ -452,8 +446,7 @@ namespace Lemoine.Business.Reason
         else { // null != leftReasonSlot
           if (leftReasonSlot.IsEmpty ()){
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendLeft: " +
-                             "empty left reason slot {0}",
+            log.ErrorFormat ("ExtendLeft: empty left reason slot {0}",
                              leftReasonSlot);
             lowerLimitReached = false;
             return slot;
@@ -490,9 +483,10 @@ namespace Lemoine.Business.Reason
         return slot;
       }
       else if (Bound.Compare<DateTime> (upperLimit, slot.DateTimeRange.Upper.Value) <= 0) {
-        log.DebugFormat ("ExtendRight: " +
-                         "upper limit {0} reached",
-                         upperLimit);
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("ExtendRight: upper limit {0} reached",
+                           upperLimit);
+        }
         upperLimitReached = true;
         return slot;
       }
@@ -506,8 +500,7 @@ namespace Lemoine.Business.Reason
         else { // null != rightReasonSlot
           if (rightReasonSlot.IsEmpty ()){
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRight: " +
-                             "empty right reason slot {0}",
+            log.ErrorFormat ("ExtendRight: empty right reason slot {0}",
                              rightReasonSlot);
             upperLimitReached = false;
             return slot;

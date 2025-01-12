@@ -92,12 +92,13 @@ namespace Lemoine.Plugin.OperationSlotByMachineShift
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Plugin.OperationSlotByMachineShift.CycleCounter")) {
           IOperationSlot operationSlotAtStart = await GetOperationSlotAtStartAsync (range);
-          if ((null == operationSlotAtStart) || !Bound.Equals<DateTime> (range.Lower, operationSlotAtStart.DateTimeRange.Lower)) {
+          if ((operationSlotAtStart is null) || !Bound.Equals<DateTime> (range.Lower, operationSlotAtStart.DateTimeRange.Lower)) {
             if (log.IsDebugEnabled) {
-              log.Debug ($"GetNumberOfCyclesAsync: operation slot at {range.Lower} starts at {operationSlotAtStart.DateTimeRange.Lower} => give up");
+              log.Debug ($"GetNumberOfCyclesAsync: operation slot at {range.Lower} starts at {operationSlotAtStart?.DateTimeRange?.Lower} => give up");
             }
             throw new Exception ($"Lower bound does not match an operation slot");
           }
+          Debug.Assert (null != operationSlotAtStart);
           IOperationSlot operationSlotAtEnd = null;
           if (range.Upper.HasValue && (range.Upper.Value < System.DateTime.UtcNow)
             && !Bound.Equals<DateTime> (operationSlotAtStart.DateTimeRange.Upper, range.Upper)) {

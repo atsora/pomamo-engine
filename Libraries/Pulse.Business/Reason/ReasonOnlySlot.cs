@@ -54,18 +54,9 @@ namespace Lemoine.Business.Reason
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
-    /// <param name="reason"></param>
-    /// <param name="running"></param>
-    /// <param name="reasonScore"></param>
-    /// <param name="reasonSource"></param>
-    /// <param name="autoReasonNumber"></param>
-    /// <param name="overwriteRequired"></param>
-    /// <param name="reasonDetails"></param>
-    /// <param name="defaultReason"></param>
-    /// <param name="range"></param>
-    /// <param name="dayRange"></param>
     protected internal ReasonOnlySlot (IMachine machine,
                                        IReason reason,
+                                       string jsonData,
                                        bool running,
                                        double reasonScore,
                                        ReasonSource reasonSource,
@@ -86,6 +77,7 @@ namespace Lemoine.Business.Reason
                                                 this.GetType ().FullName,
                                                 machine.Id));
       m_reason = reason;
+      m_jsonData = jsonData;
       m_running = running;
       m_reasonScore = reasonScore;
       m_reasonSource = reasonSource;
@@ -112,6 +104,7 @@ namespace Lemoine.Business.Reason
     /// <param name="range"></param>
     protected internal ReasonOnlySlot (IMachine machine,
                                        IReason reason,
+                                       string jsonData,
                                        bool running,
                                        double reasonScore,
                                        ReasonSource reasonSource,
@@ -120,7 +113,7 @@ namespace Lemoine.Business.Reason
                                        string reasonDetails,
                                        bool defaultReason,
                                        UtcDateTimeRange range)
-      : this (machine, reason, running,
+      : this (machine, reason, jsonData, running,
           reasonScore, reasonSource, autoReasonNumber,
           overwriteRequired, reasonDetails, defaultReason, range,
           ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (range)))
@@ -132,7 +125,7 @@ namespace Lemoine.Business.Reason
     /// </summary>
     /// <param name="reasonSlot"></param>
     protected internal ReasonOnlySlot (IReasonSlot reasonSlot)
-      : this (reasonSlot.Machine, reasonSlot.Reason, reasonSlot.Running,
+      : this (reasonSlot.Machine, reasonSlot.Reason, reasonSlot.JsonData, reasonSlot.Running,
           reasonSlot.ReasonScore, reasonSlot.ReasonSource, reasonSlot.AutoReasonNumber,
           reasonSlot.OverwriteRequired, reasonSlot.ReasonDetails,
           reasonSlot.DefaultReason, reasonSlot.DateTimeRange, reasonSlot.DayRange)
@@ -151,21 +144,17 @@ namespace Lemoine.Business.Reason
       }
     }
     #endregion // Constructors
-    
+
     #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
-    public virtual IMachine Machine {
-      get { return m_machine; }
-    }
+    public virtual IMachine Machine => m_machine;
 
     /// <summary>
     /// Reference to the reason
     /// </summary>
-    public virtual IReason Reason {
-      get { return m_reason; }
-    }
+    public virtual IReason Reason => m_reason;
 
     /// <summary>
     /// Reason data in Json format
@@ -175,51 +164,37 @@ namespace Lemoine.Business.Reason
     /// <summary>
     /// Running
     /// </summary>
-    public virtual bool Running {
-      get { return m_running; }
-    }
-    
+    public virtual bool Running => m_running;
+
     /// <summary>
     /// Reason score
     /// </summary>
-    public virtual double ReasonScore {
-      get { return m_reasonScore; }
-    }
+    public virtual double ReasonScore => m_reasonScore;
 
     /// <summary>
     /// Reason source
     /// </summary>
-    public virtual ReasonSource ReasonSource {
-      get { return m_reasonSource; }
-    }
+    public virtual ReasonSource ReasonSource => m_reasonSource;
 
     /// <summary>
     /// Auto-reason number
     /// </summary>
-    public virtual int AutoReasonNumber {
-      get { return m_autoReasonNumber;  }
-    }
+    public virtual int AutoReasonNumber => m_autoReasonNumber;
 
     /// <summary>
     /// Overwrite required ?
     /// </summary>
-    public virtual bool OverwriteRequired {
-      get { return m_overwriteRequired; }
-    }
-    
+    public virtual bool OverwriteRequired => m_overwriteRequired;
+
     /// <summary>
     /// Reason details
     /// </summary>
-    public virtual string ReasonDetails {
-      get { return m_reasonDetails; }
-    }
-    
+    public virtual string ReasonDetails => m_reasonDetails;
+
     /// <summary>
     /// Default reason ?
     /// </summary>
-    public virtual bool DefaultReason {
-      get { return m_defaultReason; }
-    }
+    public virtual bool DefaultReason => m_defaultReason;
     
     /// <summary>
     /// Date/time range of the slot
@@ -232,34 +207,26 @@ namespace Lemoine.Business.Reason
         m_dayRange = ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (m_dateTimeRange));
       }
     }
-    
+
     /// <summary>
     /// Day range of the slot
     /// </summary>
-    public virtual DayRange DayRange {
-      get { return m_dayRange; }
-    }
-    
+    public virtual DayRange DayRange => m_dayRange;
+
     /// <summary>
     /// Duration of the slot
     /// </summary>
-    public virtual TimeSpan? Duration {
-      get { return m_dateTimeRange.Duration; }
-    }
-    
-    /// <summary>
-    /// Sub-slots
-    /// </summary>
-    public virtual IList<IMachineModeSubSlot> MachineModeSlots {
-      get { return m_machineModeSlots; }
-    }
+    public virtual TimeSpan? Duration => m_dateTimeRange.Duration;
 
     /// <summary>
     /// Sub-slots
     /// </summary>
-    public virtual IList<IMachineObservationStateSubSlot> MachineObservationStateSlots {
-      get { return m_machineObservationStateSlots; }
-    }
+    public virtual IList<IMachineModeSubSlot> MachineModeSlots => m_machineModeSlots;
+
+    /// <summary>
+    /// Sub-slots
+    /// </summary>
+    public virtual IList<IMachineObservationStateSubSlot> MachineObservationStateSlots => m_machineObservationStateSlots;
     #endregion // Getters / Setters
 
     /// <summary>
@@ -372,7 +339,7 @@ namespace Lemoine.Business.Reason
       // Note: do not use here this.GetType () != obj.GetType
       //       because a Xxx may be compared with a XxxProxy
       //       which may return false although true might be returned
-      ReasonOnlySlot other = obj as ReasonOnlySlot;
+      var other = obj as ReasonOnlySlot;
       if (null == other) {
         return false;
       }
