@@ -478,7 +478,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
           var association = ModelDAOHelper.ModelFactory
             .CreateReasonMachineAssociation (m_machine, associationRange);
           association.SetAutoReason (autoReasonProposal.Reason, autoReasonProposal.ReasonScore,
-            autoReasonProposal.Kind.IsOverwriteRequired (), autoReasonProposal.ReasonDetails);
+            autoReasonProposal.Kind.IsOverwriteRequired (), autoReasonProposal.ReasonDetails, autoReasonProposal.JsonData);
           association.Option = AssociationOption.FinalProcess | AssociationOption.NoCompatibilityCheck;
           association.Apply ();
           ModelDAOHelper.DAOFactory.Flush ();

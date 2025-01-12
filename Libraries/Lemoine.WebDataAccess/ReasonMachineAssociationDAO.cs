@@ -77,10 +77,10 @@ namespace Lemoine.WebDataAccess
     /// <param name="overwriteRequired"></param>
     /// <param name="option"></param>
     /// <returns></returns>
-    public long InsertAutoReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details, string dynamic, bool overwriteRequired, AssociationOption? option)
+    public long InsertAutoReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details, string dynamic, bool overwriteRequired, AssociationOption? option, string jsonData = null)
     {
       var association = ModelDAO.ModelDAOHelper.ModelFactory.CreateReasonMachineAssociation (machine, range);
-      association.SetAutoReason (reason, reasonScore, overwriteRequired, details);
+      association.SetAutoReason (reason, reasonScore, overwriteRequired, details, jsonData);
       association.Dynamic = dynamic;
       association.Option = option;
       return Insert (association);

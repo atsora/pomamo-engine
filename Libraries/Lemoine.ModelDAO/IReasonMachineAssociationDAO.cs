@@ -44,7 +44,7 @@ namespace Lemoine.ModelDAO
     /// <param name="overwriteRequired"></param>
     /// <param name="option"></param>
     /// <returns></returns>
-    long InsertAutoReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details, string dynamic, bool overwriteRequired, AssociationOption? option);
+    long InsertAutoReason (IMachine machine, UtcDateTimeRange range, IReason reason, double reasonScore, string details, string dynamic, bool overwriteRequired, AssociationOption? option, string jsonData = null);
 
     /// <summary>
     /// Insert a row in database that corresponds to a sub-modification

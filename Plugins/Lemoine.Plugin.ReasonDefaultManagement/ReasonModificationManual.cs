@@ -383,7 +383,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
           }
         }
         manualReasonAssociation = ModelDAOHelper.ModelFactory.CreateReasonMachineAssociation (m_machine, range);
-        manualReasonAssociation.SetManualReason (manualReasonProposal.Reason, manualReasonProposal.ReasonScore, manualReasonProposal.ReasonDetails);
+        manualReasonAssociation.SetManualReason (manualReasonProposal.Reason, manualReasonProposal.ReasonScore, manualReasonProposal.ReasonDetails, manualReasonProposal.JsonData);
         if (log.IsDebugEnabled) {
           log.Debug ($"TryResetReason: consider manual reason {manualReasonProposal.Reason.Id} score {manualReasonProposal.ReasonScore} for range {range}");
         }
