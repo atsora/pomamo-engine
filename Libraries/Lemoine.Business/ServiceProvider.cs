@@ -14,18 +14,15 @@ namespace Lemoine.Business
   /// </summary>
   public sealed class ServiceProvider
   {
-    #region Members
     // Default service
     IService m_defaultService;
 
     // Custom services management
     static volatile bool s_customServicesDefined;
     static readonly IDictionary<int, IService> s_customServicesPerThread = new Dictionary<int, IService> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ServiceProvider).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Service to use as default (not null)
     /// </summary>
@@ -37,9 +34,7 @@ namespace Lemoine.Business
         Instance.m_defaultService = value;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class!)
     /// </summary>
@@ -47,7 +42,6 @@ namespace Lemoine.Business
     {
       m_defaultService = new DefaultService ();
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>

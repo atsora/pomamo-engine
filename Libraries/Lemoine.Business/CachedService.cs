@@ -46,16 +46,10 @@ namespace Lemoine.Business
   {
     static readonly TimeSpan MAX_CACHE_TIMEOUT = CacheTimeOut.Permanent.GetTimeSpan ();
 
-    #region Members
     readonly ICacheClient m_cacheClient;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CachedService).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -66,7 +60,6 @@ namespace Lemoine.Business
 
       m_cacheClient = cacheClient;
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>
