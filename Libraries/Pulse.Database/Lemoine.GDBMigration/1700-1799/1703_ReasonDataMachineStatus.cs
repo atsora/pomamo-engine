@@ -16,7 +16,7 @@ namespace Lemoine.GDBMigration
   [Migration (1703)]
   public class AddReasonDataMachineStatus : MigrationExt
   {
-    static readonly ILog log = LogManager.GetLogger (typeof (AddReasonDataReasonSlot).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (AddReasonDataMachineStatus).FullName);
 
     readonly static string REASON_DATA_COLUMN = "reasondata";
 

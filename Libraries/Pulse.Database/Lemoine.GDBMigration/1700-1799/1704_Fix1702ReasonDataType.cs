@@ -11,12 +11,12 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration 1702: Add a column reasondata in reasonproposal table
+  /// Migration 1704: Fix the type of reasondata in table reasonproposal
   /// </summary>
-  [Migration (1702)]
-  public class AddReasonDataPossibleReason : MigrationExt
+  [Migration (1704)]
+  public class Fix1702ReasonDataType : MigrationExt
   {
-    static readonly ILog log = LogManager.GetLogger (typeof (AddReasonDataPossibleReason).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (Fix1702ReasonDataType).FullName);
 
     readonly static string REASON_DATA_COLUMN = "reasondata";
 
@@ -25,8 +25,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      Database.AddColumn (TableName.REASON_PROPOSAL,
-        new Column (REASON_DATA_COLUMN, DbType.String));
       MakeColumnJson (TableName.REASON_PROPOSAL, REASON_DATA_COLUMN);
     }
 
@@ -35,7 +33,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      Database.RemoveColumn (TableName.REASON_PROPOSAL, REASON_DATA_COLUMN);
     }
   }
 }

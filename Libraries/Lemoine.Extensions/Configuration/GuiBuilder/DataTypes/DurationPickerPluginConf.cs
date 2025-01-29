@@ -47,8 +47,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
             this.WithMilliseconds = timeSpan.Milliseconds != 0;
           }
           catch (Exception ex) {
-            log.ErrorFormat ("Parameters.set: invalid value {0}", value);
-            log.Error ("Parameters.set: exception", ex);
+            log.Error ($"Parameters.set: invalid value {value}", ex);
           }
         }
       }
