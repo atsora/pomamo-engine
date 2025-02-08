@@ -19,8 +19,12 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   /// </summary>
   public sealed class DefaultOsConfigReader : DefaultGenericConfigReader, IGenericConfigReader
   {
+    static readonly string LINUX_CONF_DIRECTORY = $"/etc/{PulseInfo.LinuxPackageName}"; // COMON_CONFIG_DIRECTORY_KEY + COMPANY_CONFIG_DIRECTORY_KEY
+
+    const string COMPANY_CONFIG_DIRECTORY_KEY = "CompanyConfigDirectory";
+    // Windows: %CSIDL_COMMON_APPDATA%\{Company} for example %CSIDL_COMMON_APPDATA%\Atsora\
+    
     const string COMMON_CONFIG_DIRECTORY_KEY = "CommonConfigDirectory";
-    static readonly string LINUX_CONF_DIRECTORY = $"/etc/{PulseInfo.LinuxPackageName}"; // COMON_CONFIG_DIRECTORY_KEY
     // Windows: %CSIDL_COMMON_APPDATA%\{Company}\{Product} for example %CSIDL_COMMON_APPDATA%\Atsora\Tracking
 
     const string LOGS_DIRECTORY_KEY = "LogDirectory";
@@ -76,6 +80,8 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       // Note: they may be also defined on Linux in file $"{PulseInfo.LinuxPackageName}.directories" (see OsConfigReader)
 
       switch (key) {
+      case COMPANY_CONFIG_DIRECTORY_KEY:
+        return GetCompanyConfigDirectory ();
       case COMMON_CONFIG_DIRECTORY_KEY:
         return GetCommonConfigDirectory ();
       case LOGS_DIRECTORY_KEY:
@@ -113,6 +119,28 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       return path;
     }
 
+    public string GetCompanyConfigDirectory ()
+    {
+      string path;
+      if (m_isWindows) {
+        path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData),
+#if ATSORA
+      "Atsora");
+#elif LEMOINE        
+      "Lemoine");
+#else
+      "Pomamo");
+#endif
+      }
+      else {
+        path = LINUX_CONF_DIRECTORY;
+      }
+      if (log.IsErrorEnabled && !Directory.Exists (path)) {
+        log.Error ($"GetCompanyConfigDirectory: return a path {path} that does not exist");
+      }
+      return path;
+    }
+
     public string GetCommonConfigDirectory ()
     {
       string path;
@@ -125,7 +153,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
       "Atsora", "Tracking");
 #endif // !CONNECTOR
 #elif LEMOINE        
-      "Lemoine", "PULSE)";
+      "Lemoine", "PULSE");
 #else
       "Pomamo");
 #endif
