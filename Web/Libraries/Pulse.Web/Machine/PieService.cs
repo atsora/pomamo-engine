@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,7 +26,6 @@ namespace Pulse.Web.Machine
   {
     static readonly ILog log = LogManager.GetLogger (typeof (PieService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -33,9 +33,7 @@ namespace Pulse.Web.Machine
       : base (Lemoine.Core.Cache.CacheTimeOut.CurrentLong)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -61,7 +59,7 @@ namespace Pulse.Web.Machine
       }
       if (null == group) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: no group with id {0}", request.GroupId);
+          log.Error ($"GetWithoutCache: no group with id {request.GroupId}");
         }
         return new ErrorDTO ("Invalid group id", ErrorStatus.WrongRequestParameter);
       }
@@ -81,6 +79,5 @@ namespace Pulse.Web.Machine
       }
       return response;
     }
-    #endregion // Methods
   }
 }

@@ -337,7 +337,7 @@ namespace Pulse.Web.Operation
         responseDto = (CycleProgressResponseDTO)outputDTO;
       }
       catch (Exception ex) {
-        log.Error ($"GetCacheTimeout: {outputDTO} is not of type {typeof (CycleProgress)} => return {defaultTimeout}", ex);
+        log.Warn ($"GetCacheTimeout: {outputDTO} is not of type {typeof (CycleProgress)} => return {defaultTimeout}", ex);
         return defaultTimeout;
       }
 

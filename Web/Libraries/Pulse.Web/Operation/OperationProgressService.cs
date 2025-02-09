@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -44,7 +45,6 @@ namespace Pulse.Web.Operation
     /// </summary>
     internal DateTime? RequestDateTime { get; set; }
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -52,7 +52,6 @@ namespace Pulse.Web.Operation
       : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
     {
     }
-    #endregion // Constructors
 
     #region Methods
     IEnumerable<IProgressExtension> GetExtensions (IMonitoredMachine machine)
@@ -100,15 +99,13 @@ namespace Pulse.Web.Operation
 
       if (null == group) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: group with id {0} is not valid",
-            request.GroupId);
+          log.Error ($"GetByGroup: group with id {request.GroupId} is not valid");
         }
         return new ErrorDTO ("Invalid group", ErrorStatus.WrongRequestParameter);
       }
       if (!group.SingleMachine) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: group with id {0} is not supported (multi-machines)",
-            request.GroupId);
+          log.Error ($"GetByGroup: group with id {request.GroupId} is not supported (multi-machines)");
         }
         return new ErrorDTO ("Not supported group (multi-machines)", ErrorStatus.WrongRequestParameter);
       }
@@ -123,9 +120,7 @@ namespace Pulse.Web.Operation
         IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (machineId);
         if (null == monitoredMachine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
+          log.Error ($"GetByMachine: unknown monitored machine with ID {machineId}");
           return new ErrorDTO ("No monitored machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -180,12 +175,12 @@ namespace Pulse.Web.Operation
           var remainingTime = operationProgressResponse.EstimatedEndDateTime.Value
             .Subtract (dataTime);
           if (remainingTime.Ticks < 0) {
-            log.Error ($"GetWithoutCache: remaining time {remainingTime} is negative");
+            log.Error ($"GetByMachine: remaining time {remainingTime} is negative");
           }
           var completion = 1.0 -
             (remainingTime.TotalSeconds / operationProgressResponse.Operation.MachiningDuration.Value.TotalSeconds);
           if (log.IsDebugEnabled) {
-            log.Debug ($"GetWithoutCache: estimate completion {completion} from estimatedCycleEndDateTime");
+            log.Debug ($"GetByMachine: estimate completion {completion} from estimatedCycleEndDateTime");
           }
           responseDTO.Completion = RoundPercent (completion);
         }
@@ -227,7 +222,7 @@ namespace Pulse.Web.Operation
               responseDTO.Running = currentMachineMode.MachineMode.Running;
             }
             else {
-              log.WarnFormat ("GetWithoutCache: current machine mode at {0} is too old", currentMachineMode.DateTime);
+              log.Warn ($"GetByMachine: current machine mode at {currentMachineMode.DateTime} is too old");
             }
           }
         }
@@ -395,7 +390,7 @@ namespace Pulse.Web.Operation
         parsedResponseDateTime = DateTime.Parse (responseDateTime);
       }
       catch (Exception ex) {
-        log.Error ($"IsStringDateTimeBefore: date/time {responseDateTime} could not be parsed, skip it", ex);
+        log.Error ($"UpdateIfResponseDateTimeBefore: date/time {responseDateTime} could not be parsed, skip it", ex);
         return false;
       }
       return UpdateIfResponseDateTimeBefore (parsedResponseDateTime, ref dateTime);
@@ -408,7 +403,7 @@ namespace Pulse.Web.Operation
         parsedResponseDateTime = DateTime.Parse (responseDateTime);
       }
       catch (Exception ex) {
-        log.Error ($"IsStringDateTimeBefore: date/time {responseDateTime} could not be parsed, skip it", ex);
+        log.Error ($"UpdateIfResponseDateTimeBefore: date/time {responseDateTime} could not be parsed, skip it", ex);
         return false;
       }
       return UpdateIfResponseDateTimeBefore (parsedResponseDateTime.Add (delta), ref dateTime);
