@@ -30,20 +30,17 @@ namespace Lemoine.CncDataImport
   ///  at t1     -         [A]
   ///  at t2     -         [A-------]
   ///  at t3     -         [A-----------------]           (scenario 1)
-  ///            -         [A-----------------([B]        (scenario 2)
+  ///            -         [A-----------------][B]        (scenario 2)
   ///            -         [A-------]          [B]        (scenario 3)
   /// </summary>
   internal sealed class ImportDataCncAlarm : IImportData
   {
     static readonly TimeSpan DEFAULT_MAX_ALARM_GAP = TimeSpan.FromMinutes (1);
 
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
     readonly CacheAlarm m_cache;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
@@ -54,9 +51,7 @@ namespace Lemoine.CncDataImport
     /// Maximum duration of a gap
     /// </summary>
     TimeSpan MaxAlarmGap { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -73,7 +68,6 @@ namespace Lemoine.CncDataImport
       m_cache = new CacheAlarm (machineModule);
       MaxAlarmGap = ConfigSet.LoadAndGet<TimeSpan> ("MaxAlarmGap", DEFAULT_MAX_ALARM_GAP);
     }
-    #endregion // Constructors
 
     #region IImportData implementation
     /// <summary>
@@ -143,7 +137,7 @@ namespace Lemoine.CncDataImport
     /// <param name="datas"></param>
     public void ImportDatas (IList<ExchangeData> datas, CancellationToken cancellationToken = default)
     {
-      if (datas == null) {
+      if (datas is null) {
         log.Error ("ImportDataCncAlarm.ImportDatas: datas is null");
         return;
       }
@@ -192,7 +186,6 @@ namespace Lemoine.CncDataImport
     }
     #endregion // IImportData implementation
 
-    #region Private methods
     /// <summary>
     /// Transform an object into a list of cncalarm, if possible
     /// Can return null
@@ -248,18 +241,14 @@ namespace Lemoine.CncDataImport
         if (cachedCncAlarm != null) {
           if (cachedCncAlarm.DateTimeRange.Upper.Value > startDatetime) {
             // In that case, we ignore
-            log.FatalFormat ("ImportCncAlarm: " +
-                            "the end of the last alarm in the cache comes after the beginning of the first alarm to process ({0} > {1}). " +
-                            "This should not happen => skip it.",
-                            cachedCncAlarm.DateTimeRange.Upper.Value, startDatetime);
+            log.Fatal ($"ImportCncAlarm: the end of the last alarm in the cache comes after the beginning of the first alarm to process ({cachedCncAlarm.DateTimeRange.Upper.Value} > {startDatetime}). This should not happen => skip it.");
             continue;
           }
           else {
             // Check the gap and possibly clear the cache for this alarm
             if (startDatetime.Subtract (cachedCncAlarm.DateTimeRange.Upper.Value) > MaxAlarmGap) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("ImportCncAlarm: there is a gap {0}-{1}, " +
-                                 "discontinue the CncAlarm {2}",
+                log.DebugFormat ("ImportCncAlarm: there is a gap {0}-{1}, discontinue the CncAlarm {2}",
                                  cachedCncAlarm.DateTimeRange.Upper.Value, startDatetime,
                                  cachedCncAlarm);
               }
@@ -308,8 +297,10 @@ namespace Lemoine.CncDataImport
       // Get the previous cnc value
       ICncAlarm cachedCncAlarm = m_cache.GetStoredReattachedCncAlarm (alarmKey);
 
-      log.DebugFormat ("ProcessCncAlarm: /B new alarm={0} at {1} for key={2} and machineModule={3}",
-                      cncAlarm, startDatetime, alarmKey, m_machineModule);
+      if (log.IsDebugEnabled) {
+        log.DebugFormat ("ProcessCncAlarm: /B new alarm={0} at {1} for key={2} and machineModule={3}",
+                        cncAlarm, startDatetime, alarmKey, m_machineModule);
+      }
 
       if (cachedCncAlarm != null) {
         Debug.Assert (cachedCncAlarm.CncInfo == cncAlarm.CncInfo);
@@ -320,8 +311,10 @@ namespace Lemoine.CncDataImport
         Debug.Assert (cachedCncAlarm.DateTimeRange.Upper.Value <= startDatetime);
 
         // Make the previous CncAlarm longer
-        log.DebugFormat ("ProcessCncAlarm: make the previous CncAlarm {0} longer to {1}",
-                        cachedCncAlarm, endDatetime);
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("ProcessCncAlarm: make the previous CncAlarm {0} longer to {1}",
+                          cachedCncAlarm, endDatetime);
+        }
         cachedCncAlarm.Extend (new UpperBound<DateTime> (endDatetime), true);
       }
       else {
@@ -339,12 +332,11 @@ namespace Lemoine.CncDataImport
 
       // Check not null constraint and save
       if (String.IsNullOrEmpty (cachedCncAlarm.Type)) {
-        log.ErrorFormat ("Type of the alarm {0} is null or empty", cachedCncAlarm);
+        log.Error ($"ProcessCncAlarm: type of the alarm {cachedCncAlarm} is null or empty");
       }
       else {
         ModelDAOHelper.DAOFactory.CncAlarmDAO.MakePersistent (cachedCncAlarm);
       }
     }
-    #endregion // Private methods
   }
 }

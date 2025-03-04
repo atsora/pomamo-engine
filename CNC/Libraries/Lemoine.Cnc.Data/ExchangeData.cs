@@ -166,7 +166,6 @@ namespace Lemoine.Cnc.Data
     /// </summary>
     ExchangeData () { }
 
-    #region Methods
     /// <summary>
     /// ToString method
     /// </summary>
@@ -608,7 +607,6 @@ namespace Lemoine.Cnc.Data
                                ExchangeDataCommand.MachineModuleActivity,
                                ExchangeData.MACHINE_MODE_TRANSLATION_KEY_OR_NAME, v);
     }
-    #endregion // Methods
 
     #region ISerializable interface
     /// <summary>
