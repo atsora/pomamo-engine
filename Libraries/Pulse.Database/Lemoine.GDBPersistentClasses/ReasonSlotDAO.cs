@@ -196,8 +196,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="machine"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    public IReasonSlot FindWithEnd (IMachine machine,
-                                    DateTime end)
+    public IReasonSlot FindWithEnd (IMachine machine, DateTime end)
     {
       Debug.Assert (null != machine);
 

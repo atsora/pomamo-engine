@@ -31,23 +31,23 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
     static readonly string REASON_SELECTION_SCORE_KEY = "Reason.SelectionScore.DefaultReasonMinimalConfig";
     static readonly double REASON_SELECTION_SCORE_DEFAULT = 100.0;
 
+    static readonly string THROW_EXCEPTION_EXTEND_KEY = "DefaultReasonMinimalConfig.ThrowExceptionExtend";
+    static readonly bool THROW_EXCEPTION_EXTEND_DEFAULT = true;
+
     static readonly string CURRENT_MACHINE_MODE_CLOSE_FUTURE_KEY = "DefaultReasonMinimalConfig.CurrentMachineMode.CloseFuture";
     static readonly TimeSpan CURRENT_MACHINE_MODE_CLOSE_FUTURE_DEFAULT = TimeSpan.FromSeconds (4);
 
-    static readonly string LOG_ACTIVE_KEY = "DefaultReasonMinimalConfig.LogActive";
+    static readonly string LOG_ACTIVE_KEY = "Plugin.DefaultReasonMinimalConfig.LogActive";
     static readonly bool LOG_ACTIVE_DEFAULT = false;
 
     static readonly string INTERRUPT_EXTEND_IF_RIGHT_REASON_KEY = "DefaultReasonMinimalConfig.InterruptExtendIfRightReason";
     static readonly bool INTERRUPT_EXTEND_IF_RIGHT_REASON_DEFAULT = true;
 
     IMachine m_machine;
-
     bool m_batch = false;
-
     UtcDateTimeRange m_cacheRange = new UtcDateTimeRange ();
     UpperBound<DateTime> m_cacheConsolidationLimit = new UpperBound<DateTime> ();
     bool? m_cacheIsShort = null;
-
     bool m_logActive;
     IMachineMode m_activeMachineMode;
     IMachineMode m_unknownMachineMode;
@@ -544,9 +544,28 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
 
       // Test again the duration with an extended period of time
       // if needed
-      bool noDurationInterruption = ExtendToLeft (machine, ref effectiveRange, extendedPeriodReasonSlots);
+      bool noDurationInterruption;
+      try {
+        noDurationInterruption = ExtendToLeft (machine, ref effectiveRange, extendedPeriodReasonSlots);
+      }
+      catch (Exception ex) {
+        log.Fatal ($"TestShort: exception in ExtendToLeft", ex);
+        if (Lemoine.Info.ConfigSet.LoadAndGet (THROW_EXCEPTION_EXTEND_KEY, THROW_EXCEPTION_EXTEND_DEFAULT)) {
+          throw;
+        }
+        noDurationInterruption = true;
+      }
       if (noDurationInterruption) {
-        noDurationInterruption = ExtendToRight (machine, ref effectiveRange, extendedPeriodReasonSlots);
+        try {
+          noDurationInterruption = ExtendToRight (machine, ref effectiveRange, extendedPeriodReasonSlots);
+        }
+        catch (Exception ex) {
+          log.Fatal ($"TestShort: exception in ExtendToRight", ex);
+          if (Lemoine.Info.ConfigSet.LoadAndGet (THROW_EXCEPTION_EXTEND_KEY, THROW_EXCEPTION_EXTEND_DEFAULT)) {
+            throw;
+          }
+          noDurationInterruption = true;
+        }
       }
 
       if (extendedPeriodReasonSlots.Any ()) {
@@ -609,9 +628,23 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
       }
 
       var reasonSlotBefore = ModelDAOHelper.DAOFactory.ReasonSlotDAO
-        .FindWithEnd (machine,
-                      range.Lower.Value);
+        .FindWithEnd (machine, range.Lower.Value);
       if (null != reasonSlotBefore) {
+        if (!reasonSlotBefore.DateTimeRange.Upper.HasValue) {
+          log.Fatal ($"ExtendToLeft: no upper value in reason slot before id={reasonSlotBefore.Id} range={reasonSlotBefore.DateTimeRange}");
+          throw new InvalidOperationException ("Invalid reason slot, with no upper date/time");
+        }
+        else if (reasonSlotBefore.DateTimeRange.IsEmpty ()) {
+          log.Fatal ($"ExtendToLeft: reason slot before id={reasonSlotBefore.Id} with an empty range={reasonSlotBefore.DateTimeRange}");
+          throw new InvalidOperationException ("Invalid reason slot, with an empty range");
+        }
+        else if (Bound.Compare<DateTime> (range.Lower, reasonSlotBefore.DateTimeRange.Upper) < 0) {
+          log.Fatal ($"ExtendToLeft: reason slot before id={reasonSlotBefore.Id} range={reasonSlotBefore.DateTimeRange} is not before reason slot range={range}");
+          throw new Exception ("Invalid reason slot before");
+        }
+        else if (!reasonSlotBefore.DateTimeRange.Upper.Value.Equals (range.Lower.Value)) {
+          log.Fatal ($"ExtendToLeft: reason slot before id={reasonSlotBefore.Id} range={reasonSlotBefore.DateTimeRange} is not adjacent to  reason slot range={range}, but try to continue");
+        }
         if (log.IsDebugEnabled && m_logActive) {
           log.Debug ($"ExtendToleft: check if {range} can be extended to {reasonSlotBefore.DateTimeRange.Lower}");
         }
@@ -619,18 +652,31 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
           if (log.IsDebugEnabled && m_logActive) {
             log.Debug ($"ExtendToLeft: extend {range} to {reasonSlotBefore.DateTimeRange.Lower}");
           }
-          var newRange = new UtcDateTimeRange (range.Union (reasonSlotBefore.DateTimeRange));
-          if (!newRange.ContainsRange (range) || newRange.Equals (range)) {
-            log.Fatal ($"ExtendToLeft: new range {newRange} is not larger than old {range}");
-            throw new InvalidOperationException ("Unexpected range in recursion");
+          try {
+            UtcDateTimeRange newRange;
+            try {
+              newRange = new UtcDateTimeRange (range.Union (reasonSlotBefore.DateTimeRange));
+            }
+            catch (Exception ex) {
+              log.Fatal ($"ExtendToLeft: exception in union of {range} with {reasonSlotBefore.DateTimeRange}", ex);
+              newRange = new UtcDateTimeRange (reasonSlotBefore.DateTimeRange.Lower, range.Upper, reasonSlotBefore.DateTimeRange.LowerInclusive, range.UpperInclusive);
+            }
+            if (!newRange.ContainsRange (range) || newRange.Equals (range)) {
+              log.Fatal ($"ExtendToLeft: new range {newRange} is not larger than old {range}");
+              throw new InvalidOperationException ("Unexpected range in recursion");
+            }
+            range = newRange;
+            reasonSlots.Insert (0, reasonSlotBefore);
+            if (((reasonSlotBefore.Reason?.Id ?? 0) == m_inactiveLongReason.Id)
+              && Lemoine.Info.ConfigSet.LoadAndGet (INTERRUPT_EXTEND_IF_RIGHT_REASON_KEY, INTERRUPT_EXTEND_IF_RIGHT_REASON_DEFAULT)) {
+              // The right reason is already set, there is no reason to continue
+              log.Info ($"ExtendToLeft: stop extending the periods since the new slot at {reasonSlotBefore.DateTimeRange} has already the right reason => isLong");
+              return false;
+            }
           }
-          range = newRange;
-          reasonSlots.Insert (0, reasonSlotBefore);
-          if (((reasonSlotBefore.Reason?.Id ?? 0) == m_inactiveLongReason.Id)
-            && Lemoine.Info.ConfigSet.LoadAndGet (INTERRUPT_EXTEND_IF_RIGHT_REASON_KEY, INTERRUPT_EXTEND_IF_RIGHT_REASON_DEFAULT)) {
-            // The right reason is already set, there is no reason to continue
-            log.Info ($"ExtendToLeft: stop extending the periods since the new slot at {reasonSlotBefore.DateTimeRange} has already the right reason => isLong");
-            return false;
+          catch (Exception ex) {
+            log.Fatal ($"ExtendToLeft: exception when trying to get a new extended range", ex);
+            throw;
           }
           // Try again
           return ExtendToLeft (machine, ref range, reasonSlots, maxRecursionNumber - 1);
@@ -667,8 +713,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
       // The range may be with upper bound inclusive (unique date/time)
       var dateTimeAfter = range.UpperInclusive ? range.Upper.Value.AddSeconds (1) : range.Upper.Value;
       var reasonSlotAfter = ModelDAOHelper.DAOFactory.ReasonSlotDAO
-        .FindAt (machine,
-                 dateTimeAfter);
+        .FindAt (machine, dateTimeAfter);
       if (null != reasonSlotAfter) {
         if (!reasonSlotAfter.DateTimeRange.Lower.HasValue) {
           log.Fatal ($"ExtendToRight: no lower value in reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange}");
@@ -682,30 +727,39 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
           log.Fatal ($"ExtendToRight: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not after reason slot range={range}");
           throw new Exception ("Invalid reason slot after");
         }
-        else { // Valid next reasonSlotAfter
+        else if (!reasonSlotAfter.DateTimeRange.Lower.Value.Equals (range.Upper.Value)) {
+          log.Fatal ($"ExtendToRight: reason slot after id={reasonSlotAfter.Id} is not adjacent to range={reasonSlotAfter.DateTimeRange}, but try to continue");
+        }
+        // else Valid next reasonSlotAfter
+        if (log.IsDebugEnabled && m_logActive) {
+          log.Debug ($"ExtendToRight: check if {range} can be extended to {reasonSlotAfter.DateTimeRange.Upper}");
+        }
+        if (!(IsRunning (reasonSlotAfter) ?? true)) { // Inactive
           if (log.IsDebugEnabled && m_logActive) {
-            log.Debug ($"ExtendToRight: check if {range} can be extended to {reasonSlotAfter.DateTimeRange.Upper}");
+            log.Debug ($"ExtendToRight: extend {range} to {reasonSlotAfter.DateTimeRange.Upper}");
           }
-          if (!(IsRunning (reasonSlotAfter) ?? true)) { // Inactive
-            if (log.IsDebugEnabled && m_logActive) {
-              log.Debug ($"ExtendToRight: extend {range} to {reasonSlotAfter.DateTimeRange.Upper}");
-            }
-            var newRange = new UtcDateTimeRange (range.Union (reasonSlotAfter.DateTimeRange));
-            if (!newRange.ContainsRange (range) || newRange.Equals (range)) {
-              log.Fatal ($"ExtendToRight: new range {newRange} is not larger than old {range}. Slot after={reasonSlotAfter.Id} {reasonSlotAfter.DateTimeRange}. StackTrace={System.Environment.StackTrace}");
-              throw new InvalidOperationException ("Unexpected range in recursion");
-            }
-            range = newRange;
-            reasonSlots.Add (reasonSlotAfter);
-            if (((reasonSlotAfter.Reason?.Id ?? 0) == m_inactiveLongReason.Id)
-              && Lemoine.Info.ConfigSet.LoadAndGet (INTERRUPT_EXTEND_IF_RIGHT_REASON_KEY, INTERRUPT_EXTEND_IF_RIGHT_REASON_DEFAULT)) {
-              // The right reason is already set, there is no reason to continue
-              log.Info ($"ExtendToRight: stop extending the periods since the new slot at {reasonSlotAfter.DateTimeRange} has already the right reason => isLong");
-              return false;
-            }
-            // Try again
-            return ExtendToRight (machine, ref range, reasonSlots, maxRecursionNumber - 1);
+          UtcDateTimeRange newRange;
+          try {
+            newRange = new UtcDateTimeRange (range.Union (reasonSlotAfter.DateTimeRange));
           }
+          catch (Exception) {
+            log.Fatal ($"ExtendToRight: exception in union of {range} and {reasonSlotAfter.DateTimeRange}");
+            newRange = new UtcDateTimeRange (range.Lower, reasonSlotAfter.DateTimeRange.Upper, range.LowerInclusive, reasonSlotAfter.DateTimeRange.UpperInclusive);
+          }
+          if (!newRange.ContainsRange (range) || newRange.Equals (range)) {
+            log.Fatal ($"ExtendToRight: new range {newRange} is not larger than old {range}. Slot after={reasonSlotAfter.Id} {reasonSlotAfter.DateTimeRange}. StackTrace={System.Environment.StackTrace}");
+            throw new InvalidOperationException ("Unexpected range in recursion");
+          }
+          range = newRange;
+          reasonSlots.Add (reasonSlotAfter);
+          if (((reasonSlotAfter.Reason?.Id ?? 0) == m_inactiveLongReason.Id)
+            && Lemoine.Info.ConfigSet.LoadAndGet (INTERRUPT_EXTEND_IF_RIGHT_REASON_KEY, INTERRUPT_EXTEND_IF_RIGHT_REASON_DEFAULT)) {
+            // The right reason is already set, there is no reason to continue
+            log.Info ($"ExtendToRight: stop extending the periods since the new slot at {reasonSlotAfter.DateTimeRange} has already the right reason => isLong");
+            return false;
+          }
+          // Try again
+          return ExtendToRight (machine, ref range, reasonSlots, maxRecursionNumber - 1);
         }
       }
 
@@ -797,8 +851,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
       var currentMachineMode = ModelDAOHelper.DAOFactory.CurrentMachineModeDAO
         .Find (m_machine);
       if (null == currentMachineMode) {
-        log.ErrorFormat ("GetRangeFromCurrentMachineMode: no current machine mode for machine {0}",
-          m_machine.Id);
+        log.Error ($"GetRangeFromCurrentMachineMode: no current machine mode for machine {m_machine.Id}");
         return false;
       }
 
@@ -809,7 +862,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
             currentMachineMode.MachineMode.Id, machineMode.Id, at);
           return false;
         }
-        if (log.IsDebugEnabled) {
+        if (log.IsDebugEnabled && m_logActive) {
           log.DebugFormat ("GetRangeFromCurrentMachineMode: from current machine mode {0}", currentMachineModeRange);
         }
         range = currentMachineModeRange;
@@ -840,13 +893,13 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
       IFact fact = ModelDAOHelper.DAOFactory.FactDAO
         .FindAt (m_machine, at);
       if (null == fact) {
-        if (log.IsDebugEnabled) {
+        if (log.IsDebugEnabled && m_logActive) {
           log.DebugFormat ("GetRangeFromFact: no fact at {0}", at);
         }
         return GetRangeFromLastFact (at, machineMode, ref range);
       }
       else if (fact.CncMachineMode.Id == machineMode.Id) {
-        if (log.IsDebugEnabled) {
+        if (log.IsDebugEnabled && m_logActive) {
           log.DebugFormat ("GetRangeFromFact: get range {0} from fact {1} {2}-{3}", fact.DateTimeRange, fact.Id, fact.Begin, fact.End);
         }
         range = fact.DateTimeRange;
@@ -866,7 +919,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
       var fact = ModelDAOHelper.DAOFactory.FactDAO
         .GetLast (m_machine);
       if (null == fact) {
-        log.ErrorFormat ("GetRangeFromLastFact: machine has no fact (GetLast returned null)");
+        log.Error ("GetRangeFromLastFact: machine has no fact (GetLast returned null)");
         return false;
       }
       else if (Bound.Compare<DateTime> (at, fact.Begin) < 0) {

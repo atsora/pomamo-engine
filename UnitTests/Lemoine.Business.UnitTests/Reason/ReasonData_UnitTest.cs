@@ -29,7 +29,8 @@ namespace Lemoine.Business.UnitTests.Reason
           }
         }
         """;
-      // TODO: ...
+      Assert.That (json, Is.Not.Null);
+      // TODO: Test deserialization
     }
 
     [Test]
