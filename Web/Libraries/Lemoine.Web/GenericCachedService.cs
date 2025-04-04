@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,9 +23,6 @@ namespace Lemoine.Web
   /// </summary>
   public abstract class GenericCachedService<InputDTO> : ICachedHandler
   {
-    readonly Regex DISABLE_BROWSER_CACHE_URL_FIX_REGEX = new Regex ("&_=[0-9]+$");
-    readonly Regex CACHE_PARAMETER_REGEX = new Regex ("&Cache=(No|Clear)", RegexOptions.IgnoreCase);
-
     readonly ILog log = LogManager.GetLogger (typeof (GenericCachedService<InputDTO>).FullName);
 
     CacheTimeOut DefaultCacheTimeOut { get; set; }

@@ -27,14 +27,12 @@ namespace Lemoine.Web
     /// </summary>
     public string RemoteIp { get; set; }
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     protected GenericSaveService ()
     {
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Get
