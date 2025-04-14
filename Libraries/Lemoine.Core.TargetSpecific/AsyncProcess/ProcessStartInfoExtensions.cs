@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lemoine.Core.AsyncProcess
@@ -28,7 +29,9 @@ namespace Lemoine.Core.AsyncProcess
       var taskCompletionSource = new TaskCompletionSource<ProcessResult> ();
       var process = new Process { StartInfo = processStartInfo, EnableRaisingEvents = true };
       process.Exited += (sender, args) => {
-        log.DebugFormat ($"RunProcessAsync: {processStartInfo.FileName} {processStartInfo.Arguments} exited");
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RunProcessAsync: {processStartInfo.FileName} {processStartInfo.Arguments} exited");
+        }
         process.WaitForExit (); // To complete processing the standard / error outputs
         var standardOutputString = standardOutput.ToString ();
         var standardErrorString = standardError.ToString ();
