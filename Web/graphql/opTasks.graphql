@@ -14,7 +14,10 @@ type Query {
   maintenancePartReferences: [String!]!
   "Get the machine groups that may be used by the op tasks"
   opTaskMachineGroups: [MachineGroupCategory!]!
+  "Get all the op tasks"
   opTasks: [OpTask!]!
+  "Get the op task for the specified ID"
+  opTask(opTaskId: ID!): OpTask!
   "Op tasks by role"
   opTasksByRole(role: String!): [OpTask!]!
   "Op tasks by role and machine group"
@@ -28,14 +31,26 @@ type Query {
 }
 
 type Mutation {
-  createOpTask(opTask: NewOpTask!): OpTask!
-  editOpTask(opTask: UpdateOpTask!): OpTask!
+  createQualityTask(opTask: NewQualityTask!): QualityTask!
+  createMaintenanceTask(opTask: NewMaintenanceTask!): MaintenanceTask!
+  createAdviseDocTask(opTask: NewAdviseDocTask!): AdviseDocTask!
+  createShiftChangeMessage(opTask: NewShiftChangeMessage!): ShiftChangeMessage!
+  createAdviseShiftChange(opTask: NewAdviseShiftChange!): AdviseShiftChange!
+  editQualityTask(opTask: UpdateQualityTask!): QualityTask!
+  editMaintenanceTask(opTask: UpdateMaintenanceTask!): MaintenanceTask!
+  editAdviseDocTask(opTask: UpdateAdviseDocTask!): AdviseDocTask!
+  editShiftChangeMessage(opTask: UpdateShiftChangeMessage!): ShiftChangeMessage!
+  editAdviseShiftChange(opTask: UpdateAdviseShiftChange!): AdviseShiftChange!
   validateOpTaskAction(validation: OpTaskActionValidation!): OpTaskAction!
   correctOpTaskActionValidation(validation: OpTaskActionValidation!): OpTaskAction!
+  "Add a document to an op task that supports it"
+  addDoc(opTaskId: ID!, docId: ID!): OpTask!
+  "Remove a document from an op task that supports it"
+  removeDoc (opTaskId: ID!, docId: ID!): OpTask!
 }
 
 type MachineGroupCategory {
-  name: String!j
+  name: String!
   groups: [MachineGroup!]!
 }
 
@@ -45,7 +60,12 @@ type MachineGroup {
   subGroups: [MachineGroup!]
 }
 
-union OpTaskState = Draft | Active | Pause | Archived
+enum OpTaskState {
+  Draft
+  Active
+  Pause
+  Archived
+}
 
 "Time of the day: hh:MM[:ss]"
 scalar Time
@@ -113,9 +133,38 @@ type TimeRange {
 }
 
 type ShiftStart {
+  "Optional number of seconds after the shift start"
+  seconds: Int
 }
 
 type ShiftEnd {
+  "Optional number of seconds before the shift end"
+  seconds: Int
+}
+
+input FrequencyInput {
+  "Frequency type: FixedDuration | FixedRange | MachiningDuration | MachiningRange | NumberOfParts | PartsRange | NumberOfCycles | CyclesRange | FixedTime | TimeRange | ShiftStart | ShiftEnd"
+  frequencyType: String!
+  "Number of seconds in the case of FixedDuration, MachiningDuration, shiftStart, shiftEnd"
+  seconds: Int
+  "Minimum number of seconds in the case of FixedRange and machiningRange"
+  minSeconds: Int
+  "Maximum number of seconds in the case of FixedRange and MachiningRange"
+  maxSeconds: Int
+  "Number of parts in the case of NumberOfParts or NumberOfCycles"
+  number: Int
+  "Minimum number of parts in the case of PartsRange or CyclesRange"
+  min: Int
+  "Maximum number of parts in the case of PartsRange or CyclesRange"
+  max: Int
+  "week day of the start time in the case of TimeRange or FixedTime"
+  weekDay: [WeekDay!]
+  "Time in the case of FixedTime"
+  time: Time
+  "Start time in the case of TimeRange"
+  start: Time
+  "End time in the case of TimeRange"
+  end: Time
 }
 
 interface IOpTask {
@@ -130,8 +179,6 @@ interface IOpTask {
 }
 
 union OpTask = QualityTask | MaintenanceTask | ShiftChangeMessage | AdviseShiftChange | AdviseDocTask
-union NewOpTask = NewQualityTask | NewMaintenanceTask | NewShiftChangeMessage | NewAdviseShiftChange | NewAdviseDocTask
-union UpdateOpTask = UpdateQualityTask | UpdateMaintenanceTask | UpdateShiftChangeMessage | UpdateAdviseShiftChange | UpdateAdviseDocTask
 
 enum CommentRequirement {
   None
@@ -178,6 +225,18 @@ type Dimension {
   description: String
 }
 
+input DimensionInput {
+  "Only for existing dimensions"
+  id: ID
+  name: String!
+  value: Float!
+  unit: Unit
+  tolerancePlus: Float!
+  toleranceMinus: Float!
+  numberOfParts: Int!
+  description: String
+}
+
 type QualityTask implements IOpTask {
   id: ID!
   state: OpTaskState!
@@ -189,20 +248,22 @@ type QualityTask implements IOpTask {
   role: String!
   commentRequirement: CommentRequirement!
   dimensions: [Dimension!]
+  docs: [Doc!]!
 }
 
-input NewQualityTask implements INewOpTask {
+input NewQualityTask {
   name: String!
   description: String
   machineGroup: String!
-  frequency: Frequency!
+  frequency: FrequencyInput!
   "Who is responsible of the task: Operator, Maintenance, ..."
   role: String!
   commentRequirement: CommentRequirement!
-  dimensions: [Dimension!]  
+  dimensions: [DimensionInput!]  
+  docIds: [ID!]!
 }
 
-input UpdateQualityTask implements IUpdateOpTask {
+input UpdateQualityTask {
   id: ID!
   state: OpTaskState
   "If null: leave unchanged"
@@ -210,9 +271,9 @@ input UpdateQualityTask implements IUpdateOpTask {
   "If null: leave unchanged"
   description: String
   "If null: leave unchanged"
-  frequency: Frequency
+  frequency: FrequencyInput
   commentRequirement: CommentRequirement
-  dimensions: [Dimension!]
+  dimensions: [DimensionInput!]
 }
 
 type MaintenanceTask implements IOpTask {
@@ -228,18 +289,19 @@ type MaintenanceTask implements IOpTask {
   partReference: String
 }
 
-input NewMaintenanceTask implements INewOpTask {
+input NewMaintenanceTask {
   name: String!
   description: String
   machineGroup: String!
-  frequency: Frequency!
+  frequency: FrequencyInput!
   "Who is responsible of the task: Operator, Maintenance, ..."
   role: String!
   commentRequirement: CommentRequirement!
   partReference: String
+  docIds: [ID!]!
 }
 
-input UpdateMaintenanceTask implements IUpdateOpTask {
+input UpdateMaintenanceTask {
   id: ID!
   state: OpTaskState
   "If null: leave unchanged"
@@ -247,7 +309,7 @@ input UpdateMaintenanceTask implements IUpdateOpTask {
   "If null: leave unchanged"
   description: String
   "If null: leave unchanged"
-  frequency: Frequency
+  frequency: FrequencyInput
   commentRequirement: CommentRequirement
   partReference: String
 }
@@ -264,18 +326,20 @@ type ShiftChangeMessage implements IOpTask {
   frequency: Frequency!
   "Who is responsible of the task: Operator, Maintenance, ..."
   role: String!
+  docs: [Doc!]!
 }
 
-input NewShiftChangeMessage implements INewOpTask {
+input NewShiftChangeMessage {
   name: String!
   description: String
   machineGroup: String!
-  frequency: Frequency!
+  frequency: FrequencyInput!
   "Who is responsible of the task: Operator, Maintenance, ..."
   role: String!
+  docIds: [ID!]!
 }
 
-input UpdateShiftChangeMessage implements IUpdateOpTask {
+input UpdateShiftChangeMessage {
   id: ID!
   state: OpTaskState
   "If null: leave unchanged"
@@ -283,7 +347,7 @@ input UpdateShiftChangeMessage implements IUpdateOpTask {
   "If null: leave unchanged"
   description: String
   "If null: leave unchanged"
-  frequency: Frequency
+  frequency: FrequencyInput
 }
 
 """
@@ -300,16 +364,16 @@ type AdviseShiftChange implements IOpTask {
   role: String!
 }
 
-input NewAdviseShiftChange implements INewOpTask {
+input NewAdviseShiftChange {
   name: String!
   description: String
   machineGroup: String!
-  frequency: Frequency!
+  frequency: FrequencyInput!
   "Who is responsible of the task: Operator, Maintenance, ..."
   role: String!
 }
 
-input UpdateAdviseShiftChange implements IUpdateOpTask {
+input UpdateAdviseShiftChange {
   id: ID!
   state: OpTaskState
   "If null: leave unchanged"
@@ -317,7 +381,7 @@ input UpdateAdviseShiftChange implements IUpdateOpTask {
   "If null: leave unchanged"
   description: String
   "If null: leave unchanged"
-  frequency: Frequency
+  frequency: FrequencyInput
 }
 
 type Doc {
@@ -341,17 +405,17 @@ type AdviseDocTask implements IOpTask {
   doc: Doc!
 }
 
-input NewAdviseDocTask implements INewOpTask {
+input NewAdviseDocTask {
   name: String!
   description: String
   machineGroup: String!
-  frequency: Frequency!
+  frequency: FrequencyInput!
   "Who is responsible of the task: Operator, Maintenance, ..."
   role: String!
-  doc: Doc!
+  docId: ID!
 }
 
-input UpdateAdviseDocTask implements IUpdateOpTask {
+input UpdateAdviseDocTask {
   id: ID!
   state: OpTaskState
   "If null: leave unchanged"
@@ -359,7 +423,7 @@ input UpdateAdviseDocTask implements IUpdateOpTask {
   "If null: leave unchanged"
   description: String
   "If null: leave unchanged"
-  frequency: Frequency
+  frequency: FrequencyInput
 }
 
 "UTC DateTime: YYYYmmddTHHmmssZ"
@@ -371,8 +435,6 @@ enum OpTaskActionCompletion {
   Validated
   Error
 }
-
-union UpdateOpTaskAction = UpdateQualityAction | UpdateMaintenanceAction | UpdateShiftChangeMessageAction | UpdateAdviseShiftChangeAction | UpdateAdviceDocAction
 
 "If no result is set, according to the start and end date/times, the state of the action is To come / To do / Late"
 type OpTaskAction {
@@ -388,10 +450,15 @@ union OpTaskActionResult = QualityResult | MaintenanceResult | ShiftChangeResult
 
 interface IOpTaskActionResult {
   dateTime: UtcDateTime!
-  completion: OpTackActionCompletion!
+  completion: OpTaskActionCompletion!
 }
 
 type Measure {
+  dimensionId: ID!
+  value: Float!
+}
+
+input MeasureInput {
   dimensionId: ID!
   value: Float!
 }
@@ -425,36 +492,11 @@ type AdviseDocResult implements IOpTaskActionResult {
   completion: OpTaskActionCompletion!
 }
 
-union OpTaskActionValidation = QualityValidation | MaintenanceValidation | ShiftChangeValidation | AdviseShiftChangeValidation | AdviseDocValidation
-
-interface IOpTaskActionValidation {
-  "Op task action ID"
+input OpTaskActionValidation {
   id: ID!
-}
-
-input QualityValidation implements IOpTaskActionValidation {
-  id: ID!
-  completion: OpTaskActionCompletion!
+  completion: OpTaskActionCompletion
+  "Only when applicable"
   comment: String
-  measures: [Measure!]!
-}
-
-input MaintenanceValidation implements IOpTaskActionValidation {
-  id: ID!
-  completion: OpTaskActionCompletion!
-  comment: String
-}
-
-input ShiftChangeValidation implements IOpTaskActionValidation {
-  id: ID!
-  completion: OpTaskActionCompletion!
-  comment: String!
-}
-
-type AdviseShiftChangeValidation implements IOpTaskActionValidation {
-  id: ID!
-}
-
-type AdviseDocValidation implements IOpTaskActionValidation {
-  id: ID!
+  "For Quality validation"
+  measures: [MeasureInput!]
 }
