@@ -33,8 +33,18 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "UndefinedValue");
+        translation.TranslationValue = "Non défini";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "WorkOrderProjectIsJob");
         translation.TranslationValue = "Work Order + Project = Job";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "WorkOrderProjectIsJob");
+        translation.TranslationValue = "OF + Projet = Job";
         InsertDefaultValue (translation);
       }
       {
@@ -43,8 +53,18 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "ProjectComponentIsPart");
+        translation.TranslationValue = "Projet + Composant = Pièce";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "IntermediateWorkPieceOperationIsSimpleOperation");
         translation.TranslationValue = "Intermediate Work Piece + Operation = Simple Operation";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "IntermediateWorkPieceOperationIsSimpleOperation");
+        translation.TranslationValue = "Pièce intermédiaire + Opération = Opération simple";
         InsertDefaultValue (translation);
       }
       {
@@ -53,8 +73,18 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "UniqueWorkOrderFromProjectOrComponent");
+        translation.TranslationValue = "Projet/Composant/Pièce => 1 OF";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "UniqueComponentFromOperation");
         translation.TranslationValue = "Operation => 1 Component/Part";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "UniqueComponentFromOperation");
+        translation.TranslationValue = "Opération => 1 Composant/Pièce";
         InsertDefaultValue (translation);
       }
       {
@@ -63,8 +93,18 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "ComponentFromOperationOnly");
+        translation.TranslationValue = "Projet/Composant/Pièce <= Opération seulement";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "WorkOrderFromComponentOnly");
         translation.TranslationValue = "WorkOrder <= Project/Component/Part only";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "WorkOrderFromComponentOnly");
+        translation.TranslationValue = "OF <= Projet/Composant/Pièce seulement";
         InsertDefaultValue (translation);
       }
 
@@ -75,8 +115,18 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "MachineModeCategoryInactive");
+        translation.TranslationValue = "Inactif";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "MachineModeCategoryActive");
         translation.TranslationValue = "Active";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeCategoryActive");
+        translation.TranslationValue = "Actif";
         InsertDefaultValue (translation);
       }
       {
@@ -85,13 +135,28 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "MachineModeCategoryError");
+        translation.TranslationValue = "Erreur machine";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "MachineModeCategoryUnknown");
         translation.TranslationValue = "Unknown";
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "MachineModeCategoryUnknown");
+        translation.TranslationValue = "État inconnu";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "MachineModeCategoryEco");
         translation.TranslationValue = "Eco";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeCategoryEco");
+        translation.TranslationValue = "Éco";
         InsertDefaultValue (translation);
       }
 
@@ -102,8 +167,18 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("fr", "MachineModeInactive");
+        translation.TranslationValue = "Inactif";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "MachineModeActive");
         translation.TranslationValue = "Active";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeActive");
+        translation.TranslationValue = "Actif";
         InsertDefaultValue (translation);
       }
       {
