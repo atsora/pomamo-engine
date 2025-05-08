@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -64,20 +65,16 @@ namespace Lemoine.I18N
       get { return m_extension; }
       set { m_extension = value; }
     }
-    
+
     /// <summary>
     /// Base file name
     /// </summary>
-    public string BaseFileName {
-      get { return m_baseFileName; }
-    }
-    
+    public string BaseFileName => m_baseFileName;
+
     /// <summary>
     /// Main directory path
     /// </summary>
-    public string Directory {
-      get { return m_directory; }
-    }
+    public string Directory => m_directory;
     
     /// <summary>
     /// Alternative directories
@@ -144,9 +141,7 @@ namespace Lemoine.I18N
         else {
           string toRemove = m_baseFileName + m_localePrefix;
           if (!fileNameWithoutExtension.StartsWith (toRemove, StringComparison.InvariantCultureIgnoreCase)) {
-            log.ErrorFormat ("LoadFromDirectory: " +
-                             "invalid locale prefix in {0}",
-                             path);
+            log.Error ($"LoadFromDirectory: invalid locale prefix in {path}");
           }
           else {
             string locale = fileNameWithoutExtension.Substring (toRemove.Length);
@@ -158,10 +153,8 @@ namespace Lemoine.I18N
               try {
                 cultureInfo = CultureInfo.CreateSpecificCulture (locale);
               }
-              catch (Exception) {
-                log.ErrorFormat ("LoadFromDirectory: " +
-                                 "invalid locale in {0}",
-                                 path);
+              catch (Exception ex) {
+                log.Error ($"LoadFromDirectory: invalid locale in {path}", ex);
               }
             }
             if (null != cultureInfo) {
