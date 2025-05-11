@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>18.1.0.0</AssemblyVersion>
+    <AssemblyVersion>18.2.0.0</AssemblyVersion>
     <NoWarn>0649</NoWarn>
     <LangVersion>preview</LangVersion>
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
