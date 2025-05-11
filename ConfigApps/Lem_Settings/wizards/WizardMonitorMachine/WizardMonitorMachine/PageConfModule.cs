@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -39,7 +40,6 @@ The old configuration, if any, is displayed on the bottom of the page.
     }
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -48,9 +48,7 @@ The old configuration, if any, is displayed on the bottom of the page.
       InitializeComponent ();
       textOldParameters.ReadOnly = true;
     }
-    #endregion // Constructors
-
-    #region Page methods
+    
     /// <summary>
     /// Initialization of the page, happening before the first load
     /// This method is called again if the database has been updated
@@ -233,6 +231,5 @@ The old configuration, if any, is displayed on the bottom of the page.
       CncDocument cncDocument = xmlData[data.Get<string> (Item.CONFIG_FILE)];
       return cncDocument.GetSummary (ContextManager.UserCategory == LemSettingsGlobal.UserCategory.SUPER_ADMIN);
     }
-    #endregion // Page methods
   }
 }

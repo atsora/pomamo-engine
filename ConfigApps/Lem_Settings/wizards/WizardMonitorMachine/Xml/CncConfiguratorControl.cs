@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -16,11 +17,8 @@ namespace WizardMonitorMachine
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CncConfiguratorControl).FullName);
 
-    #region Getters / Setters
     private IList<AbstractParameter> Parameters { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -28,9 +26,7 @@ namespace WizardMonitorMachine
     {
       InitializeComponent();
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize with all field to configure a cnc document
     /// </summary>
@@ -77,6 +73,5 @@ namespace WizardMonitorMachine
         }
       }
     }
-    #endregion // Methods
   }
 }

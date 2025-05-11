@@ -1,5 +1,6 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-//
+// Copyright (C) 2025 Atsora Solutions
+// 
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
@@ -101,7 +102,6 @@ namespace WizardMonitorMachine
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncDocument).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Filename
     /// </summary>
@@ -196,9 +196,7 @@ namespace WizardMonitorMachine
     /// Old parameter (single parameter)
     /// </summary>
     public bool OldSingleParameterConfiguration { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -234,9 +232,7 @@ namespace WizardMonitorMachine
         CheckValidity ();
       }
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Dispose all controls previously created
     /// </summary>
@@ -666,8 +662,17 @@ namespace WizardMonitorMachine
         }
         if (parameters.Keys.Any (x => !Parameters.Select (y => y.Name).Contains (x))) {
           log.Info ($"Load: more parameters in database than parameters in configuration");
-          return LoadMachineModules (moma) ? LoadResult.TOO_MANY_PARAMETERS :
+          foreach (var parameter in parameters.Where (x => !x.Key.StartsWith ("Param") && !this.Parameters.Select (y => y.Name).Contains (x.Key))) {
+            var newParameter = new CncParameterAdditional (parameter.Key);
+            this.Parameters.Add (newParameter);
+          }
+          if (parameters.Keys.Any (x => !Parameters.Select (y => y.Name).Contains (x))) {
+            return LoadMachineModules (moma) ? LoadResult.TOO_MANY_PARAMETERS :
             LoadResult.TOO_MANY_PARAMETERS | LoadResult.DIFFERENT_MACHINE_MODULES;
+          }
+          else {
+            return LoadMachineModules (moma) ? LoadResult.SUCCESS : LoadResult.DIFFERENT_MACHINE_MODULES;
+          }
         }
 
         try {
@@ -745,6 +750,5 @@ namespace WizardMonitorMachine
 
       return true;
     }
-    #endregion // Methods
   }
 }

@@ -15,17 +15,14 @@ namespace WizardMonitorMachine
   /// </summary>
   public abstract class AbstractParameter
   {
-    #region Members
     Label m_label = null;
     TextBox m_oldLabel = null;
     CheckBox m_checkbox = null;
     Control m_specializedControl = null;
     TableLayoutPanel m_panel = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (AbstractParameter).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return true if the parameter is valid
     /// </summary>
@@ -120,9 +117,7 @@ namespace WizardMonitorMachine
 
     public string Name { get; private set; }
     protected int CncAcquisitionId { get; private set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -168,7 +163,23 @@ namespace WizardMonitorMachine
         }
       }
     }
-    #endregion // Constructors
+
+    /// <summary>
+    /// Alternative constructor for additional parameters that are not described in CncDocument
+    /// </summary>
+    /// <param name="node"></param>
+    protected AbstractParameter (string key)
+    {
+      Name = key;
+      IsValid = true;
+      ParamLabel = key;
+      Description = key;
+      Help = "";
+      DefaultValue = "";
+      Optional = true;
+      AdvancedUsage = true;
+      Hidden = false;
+    }
 
     #region Methods
     /// <summary>
