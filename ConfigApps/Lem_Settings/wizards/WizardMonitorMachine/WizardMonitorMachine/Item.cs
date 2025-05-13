@@ -396,10 +396,10 @@ namespace WizardMonitorMachine
       }
 
       // Variables
-      machineModule.StartCycleVariable = module.m_startCycleVariable ? module.m_startCycleVariableValue : "";
-      machineModule.CycleVariable = module.m_cycleVariable ? module.m_cycleVariableValue : "";
-      machineModule.SequenceVariable = module.m_sequenceVariable ? module.m_sequenceVariableValue : "";
-      machineModule.DetectionMethodVariable = module.m_detectionMethodVariable ? module.m_detectionMethodVariableValue : "";
+      machineModule.StartCycleVariable = module.m_startCycleVariableValue;
+      machineModule.CycleVariable = module.m_cycleVariableValue;
+      machineModule.SequenceVariable = module.m_sequenceVariableValue;
+      machineModule.DetectionMethodVariable = module.m_detectionMethodVariableValue;
 
       // Detection methods
       if (module.m_startCycleDetectionMethod > 0) {

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,14 +19,11 @@ namespace WizardMonitorMachine
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CncParameterPath).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public CncParameterPath(XmlNode node) : base(node) {}
-    #endregion // Constructors
 
-    #region Methods
     protected override bool Parse(XmlAttributeCollection attributes)
     {
       return true;
@@ -67,12 +65,25 @@ namespace WizardMonitorMachine
     {
       // Try the path
       try {
-        return File.Exists(GetValue(specializedControl)) ?
-          "" : "the path refers to a file that doesn't exist or is not accessible";
-      } catch (Exception e) {
-        return e.Message;
+        var v = GetValue (specializedControl);
+        if (string.IsNullOrWhiteSpace (v)) {
+          if (this.Optional) {
+            return "";
+          }
+          else {
+            return $"The path for {this.ParamLabel} is not set although it is mandatory";
+          }
+        }
+        else {
+          return File.Exists (v)
+            ? ""
+            : $"The path {v} for {this.ParamLabel} refers to a file that doesn't exist or is not accessible";
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"GetWarning: File.Exists exception", ex);
+        return ex.Message;
       }
     }
-    #endregion // Methods
   }
 }

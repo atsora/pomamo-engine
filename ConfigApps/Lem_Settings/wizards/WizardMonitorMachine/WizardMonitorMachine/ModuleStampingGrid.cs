@@ -61,14 +61,8 @@ namespace WizardMonitorMachine
     {
       get { return m_textCycleStart.Enabled ? m_textCycleStart.Text : null; }
       set {
-        if (value == null) {
-          m_textCycleStart.Enabled = false;
-          m_textCycleStart.Text = "";
-        }
-        else {
-          m_textCycleStart.Enabled = !m_readOnlyState;
-          m_textCycleStart.Text = value;
-        }
+        m_textCycleStart.Enabled = !m_readOnlyState;
+        m_textCycleStart.Text = value ?? "";
       }
     }
 
@@ -98,14 +92,8 @@ namespace WizardMonitorMachine
     {
       get { return m_textCycleEnd.Enabled ? m_textCycleEnd.Text : null; }
       set {
-        if (value == null) {
-          m_textCycleEnd.Enabled = false;
-          m_textCycleEnd.Text = "";
-        }
-        else {
-          m_textCycleEnd.Enabled = !m_readOnlyState;
-          m_textCycleEnd.Text = value;
-        }
+        m_textCycleEnd.Enabled = !m_readOnlyState;
+        m_textCycleEnd.Text = value ?? "";
       }
     }
 
@@ -135,14 +123,8 @@ namespace WizardMonitorMachine
     {
       get { return m_textSequence.Enabled ? m_textSequence.Text : null; }
       set {
-        if (value == null) {
-          m_textSequence.Enabled = false;
-          m_textSequence.Text = "";
-        }
-        else {
-          m_textSequence.Enabled = !m_readOnlyState;
-          m_textSequence.Text = value;
-        }
+        m_textSequence.Enabled = !m_readOnlyState;
+        m_textSequence.Text = value ?? "";
       }
     }
 
@@ -172,14 +154,8 @@ namespace WizardMonitorMachine
     {
       get { return m_textDetection.Enabled ? m_textDetection.Text : null; }
       set {
-        if (value == null) {
-          m_textDetection.Enabled = false;
-          m_textDetection.Text = "";
-        }
-        else {
-          m_textDetection.Enabled = !m_readOnlyState;
-          m_textDetection.Text = value;
-        }
+        m_textDetection.Enabled = !m_readOnlyState;
+        m_textDetection.Text = value ?? "";
       }
     }
 

@@ -76,7 +76,7 @@ namespace WizardMonitorMachine
       // 
       labelOldConfiguration.BackColor = System.Drawing.SystemColors.ControlDarkDark;
       labelOldConfiguration.Dock = System.Windows.Forms.DockStyle.Fill;
-      labelOldConfiguration.Font = new System.Drawing.Font ("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+      labelOldConfiguration.Font = new System.Drawing.Font ("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       labelOldConfiguration.ForeColor = System.Drawing.SystemColors.ControlLightLight;
       labelOldConfiguration.Location = new System.Drawing.Point (0, 153);
       labelOldConfiguration.Margin = new System.Windows.Forms.Padding (0);
@@ -99,7 +99,7 @@ namespace WizardMonitorMachine
       // 
       labelNewConfiguration.BackColor = System.Drawing.SystemColors.ControlDarkDark;
       labelNewConfiguration.Dock = System.Windows.Forms.DockStyle.Fill;
-      labelNewConfiguration.Font = new System.Drawing.Font ("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+      labelNewConfiguration.Font = new System.Drawing.Font ("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       labelNewConfiguration.ForeColor = System.Drawing.SystemColors.ControlLightLight;
       labelNewConfiguration.Location = new System.Drawing.Point (0, 0);
       labelNewConfiguration.Margin = new System.Windows.Forms.Padding (0);
@@ -114,7 +114,7 @@ namespace WizardMonitorMachine
       textOldParameters.BackColor = System.Drawing.SystemColors.Control;
       textOldParameters.BorderStyle = System.Windows.Forms.BorderStyle.None;
       textOldParameters.Dock = System.Windows.Forms.DockStyle.Fill;
-      textOldParameters.Font = new System.Drawing.Font ("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+      textOldParameters.Font = new System.Drawing.Font ("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       textOldParameters.Location = new System.Drawing.Point (4, 265);
       textOldParameters.Margin = new System.Windows.Forms.Padding (4, 3, 4, 0);
       textOldParameters.Name = "textOldParameters";

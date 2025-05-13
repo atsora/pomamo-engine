@@ -667,11 +667,16 @@ namespace WizardMonitorMachine
             this.Parameters.Add (newParameter);
           }
           if (parameters.Keys.Any (x => !Parameters.Select (y => y.Name).Contains (x))) {
-            return LoadMachineModules (moma) ? LoadResult.TOO_MANY_PARAMETERS :
-            LoadResult.TOO_MANY_PARAMETERS | LoadResult.DIFFERENT_MACHINE_MODULES;
+            if (!LoadMachineModules (moma)) {
+              result |= LoadResult.DIFFERENT_MACHINE_MODULES;
+            }
+            return result | LoadResult.TOO_MANY_PARAMETERS;
           }
           else {
-            return LoadMachineModules (moma) ? LoadResult.SUCCESS : LoadResult.DIFFERENT_MACHINE_MODULES;
+            if (!LoadMachineModules (moma)) {
+              result |= LoadResult.DIFFERENT_MACHINE_MODULES;
+            }
+            return result;
           }
         }
 

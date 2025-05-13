@@ -137,17 +137,9 @@ namespace WizardMonitorMachine
       foreach (var module in cncDoc.Modules) {
         string str = string.IsNullOrEmpty (module.m_identifier) ?
           "Main module" : module.m_identifier;
-        if (module.m_startCycleVariable) {
-          str += "\nStart cycle: " + module.m_startCycleVariableValue;
-        }
-
-        if (module.m_cycleVariable) {
-          str += "\nEnd cycle: " + module.m_cycleVariableValue;
-        }
-
-        if (module.m_sequenceVariable) {
-          str += "\nSequence: " + module.m_sequenceVariableValue;
-        }
+        str += "\nStart cycle: " + module.m_startCycleVariableValue;
+        str += "\nEnd cycle: " + module.m_cycleVariableValue;
+        str += "\nSequence: " + module.m_sequenceVariableValue;
 
         if (module.m_detectionMethodVariable) {
           str += "\nDetection method: " + module.m_detectionMethodVariableValue;
