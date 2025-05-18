@@ -32,7 +32,6 @@ namespace Lemoine.DataRepository
 
     static readonly ILog log = LogManager.GetLogger (typeof (FileRepoFactory).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Namespace in the File Repository
     /// </summary>
@@ -42,7 +41,6 @@ namespace Lemoine.DataRepository
     /// Path in the File Repository
     /// </summary>
     public string Path { get; set; }
-    #endregion
 
     /// <summary>
     /// Constructor
@@ -70,12 +68,12 @@ namespace Lemoine.DataRepository
       }
       catch (MissingFileException ex) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetData: MissingFile returned by GetString of {0}/{1}", NameSpace, Path);
+          log.Warn ($"GetData: MissingFile returned by GetString of {NameSpace}/{Path}");
         }
         throw new FileRepoException ("FileRepoClient.GetString error", ex);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetData: GetString error of {0}/{1}, {2}", NameSpace, Path, ex);
+        log.Error ($"GetData: GetString error of {NameSpace}/{Path}", ex);
         throw new FileRepoException ("FileRepoClient.GetString error", ex);
       }
       cancellationToken.ThrowIfCancellationRequested ();
@@ -95,8 +93,7 @@ namespace Lemoine.DataRepository
     /// <returns></returns>
     public bool CheckSynchronizationOkAction ()
     {
-      log.Debug ("CheckSynchronizationOkAction: " +
-                 "return false");
+      log.Debug ("CheckSynchronizationOkAction: return false");
       return false;
     }
 

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -68,6 +69,7 @@ namespace WizardMonitorMachine
                  mamo.StartCycleVariable,
                  mamo.CycleVariable,
                  mamo.SequenceVariable,
+                 mamo.MilestoneVariable,
                  mamo.DetectionMethodVariable,
                  "");
         }
@@ -89,6 +91,7 @@ namespace WizardMonitorMachine
                module.m_startCycleVariable ? module.m_startCycleVariableValue ?? "" : null,
                module.m_cycleVariable ? module.m_cycleVariableValue ?? "" : null,
                module.m_sequenceVariable ? module.m_sequenceVariableValue ?? "" : null,
+               module.m_milestoneVariable ? module.m_milestoneVariableValue ?? "" : null,
                module.m_detectionMethodVariable ? module.m_detectionMethodVariableValue ?? "" : null,
                module.m_description);
       }
@@ -155,6 +158,7 @@ namespace WizardMonitorMachine
             module.m_startCycleVariableValue = grid.CycleStart;
             module.m_cycleVariableValue = grid.CycleEnd;
             module.m_sequenceVariableValue = grid.Sequence;
+            module.m_milestoneVariableValue = grid.Milestone;
             module.m_detectionMethodVariableValue = grid.Detection;
             break;
           }
@@ -171,7 +175,7 @@ namespace WizardMonitorMachine
       tabControl.TabPages.Clear ();
     }
 
-    void AddTab (string name, string cycleStart, string cycleEnd, string sequence,
+    void AddTab (string name, string cycleStart, string cycleEnd, string sequence, string milestone,
                 string detection, string description)
     {
       // Prepare the grid
@@ -180,6 +184,7 @@ namespace WizardMonitorMachine
       grid.CycleStart = cycleStart;
       grid.CycleEnd = cycleEnd;
       grid.Sequence = sequence;
+      grid.Milestone = milestone;
       grid.Detection = detection;
       grid.Dock = DockStyle.Fill;
       m_stampingGrids.Add (grid);

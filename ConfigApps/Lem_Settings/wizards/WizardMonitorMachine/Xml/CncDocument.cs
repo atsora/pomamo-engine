@@ -78,6 +78,8 @@ namespace WizardMonitorMachine
       public string m_cycleVariableValue = "";
       public bool m_startCycleVariable = false;
       public string m_startCycleVariableValue = "";
+      public bool m_milestoneVariable = false;
+      public string m_milestoneVariableValue = "";
       public bool m_detectionMethodVariable = false;
       public string m_detectionMethodVariableValue = "";
 
@@ -526,6 +528,14 @@ namespace WizardMonitorMachine
               module.m_sequenceVariable = bool.Parse (nodeTmp.Attributes["sequencevariable"].Value);
             }
 
+            if (nodeTmp.Attributes["sequencevariable"] != null) {
+              module.m_sequenceVariable = bool.Parse (nodeTmp.Attributes["sequencevariable"].Value);
+            }
+
+            if (nodeTmp.Attributes["milestonevariable"] != null) {
+              module.m_milestoneVariable = bool.Parse (nodeTmp.Attributes["milestonevariable"].Value);
+            }
+
             if (nodeTmp.Attributes["cyclevariable"] != null) {
               module.m_cycleVariable = bool.Parse (nodeTmp.Attributes["cyclevariable"].Value);
             }
@@ -731,6 +741,7 @@ namespace WizardMonitorMachine
               module.m_sequenceVariableValue = mamo.SequenceVariable;
               module.m_cycleVariableValue = mamo.CycleVariable;
               module.m_startCycleVariableValue = mamo.StartCycleVariable;
+              module.m_milestoneVariableValue = mamo.MilestoneVariable;
               module.m_detectionMethodVariableValue = mamo.DetectionMethodVariable;
 
               // Detection methods

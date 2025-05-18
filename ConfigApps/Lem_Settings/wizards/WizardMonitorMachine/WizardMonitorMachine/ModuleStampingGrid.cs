@@ -21,17 +21,20 @@ namespace WizardMonitorMachine
     TextBox m_textCycleStart = new TextBox ();
     TextBox m_textCycleEnd = new TextBox ();
     TextBox m_textSequence = new TextBox ();
+    TextBox m_textMilestone = new TextBox ();
     TextBox m_textDetection = new TextBox ();
 
     Label m_labelDescription = new Label ();
     Label m_labelCycleStart = new Label ();
     Label m_labelCycleEnd = new Label ();
     Label m_labelSequence = new Label ();
+    Label m_labelMilestone = new Label ();
     Label m_labelDetection = new Label ();
 
     TextBox m_oldCycleStart = new TextBox ();
     TextBox m_oldCycleEnd = new TextBox ();
     TextBox m_oldSequence = new TextBox ();
+    TextBox m_oldMilestone = new TextBox ();
     TextBox m_oldDetection = new TextBox ();
     #endregion // Members
 
@@ -49,6 +52,7 @@ namespace WizardMonitorMachine
         CycleStart = m_textCycleStart.Text;
         CycleEnd = m_textCycleEnd.Text;
         Sequence = m_textSequence.Text;
+        Milestone = m_textMilestone.Text;
         Detection = m_textDetection.Text;
       }
     }
@@ -147,6 +151,37 @@ namespace WizardMonitorMachine
     }
 
     /// <summary>
+    /// Milestone
+    /// May be null if disabled
+    /// </summary>
+    public string Milestone
+    {
+      get { return m_textMilestone.Enabled ? m_textMilestone.Text : null; }
+      set {
+        m_textMilestone.Enabled = !m_readOnlyState;
+        m_textMilestone.Text = value ?? "";
+      }
+    }
+
+    /// <summary>
+    /// Old milestone
+    /// </summary>
+    public string OldMilestone
+    {
+      get { return m_oldMilestone.Text; }
+      set {
+        if (string.IsNullOrEmpty (value)) {
+          m_oldMilestone.Hide ();
+          m_oldMilestone.Text = "";
+        }
+        else {
+          m_oldMilestone.Text = "Old: " + value;
+          m_oldMilestone.Show ();
+        }
+      }
+    }
+
+    /// <summary>
     /// Detection
     /// May be null if disabled
     /// </summary>
@@ -186,50 +221,49 @@ namespace WizardMonitorMachine
     {
       InitializeComponent ();
 
-
       m_labelDescription.Text = "Description";
       m_labelCycleStart.Text = "Cycle start";
       m_labelCycleEnd.Text = "Cycle end";
       m_labelSequence.Text = "Sequence";
+      m_labelMilestone.Text = "Milestone";
       m_labelDetection.Text = "Detection";
 
       m_labelDescription.Dock = m_labelCycleStart.Dock = m_labelCycleEnd.Dock = m_labelSequence.Dock =
-        m_labelDetection.Dock = DockStyle.Fill;
-
-      m_oldCycleStart.Dock = m_oldCycleEnd.Dock = m_oldSequence.Dock =
-        m_oldDetection.Dock = DockStyle.Fill;
+        m_labelMilestone.Dock = m_labelDetection.Dock = DockStyle.Fill;
 
       m_oldCycleStart.Font = m_oldCycleEnd.Font = m_oldSequence.Font =
-        m_oldDetection.Font = new Font (m_oldCycleStart.Font, FontStyle.Italic);
+        m_oldMilestone.Font = m_oldDetection.Font = new Font (m_oldCycleStart.Font, FontStyle.Italic);
 
       m_oldCycleStart.ForeColor = m_oldCycleEnd.ForeColor = m_oldSequence.ForeColor =
-        m_oldDetection.ForeColor = SystemColors.ControlDarkDark;
+        m_oldMilestone.ForeColor = m_oldDetection.ForeColor = SystemColors.ControlDarkDark;
 
       m_oldCycleStart.Dock = m_oldCycleEnd.Dock = m_oldSequence.Dock =
-        m_oldDetection.Dock = DockStyle.Fill;
+        m_oldMilestone.Dock = m_oldDetection.Dock = DockStyle.Fill;
 
       m_oldCycleStart.Visible = m_oldCycleEnd.Visible = m_oldSequence.Visible =
-        m_oldDetection.Visible = false;
+        m_oldMilestone.Visible = m_oldDetection.Visible = false;
 
       m_labelDescription.Padding = new Padding (0, 3, 3, 0);
       m_labelDescription.TextAlign = ContentAlignment.TopLeft;
       m_labelCycleStart.TextAlign = ContentAlignment.MiddleLeft;
       m_labelCycleEnd.TextAlign = ContentAlignment.MiddleLeft;
       m_labelSequence.TextAlign = ContentAlignment.MiddleLeft;
+      m_labelMilestone.TextAlign = ContentAlignment.MiddleLeft;
       m_labelDetection.TextAlign = ContentAlignment.MiddleLeft;
 
       m_oldCycleStart.BorderStyle = m_oldCycleEnd.BorderStyle =
-        m_oldSequence.BorderStyle = m_oldDetection.BorderStyle = BorderStyle.None;
+        m_oldSequence.BorderStyle = m_oldMilestone.BorderStyle = m_oldDetection.BorderStyle = BorderStyle.None;
       AbstractParameter.EnableControl (m_oldCycleStart, false);
       AbstractParameter.EnableControl (m_oldCycleEnd, false);
       AbstractParameter.EnableControl (m_oldSequence, false);
+      AbstractParameter.EnableControl (m_oldMilestone, false);
       AbstractParameter.EnableControl (m_oldDetection, false);
 
       m_textDescription.Height = 40;
       m_textDescription.ReadOnly = true;
       m_textDescription.BorderStyle = BorderStyle.None;
       m_textDescription.Dock = m_textCycleStart.Dock = m_textCycleEnd.Dock =
-        m_textSequence.Dock = m_textDetection.Dock = DockStyle.Fill;
+        m_textSequence.Dock = m_textMilestone.Dock = m_textDetection.Dock = DockStyle.Fill;
 
       int row = 0;
       if (!string.IsNullOrEmpty (description)) {
@@ -246,6 +280,9 @@ namespace WizardMonitorMachine
       verticalScroll.AddControl (m_labelSequence, 0, row);
       verticalScroll.AddControl (m_textSequence, 1, row++);
       verticalScroll.AddControl (m_oldSequence, 1, row++);
+      verticalScroll.AddControl (m_labelMilestone, 0, row);
+      verticalScroll.AddControl (m_textMilestone, 1, row++);
+      verticalScroll.AddControl (m_oldMilestone, 1, row++);
       verticalScroll.AddControl (m_labelDetection, 0, row);
       verticalScroll.AddControl (m_textDetection, 1, row++);
       verticalScroll.AddControl (m_oldDetection, 1, row++);

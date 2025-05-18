@@ -61,8 +61,8 @@ namespace Lem_LanguageSelector
           defaultLanguage = false;
           selectedCultureInfo = new CultureInfo (languageInRegistry);
         }
-        catch (Exception e) {
-          log.Error (e);
+        catch (Exception ex) {
+          log.Error ($"MainForm: creating culture {languageInRegistry} failed", ex);
           defaultLanguage = true;
           selectedCultureInfo = CultureInfo.CurrentUICulture;
         }

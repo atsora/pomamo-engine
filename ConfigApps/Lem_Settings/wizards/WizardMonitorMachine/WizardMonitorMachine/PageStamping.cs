@@ -140,6 +140,7 @@ namespace WizardMonitorMachine
         str += "\nStart cycle: " + module.m_startCycleVariableValue;
         str += "\nEnd cycle: " + module.m_cycleVariableValue;
         str += "\nSequence: " + module.m_sequenceVariableValue;
+        str += "\nMilestone: " + module.m_milestoneVariableValue;
 
         if (module.m_detectionMethodVariable) {
           str += "\nDetection method: " + module.m_detectionMethodVariableValue;

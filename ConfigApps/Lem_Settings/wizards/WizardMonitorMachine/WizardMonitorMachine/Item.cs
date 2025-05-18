@@ -399,6 +399,7 @@ namespace WizardMonitorMachine
       machineModule.StartCycleVariable = module.m_startCycleVariableValue;
       machineModule.CycleVariable = module.m_cycleVariableValue;
       machineModule.SequenceVariable = module.m_sequenceVariableValue;
+      machineModule.MilestoneVariable = module.m_milestoneVariableValue;
       machineModule.DetectionMethodVariable = module.m_detectionMethodVariableValue;
 
       // Detection methods
