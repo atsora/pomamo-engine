@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -218,7 +219,7 @@ CREATE OR REPLACE FUNCTION configvalueextract (
     configvalue character varying)
   RETURNS character varying AS
 $BODY$
-  SELECT regexp_replace (configvalue, '<\w+/>', '', 'g');
+  SELECT regexp_replace (configvalue, '</?\w+/?>', '', 'g');
 $BODY$ LANGUAGE SQL IMMUTABLE;
 ");
       Database.ExecuteNonQuery (@"
