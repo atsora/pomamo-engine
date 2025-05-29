@@ -441,6 +441,7 @@ type OpTaskAction {
   id: ID!
   machineId: ID!
   opTask: OpTask!
+  serverTime: UtcDateTime
   start: UtcDateTime
   end: UtcDateTime
   result: OpTaskActionResult

@@ -1661,6 +1661,22 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
 
+      {
+        ITranslation translation = new Translation ("", "ReasonInactive");
+        translation.TranslationValue = "Inactive";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "ReasonInactive");
+        translation.TranslationValue = "Inactif";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "ReasonInactive");
+        translation.TranslationValue = "Inaktiv";
+        InsertDefaultValue (translation);
+      }
+
       // Machine monitoring types
       {
         ITranslation translation = new Translation ("", "MonitoringTypeMonitored");
@@ -3049,6 +3065,39 @@ namespace Lemoine.GDBPersistentClasses
       {
         ITranslation translation = new Translation ("de", "FieldSelcaNCStatusCode");
         translation.TranslationValue = "NC-Statuscode (Selca)";
+        InsertDefaultValue (translation);
+      }
+
+      // Production state
+      {
+        ITranslation translation = new Translation ("", "ProductionStateProduction");
+        translation.TranslationValue = "Production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "ProductionStateProduction");
+        translation.TranslationValue = "Production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "ProductionStateProduction");
+        translation.TranslationValue = "Produktion";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "ProductionStateNoProduction");
+        translation.TranslationValue = "No production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "ProductionStateNoProduction");
+        translation.TranslationValue = "Pas de production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "ProductionStateNoProduction");
+        translation.TranslationValue = "Keine Produktion";
         InsertDefaultValue (translation);
       }
 

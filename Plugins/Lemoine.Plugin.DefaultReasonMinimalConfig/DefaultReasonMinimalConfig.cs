@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -168,7 +169,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
         }
         else {
           m_inactiveLongReason = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (m_configuration.InactiveLongReasonId);
-          if (m_inactiveShortReason is null) {
+          if (m_inactiveLongReason is null) {
             log.Error ($"Initialize: no long reason with id={m_configuration.InactiveLongReasonId} => return false");
             return false;
           }
