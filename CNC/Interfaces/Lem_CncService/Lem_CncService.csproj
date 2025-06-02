@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <!-- CNC Module and plugin dependencies -->
     <Reference Include="IIOPChannel">
       <HintPath>..\..\..\..\pomamo-extern\IIOP.NET\IIOPChannel.dll</HintPath>
