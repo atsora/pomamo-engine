@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,16 +21,10 @@ namespace Lemoine.I18N
   {
     private static readonly string LANGUAGE_KEY = "Language";
 
-    #region Members
     bool m_manuallySet;
-    #endregion
 
     private static readonly ILog log = LogManager.GetLogger (typeof (LocaleSettings).FullName);
 
-    #region Getters / Setters
-    #endregion
-
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class !)
     /// </summary>
@@ -37,9 +32,7 @@ namespace Lemoine.I18N
     {
       m_manuallySet = false;
     }
-    #endregion
 
-    #region Methods
     /// <summary>
     /// Current culture
     /// </summary>
@@ -133,7 +126,6 @@ namespace Lemoine.I18N
         return true;
       }
     }
-    #endregion
 
     #region Instance
     static LocaleSettings Instance
