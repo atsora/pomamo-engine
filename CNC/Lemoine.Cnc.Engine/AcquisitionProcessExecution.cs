@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -16,12 +17,10 @@ namespace Lemoine.CncEngine
   /// </summary>
   public class AcquisitionProcessExecution : ProcessClassExecution
   {
-    #region Getters / Setters
     /// <summary>
     /// Associated Lemoine.Cnc.Acquisition
     /// </summary>
     public Acquisition Acquisition { get; set; }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor
@@ -45,22 +44,12 @@ namespace Lemoine.CncEngine
     /// Implements <see cref="ProcessClassExecution">ProcessClassExecution</see>
     /// </summary>
     /// <returns></returns>
-    public override string GetSpecificArguments ()
-    {
-
-      return string.Format ("-i {0} " +
-                            "-e {1}",
-                            this.Acquisition.CncAcquisitionId,
-                            this.Acquisition.Every.TotalMilliseconds);
-    }
+    public override string GetSpecificArguments () => $"-i {this.Acquisition.CncAcquisitionId} -e {this.Acquisition.Every.TotalMilliseconds}";
 
     /// <summary>
     /// Implements <see cref="ProcessClassExecution">ProcessClassExecution</see>
     /// </summary>
     /// <returns></returns>
-    public override int GetId ()
-    {
-      return this.Acquisition.CncAcquisitionId;
-    }
+    public override int GetId () => this.Acquisition.CncAcquisitionId;
   }
 }

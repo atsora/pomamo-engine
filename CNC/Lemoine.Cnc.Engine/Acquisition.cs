@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -117,9 +118,7 @@ namespace Lemoine.CncEngine
     {
       get {
         if (null == m_cncDataHandler) {
-          log.DebugFormat ("LastExecution.get: " +
-                           "Cnc data handler is not set yet " +
-                           "=> fallback to base.LastExecution");
+          log.Debug ("LastExecution.get: Cnc data handler is not set yet => fallback to base.LastExecution");
           return base.LastExecution;
         }
         else {
@@ -128,9 +127,7 @@ namespace Lemoine.CncEngine
       }
       set {
         if (null == m_cncDataHandler) {
-          log.DebugFormat ("LastExecution.set: " +
-                           "Cnc data handler is not set yet " +
-                           "=> fallback to base.LastExecution");
+          log.Debug ("LastExecution.set: Cnc data handler is not set yet => fallback to base.LastExecution");
           base.LastExecution = value;
         }
         else {
@@ -537,10 +534,7 @@ namespace Lemoine.CncEngine
     /// Implements <see cref="ProcessOrThreadClass">ProcessOrThreadClass</see>
     /// </summary>
     /// <returns></returns>
-    public override ILog GetLogger ()
-    {
-      return log;
-    }
+    public override ILog GetLogger () => log;
     #endregion // Implementation of ProcessOrThreadClass
 
     /// <summary>

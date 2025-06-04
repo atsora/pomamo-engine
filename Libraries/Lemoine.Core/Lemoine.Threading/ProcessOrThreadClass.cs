@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -14,10 +15,8 @@ namespace Lemoine.Threading
   /// </summary>
   public abstract class ProcessOrThreadClass: ThreadClass, IProcessClass, IThreadClass
   {
-    #region Members
     bool m_useStampFile = false;
     int m_parentProcessId = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProcessOrThreadClass).FullName);
 

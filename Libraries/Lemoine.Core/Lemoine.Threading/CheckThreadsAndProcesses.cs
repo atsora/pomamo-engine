@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -267,11 +268,6 @@ namespace Lemoine.Threading
     void ForceExit (ILog logger)
     {
       Lemoine.Core.Environment.LogAndForceExit (logger);
-    }
-
-    void ForceExit ()
-    {
-      ForceExit (GetLogger ());
     }
 
     /// <summary>

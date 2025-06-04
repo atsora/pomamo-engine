@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -99,8 +100,6 @@ namespace Lemoine.CncEngine
     TimeSpan m_every = DEFAULT_EVERY; // run ProcessTasks every 2 s by default
     TimeSpan m_notRespondingTimeout = DEFAULT_NOT_RESPONDING_TIMEOUT;
     TimeSpan m_restartSleep = DEFAULT_RESTART_SLEEP; // time to sleep just in case of restart
-    ReaderWriterLock m_runningParamLock = new ReaderWriterLock ();
-    DateTime m_lastExecution = DateTime.UtcNow;
 
     Repository m_configuration;
     IDictionary<string, object> m_data = new Dictionary<string, object> ();
@@ -841,6 +840,14 @@ namespace Lemoine.CncEngine
           }
           catch (Exception ex) {
             log.Fatal ("Work: ProcessTasks failed", ex);
+
+            // Not sure it helps, but check it again, just in case
+            if (Lemoine.Core.ExceptionManagement.ExceptionTest.RequiresExitExceptFromDatabase (ex)) {
+              log.Fatal ("Work: exception requires to exit", ex);
+              this.SetExitRequested ();
+              return;
+            }
+
             // Continue the job to prevent the service to crash because of a unique machine
             if (ExitRequested) {
               log.Fatal ("Work: exit is requested after exception => return", ex);
@@ -1295,8 +1302,7 @@ namespace Lemoine.CncEngine
         string property = instructionElement.GetAttribute ("property");
         if (0 < property.Length) {
           if (!ProcessSetProperty (cncModuleExecutor, instructionElement, property, datavalue)) {
-            log.FatalFormat ("ProcessSet: property {0} does not exist in module {1} element {2}",
-              property, cncModuleExecutor, instructionElement);
+            log.Fatal ($"ProcessSet: property {property} does not exist in module {cncModuleExecutor} element {instructionElement}");
           }
           return;
         }

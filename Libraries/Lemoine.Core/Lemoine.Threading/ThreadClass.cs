@@ -310,10 +310,7 @@ namespace Lemoine.Threading
     /// <summary>
     /// Exit requested
     /// </summary>
-    public bool ExitRequested
-    {
-      get { return m_exitRequested; }
-    }
+    public bool ExitRequested => m_exitRequested;
 
     /// <summary>
     /// Set the exit is requested
@@ -323,8 +320,8 @@ namespace Lemoine.Threading
       if (log.IsDebugEnabled) {
         log.Debug ($"SetExitRequested");
       }
-      m_exitRequestedSource?.Cancel ();
       m_exitRequested = true;
+      m_exitRequestedSource?.Cancel ();
     }
 
     /// <summary>
