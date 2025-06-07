@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -876,7 +877,7 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
               && Lemoine.Info.ConfigSet.LoadAndGet (INTERRUPT_EXTEND_IF_RIGHT_REASON_KEY, INTERRUPT_EXTEND_IF_RIGHT_REASON_DEFAULT)) {
               // The right reason is already set, there is no reason to continue
               log.Info ($"ExtendToLeft: stop extending the periods since the new slot at {reasonSlotBefore.DateTimeRange} has already the right reason");
-              return false;
+              return true;
             }
           }
           catch (Exception ex) {
@@ -967,7 +968,7 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
             && Lemoine.Info.ConfigSet.LoadAndGet (INTERRUPT_EXTEND_IF_RIGHT_REASON_KEY, INTERRUPT_EXTEND_IF_RIGHT_REASON_DEFAULT)) {
             // The right reason is already set, there is no reason to continue
             log.Info ($"ExtendToRight: stop extending the periods since the new slot at {reasonSlotAfter.DateTimeRange} has already the right reason");
-            return false;
+            return true;
           }
           // Try again
           return ExtendToRight (machine, defaultReasonToTest, ref range, reasonSlots, maxRecursionNumber - 1);
