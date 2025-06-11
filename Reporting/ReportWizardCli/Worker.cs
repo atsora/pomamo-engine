@@ -27,6 +27,9 @@ namespace ReportWizardCli
   public class Worker
     : IHostedService
   {
+    static readonly string TIMEOUT_KEY = "ReportWizardCli.Timeout";
+    static readonly TimeSpan TIMEOUT_DEFAULT = TimeSpan.FromMinutes (5);
+
     static readonly string DEFAULT_SENDER = "user@domain";
     static readonly int SMTP_SEND_MAX_ATTEMPTS = 3;
 
@@ -48,6 +51,8 @@ namespace ReportWizardCli
       m_httpClient = httpClient;
       m_options = options;
       m_iniConfigInitializer = iniConfigInitializer;
+
+      m_httpClient.Timeout = Lemoine.Info.ConfigSet.LoadAndGet (TIMEOUT_KEY, TIMEOUT_DEFAULT);
 
       appLifeTime.ApplicationStarted.Register (OnStarted);
       appLifeTime.ApplicationStopping.Register (OnStopping);
