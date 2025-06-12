@@ -24,44 +24,46 @@ namespace ReportWizardCli
       Lemoine.Info.ConfigSet.SetOsConfigReader (new OsConfigReader ());
 
       Options? options = null;
-      try
-      {
+      try {
         var result = CommandLine.Parser.Default.ParseArguments<Options> (args);
 
-        result.WithNotParsed<Options> (errors =>
-        {
+        result.WithNotParsed<Options> (errors => {
           Environment.ExitCode = 1;
           options = null;
         });
 
-        result.WithParsed<Options> (opt =>
-        {
+        result.WithParsed<Options> (opt => {
           options = opt;
         });
       }
-      catch (Exception ex)
-      {
+      catch (Exception ex) {
         System.Console.Error.WriteLine ($"Exception {ex} raised");
         Environment.Exit (1);
         return;
       }
 
-      if (options is null)
-      {
+      if (options is null) {
         System.Console.Error.WriteLine ($"Invalid arguments");
         Environment.Exit (1);
         return;
       }
 
       var parameters = options.Parameters;
-      if (null != parameters)
-      {
+      if (null != parameters) {
         Lemoine.Info.ConfigSet.AddCommandLineParameters (parameters);
       }
       LogManager.AddLog4net (traceEnabled: options.TraceEnabled);
 
       var hostBuilder = CreateHostBuilder (args, options);
-      await hostBuilder.Build ().RunAsync ();
+
+      try {
+        await hostBuilder.Build ().RunAsync ();
+      }
+      catch (Exception ex) {
+        log.Error ($"Main: exception {ex} raised", ex);
+        Environment.Exit (1);
+        return;
+      }
     }
 
     static IHostBuilder CreateHostBuilder (string[] args, Options options)

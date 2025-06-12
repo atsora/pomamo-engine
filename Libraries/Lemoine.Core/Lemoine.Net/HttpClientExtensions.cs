@@ -75,7 +75,7 @@ namespace Lemoine.Net
         log.Debug ($"DownloadAsync: url={url} to={path}");
       }
 
-      var response = await httpClient.GetAsync (url);
+      var response = await httpClient.GetAsync (url, cancellationToken);
       response.EnsureSuccessStatusCode ();
 #if NET5_0_OR_GREATER
       using (var stream = await response.Content.ReadAsStreamAsync (cancellationToken)) {
