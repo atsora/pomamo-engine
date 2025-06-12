@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,9 +25,6 @@ namespace Lemoine.Core.StateMachine
     readonly ILog log = LogManager.GetLogger (typeof (AdvancedStateMachine<TContext>).FullName);
 
     readonly IAdvancedStateMachineDefinition<TContext> m_definition;
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

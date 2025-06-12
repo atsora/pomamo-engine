@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -544,6 +545,10 @@ namespace Lemoine.Analysis
               ProcessActivities (cancellationToken, lastActivityAnalysisDateTime, m_facts);
               break; // Transaction ok
             }
+            catch (OperationCanceledException ex) {
+              GetLogger ().Warn ($"RunActivityAnalysis: cancelled", ex);
+              throw;
+            }
             catch (Exception ex) {
               // Reload m_monitoredMachineAnalysisStatus that may have been updated
               try {
@@ -561,7 +566,7 @@ namespace Lemoine.Analysis
                   } // auto commit because read-only
                 }
                 if (null == m_monitoredMachineAnalysisStatus) {
-                  log.Fatal ("RunActivityAnalysis: null MonitoredMachineAnalysisStatus");
+                  GetLogger ().Fatal ("RunActivityAnalysis: null MonitoredMachineAnalysisStatus");
                   Debug.Assert (null != m_monitoredMachineAnalysisStatus);
                   throw new Exception ("null MonitoredMachineAnalysisStatus");
                 }
@@ -570,6 +575,10 @@ namespace Lemoine.Analysis
                   lastActivityAnalysisDateTime = m_monitoredMachineAnalysisStatus.ActivityAnalysisDateTime;
                   Debug.Assert (m_facts.All (f => lastActivityAnalysisDateTime < f.End));
                 }
+              }
+              catch (OperationCanceledException ex1) {
+                GetLogger ().Warn ($"RunActivityAnalysis: cancelled", ex1);
+                throw;
               }
               catch (Exception ex1) {
                 GetLogger ().Fatal ($"RunActivityAnalysis: re-loading monitoredMachineAnalysisStatus after {ex} failed", ex1);
@@ -592,7 +601,10 @@ namespace Lemoine.Analysis
           SetActive ();
         } // End 0 < facts.Count
       }
-      catch (Exception) {
+      catch (Exception ex) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RunActivityAnalysis: exception {ex}", ex);
+        }
         m_facts = new List<IFact> ();
         throw;
       }

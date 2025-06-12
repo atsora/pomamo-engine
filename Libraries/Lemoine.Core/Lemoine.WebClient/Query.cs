@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -62,7 +63,6 @@ namespace Lemoine.WebClient
       }
     }
 
-    #region Getters / Setters
     /// <summary>
     /// URL of the web service
     /// </summary>
@@ -70,9 +70,7 @@ namespace Lemoine.WebClient
     {
       get { return m_webServiceUrl; }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
 #if NETSTANDARD
     /// <summary>
     /// Recommended constructor with a default web service URL
@@ -123,9 +121,7 @@ namespace Lemoine.WebClient
       }
       m_webServiceUrl = webServiceUrl;
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return a string result
     /// </summary>
@@ -758,7 +754,6 @@ namespace Lemoine.WebClient
       }
       return false;
     }
-    #endregion // Methods
   }
 
   /// <summary>

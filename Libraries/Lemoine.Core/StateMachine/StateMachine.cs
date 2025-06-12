@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -27,7 +28,6 @@ namespace Lemoine.Core.StateMachine
     DateTime? m_startDateTime;
     IState<TContext> m_state;
 
-    #region Getters / Setters
     /// <summary>
     /// Initial state
     /// </summary>
@@ -42,9 +42,7 @@ namespace Lemoine.Core.StateMachine
     /// <see cref="IContext"/>
     /// </summary>
     public TimeSpan MaxTime => m_context.MaxTime;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -58,7 +56,6 @@ namespace Lemoine.Core.StateMachine
       m_context = context;
       m_initialState = initialState;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="IContext{TContext}"/>
@@ -131,16 +128,22 @@ namespace Lemoine.Core.StateMachine
             if (log.IsInfoEnabled) {
               log.Info ($"Run: RunState returned false, switch to an end state");
             }
+            cancellationToken.ThrowIfCancellationRequested ();
             SwitchToEndState ();
             return false;
           }
         } // while
+      }
+      catch (OperationCanceledException ex) {
+        log.Warn ($"Run: OperationCanceledException raised", ex);
+        throw;
       }
       catch (Exception ex) {
         log.Error ($"Run: RunState returned an exception", ex);
         throw;
       }
       finally {
+        cancellationToken.ThrowIfCancellationRequested ();
         this.SwitchToInitialState ();
         try {
           EndStateMachine ();
@@ -196,7 +199,7 @@ namespace Lemoine.Core.StateMachine
         throw;
       }
       catch (OperationCanceledException ex) {
-        log.Error ($"RunState: OperationCanceledException in {state.Name}", ex);
+        log.Warn ($"RunState: OperationCanceledException in {state.Name}", ex);
         throw;
       }
       catch (Exception ex) {

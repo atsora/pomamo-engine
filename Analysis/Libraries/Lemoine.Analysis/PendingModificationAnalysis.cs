@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -628,7 +629,7 @@ namespace Lemoine.Analysis
         }
       }
       catch (OperationCanceledException ex) {
-        GetLogger ().Error ("ProcessPastPendingModifications: OperationCanceledException detected", ex);
+        GetLogger ().Warn ("ProcessPastPendingModifications: OperationCanceledException detected", ex);
         return false;
       }
       catch (Exception ex) {
@@ -879,7 +880,10 @@ namespace Lemoine.Analysis
         LogModification (modification, Lemoine.Core.Log.Level.Error, "Exception");
         try {
           foreach (var extension in m_extensions) {
-            cancellationToken.ThrowIfCancellationRequested ();
+            // Do not interrupt the extensions here if OperationCanceled was raised
+            if (cancellationToken.IsCancellationRequested) {
+              log.Warn ($"MakeAnalysis: cancellation requested, but complete to run MakeAnalysisException of the extensions");
+            }
             extension.MakeAnalysisException (modification, ex);
           }
         }
@@ -889,9 +893,13 @@ namespace Lemoine.Analysis
         throw;
       }
       foreach (var extension in m_extensions) {
-        cancellationToken.ThrowIfCancellationRequested ();
+        // Do not interrupt the extensions here if OperationCanceled was raised
+        if (cancellationToken.IsCancellationRequested) {
+          log.Warn ($"MakeAnalysis: cancellation requested, but complete to run MakeAnalysisException of the extensions");
+        }
         extension.AfterMakeAnalysis (modification, completed);
       }
+      cancellationToken.ThrowIfCancellationRequested ();
       return completed;
     }
 

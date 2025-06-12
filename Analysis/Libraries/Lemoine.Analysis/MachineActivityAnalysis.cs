@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -484,9 +485,11 @@ namespace Lemoine.Analysis
     /// <param name="cancellationToken"></param>
     /// <param name="throwStateException">throw an exception if one of the state returned an exception, else return true</param>
     /// <returns>if true is returned, any other process can continue (kind of completed)</returns>
+    /// <exception cref="OperationCanceledException">If cancellationToken was requested</exception>
     protected virtual bool RunStateMachine (CancellationToken cancellationToken, bool throwStateException)
     {
       var result = m_stateMachine.Run (cancellationToken);
+      cancellationToken.ThrowIfCancellationRequested ();
       if (throwStateException && this.StateExceptions.Any ()) {
         log.Error ($"RunStateMachine: {this.StateExceptions.Count ()} exceptions in state machine execution => throw an exception");
         throw new Exception ("Exception in MakeAnalysis (inner is first)", this.StateExceptions.First ());

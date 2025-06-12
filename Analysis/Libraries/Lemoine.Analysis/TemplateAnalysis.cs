@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -184,6 +185,10 @@ namespace Lemoine.Analysis
           return false;
         }
         catch (Exception ex) {
+          if (cancellationToken.IsCancellationRequested) {
+            GetLogger ().Warn ($"Run: cancellation requested, exit");
+            return false;
+          }
           if (ExceptionTest.IsStale (ex, GetLogger ())) {
             GetLogger ().Info ("Run: Stale exception => try again", ex);
           }
@@ -208,9 +213,7 @@ namespace Lemoine.Analysis
         }
       }
 
-      GetLogger ().WarnFormat ("Run: " +
-                               "the maximum number of attempt was reached " +
-                               "=> return false");
+      GetLogger ().Warn ("Run: the maximum number of attempt was reached => return false");
       SetActive ();
       return false;
     }

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -23,7 +24,6 @@ namespace Lemoine.Core.StateMachine
 
     TContext m_context;
 
-    #region Getters / Setters
     /// <summary>
     /// Context
     /// </summary>
@@ -35,9 +35,7 @@ namespace Lemoine.Core.StateMachine
     /// <see cref="IState{TContext}"/>
     /// </summary>
     public virtual IState<TContext> ExceptionState { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -46,7 +44,6 @@ namespace Lemoine.Core.StateMachine
     {
       this.ExceptionState = exceptionState;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="IState{TContext}"/>

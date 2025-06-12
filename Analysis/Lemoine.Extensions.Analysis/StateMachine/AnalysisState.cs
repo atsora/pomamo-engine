@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -26,10 +27,6 @@ namespace Lemoine.Extensions.Analysis.StateMachine
     readonly IState<TContext> m_nextState;
     readonly IState<TContext> m_maxTimeState;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -93,7 +90,6 @@ namespace Lemoine.Extensions.Analysis.StateMachine
 
       this.Context.SwitchTo (m_nextState);
     }
-    #endregion // Constructors
 
   }
 }
