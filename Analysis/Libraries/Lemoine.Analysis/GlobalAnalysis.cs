@@ -629,7 +629,7 @@ namespace Lemoine.Analysis
           log.Debug ($"ManageWeekNumbers: already completed");
         }
       }
-      catch (OperationCanceledException ex) {
+      catch (OperationCanceledException) {
         throw;
       }
       catch (Exception ex) {

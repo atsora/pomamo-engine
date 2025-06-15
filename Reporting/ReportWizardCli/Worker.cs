@@ -27,7 +27,7 @@ namespace ReportWizardCli
   public class Worker
     : IHostedService
   {
-    static readonly string TIMEOUT_KEY = "ReportWizardCli.Timeout";
+    static readonly string TIMEOUT_KEY = "ReportWizardCli.Download.Timeout";
     static readonly TimeSpan TIMEOUT_DEFAULT = TimeSpan.FromMinutes (5);
 
     static readonly string DEFAULT_SENDER = "user@domain";
