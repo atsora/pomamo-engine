@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -813,17 +814,15 @@ namespace Lemoine.Analysis.Detection
           }
 
           if (log.IsDebugEnabled) {
-            log.Debug ($"StopOperation: stop operation at {dateTime}");
+            log.Debug ($"StopOperation: after extensions, stop operation at {dateTime}");
           }
           var association =
-            new Lemoine.GDBPersistentClasses.OperationMachineAssociation (m_monitoredMachine,
-                                                                          new UtcDateTimeRange (dateTime),
-                                                                          null, // Transient !
-                                                                          true);
+            new Lemoine.GDBPersistentClasses.OperationMachineAssociation (m_monitoredMachine, new UtcDateTimeRange (dateTime), null, true); // Transient
           association.Operation = null;
           association.Option = AssociationOption.Detected;
           association.Caller = m_caller;
           association.Apply ();
+          transaction.Commit ();
         }
         catch (Exception ex) {
           if (ExceptionTest.IsStale (ex, log)) {

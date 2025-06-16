@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -304,18 +305,21 @@ namespace Lemoine.Analysis
       Debug.Assert (0 < nbAttemptSerializationFailure);
 
       maxAttemptReached = false;
+      var machineModuleDetectionId = machineModuleDetection.Id;
 
       int attempt;
       for (attempt = 0; attempt < nbAttemptSerializationFailure; ++attempt) {
         SetActive ();
 
         if (log.IsDebugEnabled) {
-          log.Debug ($"RunDetection: machine module detection id={machineModuleDetection.Id} attempt={attempt}");
+          log.Debug ($"RunDetection: machine module detection id={machineModuleDetectionId} attempt={attempt}");
         }
 
         // - Try not to spend too much time in this method
         if (!processValidityChecker.IsValid ()) {
-          log.Info ("RunDetection: requested to return at once by processValidityChecker => return false");
+          if (log.IsInfoEnabled) {
+            log.Info ($"RunDetection: requested to return at once by processValidityChecker => return false for id={machineModuleDetectionId}");
+          }
           return false;
         }
 
@@ -327,7 +331,7 @@ namespace Lemoine.Analysis
         try {
           TryRunOnDetection (machineModule, machineModuleDetection, attempt);
           if (log.IsDebugEnabled) {
-            log.Debug ($"RunDetection: detectio id={machineModuleDetection.Id} completed successfully");
+            log.Debug ($"RunDetection: detectionId={machineModuleDetectionId} completed successfully");
           }
           return true;
         }
@@ -340,13 +344,13 @@ namespace Lemoine.Analysis
         catch (Exception ex) {
           TriggerDetectionProcessError (machineModule, ex);
           if (ExceptionTest.IsStale (ex)) {
-            log.Warn ($"RunDetection: stale object state exception with attempt {attempt} => try again", ex);
+            log.Warn ($"RunDetection: id={machineModuleDetectionId} stale object state exception with attempt {attempt} => try again", ex);
           }
           else if (ExceptionTest.IsTemporary (ex)) {
-            log.Warn ($"RunDetection: temporary failure (serialization) with attempt {attempt} => try again", ex);
+            log.Warn ($"RunDetection: id={machineModuleDetectionId} temporary failure (serialization) with attempt {attempt} => try again", ex);
           }
           else {
-            log.Exception (ex, "RunDetection");
+            log.Exception (ex, $"RunDetection: exception for id={machineModuleDetectionId}");
             throw;
           }
         }
@@ -366,6 +370,9 @@ namespace Lemoine.Analysis
     /// <param name="attempt"></param>
     void TryRunOnDetection (IMachineModule machineModule, IMachineModuleDetection machineModuleDetection, int attempt)
     {
+      Debug.Assert (null != machineModule);
+      Debug.Assert (null != machineModuleDetection);
+
       if (log.IsDebugEnabled) {
         log.Debug ($"TryRunOnDetection: machine module detection id={machineModuleDetection.Id} attempt={attempt}");
       }
@@ -386,7 +393,7 @@ namespace Lemoine.Analysis
               ProcessDetection (machineModule, machineModuleDetection);
             }
             catch (Exception ex) {
-              log.Error ("TryRunOnDetection: exception in ProcessDetection", ex);
+              log.Error ($"TryRunOnDetection: exception in ProcessDetection for id={machineModuleDetection.Id}", ex);
               throw;
             }
 
@@ -450,14 +457,16 @@ namespace Lemoine.Analysis
       foreach (var extension in GetExtensionsByMachineModule (machineModule)) {
         var startDateTime = DateTime.UtcNow;
         extension.ProcessDetection (detection);
-        log.DebugFormat ("ProcessDetection: process detection with extension {0} on detection id {1} completed in {2}",
-          extension, detection.Id, DateTime.UtcNow.Subtract (startDateTime));
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessDetection: process detection with extension {extension} on detection id {detection.Id} completed in {DateTime.UtcNow.Subtract (startDateTime)}");
+        }
       }
       foreach (var extension in m_extensions) {
         var startDateTime = DateTime.UtcNow;
         extension.ProcessDetection (detection);
-        log.DebugFormat ("ProcessDetection: process detection with extension {0} on detection id {1} completed in {2}",
-          extension, detection.Id, DateTime.UtcNow.Subtract (startDateTime));
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessDetection: process detection with extension {extension} on detection id {detection.Id} completed in {DateTime.UtcNow.Subtract (startDateTime)}");
+        }
       }
     }
 

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -307,7 +308,7 @@ namespace Lemoine.Database.Persistent
           log.Warn ($"Dispose: serialization failure => implicit rollback. BeginTransaction: {m_beginStackTrace}\n Rollback: {System.Environment.StackTrace}");
         }
         else {
-          log.Error ($"Dispose: implicit rollback. BeginTransaction: {m_beginStackTrace}\n Rollback: {System.Environment.StackTrace}");
+          log.Error ($"Dispose: implicit rollback (missing transaction.Commit or unexpected exception?). BeginTransaction: {m_beginStackTrace}\n Rollback: {System.Environment.StackTrace}");
         }
 
         try {
