@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -26,14 +27,11 @@ namespace Pulse.Database.ConnectionInitializer
     readonly string m_applicationName;
     readonly IMigrationHelper m_migrationHelper;
 
-    #region Getters / Setters
     /// <summary>
     /// Kill orphaned connections first
     /// </summary>
     public bool KillOrphanedConnectionsFirst { get; set; } = false;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -51,8 +49,6 @@ namespace Pulse.Database.ConnectionInitializer
     {
       m_migrationHelper = migrationHelper;
     }
-
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="IDatabaseConnectionStatus"/>

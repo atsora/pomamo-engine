@@ -72,6 +72,24 @@ namespace Lemoine.Model
     InverseTime = 8,
   }
 
+  public class MachiningLine
+  { 
+    /// <summary>
+    /// Angle
+    /// </summary>
+    public double? Angle { get; set; }
+
+    /// <summary>
+    /// List of axis names for which the direction changed
+    /// </summary>
+    public IList<string> DirectionChange { get; set; } = null;
+
+    /// <summary>
+    /// Lenght
+    /// </summary>
+    public double? Length { get; set; }
+  }
+
   /// <summary>
   /// Sequence path
   /// </summary>
@@ -121,6 +139,11 @@ namespace Lemoine.Model
     public double? SpindleSpeed { get; set; }
 
     /// <summary>
+    /// Lines: angle that is followed by a length
+    /// </summary>
+    public IList<MachiningLine> Lines { get; set; } = null;
+
+    /// <summary>
     /// Number of times an axis direction changes
     /// </summary>
     public int? DirectionChanges { get; set; } = null;
@@ -151,7 +174,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Version of the sequence detail data structure
     /// </summary>
-    public int Version { get; set; } = 2;
+    public int Version { get; set; } = 3;
 
     /// <summary>
     /// Sequence paths
