@@ -17,9 +17,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
   public class Configuration
     : Lemoine.Extensions.Configuration.IConfiguration
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (Configuration).FullName);
 
     #region Getters / Setters
@@ -41,14 +38,12 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     }
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public Configuration ()
     {
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>

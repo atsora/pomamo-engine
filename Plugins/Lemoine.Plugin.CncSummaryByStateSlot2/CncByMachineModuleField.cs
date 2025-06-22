@@ -105,9 +105,9 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       {
         DateTime observationStateSlotDateTime = range.Lower.Value;
         while (range.ContainsElement (observationStateSlotDateTime)) {
-          log.DebugFormat ("Recompute: " +
-                           "observation state slot date/time is {0}",
-                           observationStateSlotDateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Recompute: observation state slot date/time is {observationStateSlotDateTime}");
+          }
           ComputePeriod (observationStateSlotDateTime);
           Debug.Assert (null != m_observationStateSlot);
           if (!m_observationStateSlot.EndDateTime.HasValue) {
@@ -151,15 +151,12 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     internal static bool IsRangeValid (UtcDateTimeRange range, ILog log)
     {
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("IsRangeValid: " +
-                         "range is empty, return false");
+        log.Error ("IsRangeValid: range is empty, return false");
         return false;
       }
       
       if (!range.Duration.HasValue) {
-        log.InfoFormat ("IsRangeValid: " +
-                        "range has no duration " +
-                        "=> return false");
+        log.Info ("IsRangeValid: range has no duration => return false");
         return false;
       }
       Debug.Assert (range.Lower.HasValue); // else no duration

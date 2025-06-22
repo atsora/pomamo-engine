@@ -217,8 +217,14 @@ namespace Pulse.PluginImplementation.Analysis
               opName = $"{op1Name}/{op2Name}";
             }
           }
+          else if (log.IsDebugEnabled) {
+            log.Debug ($"GetOperation: opName={opName} from regex");
+          }
         }
-
+        else if (log.IsDebugEnabled) {
+          log.Debug ($"GetOperation: opName={opName} from plugin");
+        }
+        
         // opCode / op1Code / op2Code
         string op1Code = null;
         string op2Code = null;
@@ -262,6 +268,12 @@ namespace Pulse.PluginImplementation.Analysis
               opCode = $"{op1Code}/{op2Code}";
             }
           }
+          else if (log.IsDebugEnabled) {
+            log.Debug ($"GetOperation: opCode={opCode} from regex");
+          }
+        }
+        else if (log.IsDebugEnabled) {
+          log.Debug ($"GetOperation: opCode={opCode} from plugin");
         }
 
         if (string.IsNullOrEmpty (opName) && string.IsNullOrEmpty (opCode)) {
@@ -281,6 +293,9 @@ namespace Pulse.PluginImplementation.Analysis
           operation = matchingOperations.FirstOrDefault ();
         }
         else {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetOperation: single operation for opName={opName} opCode={opCode} in {m_programComment} for {m_regex}");
+          }
           operation = matchingOperations.SingleOrDefault ();
         }
         if (null != operation) {
@@ -439,6 +454,9 @@ namespace Pulse.PluginImplementation.Analysis
           if (log.IsWarnEnabled) {
             log.Warn ($"GetOperation: operation is null in {m_programComment} for regex {m_regex} => return null");
           }
+        }
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetOperation: got operation id={operation.Id}");
         }
         return operation;
       }

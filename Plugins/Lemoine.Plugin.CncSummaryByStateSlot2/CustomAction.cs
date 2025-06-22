@@ -96,7 +96,7 @@ WHERE startdatetime < '{1}' AND enddatetime > '{0}'
           if (field != null) {
             foreach (var machineModule in machineModules) {
               using (IDAOTransaction transaction = session.BeginTransaction ("CncSummaryByStateSlot2.Action.Recompute")) {
-                CncByMachineModuleField implementation = new CncByMachineModuleField (machineModule, field);
+                var implementation = new CncByMachineModuleField (machineModule, field);
                 implementation.Recompute (range);
                 transaction.Commit ();
               }

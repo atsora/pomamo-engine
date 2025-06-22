@@ -28,7 +28,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     readonly IDictionary<int, CncByMachineModuleField> m_fieldImplementation
       = new Dictionary<int, CncByMachineModuleField> ();
 
-    #region Constructor
     /// <summary>
     /// Constructor
     /// </summary>
@@ -36,7 +35,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       : base (new ConfigurationLoader ())
     {
     }
-    #endregion // Constructor
     
     #region ICncExtension implementation
     /// <summary>
@@ -147,8 +145,5 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       }
     }
     #endregion // ICncExtension implementation
-    
-    #region Private methods
-    #endregion // Private methods
   }
 }

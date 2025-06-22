@@ -222,6 +222,13 @@
     <!--appender-ref ref="debugRollingAp" /-->
     <!--appender-ref ref="consoleAp" /-->
   </logger>
+  <logger name="Pulse">
+    <level value="DEBUG" />
+    <!--appender-ref ref="warnRollingAp" /-->    
+    <appender-ref ref="infoRollingAp" />
+    <!--appender-ref ref="debugRollingAp" /-->
+    <!--appender-ref ref="consoleAp" /-->
+  </logger>
 
   <logger name="Lemoine.Core.Plugin.DefaultAssemblyLoader.Success">
     <level value="DEBUG" />

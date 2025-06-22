@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,18 +22,12 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     : Lemoine.Extensions.UniqueInstanceConfigurableExtension<Configuration>
     , Pulse.Extensions.Database.ISlotExtension
   {
-    #region Members
     IEnumerable<IMachineModule> m_machineModules = null; // Warning: it may remain null (if not a monitored machine or plugin not active) !
     IEnumerable<IField> m_fields = null; // Warning: it may remain null (if the plugin is not active) or it can be empty (plugin active with no configured field)
     bool m_initialized = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (SlotExtension).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -40,7 +35,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       : base (new ConfigurationLoader ())
     {
     }
-    #endregion // Constructors
 
     #region ISlotExtension implementation
     public void InsertNewSlotsBegin(IPeriodAssociation association, UtcDateTimeRange range, System.Collections.Generic.IEnumerable<ISlot> existingSlots, System.Collections.Generic.IEnumerable<ISlot> newSlots)
@@ -107,9 +101,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         IField field = ModelDAOHelper.DAOFactory.FieldDAO
           .FindById (fieldId);
         if (null == field) {
-          log.WarnFormat ("Initialize: " +
-                          "no field with id {0}",
-                          fieldId);
+          log.Warn ($"Initialize: no field with id {fieldId}");
         }
         else {
           fields.Add (field);
@@ -120,9 +112,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
         .FindByIdWithMachineModules (machine.Id);
       if (null == monitoredMachine) {
-        log.WarnFormat ("Initialize: " +
-                        "no monitored machine with id {0}",
-                        machine.Id);
+        log.Warn ($"Initialize: no monitored machine with id {machine.Id}");
         m_initialized = true;
         Debug.Assert (null != m_fields);
         return;
@@ -138,8 +128,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     {
       Debug.Assert (null != slot);
       if (null == slot) {
-        log.FatalFormat ("AddModify: " +
-                         "slot is null");
+        log.Fatal ("AddModify: slot is null");
         return;
       }
       
@@ -178,7 +167,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         Debug.Assert (null != m_machineModules);
         foreach (var machineModule in m_machineModules) {
           foreach (var field in m_fields) {
-            CncByMachineModuleField implementation = new CncByMachineModuleField (machineModule, field);
+            var implementation = new CncByMachineModuleField (machineModule, field);
             implementation.Recompute (slot.DateTimeRange);
           }
         }
@@ -231,8 +220,7 @@ WHERE t.machineid={0} AND t.machinemoduleid={1}
       
       Debug.Assert (null != slot);
       if (null == slot) {
-        log.ErrorFormat ("ExistsSameRange: " +
-                         "null slot");
+        log.Error ("ExistsSameRange: null slot");
         return false;
       }
       
@@ -242,8 +230,7 @@ WHERE t.machineid={0} AND t.machinemoduleid={1}
       
       Debug.Assert (null != slot.MachineObservationState);
       if (null == slot.MachineObservationState) {
-        log.ErrorFormat ("ExistsSameRange: " +
-                         "null machine observation state");
+        log.Error ("ExistsSameRange: null machine observation state");
         return false;
       }
       
@@ -283,25 +270,20 @@ RETURNING id
           try {
             object result = command.ExecuteScalar ();
             if (null != result) {
-              log.DebugFormat ("ExistsSameRange: " +
-                               "return true for machineModule {0}",
-                               machineModule.Id);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"ExistsSameRange: return true for machineModule {machineModule.Id}");
+              }
               return true;
             }
           }
           catch (Exception ex) {
-            log.ErrorFormat ("ExistsSameRange: " +
-                             "request error in SQL query {0} \n" +
-                             "Exception: {1}",
-                             command.CommandText,
-                             ex);
+            log.Error ($"ExistsSameRange: request error in SQL query {command.CommandText}", ex);
             throw;
           }
         }
       }
       
-      log.DebugFormat ("ExistsSameRange: " +
-                       "return false");
+      log.Debug ("ExistsSameRange: return false");
       return false;
     }
 
@@ -338,11 +320,7 @@ WHERE machineid={0} AND machinemoduleid={1} AND enddatetime>'{2}'
               command.ExecuteNonQuery();
             }
             catch (Exception ex) {
-              log.ErrorFormat ("RemoveOverlapsNotSameRange: " +
-                               "request error in SQL query {0} \n" +
-                               "Exception: {1}",
-                               command.CommandText,
-                               ex);
+              log.Error ($"RemoveOverlapsNotSameRange: request error in SQL query {command.CommandText}", ex);
               throw;
             }
             
@@ -363,11 +341,7 @@ WHERE machineid={0} AND machinemoduleid={1} AND enddatetime>'{2}' AND startdatet
               command.ExecuteNonQuery();
             }
             catch (Exception ex) {
-              log.ErrorFormat ("RemoveOverlapsNotSameRange: " +
-                               "request error in SQL query {0} \n" +
-                               "Exception: {1}",
-                               command.CommandText,
-                               ex);
+              log.Error ($"RemoveOverlapsNotSameRange: request error in SQL query {command.CommandText}", ex);
               throw;
             }
           }
