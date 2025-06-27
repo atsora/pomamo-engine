@@ -404,6 +404,10 @@ namespace Lemoine.CncEngine
     void CheckCncModuleLicense ()
     {
 #if !NET40
+      if (0 == m_cncAcquisitionId) {
+        log.Info ("CheckCncModuleLicense: id=0 => do nothing since this is probably for a test");
+        return;
+      }
       // Check the license value is correct
       var license = m_moduleObjects.Values
         .Select (x => this.GetCncModuleLicense (x.CncModule))
@@ -415,8 +419,9 @@ namespace Lemoine.CncEngine
             var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
               .FindById (m_cncAcquisitionId);
             if (cncAcquisition is null) {
-              log.Fatal ($"CheckCncModuleLicense: no cnc acquisition row with id={m_cncAcquisitionId}");
-              throw new InvalidOperationException ("Unexpected behavior");
+              log.Warn ($"CheckCncModuleLicense: no cnc acquisition row with id={m_cncAcquisitionId}. If this is a test, discard it");
+              transaction.Commit ();
+              return;
             }
             else if (cncAcquisition.License != license) {
               cncAcquisition.License = license;
@@ -431,13 +436,15 @@ namespace Lemoine.CncEngine
         }
       }
       catch (Exception ex) {
-        log.Error ($"CncDataHandler: error while updating the license of cnc acquisition id {m_cncAcquisitionId} to {license}", ex);
+        log.Error ($"CheckCncModuleLicense: error while updating the license of cnc acquisition id {m_cncAcquisitionId} to {license}", ex);
       }
-      if (configReload) {
-        if (log.IsDebugEnabled) {
-          log.Debug ("CncDataHandler: configuration was updated, reload the configuration");
+      finally {
+        if (configReload) {
+          if (log.IsDebugEnabled) {
+            log.Debug ("CheckCncModuleLicense: configuration was updated, reload the configuration");
+          }
+          throw new ConfigReloadRequired ();
         }
-        throw new ConfigReloadRequired ();
       }
 #endif // !NET40
     }

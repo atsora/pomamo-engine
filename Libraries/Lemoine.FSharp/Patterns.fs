@@ -13,11 +13,33 @@ let (|Prefix|_|) (p:string) (s:string) =
   else
     None
 
+(** Split a string using the characters that are found in sep *)
+let (|Split|_|) (sep:string) (s:string) =
+  let separators = sep.ToCharArray () in
+  match s.Split (separators) with
+  | [| |] -> None
+  | [| _ |] -> None
+  | a -> Some (Array.toSeq a)
+
+(** Split a string using the characters that are found in sep, but only split once *)
 let (|Split2|_|) (sep:string) (s:string) =
   let separators = sep.ToCharArray () in
   match s.Split (separators, 2) with
   | [| a; b |] -> Some(a, b)
   | _ -> None
+
+(** Split a string using the string sep *)
+let (|SplitS2|_|) (sep:string) (s:string) =
+  match s.Split ([| sep |], 2, System.StringSplitOptions.None) with
+  | [| a; b |] -> Some(a, b)
+  | _ -> None
+
+(** Split a string using the string sep, but only split once *)
+let (|SplitS|_|) (sep:string) (s:string) =
+  match s.Split ([| sep |], System.StringSplitOptions.None) with
+  | [| |] -> None
+  | [| _ |] -> None
+  | a -> Some (Array.toSeq a)
 
 let (|SingleChar|_|) (s:string) =
   if s.Length = 1 then
