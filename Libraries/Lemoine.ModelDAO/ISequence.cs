@@ -108,6 +108,11 @@ namespace Lemoine.Model
     /// Length of the segment
     /// </summary>
     public double? L { get; set; }
+
+    /// <summary>
+    /// Distance by axis
+    /// </summary>
+    public double[] D { get; set; } = null;
   }
 
   /// <summary>
