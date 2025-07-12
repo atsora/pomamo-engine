@@ -113,6 +113,16 @@ namespace Lemoine.Model
     /// Distance by axis
     /// </summary>
     public double[] D { get; set; } = null;
+
+    /// <summary>
+    /// Number of times an axis movement was started
+    /// </summary>
+    public double[] S { get; set; } = null;
+
+    /// <summary>
+    /// Number of times an axis movement was stopped
+    /// </summary>
+    public double[] E { get; set; } = null;
   }
 
   /// <summary>
