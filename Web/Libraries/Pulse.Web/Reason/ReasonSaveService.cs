@@ -3,26 +3,25 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using Lemoine.Core.Log;
+using Lemoine.Extensions.Web.Interfaces;
+using Lemoine.Extensions.Web.Responses;
+using Lemoine.Model;
+using Lemoine.ModelDAO;
+using Lemoine.Web;
+using Lemoine.Web.CommonRequestDTO;
+using Lemoine.WebMiddleware.HttpContext;
+using Microsoft.AspNetCore.Http;
+using Pulse.Business.Reason;
+using Pulse.Web.CommonResponseDTO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.Json;
-
-using Lemoine.Model;
-using Lemoine.ModelDAO;
-
-using Lemoine.Core.Log;
-using Lemoine.Web.CommonRequestDTO;
-using Pulse.Web.CommonResponseDTO;
-using Lemoine.Extensions.Web.Responses;
-using System.Threading.Tasks;
-using Lemoine.Extensions.Web.Interfaces;
 using System.IO;
-using Microsoft.AspNetCore.Http;
-using Lemoine.Web;
-using Lemoine.WebMiddleware.HttpContext;
-using Pulse.Business.Reason;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Pulse.Web.Reason
 {

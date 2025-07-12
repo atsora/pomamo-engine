@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -105,7 +106,6 @@ namespace Lemoine.Business.Machine
 
     readonly System.Security.Claims.ClaimsPrincipal m_user;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -114,7 +114,6 @@ namespace Lemoine.Business.Machine
     {
       m_user = user;
     }
-    #endregion // Constructors
 
     #region IRequest implementation
     /// <summary>

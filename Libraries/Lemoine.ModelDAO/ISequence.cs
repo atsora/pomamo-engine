@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2024 Atsora Solutions
+// Copyright (C) 2024-2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -72,22 +72,42 @@ namespace Lemoine.Model
     InverseTime = 8,
   }
 
-  public class MachiningLine
-  { 
+  /// <summary>
+  /// In a segment, small angle changes are dismissed.
+  /// 
+  /// A segment is made of:
+  /// - an initial vector (FV)
+  /// - a length (L)
+  /// - a terminal vector (LV)
+  /// - if applicable, an angle change (A) at the end of the segment
+  /// - the name of the axes that changed direction (DC) at the end of the segment
+  /// </summary>
+  public class Segment
+  {
     /// <summary>
-    /// Angle
+    /// First/initial vector, if configured to record it
     /// </summary>
-    public double? Angle { get; set; }
+    public double[] FV { get; set; } = null;
 
     /// <summary>
-    /// List of axis names for which the direction changed
+    /// Last/terminal vector, if configured to record it
     /// </summary>
-    public IList<string> DirectionChange { get; set; } = null;
+    public double[] LV { get; set; } = null;
 
     /// <summary>
-    /// Lenght
+    /// Angle at the end of the segment
     /// </summary>
-    public double? Length { get; set; }
+    public double? A { get; set; }
+
+    /// <summary>
+    /// Direction change: list of axis names for which the direction changed at the end of the segment
+    /// </summary>
+    public IList<string> DC { get; set; } = null;
+
+    /// <summary>
+    /// Length of the segment
+    /// </summary>
+    public double? L { get; set; }
   }
 
   /// <summary>
@@ -139,9 +159,18 @@ namespace Lemoine.Model
     public double? SpindleSpeed { get; set; }
 
     /// <summary>
-    /// Lines: angle that is followed by a length
+    /// Segments
+    /// 
+    /// In a segment, small angle changes are dismissed.
+    /// 
+    /// A segment is made of:
+    /// - an initial vector (FV)
+    /// - a length (L)
+    /// - a terminal vector (LV)
+    /// - if applicable, an angle change (A) at the end of the segment
+    /// - the name of the axes that changed direction (DC) at the end of the segment
     /// </summary>
-    public IList<MachiningLine> Lines { get; set; } = null;
+    public IList<Segment> Segments { get; set; } = null;
 
     /// <summary>
     /// Number of times an axis direction changes
@@ -174,7 +203,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Version of the sequence detail data structure
     /// </summary>
-    public int Version { get; set; } = 3;
+    public int Version { get; set; } = 4;
 
     /// <summary>
     /// Sequence paths

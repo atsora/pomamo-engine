@@ -16,15 +16,8 @@ namespace Lemoine.Web.CommonRequestDTO
   /// </summary>
   public abstract class PostDTO
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (PostDTO).FullName);
 
-    #region Constructors
-    #endregion // Constructors
-
-    #region Methods
     /// <summary>
     /// Deserialize
     /// </summary>
@@ -53,6 +46,5 @@ namespace Lemoine.Web.CommonRequestDTO
 
       return await System.Text.Json.JsonSerializer.DeserializeAsync<T> (stream);
     }
-    #endregion // Methods
   }
 }

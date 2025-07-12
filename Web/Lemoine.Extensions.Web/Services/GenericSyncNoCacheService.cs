@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -23,22 +24,13 @@ namespace Lemoine.Extensions.Web.Services
   {
     readonly ILog log = LogManager.GetLogger (typeof (GenericSyncNoCacheService<InputDTO>).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     protected GenericSyncNoCacheService ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get without cache
     /// </summary>
@@ -56,6 +48,5 @@ namespace Lemoine.Extensions.Web.Services
       var result = GetWithoutCache (request);
       return Task.FromResult (result);
     }
-    #endregion // Methods
   }
 }
