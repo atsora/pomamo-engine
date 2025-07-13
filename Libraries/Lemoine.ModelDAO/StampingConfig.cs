@@ -200,7 +200,16 @@ namespace Lemoine.Model
   {
     readonly ILog log = LogManager.GetLogger (typeof (StampingConfig).FullName);
 
-    #region Getters / Setters
+    /// <summary>
+    /// Description of the stamping config
+    /// </summary>
+    public string Description { get; set; } = "";
+
+    /// <summary>
+    /// Supported CNCs
+    /// </summary>
+    public string[] CNCs { get; set; } = null;
+
     /// <summary>
     /// Full type name of the stamping file flow
     /// </summary>
@@ -235,7 +244,6 @@ namespace Lemoine.Model
     /// Full type names of the event handlers
     /// </summary>
     public IList<string> EventHandlers { get; set; } = new List<string> ();
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor
