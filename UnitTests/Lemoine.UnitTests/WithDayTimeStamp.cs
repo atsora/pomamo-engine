@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,10 +16,6 @@ namespace Lemoine.UnitTests
   {
     static readonly ILog log = LogManager.GetLogger(typeof (WithDayTimeStamp).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -27,13 +24,10 @@ namespace Lemoine.UnitTests
       : base (baseDateTime)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
-    protected override DateTime T(int n)
+    protected override DateTime T(double n)
     {
       return m_baseDateTime.AddDays (n);
     }
-    #endregion // Methods
   }
 }

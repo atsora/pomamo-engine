@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,10 +16,6 @@ namespace Lemoine.UnitTests
   {
     static readonly ILog log = LogManager.GetLogger(typeof (WithSecondTimeStamp).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -26,18 +23,15 @@ namespace Lemoine.UnitTests
       : base (baseDateTime)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Convienent function to create a DateTime relative to the origin
     /// </summary>
     /// <param name="n">number of seconds to add</param>
     /// <returns></returns>
-    protected override DateTime T(int n)
+    protected override DateTime T(double n)
     {
       return m_baseDateTime.AddSeconds (n);
     }
-    #endregion // Methods
   }
 }

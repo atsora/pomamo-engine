@@ -195,8 +195,6 @@ namespace Lemoine.GDBPersistentClasses
 
     /// <summary>
     /// Find the unique slot at the specified UTC date/time
-    /// 
-    /// Be careful ! This can be used only on global slots
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="at">in UTC</param>
@@ -216,19 +214,22 @@ namespace Lemoine.GDBPersistentClasses
             break;
           case DateTimeKind.Unspecified:
           default:
-            log.ErrorFormat ("FindAt:date/time {0} is of kind Unspecified",
-                             at);
+            log.Error ($"FindAt: date/time {at} is of kind Unspecified");
             Debug.Assert (DateTimeKind.Unspecified != at.Value.Kind);
             utc = at.Value;
             break;
         }
-        return NHibernateHelper.GetCurrentSession ()
+        var result = NHibernateHelper.GetCurrentSession ()
           .CreateCriteria<TSlot> ()
           .Add (Restrictions.Eq ("Machine.Id", machine.Id))
           // Note: new SimpleExpression ("DateTimeRange", dateTime, "@>") does not work because it compares object of different types
           // The returned error is: Type mismatch in NHibernate.Criterion.SimpleExpression: DateTimeRange expected type Lemoine.Model.UtcDateTimeRange, actual type System.DateTime
           .Add (new SimpleTypedExpression ("DateTimeRange", new Lemoine.NHibernateTypes.UTCDateTimeFullType (), utc, "@>"))
           .UniqueResult<I> ();
+        if (result is not null && !result.DateTimeRange.ContainsElement (at)) {
+          log.Fatal ($"FindAt: returned element with range{result.DateTimeRange} does not contain {at}");
+        }
+        return result;
       }
       else { // !at.HasValue
         switch (at.BoundType) {

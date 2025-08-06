@@ -17,18 +17,15 @@ namespace Lemoine.Model
   public class Range<T> : IRange<T>, IEquatable<Range<T>>, ICloneable, IComparable, IComparable<Range<T>>
     where T : struct, IComparable, IComparable<T>, IEquatable<T>
   {
-    #region Members
     LowerBound<T> m_lower; // null => -oo
     bool m_lowerInclusive = true;
     UpperBound<T> m_upper; // null => +oo
     bool m_upperInclusive = false;
     bool m_empty = false; // Manuall set to empty
-    #endregion // Members
 
     // disable once StaticFieldInGenericType
     static readonly ILog log = LogManager.GetLogger (typeof (Range<T>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Lower bound of range
     /// </summary>
@@ -37,8 +34,7 @@ namespace Lemoine.Model
     {
       get {
         if (m_empty) {
-          log.ErrorFormat ("Lower.get: empty range. StackTrace={0}",
-                           System.Environment.StackTrace);
+          log.Error ($"Lower.get: empty range. StackTrace={System.Environment.StackTrace}");
           throw new InvalidOperationException ("empty range");
         }
         return m_lower;
@@ -74,8 +70,7 @@ namespace Lemoine.Model
     {
       get {
         if (m_empty) {
-          log.ErrorFormat ("Upper.get: empty range. StackTrace={0}",
-            System.Environment.StackTrace);
+          log.Error ($"Upper.get: empty range. StackTrace={System.Environment.StackTrace}");
           throw new InvalidOperationException ("empty range");
         }
         return m_upper;
@@ -110,9 +105,7 @@ namespace Lemoine.Model
       get { return this.ToString (); }
       set { this.Parse (value); }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Create an empty range
     /// </summary>
@@ -199,9 +192,7 @@ namespace Lemoine.Model
       ParseInclusivity (inclusivity);
       GetCanonical ();
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the canonical form of the range
     /// 
@@ -217,8 +208,7 @@ namespace Lemoine.Model
     protected virtual void Parse (string arg)
     {
       if (null == arg) {
-        log.WarnFormat ("Parse: " +
-                        "arg is null => fallback: consider it is empty though");
+        log.Warn ("Parse: arg is null => fallback: consider it is empty though");
         Debug.Assert (null != arg);
         m_empty = true;
         return;
@@ -228,25 +218,21 @@ namespace Lemoine.Model
 
       m_empty = string.IsNullOrEmpty (s) || s.Equals ("empty");
       if (m_empty) {
-        log.DebugFormat ("Parse: " +
-                         "the Range from string {0} is empty",
-                         s);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Parse: the Range from string {s} is empty");
+        }
         return;
       }
 
       if (s.Length < 3) {
-        log.ErrorFormat ("Parse: " +
-                         "parameter {0} with not enough characters",
-                         s);
+        log.Error ($"Parse: parameter {s} with not enough characters");
         throw new FormatException ("Invalid string length");
       }
 
       // - Bounds
       string[] bounds = s.Substring (1, s.Length - 2).Split (new char[] { ',' }, 2);
       if (2 != bounds.Length) {
-        log.ErrorFormat ("Parse: " +
-                         "missing separator bound in parameter {0}",
-                         s);
+        log.Error ($"Parse: missing separator bound in parameter {s}");
         throw new FormatException ("Missing bound separator");
       }
       else {
@@ -269,8 +255,7 @@ namespace Lemoine.Model
       }
 
       // - Inclusivity
-      string inclusivity = string.Format ("{0}{1}",
-                                          s[0], s[s.Length - 1]);
+      string inclusivity = $"{s[0]}{s[s.Length - 1]}";
       ParseInclusivity (inclusivity);
     }
 
@@ -297,14 +282,11 @@ namespace Lemoine.Model
     void ParseInclusivity (string inclusivity)
     {
       if (string.IsNullOrEmpty (inclusivity)) {
-        log.ErrorFormat ("ParseInclusivity: " +
-                         "null or empty parameter");
+        log.Error ("ParseInclusivity: null or empty parameter");
         throw new ArgumentOutOfRangeException ("inclusivity", "NullOrEmpty");
       }
       else if (2 != inclusivity.Length) {
-        log.ErrorFormat ("ParseInclusivity: " +
-                         "parameter {0} not with 2 characters",
-                         inclusivity);
+        log.Error ($"ParseInclusivity: parameter {inclusivity} not with 2 characters");
         throw new ArgumentOutOfRangeException ("inclusivity", "Bad length");
       }
       else {
@@ -316,9 +298,7 @@ namespace Lemoine.Model
           m_lowerInclusive = false;
           break;
         default:
-          log.ErrorFormat ("ParseInclusivity: " +
-                           "bad syntax for the lower inclusivity in parameter {0}",
-                           inclusivity);
+          log.Error ($"ParseInclusivity: bad syntax for the lower inclusivity in parameter {inclusivity}");
           throw new ArgumentOutOfRangeException ("inclusivity", "Bad format for lower inclusivity");
         }
         switch (inclusivity[1]) {
@@ -329,9 +309,7 @@ namespace Lemoine.Model
           m_upperInclusive = false;
           break;
         default:
-          log.ErrorFormat ("ParseInclusivity: " +
-                           "bad syntax for the upper inclusivity in parameter {0}",
-                           inclusivity);
+          log.ErrorFormat ($"ParseInclusivity: bad syntax for the upper inclusivity in parameter {inclusivity}");
           throw new ArgumentOutOfRangeException ("inclusivity", "Bad format for lower inclusivity");
         }
       }
@@ -354,22 +332,21 @@ namespace Lemoine.Model
     public bool IsEmpty ()
     {
       if (m_empty) {
-        log.DebugFormat ("IsEmpty: " +
-                         "empty because Empty property is set to true");
+        log.Debug ("IsEmpty: empty because Empty property is set to true");
         return true;
       }
       else if (m_upper.HasValue && m_lower.HasValue) {
         if (m_upper.Value.CompareTo (m_lower.Value) < 0) {
-          log.DebugFormat ("IsEmpty: " +
-                           "empty because upper {1} is strictly lesser than lower {0}",
-                           m_lower, m_upper);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsEmpty: empty because upper {m_upper} is strictly lesser than lower {m_lower}");
+          }
           return true;
         }
         else if (object.Equals (m_upper.Value, m_lower.Value)
                  && (!m_lowerInclusive || !m_upperInclusive)) {
-          log.DebugFormat ("IsEmpty: " +
-                           "empty because, lower {0} and upper {1} are equal but one of them is not inclusive",
-                           m_lower, m_upper);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsEmpty: empty because, lower {m_lower} and upper {m_upper} are equal but one of them is not inclusive");
+          }
           return true;
         }
       }
@@ -392,10 +369,8 @@ namespace Lemoine.Model
         if (m_upper.Value.CompareTo (m_lower.Value) < 0) {
           // Note: this fixes a problem with PostgreSQL
           // A request in PostgreSQL ends in error if Upper<Lower
-          log.WarnFormat ("ToString: " +
-                          "the upper bound is before the lower bound " +
-                          "=> return empty instead of {0}{1},{2}{3} " +
-                          "Stack: {4}",
+          log.WarnFormat ("ToString: the upper bound is before the lower bound " +
+                          "=> return empty instead of {0}{1},{2}{3} Stack: {4}",
                           m_lowerInclusive ? "[" : "(",
                           m_lower.HasValue ? convertBoundToString (m_lower.Value) : "",
                           m_upper.HasValue ? convertBoundToString (m_upper.Value) : "",
@@ -405,10 +380,8 @@ namespace Lemoine.Model
         }
         else if (object.Equals (m_upper.Value, m_lower.Value)
                  && (!m_lowerInclusive || !m_upperInclusive)) {
-          log.WarnFormat ("ToString: " +
-                          "lower {1} and upper {2} are equal but one of them is not inclusive " +
-                          "=> return empty instead {0}{1},{2}{3} " +
-                          "Stack: {4}",
+          log.WarnFormat ("ToString: lower {1} and upper {2} are equal but one of them is not inclusive " +
+                          "=> return empty instead {0}{1},{2}{3} Stack: {4}",
                           m_lowerInclusive ? "[" : "(",
                           m_lower.HasValue ? convertBoundToString (m_lower.Value) : "",
                           m_upper.HasValue ? convertBoundToString (m_upper.Value) : "",
@@ -469,7 +442,6 @@ namespace Lemoine.Model
         return hashCode;
       }
     }
-    #endregion // Methods
 
     #region ICloneable implementation
     /// <summary>

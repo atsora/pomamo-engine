@@ -892,6 +892,47 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       return true;
     }
 
+    IReasonSlot FindAfter (IMachine machine, UtcDateTimeRange range)
+    {
+      // The range may be with upper bound inclusive (unique date/time)
+      var dateTimeAfter = range.UpperInclusive ? range.Upper.Value.AddSeconds (1) : range.Upper.Value;
+      return FindAfterAt (machine, range, dateTimeAfter);
+    }
+
+    IReasonSlot FindAfterAt (IMachine machine, UtcDateTimeRange range, DateTime at, int attempt = 1)
+    {
+      var reasonSlotAfter = ModelDAOHelper.DAOFactory.ReasonSlotDAO
+        .FindAt (machine, at);
+      if (reasonSlotAfter is not null) {
+        if (!reasonSlotAfter.DateTimeRange.Lower.HasValue) {
+          log.Fatal ($"FindAfterAt: no lower value in reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange}");
+          throw new InvalidOperationException ("Invalid reason slot, with no lower date/time");
+        }
+        else if (reasonSlotAfter.DateTimeRange.IsEmpty ()) {
+          log.Fatal ($"FindAfterAt: reason slot after id={reasonSlotAfter.Id} with an empty range={reasonSlotAfter.DateTimeRange}");
+          throw new InvalidOperationException ("Invalid reason slot, with an empty range");
+        }
+        if (!reasonSlotAfter.DateTimeRange.IsStrictlyRightOf (range)) {
+          log.Fatal ($"FindAfterAt: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not strictly after reason slot range={range}, after={at}");
+          if (reasonSlotAfter.DateTimeRange.Equals (range) && (1 == attempt)) {
+            log.Fatal ($"FindAfterAt: this should not happen, range are identical range={range} at={at}, try again one second later");
+            // Work around in case this happens: try with after + 1 second
+            return FindAfterAt (machine, range, at.AddSeconds (1), attempt + 1);
+          }
+          // Bug: the log above is from time to time raised, and the reason why has not beed found yet
+          throw new Exception ("Invalid reason slot after");
+        }
+        if (!reasonSlotAfter.DateTimeRange.Lower.Value.Equals (range.Upper.Value)) {
+          log.Fatal ($"FindAfterAt: reason slot after id={reasonSlotAfter.Id} is not adjacent to range={reasonSlotAfter.DateTimeRange}, but try to continue");
+        }
+        // else Valid next reasonSlotAfter
+        if (log.IsDebugEnabled) {
+          log.Debug ($"FindAfterAt: check if {range} can be extended to {reasonSlotAfter.DateTimeRange.Upper}");
+        }
+      }
+      return reasonSlotAfter;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -918,27 +959,9 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       }
 
       // The range may be with upper bound inclusive (unique date/time)
-      var dateTimeAfter = range.UpperInclusive ? range.Upper.Value.AddSeconds (1) : range.Upper.Value;
-      var reasonSlotAfter = ModelDAOHelper.DAOFactory.ReasonSlotDAO
-        .FindAt (machine, dateTimeAfter);
+      var reasonSlotAfter = FindAfter (machine, range);
       if ((null != reasonSlotAfter)
           && (defaultReasonToTest.MachineObservationState.Id == reasonSlotAfter.MachineObservationState.Id)) {
-        if (!reasonSlotAfter.DateTimeRange.Lower.HasValue) {
-          log.Fatal ($"ExtendToRight: no lower value in reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange}");
-          throw new InvalidOperationException ("Invalid reason slot, with no lower date/time");
-        }
-        else if (reasonSlotAfter.DateTimeRange.IsEmpty ()) {
-          log.Fatal ($"ExtendToRight: reason slot after id={reasonSlotAfter.Id} with an empty range={reasonSlotAfter.DateTimeRange}");
-          throw new InvalidOperationException ("Invalid reason slot, with an empty range");
-        }
-        else if (Bound.Compare<DateTime> (reasonSlotAfter.DateTimeRange.Upper, dateTimeAfter) <= 0) {
-          log.Fatal ($"ExtendToRight: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not after reason slot range={range}");
-          throw new Exception ("Invalid reason slot after");
-        }
-        else if (!reasonSlotAfter.DateTimeRange.Lower.Value.Equals (range.Upper.Value)) {
-          log.Fatal ($"ExtendToRight: reason slot after id={reasonSlotAfter.Id} is not adjacent to range={reasonSlotAfter.DateTimeRange}, but try to continue");
-        }
-        // else Valid next reasonSlotAfter
         if (log.IsDebugEnabled) {
           log.Debug ($"ExtendToRight: check if {range} can be extended to {reasonSlotAfter.DateTimeRange.Upper}");
         }
@@ -1053,7 +1076,7 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
             range = new UtcDateTimeRange (at.Subtract (TimeSpan.FromSeconds (1)), at);
           }
           Debug.Assert (!range.IsEmpty ());
-          IMachineModeDefaultReason machineModeDefaultReason = TestMachineModeDefaultReasons (m_machine,
+          var machineModeDefaultReason = TestMachineModeDefaultReasons (m_machine,
             machineModeDefaultReasons, range, x => !autoManualOnly || x.Auto);
           if (machineModeDefaultReason is null) {
             if (log.IsDebugEnabled && m_logActive) {

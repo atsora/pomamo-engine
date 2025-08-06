@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -154,10 +155,7 @@ namespace Lemoine.Model
     {
       if (this.IsEmpty ()) {
         Debug.Assert (!this.IsEmpty ());
-        log.FatalFormat ("GetDistance: " +
-                         "empty range => Fallback is 0s. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Fatal ($"GetDistance: empty range => fallback is 0s. StackTrace: {System.Environment.StackTrace}");
         return TimeSpan.FromTicks (0);
       }
 
@@ -197,8 +195,7 @@ namespace Lemoine.Model
     public IList<UtcDateTimeRange> Intersects (TimePeriodOfDay timePeriod)
     {
       if (!this.Lower.HasValue || !this.Upper.HasValue) {
-        log.ErrorFormat ("Intersects: " +
-                         "an infinite range can't intersect a time period");
+        log.Error ("Intersects: an infinite range can't intersect a time period");
         throw new ArgumentException ("timePeriod");
       }
 

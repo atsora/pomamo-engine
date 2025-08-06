@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,7 +19,6 @@ namespace Lemoine.UnitTests
     
     static readonly ILog log = LogManager.GetLogger(typeof (WithTimeStamp).FullName);
     
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -27,22 +27,20 @@ namespace Lemoine.UnitTests
     {
       m_baseDateTime = baseDateTime.ToUniversalTime ();
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get a time stamp
     /// </summary>
     /// <param name="n"></param>
     /// <returns></returns>
-    protected abstract DateTime T(int n);
+    protected abstract DateTime T(double n);
     
     /// <summary>
     /// Convenient function to create a range, relative to the origin
     /// </summary>
     /// <param name="l">number of seconds to add, defining the start of the range</param>
     /// <param name="u">number of seconds to add, defining the end of the range. Can be null</param>
-    protected virtual UtcDateTimeRange R(int l, int? u)
+    protected virtual UtcDateTimeRange R(double l, double? u)
     {
       return u.HasValue
         ? new UtcDateTimeRange (T(l), T(u.Value))
@@ -55,7 +53,7 @@ namespace Lemoine.UnitTests
     /// <param name="l">number of seconds to add, defining the start of the range</param>
     /// <param name="u">number of seconds to add, defining the end of the range. Can be null</param>
     /// <param name="inclusivity"></param>
-    protected virtual UtcDateTimeRange R (int l, int? u, string inclusivity)
+    protected virtual UtcDateTimeRange R (double l, double? u, string inclusivity)
     {
       return u.HasValue
         ? new UtcDateTimeRange (T (l), T (u.Value), inclusivity)
@@ -67,10 +65,9 @@ namespace Lemoine.UnitTests
     /// </summary>
     /// <param name="l"></param>
     /// <returns></returns>
-    protected virtual UtcDateTimeRange R (int l)
+    protected virtual UtcDateTimeRange R (double l)
     {
       return R (l, null);
     }
-    #endregion // Methods
   }
 }
