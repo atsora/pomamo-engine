@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -9,6 +10,7 @@ using System.Linq;
 using Lemoine.Extensions.Configuration.GuiBuilder;
 using Lemoine.Core.Log;
 using System.ComponentModel;
+using Lemoine.Model;
 
 namespace Lemoine.Plugin.ActivityIsProduction
 {
@@ -18,7 +20,6 @@ namespace Lemoine.Plugin.ActivityIsProduction
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// [Optional] Name prefix
     /// </summary>
@@ -58,6 +59,17 @@ namespace Lemoine.Plugin.ActivityIsProduction
     }
 
     /// <summary>
+    /// Minimum activity time that triggers a production
+    /// 
+    /// Default: null (no minimum activity time)
+    /// </summary>
+    [PluginConf ("DurationPicker", "Minimum activity time", Description = "Optionally a minimum required time of activity that triggers a production")]
+    public TimeSpan? MinimumActivityDuration
+    {
+      get; set;
+    } = null;
+
+    /// <summary>
     /// Maximum time before giving up for LastProductionEnd
     /// 
     /// Set it to 3 days for example to limit some side performance effects
@@ -84,7 +96,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
     /// 
     /// <see cref="IgnoreShortMachineModeIds"/> must be set as well
     /// </summary>
-    [PluginConf ("DurationPicker", "Maximum duration for short periods", Description = "Optionally a maximum delay for LastProductionEnd dynamic time", Parameters = "0:00:01", Optional = true)]
+    [PluginConf ("DurationPicker", "Maximum duration for short periods", Description = "Optionally a maximum duration for the short periods", Parameters = "0:00:01", Optional = true)]
     [DefaultValue (null)]
     public TimeSpan? IgnoreShortMaximumDuration
     {
@@ -108,14 +120,53 @@ namespace Lemoine.Plugin.ActivityIsProduction
     {
       get; set;
     } = null;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public Configuration ()
     {
+    }
+
+    /// <summary>
+    /// Were the ignore short periods settings set?
+    /// </summary>
+    /// <returns></returns>
+    public bool IsIgnoreShortActive () => (null != this.IgnoreShortMachineModeIds) && this.IgnoreShortMachineModeIds.Any ()
+        && (null != this.IgnoreShortMaximumDuration) && (0 < this.IgnoreShortMaximumDuration.Value.Ticks);
+
+    /// <summary>
+    /// Does a fact corresponds to a short period
+    /// </summary>
+    public bool IsShort (DateTime start, DateTime end, IMachineMode machineMode, IEnumerable<IMachineMode> shortMachineModes)
+    {
+      if (!IsIgnoreShortActive ()) {
+        return false;
+      }
+
+      if (shortMachineModes is null || !shortMachineModes.Any ()) {
+        return false;
+      }
+
+      if (end < start) {
+        log.Error ($"IsShort: end {end} is before start {start}");
+        return false;
+      }
+      var duration = end - start;
+
+      if (this.IgnoreShortMaximumDuration <= duration) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsShort: {start}-{end} is longer than {this.IgnoreShortMaximumDuration}, return false");
+        }
+        return false;
+      }
+
+      return shortMachineModes.Any (m => IsSubMachineMode (m, machineMode));
+    }
+
+    bool IsSubMachineMode (IMachineMode ancestor, IMachineMode descendant)
+    {
+      return Lemoine.Business.ServiceProvider.Get (new Lemoine.Business.MachineMode.IsDescendantOrSelfOf (ancestor, descendant));
     }
 
     /// <summary>
@@ -165,8 +216,6 @@ namespace Lemoine.Plugin.ActivityIsProduction
 
       return result;
     }
-
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>

@@ -55,10 +55,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
             log.Fatal ($"Initialize: no monitored machine for id {this.Machine.Id}");
             return false;
           }
-          if (m_configuration.IgnoreShortMaximumDuration.HasValue
-            && (0 < m_configuration.IgnoreShortMaximumDuration.Value.Ticks)
-            && (null != m_configuration.IgnoreShortMachineModeIds)
-            && (m_configuration.IgnoreShortMachineModeIds.Any ())) {
+          if (m_configuration.IsIgnoreShortActive ()) {
             m_ignoreShortMachineModes = m_configuration.IgnoreShortMachineModeIds
               .Select (i => ModelDAOHelper.DAOFactory.MachineModeDAO.FindById (i))
               .Where (x => (null != x))

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -29,6 +30,8 @@ namespace Lemoine.Plugin.ActivityIsProduction
     ILog log = LogManager.GetLogger (typeof (NextProductionStart).FullName);
 
     Configuration m_configuration;
+    IEnumerable<IMachineMode> m_ignoreShortMachineModes = new List<IMachineMode> ();
+    IMachineMode m_noData = null;
 
     public bool Initialize (IMachine machine, string parameter)
     {
@@ -38,7 +41,27 @@ namespace Lemoine.Plugin.ActivityIsProduction
         return false;
       }
       Debug.Assert (null != m_configuration);
-      return m_configuration.CheckMachineFilter (machine);
+      if (!m_configuration.CheckMachineFilter (machine)) {
+        return false;
+      }
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("ActivityIsProduction.NextProductionStart.Initialize")) {
+          if (m_configuration.IsIgnoreShortActive ()) {
+            m_ignoreShortMachineModes = m_configuration.IgnoreShortMachineModeIds
+              .Select (i => ModelDAOHelper.DAOFactory.MachineModeDAO.FindById (i))
+              .Where (x => (null != x))
+              .ToList ();
+            m_noData = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById ((int)MachineModeId.NoData);
+            if (m_noData is null) {
+              log.Fatal ($"Initialize: machine mode no data id={MachineModeId.NoData} does not exist");
+              return false;
+            }
+          }
+        }
+      }
+
+      return true;
     }
 
     public IMachine Machine
@@ -48,8 +71,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
 
     public string Name
     {
-      get
-      {
+      get {
         var suffix = "NextProductionStart";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
@@ -87,7 +109,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
           }
           else {
             if (IsFactAfter (dateTime)) {
-              log.WarnFormat ("IsApplicableAt: no fact at {0}", dateTime);
+              log.Warn ($"IsApplicableAt: no fact at {dateTime}");
               return DynamicTimeApplicableStatus.YesAtDateTime;
             }
             else {
@@ -111,6 +133,8 @@ namespace Lemoine.Plugin.ActivityIsProduction
           var facts = ModelDAOHelper.DAOFactory.FactDAO
             .FindOverlapsRangeAscending (this.Machine, range, STEP);
           DateTime? afterResponse = null;
+          DateTime? activityStart = null; // To track short ignore periods
+          DateTime? activityEnd = null; // To track short ignore periods
           foreach (var fact in facts) {
             if (timeout < DateTime.UtcNow.Subtract (startDateTime)) {
               log.Error ($"Get: timeout, start={startDateTime} VS timeout={timeout}");
@@ -119,15 +143,60 @@ namespace Lemoine.Plugin.ActivityIsProduction
 
             if (Match (fact)) {
               if (fact.DateTimeRange.ContainsElement (dateTime)) {
-                log.InfoFormat ("Get: the fact at {0} is a production period, return NotApplicable", dateTime);
+                if (log.IsInfoEnabled) {
+                  log.Info ($"Get: the fact at {dateTime} is a production period, return NotApplicable");
+                }
                 return this.CreateNotApplicable ();
               }
               Debug.Assert (fact.DateTimeRange.Lower.HasValue);
-              return this.CreateFinal (fact.DateTimeRange.Lower.Value);
-            }
-            else {
+              if (!activityStart.HasValue) {
+                activityStart = fact.DateTimeRange.Lower.Value;
+              }
+              else { // activityStart is already set, check for gaps
+                Debug.Assert (activityEnd.HasValue);
+                if (activityEnd.Value < fact.DateTimeRange.Lower.Value) { // Gap
+                  if (!m_configuration.IsIgnoreShortActive ()
+                    || !m_configuration.IsShort (activityEnd.Value, fact.DateTimeRange.Lower.Value, m_noData, m_ignoreShortMachineModes)) {
+                    // Not a short gap that can be ignored, reset activityStart
+                    activityStart = fact.DateTimeRange.Lower.Value;
+                  }
+                }
+              }
               Debug.Assert (fact.DateTimeRange.Upper.HasValue);
-              afterResponse = fact.DateTimeRange.Upper.Value;
+              activityEnd = fact.DateTimeRange.Upper.Value;
+              if (m_configuration.MinimumActivityDuration.HasValue) {
+                var activityDuration = activityEnd - activityStart.Value;
+                if (m_configuration.MinimumActivityDuration.Value <= activityDuration) {
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"Get: {activityStart}-{activityEnd} is a production period with sufficient duration {activityDuration} >= {m_configuration.MinimumActivityDuration.Value}");
+                  }
+                  return this.CreateFinal (activityStart.Value);
+                }
+                else if (log.IsDebugEnabled) {
+                  log.Debug ($"Get: {activityStart}-{activityEnd} is a production period with insufficient duration {activityDuration} < {m_configuration.MinimumActivityDuration.Value}");
+                }
+              }
+              else { // No minimum activity duration
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Get: fact {fact} is a production period without minimum duration");
+                }
+                return this.CreateFinal (fact.DateTimeRange.Lower.Value);
+              }
+            } // Match (fact)
+            else {
+              if (activityStart.HasValue && activityEnd.HasValue && m_configuration.IsIgnoreShortActive ()) {
+                Debug.Assert (fact.DateTimeRange.Upper.HasValue);
+                if (!m_configuration.IsShort (activityEnd.Value, fact.DateTimeRange.Upper.Value, fact.CncMachineMode, m_ignoreShortMachineModes)) {
+                  activityStart = null;
+                  activityEnd = null;
+                  afterResponse = fact.DateTimeRange.Upper.Value;
+                }
+              }
+              else {
+                activityStart = null;
+                Debug.Assert (fact.DateTimeRange.Upper.HasValue);
+                afterResponse = fact.DateTimeRange.Upper.Value;
+              }
             }
           } // Loop on facts
 

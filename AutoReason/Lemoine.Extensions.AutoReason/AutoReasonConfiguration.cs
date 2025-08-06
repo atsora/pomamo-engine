@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,7 +21,6 @@ namespace Lemoine.Extensions.AutoReason
   {
     static readonly ILog log = LogManager.GetLogger (typeof (AutoReasonConfiguration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reason score
     /// </summary>
@@ -55,16 +55,13 @@ namespace Lemoine.Extensions.AutoReason
     /// </summary>
     [PluginConf ("Text", "Default reason translation value", Description = "optionally a default reason translation value in case no reason is set", Multiple = false, Optional = true)]
     public string DefaultReasonTranslationValue { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public AutoReasonConfiguration ()
     {
     }
-    #endregion // Constructors
 
     #region ConfigurationWithMachineFilter implementation
     /// <summary>

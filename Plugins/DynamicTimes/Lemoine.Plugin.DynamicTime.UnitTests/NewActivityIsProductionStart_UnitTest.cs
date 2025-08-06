@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -118,6 +119,303 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
             CheckFinal (extension, T (2), R (0, 2, "[]"));
             CheckFinal (extension, T (2), R (0, 3));
 
+          }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the activity analysis extension
+    /// </summary>
+    [Test]
+    public void TestMinimumActivity ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          // Reference data
+          IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindById (2);
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (machine);
+          IMachineMode inactive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Inactive);
+          IMachineMode active = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Active);
+          IMachineMode manualActive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.ManualActive);
+          IMachineMode autoFeed = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.AutoFeed);
+          IMachineMode machining = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Machining);
+          IMachineMode autoMachining = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.AutoMachining);
+
+          {
+            var extension = new Lemoine.Plugin.ActivityIsProduction
+              .NextProductionStart ();
+            extension.SetTestConfiguration ($$"""
+              {
+                "Manual": false,
+                "NorManualNorAuto": true,
+                "IgnoreShortMachineModeIds": [{{(int)MachineModeId.Inactive}}, {{(int)MachineModeId.Unknown}}],
+                "IgnoreShortMaximumDuration": "0:01:00",
+                "MinimumActivityDuration": "0:01:30"
+              }
+              """);
+            var initializeResult = extension.Initialize (machine, "");
+            Assert.That (initializeResult, Is.True);
+
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (0)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+
+            AddFact (machine, R (0, 1), inactive);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (1)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+
+            AddFact (machine, R (1, 2), manualActive);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+            AddFact (machine, R (2, 3), machining);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+            AddFact (machine, R (3, 4), autoMachining);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Final.HasValue, Is.True);
+                Assert.That (response.Final.Value, Is.EqualTo (T (2)));
+              });
+            }
+            CheckNoData (extension, R (0, 2));
+            CheckFinal (extension, T (2), R (0, 4));
+          }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the activity analysis extension
+    /// </summary>
+    [Test]
+    public void TestIgnoreMachineModes ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          // Reference data
+          IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindById (2);
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (machine);
+          IMachineMode inactive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Inactive);
+          IMachineMode active = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Active);
+          IMachineMode manualActive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.ManualActive);
+          IMachineMode autoFeed = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.AutoFeed);
+          IMachineMode machining = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Machining);
+          IMachineMode autoMachining = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.AutoMachining);
+
+          {
+            var extension = new Lemoine.Plugin.ActivityIsProduction
+              .NextProductionStart ();
+            extension.SetTestConfiguration ($$"""
+              {
+                "Manual": false,
+                "NorManualNorAuto": true,
+                "IgnoreShortMachineModeIds": [{{(int)MachineModeId.Inactive}}, {{(int)MachineModeId.Unknown}}],
+                "IgnoreShortMaximumDuration": "0:01:00",
+                "MinimumActivityDuration": "0:01:30"
+              }
+              """);
+            var initializeResult = extension.Initialize (machine, "");
+            Assert.That (initializeResult, Is.True);
+
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (0)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+
+            AddFact (machine, R (0, 1), inactive);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (1)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+
+            AddFact (machine, R (1, 2), manualActive);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+            AddFact (machine, R (2, 3), machining);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+            AddFact (machine, R (3, 3.5), inactive);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+            AddFact (machine, R (3.5, 4), autoMachining);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Final.HasValue, Is.True);
+                Assert.That (response.Final.Value, Is.EqualTo (T (2)));
+              });
+            }
+            CheckNoData (extension, R (0, 2));
+            CheckFinal (extension, T (2), R (0, 4));
+          }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the activity analysis extension
+    /// </summary>
+    [Test]
+    public void TestGap ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          // Reference data
+          IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindById (2);
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (machine);
+          IMachineMode inactive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Inactive);
+          IMachineMode active = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Active);
+          IMachineMode manualActive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.ManualActive);
+          IMachineMode autoFeed = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.AutoFeed);
+          IMachineMode machining = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.Machining);
+          IMachineMode autoMachining = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)Lemoine.Model.MachineModeId.AutoMachining);
+
+          {
+            var extension = new Lemoine.Plugin.ActivityIsProduction
+              .NextProductionStart ();
+            extension.SetTestConfiguration ($$"""
+              {
+                "Manual": false,
+                "NorManualNorAuto": true,
+                "IgnoreShortMachineModeIds": [{{(int)MachineModeId.Inactive}}, {{(int)MachineModeId.Unknown}}],
+                "IgnoreShortMaximumDuration": "0:01:00",
+                "MinimumActivityDuration": "0:01:30"
+              }
+              """);
+            var initializeResult = extension.Initialize (machine, "");
+            Assert.That (initializeResult, Is.True);
+
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (0)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+
+            AddFact (machine, R (0, 1), inactive);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint, Is.EqualTo (R (1)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+
+            AddFact (machine, R (1, 2), manualActive);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+            AddFact (machine, R (2, 3), machining);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Hint.Lower.HasValue, Is.True);
+                Assert.That (response.Hint.Lower.Value, Is.EqualTo (T (2)));
+                Assert.That (response.Final.HasValue, Is.False);
+              });
+            }
+            AddFact (machine, R (3.5, 4), autoMachining);
+            {
+              var response = extension.Get (T (0), R (0), new UtcDateTimeRange ("(,)"));
+              Assert.Multiple (() => {
+                Assert.That (response.Final.HasValue, Is.True);
+                Assert.That (response.Final.Value, Is.EqualTo (T (2)));
+              });
+            }
+            CheckNoData (extension, R (0, 2));
+            CheckFinal (extension, T (2), R (0, 4));
           }
         }
         finally {
