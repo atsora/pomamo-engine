@@ -244,6 +244,11 @@ namespace Lemoine.Model
 
     /// <summary>
     /// Dynamic times (start/end) description: start,end
+    /// 
+    /// If start or end ends with +, then the reference date/time is the upper bound of the date/time range,
+    /// else it is by default the lower bound of the date/time range
+    /// 
+    /// If Dynamic starts with "?", then switch to aggressive mode
     /// </summary>
     string Dynamic { get; set; }
 

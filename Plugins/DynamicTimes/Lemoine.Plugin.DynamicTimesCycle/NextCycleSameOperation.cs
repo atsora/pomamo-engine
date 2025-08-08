@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -31,10 +32,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
       get; private set;
     }
 
-    public string Name
-    {
-      get { return "NextCycleSameOperation"; }
-    }
+    public string Name => "NextCycleSameOperation";
 
     public bool IsApplicable ()
     {

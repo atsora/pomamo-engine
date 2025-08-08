@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -100,7 +101,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
                      false);
               if (!extendCycle) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: cycle with real end found at {0} and extend full cycle option is off", dateTime);
+                  log.Debug ($"Get: cycle with real end found at {dateTime} and extend full cycle option is off");
                 }
                 return this.CreateFinal (cycleAt.End.Value);
               }
@@ -110,13 +111,13 @@ namespace Lemoine.Plugin.DynamicTimesCycle
             if (null != cycleAfter) {
               if (!cycleAt.End.HasValue) {
                 if (log.IsErrorEnabled) {
-                  log.ErrorFormat ("Get: cycle at {0} has no end although there is a cycle after it", dateTime);
+                  log.Error ($"Get: cycle at {dateTime} has no end although there is a cycle after it");
                 }
                 return this.CreateNoData ();
               }
               else if (cycleAt.HasRealEnd ()) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: cycle with real end found at {0} and there is a cycle after it", dateTime);
+                  log.Debug ($"Get: cycle with real end found at {dateTime} and there is a cycle after it");
                 }
                 return this.CreateFinal (cycleAt.End.Value);
               }
@@ -124,7 +125,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
               var operationDetectionDateTime = GetOperationDetectionDateTime ();
               if (operationDetectionDateTime.HasValue && cycleAfter.DateTime <= operationDetectionDateTime.Value) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: cycle with estimated end found at {0} with a cycle after it", dateTime);
+                  log.Debug ($"Get: cycle with estimated end found at {dateTime} with a cycle after it");
                 }
                 return this.CreateFinal (cycleAt.End.Value);
               }
@@ -138,8 +139,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
             }
             else { // null == cycleAfter
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: active cycle at {0}",
-                  dateTime);
+                log.Debug ($"Get: active cycle at {dateTime}");
               }
               return this.CreateWithHint (hint);
             }

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,19 +22,13 @@ namespace Lemoine.Business.Operation
   public sealed class GoodCycleLoadingTime
     : IRequest<GoodCycleExtensionResponse>
   {
-    #region Members
     readonly DateTime m_start;
     readonly IOperationCycle m_operationCycle;
     readonly IMonitoredMachine m_monitoredMachine;
     readonly double m_multiplicator;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GoodCycleLoadingTime).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -54,10 +49,6 @@ namespace Lemoine.Business.Operation
       m_monitoredMachine = Lemoine.Business.ServiceProvider
         .Get (monitoredMachineRequest);
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -100,8 +91,9 @@ namespace Lemoine.Business.Operation
     /// <returns></returns>
     public string GetCacheKey ()
     {
-      return "Business.Operation.GoodCycleLoadingTime." + m_operationCycle.Id
+      var cacheKey = "Business.Operation.GoodCycleLoadingTime." + m_operationCycle.Id
         + "." + m_multiplicator.ToString ();
+      return cacheKey;
     }
 
     /// <summary>

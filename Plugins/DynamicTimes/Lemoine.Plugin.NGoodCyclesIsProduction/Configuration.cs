@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -17,7 +18,6 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// [Optional] Name prefix
     /// </summary>
@@ -69,9 +69,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -99,7 +97,6 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
       errors = errors.Concat (errorList);
       return result;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="Lemoine.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>

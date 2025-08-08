@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2024 Atsora Solutions
+// Copyright (C) 2024-2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -1619,7 +1619,7 @@ namespace Lemoine.GDBPersistentClasses
       var range = this.GetNotPocessedRange ();
       if (range.IsEmpty ()) {
         if (GetLogger ().IsFatalEnabled) {
-          GetLogger ().FatalFormat ("ApplyDynamicEnd: (unexpected) GetNotProcessedRange is empty => nothing to do");
+          GetLogger ().Fatal ("ApplyDynamicEnd: (unexpected) GetNotProcessedRange is empty => nothing to do");
         }
         Debug.Assert (false);
         ForceAsDone (""); // To skip the process of the sub-modifications TrackDynamicEnd
@@ -1632,8 +1632,7 @@ namespace Lemoine.GDBPersistentClasses
         GetLogger ().DebugFormat ("ApplyDynamicEnd: restricted range is empty => nothing to do");
       }
       else { // range ok
-        GetLogger ().InfoFormat ("ApplyDynamicEnd: restrict {0} to {1}",
-                        this, dynamicApplicableEnd);
+        GetLogger ().Info ($"ApplyDynamicEnd: restrict {this} to {dynamicApplicableEnd}");
         ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
           .InsertSub (this, restrictedRange, ApplyDynamicEndSubChange, null);
       }

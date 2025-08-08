@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.AfterDynamicTime
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name prefix (mandatory)
     /// </summary>
@@ -63,9 +62,7 @@ namespace Lemoine.Plugin.AfterDynamicTime
     {
       get; set;
     } = null;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -100,6 +97,5 @@ namespace Lemoine.Plugin.AfterDynamicTime
       errors = errorList;
       return result;
     }
-    #endregion // Constructors
   }
 }

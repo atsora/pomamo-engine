@@ -37,6 +37,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     /// <param name="cycle"></param>
     /// <param name="start"></param>
     /// <param name="maxLoadingDurationMultiplicator"></param>
+    /// <param name="maxLoadingDuration"></param>
     /// <returns></returns>
     internal static GoodCycleExtensionResponse IsGoodLoadingTime (this IOperationCycle cycle, DateTime start, double maxLoadingDurationMultiplicator)
     {

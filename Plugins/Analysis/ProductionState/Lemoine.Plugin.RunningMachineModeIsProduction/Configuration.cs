@@ -19,7 +19,6 @@ namespace Lemoine.Plugin.RunningMachineModeIsProduction
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Score of the plugin
     /// </summary>
@@ -111,7 +110,6 @@ namespace Lemoine.Plugin.RunningMachineModeIsProduction
     {
       get; set;
     } = false;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

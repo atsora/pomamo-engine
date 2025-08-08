@@ -1,4 +1,5 @@
 ﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies, 2023 Nicolas Relange
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -29,26 +30,18 @@ namespace Lemoine.Analysis.Detection
     static readonly string SKIP_EMPTY_BETWEEN_IF_PREVIOUS_EMPTY_KEY = "Analysis.SkipEmptyBetweenIfPreviousEmpty";
     static readonly bool SKIP_EMPTY_BETWEEN_IF_PREVIOUS_EMPTY_DEFAULT = true;
 
-    #region Members
     readonly IMonitoredMachine m_monitoredMachine;
     readonly Lemoine.Threading.IChecked m_caller;
 
     IEnumerable<Lemoine.Extensions.Analysis.IOperationCycleDetectionExtension> m_operationCycleDetectionExtensions;
     IEnumerable<Lemoine.Extensions.Analysis.IOperationCycleFullDetectionExtension> m_operationCycleFullDetectionExtensions;
     readonly IEnumerable<IAfterCycleDetectionExtension> m_afterExtensions;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machine
     /// </summary>
-    public IMonitoredMachine Machine
-    {
-      get { return m_monitoredMachine; }
-    }
-    #endregion // Getters / Setters
+    public IMonitoredMachine Machine => m_monitoredMachine;
 
-    #region Constructors
     /// <summary>
     /// Constructor to set the monitored machine
     /// </summary>
@@ -84,7 +77,6 @@ namespace Lemoine.Analysis.Detection
                                     IEnumerable<Lemoine.Extensions.Analysis.IDetectionExtension> extensions)
       : this (monitoredMachine, extensions, null)
     { }
-    #endregion // Constructors
 
     #region IChecked implementation
     /// <summary>

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,42 +22,21 @@ namespace Lemoine.Plugin.SameMachineMode
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "SameMachineMode"; } }
+    public override string Name => "SameMachineMode";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Get a dynamic period corresponding to a same and consecutive machine mode";
-      }
-    }
+    public override string Description => "Get a dynamic period corresponding to a same and consecutive machine mode";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Analysis | PluginFlag.AutoReason;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis | PluginFlag.AutoReason;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

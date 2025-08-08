@@ -17,15 +17,12 @@ namespace Lemoine.Plugin.ResetProductionState
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Score of the plugin
     /// </summary>
     [PluginConf ("Double", "Score", Description = "Score. Default: 0.0", Parameters = "100000:3", Multiple = false, Optional = false)]
     [DefaultValue (0.0)]
     public double Score { get; set; } = 0.0;
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
