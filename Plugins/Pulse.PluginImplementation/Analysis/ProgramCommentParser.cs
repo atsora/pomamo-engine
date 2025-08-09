@@ -40,18 +40,20 @@ namespace Pulse.PluginImplementation.Analysis
     readonly string m_programComment;
     readonly IEnumerable<IRegexMatchToFileOpDataExtension> m_regexMatchToOpDatas;
     readonly ISequenceCreatorExtension m_sequenceCreator;
+    readonly string m_defaultOpName = "";
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="regex"></param>
     /// <param name="programComment"></param>
-    public ProgramCommentParser (Regex regex, string programComment, IEnumerable<IRegexMatchToFileOpDataExtension> regexMatchToOpDatas = null, ISequenceCreatorExtension sequenceCreator = null)
+    public ProgramCommentParser (Regex regex, string programComment, IEnumerable<IRegexMatchToFileOpDataExtension> regexMatchToOpDatas = null, ISequenceCreatorExtension sequenceCreator = null, string defaultOpName = "")
     {
       m_regex = regex;
       m_programComment = programComment;
       m_regexMatchToOpDatas = regexMatchToOpDatas;
       m_sequenceCreator = sequenceCreator;
+      m_defaultOpName = defaultOpName;
     }
 
     bool TryGetOpData (Match match, string dataName, out string opData)
@@ -277,8 +279,14 @@ namespace Pulse.PluginImplementation.Analysis
         }
 
         if (string.IsNullOrEmpty (opName) && string.IsNullOrEmpty (opCode)) {
-          log.Warn ($"GetOperation: opName and opCode are empty in {m_programComment} for regex {m_regex}");
-          return null;
+          if (string.IsNullOrEmpty (m_defaultOpName)) {
+            log.Warn ($"GetOperation: opName and opCode are empty in {m_programComment} for regex {m_regex}");
+            return null;
+          }
+          else {
+            log.Info ($"GetOperation: use default op name={m_defaultOpName} since there is no opCode or opName in regex");
+            opName = m_defaultOpName;
+          }
         }
 
         if (log.IsDebugEnabled) {
