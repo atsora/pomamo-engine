@@ -305,7 +305,7 @@ namespace Lemoine.Business.DynamicTimes
         log.ErrorFormat ("GetDynamicTime: no dynamic time extension with name {0}", nameWithoutParameter);
         var logger = GetDynamicTimeLogger (nameWithoutParameter, machine);
         if (logger.IsFatalEnabled) {
-          logger.Fatal ("no dynamic time with that name");
+          logger.Fatal ($"no dynamic time with that name");
         }
         var message = "No DynamicTime with name " + nameWithoutParameter;
         if (!string.IsNullOrEmpty (parameter)) {

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,48 +16,27 @@ using Lemoine.Extensions.Interfaces;
 namespace Lemoine.Plugin.SameCncValue
 {
   /// <summary>
-  /// Description of Plugin.
+  /// Dynamic time on cnc values
   /// </summary>
   public class Plugin : PluginNoConfig, IPluginDll, IFlaggedPlugin
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "SameCncValue"; } }
+    public override string Name => "SameCncValue";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Get a dynamic period corresponding to a same and consecutive cnc value";
-      }
-    }
+    public override string Description => "Get a dynamic period corresponding to a same and consecutive cnc value";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Analysis | PluginFlag.AutoReason;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis | PluginFlag.AutoReason;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
+    public override int Version => 1;
   }
 }

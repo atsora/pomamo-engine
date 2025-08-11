@@ -14,6 +14,16 @@ using Lemoine.Core.Cache;
 
 namespace Lemoine.Plugin.SameCncValue
 {
+  /// <summary>
+  /// Identify the time of the next cnc value.
+  /// This dynamic time takes the following parameters:
+  /// <item>either the field ID</item>
+  /// <item>or the machine mode ID followed by the field ID</item>
+  /// 
+  /// Examples:
+  /// <item>GetDynamicTime ("NextCncValue(118)")</item>
+  /// <item>GetDynamicTime ("NextCncValue(2, 118")</item>
+  /// </summary>
   public class NextCncValue
     : Lemoine.Extensions.NotConfigurableExtension
     , IDynamicTimeExtension
@@ -31,13 +41,7 @@ namespace Lemoine.Plugin.SameCncValue
       get; private set;
     }
 
-    public string Name
-    {
-      get
-      {
-        return "NextCncValue";
-      }
-    }
+    public string Name => "NextCncValue";
 
     public bool IsApplicable ()
     {
@@ -271,7 +275,7 @@ namespace Lemoine.Plugin.SameCncValue
         fieldIdParameter = parameters[1].Trim ();
         break;
       default:
-        log.ErrorFormat ("Initialize: invalid parameter {0}", parameter);
+        log.Error ($"Initialize: invalid parameter {parameter}");
         return false;
       }
 
