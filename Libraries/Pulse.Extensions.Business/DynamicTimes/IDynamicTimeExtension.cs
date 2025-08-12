@@ -47,6 +47,17 @@ namespace Lemoine.Extensions.Business.DynamicTimes
     Type ImplementationType { get; }
   }
 
+  public static class DynamicTimeResponseExtensions
+  {
+    /// <summary>
+    /// Is the response pending?
+    /// </summary>
+    /// <param name="response"></param>
+    /// <returns></returns>
+    public static bool IsPending (this IDynamicTimeResponse response)
+      => !response.NoData && !response.Timeout && !response.Final.HasValue;
+  }
+
   /// <summary>
   /// IDynamicTimeResponse implementation
   /// 

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,19 +25,13 @@ namespace Lemoine.Business.Extension
     : IRequest<IEnumerable<T>>
     where T : Lemoine.Extensions.IExtension
   {
-    #region Members
     U m_parameter;
 
     Func<T, U, bool> m_filter = ( (x, m) => true);
     Func<U, string> m_parameterKey;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GlobalExtensions<T>).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -62,10 +57,6 @@ namespace Lemoine.Business.Extension
     {
       m_filter = filter;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

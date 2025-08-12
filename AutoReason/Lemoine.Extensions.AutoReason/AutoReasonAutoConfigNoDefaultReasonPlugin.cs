@@ -18,10 +18,6 @@ namespace Lemoine.Extensions.AutoReason
     : PluginWithAutoConfig<TConfiguration>, IPluginDll, IFlaggedPlugin
     where TConfiguration : AutoReasonConfiguration, new()
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Applicable flags
     /// </summary>
@@ -35,21 +31,17 @@ namespace Lemoine.Extensions.AutoReason
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     static readonly ILog log = LogManager.GetLogger (typeof (AutoReasonAutoConfigNoDefaultReasonPlugin<TConfiguration>).FullName);
 
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// </summary>
     protected AutoReasonAutoConfigNoDefaultReasonPlugin ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -71,6 +63,5 @@ namespace Lemoine.Extensions.AutoReason
     /// Complete the installation if needed
     /// </summary>
     protected virtual void CompleteInstall () { }
-    #endregion // Methods
   }
 }

@@ -204,7 +204,7 @@ namespace Lemoine.Business.DynamicTimes
     {
       var match = NAME_REGEX.Match (name);
       if (!match.Success) {
-        log.ErrorFormat ("ExtractNameParameter: invalid name {0}", name);
+        log.Error ($"ExtractNameParameter: invalid name {name}");
         throw new ArgumentException ("Invalid dynamic time name", "name");
       }
       else {
@@ -216,7 +216,7 @@ namespace Lemoine.Business.DynamicTimes
         }
         else {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("ExtractNameParameter: name={0} with no parameter", name);
+            log.Debug ($"ExtractNameParameter: name={name} with no parameter");
           }
           return (name, null);
         }

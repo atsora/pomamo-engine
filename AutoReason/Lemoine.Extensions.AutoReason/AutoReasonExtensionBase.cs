@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -55,17 +56,12 @@ namespace Lemoine.Extensions.AutoReason
     /// <summary>
     /// <see cref="IAutoReasonExtension"/>
     /// </summary>
-    public IEnumerable<IStateAction> DelayedStateActions {
-      get { return m_delayedStateActions; }
-    }
+    public IEnumerable<IStateAction> DelayedStateActions => m_delayedStateActions;
 
     /// <summary>
     /// <see cref="IAutoReasonExtension"/>
     /// </summary>
-    public IEnumerable<IReasonAction> DelayedReasonActions
-    {
-      get { return m_delayedReasonActions; }
-    }
+    public IEnumerable<IReasonAction> DelayedReasonActions => m_delayedReasonActions;
 
     /// <summary>
     /// Logger
@@ -76,60 +72,39 @@ namespace Lemoine.Extensions.AutoReason
     /// <summary>
     /// Plugin key that corresponds to a prefix in autoreasonstate
     /// </summary>
-    public virtual string PluginKey
-    {
-      get { return m_pluginKey; }
-    }
+    public virtual string PluginKey => m_pluginKey;
 
     /// <summary>
     /// Default reason translation key
     /// </summary>
-    public virtual string DefaultReasonTranslationKey
-    {
-      get { return m_defaultReasonTranslationKey; }
-    }
+    public virtual string DefaultReasonTranslationKey => m_defaultReasonTranslationKey;
 
     /// <summary>
     /// Associated machine
     /// </summary>
-    public IMonitoredMachine Machine
-    {
-      get { return m_machine; }
-    }
+    public IMonitoredMachine Machine => m_machine;
 
     /// <summary>
     /// Associated reason
     /// 
     /// Not null if Initialize returns true
     /// </summary>
-    public IReason Reason
-    {
-      get { return m_reason; }
-    }
+    public IReason Reason => m_reason;
 
     /// <summary>
     /// Associated reason score
     /// </summary>
-    public double ReasonScore
-    {
-      get { return m_reasonScore; }
-    }
+    public double ReasonScore => m_reasonScore;
 
     /// <summary>
     /// Associated manual score
     /// </summary>
-    public double? ManualScore
-    {
-      get { return m_manualScore; }
-    }
+    public double? ManualScore => m_manualScore;
 
     /// <summary>
     /// Associated date/time
     /// </summary>
-    public DateTime DateTime
-    {
-      get { return m_dateTime; }
-    }
+    public DateTime DateTime => m_dateTime;
 
     #region Constructors
     /// <summary>
