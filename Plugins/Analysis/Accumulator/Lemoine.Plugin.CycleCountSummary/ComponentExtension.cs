@@ -30,7 +30,7 @@ namespace Lemoine.Plugin.CycleCountSummary
                                                  oldSummary.Shift,
                                                  oldSummary.WorkOrder,
                                                  oldSummary.Line,
-                                                 oldSummary.Task,
+                                                 oldSummary.ManufacturingOrder,
                                                  newComponent,
                                                  oldSummary.Operation,
                                                  oldSummary.Full,

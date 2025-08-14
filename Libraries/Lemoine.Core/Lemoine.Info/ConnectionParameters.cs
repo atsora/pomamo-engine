@@ -35,18 +35,15 @@ namespace Lemoine.Info
 
     static readonly string DEV_SUFFIX = "-dev";
 
-    #region Members
     string m_dsnName = Constants.DEFAULT_DSN_NAME;
     string m_server = "localhost";
     string m_port = PORT_DEFAULT;
     string m_database = DATABASE_DEFAULT;
     string m_username = USERNAME_DEFAULT;
     string m_password = PASSWORD_DEFAULT;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (ConnectionParameters).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// DSN Name
     /// </summary>
@@ -145,7 +142,6 @@ namespace Lemoine.Info
       "Pwd=" + Password + ";";
       }
     }
-    #endregion
 
     #region Events
     /// <summary>
@@ -177,7 +173,6 @@ namespace Lemoine.Info
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Get the connection string with a specified application name
     /// </summary>
@@ -359,6 +354,5 @@ namespace Lemoine.Info
         return false;
       }
     }
-    #endregion
   }
 }

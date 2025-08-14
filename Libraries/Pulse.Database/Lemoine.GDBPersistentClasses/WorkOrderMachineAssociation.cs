@@ -34,9 +34,9 @@ namespace Lemoine.GDBPersistentClasses
     #region Members
     IWorkOrder m_workOrder;
     ILine m_line;
-    ITask m_task;
+    IManufacturingOrder m_manufacturingOrder;
     bool? m_autoTask;
-    bool? m_resetTask;
+    bool? m_resetManufacturingOrder;
     IComponent m_component = null;
     IOperation m_operation = null;
     bool m_partOfDetectionAnalysis;
@@ -83,32 +83,32 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Task to associate to a machine with a work order
+    /// Manufacturing order to associate to a machine with a work order
     /// </summary>
     [XmlIgnore]
-    public virtual ITask Task
+    public virtual IManufacturingOrder ManufacturingOrder
     {
-      get { return m_task; }
-      set { m_task = value; }
+      get { return m_manufacturingOrder; }
+      set { m_manufacturingOrder = value; }
     }
 
     /// <summary>
-    /// Was the task automatically set ?
+    /// Was the manufacturing order automatically set ?
     /// </summary>
     [XmlIgnore]
-    public virtual bool? AutoTask
+    public virtual bool? AutoManufacturingOrder
     {
       get { return m_autoTask; }
       set { m_autoTask = value; }
     }
 
     /// <summary>
-    /// Is the option to reset the task active ?
+    /// Is the option to reset the manufacturing order active ?
     /// </summary>
-    public virtual bool? ResetTask
+    public virtual bool? ResetManufacturingOrder
     {
-      get { return m_resetTask; }
-      set { m_resetTask = value; }
+      get { return m_resetManufacturingOrder; }
+      set { m_resetManufacturingOrder = value; }
     }
 
     /// <summary>
@@ -282,7 +282,7 @@ namespace Lemoine.GDBPersistentClasses
             .CreateWorkOrderMachineAssociation (this.Machine, this.WorkOrder, range);
           subModification.WorkOrder = this.WorkOrder;
           subModification.Line = this.Line;
-          subModification.ResetTask = this.ResetTask;
+          subModification.ResetManufacturingOrder = this.ResetManufacturingOrder;
           ModelDAOHelper.DAOFactory.WorkOrderMachineAssociationDAO.MakePersistent (subModification);
           subModification.Parent = this.MainModification ?? this;
           subModification.Priority = this.StatusPriority;
@@ -372,18 +372,18 @@ namespace Lemoine.GDBPersistentClasses
       }
       SetActive ();
 
-      if (null != this.Task) {
+      if (null != this.ManufacturingOrder) {
         // - Task => WorkOrder
-        if (null != this.Task.WorkOrder) {
-          m_workOrder = this.Task.WorkOrder;
+        if (null != this.ManufacturingOrder.WorkOrder) {
+          m_workOrder = this.ManufacturingOrder.WorkOrder;
         }
         // - Task => Component
-        if (null != this.Task.Component) {
-          m_component = this.Task.Component;
+        if (null != this.ManufacturingOrder.Component) {
+          m_component = this.ManufacturingOrder.Component;
         }
         // - Task => Operation
-        if (null != this.Task.Operation) {
-          m_operation = this.Task.Operation;
+        if (null != this.ManufacturingOrder.Operation) {
+          m_operation = this.ManufacturingOrder.Operation;
         }
       }
 
@@ -565,9 +565,9 @@ namespace Lemoine.GDBPersistentClasses
               noShiftAssociation.Option = AssociationOption.NoRightMerge.Add (this.Option);
               noShiftAssociation.WorkOrder = this.WorkOrder;
               noShiftAssociation.Line = this.Line;
-              noShiftAssociation.Task = m_task;
-              noShiftAssociation.AutoTask = m_autoTask;
-              noShiftAssociation.ResetTask = m_resetTask;
+              noShiftAssociation.ManufacturingOrder = m_manufacturingOrder;
+              noShiftAssociation.AutoManufacturingOrder = m_autoTask;
+              noShiftAssociation.ResetManufacturingOrder = m_resetManufacturingOrder;
               noShiftAssociation.Component = m_component;
               noShiftAssociation.Operation = m_operation;
               noShiftAssociation.Day = null;
@@ -599,9 +599,9 @@ namespace Lemoine.GDBPersistentClasses
               }
               association.WorkOrder = this.WorkOrder;
               association.Line = this.Line;
-              association.Task = m_task;
-              association.AutoTask = m_autoTask;
-              association.ResetTask = m_resetTask;
+              association.ManufacturingOrder = m_manufacturingOrder;
+              association.AutoManufacturingOrder = m_autoTask;
+              association.ResetManufacturingOrder = m_resetManufacturingOrder;
               association.Component = m_component;
               association.Operation = m_operation;
               association.Day = slot.Day;
@@ -633,9 +633,9 @@ namespace Lemoine.GDBPersistentClasses
           }
           association.WorkOrder = this.WorkOrder;
           association.Line = this.Line;
-          association.Task = m_task;
-          association.AutoTask = m_autoTask;
-          association.ResetTask = m_resetTask;
+          association.ManufacturingOrder = m_manufacturingOrder;
+          association.AutoManufacturingOrder = m_autoTask;
+          association.ResetManufacturingOrder = m_resetManufacturingOrder;
           association.Component = m_component;
           association.Operation = m_operation;
           association.Day = null;
@@ -651,9 +651,9 @@ namespace Lemoine.GDBPersistentClasses
         association.Caller = this;
         association.WorkOrder = this.WorkOrder;
         association.Line = this.Line;
-        association.Task = m_task;
-        association.AutoTask = m_autoTask;
-        association.ResetTask = m_resetTask;
+        association.ManufacturingOrder = m_manufacturingOrder;
+        association.AutoManufacturingOrder = m_autoTask;
+        association.ResetManufacturingOrder = m_resetManufacturingOrder;
         association.Component = m_component;
         association.Operation = m_operation;
         association.Day = null;

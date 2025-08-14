@@ -176,7 +176,7 @@ namespace Lemoine.Plugin.Web.DefaultCache
         };
       case "serialnumberstamp":
         return new List<string> { };
-      case "taskassociation":
+      case "manufacturingorderassociation":
         return new List<string> {
             "Operation/?Slots",
             "(Operation/)?CycleProgress",

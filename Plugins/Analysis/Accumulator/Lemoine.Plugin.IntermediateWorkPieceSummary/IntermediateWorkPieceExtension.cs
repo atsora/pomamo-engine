@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -31,7 +32,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           IIntermediateWorkPieceByMachineSummary existing =
             new IntermediateWorkPieceByMachineSummaryDAO ()
             .FindByKey (iwpSummary.Machine, newIntermediateWorkPiece, iwpSummary.Component, iwpSummary.WorkOrder,
-                        iwpSummary.Line, iwpSummary.Task,
+                        iwpSummary.Line, iwpSummary.ManufacturingOrder,
                         iwpSummary.Day, iwpSummary.Shift);
           if (null != existing) {
             existing.Counted += iwpSummary.Counted;
@@ -49,7 +50,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
                                                                                        iwpSummary.Component,
                                                                                        iwpSummary.WorkOrder,
                                                                                        iwpSummary.Line,
-                                                                                       iwpSummary.Task,
+                                                                                       iwpSummary.ManufacturingOrder,
                                                                                        iwpSummary.Day,
                                                                                        iwpSummary.Shift);
             created.Counted = iwpSummary.Counted;

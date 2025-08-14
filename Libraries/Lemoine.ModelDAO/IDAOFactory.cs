@@ -795,14 +795,14 @@ namespace Lemoine.ModelDAO
     IStampingValueDAO StampingValueDAO { get; }
 
     /// <summary>
-    /// Get a ITaskDAO
+    /// Get a IManufacturingOrderDAO
     /// </summary>
-    ITaskDAO TaskDAO { get; }
+    IManufacturingOrderDAO ManufacturingOrderDAO { get; }
 
     /// <summary>
-    /// Get a ITaskMachineAssociationDAO
+    /// Get a IManufacturingOrderMachineAssociationDAO
     /// </summary>
-    ITaskMachineAssociationDAO TaskMachineAssociationDAO { get; }
+    IManufacturingOrderMachineAssociationDAO ManufacturingOrderMachineAssociationDAO { get; }
 
     /// <summary>
     /// Get a ITimeConfigDAO

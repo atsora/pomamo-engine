@@ -33,9 +33,9 @@ namespace Lemoine.Plugin.CycleDurationSummary
     ILine Line { get; }
 
     /// <summary>
-    /// Associated task
+    /// Associated manufacturing order
     /// </summary>
-    ITask Task { get; }
+    IManufacturingOrder ManufacturingOrder { get; }
 
     /// <summary>
     /// Associated component

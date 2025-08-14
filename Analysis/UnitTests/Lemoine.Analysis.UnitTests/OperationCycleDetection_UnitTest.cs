@@ -3335,14 +3335,14 @@ namespace Lemoine.Analysis.UnitTests
             operationSlot.Shift,
             operationSlot.WorkOrder,
             operationSlot.Line,
-            operationSlot.Task,
+            operationSlot.ManufacturingOrder,
             operationSlot.Component,
             operationSlot.Operation);
           var operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindByDayShift (operationSlot.Machine, operationSlot.Day.Value, operationSlot.Shift)
             .Where (s => WorkOrder.Equals (operationSlot.WorkOrder, s.WorkOrder))
             .Where (s => Line.Equals (operationSlot.Line, s.Line))
-            .Where (s => Task.Equals (operationSlot.Task, s.Task))
+            .Where (s => ManufacturingOrder.Equals (operationSlot.ManufacturingOrder, s.ManufacturingOrder))
             .Where (s => Component.Equals (operationSlot.Component, s.Component))
             .Where (s => Operation.Equals (operationSlot.Operation, s.Operation));
           var total = operationSlots
@@ -3378,7 +3378,7 @@ namespace Lemoine.Analysis.UnitTests
                           operationSlot.Component,
                           operationSlot.WorkOrder,
                           operationSlot.Line,
-                          operationSlot.Task,
+                          operationSlot.ManufacturingOrder,
                           operationSlot.Day,
                           operationSlot.Shift);
             if (null != summary) {
@@ -6023,7 +6023,7 @@ namespace Lemoine.Analysis.UnitTests
                         operationSlot.Component,
                         operationSlot.WorkOrder,
                         operationSlot.Line,
-                        operationSlot.Task,
+                        operationSlot.ManufacturingOrder,
                         operationSlot.Day,
                         operationSlot.Shift);
           if (null == summary) {
@@ -6032,7 +6032,7 @@ namespace Lemoine.Analysis.UnitTests
                                                             operationSlot.Component,
                                                             operationSlot.WorkOrder,
                                                             operationSlot.Line,
-                                                            operationSlot.Task,
+                                                            operationSlot.ManufacturingOrder,
                                                             operationSlot.Day,
                                                             operationSlot.Shift);
           }

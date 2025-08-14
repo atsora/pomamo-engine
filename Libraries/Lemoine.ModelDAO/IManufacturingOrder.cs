@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -9,7 +10,7 @@ namespace Lemoine.Model
   /// <summary>
   /// Task status
   /// </summary>
-  public enum TaskStatus
+  public enum ManufacturingOrderStatus
   {
     /// <summary>
     /// New
@@ -32,7 +33,7 @@ namespace Lemoine.Model
   /// <summary>
   /// Task
   /// </summary>
-  public interface ITask: IVersionable, IDataWithIdentifiers, IDisplayable, IEquatable<ITask>, ISerializableModel, Lemoine.Collections.IDataWithId
+  public interface IManufacturingOrder: IVersionable, IDataWithIdentifiers, IDisplayable, IEquatable<IManufacturingOrder>, ISerializableModel, Lemoine.Collections.IDataWithId
   {
     /// <summary>
     /// External code
@@ -67,7 +68,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Task status
     /// </summary>
-    TaskStatus TaskStatus { get; set; }
+    ManufacturingOrderStatus ManufacturingOrderStatus { get; set; }
     
     /// <summary>
     /// Quantity (optional)
@@ -94,14 +95,14 @@ namespace Lemoine.Model
     DateTime? DueDateTime { get; set; }
     
     /// <summary>
-    /// Order in which the task are scheduled
+    /// Order in which the manufacturing orders are scheduled
     /// </summary>
     double? Order { get; set; }
     
     /// <summary>
     /// Associated machine
     /// 
-    /// May be null at start when a task is not fully scheduled yet
+    /// May be null at start when a manufacturing order is not fully scheduled yet
     /// </summary>
     IMachine Machine { get; set; }
   }

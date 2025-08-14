@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -30,7 +31,7 @@ namespace Lemoine.Plugin.CycleCountSummary
                                               oldSummary.Shift,
                                               oldSummary.WorkOrder,
                                               oldSummary.Line,
-                                              oldSummary.Task,
+                                              oldSummary.ManufacturingOrder,
                                               oldSummary.Component,
                                               newOperation,
                                               oldSummary.Full,

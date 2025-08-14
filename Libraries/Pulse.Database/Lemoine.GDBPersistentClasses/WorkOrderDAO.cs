@@ -81,10 +81,10 @@ namespace Lemoine.GDBPersistentClasses
         // Merge the data in all the impacted tables
         ISession session = NHibernateHelper.GetCurrentSession (); // Temporary
         // - Data
-        IList<ITask> tasks = ModelDAOHelper.DAOFactory.TaskDAO
+        IList<IManufacturingOrder> manufacturingOrders = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
           .FindAllByWorkOrder (oldWorkOrder);
-        foreach (ITask task in tasks) {
-          task.WorkOrder = newWorkOrder;
+        foreach (IManufacturingOrder manufacturingOrder in manufacturingOrders) {
+          manufacturingOrder.WorkOrder = newWorkOrder;
         }
         {
           IList<IWorkOrderLine> otherWorkOrderLines = ModelDAOHelper.DAOFactory.WorkOrderLineDAO

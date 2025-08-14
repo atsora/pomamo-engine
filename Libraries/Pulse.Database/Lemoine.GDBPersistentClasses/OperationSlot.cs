@@ -1,4 +1,5 @@
 ﻿// Copyright (C) 2009-2023 Lemoine Automation Technologies, 2023 Nicolas Relange
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -115,12 +116,11 @@ namespace Lemoine.GDBPersistentClasses
 
     static readonly ILog slog = LogManager.GetLogger (typeof (OperationSlot).FullName);
 
-    #region Members
     IOperation m_operation;
     IComponent m_component;
     IWorkOrder m_workOrder;
     ILine m_line;
-    ITask m_task;
+    IManufacturingOrder m_manufacturingOrder;
     IShift m_shift;
     DateTime? m_day;
     TimeSpan? m_runTime = null;
@@ -129,7 +129,7 @@ namespace Lemoine.GDBPersistentClasses
     int m_adjustedQuantity = 0;
     int m_partialCycles = 0;
     TimeSpan? m_averageCycleTime; // in s
-    bool? m_autoTask;
+    bool? m_autoManufacturingOrder;
     TimeSpan? m_productionDuration = null;
 
     bool m_activityConsolidated = true;
@@ -142,9 +142,7 @@ namespace Lemoine.GDBPersistentClasses
 
     bool m_deleted = false;
     bool m_changeTrackerActive = false;
-    #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
@@ -174,7 +172,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="component"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     /// <param name="range"></param>
@@ -183,7 +181,7 @@ namespace Lemoine.GDBPersistentClasses
                                       IComponent component,
                                       IWorkOrder workOrder,
                                       ILine line,
-                                      ITask task,
+                                      IManufacturingOrder manufacturingOrder,
                                       DateTime? day,
                                       IShift shift,
                                       UtcDateTimeRange range)
@@ -195,7 +193,7 @@ namespace Lemoine.GDBPersistentClasses
       m_component = component;
       m_workOrder = workOrder;
       m_line = line;
-      m_task = task;
+      m_manufacturingOrder = manufacturingOrder;
       m_day = day;
       m_shift = shift;
       if (Bound.Compare<DateTime> (range.Lower, DateTime.UtcNow) <= 0) {
@@ -212,9 +210,7 @@ namespace Lemoine.GDBPersistentClasses
         m_productionDuration = TimeSpan.FromSeconds (0);
       }
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Display name that is retrieved with a display function
     /// </summary>
@@ -300,21 +296,21 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Reference to the task if known.
+    /// Reference to the manufacturing order if known.
     /// 
-    /// null if no task was identified
+    /// null if no manufacturing order was identified
     /// </summary>
-    public virtual ITask Task
+    public virtual IManufacturingOrder ManufacturingOrder
     {
-      get { return m_task; }
+      get { return m_manufacturingOrder; }
       set {
-        if (object.Equals (m_task, value)) {
+        if (object.Equals (m_manufacturingOrder, value)) {
           // Nothing to do
           return;
         }
 
         using (ChangeTracker changeTracker = new ChangeTracker (this)) {
-          m_task = value;
+          m_manufacturingOrder = value;
         }
       }
     }
@@ -531,12 +527,12 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// The task was automatically determined
+    /// The manufacturing order was automatically determined
     /// </summary>
-    public virtual bool? AutoTask
+    public virtual bool? AutoManufacturingOrder
     {
-      get { return m_autoTask; }
-      set { m_autoTask = value; }
+      get { return m_autoManufacturingOrder; }
+      set { m_autoManufacturingOrder = value; }
     }
 
     /// <summary>
@@ -562,7 +558,6 @@ namespace Lemoine.GDBPersistentClasses
         m_productionConsolidated = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region ICheckedCaller
     /// <summary>
@@ -575,7 +570,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion ICheckedCaller
 
-    #region Methods
     /// <summary>
     /// IDisplay implementation
     /// </summary>
@@ -758,7 +752,7 @@ namespace Lemoine.GDBPersistentClasses
         && object.Equals (this.Component, other.Component)
         && object.Equals (this.WorkOrder, other.WorkOrder)
         && object.Equals (this.Line, other.Line)
-        && object.Equals (this.Task, other.Task)
+        && object.Equals (this.ManufacturingOrder, other.ManufacturingOrder)
         && object.Equals (this.Machine, other.Machine)
         && object.Equals (this.Day, other.Day)
         && object.Equals (this.Shift, other.Shift);
@@ -774,7 +768,7 @@ namespace Lemoine.GDBPersistentClasses
                      && (null == this.Component)
                      && (null == this.Operation)
                      && (null == this.Line)
-                     && (null == this.Task))
+                     && (null == this.ManufacturingOrder))
         || this.DateTimeRange.IsEmpty ();
       GetLogger ().DebugFormat ("IsEmpty: " +
                                 "return {0} for {1}",
@@ -1388,7 +1382,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Object.ToString" />

@@ -162,8 +162,8 @@ namespace Lemoine.Plugin.CycleCsv
             operation.Name);
         }
         // - Task
-        if (null != m_operationCycle.OperationSlot.Task) {
-          var task = m_operationCycle.OperationSlot.Task;
+        if (null != m_operationCycle.OperationSlot.ManufacturingOrder) {
+          var task = m_operationCycle.OperationSlot.ManufacturingOrder;
           AddValue (m_configuration.TaskExternalCodeHeader,
             task.ExternalCode);
           AddValue (m_configuration.TaskIdHeader,

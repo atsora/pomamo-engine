@@ -41,7 +41,7 @@ namespace Lemoine.Business.Config
     static readonly PropagationOption DEFAULT_EXTEND_OPERATION_PROPAGATION = PropagationOption.All;
     static readonly PropagationOption DEFAULT_AUTO_OPERATION_PROPAGATION = PropagationOption.All;
     static readonly bool DEFAULT_LINE_MANAGEMENT = false;
-    static readonly bool DEFAULT_TASK_MANAGEMENT = false;
+    static readonly bool DEFAULT_MANUFACTURING_ORDER_MANAGEMENT = false;
     static readonly bool DEFAULT_LINE_FROM_MACHINE_OPERATION = true;
     static readonly bool DEFAULT_OPERATION_SLOT_RUN_TIME = true;
     static readonly bool DEFAULT_OPERATION_SLOT_PRODUCTION_DURATION = true;
@@ -362,13 +362,13 @@ namespace Lemoine.Business.Config
     }
 
     /// <summary>
-    /// Option to validate the task management
+    /// Option to validate the manufacturing order management
     /// </summary>
-    public static bool TaskManagement {
+    public static bool ManufacturingOrderManagement {
       get
       {
-        return GetConfig (AnalysisConfigKey.TaskManagement,
-                          DEFAULT_TASK_MANAGEMENT);
+        return GetConfig (AnalysisConfigKey.ManufacturingOrderManagement,
+                          DEFAULT_MANUFACTURING_ORDER_MANAGEMENT);
       }
     }
 

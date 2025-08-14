@@ -98,7 +98,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
               }
               var operationCycles = ModelDAOHelper.DAOFactory.OperationCycleDAO.FindOverlapsRange (machine, r);
               var groupByHourlyOperationSummaries = operationCycles
-                .GroupBy (s => new HourlyOperationSummary (machine, s.OperationSlot?.Operation, s.OperationSlot?.Component, s.OperationSlot?.WorkOrder, s.OperationSlot?.Line, s.OperationSlot?.Task, s.OperationSlot?.Day, s.OperationSlot?.Shift, localDateHour), new HourlyOperationSummaryReferenceDataComparer ());
+                .GroupBy (s => new HourlyOperationSummary (machine, s.OperationSlot?.Operation, s.OperationSlot?.Component, s.OperationSlot?.WorkOrder, s.OperationSlot?.Line, s.OperationSlot?.ManufacturingOrder, s.OperationSlot?.Day, s.OperationSlot?.Shift, localDateHour), new HourlyOperationSummaryReferenceDataComparer ());
               foreach (var group in groupByHourlyOperationSummaries) {
                 var hourlyOperationSummary = group.Key;
                 hourlyOperationSummary.TotalCycles = group.Count (c => c.Full);
