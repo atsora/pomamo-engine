@@ -279,9 +279,9 @@ namespace Lemoine.Model
     /// </summary>
     LineManagement,
     /// <summary>
-    /// Option to activate the task management
+    /// Option to activate the manufacturing order management
     /// </summary>
-    TaskManagement,
+    ManufacturingOrderManagement,
     /// <summary>
     /// Give the possibility to dynamically determine the line from the machine and the operation
     /// </summary>
@@ -408,9 +408,9 @@ namespace Lemoine.Model
     /// <summary>
     /// Propgate the task
     /// </summary>
-    Task = 8, // 1 << 3
+    ManufacturingOrder = 8, // 1 << 3
     /// <summary>
-    /// Propage the work order, the component, the line, the task
+    /// Propage the work order, the component, the line, the manufacturing order
     /// </summary>
     All = 15, // = SUM
   }

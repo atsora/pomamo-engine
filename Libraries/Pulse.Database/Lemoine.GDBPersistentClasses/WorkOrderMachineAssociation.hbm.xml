@@ -28,8 +28,8 @@
                 column="workordermachineassociationenddatetime" />
       <property name="Option"
                 column="workordermachineassociationoption" />
-      <property name="ResetTask"
-                column="workordermachineassociationresettask" />
+      <property name="ResetManufacturingOrder"
+                column="workordermachineassociationresetmanuforder" />
     </join>
   </subclass>
 </hibernate-mapping>

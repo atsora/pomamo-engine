@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -44,11 +45,11 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     ILine Line { get; }
 
     /// <summary>
-    /// Reference to the Task if known
+    /// Reference to the ManufacturingOrder if known
     /// 
     /// Set to null if it could not be identified yet or it if is not applicable
     /// </summary>
-    ITask Task { get; }
+    IManufacturingOrder ManufacturingOrder { get; }
 
     /// <summary>
     /// If the option to split the operation slots by day is set,

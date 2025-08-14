@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -45,7 +46,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
       readonly IShift m_shift;
       readonly IWorkOrder m_workOrder;
       readonly ILine m_line;
-      readonly ITask m_task;
+      readonly IManufacturingOrder m_manufacturingOrder;
       readonly IComponent m_component;
       readonly IOperation m_operation;
       readonly int m_offset;
@@ -91,11 +92,11 @@ namespace Lemoine.Plugin.CycleDurationSummary
       }
 
       /// <summary>
-      /// Task
+      /// Manufacturing order
       /// </summary>
-      public ITask Task
+      public IManufacturingOrder ManufacturingOrder
       {
-        get { return m_task; }
+        get { return m_manufacturingOrder; }
       }
 
       /// <summary>
@@ -126,7 +127,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
       /// Constructor
       /// </summary>
       public CycleDurationSummaryKey (IMachine machine, DateTime day, IShift shift,
-                                      IWorkOrder workOrder, ILine line, ITask task,
+                                      IWorkOrder workOrder, ILine line, IManufacturingOrder manufacturingOrder,
                                       IComponent component, IOperation operation,
                                       int offset)
       {
@@ -134,7 +135,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
         m_day = day;
         m_workOrder = workOrder;
         m_line = line;
-        m_task = task;
+        m_manufacturingOrder = manufacturingOrder;
         m_component = component;
         m_operation = operation;
         m_offset = offset;
@@ -166,7 +167,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
           && object.Equals (m_shift, other.m_shift)
           && object.Equals (m_workOrder, other.m_workOrder)
           && object.Equals (m_line, other.m_line)
-          && object.Equals (m_task, other.m_task)
+          && object.Equals (m_manufacturingOrder, other.m_manufacturingOrder)
           && object.Equals (m_component, other.m_component)
           && object.Equals (m_operation, other.m_operation)
           && m_offset.Equals (other.m_offset);
@@ -198,8 +199,8 @@ namespace Lemoine.Plugin.CycleDurationSummary
             hashCode += 1000000019 * m_operation.GetHashCode ();
           }
           hashCode += 1000000021 * m_offset.GetHashCode ();
-          if (null != m_task) {
-            hashCode += 1000000023 * m_task.GetHashCode ();
+          if (null != m_manufacturingOrder) {
+            hashCode += 1000000023 * m_manufacturingOrder.GetHashCode ();
           }
         }
         return hashCode;
@@ -323,7 +324,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
       CycleDurationSummaryKey key =
         new CycleDurationSummaryKey (machine, day,
                                      operationSlot.Shift,
-                                     operationSlot.WorkOrder, operationSlot.Line, operationSlot.Task,
+                                     operationSlot.WorkOrder, operationSlot.Line, operationSlot.ManufacturingOrder,
                                      operationSlot.Component, operationSlot.Operation,
                                      (int)Math.Round (offsetDuration.Value));
       CycleDurationSummaryValue v;
@@ -363,7 +364,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
           && (!object.Equals (before.Component, after.Component)
               || !object.Equals (before.WorkOrder, after.WorkOrder)
               || !object.Equals (before.Line, after.Line)
-              || !object.Equals (before.Task, after.Task))) {
+              || !object.Equals (before.ManufacturingOrder, after.ManufacturingOrder))) {
         IList<IOperationCycle> cycles = ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAllWithOperationSlot (after);
         foreach (var cycle in cycles) {
@@ -381,7 +382,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
             CycleDurationSummaryKey key =
               new CycleDurationSummaryKey (machine, day,
                                            before.Shift,
-                                           before.WorkOrder, before.Line, before.Task,
+                                           before.WorkOrder, before.Line, before.ManufacturingOrder,
                                            before.Component, before.Operation,
                                            (int)Math.Round (offsetDuration.Value));
             CycleDurationSummaryValue v;
@@ -404,7 +405,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
             CycleDurationSummaryKey key =
               new CycleDurationSummaryKey (machine, day,
                                            after.Shift,
-                                           after.WorkOrder, after.Line, after.Task,
+                                           after.WorkOrder, after.Line, after.ManufacturingOrder,
                                            after.Component, after.Operation,
                                            (int)Math.Round (offsetDuration.Value));
             CycleDurationSummaryValue v;
@@ -459,7 +460,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
                       key.Shift,
                       key.WorkOrder,
                       key.Line,
-                      key.Task,
+                      key.ManufacturingOrder,
                       key.Component,
                       key.Operation,
                       key.Offset,

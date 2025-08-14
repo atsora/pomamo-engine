@@ -35,7 +35,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     IComponent m_component = null;
     IWorkOrder m_workOrder = null;
     ILine m_line = null;
-    ITask m_task = null;
+    IManufacturingOrder m_manufacturingOrder = null;
     [NonSerialized]
     DateTime? m_day = null;
     IShift m_shift = null;
@@ -58,7 +58,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     [XmlIgnore]
     public override string[] Identifiers
     {
-      get { return new string[] { "Id", "Machine", "Operation", "Component", "WorkOrder", "Task" }; }
+      get { return new string[] { "Id", "Machine", "Operation", "Component", "WorkOrder", "ManufacturingOrder" }; }
     }
 
     /// <summary>
@@ -197,13 +197,13 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     }
 
     /// <summary>
-    /// Reference to the Task if known
+    /// Reference to the ManufacturingOrder if known
     /// </summary>
     [XmlIgnore]
-    public virtual ITask Task
+    public virtual IManufacturingOrder ManufacturingOrder
     {
-      get { return m_task; }
-      protected set { m_task = value; }
+      get { return m_manufacturingOrder; }
+      protected set { m_manufacturingOrder = value; }
     }
 
     /// <summary>
@@ -340,7 +340,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     /// <param name="component"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     public HourlyOperationSummary (IMachine machine,
@@ -348,7 +348,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
                                                         IComponent component,
                                                         IWorkOrder workOrder,
                                                         ILine line,
-                                                        ITask task,
+                                                        IManufacturingOrder manufacturingOrder,
                                                         DateTime? day,
                                                         IShift shift,
                                                         DateTime localDateHour)
@@ -358,7 +358,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       m_component = component;
       m_workOrder = workOrder;
       m_line = line;
-      m_task = task;
+      m_manufacturingOrder = manufacturingOrder;
       m_day = day;
       m_shift = shift;
       m_localDateHour = localDateHour;
@@ -388,7 +388,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
         || !EqualsNullable (this.Component, other.Component, (a, b) => ((IDataWithId)a).Id == ((IDataWithId)b).Id)
         || !EqualsNullable (this.WorkOrder, other.WorkOrder, (a, b) => ((IDataWithId)a).Id == ((IDataWithId)b).Id)
         || !EqualsNullable (this.Line, other.Line, (a, b) => a.Id == b.Id)
-        || !EqualsNullable (this.Task, other.Task, (a, b) => ((IDataWithId)a).Id == ((IDataWithId)b).Id)
+        || !EqualsNullable (this.ManufacturingOrder, other.ManufacturingOrder, (a, b) => ((IDataWithId)a).Id == ((IDataWithId)b).Id)
         || !EqualsNullable (this.Day, other.Day, (a, b) => a.Value == b.Value)
         || !EqualsNullable (this.Shift, other.Shift, (a, b) => a.Id == b.Id)
         || (!DateTime.Equals (this.LocalDateHour, other.LocalDateHour))) {
@@ -405,7 +405,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
 
     public virtual int GetReferenceDataHashCode ()
     {
-      return (this.Machine, this.Operation, this.Component, this.WorkOrder, this.Line, this.Task, this.Day, this.Shift, this.LocalDateHour)
+      return (this.Machine, this.Operation, this.Component, this.WorkOrder, this.Line, this.ManufacturingOrder, this.Day, this.Shift, this.LocalDateHour)
         .GetHashCode ();
     }
   }

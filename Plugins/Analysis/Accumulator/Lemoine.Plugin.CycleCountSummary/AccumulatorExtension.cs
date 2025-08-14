@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -48,7 +49,7 @@ namespace Lemoine.Plugin.CycleCountSummary
       readonly IShift m_shift;
       readonly IWorkOrder m_workOrder;
       readonly ILine m_line;
-      readonly ITask m_task;
+      readonly IManufacturingOrder m_manufacturingOrder;
       readonly IComponent m_component;
       readonly IOperation m_operation;
 
@@ -93,11 +94,11 @@ namespace Lemoine.Plugin.CycleCountSummary
       }
 
       /// <summary>
-      /// Task
+      /// Manufacturing Order
       /// </summary>
-      public ITask Task
+      public IManufacturingOrder ManufacturingOrder
       {
-        get { return m_task; }
+        get { return m_manufacturingOrder; }
       }
 
       /// <summary>
@@ -120,14 +121,14 @@ namespace Lemoine.Plugin.CycleCountSummary
       /// Constructor
       /// </summary>
       public CycleCountSummaryKey (IMachine machine, DateTime day, IShift shift,
-                                   IWorkOrder workOrder, ILine line, ITask task,
+                                   IWorkOrder workOrder, ILine line, IManufacturingOrder manufacturingOrder,
                                    IComponent component, IOperation operation)
       {
         m_machine = machine;
         m_day = day;
         m_workOrder = workOrder;
         m_line = line;
-        m_task = task;
+        m_manufacturingOrder = manufacturingOrder;
         m_component = component;
         m_operation = operation;
 
@@ -158,7 +159,7 @@ namespace Lemoine.Plugin.CycleCountSummary
           && object.Equals (m_shift, other.m_shift)
           && object.Equals (m_workOrder, other.m_workOrder)
           && object.Equals (m_line, other.m_line)
-          && object.Equals (m_task, other.m_task)
+          && object.Equals (m_manufacturingOrder, other.m_manufacturingOrder)
           && object.Equals (m_component, other.m_component)
           && object.Equals (m_operation, other.m_operation);
       }
@@ -188,8 +189,8 @@ namespace Lemoine.Plugin.CycleCountSummary
           if (null != m_operation) {
             hashCode += 1000000019 * m_operation.GetHashCode ();
           }
-          if (null != m_task) {
-            hashCode += 1000000021 * m_task.GetHashCode ();
+          if (null != m_manufacturingOrder) {
+            hashCode += 1000000021 * m_manufacturingOrder.GetHashCode ();
           }
         }
         return hashCode;
@@ -205,24 +206,17 @@ namespace Lemoine.Plugin.CycleCountSummary
     static readonly string DAY_FROM_DATETIME_RANGE_KEY = "Analysis.CycleCountSummaryAccumulator.DayFromDateTimeRange";
     static readonly bool DAY_FROM_DATETIME_RANGE_VALUE = false;
 
-    #region Members
     readonly IDictionary<CycleCountSummaryKey, CycleCountSummaryValue> m_cycleCountSummaryAccumulator =
       new Dictionary<CycleCountSummaryKey, CycleCountSummaryValue> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CycleCountSummaryAccumulator).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public CycleCountSummaryAccumulator ()
     {
     }
-    #endregion // Constructors
 
     #region IAccumulator
     /// <summary>
@@ -235,7 +229,6 @@ namespace Lemoine.Plugin.CycleCountSummary
     }
     #endregion // IAccumulator
 
-    #region Methods
     /// <summary>
     /// IOperationCycleAccumulator implementation
     /// </summary>
@@ -331,7 +324,7 @@ namespace Lemoine.Plugin.CycleCountSummary
       CycleCountSummaryKey key =
         new CycleCountSummaryKey (machine, day,
                                   operationSlot.Shift,
-                                  operationSlot.WorkOrder, operationSlot.Line, operationSlot.Task,
+                                  operationSlot.WorkOrder, operationSlot.Line, operationSlot.ManufacturingOrder,
                                   operationSlot.Component, operationSlot.Operation);
       CycleCountSummaryValue v;
       if (!m_cycleCountSummaryAccumulator.TryGetValue (key, out v)) {
@@ -386,7 +379,7 @@ namespace Lemoine.Plugin.CycleCountSummary
           && (!object.Equals (before.Component, after.Component)
              || !object.Equals (before.WorkOrder, after.WorkOrder)
              || !object.Equals (before.Line, after.Line)
-             || !object.Equals (before.Task, after.Task))) {
+             || !object.Equals (before.ManufacturingOrder, after.ManufacturingOrder))) {
         IList<IOperationCycle> cycles = ModelDAOHelper.DAOFactory.OperationCycleDAO
           .FindAllWithOperationSlot (after);
         foreach (var cycle in cycles) {
@@ -398,7 +391,7 @@ namespace Lemoine.Plugin.CycleCountSummary
             CycleCountSummaryKey key =
               new CycleCountSummaryKey (machine, day,
                                         before.Shift,
-                                        before.WorkOrder, before.Line, before.Task,
+                                        before.WorkOrder, before.Line, before.ManufacturingOrder,
                                         before.Component, before.Operation);
             CycleCountSummaryValue v;
             if (!m_cycleCountSummaryAccumulator.TryGetValue (key, out v)) {
@@ -420,7 +413,7 @@ namespace Lemoine.Plugin.CycleCountSummary
             CycleCountSummaryKey key =
               new CycleCountSummaryKey (machine, day,
                                         after.Shift,
-                                        after.WorkOrder, after.Line, after.Task,
+                                        after.WorkOrder, after.Line, after.ManufacturingOrder,
                                         after.Component, after.Operation);
             CycleCountSummaryValue v;
             if (!m_cycleCountSummaryAccumulator.TryGetValue (key, out v)) {
@@ -509,7 +502,7 @@ namespace Lemoine.Plugin.CycleCountSummary
           new CycleCountSummaryKey (operationSlot.Machine,
                                     day, operationSlot.Shift,
                                     operationSlot.WorkOrder, operationSlot.Line,
-                                    operationSlot.Task,
+                                    operationSlot.ManufacturingOrder,
                                     operationSlot.Component,
                                     operationSlot.Operation);
         CycleCountSummaryValue v;
@@ -545,7 +538,7 @@ namespace Lemoine.Plugin.CycleCountSummary
                    key.Shift,
                    key.WorkOrder,
                    key.Line,
-                   key.Task,
+                   key.ManufacturingOrder,
                    key.Component,
                    key.Operation,
                    cycleCountSummaryData.Value.Full,
@@ -554,6 +547,5 @@ namespace Lemoine.Plugin.CycleCountSummary
       m_cycleCountSummaryAccumulator.Clear ();
       SetActive ();
     }
-    #endregion // Methods
   }
 }

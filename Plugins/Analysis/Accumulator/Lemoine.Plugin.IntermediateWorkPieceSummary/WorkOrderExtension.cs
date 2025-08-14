@@ -31,7 +31,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           IIntermediateWorkPieceByMachineSummary existing =
             new IntermediateWorkPieceByMachineSummaryDAO ()
             .FindByKey (iwpSummary.Machine, iwpSummary.IntermediateWorkPiece, iwpSummary.Component, newWorkOrder,
-                        iwpSummary.Line, iwpSummary.Task,
+                        iwpSummary.Line, iwpSummary.ManufacturingOrder,
                         iwpSummary.Day, iwpSummary.Shift);
           if (null != existing) {
             existing.Counted += iwpSummary.Counted;
@@ -49,7 +49,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
                                                                                        iwpSummary.Component,
                                                                                        newWorkOrder,
                                                                                        iwpSummary.Line,
-                                                                                       iwpSummary.Task,
+                                                                                       iwpSummary.ManufacturingOrder,
                                                                                        iwpSummary.Day,
                                                                                        iwpSummary.Shift);
             created.Counted = iwpSummary.Counted;

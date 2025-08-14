@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -665,171 +666,156 @@ namespace Lemoine.Business.Operation
         }
       }
 
-      log.InfoFormat ("IsLineCompatibleWithMachineComponent: " +
-                      "operation and line are not compatible " +
-                      "=> return false");
+      log.Info ("IsLineCompatibleWithMachineComponent: operation and line are not compatible => return false");
       return false;
     }
 
     /// <summary>
-    /// Check a task and an operation are compatible with each other
+    /// Check a manufacturing order and an operation are compatible with each other
     /// 
-    /// In case task or operation is null, true is returned.
+    /// In case manufacturing order or operation is null, true is returned.
     /// 
     /// Warning ! This must be run in a NHibernate session
     /// </summary>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="machine">not null</param>
     /// <param name="operation"></param>
     /// <returns></returns>
-    public static bool IsTaskCompatibleWithMachineOperation (ITask task,
+    public static bool IsManufacturingOrderCompatibleWithMachineOperation (IManufacturingOrder manufacturingOrder,
                                                                IMachine machine,
                                                                IOperation operation)
     {
       Debug.Assert (null != machine);
 
-      if (null == task) {
-        log.Info ("IsTaskCompatibleWithMachineOperation: " +
-                  "null task => return true");
+      if (null == manufacturingOrder) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineOperation: null manufacturing order => return true");
         return true;
       }
 
       if (null == operation) {
-        log.Info ("IsTaskCompatibleWithMachineOperation: " +
-                  "null operation => return true");
+        log.Info ("IsManufacturingOrderCompatibleWithMachineOperation: null operation => return true");
         return true;
       }
 
-      if ((null != task.Machine) && !object.Equals (machine, task.Machine)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineOperation: " +
-                        "machine and task are not compatible => return false");
+      if ((null != manufacturingOrder.Machine) && !object.Equals (machine, manufacturingOrder.Machine)) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineOperation: machine and manufacturing order are not compatible => return false");
         return false;
       }
 
-      if (null == task.Operation) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineOperation: " +
-                        "no operation is associated to the task => return true");
+      if (null == manufacturingOrder.Operation) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineOperation: no operation is associated to the manufacturing order => return true");
         return true;
       }
 
-      Debug.Assert (null != task.Operation);
+      Debug.Assert (null != manufacturingOrder.Operation);
       Debug.Assert (null != operation);
-      if (!object.Equals (task.Operation, operation)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineOperation: " +
-                        "operation and task are not compatible => return false");
+      if (!object.Equals (manufacturingOrder.Operation, operation)) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineOperation: operation and manufacturing order are not compatible => return false");
         return false;
       }
 
-      log.InfoFormat ("IsTaskCompatibleWithMachineOperation: " +
-                      "operation and task are compatible " +
-                      "=> return true");
+      log.Info ("IsManufacturingOrderCompatibleWithMachineOperation: operation and manufacturing order are compatible => return true");
       return true;
     }
 
     /// <summary>
-    /// Check a task and a component are compatible with each other
+    /// Check a manufacturing order and a component are compatible with each other
     /// 
-    /// In case task or component is null, true is returned.
+    /// In case manufacturing order or component is null, true is returned.
     /// 
     /// Warning ! This must be run in a NHibernate session
     /// </summary>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="machine">not null</param>
     /// <param name="component"></param>
     /// <returns></returns>
-    public static bool IsTaskCompatibleWithMachineComponent (ITask task,
+    public static bool IsManufacturingOrderCompatibleWithMachineComponent (IManufacturingOrder manufacturingOrder,
                                                                IMachine machine,
                                                                IComponent component)
     {
       Debug.Assert (null != machine);
 
-      if (null == task) {
-        log.Info ("IsTaskCompatibleWithMachineComponent: " +
-                  "null task => return true");
+      if (null == manufacturingOrder) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineComponent: null manufacturing order => return true");
         return true;
       }
 
       if (null == component) {
-        log.Info ("IsTaskCompatibleWithMachineComponent: " +
-                  "null component => return true");
+        log.Info ("IsManufacturingOrderCompatibleWithMachineComponent: null component => return true");
         return true;
       }
 
-      if ((null != task.Machine) && !object.Equals (machine, task.Machine)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineComponent: " +
-                        "machine and task are not compatible => return false");
+      if ((null != manufacturingOrder.Machine) && !object.Equals (machine, manufacturingOrder.Machine)) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineComponent: machine and manufacturing order are not compatible => return false");
         return false;
       }
 
-      if ((null != task.Component) && !object.Equals (task.Component, component)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineComponent: " +
-                        "task references another component => return false");
+      if ((null != manufacturingOrder.Component) && !object.Equals (manufacturingOrder.Component, component)) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineComponent: manufacturing order references another component => return false");
         return false;
       }
 
       Debug.Assert (null != component);
-      if ((null != task.Operation) && IsComponentCompatibleWithOperation (component, task.Operation)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineComponent: " +
-                        "component and task.operation are not compatible => return false");
+      if ((null != manufacturingOrder.Operation) && IsComponentCompatibleWithOperation (component, manufacturingOrder.Operation)) {
+        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineComponent: " +
+                        "component and manufacturing order.operation are not compatible => return false");
         return false;
       }
 
-      log.InfoFormat ("IsTaskCompatibleWithMachineComponent: " +
-                      "component and task are compatible " +
-                      "=> return true");
+      log.Info ("IsManufacturingOrderCompatibleWithMachineComponent: component and manufacturing order are compatible => return true");
       return true;
     }
 
     /// <summary>
-    /// Check a task and a work order are compatible with each other
+    /// Check a manufacturing order and a work order are compatible with each other
     /// 
-    /// In case task or workOrder is null, true is returned.
+    /// In case manufacturing order or workOrder is null, true is returned.
     /// 
     /// Warning ! This must be run in a NHibernate session
     /// </summary>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="machine">not null</param>
     /// <param name="workOrder"></param>
     /// <returns></returns>
-    public static bool IsTaskCompatibleWithMachineWorkOrder (ITask task,
+    public static bool IsManufacturingOrderCompatibleWithMachineWorkOrder (IManufacturingOrder manufacturingOrder,
                                                                IMachine machine,
                                                                IWorkOrder workOrder)
     {
       Debug.Assert (null != machine);
 
-      if (null == task) {
-        log.Info ("IsTaskCompatibleWithMachineWorkOrder: " +
-                  "null task => return true");
+      if (null == manufacturingOrder) {
+        log.Info ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
+                  "null manufacturing order => return true");
         return true;
       }
 
       if (null == workOrder) {
-        log.Info ("IsTaskCompatibleWithMachineWorkOrder: " +
+        log.Info ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
                   "null workOrder => return true");
         return true;
       }
 
-      if ((null != task.Machine) && (machine.Id != task.Machine.Id)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineWorkOrder: " +
-                        "machine and task are not compatible => return false");
+      if ((null != manufacturingOrder.Machine) && (machine.Id != manufacturingOrder.Machine.Id)) {
+        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
+                        "machine and manufacturing order are not compatible => return false");
         return false;
       }
 
-      if ((null != task.WorkOrder) && (null != workOrder) && (((IDataWithId)task.WorkOrder).Id != ((IDataWithId)workOrder).Id)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineWorkOrder: " +
-                        "task references another work order => return false");
+      if ((null != manufacturingOrder.WorkOrder) && (null != workOrder) && (((IDataWithId)manufacturingOrder.WorkOrder).Id != ((IDataWithId)workOrder).Id)) {
+        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
+                        "manufacturing order references another work order => return false");
         return false;
       }
 
       Debug.Assert (null != workOrder);
-      if ((null != task.Operation) && IsWorkOrderCompatibleWithOperation (workOrder, task.Operation)) {
-        log.InfoFormat ("IsTaskCompatibleWithMachineWorkOrder: " +
-                        "work order and task are not compatible => return false");
+      if ((null != manufacturingOrder.Operation) && IsWorkOrderCompatibleWithOperation (workOrder, manufacturingOrder.Operation)) {
+        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
+                        "work order and manufacturing order are not compatible => return false");
         return false;
       }
 
-      log.InfoFormat ("IsTaskCompatibleWithMachineWorkOrder: " +
-                      "work order and task are compatible " +
+      log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
+                      "work order and manufacturing order are compatible " +
                       "=> return true");
       return true;
     }

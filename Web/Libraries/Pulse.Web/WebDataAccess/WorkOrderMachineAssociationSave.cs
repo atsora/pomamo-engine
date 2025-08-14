@@ -3,12 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Core.Log;
 
 using System.Net;
@@ -47,8 +43,8 @@ namespace Pulse.Web.WebDataAccess
     /// <summary>
     /// WorkOrder details
     /// </summary>
-    [ApiMember(Name="ResetTask", Description="", ParameterType="path", DataType="bool", IsRequired=false)]
-    public bool? ResetTask { get; set; }
+    [ApiMember(Name="ResetManufacturingOrder", Description="", ParameterType="path", DataType="bool", IsRequired=false)]
+    public bool? ResetManufacturingOrder { get; set; }
     
     /// <summary>
     /// Revision ID

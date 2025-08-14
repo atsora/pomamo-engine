@@ -15,6 +15,14 @@ namespace Lemoine.GDBMigration
   [Migration (278)]
   public class AddTaskInAnalysisTables : MigrationExt
   {
+    // Keep the options until all customers were upgraded to version >= 19.0.0
+    // And after version >= 19.0.0 was installed at new customers
+    static readonly string USE_DEPRECATED_TASK_STATUS_KEY = "Migration.UseDeprecatedTaskStatus";
+    static readonly bool USE_DEPRECATED_TASK_STATUS_DEFAULT = false;
+
+    static readonly string USE_DEPRECATED_TASK_KEY = "Migration.UseDeprecatedTask";
+    static readonly bool USE_DEPRECATED_TASK_DEFAULT = false;
+
     static readonly ILog log = LogManager.GetLogger (typeof (AddTaskInAnalysisTables).FullName);
 
     /// <summary>
@@ -43,10 +51,18 @@ namespace Lemoine.GDBMigration
 
     void OperationSlotUp ()
     {
-      Database.AddColumn (TableName.OPERATION_SLOT,
-                          new Column (ColumnName.TASK_ID, DbType.Int32, ColumnProperty.Null));
-      Database.AddColumn (TableName.OPERATION_SLOT,
-                          new Column (TableName.OPERATION_SLOT + "autotask", DbType.Boolean, ColumnProperty.Null));
+      if (Lemoine.Info.ConfigSet.LoadAndGet (USE_DEPRECATED_TASK_KEY, USE_DEPRECATED_TASK_DEFAULT)) {
+        Database.AddColumn (TableName.OPERATION_SLOT,
+                            new Column (ColumnName.TASK_ID, DbType.Int32, ColumnProperty.Null));
+        Database.AddColumn (TableName.OPERATION_SLOT,
+                            new Column (TableName.OPERATION_SLOT + "autotask", DbType.Boolean, ColumnProperty.Null));
+      }
+      else {
+        Database.AddColumn (TableName.OPERATION_SLOT,
+                            new Column (ColumnName.MANUFACTURING_ORDER_ID, DbType.Int32, ColumnProperty.Null));
+        Database.AddColumn (TableName.OPERATION_SLOT,
+                            new Column (TableName.OPERATION_SLOT + "automanuforder", DbType.Boolean, ColumnProperty.Null));
+      }
       // Note: this is not possible to add a foreign key to a view
       // So next constraint can't be written
       /*
@@ -58,16 +74,35 @@ namespace Lemoine.GDBMigration
 
     void OperationSlotDown ()
     {
-      Database.RemoveColumn (TableName.OPERATION_SLOT,
-                             TableName.OPERATION_SLOT + "autotask");
-      Database.RemoveColumn (TableName.OPERATION_SLOT,
-                             ColumnName.TASK_ID);
+      if (Database.ColumnExists (TableName.OPERATION_SLOT, TableName.OPERATION_SLOT + "automanuforder")) {
+        Database.RemoveColumn (TableName.OPERATION_SLOT,
+                               TableName.OPERATION_SLOT + "automanuforder");
+      }
+      if (Database.ColumnExists (TableName.OPERATION_SLOT, ColumnName.MANUFACTURING_ORDER_ID)) {
+        Database.RemoveColumn (TableName.OPERATION_SLOT,
+                               ColumnName.MANUFACTURING_ORDER_ID);
+      }
+
+      // Keep the next lines until all customers were upgraded to version >= 19.0.0
+      // And after version >= 19.0.0 was installed at new customers
+      if (Database.ColumnExists (TableName.OPERATION_SLOT, TableName.OPERATION_SLOT + "autotask")) {
+        Database.RemoveColumn (TableName.OPERATION_SLOT,
+                               TableName.OPERATION_SLOT + "autotask");
+      }
+      if (Database.ColumnExists (TableName.OPERATION_SLOT, ColumnName.TASK_ID)) {
+        Database.RemoveColumn (TableName.OPERATION_SLOT,
+                               ColumnName.TASK_ID);
+      }
     }
 
     void WorkOrderSlotUp ()
     {
+      var taskIdColumn =
+        Lemoine.Info.ConfigSet.LoadAndGet (USE_DEPRECATED_TASK_KEY, USE_DEPRECATED_TASK_DEFAULT)
+        ? ColumnName.TASK_ID
+        : ColumnName.MANUFACTURING_ORDER_ID;
       Database.AddColumn (TableName.WORK_ORDER_SLOT,
-                          new Column (ColumnName.TASK_ID, DbType.Int32, ColumnProperty.Null));
+                          new Column (taskIdColumn, DbType.Int32, ColumnProperty.Null));
       // Note: this is not possible to add a foreign key to a view
       // So next constraint can't be written
       /*
@@ -79,8 +114,17 @@ namespace Lemoine.GDBMigration
 
     void WorkOrderSlotDown ()
     {
-      Database.RemoveColumn (TableName.WORK_ORDER_SLOT,
-                             ColumnName.TASK_ID);
+      if (Database.ColumnExists (TableName.WORK_ORDER_SLOT, ColumnName.MANUFACTURING_ORDER_ID)) {
+        Database.RemoveColumn (TableName.WORK_ORDER_SLOT,
+                               ColumnName.MANUFACTURING_ORDER_ID);
+      }
+
+      // Keep the next lines until all customers were upgraded to version >= 19.0.0
+      // And after version >= 19.0.0 was installed at new customers
+      if (Database.ColumnExists (TableName.WORK_ORDER_SLOT, ColumnName.TASK_ID)) {
+        Database.RemoveColumn (TableName.WORK_ORDER_SLOT,
+                               ColumnName.TASK_ID);
+      }
     }
 
     void IntermediateWorkPieceByMachineSummaryUp ()
@@ -93,7 +137,7 @@ namespace Lemoine.GDBMigration
       RemoveUniqueConstraint (TableName.INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY);
 
       Database.AddColumn (TableName.INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY,
-                          new Column (ColumnName.TASK_ID, DbType.Int32, ColumnProperty.Null));
+                          new Column (ColumnName.MANUFACTURING_ORDER_ID, DbType.Int32, ColumnProperty.Null));
       // Note: this is not possible to add a foreign key to a view
       // So next constraint can't be written
       /*
@@ -104,7 +148,7 @@ namespace Lemoine.GDBMigration
       AddNamedUniqueConstraint (TableName.INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY + "_unique",
                              TableName.INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY,
                              new string[] {
-                               ColumnName.TASK_ID,
+                               ColumnName.MANUFACTURING_ORDER_ID,
                                ColumnName.LINE_ID,
                                ColumnName.INTERMEDIATE_WORK_PIECE_ID,
                                TableName.INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY + "day",
@@ -130,7 +174,7 @@ namespace Lemoine.GDBMigration
       RemoveUniqueConstraint (TableName.CYCLE_COUNT_SUMMARY);
 
       Database.AddColumn (TableName.CYCLE_COUNT_SUMMARY,
-                          new Column (ColumnName.TASK_ID, DbType.Int32, ColumnProperty.Null));
+                          new Column (ColumnName.MANUFACTURING_ORDER_ID, DbType.Int32, ColumnProperty.Null));
       // Note: this is not possible to add a foreign key to a view
       // So next constraint can't be written
       /*
@@ -147,7 +191,7 @@ namespace Lemoine.GDBMigration
                                ColumnName.COMPONENT_ID,
                                ColumnName.WORK_ORDER_ID,
                                ColumnName.LINE_ID,
-                               ColumnName.TASK_ID});
+                               ColumnName.MANUFACTURING_ORDER_ID});
     }
 
     void CycleCountSummaryDown ()
@@ -165,7 +209,7 @@ namespace Lemoine.GDBMigration
       RemoveUniqueConstraint (TableName.CYCLE_DURATION_SUMMARY);
 
       Database.AddColumn (TableName.CYCLE_DURATION_SUMMARY,
-                          new Column (ColumnName.TASK_ID, DbType.Int32, ColumnProperty.Null));
+                          new Column (ColumnName.MANUFACTURING_ORDER_ID, DbType.Int32, ColumnProperty.Null));
       // Note: this is not possible to add a foreign key to a view
       // So next constraint can't be written
       /*
@@ -183,7 +227,7 @@ namespace Lemoine.GDBMigration
                                ColumnName.COMPONENT_ID,
                                ColumnName.WORK_ORDER_ID,
                                ColumnName.LINE_ID,
-                               ColumnName.TASK_ID,
+                               ColumnName.MANUFACTURING_ORDER_ID,
                                TableName.CYCLE_DURATION_SUMMARY + "offset"});
     }
 

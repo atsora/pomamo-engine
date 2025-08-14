@@ -305,13 +305,13 @@
       <LogicalName>ShiftTemplateSlot.hbm.xml</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\StampingConfigByName.hbm.xml" />
-    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Task.hbm.xml">
-      <DependentUpon>Task.cs</DependentUpon>
-      <LogicalName>Task.hbm.xml</LogicalName>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ManufacturingOrder.hbm.xml">
+      <DependentUpon>ManufacturingOrder.cs</DependentUpon>
+      <LogicalName>ManufacturingOrder.hbm.xml</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\TaskMachineAssociation.hbm.xml">
-      <DependentUpon>TaskMachineAssociation.cs</DependentUpon>
-      <LogicalName>TaskMachineAssociation.hbm.xml</LogicalName>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ManufacturingOrderMachineAssociation.hbm.xml">
+      <DependentUpon>ManufacturingOrderMachineAssociation.cs</DependentUpon>
+      <LogicalName>ManufacturingOrderMachineAssociation.hbm.xml</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ToolPosition.hbm.xml">
       <DependentUpon>ToolPosition.cs</DependentUpon>

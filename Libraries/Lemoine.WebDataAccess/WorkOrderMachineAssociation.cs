@@ -269,10 +269,10 @@ namespace Lemoine.WebDataAccess
     public ILine Line {
       get; set;
     }
-    public ITask Task {
+    public IManufacturingOrder ManufacturingOrder {
       get; set;
     }
-    public bool? ResetTask {
+    public bool? ResetManufacturingOrder {
       get; set;
     }
     public Lemoine.Model.AssociationOption? Option {

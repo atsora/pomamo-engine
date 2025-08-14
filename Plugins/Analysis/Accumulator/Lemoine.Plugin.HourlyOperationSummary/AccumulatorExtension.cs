@@ -51,7 +51,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       readonly IComponent m_component;
       readonly IWorkOrder m_workOrder;
       readonly ILine m_line;
-      readonly ITask m_task;
+      readonly IManufacturingOrder m_manufacturingOrder;
       readonly DateTime? m_day;
       readonly IShift m_shift;
       readonly DateTime m_localDateHour;
@@ -61,7 +61,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       public IComponent Component => m_component;
       public IWorkOrder WorkOrder => m_workOrder;
       public ILine Line => m_line;
-      public ITask Task => m_task;
+      public IManufacturingOrder ManufacturingOrder => m_manufacturingOrder;
       public DateTime? Day => m_day;
       public IShift Shift => m_shift;
       public DateTime LocalDateHour => m_localDateHour;
@@ -69,7 +69,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       /// <summary>
       /// Constructor
       /// </summary>
-      public HourlyOperationSummaryKey (IMachine machine, IOperation operation, IComponent component, IWorkOrder workOrder, ILine line, ITask task, DateTime? day, IShift shift, DateTime localDateHour)
+      public HourlyOperationSummaryKey (IMachine machine, IOperation operation, IComponent component, IWorkOrder workOrder, ILine line, IManufacturingOrder manufacturingOrder, DateTime? day, IShift shift, DateTime localDateHour)
       {
         Debug.Assert (null != machine);
         Debug.Assert (null != operation);
@@ -79,7 +79,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
         m_component = component;
         m_workOrder = workOrder;
         m_line = line;
-        m_task = task;
+        m_manufacturingOrder = manufacturingOrder;
         m_day = day;
         m_shift = shift;
         m_localDateHour = localDateHour;
@@ -107,7 +107,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
           && object.Equals (m_component, other.m_component)
           && object.Equals (m_workOrder, other.m_workOrder)
           && object.Equals (m_line, other.m_line)
-          && object.Equals (m_task, other.m_task)
+          && object.Equals (m_manufacturingOrder, other.m_manufacturingOrder)
           && m_day.Equals (other.m_day)
           && object.Equals (m_shift, other.m_shift)
           && object.Equals (m_localDateHour, other.m_localDateHour);
@@ -134,8 +134,8 @@ namespace Lemoine.Plugin.HourlyOperationSummary
           if (null != m_line) {
             hashCode += 1000000015 * m_line.GetHashCode ();
           }
-          if (null != m_task) {
-            hashCode += 1000000017 * m_task.GetHashCode ();
+          if (null != m_manufacturingOrder) {
+            hashCode += 1000000017 * m_manufacturingOrder.GetHashCode ();
           }
           if (m_day.HasValue) {
             hashCode += 1000000019 * m_day.GetHashCode ();
@@ -272,7 +272,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       Debug.Assert (null != machine);
 
       var key = new HourlyOperationSummaryKey (machine, operationSlot.Operation,
-        operationSlot.Component, operationSlot.WorkOrder, operationSlot.Line, operationSlot.Task,
+        operationSlot.Component, operationSlot.WorkOrder, operationSlot.Line, operationSlot.ManufacturingOrder,
         operationSlot.Day, operationSlot.Shift, operationCycle.GetLocalDateHour ());
       if (!m_summaryAccumulator.TryGetValue (key, out var v)) {
         v = new HourlyIntermediateWorkPieceSummaryValue {
@@ -378,7 +378,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
             operationSlot.Operation,
             operationSlot.Component,
             operationSlot.WorkOrder, operationSlot.Line,
-            operationSlot.Task,
+            operationSlot.ManufacturingOrder,
             operationSlot.Day, operationSlot.Shift,
             localDateHour);
         var summaryRange = new UtcDateTimeRange (localDateHour.ToUniversalTime (),
@@ -434,7 +434,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
                    key.Component,
                    key.WorkOrder,
                    key.Line,
-                   key.Task,
+                   key.ManufacturingOrder,
                    key.Day,
                    key.Shift,
                    key.LocalDateHour,

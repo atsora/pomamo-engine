@@ -144,7 +144,7 @@ namespace Lemoine.GDBPersistentClasses
 
         IOperationSlot newOperationSlot = (IOperationSlot) oldOperationSlot.Clone ();
         Debug.Assert (object.Equals (newOperationSlot.WorkOrder, oldOperationSlot.WorkOrder));
-        Debug.Assert (object.Equals (newOperationSlot.Task, oldOperationSlot.Task));
+        Debug.Assert (object.Equals (newOperationSlot.ManufacturingOrder, oldOperationSlot.ManufacturingOrder));
         Debug.Assert (object.Equals (newOperationSlot.Operation, oldOperationSlot.Operation));
         ((OperationSlot)newOperationSlot).Day = this.Day;
         ((OperationSlot)newOperationSlot).Shift = this.Shift;
