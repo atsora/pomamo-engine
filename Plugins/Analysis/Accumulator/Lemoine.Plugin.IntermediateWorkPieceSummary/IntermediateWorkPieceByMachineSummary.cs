@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,7 +23,6 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
   [Serializable]
   public class IntermediateWorkPieceByMachineSummary : BaseData, IIntermediateWorkPieceByMachineSummary, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -30,7 +30,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     IComponent m_component = null;
     IWorkOrder m_workOrder = null;
     ILine m_line = null;
-    ITask m_task = null;
+    IManufacturingOrder m_manufacturingOrder = null;
     DateTime? m_day = null;
     IShift m_shift = null;
     int m_counted = 0;
@@ -39,11 +39,9 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     int m_scrapped = 0;
     int? m_targeted = null;
     // Note: if you add some summary values here, do not forget to update the method IsEmpty () accordingly
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (IntermediateWorkPieceByMachineSummary).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -200,15 +198,15 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     }
 
     /// <summary>
-    /// Reference to the Task if known
+    /// Reference to the ManufacturingOrder if known
     /// 
     /// Set to null if it could not be identified yet or it if is not applicable
     /// </summary>
     [XmlIgnore]
-    public virtual ITask Task
+    public virtual IManufacturingOrder ManufacturingOrder
     {
-      get { return m_task; }
-      protected set { m_task = value; }
+      get { return m_manufacturingOrder; }
+      protected set { m_manufacturingOrder = value; }
     }
 
     /// <summary>
@@ -332,9 +330,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
         }
       }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
@@ -362,7 +358,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     /// <param name="component"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     public IntermediateWorkPieceByMachineSummary (IMachine machine,
@@ -370,7 +366,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
                                                               IComponent component,
                                                               IWorkOrder workOrder,
                                                               ILine line,
-                                                              ITask task,
+                                                              IManufacturingOrder manufacturingOrder,
                                                               DateTime? day,
                                                               IShift shift)
     {
@@ -379,11 +375,10 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       m_component = component;
       m_workOrder = workOrder;
       m_line = line;
-      m_task = task;
+      m_manufacturingOrder = manufacturingOrder;
       m_day = day;
       m_shift = shift;
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Is the data empty ? It means may it be deleted because all the data are null ?

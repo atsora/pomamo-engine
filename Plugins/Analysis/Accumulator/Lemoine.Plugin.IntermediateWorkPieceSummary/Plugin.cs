@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyritht (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,37 +25,24 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "IntermediateWorkPieceSummary"; } }
+    public override string Name => "IntermediateWorkPieceSummary";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Support of a iwpbymachinesummary table and intermediateworkpiecesummary view. Used by the LineProduction and LineProductionByMachine reports";
-      }
-    }
+    public override string Description => "Support of a iwpbymachinesummary table and intermediateworkpiecesummary view. Used by the LineProduction and LineProductionByMachine reports";
 
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Config | PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web; // Web: for a later use, to support the merge of components / operations
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Config | PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web; // Web: for a later use, to support the merge of components / operations
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version => 1;
+    public override int Version => 2;
 
     TransformationProviderExt Database
     {
@@ -65,9 +53,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
         return m_database;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -77,11 +63,14 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     protected override void InstallVersion (int version)
     {
       switch (version) {
-      case 1: // First installation
-        Install1 ();
-        break;
-      default:
-        throw new InvalidOperationException ();
+        case 1: // First installation
+          Install1 ();
+          break;
+        case 2: // Rename task into manuforder
+          Install2 ();
+          break;
+        default:
+          throw new InvalidOperationException ();
       }
     }
 
@@ -105,7 +94,7 @@ CREATE TABLE public.iwpbymachinesummary
   lineid integer,
   iwpbymachinesummaryday date,
   shiftid integer,
-  taskid integer,
+  manuforderid integer,
   CONSTRAINT iwpbymachinesummary_pkey PRIMARY KEY (iwpbymachinesummaryid),
   CONSTRAINT fk_iwpbymachinesummary_component FOREIGN KEY (componentid)
       REFERENCES public.component (componentid) MATCH SIMPLE
@@ -164,6 +153,13 @@ GRANT SELECT ON TABLE public.intermediateworkpiecesummary TO PUBLIC;
       }
     }
 
+    void Install2 ()
+    {
+      if (Database.ColumnExists (INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY, ColumnName.TASK_ID)) {
+        Database.RenameColumn (INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY, ColumnName.TASK_ID, ColumnName.MANUFACTURING_ORDER_ID);
+      }
+    }
+
     /// <summary>
     /// Uninstall the plugin
     /// (delete tables if necessary, ...)
@@ -174,6 +170,5 @@ GRANT SELECT ON TABLE public.intermediateworkpiecesummary TO PUBLIC;
       Database.RemoveTable (INTERMEDIATE_WORK_PIECE_SUMMARY);
       Database.RemoveTable (INTERMEDIATE_WORK_PIECE_BY_MACHINE_SUMMARY);
     }
-    #endregion // Methods
   }
 }

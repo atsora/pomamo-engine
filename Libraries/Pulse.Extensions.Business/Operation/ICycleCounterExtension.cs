@@ -20,9 +20,9 @@ namespace Lemoine.Extensions.Business.Operation
     public IOperation Operation { get; private set; }
 
     /// <summary>
-    /// Associated task (nullable)
+    /// Associated manufacturing order (nullable)
     /// </summary>
-    public ITask Task { get; private set; }
+    public IManufacturingOrder ManufacturingOrder { get; private set; }
 
     /// <summary>
     /// Duration the associated operation/task was active during the requested range
@@ -53,16 +53,16 @@ namespace Lemoine.Extensions.Business.Operation
     /// Constructor
     /// </summary>
     /// <param name="operation">nullable</param>
-    /// <param name="task">nullable</param>
+    /// <param name="manufacturingOrder">nullable</param>
     /// <param name="duration"></param>
     /// <param name="totalCycles"></param>
     /// <param name="adjustedCycles"></param>
     /// <param name="adjustedQuantity"></param>
     /// <param name="inProgress"></param>
-    public CycleCounterValue (IOperation operation, ITask task, TimeSpan duration, int totalCycles, int adjustedCycles, int adjustedQuantity, bool inProgress = false)
+    public CycleCounterValue (IOperation operation, IManufacturingOrder manufacturingOrder, TimeSpan duration, int totalCycles, int adjustedCycles, int adjustedQuantity, bool inProgress = false)
     {
       this.Operation = operation;
-      this.Task = task;
+      this.ManufacturingOrder = manufacturingOrder;
       this.Duration = duration;
       this.TotalCycles = totalCycles;
       this.AdjustedCycles = adjustedCycles;

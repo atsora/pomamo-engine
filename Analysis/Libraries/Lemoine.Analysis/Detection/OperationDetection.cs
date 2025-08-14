@@ -25,24 +25,16 @@ namespace Lemoine.Analysis.Detection
   {
     readonly ILog log;
 
-    #region Members
     readonly IMonitoredMachine m_monitoredMachine;
     readonly Lemoine.Threading.IChecked m_caller;
     IEnumerable<Lemoine.Extensions.Analysis.IOperationDetectionExtension> m_operationDetectionExtensions = null;
     readonly IEnumerable<IAfterOperationDetectionExtension> m_afterExtensions;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machine
     /// </summary>
-    public IMonitoredMachine Machine
-    {
-      get { return m_monitoredMachine; }
-    }
-    #endregion // Getters / Setters
+    public IMonitoredMachine Machine => m_monitoredMachine;
 
-    #region Constructors
     /// <summary>
     /// Constructor to set the monitored machine
     /// </summary>
@@ -74,7 +66,6 @@ namespace Lemoine.Analysis.Detection
       : this (monitoredMachine, extensions, null)
     {
     }
-    #endregion // Constructors
 
     #region IChecked implementation
     /// <summary>
@@ -243,12 +234,12 @@ namespace Lemoine.Analysis.Detection
             IWorkOrder workOrder = null;
             IComponent component = null;
             ILine line = null;
-            ITask task = null;
+            IManufacturingOrder manufacturingOrder = null;
             IOperationSlot previousOperationSlot = null;
 
-            // - Get the previous operation slot for an eventual auto-operation or a task change
+            // - Get the previous operation slot for an eventual auto-operation or a manufacturingOrder change
             //   or if the extension requires it
-            bool previousOperationSlotRequired = autoOperation || Lemoine.Business.Config.AnalysisConfigHelper.TaskManagement;
+            bool previousOperationSlotRequired = autoOperation || Lemoine.Business.Config.AnalysisConfigHelper.ManufacturingOrderManagement;
             foreach (var extension in GetExtensions ()) {
               previousOperationSlotRequired = previousOperationSlotRequired || extension.IsPreviousOperationSlotRequired ();
             }
@@ -261,14 +252,14 @@ namespace Lemoine.Analysis.Detection
               }
             }
 
-            // - Next task management if the operation changes
+            // - Next manufacturingOrder management if the operation changes
             if (((null == previousOperationSlot)
                   || !localOperation.Equals (previousOperationSlot.Operation))
-                && Lemoine.Business.Config.AnalysisConfigHelper.TaskManagement) {
+                && Lemoine.Business.Config.AnalysisConfigHelper.ManufacturingOrderManagement) {
               Debug.Assert (range.Lower.HasValue);
-              ITask nextTask = GuessNextTask (localOperation, previousOperationSlot);
-              if (null != nextTask) {
-                ApplyTask (nextTask, range.Lower.Value);
+              IManufacturingOrder nextManufacturingOrder = GuessNextManufacturingOrder (localOperation, previousOperationSlot);
+              if (null != nextManufacturingOrder) {
+                ApplyManufacturingOrder (nextManufacturingOrder, range.Lower.Value);
               }
             }
 
@@ -290,7 +281,7 @@ namespace Lemoine.Analysis.Detection
                   workOrder = previousOperationSlot.WorkOrder;
                   component = previousOperationSlot.Component;
                   line = previousOperationSlot.Line;
-                  task = previousOperationSlot.Task;
+                  manufacturingOrder = previousOperationSlot.ManufacturingOrder;
                 }
                 else { // Gap between previousOperationSlot and applyOperationFrom
                   Debug.Assert (previousOperationSlot.EndDateTime.HasValue);
@@ -316,7 +307,7 @@ namespace Lemoine.Analysis.Detection
                       workOrder = previousOperationSlot.WorkOrder;
                       component = previousOperationSlot.Component;
                       line = previousOperationSlot.Line;
-                      task = previousOperationSlot.Task;
+                      manufacturingOrder = previousOperationSlot.ManufacturingOrder;
                     } // IsAutoSequenceActivity
                   } // Duration ok < AutoOperationSame
                 } // EndIf Gap / No gap
@@ -342,10 +333,10 @@ namespace Lemoine.Analysis.Detection
                                                                             null, // Transient !
                                                                             true);
             association.Operation = localOperation;
-            // Propagate the work order / component / line / task
+            // Propagate the work order / component / line / manufacturingOrder
             if (autoOperation && Lemoine.Business.Config.AnalysisConfigHelper.AutoOperationPropagation.IsActive ()
-                && ((null != workOrder) || (null != component) || (null != line) || (null != task))) {
-              Debug.Assert (null != previousOperationSlot); // Else all of workOrder/component/line/task would be null
+                && ((null != workOrder) || (null != component) || (null != line) || (null != manufacturingOrder))) {
+              Debug.Assert (null != previousOperationSlot); // Else all of workOrder/component/line/manufacturingOrder would be null
               Debug.Assert (range.Lower.HasValue); // Else previousOperationSlot would be null
               IList<IOperationSlot> betweenSlots = new List<IOperationSlot> ();
               if (!previousOperationSlot.DateTimeRange.ContainsRange (range)) {
@@ -355,7 +346,7 @@ namespace Lemoine.Analysis.Detection
                                                                                 range.Upper));
               }
               Propagate (Lemoine.Business.Config.AnalysisConfigHelper.AutoOperationPropagation,
-                         association, workOrder, component, line, task, betweenSlots);
+                         association, workOrder, component, line, manufacturingOrder, betweenSlots);
             }
             association.Option = AssociationOption.Detected;
             association.Caller = m_caller;
@@ -535,17 +526,17 @@ namespace Lemoine.Analysis.Detection
       }
     }
 
-    void Propagate (PropagationOption propagationOption, IOperationMachineAssociation association, IWorkOrder workOrder, IComponent component, ILine line, ITask task, IList<IOperationSlot> betweenSlots)
+    void Propagate (PropagationOption propagationOption, IOperationMachineAssociation association, IWorkOrder workOrder, IComponent component, ILine line, IManufacturingOrder manufacturingOrder, IList<IOperationSlot> betweenSlots)
     {
       if (propagationOption.IsActive ()
-          && ((null != workOrder) || (null != component) || (null != line) || (null != task))) {
-        // Note: The case when there is a change of workOrder / component / line or task in range,
+          && ((null != workOrder) || (null != component) || (null != line) || (null != manufacturingOrder))) {
+        // Note: The case when there is a change of workOrder / component / line or manufacturingOrder in range,
         //       is not specifically handled because it would complexify a little bit too much the process.
         //       To simplify it, in case there is such a case, the auto-operation propagation is not processed
         bool workOrderPropagation = propagationOption.HasFlag (PropagationOption.WorkOrder);
         bool componentPropagation = propagationOption.HasFlag (PropagationOption.Component);
         bool linePropagation = propagationOption.HasFlag (PropagationOption.Line);
-        bool taskPropagation = propagationOption.HasFlag (PropagationOption.Task);
+        bool manufacturingOrderPropagation = propagationOption.HasFlag (PropagationOption.ManufacturingOrder);
         if (workOrderPropagation && (null != workOrder)) {
           foreach (var betweenSlot in betweenSlots) {
             if ((null != betweenSlot.WorkOrder)
@@ -583,14 +574,14 @@ namespace Lemoine.Analysis.Detection
             }
           }
         }
-        if (taskPropagation && (null != task)) {
+        if (manufacturingOrderPropagation && (null != manufacturingOrder)) {
           foreach (var betweenSlot in betweenSlots) {
-            if ((null != betweenSlot.Task)
-                && !object.Equals (betweenSlot.Task, task)) {
+            if ((null != betweenSlot.ManufacturingOrder)
+                && !object.Equals (betweenSlot.ManufacturingOrder, manufacturingOrder)) {
               if (log.IsDebugEnabled) {
-                log.Debug ($"Propagate: do not propagate the task {task} because of the existing slot {betweenSlot}");
+                log.Debug ($"Propagate: do not propagate the manufacturingOrder {manufacturingOrder} because of the existing slot {betweenSlot}");
               }
-              taskPropagation = false;
+              manufacturingOrderPropagation = false;
               workOrderPropagation = false;
               break;
             }
@@ -605,78 +596,77 @@ namespace Lemoine.Analysis.Detection
         if (linePropagation) {
           ((Lemoine.GDBPersistentClasses.OperationMachineAssociation)association).Line = line;
         }
-        if (taskPropagation) {
-          ((Lemoine.GDBPersistentClasses.OperationMachineAssociation)association).Task = task;
+        if (manufacturingOrderPropagation) {
+          ((Lemoine.GDBPersistentClasses.OperationMachineAssociation)association).ManufacturingOrder = manufacturingOrder;
         }
       }
     }
 
     /// <summary>
-    /// Guess the next task for a specified operation
+    /// Guess the next manufacturingOrder for a specified operation
     /// </summary>
     /// <param name="operation">not null</param>
     /// <param name="previousOperationSlot"></param>
     /// <returns></returns>
-    ITask GuessNextTask (IOperation operation, IOperationSlot previousOperationSlot)
+    IManufacturingOrder GuessNextManufacturingOrder (IOperation operation, IOperationSlot previousOperationSlot)
     {
       Debug.Assert (null != operation);
 
-      IList<ITask> nextTasks = ModelDAOHelper.DAOFactory.TaskDAO.GetNext (m_monitoredMachine,
+      IList<IManufacturingOrder> nextManufacturingOrders = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO.GetNext (m_monitoredMachine,
                                                                           operation);
-      if (0 == nextTasks.Count) {
-        if ((null != previousOperationSlot) && (null != previousOperationSlot.Task)) {
-          // Log it only for the moment if a task was previously defined
-          string message = string.Format ("No next task found for {0}",
-                                          operation);
-          AddTaskDetectionLog (LogLevel.NOTICE,
+      if (0 == nextManufacturingOrders.Count) {
+        if ((null != previousOperationSlot) && (null != previousOperationSlot.ManufacturingOrder)) {
+          // Log it only for the moment if a manufacturingOrder was previously defined
+          var message = $"No next manufacturingOrder found for {operation}";
+          AddManufacturingOrderDetectionLog (LogLevel.NOTICE,
                                message);
-          log.Info ($"GuessNextTask: {message}");
+          log.Info ($"GuessNextManufacturingOrder: {message}");
         }
         return null;
       }
       else {
-        if (1 < nextTasks.Count) {
-          if ((null != nextTasks[0].Machine)
-              && nextTasks[0].Order.HasValue
-              && (!nextTasks[1].Order.HasValue
-                  || !object.Equals (nextTasks[0].Order.Value,
-                                     nextTasks[1].Order.Value))) {
-            log.Debug ("GuessNextTask: the next task was fully determined by a machine and an order attribute");
+        if (1 < nextManufacturingOrders.Count) {
+          if ((null != nextManufacturingOrders[0].Machine)
+              && nextManufacturingOrders[0].Order.HasValue
+              && (!nextManufacturingOrders[1].Order.HasValue
+                  || !object.Equals (nextManufacturingOrders[0].Order.Value,
+                                     nextManufacturingOrders[1].Order.Value))) {
+            log.Debug ("GuessNextManufacturingOrder: the next manufacturingOrder was fully determined by a machine and an order attribute");
           }
           else {
-            // Log it, if there are more than one possible task
-            string message = $"{nextTasks.Count} next possible tasks for {operation}";
-            AddTaskDetectionLog (LogLevel.INFO,
+            // Log it, if there are more than one possible manufacturingOrder
+            string message = $"{nextManufacturingOrders.Count} next possible manufacturingOrders for {operation}";
+            AddManufacturingOrderDetectionLog (LogLevel.INFO,
                                  message);
             if (log.IsDebugEnabled) {
-              log.Debug ($"GuessNextTask: {message}");
+              log.Debug ($"GuessNextManufacturingOrder: {message}");
             }
           }
         }
-        return nextTasks[0];
+        return nextManufacturingOrders[0];
       }
     }
 
     /// <summary>
-    /// Apply the next task
+    /// Apply the next manufacturingOrder
     /// </summary>
-    /// <param name="task">not null</param>
+    /// <param name="manufacturingOrder">not null</param>
     /// <param name="from"></param>
-    void ApplyTask (ITask task, DateTime from)
+    void ApplyManufacturingOrder (IManufacturingOrder manufacturingOrder, DateTime from)
     {
-      Debug.Assert (null != task);
+      Debug.Assert (null != manufacturingOrder);
 
-      log.Info ($"ApplyTask: apply task {task}");
-      var taskAssociation = new Lemoine.GDBPersistentClasses
+      log.Info ($"ApplyManufacturingOrder: apply manufacturingOrder {manufacturingOrder}");
+      var manufacturingOrderAssociation = new Lemoine.GDBPersistentClasses
         .WorkOrderMachineAssociation (m_monitoredMachine,
                                       new UtcDateTimeRange (from),
                                       null, // transient
                                       true);
-      taskAssociation.WorkOrder = task.WorkOrder;
-      taskAssociation.Task = task;
-      ((Lemoine.GDBPersistentClasses.WorkOrderMachineAssociation)taskAssociation).AutoTask = true;
-      taskAssociation.Caller = m_caller;
-      taskAssociation.Apply ();
+      manufacturingOrderAssociation.WorkOrder = manufacturingOrder.WorkOrder;
+      manufacturingOrderAssociation.ManufacturingOrder = manufacturingOrder;
+      ((Lemoine.GDBPersistentClasses.WorkOrderMachineAssociation)manufacturingOrderAssociation).AutoManufacturingOrder = true;
+      manufacturingOrderAssociation.Caller = m_caller;
+      manufacturingOrderAssociation.Apply ();
       // TODO: event ?
     }
 
@@ -714,10 +704,10 @@ namespace Lemoine.Analysis.Detection
                                                                                 null, // Transient !
                                                                                 true);
                 association.Operation = operationSlot.Operation;
-                // Note: extend the work order / part / line and task as well
+                // Note: extend the work order / part / line and manufacturing order as well
                 if (Lemoine.Business.Config.AnalysisConfigHelper.AutoOperationPropagation.IsActive ()
                     && ((null != operationSlot.WorkOrder) || (null != operationSlot.Component)
-                        || (null != operationSlot.Line) || (null != operationSlot.Task))) {
+                        || (null != operationSlot.Line) || (null != operationSlot.ManufacturingOrder))) {
                   IList<IOperationSlot> betweenSlots = new List<IOperationSlot> ();
                   if (!operationSlot.DateTimeRange.ContainsElement (dateTime)) {
                     Debug.Assert (operationSlot.DateTimeRange.Upper.HasValue); // Else it would contain range
@@ -727,7 +717,7 @@ namespace Lemoine.Analysis.Detection
                   }
                   Propagate (Lemoine.Business.Config.AnalysisConfigHelper.ExtendOperationPropagation,
                              association, operationSlot.WorkOrder, operationSlot.Component,
-                             operationSlot.Line, operationSlot.Task, betweenSlots);
+                             operationSlot.Line, operationSlot.ManufacturingOrder, betweenSlots);
                 }
                 association.End = dateTime;
                 association.Caller = m_caller;
@@ -852,15 +842,15 @@ namespace Lemoine.Analysis.Detection
     }
 
     /// <summary>
-    /// Add a task detection log
+    /// Add a manufacturing order detection log
     /// </summary>
     /// <param name="level"></param>
     /// <param name="message"></param>
-    void AddTaskDetectionLog (LogLevel level,
+    void AddManufacturingOrderDetectionLog (LogLevel level,
                               string message)
     {
       AddDetectionAnalysisLog (level,
-                               "taskdetection",
+                               "manufacturingorderdetection",
                                message);
     }
 

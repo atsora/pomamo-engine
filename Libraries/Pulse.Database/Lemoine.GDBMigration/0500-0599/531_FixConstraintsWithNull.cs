@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,6 +16,9 @@ namespace Lemoine.GDBMigration
   [Migration (531)]
   public class FixConstraintsWithNull : MigrationExt
   {
+    static readonly string USE_DEPRECATED_TASK_STATUS_KEY = "Migration.UseDeprecatedTaskStatus";
+    static readonly bool USE_DEPRECATED_TASK_STATUS_DEFAULT = false;
+
     static readonly ILog log = LogManager.GetLogger (typeof (FixConstraintsWithNull).FullName);
 
     /// <summary>
@@ -91,7 +95,11 @@ OR ((updatertypeid = 2) AND (updaterid = serviceid) AND (userid IS NULL))");
       FixNameTranslationKeyConstraint (TableName.GOALTYPE);
 
       // 277
-      FixNameTranslationKeyConstraint (TableName.TASK_STATUS);
+      var taskStatusTableName =
+        Lemoine.Info.ConfigSet.LoadAndGet (USE_DEPRECATED_TASK_STATUS_KEY, USE_DEPRECATED_TASK_STATUS_DEFAULT)
+        ? TableName.TASK_STATUS
+        : TableName.MANUFACTURING_ORDER_STATUS;
+      FixNameTranslationKeyConstraint (taskStatusTableName);
     }
 
 

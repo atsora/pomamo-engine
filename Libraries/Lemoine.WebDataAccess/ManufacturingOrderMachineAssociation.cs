@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -11,19 +12,17 @@ using Lemoine.Core.Log;
 namespace Lemoine.WebDataAccess
 {
   /// <summary>
-  /// Description of TaskMachineAssociation.
+  /// Description of ManufacturingOrderMachineAssociation.
   /// </summary>
-  public class TaskMachineAssociation: ITaskMachineAssociation
+  public class ManufacturingOrderMachineAssociation: IManufacturingOrderMachineAssociation
   {
-    #region Constructors
-    internal TaskMachineAssociation (IMachine machine, UtcDateTimeRange range)
+    internal ManufacturingOrderMachineAssociation (IMachine machine, UtcDateTimeRange range)
     {
       Debug.Assert (null != machine);
       
       this.Machine = machine;
       this.Range = range;
     }
-    #endregion // Constructors
 
     #region IModification implementation
     public string ModificationType
@@ -262,8 +261,8 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
     #endregion
-    #region ITaskMachineAssociation implementation
-    public Lemoine.Model.ITask Task {
+    #region IManufacturingOrderMachineAssociation implementation
+    public Lemoine.Model.IManufacturingOrder ManufacturingOrder {
       get; set;
     }
     public Lemoine.Model.AssociationOption? Option {

@@ -643,7 +643,7 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException();
     }
 
-    public IOperationSlot CreateOperationSlot(IMachine machine, IOperation operation, IComponent component, IWorkOrder workOrder, ILine line, ITask task, DateTime? day, IShift shift, UtcDateTimeRange range)
+    public IOperationSlot CreateOperationSlot(IMachine machine, IOperation operation, IComponent component, IWorkOrder workOrder, ILine line, IManufacturingOrder manufacturingOrder, DateTime? day, IShift shift, UtcDateTimeRange range)
     {
       throw new NotImplementedException();
     }
@@ -880,14 +880,14 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException();
     }
 
-    public ITask CreateTask(int taskId)
+    public IManufacturingOrder CreateManufacturingOrder(int taskId)
     {
       throw new NotImplementedException();
     }
-    public ITaskMachineAssociation CreateTaskMachineAssociation (IMachine machine, ITask task, UtcDateTimeRange range)
+    public IManufacturingOrderMachineAssociation CreateManufacturingOrderMachineAssociation (IMachine machine, IManufacturingOrder manufacturingOrder, UtcDateTimeRange range)
     {
-      var association = new TaskMachineAssociation (machine, range);
-      association.Task = task;
+      var association = new ManufacturingOrderMachineAssociation (machine, range);
+      association.ManufacturingOrder = manufacturingOrder;
       return association;
     }
     

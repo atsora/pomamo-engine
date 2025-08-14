@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -17,7 +18,6 @@ namespace Lemoine.Plugin.CycleDurationSummary
   [Serializable]
   public class CycleDurationSummary : ICycleDurationSummary, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -25,17 +25,15 @@ namespace Lemoine.Plugin.CycleDurationSummary
     IShift m_shift;
     IWorkOrder m_workOrder;
     ILine m_line;
-    ITask m_task;
+    IManufacturingOrder m_manufacturingOrder;
     IComponent m_component;
     IOperation m_operation;
     int m_offset;
     int m_number;
     int m_partial = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CycleDurationSummary).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// CycleDurationSummary Id
     /// </summary>
@@ -93,11 +91,11 @@ namespace Lemoine.Plugin.CycleDurationSummary
     }
 
     /// <summary>
-    /// Associated task
+    /// Associated manufacturing order
     /// </summary>
-    public virtual ITask Task
+    public virtual IManufacturingOrder ManufacturingOrder
     {
-      get { return m_task; }
+      get { return m_manufacturingOrder; }
     }
 
     /// <summary>
@@ -149,9 +147,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
         m_partial = value;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
@@ -166,7 +162,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
     /// <param name="shift"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="component"></param>
     /// <param name="operation"></param>
     /// <param name="offset"></param>
@@ -175,7 +171,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
                                  IShift shift,
                                  IWorkOrder workOrder,
                                  ILine line,
-                                 ITask task,
+                                 IManufacturingOrder manufacturingOrder,
                                  IComponent component,
                                  IOperation operation,
                                  int offset)
@@ -185,11 +181,10 @@ namespace Lemoine.Plugin.CycleDurationSummary
       m_shift = shift;
       m_workOrder = workOrder;
       m_line = line;
-      m_task = task;
+      m_manufacturingOrder = manufacturingOrder;
       m_component = component;
       m_operation = operation;
       m_offset = offset;
     }
-    #endregion // Constructors
   }
 }

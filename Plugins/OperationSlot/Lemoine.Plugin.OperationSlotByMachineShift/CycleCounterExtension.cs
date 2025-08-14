@@ -118,8 +118,8 @@ namespace Lemoine.Plugin.OperationSlotByMachineShift
 
           var operationSlots = await FindOperationSlotsOverlapsRangeAsync (range, operationSlotAtStart, operationSlotAtEnd);
           var result = operationSlots
-            .GroupBy (x => (operation: x.Operation, task: x.Task))
-            .Select (x => new CycleCounterValue (x.Key.operation, x.Key.task, TimeSpan.FromSeconds (x.Sum (y => GetEffectiveDuration (y).TotalSeconds)), x.Sum (y => y.TotalCycles), x.Sum (y => y.AdjustedCycles), x.Sum (y => y.AdjustedQuantity), x.OrderByDescending (y => y.DateTimeRange).Any (y => IsInProgress (y))));
+            .GroupBy (x => (operation: x.Operation, manufacturingOrder: x.ManufacturingOrder))
+            .Select (x => new CycleCounterValue (x.Key.operation, x.Key.manufacturingOrder, TimeSpan.FromSeconds (x.Sum (y => GetEffectiveDuration (y).TotalSeconds)), x.Sum (y => y.TotalCycles), x.Sum (y => y.AdjustedCycles), x.Sum (y => y.AdjustedQuantity), x.OrderByDescending (y => y.DateTimeRange).Any (y => IsInProgress (y))));
           return result.ToList (); // To initialize all the data in this session and not later (IEnumerable is lazy)
         }
       }

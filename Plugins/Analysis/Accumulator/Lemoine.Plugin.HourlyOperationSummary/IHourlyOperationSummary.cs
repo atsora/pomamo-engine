@@ -49,7 +49,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     /// 
     /// Set to null if it could not be identified yet or it if is not applicable
     /// </summary>
-    ITask Task { get; }
+    IManufacturingOrder ManufacturingOrder { get; }
 
     /// <summary>
     /// If the option to split the operation slots by day is set,

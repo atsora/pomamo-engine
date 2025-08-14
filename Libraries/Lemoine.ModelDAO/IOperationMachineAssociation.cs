@@ -59,7 +59,7 @@ namespace Lemoine.Model
     /// Note: This is usually only used when the object is only kept in memory and not persistent.
     ///       There is no associated database column
     /// </summary>
-    ITask Task { get; set; }
+    IManufacturingOrder ManufacturingOrder { get; set; }
 
     /// <summary>
     /// Determined component from the operation

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -28,7 +29,7 @@ namespace Lemoine.Business.Operation
     #region Members
     readonly IMachine m_machine;
     IOperation m_operation;
-    readonly ITask m_task;
+    readonly IManufacturingOrder m_manufacturingOrder;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationCycleProperties).FullName);
@@ -36,14 +37,13 @@ namespace Lemoine.Business.Operation
     #region Getters / Setters
     #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="operation">not null</param>
-    /// <param name="task">optional, nullable</param>
-    public OperationCycleProperties (IMachine machine, IOperation operation, ITask task = null)
+    /// <param name="manufacturingOrder">optional, nullable</param>
+    public OperationCycleProperties (IMachine machine, IOperation operation, IManufacturingOrder manufacturingOrder = null)
     {
       Debug.Assert (null != machine);
       Debug.Assert (null != operation);
@@ -59,9 +59,8 @@ namespace Lemoine.Business.Operation
 
       m_machine = machine;
       m_operation = operation;
-      m_task = task;
+      m_manufacturingOrder = manufacturingOrder;
     }
-    #endregion // Constructors
 
     #region Methods
     #endregion // Methods
@@ -122,8 +121,8 @@ namespace Lemoine.Business.Operation
       var cacheKey = "Business.Operation.OperationProperties."
         + m_machine.Id
         + "." + ((IDataWithId)m_operation).Id;
-      if (null != m_task) {
-        cacheKey += "." + ((IDataWithId)m_task).Id;
+      if (null != m_manufacturingOrder) {
+        cacheKey += "." + ((IDataWithId)m_manufacturingOrder).Id;
       }
       return cacheKey;
     }
@@ -155,8 +154,8 @@ namespace Lemoine.Business.Operation
     /// <returns></returns>
     TimeSpan? GetCycleDuration (IMonitoredMachine monitoredMachine)
     {
-      if ((null != m_task) && (m_task.CycleDuration.HasValue)) {
-        return m_task.CycleDuration.Value;
+      if ((null != m_manufacturingOrder) && (m_manufacturingOrder.CycleDuration.HasValue)) {
+        return m_manufacturingOrder.CycleDuration.Value;
       }
 
       return m_operation.GetStandardCycleDuration (monitoredMachine);

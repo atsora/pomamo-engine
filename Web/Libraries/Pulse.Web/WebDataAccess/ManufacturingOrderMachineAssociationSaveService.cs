@@ -18,17 +18,17 @@ using Lemoine.Web;
 namespace Pulse.Web.WebDataAccess
 {
   /// <summary>
-  /// TaskMachineAssociationSave Service.
+  /// ManufacturingOrderMachineAssociationSave Service.
   /// </summary>
-  public class TaskMachineAssociationSaveService : GenericSaveService<Pulse.Web.WebDataAccess.TaskMachineAssociationSave>
+  public class ManufacturingOrderMachineAssociationSaveService : GenericSaveService<Pulse.Web.WebDataAccess.ManufacturingOrderMachineAssociationSave>
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (TaskMachineAssociationSaveService).FullName);
+    static readonly ILog log = LogManager.GetLogger(typeof (ManufacturingOrderMachineAssociationSaveService).FullName);
 
     #region Constructors
     /// <summary>
     /// 
     /// </summary>
-    public TaskMachineAssociationSaveService ()
+    public ManufacturingOrderMachineAssociationSaveService ()
     {
     }
     #endregion // Constructors
@@ -39,20 +39,18 @@ namespace Pulse.Web.WebDataAccess
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public override object GetSync(Pulse.Web.WebDataAccess.TaskMachineAssociationSave request)
+    public override object GetSync(Pulse.Web.WebDataAccess.ManufacturingOrderMachineAssociationSave request)
     {
-      ITaskMachineAssociation taskMachineAssociation;
+      IManufacturingOrderMachineAssociation manufacturingOrderMachineAssociation;
       
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       {
-        using (IDAOTransaction transaction = session.BeginTransaction ("TaskMachineAssociationSaveService"))
+        using (IDAOTransaction transaction = session.BeginTransaction ("ManufacturingOrderMachineAssociationSaveService"))
         {
           IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
             .FindById (request.MachineId);
           if (null == machine) {
-            log.ErrorFormat ("Get: " +
-                             "Machine with {0} does not exist",
-                             request.MachineId);
+            log.Error ($"Get: Machine with {request.MachineId} does not exist");
             transaction.Commit ();
             return new ErrorDTO ("No machine with id " + request.MachineId,
                                  ErrorStatus.WrongRequestParameter);
@@ -60,25 +58,25 @@ namespace Pulse.Web.WebDataAccess
           
           UtcDateTimeRange range = new UtcDateTimeRange (request.Range);
           
-          if (request.TaskId.HasValue) {
-            ITask task = ModelDAOHelper.DAOFactory.TaskDAO
-              .FindById (request.TaskId.Value);
-            if (null == task) {
+          if (request.ManufacturingOrderId.HasValue) {
+            IManufacturingOrder manufacturingOrder = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
+              .FindById (request.ManufacturingOrderId.Value);
+            if (null == manufacturingOrder) {
               log.ErrorFormat ("Get: " +
                                "No reason with ID {0}",
-                               request.TaskId.Value);
+                               request.ManufacturingOrderId.Value);
               transaction.Commit ();
-              return new ErrorDTO ("No work order with id " + request.TaskId.Value,
+              return new ErrorDTO ("No work order with id " + request.ManufacturingOrderId.Value,
                                    ErrorStatus.WrongRequestParameter);
             }
             else {
-              taskMachineAssociation = ModelDAOHelper.ModelFactory
-                .CreateTaskMachineAssociation (machine, task, range);
+              manufacturingOrderMachineAssociation = ModelDAOHelper.ModelFactory
+                .CreateManufacturingOrderMachineAssociation (machine, manufacturingOrder, range);
             }
           }
           else {
-            taskMachineAssociation = ModelDAOHelper.ModelFactory
-              .CreateTaskMachineAssociation (machine, null, range);
+            manufacturingOrderMachineAssociation = ModelDAOHelper.ModelFactory
+              .CreateManufacturingOrderMachineAssociation (machine, null, range);
           }
           if (request.RevisionId.HasValue) {
             if (-1 == request.RevisionId.Value) { // auto-revision
@@ -86,7 +84,7 @@ namespace Pulse.Web.WebDataAccess
               revision.Application = "Lem_AspService";
               revision.IPAddress = GetRequestRemoteIp ();
               ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistent (revision);
-              taskMachineAssociation.Revision = revision;
+              manufacturingOrderMachineAssociation.Revision = revision;
             }
             else {
               IRevision revision = ModelDAOHelper.DAOFactory.RevisionDAO
@@ -97,20 +95,20 @@ namespace Pulse.Web.WebDataAccess
                                 request.RevisionId.Value);
               }
               else {
-                taskMachineAssociation.Revision = revision;
+                manufacturingOrderMachineAssociation.Revision = revision;
               }
             }
           }
           
-          ModelDAOHelper.DAOFactory.TaskMachineAssociationDAO
-            .MakePersistent (taskMachineAssociation);
+          ModelDAOHelper.DAOFactory.ManufacturingOrderMachineAssociationDAO
+            .MakePersistent (manufacturingOrderMachineAssociation);
           
           transaction.Commit ();
         }
       }
       
-      Debug.Assert (null != taskMachineAssociation);
-      return new SaveModificationResponseDTO (taskMachineAssociation);
+      Debug.Assert (null != manufacturingOrderMachineAssociation);
+      return new SaveModificationResponseDTO (manufacturingOrderMachineAssociation);
     }
     #endregion // Methods
   }

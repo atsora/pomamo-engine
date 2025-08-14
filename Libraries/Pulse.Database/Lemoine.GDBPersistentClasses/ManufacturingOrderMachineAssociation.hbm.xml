@@ -2,10 +2,10 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
   namespace="Lemoine.GDBPersistentClasses"
   assembly="Pulse.Database">
-  <subclass name="TaskMachineAssociation"
-            discriminator-value="TaskMachineAssociation"
+  <subclass name="ManufacturingOrderMachineAssociation"
+            discriminator-value="ManufacturingOrderMachineAssociation"
             extends="MachineModification, Pulse.Database">
-    <join table="TaskMachineAssociation"
+    <join table="manufordermachineassociation"
           fetch="select">
       <key column="modificationid" />
       <many-to-one name="Machine" column="machineid" class="Machine"
@@ -17,13 +17,13 @@
       <property name="Range"
                 access="nosetter.camelcase-m-underscore"
                 type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
-                column="taskmachineassociationrange"
+                column="manufordermachineassociationrange"
                 not-null="true" />
-      <many-to-one name="Task" column="taskid" class="Task"
+      <many-to-one name="ManufacturingOrder" column="manuforderid" class="ManufacturingOrder"
                    cascade="none"
                    not-found="exception" />
       <property name="Option"
-                column="taskmachineassociationoption" />
+                column="manufordermachineassociationoption" />
     </join>
   </subclass>
 </hibernate-mapping>

@@ -24,15 +24,15 @@ namespace Lemoine.Business.Operation
   /// Request class to get the part production machining status of the current shift
   /// for the currently effective operation.
   /// 
-  /// The task is not considered here
+  /// The manufacturing order is not considered here
   /// </summary>
-  public sealed class PartProductionCurrentShiftTask
-    : IRequest<PartProductionCurrentShiftTaskResponse>
+  public sealed class PartProductionCurrentShiftManufacturingOrder
+    : IRequest<PartProductionCurrentShiftManufacturingOrderResponse>
   {
     /// <summary>
     /// Options key for the minimum duration of the current no operation period
     /// </summary>
-    static readonly string CURRENT_NO_OPERATION_MIN_DURATION_KEY = "Business.Operation.PartProductionCurrentShiftTask.CurrentNoOperationMinDuration";
+    static readonly string CURRENT_NO_OPERATION_MIN_DURATION_KEY = "Business.Operation.PartProductionCurrentShiftManufacturingOrder.CurrentNoOperationMinDuration";
     /// <summary>
     /// Options default value for the minimum duration of the current no operation period
     /// </summary>
@@ -41,13 +41,13 @@ namespace Lemoine.Business.Operation
     readonly IMonitoredMachine m_machine;
     readonly DateTime? m_dateTime;
 
-    static readonly ILog log = LogManager.GetLogger (typeof (PartProductionCurrentShiftTask).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (PartProductionCurrentShiftManufacturingOrder).FullName);
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
-    public PartProductionCurrentShiftTask (IMonitoredMachine machine)
+    public PartProductionCurrentShiftManufacturingOrder (IMonitoredMachine machine)
     {
       Debug.Assert (null != machine);
 
@@ -60,7 +60,7 @@ namespace Lemoine.Business.Operation
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="dateTime"></param>
-    public PartProductionCurrentShiftTask (IMonitoredMachine machine, DateTime dateTime)
+    public PartProductionCurrentShiftManufacturingOrder (IMonitoredMachine machine, DateTime dateTime)
       : this (machine)
     {
       m_dateTime = dateTime;
@@ -71,11 +71,11 @@ namespace Lemoine.Business.Operation
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
     /// <returns></returns>
-    public PartProductionCurrentShiftTaskResponse Get ()
+    public PartProductionCurrentShiftManufacturingOrderResponse Get ()
     {
       var dateTime = m_dateTime ?? DateTime.UtcNow;
 
-      var response = new PartProductionCurrentShiftTaskResponse ();
+      var response = new PartProductionCurrentShiftManufacturingOrderResponse ();
       response.RequestDateTime = m_dateTime;
       response.DateTime = dateTime;
 
@@ -94,7 +94,7 @@ namespace Lemoine.Business.Operation
       var effectiveOperationSlots = effectiveOperationCurrentShiftResponse
         .OperationSlots;
       var virtualOperationSlot = effectiveOperationCurrentShiftResponse.VirtualOperationSlot;
-      response.Task = effectiveOperationCurrentShiftResponse.Task;
+      response.ManufacturingOrder = effectiveOperationCurrentShiftResponse.ManufacturingOrder;
       response.WorkOrder = effectiveOperationCurrentShiftResponse.WorkOrder;
       response.Component = effectiveOperationCurrentShiftResponse.Component;
       response.Operation = effectiveOperationCurrentShiftResponse.Operation;
@@ -116,7 +116,7 @@ namespace Lemoine.Business.Operation
           // - Get the production durations
           GetProductionDurations (out TimeSpan shiftProductionDuration, out TimeSpan globalProductionDuration,
                                   dateTime,
-                                  response.Task,
+                                  response.ManufacturingOrder,
                                   response.Day, response.Shift,
                                   effectiveOperationSlots);
           if (log.IsDebugEnabled) {
@@ -131,11 +131,11 @@ namespace Lemoine.Business.Operation
               }
             }
           }
-          if (null != response.Task) {
-            response.GoalWholeTask = globalProductionDuration.TotalHours * standardProductionTargetPerHour.Value;
-            if (!isLongCycle && response.GoalWholeTask.HasValue) {
+          if (null != response.ManufacturingOrder) {
+            response.GoalWholeManufacturingOrder = globalProductionDuration.TotalHours * standardProductionTargetPerHour.Value;
+            if (!isLongCycle && response.GoalWholeManufacturingOrder.HasValue) {
               // Consider the number of pieces by cycle in case it is rounded (not a long cycle)
-              response.GoalWholeTask = nbPiecesByCycle * (((int)response.GoalWholeTask.Value) / nbPiecesByCycle);
+              response.GoalWholeManufacturingOrder = nbPiecesByCycle * (((int)response.GoalWholeManufacturingOrder.Value) / nbPiecesByCycle);
             }
           }
 
@@ -143,9 +143,9 @@ namespace Lemoine.Business.Operation
         }
 
         // - Get the number of produced parts
-        if (null != response.Task) {
+        if (null != response.ManufacturingOrder) {
           GetNumberOfProducedParts (out var shiftPieces, out var globalPieces,
-                                    response.Task,
+                                    response.ManufacturingOrder,
                                     response.Day, response.Shift);
           if (response.Day.HasValue
               && (null != response.Shift)) {
@@ -154,12 +154,12 @@ namespace Lemoine.Business.Operation
               response.NbPiecesCurrentShift = (int?)response.NbPiecesCurrentShift;
             }
           }
-          response.NbPiecesWholeTask = globalPieces;
+          response.NbPiecesWholeManufacturingOrder = globalPieces;
           if (!isLongCycle) {
-            response.NbPiecesWholeTask = (int?)response.NbPiecesWholeTask;
+            response.NbPiecesWholeManufacturingOrder = (int?)response.NbPiecesWholeManufacturingOrder;
           }
         }
-        else { // null == task
+        else { // null == manufacturingOrder
           if ((null != effectiveOperationSlots) && effectiveOperationSlots.Any ()) {
             response.NbPiecesCurrentShift =
               GetNumberOfProducedParts (effectiveOperationSlots, nbPiecesByCycle,
@@ -192,7 +192,7 @@ namespace Lemoine.Business.Operation
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
     /// <returns></returns>
-    public async Task<PartProductionCurrentShiftTaskResponse> GetAsync ()
+    public async Task<PartProductionCurrentShiftManufacturingOrderResponse> GetAsync ()
     {
       return await Task.FromResult (Get ());
     }
@@ -203,7 +203,7 @@ namespace Lemoine.Business.Operation
     /// <returns></returns>
     public string GetCacheKey ()
     {
-      var cacheKey = "Business.Operation.PartProductionCurrentShiftTask." + m_machine.Id;
+      var cacheKey = "Business.Operation.PartProductionCurrentShiftManufacturingOrder." + m_machine.Id;
       if (m_dateTime.HasValue) {
         Debug.Assert (DateTimeKind.Local != m_dateTime.Value.Kind);
         cacheKey += "." + m_dateTime.Value.ToString ("s") + "Z";
@@ -215,7 +215,7 @@ namespace Lemoine.Business.Operation
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
     /// <returns></returns>
-    public TimeSpan GetCacheTimeout (PartProductionCurrentShiftTaskResponse data)
+    public TimeSpan GetCacheTimeout (PartProductionCurrentShiftManufacturingOrderResponse data)
     {
       if (data.RequestDateTime.HasValue) { // In the past
         if (data.Range.ContainsElement (data.RequestDateTime.Value)) {
@@ -234,7 +234,7 @@ namespace Lemoine.Business.Operation
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public bool IsCacheValid (CacheValue<PartProductionCurrentShiftTaskResponse> data)
+    public bool IsCacheValid (CacheValue<PartProductionCurrentShiftManufacturingOrderResponse> data)
     {
       return true;
     }
@@ -268,18 +268,18 @@ namespace Lemoine.Business.Operation
     }
 
     /// <summary>
-    /// Get the production durations when the task is tracked
+    /// Get the production durations when the manufacturing order is tracked
     /// </summary>
     /// <param name="shiftProductionDuration"></param>
     /// <param name="globalProductionDuration"></param>
     /// <param name="now"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     /// <param name="effectiveOperationSlots"></param>
     void GetProductionDurations (out TimeSpan shiftProductionDuration, out TimeSpan globalProductionDuration,
                                  DateTime now,
-                                 ITask task,
+                                 IManufacturingOrder manufacturingOrder,
                                  DateTime? day, IShift shift,
                                  IList<IOperationSlot> effectiveOperationSlots)
     {
@@ -311,12 +311,12 @@ namespace Lemoine.Business.Operation
         }
       }
 
-      if (null != task) {
+      if (null != manufacturingOrder) {
         Debug.Assert (0 < effectiveOperationSlots.Count);
         if (effectiveOperationSlots[0].BeginDateTime.HasValue) {
           using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
             IList<IOperationSlot> operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
-              .FindByTaskStrictlyBefore (m_machine, task, effectiveOperationSlots[0].BeginDateTime.Value);
+              .FindByManufacturingOrderStrictlyBefore (m_machine, manufacturingOrder, effectiveOperationSlots[0].BeginDateTime.Value);
             foreach (IOperationSlot operationSlot in operationSlots) {
               if (operationSlot.ProductionDuration.HasValue) {
                 if (day.HasValue
@@ -365,35 +365,35 @@ namespace Lemoine.Business.Operation
     }
 
     /// <summary>
-    /// Get the number of produced parts when a task is defined
+    /// Get the number of produced parts when a manufacturing order is defined
     /// </summary>
     /// <param name="shiftPieces"></param>
     /// <param name="globalPieces"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     void GetNumberOfProducedParts (out double shiftPieces, out double globalPieces,
-                                   ITask task,
+                                   IManufacturingOrder manufacturingOrder,
                                    DateTime? day, IShift shift)
     {
       var extensionsRequest = new Lemoine.Business.Extension
-        .MachineExtensions<ITaskNumberOfPartsExtension> (m_machine, (ext, m) => ext.Initialize (m));
+        .MachineExtensions<IManufacturingOrderOfPartsExtension> (m_machine, (ext, m) => ext.Initialize (m));
       var extensions = Lemoine.Business.ServiceProvider
         .Get (extensionsRequest);
       foreach (var extension in extensions.OrderByDescending (ext => ext.Priority)) {
-        var result = extension.GetNumberOfProducedParts (out shiftPieces, out globalPieces, task, day, shift);
+        var result = extension.GetNumberOfProducedParts (out shiftPieces, out globalPieces, manufacturingOrder, day, shift);
         if (result) {
           return;
         }
       }
 
-      log.Error ("GetNumberOfProducedParts: no ITaskNumberOfPartsExtension is registered");
+      log.Error ("GetNumberOfProducedParts: no IManufacturingOrderNumberOfPartsExtension is registered");
       shiftPieces = 0;
       globalPieces = 0;
     }
 
     /// <summary>
-    /// Get the number of produced parts when no task is defined
+    /// Get the number of produced parts when no manufacturing order is defined
     /// </summary>
     /// <param name="effectiveOperationSlots"></param>
     /// <param name="nbPiecesByCycle"></param>
@@ -500,19 +500,19 @@ namespace Lemoine.Business.Operation
   }
 
   /// <summary>
-  /// Response of the business request PartProductionCurrentShiftTask
+  /// Response of the business request PartProductionCurrentShiftManufacturingOrder
   /// 
-  /// <see cref="PartProductionCurrentShiftTask"/>
+  /// <see cref="PartProductionCurrentShiftManufacturingOrder"/>
   /// </summary>
-  public sealed class PartProductionCurrentShiftTaskResponse
+  public sealed class PartProductionCurrentShiftManufacturingOrderResponse
     : IPartProductionCurrentShiftResponse
   {
-    readonly ILog log = LogManager.GetLogger<PartProductionCurrentShiftTaskResponse> ();
+    readonly ILog log = LogManager.GetLogger<PartProductionCurrentShiftManufacturingOrderResponse> ();
 
     /// <summary>
     /// Constructor
     /// </summary>
-    internal PartProductionCurrentShiftTaskResponse ()
+    internal PartProductionCurrentShiftManufacturingOrderResponse ()
     { }
 
     /// <summary>
@@ -533,9 +533,9 @@ namespace Lemoine.Business.Operation
     public double? NbPiecesCurrentShift { get; internal set; }
 
     /// <summary>
-    /// Number of parts completed in the current production for the whole task
+    /// Number of parts completed in the current production for the whole manufacturing order
     /// </summary>
-    public double? NbPiecesWholeTask { get; internal set; }
+    public double? NbPiecesWholeManufacturingOrder { get; internal set; }
 
     /// <summary>
     /// Production target in number of parts for the current production of the current shift
@@ -543,14 +543,14 @@ namespace Lemoine.Business.Operation
     public double? GoalCurrentShift { get; internal set; }
 
     /// <summary>
-    /// Production target in number of parts for the current production for the whole task
+    /// Production target in number of parts for the current production for the whole manufacturing order
     /// </summary>
-    public double? GoalWholeTask { get; internal set; }
+    public double? GoalWholeManufacturingOrder { get; internal set; }
 
     /// <summary>
-    /// Associated task
+    /// Associated manufacturing order
     /// </summary>
-    public ITask Task { get; internal set; }
+    public IManufacturingOrder ManufacturingOrder { get; internal set; }
 
     /// <summary>
     /// Associated work order

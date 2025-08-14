@@ -115,7 +115,6 @@ namespace Lemoine.Info
 
     static readonly ILog log = LogManager.GetLogger(typeof (GDBConnectionParameters).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Connection string
     /// </summary>
@@ -233,9 +232,7 @@ namespace Lemoine.Info
     {
       get { return Instance.ConnectionString;  }
     }
-    #endregion
 
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class !)
     /// </summary>
@@ -243,7 +240,6 @@ namespace Lemoine.Info
     {
       LoadGDBParameters ();
     }
-    #endregion
 
     #region Methods
     /// <summary>

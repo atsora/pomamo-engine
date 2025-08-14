@@ -1195,7 +1195,7 @@ namespace Lemoine.Model
     /// <param name="component"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     /// <param name="range"></param>
@@ -1205,7 +1205,7 @@ namespace Lemoine.Model
                                         IComponent component,
                                         IWorkOrder workOrder,
                                         ILine line,
-                                        ITask task,
+                                        IManufacturingOrder manufacturingOrder,
                                         DateTime? day,
                                         IShift shift,
                                         UtcDateTimeRange range);
@@ -1700,21 +1700,21 @@ namespace Lemoine.Model
                                                   string xmlElement);
 
     /// <summary>
-    /// Create a task
+    /// Create a manufacturing order
     /// </summary>
-    /// <param name="taskId"></param>
+    /// <param name="manufacturingOrderId"></param>
     /// <returns></returns>
-    ITask CreateTask (int taskId);
+    IManufacturingOrder CreateManufacturingOrder (int manufacturingOrderId);
 
     /// <summary>
-    /// Create a new task machine association modification
+    /// Create a new manufacturing order machine association modification
     /// </summary>
     /// <param name="machine"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="range"></param>
     /// <returns></returns>
-    ITaskMachineAssociation CreateTaskMachineAssociation (IMachine machine,
-                                                         ITask task,
+    IManufacturingOrderMachineAssociation CreateManufacturingOrderMachineAssociation (IMachine machine,
+                                                         IManufacturingOrder manufacturingOrder,
                                                          UtcDateTimeRange range);
 
     /// <summary>

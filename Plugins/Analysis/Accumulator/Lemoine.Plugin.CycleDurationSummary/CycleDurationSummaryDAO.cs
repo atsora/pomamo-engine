@@ -34,7 +34,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
                                               IShift shift,
                                               IWorkOrder workOrder,
                                               ILine line,
-                                              ITask task,
+                                              IManufacturingOrder manufacturingOrder,
                                               IComponent component,
                                               IOperation operation,
                                               int offset)
@@ -77,11 +77,11 @@ namespace Lemoine.Plugin.CycleDurationSummary
       else {
         criteria.Add (Restrictions.Eq ("Line.Id", line.Id));
       }
-      if (null == task) {
-        criteria.Add (Restrictions.IsNull ("Task"));
+      if (null == manufacturingOrder) {
+        criteria.Add (Restrictions.IsNull ("ManufacturingOrder"));
       }
       else {
-        criteria.Add (Restrictions.Eq ("Task.Id", ((IDataWithId)task).Id));
+        criteria.Add (Restrictions.Eq ("ManufacturingOrder.Id", ((IDataWithId)manufacturingOrder).Id));
       }
       return criteria.UniqueResult<ICycleDurationSummary> ();
     }
@@ -139,7 +139,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
     /// <param name="shift"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="component"></param>
     /// <param name="operation"></param>
     /// <param name="offset"></param>
@@ -150,7 +150,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
                              IShift shift,
                              IWorkOrder workOrder,
                              ILine line,
-                             ITask task,
+                             IManufacturingOrder manufacturingOrder,
                              IComponent component,
                              IOperation operation,
                              int offset,
@@ -166,7 +166,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
 
       // Find any existing analysis in database
       ICycleDurationSummary cycleDurationSummary =
-        FindByKey (machine, day, shift, workOrder, line, task, component, operation, offset);
+        FindByKey (machine, day, shift, workOrder, line, manufacturingOrder, component, operation, offset);
       if (null == cycleDurationSummary) {
         // The persistent class does not exist in database, create it
         cycleDurationSummary = new CycleDurationSummary (machine,
@@ -174,7 +174,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
                                                          shift,
                                                          workOrder,
                                                          line,
-                                                         task,
+                                                         manufacturingOrder,
                                                          component,
                                                          operation,
                                                          offset);

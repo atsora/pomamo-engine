@@ -1,14 +1,11 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Core.Log;
 
 using System.Net;
@@ -20,10 +17,10 @@ namespace Pulse.Web.WebDataAccess
   /// <summary>
   /// Request DTO
   /// </summary>
-  [Api("Request DTO for TaskMachineAssociation/Save service")]
+  [Api("Request DTO for ManufacturingOrderMachineAssociation/Save service")]
   [ApiResponse(HttpStatusCode.InternalServerError, "Oops, something broke")]
-  [Route("/Data/TaskMachineAssociation/Save/", "GET", Summary = "TaskMachineAssociation.MakePersistent", Notes = "To use with ?MachineId=&Range=&TaskId=&ResetTask=&RevisionId=")]
-  public class TaskMachineAssociationSave : IReturn<SaveModificationResponseDTO>
+  [Route("/Data/ManufacturingOrderMachineAssociation/Save/", "GET", Summary = "ManufacturingOrderMachineAssociation.MakePersistent", Notes = "To use with ?MachineId=&Range=&TaskId=&ResetTask=&RevisionId=")]
+  public class ManufacturingOrderMachineAssociationSave : IReturn<SaveModificationResponseDTO>
   {
     /// <summary>
     /// Machine ID
@@ -40,8 +37,8 @@ namespace Pulse.Web.WebDataAccess
     /// <summary>
     /// Task ID
     /// </summary>
-    [ApiMember(Name="TaskId", Description="", ParameterType="path", DataType="int", IsRequired=false)]
-    public int? TaskId { get; set; }
+    [ApiMember(Name="ManufacturingOrderId", Description="", ParameterType="path", DataType="int", IsRequired=false)]
+    public int? ManufacturingOrderId { get; set; }
     
     /// <summary>
     /// Revision ID

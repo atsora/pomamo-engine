@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,53 +26,35 @@ namespace Lemoine.Plugin.CycleDurationSummary
 
     static readonly string CYCLE_DURATION_SUMMARY = "cycledurationsummary";
 
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "CycleCountSummary"; } }
+    public override string Name => "CycleCountSummary";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Support of a cycledurationsummary table. Use by the CyclesProgressReport and MachiningCyclesReport reports";
-      }
-    }
+    public override string Description => "Support of a cycledurationsummary table. Use by the CyclesProgressReport and MachiningCyclesReport reports";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web; // Web: for a later use, to support the merge of components / operations
-      }
-    }
+    public PluginFlag Flags => PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web; // Web: for a later use, to support the merge of components / operations
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
+    public override int Version => 2;
 
     TransformationProviderExt Database
     {
-      get
-      {
+      get {
         if (null == m_database) {
           m_database = new TransformationProviderExt ();
         }
         return m_database;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -81,11 +64,14 @@ namespace Lemoine.Plugin.CycleDurationSummary
     protected override void InstallVersion (int version)
     {
       switch (version) {
-      case 1: // First installation
-        Install1 ();
-        break;
-      default:
-        throw new InvalidOperationException ();
+        case 1: // First installation
+          Install1 ();
+          break;
+        case 2: // Rename taskid into manufacturing order
+          Install2 ();
+          break;
+        default:
+          throw new InvalidOperationException ();
       }
     }
 
@@ -110,8 +96,7 @@ CREATE TABLE public.cycledurationsummary
   shiftid integer,
   cycledurationsummarypartial integer NOT NULL DEFAULT 0,
   lineid integer,
-  taskfullid integer,
-  taskid integer,
+  manuforderid integer,
   CONSTRAINT cycledurationsummary_pkey PRIMARY KEY (cycledurationsummaryid),
   CONSTRAINT fk_cycledurationsummary_component FOREIGN KEY (componentid)
       REFERENCES public.component (componentid) MATCH SIMPLE
@@ -131,7 +116,7 @@ CREATE TABLE public.cycledurationsummary
   CONSTRAINT fk_cycledurationsummary_workorder FOREIGN KEY (workorderid)
       REFERENCES public.workorder (workorderid) MATCH SIMPLE
       ON UPDATE RESTRICT ON DELETE RESTRICT,
-  CONSTRAINT cycledurationsummary_unique UNIQUE (machineid, cycledurationsummaryday, shiftid, operationid, componentid, workorderid, lineid, taskid, cycledurationsummaryoffset),
+  CONSTRAINT cycledurationsummary_unique UNIQUE (machineid, cycledurationsummaryday, shiftid, operationid, componentid, workorderid, lineid, manuforderid, cycledurationsummaryoffset),
   CONSTRAINT cycledurationsummarynumber_positive CHECK (cycledurationsummarynumber >= 0),
   CONSTRAINT cycledurationsummarypartial_positive CHECK (cycledurationsummarypartial >= 0)
 )
@@ -146,6 +131,16 @@ GRANT ALL ON TABLE public.cycledurationsummary TO ""{GDBConnectionParameters.Dat
       Database.PartitionTable (CYCLE_DURATION_SUMMARY, "monitoredmachine");
     }
 
+    void Install2 ()
+    {
+      if (Database.ColumnExists (CYCLE_DURATION_SUMMARY, ColumnName.TASK_ID)) {
+        Database.RenameColumn (CYCLE_DURATION_SUMMARY, ColumnName.TASK_ID, ColumnName.MANUFACTURING_ORDER_ID);
+      }
+      if (Database.ColumnExists (CYCLE_DURATION_SUMMARY, "taskfullid")) {
+        Database.RemoveColumnCascade (CYCLE_DURATION_SUMMARY, "taskfullid");
+      }
+    }
+
     /// <summary>
     /// Uninstall the plugin
     /// (delete tables if necessary, ...)
@@ -155,6 +150,5 @@ GRANT ALL ON TABLE public.cycledurationsummary TO ""{GDBConnectionParameters.Dat
     {
       Database.RemoveTable (CYCLE_DURATION_SUMMARY);
     }
-    #endregion // Methods
   }
 }

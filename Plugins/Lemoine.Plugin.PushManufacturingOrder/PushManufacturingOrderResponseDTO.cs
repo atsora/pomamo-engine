@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -9,14 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lemoine.Plugin.PushTask
+namespace Lemoine.Plugin.PushManufacturingOrder
 {
-#if NSERVICEKIT
-  [NServiceKit.ServiceHost.Api ("PushTask Response DTO")]
-#endif // NSERVICEKIT
-  public class PushTaskResponseDTO : NewModificationsDTO
+  public class PushManufacturingOrderResponseDTO : NewModificationsDTO
   {
-    public PushTaskResponseDTO (IRevision revision)
+    public PushManufacturingOrderResponseDTO (IRevision revision)
       : base (revision)
     {
     }

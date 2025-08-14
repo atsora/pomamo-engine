@@ -22,7 +22,6 @@ namespace Lem_DatabaseUpgrade
   {
     private static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
-    #region Constructors
     /// <summary>
     /// Main form of the Lemoine Service Monitoring application
     /// </summary>
@@ -38,10 +37,6 @@ namespace Lem_DatabaseUpgrade
       //
       InitializeComponent ();
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     private void MainForm_Shown (object sender, EventArgs e)
     {

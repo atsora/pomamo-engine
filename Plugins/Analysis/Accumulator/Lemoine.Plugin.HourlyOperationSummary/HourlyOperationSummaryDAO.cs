@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -55,7 +56,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     /// <param name="component">nullable</param>
     /// <param name="workOrder">nullable</param>
     /// <param name="line">nullable</param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day">nullable</param>
     /// <param name="shift">nullable</param>
     /// <param name="localDateHour"></param>
@@ -65,7 +66,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
                                               IComponent component,
                                               IWorkOrder workOrder,
                                               ILine line,
-                                              ITask task,
+                                              IManufacturingOrder manufacturingOrder,
                                               DateTime? day,
                                               IShift shift,
                                               DateTime localDateHour)
@@ -100,11 +101,11 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       else {
         criteria = criteria.Add (Restrictions.Eq ("Line.Id", line.Id));
       }
-      if (null == task) {
-        criteria = criteria.Add (Restrictions.IsNull ("Task"));
+      if (null == manufacturingOrder) {
+        criteria = criteria.Add (Restrictions.IsNull ("ManufacturingOrder"));
       }
       else {
-        criteria = criteria.Add (Restrictions.Eq ("Task.Id", ((IDataWithId)task).Id));
+        criteria = criteria.Add (Restrictions.Eq ("ManufacturingOrder.Id", ((IDataWithId)manufacturingOrder).Id));
       }
       if (!day.HasValue) {
         criteria = criteria.Add (Restrictions.IsNull ("Day"));
@@ -123,10 +124,10 @@ namespace Lemoine.Plugin.HourlyOperationSummary
         .UniqueResult<IHourlyOperationSummary> ();
       if (log.IsDebugEnabled) {
         if (null == result) {
-          log.Debug ($"FindByKey({machine.Id}): key: Operation:{operation} Component:{component} WorkOrder:{workOrder} Line:{line} Task:{task} Day:{day} Shift:{shift} LocalDateHour:{localDateHour} / Result: null");
+          log.Debug ($"FindByKey({machine.Id}): key: Operation:{operation} Component:{component} WorkOrder:{workOrder} Line:{line} ManufacturingOrder:{manufacturingOrder} Day:{day} Shift:{shift} LocalDateHour:{localDateHour} / Result: null");
         }
         else {
-          log.Debug ($"FindByKey({machine.Id}): key: Operation:{operation} Component:{component} WorkOrder:{workOrder} Line:{line} Task:{task} Day:{day} Shift:{shift} / Result: Operation:{result.Operation} Component:{result.Component} WorkOrder:{result.WorkOrder} Line:{result.Line} Task:{result.Task} Day:{result.Day} Shift:{result.Shift} LocalDateHour:{result.LocalDateHour}");
+          log.Debug ($"FindByKey({machine.Id}): key: Operation:{operation} Component:{component} WorkOrder:{workOrder} Line:{line} ManufacturingOrder:{manufacturingOrder} Day:{day} Shift:{shift} / Result: Operation:{result.Operation} Component:{result.Component} WorkOrder:{result.WorkOrder} Line:{result.Line} ManufacturingOrder:{result.ManufacturingOrder} Day:{result.Day} Shift:{result.Shift} LocalDateHour:{result.LocalDateHour}");
         }
       }
       return result;
@@ -263,26 +264,26 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     }
 
     /// <summary>
-    /// Find all the items that match the specified machine and task
+    /// Find all the items that match the specified machine and manufacturing order
     /// </summary>
     /// <param name="machine">not null</param>
-    /// <param name="task">not null</param>
+    /// <param name="manufacturingOrder">not null</param>
     /// <returns></returns>
-    public IList<IHourlyOperationSummary> FindByTask (IMachine machine, ITask task)
+    public IList<IHourlyOperationSummary> FindByManufacturingOrder (IMachine machine, IManufacturingOrder manufacturingOrder)
     {
       Debug.Assert (null != machine);
-      Debug.Assert (null != task);
+      Debug.Assert (null != manufacturingOrder);
 
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<HourlyOperationSummary> ()
         .Add (Restrictions.Eq ("Machine.Id", machine.Id))
-        .Add (Restrictions.Eq ("Task.Id", ((IDataWithId)task).Id))
+        .Add (Restrictions.Eq ("ManufacturingOrder.Id", ((IDataWithId)manufacturingOrder).Id))
         .List<IHourlyOperationSummary> ();
     }
 
-    public void UpdateOffset (IMachine machine, IOperation operation, IComponent component, IWorkOrder workOrder, ILine line, ITask task, DateTime? day, IShift shift, DateTime localDateHour, TimeSpan durationOffset, int totalCyclesOffset, int adjustedCyclesOffset, int adjustedQuantityOffset)
+    public void UpdateOffset (IMachine machine, IOperation operation, IComponent component, IWorkOrder workOrder, ILine line, IManufacturingOrder manufacturingOrder, DateTime? day, IShift shift, DateTime localDateHour, TimeSpan durationOffset, int totalCyclesOffset, int adjustedCyclesOffset, int adjustedQuantityOffset)
     {
-      var item = FindByKey (machine, operation, component, workOrder, line, task, day, shift, localDateHour);
+      var item = FindByKey (machine, operation, component, workOrder, line, manufacturingOrder, day, shift, localDateHour);
       if (null == item) {
         var maxDuration = TimeSpan.FromHours (2);
         if (log.IsWarnEnabled && ((durationOffset.TotalSeconds < 0) || (totalCyclesOffset < 0) || (adjustedCyclesOffset < 0) || (adjustedQuantityOffset < 0) || (maxDuration < durationOffset))) {
@@ -298,7 +299,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
               && Component.Equals (s.Component, component)
               && WorkOrder.Equals (s.WorkOrder, workOrder)
               && Line.Equals (s.Line, line)
-              && Task.Equals (s.Task, task)
+              && ManufacturingOrder.Equals (s.ManufacturingOrder, manufacturingOrder)
               && object.Equals (s.Day, day)
               && Shift.Equals (s.Shift, shift));
           var intersections = operationSlots
@@ -327,7 +328,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
             return;
           }
         }
-        item = new HourlyOperationSummary (machine, operation, component, workOrder, line, task, day, shift, localDateHour);
+        item = new HourlyOperationSummary (machine, operation, component, workOrder, line, manufacturingOrder, day, shift, localDateHour);
         item.Duration = duration;
         item.TotalCycles = totalCyclesOffset >= 0 ? totalCyclesOffset : 0;
         item.AdjustedCycles = adjustedCyclesOffset >= 0 ? adjustedCyclesOffset : 0;

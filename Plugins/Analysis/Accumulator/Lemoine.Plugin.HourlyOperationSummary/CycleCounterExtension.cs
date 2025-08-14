@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -94,8 +95,8 @@ namespace Lemoine.Plugin.HourlyOperationSummary
           }
 
           var result = summaries
-            .GroupBy (x => (operation: x.Operation, task: x.Task))
-            .Select (x => new CycleCounterValue (x.Key.operation, x.Key.task, GetTotalDuration (x, x.Key.operation, x.Key.task, range), x.Sum (y => y.TotalCycles), x.Sum (y => y.AdjustedCycles), x.Sum (y => y.AdjustedQuantity), x.OrderByDescending (y => y.LocalDateHour).Any (y => IsInProgress (y, detectionDateTime))));
+            .GroupBy (x => (operation: x.Operation, manufacturingOrder: x.ManufacturingOrder))
+            .Select (x => new CycleCounterValue (x.Key.operation, x.Key.manufacturingOrder, GetTotalDuration (x, x.Key.operation, x.Key.manufacturingOrder, range), x.Sum (y => y.TotalCycles), x.Sum (y => y.AdjustedCycles), x.Sum (y => y.AdjustedQuantity), x.OrderByDescending (y => y.LocalDateHour).Any (y => IsInProgress (y, detectionDateTime))));
           if (log.IsDebugEnabled) {
             log.Debug ($"GetNumberOfCyclesAsync: return result for range {range}");
           }
@@ -117,13 +118,13 @@ namespace Lemoine.Plugin.HourlyOperationSummary
           throw new Exception ($"No data for local day {day} shift {shift}");
         }
         var result = data
-          .GroupBy (x => (operation: x.Operation, task: x.Task))
-          .Select (x => new CycleCounterValue (x.Key.operation, x.Key.task, GetTotalDuration (x, x.Key.operation, x.Key.task, day, shift), x.Sum (y => y.TotalCycles), x.Sum (y => y.AdjustedCycles), x.Sum (y => y.AdjustedQuantity), x.Any (y => IsInProgress (y, detectionDateTime))));
+          .GroupBy (x => (operation: x.Operation, manufacturingOrder: x.ManufacturingOrder))
+          .Select (x => new CycleCounterValue (x.Key.operation, x.Key.manufacturingOrder, GetTotalDuration (x, x.Key.operation, x.Key.manufacturingOrder, day, shift), x.Sum (y => y.TotalCycles), x.Sum (y => y.AdjustedCycles), x.Sum (y => y.AdjustedQuantity), x.Any (y => IsInProgress (y, detectionDateTime))));
         return result;
       }
     }
 
-    TimeSpan GetTotalDuration (IEnumerable<IHourlyOperationSummary> summaries, IOperation operation, ITask task, DateTime day, IShift shift)
+    TimeSpan GetTotalDuration (IEnumerable<IHourlyOperationSummary> summaries, IOperation operation, IManufacturingOrder manufacturingOrder, DateTime day, IShift shift)
     {
       try {
         return TimeSpan.FromSeconds (summaries.Sum (x => GetEffectiveDuration (x).TotalSeconds));
@@ -158,7 +159,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
         using (var transaction = session.BeginReadOnlyTransaction ("Plugin.HourlyOperationSummary.CycleCounter.GetTotalDuration")) {
           var operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindByDayShift (m_machine, day, shift)
-            .Where (s => (((IDataWithId)operation)?.Id == ((IDataWithId)s.Operation)?.Id) && (((IDataWithId)task)?.Id == ((IDataWithId)s.Task)?.Id));
+            .Where (s => (((IDataWithId)operation)?.Id == ((IDataWithId)s.Operation)?.Id) && (((IDataWithId)manufacturingOrder)?.Id == ((IDataWithId)s.ManufacturingOrder)?.Id));
           var operationRanges = operationSlots
             .Select (s => new UtcDateTimeRange (presentRange.Intersects (s.DateTimeRange)))
             .Where (r => !r.IsEmpty ());
@@ -178,7 +179,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       return pastEffectiveDuration.Add (presentEffectiveDuration);
     }
 
-    TimeSpan GetTotalDuration (IEnumerable<IHourlyOperationSummary> summaries, IOperation operation, ITask task, UtcDateTimeRange range)
+    TimeSpan GetTotalDuration (IEnumerable<IHourlyOperationSummary> summaries, IOperation operation, IManufacturingOrder manufacturingOrder, UtcDateTimeRange range)
     {
       try {
         var directResult = TimeSpan.FromSeconds (summaries.Sum (x => GetEffectiveDuration (x).TotalSeconds));
@@ -217,7 +218,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
         using (var transaction = session.BeginReadOnlyTransaction ("Plugin.HourlyOperationSummary.CycleCounter.GetTotalDuration")) {
           var operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindOverlapsRange (m_machine, presentRange)
-            .Where (s => (((IDataWithId)operation)?.Id == ((IDataWithId)s.Operation)?.Id) && (((IDataWithId)task)?.Id == ((IDataWithId)s.Task)?.Id));
+            .Where (s => (((IDataWithId)operation)?.Id == ((IDataWithId)s.Operation)?.Id) && (((IDataWithId)manufacturingOrder)?.Id == ((IDataWithId)s.ManufacturingOrder)?.Id));
           var operationRanges = operationSlots
             .Select (s => new UtcDateTimeRange (presentRange.Intersects (s.DateTimeRange)))
             .Where (r => !r.IsEmpty ());

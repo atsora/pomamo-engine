@@ -254,18 +254,18 @@ namespace Lem_ApplyMachineModifications
               var association = ModelDAOHelper.ModelFactory
                 .CreateWorkOrderMachineAssociation (machine, null, range);
               modification = association;
-              association.ResetTask = true;
+              association.ResetManufacturingOrder = true;
               association.Revision = revision;
               ModelDAOHelper.DAOFactory.WorkOrderMachineAssociationDAO.MakePersistent (association);
             }
             else if (descriptionItems[0].Equals ("Task")) {
-              ITask task = null;
+              IManufacturingOrder manufacturingOrder = null;
               int taskId;
               if (int.TryParse (descriptionItems[2], out taskId)) {
-                task = ModelDAOHelper.DAOFactory.TaskDAO
+                manufacturingOrder = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
                   .FindById (taskId);
               }
-              if (null == task) {
+              if (null == manufacturingOrder) {
                 log.ErrorFormat ("Main: " +
                                  "task Id {0} is not valid",
                                  descriptionItems[2]);
@@ -275,10 +275,10 @@ namespace Lem_ApplyMachineModifications
                 continue;
               }
               var association = ModelDAOHelper.ModelFactory
-                .CreateTaskMachineAssociation (machine, task, range);
+                .CreateManufacturingOrderMachineAssociation (machine, manufacturingOrder, range);
               modification = association;
               association.Revision = revision;
-              ModelDAOHelper.DAOFactory.TaskMachineAssociationDAO.MakePersistent (association);
+              ModelDAOHelper.DAOFactory.ManufacturingOrderMachineAssociationDAO.MakePersistent (association);
             }
             else if (descriptionItems[0].Equals ("ResetWorkOrderComponent")) {
               { // WorkOrder

@@ -206,9 +206,9 @@ namespace Lemoine.GDBPersistentClasses
         // - Compute the number of completed cycles
         int nbCycles = (this.Checked + this.Scrapped) / this.IntermediateWorkPiece.OperationQuantity;
         if (nbCycles < 1) {
-          log.DebugFormat ("MakeAnalysis: " +
-                           "the number of cycles for the in progress production is {0} " +
-                           "=> no task is associated");
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MakeAnalysis: the number of cycles for the in progress production is {nbCycles} => no manufactuirng order is associated");
+          }
         }
         else { // 1 <= nbCycles
           // - Get the begin of the period
@@ -217,15 +217,13 @@ namespace Lemoine.GDBPersistentClasses
           if (cycles.Count < nbCycles) {
             string message = string.Format ("no {0} full cycles could be fetched before {1}",
                                             nbCycles, this.InformationDateTime);
-            log.ErrorFormat ("MakeAnalysis: " +
-                             "{0}",
-                             message);
+            log.Error ($"MakeAnalysis: {message}");
             AddAnalysisLog (LogLevel.ERROR, message);
             MarkAsError ();
             return;
           }
           DateTime begin;
-          IOperationCycle firstCycle = cycles [cycles.Count - 1];
+          IOperationCycle firstCycle = cycles[cycles.Count - 1];
           if (firstCycle.Begin.HasValue) {
             begin = firstCycle.Begin.Value;
           }
@@ -254,9 +252,9 @@ namespace Lemoine.GDBPersistentClasses
           // Note: begin of the period is known
           // - Check the existing operations
           UpperBound<DateTime> end = new UpperBound<DateTime> (null);
-          
-          // - Begin is known, apply the work order / task
-          
+
+          // - Begin is known, apply the work order / manufacturing order
+
         }
       }
       

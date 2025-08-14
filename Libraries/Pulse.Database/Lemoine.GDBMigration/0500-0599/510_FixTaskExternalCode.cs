@@ -24,9 +24,36 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      Database.ExecuteNonQuery (@"DROP VIEW IF EXISTS task CASCADE");
-      MakeColumnCaseInsensitive (TableName.TASK_FULL, "taskexternalcode");
-      AddTaskView ();
+      if (Database.TableExists (TableName.MANUFACTURING_ORDER_IMPLEMENTATION)) {
+        Database.ExecuteNonQuery ($"DROP VIEW IF EXISTS {TableName.MANUFACTURING_ORDER} CASCADE");
+        MakeColumnCaseInsensitive (TableName.MANUFACTURING_ORDER_IMPLEMENTATION, $"{TableName.MANUFACTURING_ORDER}externalcode");
+        Database.ExecuteNonQuery ($"""
+          INSERT INTO display(displaytable, displaypattern)
+          SELECT '{TableName.MANUFACTURING_ORDER_IMPLEMENTATION}', '<%WorkOrder.Display%>/<%Component.Display%>/<%Operation.Display%> on <%Machine.Display%>'
+          WHERE NOT EXISTS (SELECT 1 FROM display WHERE displaytable='{TableName.MANUFACTURING_ORDER_IMPLEMENTATION}' AND displayvariant IS NULL)
+          """);
+        Database.ExecuteNonQuery ($"""
+          CREATE OR REPLACE VIEW {TableName.MANUFACTURING_ORDER} AS
+          SELECT *, {TableName.MANUFACTURING_ORDER_IMPLEMENTATION}.{TableName.MANUFACTURING_ORDER_IMPLEMENTATION}display AS {TableName.MANUFACTURING_ORDER}display
+          FROM {TableName.MANUFACTURING_ORDER_IMPLEMENTATION}
+          ;
+          """);
+      }
+
+      // Keep the next lines until all customers were upgraded to version >= 19.0.0
+      // And after version >= 19.0.0 was installed at new customers
+      else if (Database.TableExists (TableName.TASK_FULL)) {
+        Database.ExecuteNonQuery (@"DROP VIEW IF EXISTS task CASCADE");
+        MakeColumnCaseInsensitive (TableName.TASK_FULL, "taskexternalcode");
+        Database.ExecuteNonQuery (@"
+INSERT INTO display(displaytable, displaypattern)
+SELECT 'TaskFull', '<%WorkOrder.Display%>/<%Component.Display%>/<%Operation.Display%> on <%Machine.Display%>'
+WHERE NOT EXISTS (SELECT 1 FROM display WHERE displaytable='TaskFull' AND displayvariant IS NULL)
+");
+        Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW task AS
+SELECT *, taskfull.taskfulldisplay AS taskdisplay
+FROM taskfull");
+      }
     }
 
     /// <summary>
@@ -34,19 +61,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-    }
-
-    void AddTaskView ()
-    {
-      Database.ExecuteNonQuery (@"
-INSERT INTO display(displaytable, displaypattern)
-SELECT 'TaskFull', '<%WorkOrder.Display%>/<%Component.Display%>/<%Operation.Display%> on <%Machine.Display%>'
-WHERE NOT EXISTS (SELECT 1 FROM display WHERE displaytable='TaskFull' AND displayvariant IS NULL)
-");
-
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE VIEW task AS
-SELECT *, taskfull.taskfulldisplay AS taskdisplay
-FROM taskfull");
     }
   }
 }

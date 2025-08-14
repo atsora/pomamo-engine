@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -16,39 +17,30 @@ using Lemoine.Core.Log;
 namespace Lemoine.GDBPersistentClasses
 {
   /// <summary>
-  /// Persistent class of table TaskMachineAssociation
+  /// Persistent class of table ManufOrderMachineAssociation
   /// </summary>
   [Serializable]
-  public class TaskMachineAssociation
+  public class ManufacturingOrderMachineAssociation
     : MachineModification
-    , ITaskMachineAssociation
+    , IManufacturingOrderMachineAssociation
     // Note: public else it is not serializable for the alert service
   {
-    #region Members
     UtcDateTimeRange m_range;
-    ITask m_task;
+    IManufacturingOrder m_manufacturingOrder;
     AssociationOption? m_associationOption;
     bool m_partOfDetectionAnalysis;
-    #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
     [XmlIgnore]
-    public override string ModificationType
-    {
-      get { return "TaskMachineAssociation"; }
-    }
+    public override string ModificationType => "ManufacturingOrderMachineAssociation";
 
     /// <summary>
     /// Range
     /// </summary>
     [XmlIgnore]
-    public virtual UtcDateTimeRange Range
-    {
-      get { return this.m_range; }
-    }
+    public virtual UtcDateTimeRange Range => m_range;
 
     /// <summary>
     /// Range for Xml serialization
@@ -58,13 +50,12 @@ namespace Lemoine.GDBPersistentClasses
     {
       get
       {
-        if (null == this.m_range) {
-          log.WarnFormat ("XmlSerializationRange.get: " +
-                          "range null");
+        if (m_range is null) {
+          log.Warn ("XmlSerializationRange.get: range null");
           return "";
         }
         else {
-          return this.m_range.ToString (dt => dt.ToString ("yyyy-MM-dd HH:mm:ss"));
+          return m_range.ToString (dt => dt.ToString ("yyyy-MM-dd HH:mm:ss"));
         }
       }
       set
@@ -82,21 +73,21 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Task to associate to a machine
+    /// Manufacturing order to associate to a machine
     /// </summary>
     [XmlIgnore]
-    public virtual ITask Task {
-      get { return m_task; }
-      set { m_task = value; }
+    public virtual IManufacturingOrder ManufacturingOrder {
+      get { return m_manufacturingOrder; }
+      set { m_manufacturingOrder = value; }
     }
 
     /// <summary>
-    /// Reference to the related Task for Xml Serialization
+    /// Reference to the related ManufacturingOrder for Xml Serialization
     /// </summary>
-    [XmlElement("Task")]
-    public virtual Task XmlSerializationTask {
-      get { return this.Task as Task; }
-      set { this.Task = value; }
+    [XmlElement("ManufacturingOrder")]
+    public virtual ManufacturingOrder XmlSerializationManufacturingOrder {
+      get { return this.ManufacturingOrder as ManufacturingOrder; }
+      set { this.ManufacturingOrder = value; }
     }
 
     /// <summary>
@@ -104,16 +95,13 @@ namespace Lemoine.GDBPersistentClasses
     /// in the detectionanalysislog table
     /// </summary>
     [XmlIgnore]
-    public virtual bool PartOfDetectionAnalysis {
-      get { return m_partOfDetectionAnalysis; }
-    }
-    #endregion // Getters / Setters
+    public virtual bool PartOfDetectionAnalysis => m_partOfDetectionAnalysis;
     
     #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
-    protected TaskMachineAssociation ()
+    protected ManufacturingOrderMachineAssociation ()
     {
     }
     
@@ -121,7 +109,7 @@ namespace Lemoine.GDBPersistentClasses
     /// Constructor
     /// </summary>
     /// <returns></returns>
-    internal protected TaskMachineAssociation (IMachine machine, UtcDateTimeRange range)
+    internal protected ManufacturingOrderMachineAssociation (IMachine machine, UtcDateTimeRange range)
       : base (machine)
     {
       m_range = range;
@@ -136,8 +124,8 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="range"></param>
     /// <param name="mainModification"></param>
     /// <param name="partOfDetectionAnalysis"></param>
-    internal protected TaskMachineAssociation (IMachine machine, UtcDateTimeRange  range, IModification mainModification,
-                                               bool partOfDetectionAnalysis)
+    internal protected ManufacturingOrderMachineAssociation (IMachine machine, UtcDateTimeRange  range, IModification mainModification,
+      bool partOfDetectionAnalysis)
       : base (machine, mainModification)
     {
       m_range = range;
@@ -145,7 +133,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -157,7 +144,7 @@ namespace Lemoine.GDBPersistentClasses
       Analyze ();
 
       // Analysis is done
-      MarkAsCompleted ("Cache/ClearDomainByMachine/TaskAssociation/" + this.Machine.Id + "?Broadcast=true");
+      MarkAsCompleted ("Cache/ClearDomainByMachine/ManufacturingOrderAssociation/" + this.Machine.Id + "?Broadcast=true");
     }
     
     /// <summary>
@@ -182,12 +169,11 @@ namespace Lemoine.GDBPersistentClasses
                                                          this.MainModification ?? this,
                                                          m_partOfDetectionAnalysis);
       association.DateTime = this.DateTime;
-      association.Task = this.Task;
+      association.ManufacturingOrder = this.ManufacturingOrder;
       association.Option = this.Option;
       association.Caller = this;
       association.Analyze ();
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
@@ -195,7 +181,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Unproxy ()
     {
       base.Unproxy ();
-      NHibernateHelper.Unproxy<ITask> (ref m_task);
+      NHibernateHelper.Unproxy<IManufacturingOrder> (ref m_manufacturingOrder);
     }
   }
 }

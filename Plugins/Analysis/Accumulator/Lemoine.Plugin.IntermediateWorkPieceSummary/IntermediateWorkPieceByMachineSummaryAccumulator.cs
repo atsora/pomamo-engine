@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -44,7 +45,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       readonly IComponent m_component;
       readonly IWorkOrder m_workOrder;
       readonly ILine m_line;
-      readonly ITask m_task;
+      readonly IManufacturingOrder m_manufacturingOrder;
       readonly DateTime? m_day;
       readonly IShift m_shift;
 
@@ -89,11 +90,11 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       }
 
       /// <summary>
-      /// Task
+      /// Manufacturing order
       /// </summary>
-      public ITask Task
+      public IManufacturingOrder ManufacturingOrder
       {
-        get { return m_task; }
+        get { return m_manufacturingOrder; }
       }
 
       /// <summary>
@@ -120,12 +121,12 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       /// <param name="component"></param>
       /// <param name="workOrder"></param>
       /// <param name="line"></param>
-      /// <param name="task"></param>
+      /// <param name="manufacturingOrder"></param>
       /// <param name="day"></param>
       /// <param name="shift"></param>
       public IntermediateWorkPieceByMachineSummaryKey (IMachine machine,
                                                        IIntermediateWorkPiece intermediateWorkPiece, IComponent component, IWorkOrder workOrder,
-                                                       ILine line, ITask task,
+                                                       ILine line, IManufacturingOrder manufacturingOrder,
                                                        DateTime? day, IShift shift)
       {
         m_machine = machine;
@@ -133,7 +134,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
         m_component = component;
         m_workOrder = workOrder;
         m_line = line;
-        m_task = task;
+        m_manufacturingOrder = manufacturingOrder;
 
         if (AnalysisConfigHelper.OperationSlotSplitOption.IsSplitByShift ()) {
           m_day = day;
@@ -166,7 +167,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           && object.Equals (m_component, other.m_component)
           && object.Equals (m_workOrder, other.m_workOrder)
           && object.Equals (m_line, other.m_line)
-          && object.Equals (m_task, other.m_task)
+          && object.Equals (m_manufacturingOrder, other.m_manufacturingOrder)
           && object.Equals (m_day, other.m_day)
           && object.Equals (m_shift, other.m_shift);
       }
@@ -196,8 +197,8 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           if (null != m_shift) {
             hashCode += 1000000021 * m_shift.GetHashCode ();
           }
-          if (null != m_task) {
-            hashCode += 1000000023 * m_task.GetHashCode ();
+          if (null != m_manufacturingOrder) {
+            hashCode += 1000000023 * m_manufacturingOrder.GetHashCode ();
           }
         }
         return hashCode;
@@ -209,8 +210,8 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       /// <returns></returns>
       public override string ToString ()
       {
-        return string.Format ("[IntermediateWorkPieceByMachineSummaryKey Machine={0}, IntermediateWorkPiece={1}, Component={2}, WorkOrder={3}, Line={4}, Task={5}, Day={6}, Shift={7}]",
-                             m_machine, m_intermediateWorkPiece, m_component, m_workOrder, m_line, m_task, m_day, m_shift);
+        return string.Format ("[IntermediateWorkPieceByMachineSummaryKey Machine={0}, IntermediateWorkPiece={1}, Component={2}, WorkOrder={3}, Line={4}, ManufacturingOrder={5}, Day={6}, Shift={7}]",
+                             m_machine, m_intermediateWorkPiece, m_component, m_workOrder, m_line, m_manufacturingOrder, m_day, m_shift);
       }
     };
 
@@ -256,7 +257,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           || !object.Equals (before.Component, after.Component)
           || !object.Equals (before.WorkOrder, after.WorkOrder)
           || !object.Equals (before.Line, after.Line)
-          || !object.Equals (before.Task, after.Task)
+          || !object.Equals (before.ManufacturingOrder, after.ManufacturingOrder)
           || !object.Equals (before.Day, after.Day)
           || !object.Equals (before.Shift, after.Shift)
           || !object.Equals (before.TotalCycles, after.TotalCycles)
@@ -290,7 +291,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           IntermediateWorkPieceByMachineSummaryKey key =
             new IntermediateWorkPieceByMachineSummaryKey (operationSlot.Machine, intermediateWorkPiece,
                                                            operationSlot.Component, operationSlot.WorkOrder,
-                                                           operationSlot.Line, operationSlot.Task,
+                                                           operationSlot.Line, operationSlot.ManufacturingOrder,
                                                            operationSlot.Day, operationSlot.Shift);
           IntermediateWorkPieceByMachineSummaryValue v;
           if (!m_intermediateWorkPieceByMachineSummaryAccumulator.TryGetValue (key, out v)) {
@@ -322,7 +323,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
                in withChangeItems) {
         IntermediateWorkPieceByMachineSummaryKey key = data.Key;
         IIntermediateWorkPieceByMachineSummary summary = new IntermediateWorkPieceByMachineSummaryDAO ()
-          .FindByKey (key.Machine, key.IntermediateWorkPiece, key.Component, key.WorkOrder, key.Line, key.Task, key.Day, key.Shift);
+          .FindByKey (key.Machine, key.IntermediateWorkPiece, key.Component, key.WorkOrder, key.Line, key.ManufacturingOrder, key.Day, key.Shift);
         IntermediateWorkPieceByMachineSummaryValue v = data.Value;
         int offset = (v.TotalCycles - v.AdjustedCycles) * key.IntermediateWorkPiece.OperationQuantity + v.AdjustedQuantity;
         if (0 != offset) {
@@ -332,7 +333,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
                                                             key.Component,
                                                             key.WorkOrder,
                                                             key.Line,
-                                                            key.Task,
+                                                            key.ManufacturingOrder,
                                                             key.Day,
                                                             key.Shift);
             new IntermediateWorkPieceByMachineSummaryDAO ()

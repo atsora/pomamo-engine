@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -26,49 +27,33 @@ namespace Lemoine.Plugin.HourlyOperationSummary
 
     TransformationProviderExt m_database = null;
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "HourlyOperationSummary"; } }
+    public override string Name => "HourlyOperationSummary";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Support of a hourlyoperationsummary table";
-      }
-    }
+    public override string Description => "Support of a hourlyoperationsummary table";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Config | PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Config | PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version => 1;
+    public override int Version => 2;
 
     TransformationProviderExt Database
     {
-      get
-      {
+      get {
         if (null == m_database) {
           m_database = new TransformationProviderExt ();
         }
         return m_database;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -78,11 +63,14 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     protected override void InstallVersion (int version)
     {
       switch (version) {
-      case 1: // First installation
-        Install1 ();
-        break;
-      default:
-        throw new InvalidOperationException ();
+        case 1: // First installation
+          Install1 ();
+          break;
+        case 2: // Rename task into manuforder
+          Install2 ();
+          break;
+        default:
+          throw new InvalidOperationException ();
       }
     }
 
@@ -106,7 +94,7 @@ CREATE TABLE public.hourlyoperationsummary
   hourlyoperationsummaryadjustedcycles integer NOT NULL DEFAULT 0,
   hourlyoperationsummaryadjustedquantity integer NOT NULL DEFAULT 0,
   lineid integer,
-  taskid integer,
+  manuforderid integer,
   hourlyoperationsummaryday date,
   shiftid integer,
   localdatehour timestamp without time zone,
@@ -145,6 +133,13 @@ GRANT SELECT ON TABLE public.hourlyoperationsummary TO PUBLIC;
       Database.AddIndex (HOURLY_OPERATION_SUMMARY, new string[] { "machineid", "localdatehour" });
     }
 
+    void Install2 ()
+    {
+      if (Database.ColumnExists (HOURLY_OPERATION_SUMMARY, ColumnName.TASK_ID)) {
+        Database.RenameColumn (HOURLY_OPERATION_SUMMARY, ColumnName.TASK_ID, ColumnName.MANUFACTURING_ORDER_ID);
+      }
+    }
+
     /// <summary>
     /// Uninstall the plugin
     /// (delete tables if necessary, ...)
@@ -154,6 +149,5 @@ GRANT SELECT ON TABLE public.hourlyoperationsummary TO PUBLIC;
     {
       Database.RemoveTable (HOURLY_OPERATION_SUMMARY);
     }
-    #endregion // Methods
   }
 }

@@ -36,13 +36,13 @@ namespace Lemoine.Model
     /// null if the line was not identified
     /// </summary>
     ILine Line { get; set; }
-    
+
     /// <summary>
-    /// Reference to a task if known
+    /// Reference to a manufacturing order if known
     /// 
     /// nullable
     /// </summary>
-    ITask Task { get; set; }
+    IManufacturingOrder ManufacturingOrder { get; set; }
     
     /// <summary>
     /// If the option to split the operation slots by day is set,
@@ -90,11 +90,11 @@ namespace Lemoine.Model
     /// Average cycle time of the full cycles during the slot
     /// </summary>
     TimeSpan? AverageCycleTime { get; set; }
-    
+
     /// <summary>
-    /// Was the task determined automatically
+    /// Was the manufacturing order determined automatically
     /// </summary>
-    bool? AutoTask { get; set; }
+    bool? AutoManufacturingOrder { get; set; }
     
     /// <summary>
     /// Production duration

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,14 +25,14 @@ namespace Lemoine.GDBPersistentClasses
     #region Members
     IWorkOrder m_workOrder = null;
     ILine m_line = null;
-    ITask m_task = null;
+    IManufacturingOrder m_manufacturingOrder = null;
     IComponent m_component = null;
     IOperation m_operation;
     DateTime? m_day = null;
     IShift m_shift;
     OperationMachineAssociation m_operationMachineAssociation;
     bool m_partOfDetectionAnalysis;
-    bool m_resetFutureWorkOrderTask = false;
+    bool m_resetFutureWorkOrderManufacturingOrder = false;
     #endregion // Members
 
     #region Getters / Setters
@@ -84,11 +85,11 @@ namespace Lemoine.GDBPersistentClasses
     }
     
     /// <summary>
-    /// Determined task from the operation
+    /// Determined manufacturing order from the operation
     /// </summary>
-    internal protected virtual ITask Task {
-      get { return m_task; }
-      set { m_task = value; }
+    internal protected virtual IManufacturingOrder ManufacturingOrder {
+      get { return m_manufacturingOrder; }
+      set { m_manufacturingOrder = value; }
     }
     
     /// <summary>
@@ -126,7 +127,7 @@ namespace Lemoine.GDBPersistentClasses
       m_component = operationMachineAssociation.Component;
       m_operation = operationMachineAssociation.Operation;
       m_line = operationMachineAssociation.Line;
-      m_task = operationMachineAssociation.Task;
+      m_manufacturingOrder = operationMachineAssociation.ManufacturingOrder;
       
       m_operationMachineAssociation = operationMachineAssociation;
       m_partOfDetectionAnalysis = partOfDetectionAnalysis;
@@ -169,7 +170,7 @@ namespace Lemoine.GDBPersistentClasses
                                 this.Component,
                                 this.WorkOrder,
                                 this.Line,
-                                this.Task,
+                                this.ManufacturingOrder,
                                 this.Day,
                                 this.Shift,
                                 this.Range);
@@ -319,48 +320,48 @@ namespace Lemoine.GDBPersistentClasses
           }
         }
         
-        // Task
-        Debug.Assert (object.Equals (oldOperationSlot.Task,
-                                     newOperationSlot.Task));
-        bool resetFutureTask = false;
-        if (null != m_task) {
-          ((OperationSlot)newOperationSlot).Task = m_task;
+        // Manufacturing order
+        Debug.Assert (object.Equals (oldOperationSlot.ManufacturingOrder,
+                                     newOperationSlot.ManufacturingOrder));
+        bool resetFutureManufacturingOrder = false;
+        if (null != m_manufacturingOrder) {
+          ((OperationSlot)newOperationSlot).ManufacturingOrder = m_manufacturingOrder;
         }
-        else if (null != oldOperationSlot.Task) {
-          if (Lemoine.Business.Operation.OperationRelations.IsTaskCompatibleWithMachineOperation (oldOperationSlot.Task,
+        else if (null != oldOperationSlot.ManufacturingOrder) {
+          if (Lemoine.Business.Operation.OperationRelations.IsManufacturingOrderCompatibleWithMachineOperation (oldOperationSlot.ManufacturingOrder,
                                                                    this.Machine,
                                                                    this.Operation)) {
             log.DebugFormat ("MergeDataWithOldSlot: " +
-                             "keep the old task {0} which is compatible with {1}",
-                             oldOperationSlot.Task, this.Operation);
+                             "keep the old manufacturing order {0} which is compatible with {1}",
+                             oldOperationSlot.ManufacturingOrder, this.Operation);
           }
           else {
-            // Get the next task that could match this operation
-            ((OperationSlot)newOperationSlot).Task = null;
-            ((OperationSlot)newOperationSlot).AutoTask = null;
+            // Get the next manufacturing order that could match this operation
+            ((OperationSlot)newOperationSlot).ManufacturingOrder = null;
+            ((OperationSlot)newOperationSlot).AutoManufacturingOrder = null;
             AddAnalysisLog (LogLevel.INFO,
-                            string.Format ("Reset the task because " +
+                            string.Format ("Reset the manufacturing order because " +
                                            "the new operation {0} is not compatible " +
-                                           "with the old task {1}",
+                                           "with the old manufacturing order {1}",
                                            this.Operation,
-                                           oldOperationSlot.Task));
-            if (this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.Detected)) { // In case of detection, the future tasks must be discontinued as well
-              resetFutureTask = true;
+                                           oldOperationSlot.ManufacturingOrder));
+            if (this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.Detected)) { // In case of detection, the future manufacturing orders must be discontinued as well
+              resetFutureManufacturingOrder = true;
             }
           }
         }
         
         if (this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.Detected)
-            && (resetFutureTask || resetFutureWorkOrder)
+            && (resetFutureManufacturingOrder || resetFutureWorkOrder)
             && this.End.HasValue
             && m_operationMachineAssociation.Range.Upper.HasValue
             && Bound.Equals<DateTime> (this.End, m_operationMachineAssociation.Range.Upper)) {
           // Note 1: Do it only for the last OperationShiftMachineAssociation of OperationMachineAssociation.
           //         For that the end of both modifications was compared
-          // Note 2: For the moment, the work order and the task must be reset in the same time.
+          // Note 2: For the moment, the work order and the manufacturing order must be reset in the same time.
           //         There is no modification to reset only one of them yet.
           //         And it is probably not necessary.
-          m_resetFutureWorkOrderTask = true;
+          m_resetFutureWorkOrderManufacturingOrder = true;
           // The process is done after the operations are updated in the Analyze method
         }
         
@@ -420,13 +421,13 @@ namespace Lemoine.GDBPersistentClasses
       this.Insert<OperationSlot, IOperationSlot, OperationSlotDAO> (operationSlotDAO,
                                                                     preFetchedOperationSlots);
       
-      if (m_resetFutureWorkOrderTask) {
+      if (m_resetFutureWorkOrderManufacturingOrder) {
         UtcDateTimeRange resetWorkOrderRange = new UtcDateTimeRange (this.End.Value);
         IWorkOrderMachineAssociation resetWorkOrderAssociation =
           new WorkOrderMachineAssociation (this.Machine, resetWorkOrderRange,
                                            this.MainModification, this.m_partOfDetectionAnalysis);
         resetWorkOrderAssociation.Apply ();
-        m_resetFutureWorkOrderTask = false; // Done
+        m_resetFutureWorkOrderManufacturingOrder = false; // Done
       }
     }
     #endregion // Methods
