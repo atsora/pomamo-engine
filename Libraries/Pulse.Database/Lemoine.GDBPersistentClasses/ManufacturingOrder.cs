@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -14,29 +15,26 @@ using Lemoine.Core.Log;
 namespace Lemoine.GDBPersistentClasses
 {
   /// <summary>
-  /// Persistent class of table Task
+  /// Persistent class of table ManufOrder
   /// </summary>
-  public class Task: DataWithDisplayFunction, ITask, IMergeable<ITask>, IEquatable<ITask>, Lemoine.Collections.IDataWithId
+  public class ManufacturingOrder: DataWithDisplayFunction, IManufacturingOrder, IMergeable<IManufacturingOrder>, IEquatable<IManufacturingOrder>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_externalCode = null;
     IOperation m_operation = null;
     IComponent m_component = null;
     IWorkOrder m_workOrder = null;
-    TaskStatus m_taskStatus = TaskStatus.New;
+    ManufacturingOrderStatus m_manufacturingOrderStatus = ManufacturingOrderStatus.New;
     int? m_quantity = null;
     TimeSpan? m_setupDuration = null;
     TimeSpan? m_cycleDuration = null;
     DateTime? m_dueDateTime = null;
     double? m_order = null;
     IMachine m_machine = null;
-    #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (Task).FullName);
+    static readonly ILog log = LogManager.GetLogger(typeof (ManufacturingOrder).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -47,16 +45,16 @@ namespace Lemoine.GDBPersistentClasses
     }
     
     /// <summary>
-    /// Task Id
+    /// ManufacturingOrder Id
     /// </summary>
     [XmlAttribute("Id")]
     public virtual int Id
     {
       get { return this.m_id; }
     }
-    
+
     /// <summary>
-    /// Task Version
+    /// ManufacturingOrder Version
     /// </summary>
     [XmlIgnore]
     public virtual int Version
@@ -136,12 +134,12 @@ namespace Lemoine.GDBPersistentClasses
     }
     
     /// <summary>
-    /// Task status
+    /// Manufacturing order status
     /// </summary>
-    [XmlAttribute("TaskStatus"), MergeAuto]
-    public virtual TaskStatus TaskStatus {
-      get { return m_taskStatus; }
-      set { m_taskStatus = value; }
+    [XmlAttribute("ManufacturingOrderStatus"), MergeAuto]
+    public virtual ManufacturingOrderStatus ManufacturingOrderStatus {
+      get { return m_manufacturingOrderStatus; }
+      set { m_manufacturingOrderStatus = value; }
     }
     
     /// <summary>
@@ -306,7 +304,7 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Order in which the task are scheduled
+    /// Order in which the manufacturing orders are scheduled
     /// </summary>
     [XmlIgnore, MergeAuto]
     public virtual double? Order {
@@ -340,7 +338,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Associated machine
     /// 
-    /// May be null at start when a task is not fully scheduled yet
+    /// May be null at start when a manufacturing order is not fully scheduled yet
     /// </summary>
     [XmlIgnore, MergeAuto]
     public virtual IMachine Machine {
@@ -356,29 +354,28 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Machine as Machine; }
       set { this.Machine = value; }
     }
-    #endregion // Getters / Setters
     
     #region Contructors
     /// <summary>
     /// Constructor
     /// </summary>
-    internal protected Task ()
+    internal protected ManufacturingOrder ()
     { }
     
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="taskId"></param>
-    internal protected Task (int taskId)
+    /// <param name="manufacturingOrderId"></param>
+    internal protected ManufacturingOrder (int manufacturingOrderId)
     {
-      m_id = taskId;
+      m_id = manufacturingOrderId;
     }
 
     /// <summary>
     /// Alternative constructor with an operation
     /// </summary>
     /// <param name="operation"></param>
-    internal protected Task (IOperation operation)
+    internal protected ManufacturingOrder (IOperation operation)
     {
       m_operation = operation;
     }
@@ -390,7 +387,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="other"></param>
     /// <param name="conflictResolution"></param>
-    public virtual void Merge (ITask other,
+    public virtual void Merge (IManufacturingOrder other,
                                Lemoine.ModelDAO.ConflictResolution conflictResolution)
     {
       Mergeable.MergeAuto (this, other, conflictResolution);
@@ -437,7 +434,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public override string ToString()
     {
-      return $"[Task Id={this.Id}]";
+      return $"[ManufacturingOrder Id={this.Id}]";
     }
     
     /// <summary>
@@ -446,7 +443,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="other">An object to compare with this object</param>
     /// <returns>true if the current object is equal to the other parameter; otherwise, false</returns>
-    public virtual bool Equals(ITask other)
+    public virtual bool Equals(IManufacturingOrder other)
     {
       return this.Equals ((object) other);
     }
@@ -469,7 +466,7 @@ namespace Lemoine.GDBPersistentClasses
       // Note: do not use here this.GetType () != obj.GetType
       //       because a Xxx may be compared with a XxxProxy
       //       which may return false although true might be returned
-      Task other = obj as Task;
+      ManufacturingOrder other = obj as ManufacturingOrder;
       if (null == other) {
         return false;
       }

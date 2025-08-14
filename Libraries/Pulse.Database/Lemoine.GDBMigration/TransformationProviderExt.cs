@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -111,6 +112,16 @@ namespace Lemoine.GDBMigration
     }
 
     /// <summary>
+    /// <see cref="Migrator.Framework.ITransformationProvider.ColumnExists(string, string)"/>
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public bool ColumnExists (string tableName, string columnName)
+    {
+      return Database.ColumnExists (tableName, columnName);
+    }
+
+    /// <summary>
     /// <see cref="Migrator.Framework.ITransformationProvider.AddTable(string, Column[])"/>
     /// </summary>
     /// <param name="name"></param>
@@ -139,6 +150,14 @@ namespace Lemoine.GDBMigration
     public void AddColumn (string table, string column, System.Data.DbType type)
     {
       Database.AddColumn (table, column, type);
+    }
+
+    /// <summary>
+    /// <see cref="Migrator.Framework.ITransformationProvider.RenameColumn(string, string, string)"/>
+    /// </summary>
+    public void RenameColumn (string tableName, string oldColumnName, string newColumnName)
+    {
+      Database.RenameColumn (tableName, oldColumnName, newColumnName);
     }
 
     /// <summary>
@@ -1071,11 +1090,12 @@ SET DEFAULT nextval('{2}'::regclass)",
     /// <param name="table"></param>
     public void SetModificationTable (string table)
     {
-      Database.ExecuteNonQuery (string.Format (@"CREATE RULE {0}_delete AS
-ON DELETE TO {0}
-DO ALSO DELETE FROM modification
-  WHERE modificationid = OLD.modificationid;",
-                                               table));
+      Database.ExecuteNonQuery ($"""
+        CREATE RULE {table}_delete AS
+        ON DELETE TO {table}
+        DO ALSO DELETE FROM modification
+          WHERE modificationid = OLD.modificationid;
+        """);
     }
 
     /// <summary>
@@ -1084,11 +1104,12 @@ DO ALSO DELETE FROM modification
     /// <param name="table"></param>
     public void SetMachineModificationTable (string table)
     {
-      Database.ExecuteNonQuery (string.Format (@"CREATE RULE {0}_delete AS
-ON DELETE TO {0}
-DO ALSO DELETE FROM machinemodification
-  WHERE modificationid = OLD.modificationid;",
-                                               table));
+      Database.ExecuteNonQuery ($"""
+        CREATE RULE {table}_delete AS
+        ON DELETE TO {table}
+        DO ALSO DELETE FROM machinemodification
+        WHERE modificationid = OLD.modificationid;
+        """);
     }
 
     /// <summary>
@@ -1097,11 +1118,12 @@ DO ALSO DELETE FROM machinemodification
     /// <param name="table"></param>
     public void SetGlobalModificationTable (string table)
     {
-      Database.ExecuteNonQuery (string.Format (@"CREATE RULE {0}_delete AS
-ON DELETE TO {0}
-DO ALSO DELETE FROM globalmodification
-  WHERE modificationid = OLD.modificationid;",
-                                               table));
+      Database.ExecuteNonQuery ($"""
+        CREATE RULE {table}_delete AS
+        ON DELETE TO {table}
+        DO ALSO DELETE FROM globalmodification
+        WHERE modificationid = OLD.modificationid;
+        """);
     }
 
     /// <summary>

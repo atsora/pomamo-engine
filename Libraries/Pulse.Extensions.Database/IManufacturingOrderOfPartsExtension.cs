@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -9,9 +10,9 @@ using System.Collections.Generic;
 namespace Pulse.Extensions.Database
 {
   /// <summary>
-  /// Interface to get the number of parts for a specific task
+  /// Interface to get the number of parts for a specific manufacturing order
   /// </summary>
-  public interface ITaskNumberOfPartsExtension
+  public interface IManufacturingOrderOfPartsExtension
     : Lemoine.Extensions.IExtension
   {
     /// <summary>
@@ -27,16 +28,16 @@ namespace Pulse.Extensions.Database
     bool Initialize (IMachine machine);
 
     /// <summary>
-    /// Get the number of produced parts when a task is defined
+    /// Get the number of produced parts when a manufacturing order is defined
     /// </summary>
     /// <param name="shiftPieces"></param>
     /// <param name="globalPieces"></param>
-    /// <param name="task">not null</param>
+    /// <param name="manufacturingOrder">not null</param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     /// <returns></returns>
     bool GetNumberOfProducedParts (out double shiftPieces, out double globalPieces,
-                                   ITask task,
+                                   IManufacturingOrder manufacturingOrder,
                                    DateTime? day, IShift shift);
   }
 }

@@ -30,7 +30,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
             .MakeTransient (operationSummary);
           IHourlyOperationSummary existing =
             new HourlyOperationSummaryDAO ()
-            .FindByKey (operationSummary.Machine, operationSummary.Operation, newComponent, operationSummary.WorkOrder, operationSummary.Line, operationSummary.Task, operationSummary.Day, operationSummary.Shift, operationSummary.LocalDateHour);
+            .FindByKey (operationSummary.Machine, operationSummary.Operation, newComponent, operationSummary.WorkOrder, operationSummary.Line, operationSummary.ManufacturingOrder, operationSummary.Day, operationSummary.Shift, operationSummary.LocalDateHour);
           if (null != existing) {
             existing.Duration += operationSummary.Duration;
             existing.TotalCycles += operationSummary.TotalCycles;
@@ -46,7 +46,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
                                           newComponent,
                                           operationSummary.WorkOrder,
                                           operationSummary.Line,
-                                          operationSummary.Task,
+                                          operationSummary.ManufacturingOrder,
                                           operationSummary.Day,
                                           operationSummary.Shift, operationSummary.LocalDateHour);
             created.Duration = operationSummary.Duration;

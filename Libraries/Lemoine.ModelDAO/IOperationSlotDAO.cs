@@ -193,30 +193,30 @@ namespace Lemoine.ModelDAO
     /// <param name="workOrder"></param>
     /// <returns></returns>
     IList<IOperationSlot> FindByWorkOrder (IWorkOrder workOrder);
-    
+
     /// <summary>
-    /// Find all the operation slots for the specified task
+    /// Find all the operation slots for the specified manufacturing order
     /// </summary>
     /// <param name="machine">not null</param>
-    /// <param name="task">not null</param>
+    /// <param name="manufacturingOrder">not null</param>
     /// <param name="before">in UTC</param>
     /// <returns></returns>
-    IList<IOperationSlot> FindByTaskStrictlyBefore (IMachine machine, ITask task, DateTime before);
+    IList<IOperationSlot> FindByManufacturingOrderStrictlyBefore (IMachine machine, IManufacturingOrder manufacturingOrder, DateTime before);
 
     /// <summary>
-    /// Find all the operation slots for the specified task
+    /// Find all the operation slots for the specified manufacturing order
     /// </summary>
     /// <param name="machine"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <returns></returns>
-    IList<IOperationSlot> FindByTask (IMachine machine, ITask task);
+    IList<IOperationSlot> FindByManufacturingOrder (IMachine machine, IManufacturingOrder manufacturingOrder);
 
     /// <summary>
-    /// Find all the operation slots for the specified task
+    /// Find all the operation slots for the specified manufacturing order
     /// </summary>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <returns></returns>
-    IList<IOperationSlot> FindByTask (ITask task);
+    IList<IOperationSlot> FindByManufacturingOrder (IManufacturingOrder manufacturingOrder);
 
     /// <summary>
     /// Get the last effective operation slot (that is effective now)

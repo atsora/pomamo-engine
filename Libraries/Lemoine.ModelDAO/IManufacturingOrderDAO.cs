@@ -9,38 +9,38 @@ using Lemoine.Model;
 namespace Lemoine.ModelDAO
 {
   /// <summary>
-  /// DAO interface for ITask.
+  /// DAO interface for IManufacturingOrder.
   /// </summary>
-  public interface ITaskDAO: IGenericUpdateDAO<ITask, int>
+  public interface IManufacturingOrderDAO: IGenericUpdateDAO<IManufacturingOrder, int>
   {
     /// <summary>
-    /// Find all the tasks matching a specific operation
+    /// Find all the manufacturing orders matching a specific operation
     /// </summary>
     /// <param name="operation"></param>
     /// <returns></returns>
-    IList<ITask> FindAllByOperation (IOperation operation);
-    
+    IList<IManufacturingOrder> FindAllByOperation (IOperation operation);
+
     /// <summary>
-    /// Find all the tasks matching a specific component
+    /// Find all the manufacturing orders matching a specific component
     /// </summary>
     /// <param name="component"></param>
     /// <returns></returns>
-    IList<ITask> FindAllByComponent (IComponent component);
-    
+    IList<IManufacturingOrder> FindAllByComponent (IComponent component);
+
     /// <summary>
-    /// Find all the tasks matching a specific work order
+    /// Find all the manufacturing orders matching a specific work order
     /// </summary>
     /// <param name="workOrder"></param>
     /// <returns></returns>
-    IList<ITask> FindAllByWorkOrder (IWorkOrder workOrder);
-    
+    IList<IManufacturingOrder> FindAllByWorkOrder (IWorkOrder workOrder);
+
     /// <summary>
-    /// Get all the next possible tasks that match the specified machine and operation
+    /// Get all the next possible manufacturing orders that match the specified machine and operation
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="operation">not null</param>
     /// <returns></returns>
-    IList<ITask> GetNext (IMachine machine,
+    IList<IManufacturingOrder> GetNext (IMachine machine,
                           IOperation operation);
   }
 }

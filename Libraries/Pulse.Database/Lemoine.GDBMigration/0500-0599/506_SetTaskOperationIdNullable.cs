@@ -22,7 +22,12 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      DropNotNull (TableName.TASK_FULL, ColumnName.OPERATION_ID);
+      if (Database.TableExists (TableName.MANUFACTURING_ORDER_IMPLEMENTATION)) {
+        DropNotNull (TableName.MANUFACTURING_ORDER_IMPLEMENTATION, ColumnName.OPERATION_ID);
+      }
+      else {
+        DropNotNull (TableName.TASK_FULL, ColumnName.OPERATION_ID);
+      }
     }
     
     /// <summary>
@@ -30,7 +35,12 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      SetNotNull (TableName.TASK_FULL, ColumnName.OPERATION_ID);
+      if (Database.TableExists (TableName.MANUFACTURING_ORDER_IMPLEMENTATION)) {
+        SetNotNull (TableName.MANUFACTURING_ORDER_IMPLEMENTATION, ColumnName.OPERATION_ID);
+      }
+      else {
+        SetNotNull (TableName.TASK_FULL, ColumnName.OPERATION_ID);
+      }
     }
   }
 }

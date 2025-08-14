@@ -158,7 +158,7 @@ namespace Lemoine.GDBPersistentClasses
         productionDuration = right.ProductionDuration;
       }
       IWorkOrderToOperationOnlySlot result = new WorkOrderToOperationOnlySlot (left.Machine,
-                                                                               left.Task,
+                                                                               left.ManufacturingOrder,
                                                                                left.WorkOrder,
                                                                                left.Component,
                                                                                left.Operation,

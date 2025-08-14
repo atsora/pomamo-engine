@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,8 +23,8 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
   {
     ILog log = LogManager.GetLogger<IntermediateWorkPieceByMachineSummaryDAO> ();
 
-    static readonly string FIND_BY_TASK_MAX_RESULTS_KEY = "Plugin.IntermediateWorkPieceSummary.FindByTask.MaxResults";
-    static readonly int FIND_BY_TASK_MAX_RESULTS_DEFAULT = 50;
+    static readonly string FIND_BY_MANUFORDER_MAX_RESULTS_KEY = "Plugin.IntermediateWorkPieceSummary.FindByManufOrder.MaxResults";
+    static readonly int FIND_BY_MANUFORDER_MAX_RESULTS_DEFAULT = 50;
 
     /// <summary>
     /// Constructor
@@ -71,7 +72,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     /// <param name="component">nullable</param>
     /// <param name="workOrder">nullable</param>
     /// <param name="line">nullable</param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day">nullable</param>
     /// <param name="shift">nullable</param>
     /// <returns></returns>
@@ -80,7 +81,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
                                                              IComponent component,
                                                              IWorkOrder workOrder,
                                                              ILine line,
-                                                             ITask task,
+                                                             IManufacturingOrder manufacturingOrder,
                                                              DateTime? day,
                                                              IShift shift)
     {
@@ -109,11 +110,11 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       else {
         criteria = criteria.Add (Restrictions.Eq ("Line.Id", line.Id));
       }
-      if (null == task) {
-        criteria = criteria.Add (Restrictions.IsNull ("Task"));
+      if (null == manufacturingOrder) {
+        criteria = criteria.Add (Restrictions.IsNull ("ManufacturingOrder"));
       }
       else {
-        criteria = criteria.Add (Restrictions.Eq ("Task.Id", ((IDataWithId)task).Id));
+        criteria = criteria.Add (Restrictions.Eq ("ManufacturingOrder.Id", ((IDataWithId)manufacturingOrder).Id));
       }
       if (!day.HasValue) {
         criteria = criteria.Add (Restrictions.IsNull ("Day"));
@@ -187,27 +188,27 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     }
 
     /// <summary>
-    /// Find all the items that match the specified machine and task
+    /// Find all the items that match the specified machine and manufacturing order
     /// </summary>
     /// <param name="machine">not null</param>
-    /// <param name="task">not null</param>
+    /// <param name="manufacturingOrder">not null</param>
     /// <returns></returns>
-    public IList<IIntermediateWorkPieceByMachineSummary> FindByTask (IMachine machine, ITask task)
+    public IList<IIntermediateWorkPieceByMachineSummary> FindByManufacturingOrder (IMachine machine, IManufacturingOrder manufacturingOrder)
     {
       Debug.Assert (null != machine);
-      Debug.Assert (null != task);
+      Debug.Assert (null != manufacturingOrder);
 
-      var maxResults = Lemoine.Info.ConfigSet.LoadAndGet (FIND_BY_TASK_MAX_RESULTS_KEY, FIND_BY_TASK_MAX_RESULTS_DEFAULT);
+      var maxResults = Lemoine.Info.ConfigSet.LoadAndGet (FIND_BY_MANUFORDER_MAX_RESULTS_KEY, FIND_BY_MANUFORDER_MAX_RESULTS_DEFAULT);
 
       var result = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<IntermediateWorkPieceByMachineSummary> ()
         .Add (Restrictions.Eq ("Machine.Id", machine.Id))
-        .Add (Restrictions.Eq ("Task.Id", task.Id))
+        .Add (Restrictions.Eq ("ManufacturingOrder.Id", manufacturingOrder.Id))
         .AddOrder (Order.Desc ("Day"))
         .SetMaxResults (maxResults)
         .List<IIntermediateWorkPieceByMachineSummary> ();
       if (maxResults <= result.Count) {
-        log.Fatal ($"FindByTask: max results {maxResults} was reached");
+        log.Fatal ($"FindByManufacturingOrder: max results {maxResults} was reached");
       }
       return result;
     }

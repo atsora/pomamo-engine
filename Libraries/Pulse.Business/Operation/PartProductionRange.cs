@@ -543,7 +543,7 @@ namespace Lemoine.Business.Operation
         return 1;
       }
       else { // cycleCounterValue.Operation is not null
-        var operationCyclePropertiesRequest = new OperationCycleProperties (m_machine, cycleCounterValue.Operation, cycleCounterValue.Task);
+        var operationCyclePropertiesRequest = new OperationCycleProperties (m_machine, cycleCounterValue.Operation, cycleCounterValue.ManufacturingOrder);
         var operationCycleProperties = ServiceProvider
           .Get (operationCyclePropertiesRequest);
         var nbPiecesByCycle = operationCycleProperties.NbPiecesByCycle;

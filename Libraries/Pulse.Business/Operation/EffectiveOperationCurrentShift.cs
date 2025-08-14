@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace Lemoine.Business.Operation
 {
   /// <summary>
-  /// Request class to get the effective operation (and task if applicable) for the current shift
+  /// Request class to get the effective operation (and manufacturing order if applicable) for the current shift
   /// </summary>
   public sealed class EffectiveOperationCurrentShift
     : IRequest<EffectiveOperationCurrentShiftResponse>
@@ -64,8 +64,8 @@ namespace Lemoine.Business.Operation
             .GetEffectiveCurrentShift (m_machine, out virtualOperationSlot, dateTime);
           if (null != virtualOperationSlot) {
             // Initialize all the proxies for the cache
-            if (null != virtualOperationSlot.Task) {
-              Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.Initialize (virtualOperationSlot.Task);
+            if (null != virtualOperationSlot.ManufacturingOrder) {
+              Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.Initialize (virtualOperationSlot.ManufacturingOrder);
             }
             if (null != virtualOperationSlot.WorkOrder) {
               Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.Initialize (virtualOperationSlot.WorkOrder);
@@ -230,7 +230,7 @@ namespace Lemoine.Business.Operation
 
       this.DateTime = dateTime;
       this.VirtualOperationSlot = virtualOperationSlot;
-      this.Task = virtualOperationSlot.Task;
+      this.ManufacturingOrder = virtualOperationSlot.ManufacturingOrder;
       this.WorkOrder = virtualOperationSlot.WorkOrder;
       this.Component = virtualOperationSlot.Component;
       this.Operation = virtualOperationSlot.Operation;
@@ -272,12 +272,12 @@ namespace Lemoine.Business.Operation
     internal IOperationSlot VirtualOperationSlot { get; private set; }
 
     /// <summary>
-    /// Associated task
+    /// Associated manufacturing order
     /// </summary>
-    public ITask Task { get; private set; }
+    public IManufacturingOrder ManufacturingOrder { get; private set; }
 
     /// <summary>
-    /// Associated work order when a task is active
+    /// Associated work order when a manufacturing order is active
     /// </summary>
     public IWorkOrder WorkOrder { get; private set; }
 

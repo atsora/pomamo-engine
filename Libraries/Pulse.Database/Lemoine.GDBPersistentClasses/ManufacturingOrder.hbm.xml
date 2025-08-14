@@ -2,16 +2,16 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
   namespace="Lemoine.GDBPersistentClasses"
   assembly="Pulse.Database">
-  <class name="Task" table="Task">
-    <id name="Id" column="taskid"
+  <class name="ManufacturingOrder" table="manuforder">
+    <id name="Id" column="manuforderid"
         access="nosetter.camelcase-m-underscore">
       <generator class="assigned" /><!-- For the moment -->
     </id>
-    <version name="Version" column="taskversion"
+    <version name="Version" column="manuforderversion"
              access="nosetter.camelcase-m-underscore" />
-    <property name="Display" column="taskdisplay"
+    <property name="Display" column="manuforderdisplay"
               update="false" insert="false" generated="always" />
-    <property name="ExternalCode" column="taskexternalcode"
+    <property name="ExternalCode" column="manuforderexternalcode"
               type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
     <many-to-one name="Operation" column="operationid"
                  class="Operation"
@@ -25,21 +25,21 @@
                  class="WorkOrder"
                  cascade="none"
                  not-found="exception" />
-    <property name="TaskStatus"
-              column="taskstatusid"
+    <property name="ManufacturingOrderStatus"
+              column="manuforderstatusid"
               not-null="true" />
     <property name="Quantity"
-              column="taskquantity" />
+              column="manuforderquantity" />
     <property name="SetupDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
-              column="tasksetupduration" />
+              column="manufordersetupduration" />
     <property name="CycleDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
-              column="taskcycleduration" />
+              column="manufordercycleduration" />
     <property name="DueDateTime"
-              column="taskduedatetime" />
+              column="manuforderduedatetime" />
     <property name="Order"
-              column="taskorder" />
+              column="manuforderorder" />
     <many-to-one name="Machine" column="machineid"
                  class="Machine"
                  cascade="none"

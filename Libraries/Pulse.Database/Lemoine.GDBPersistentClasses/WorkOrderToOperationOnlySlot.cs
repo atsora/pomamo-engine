@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,7 +13,7 @@ using Lemoine.Core.Log;
 namespace Lemoine.GDBPersistentClasses
 {
   /// <summary>
-  /// Task+WorkOrder+Component+Operation only slot
+  /// ManufacturingOrder+WorkOrder+Component+Operation only slot
   /// </summary>
   [Serializable]
   public class WorkOrderToOperationOnlySlot : IWorkOrderToOperationOnlySlot
@@ -21,7 +22,7 @@ namespace Lemoine.GDBPersistentClasses
 
     #region Members
     IMachine m_machine;
-    ITask m_task;
+    IManufacturingOrder m_manufacturingOrder;
     IWorkOrder m_workOrder;
     IComponent m_component;
     IOperation m_operation;
@@ -49,7 +50,7 @@ namespace Lemoine.GDBPersistentClasses
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="workOrder"></param>
     /// <param name="component"></param>
     /// <param name="operation"></param>
@@ -64,7 +65,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="range"></param>
     /// <param name="dayRange"></param>
     protected internal WorkOrderToOperationOnlySlot (IMachine machine,
-                                                     ITask task,
+                                                     IManufacturingOrder manufacturingOrder,
                                                      IWorkOrder workOrder,
                                                      IComponent component,
                                                      IOperation operation,
@@ -89,7 +90,7 @@ namespace Lemoine.GDBPersistentClasses
       log = LogManager.GetLogger (string.Format ("{0}.{1}",
                                                 this.GetType ().FullName,
                                                 machine.Id));
-      m_task = task;
+      m_manufacturingOrder = manufacturingOrder;
       m_workOrder = workOrder;
       m_component = component;
       m_operation = operation;
@@ -109,7 +110,7 @@ namespace Lemoine.GDBPersistentClasses
     /// Constructor
     /// </summary>
     /// <param name="machine"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="workOrder"></param>
     /// <param name="component"></param>
     /// <param name="operation"></param>
@@ -123,7 +124,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="productionDuration"></param>
     /// <param name="range"></param>
     protected internal WorkOrderToOperationOnlySlot (IMachine machine,
-                                                     ITask task,
+                                                     IManufacturingOrder manufacturingOrder,
                                                      IWorkOrder workOrder,
                                                      IComponent component,
                                                      IOperation operation,
@@ -136,7 +137,7 @@ namespace Lemoine.GDBPersistentClasses
                                                      TimeSpan? averageCycleTime,
                                                      TimeSpan? productionDuration,
                                                      UtcDateTimeRange range)
-      : this (machine, task, workOrder, component, operation, display,
+      : this (machine, manufacturingOrder, workOrder, component, operation, display,
               runTime, totalCycles, adjustedCycles, adjustedQuantity, partialCycles,
               averageCycleTime, productionDuration,
               range, ModelDAOHelper.DAOFactory.DaySlotDAO.ConvertToDayRange (range))
@@ -148,7 +149,7 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="operationSlot"></param>
     protected internal WorkOrderToOperationOnlySlot (IOperationSlot operationSlot)
-      : this (operationSlot.Machine, operationSlot.Task, operationSlot.WorkOrder, operationSlot.Component, operationSlot.Operation, operationSlot.Display,
+      : this (operationSlot.Machine, operationSlot.ManufacturingOrder, operationSlot.WorkOrder, operationSlot.Component, operationSlot.Operation, operationSlot.Display,
               operationSlot.RunTime, operationSlot.TotalCycles, operationSlot.AdjustedCycles, operationSlot.AdjustedQuantity,
               operationSlot.PartialCycles, operationSlot.AverageCycleTime, operationSlot.ProductionDuration,
               operationSlot.DateTimeRange, operationSlot.DayRange)
@@ -166,11 +167,11 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Reference to the task
+    /// Reference to the manufacturing order
     /// </summary>
-    public virtual ITask Task
+    public virtual IManufacturingOrder ManufacturingOrder
     {
-      get { return m_task; }
+      get { return m_manufacturingOrder; }
     }
 
     /// <summary>
@@ -306,7 +307,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       return object.Equals (this.Machine, other.Machine)
-        && object.Equals (this.Task, other.Task)
+        && object.Equals (this.ManufacturingOrder, other.ManufacturingOrder)
         && object.Equals (this.WorkOrder, other.WorkOrder)
         && object.Equals (this.Component, other.Component)
         && object.Equals (this.Operation, other.Operation)

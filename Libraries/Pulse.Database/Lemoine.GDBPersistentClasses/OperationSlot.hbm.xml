@@ -46,7 +46,7 @@
     <many-to-one name="Line" column="lineid" class="Line"
                  access="nosetter.camelcase-m-underscore"
                  cascade="none" />
-    <many-to-one name="Task" column="taskid" class="Task"
+    <many-to-one name="ManufacturingOrder" column="manuforderid" class="ManufacturingOrder"
                  access="nosetter.camelcase-m-underscore"
                  not-found="ignore"
                  cascade="none" />
@@ -77,8 +77,8 @@
     <property name="AverageCycleTime"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               column="operationslotaveragecycletime" />
-    <property name="AutoTask"
-              column="operationslotautotask" />
+    <property name="AutoManufacturingOrder"
+              column="operationslotautomanuforder" />
     <property name="ProductionDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               column="operationslotproductionduration" />

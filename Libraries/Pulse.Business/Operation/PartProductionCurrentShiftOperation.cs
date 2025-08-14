@@ -21,7 +21,7 @@ namespace Lemoine.Business.Operation
   /// Request class to get the part production machining status of the current shift
   /// for the currently effective operation.
   /// 
-  /// The task is not considered here
+  /// The manufacturing order is not considered here
   /// </summary>
   public sealed class PartProductionCurrentShiftOperation
     : IRequest<PartProductionCurrentShiftOperationResponse>
@@ -248,7 +248,7 @@ namespace Lemoine.Business.Operation
     }
 
     /// <summary>
-    /// Get the production durations when the task is not tracked
+    /// Get the production durations when the manufacturing order is not tracked
     /// </summary>
     /// <param name="now"></param>
     /// <param name="effectiveOperationSlots"></param>
@@ -309,7 +309,7 @@ namespace Lemoine.Business.Operation
     }
 
     /// <summary>
-    /// Get the number of produced parts when no task is defined
+    /// Get the number of produced parts when no mnaufacturing order is defined
     /// </summary>
     /// <param name="effectiveOperationSlots"></param>
     /// <param name="nbPiecesByCycle"></param>

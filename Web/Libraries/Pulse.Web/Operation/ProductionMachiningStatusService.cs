@@ -80,18 +80,18 @@ namespace Pulse.Web.Operation
         var responseDto = new ProductionMachiningStatusResponseDTO ();
 
         IPartProductionCurrentShiftResponse partProductionCurrentShiftResponse;
-        if (ProductionMachiningOption.TrackTask == request.Option) {
+        if (ProductionMachiningOption.TrackManufacturingOrder == request.Option) {
           var businessRequest = new Lemoine.Business.Operation
-            .PartProductionCurrentShiftTask (machine);
+            .PartProductionCurrentShiftManufacturingOrder (machine);
           var businessResponse = Lemoine.Business.ServiceProvider
             .Get (businessRequest);
 
           responseDto.GoalNowShift = businessResponse.GoalCurrentShift;
-          responseDto.GoalNowGlobal = businessResponse.GoalWholeTask;
+          responseDto.GoalNowGlobal = businessResponse.GoalWholeManufacturingOrder;
           responseDto.NbPiecesDoneDuringShift = businessResponse.NbPiecesCurrentShift;
-          responseDto.NbPiecesDoneGlobal = businessResponse.NbPiecesWholeTask;
+          responseDto.NbPiecesDoneGlobal = businessResponse.NbPiecesWholeManufacturingOrder;
 
-          var task = Initialize<ITask> (businessResponse.Task, ModelDAOHelper.DAOFactory.TaskDAO.FindById);
+          var manufacturingOrder = Initialize<IManufacturingOrder> (businessResponse.ManufacturingOrder, ModelDAOHelper.DAOFactory.ManufacturingOrderDAO.FindById);
           var workOrder = Initialize<IWorkOrder> (businessResponse.WorkOrder, ModelDAOHelper.DAOFactory.WorkOrderDAO.FindById);
           var component = Initialize<IComponent> (businessResponse.Component, ModelDAOHelper.DAOFactory.ComponentDAO.FindById);
           var operation = Initialize<IOperation> (businessResponse.Operation, ModelDAOHelper.DAOFactory.OperationDAO.FindById);
@@ -108,9 +108,9 @@ namespace Pulse.Web.Operation
             responseDto.WorkOrder = new WorkOrderDTOAssembler ()
               .Assemble (workOrder);
           }
-          if (null != task) {
-            responseDto.Task = new TaskDTOAssembler ()
-              .Assemble (task);
+          if (null != manufacturingOrder) {
+            responseDto.ManufacturingOrder = new ManufacturingOrderDTOAssembler ()
+              .Assemble (manufacturingOrder);
           }
 
           // - Work information (deprecated)

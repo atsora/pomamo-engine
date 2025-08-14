@@ -23,9 +23,9 @@ namespace Lemoine.GDBPersistentClasses
     #region Members
     IWorkOrder m_workOrder;
     ILine m_line = null;
-    ITask m_task = null;
-    bool? m_autoTask;
-    bool? m_resetTask;
+    IManufacturingOrder m_manufacturingOrder = null;
+    bool? m_autoManufacturingOrder;
+    bool? m_resetManufacturingOrder;
     IComponent m_component = null;
     IOperation m_operation = null;
     DateTime? m_day = null;
@@ -58,27 +58,27 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Task to associate to a machine with a work order
+    /// Manufacturing order to associate to a machine with a work order
     /// </summary>
-    public virtual ITask Task {
-      get { return m_task; }
-      set { m_task = value; }
+    public virtual IManufacturingOrder ManufacturingOrder {
+      get { return m_manufacturingOrder; }
+      set { m_manufacturingOrder = value; }
     }
     
     /// <summary>
-    /// The task was automatically set
+    /// The manufacturing order was automatically set
     /// </summary>
-    public virtual bool? AutoTask {
-      get { return m_autoTask; }
-      set { m_autoTask = value; }
+    public virtual bool? AutoManufacturingOrder {
+      get { return m_autoManufacturingOrder; }
+      set { m_autoManufacturingOrder = value; }
     }
     
     /// <summary>
-    /// Is the option to reset the task active ?
+    /// Is the option to reset the manufacturing order active ?
     /// </summary>
-    public virtual bool? ResetTask {
-      get { return m_resetTask; }
-      set { m_resetTask = value; }
+    public virtual bool? ResetManufacturingOrder {
+      get { return m_resetManufacturingOrder; }
+      set { m_resetManufacturingOrder = value; }
     }
 
     /// <summary>
@@ -143,12 +143,12 @@ namespace Lemoine.GDBPersistentClasses
                                 m_component,
                                 this.WorkOrder,
                                 this.Line,
-                                this.Task,
+                                this.ManufacturingOrder,
                                 this.Day,
                                 this.Shift,
                                 this.Range);
-        if (m_autoTask.HasValue) {
-          operationSlot.AutoTask = m_autoTask;
+        if (m_autoManufacturingOrder.HasValue) {
+          operationSlot.AutoManufacturingOrder = m_autoManufacturingOrder;
         }
         return (TSlot) operationSlot;
       }
@@ -212,28 +212,28 @@ namespace Lemoine.GDBPersistentClasses
           ((OperationSlot)newOperationSlot).Shift = this.Shift;
         }
         
-        // If the task is compatible with the new work order,
+        // If the manufacturing order is compatible with the new work order,
         // keep it ! Else reset it
-        if (null != this.Task) {
-          ((OperationSlot)newOperationSlot).Task = this.Task;
-          ((OperationSlot)newOperationSlot).AutoTask = this.AutoTask;
+        if (null != this.ManufacturingOrder) {
+          ((OperationSlot)newOperationSlot).ManufacturingOrder = this.ManufacturingOrder;
+          ((OperationSlot)newOperationSlot).AutoManufacturingOrder = this.AutoManufacturingOrder;
         }
-        else if (this.ResetTask.HasValue && this.ResetTask.Value) {
-          ((OperationSlot)newOperationSlot).Task = null;
-          ((OperationSlot)newOperationSlot).AutoTask = null;
+        else if (this.ResetManufacturingOrder.HasValue && this.ResetManufacturingOrder.Value) {
+          ((OperationSlot)newOperationSlot).ManufacturingOrder = null;
+          ((OperationSlot)newOperationSlot).AutoManufacturingOrder = null;
         }
-        else if (!Lemoine.Business.Operation.OperationRelations.IsTaskCompatibleWithMachineWorkOrder (oldOperationSlot.Task,
+        else if (!Lemoine.Business.Operation.OperationRelations.IsManufacturingOrderCompatibleWithMachineWorkOrder (oldOperationSlot.ManufacturingOrder,
                                                                        this.Machine,
                                                                        this.WorkOrder)) {
-          Debug.Assert (null != oldOperationSlot.Task);
-          ((OperationSlot)newOperationSlot).Task = null;
-          ((OperationSlot)newOperationSlot).AutoTask = null;
+          Debug.Assert (null != oldOperationSlot.ManufacturingOrder);
+          ((OperationSlot)newOperationSlot).ManufacturingOrder = null;
+          ((OperationSlot)newOperationSlot).AutoManufacturingOrder = null;
           AddAnalysisLog (LogLevel.INFO,
-                          string.Format ("Reset the task because " +
+                          string.Format ("Reset the manufacturing order because " +
                                          "the new work order {0} is not compatible " +
-                                         "with the old task {1}",
+                                         "with the old manufacturing order {1}",
                                          this.WorkOrder,
-                                         oldOperationSlot.Task));
+                                         oldOperationSlot.ManufacturingOrder));
         }
         
         if (null != m_component) {
