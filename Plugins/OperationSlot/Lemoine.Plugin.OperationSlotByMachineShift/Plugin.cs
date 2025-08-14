@@ -21,10 +21,6 @@ namespace Lemoine.Plugin.OperationSlotByMachineShift
   {
     readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -38,8 +34,6 @@ namespace Lemoine.Plugin.OperationSlotByMachineShift
 
     public PluginFlag Flags => PluginFlag.Analysis | PluginFlag.Web;
 
-    public override int Version => 1;
-    #endregion // Constructors
-
+    public override int Version => 2;
   }
 }

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -29,8 +30,8 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string CURRENT_OPERATION_SLOT_MARGIN = "CurrentOperationSlotMargin";
     static readonly TimeSpan CURRENT_OPERATION_SLOT_DEFAULT = TimeSpan.FromSeconds (30);
 
-    static readonly string FIND_BY_TASK_STRICTLY_BEFORE_MAX_RANGE_DURATION_KEY = "OperationSlotDAO.FindByTaskStrictlyBefore.MaxRangeDuration";
-    static readonly TimeSpan FIND_BY_TASK_STRICTLY_BEFORE_MAX_RANGE_DURATION_DEFAULT = TimeSpan.FromDays (14);
+    static readonly string FIND_BY_MO_STRICTLY_BEFORE_MAX_RANGE_DURATION_KEY = "OperationSlotDAO.FindByManufacturingOrderStrictlyBefore.MaxRangeDuration";
+    static readonly TimeSpan FIND_BY_MO_STRICTLY_BEFORE_MAX_RANGE_DURATION_DEFAULT = TimeSpan.FromDays (14);
 
     readonly ILog log = LogManager.GetLogger (typeof (OperationSlotDAO).FullName);
 
@@ -696,23 +697,23 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Find all the operation slots for the specified task that are strictly before a specified date/time
+    /// Find all the operation slots for the specified manufacturing order that are strictly before a specified date/time
     /// </summary>
     /// <param name="machine">not null</param>
-    /// <param name="task">not null</param>
+    /// <param name="manfacturingOrder">not null</param>
     /// <param name="before">in UTC</param>
     /// <returns></returns>
-    public IList<IOperationSlot> FindByTaskStrictlyBefore (IMachine machine, ITask task, DateTime before)
+    public IList<IOperationSlot> FindByManufacturingOrderStrictlyBefore (IMachine machine, IManufacturingOrder manfacturingOrder, DateTime before)
     {
       Debug.Assert (null != machine);
-      Debug.Assert (null != task);
+      Debug.Assert (null != manfacturingOrder);
 
-      var maxRangeDuration = Lemoine.Info.ConfigSet.LoadAndGet (FIND_BY_TASK_STRICTLY_BEFORE_MAX_RANGE_DURATION_KEY, FIND_BY_TASK_STRICTLY_BEFORE_MAX_RANGE_DURATION_DEFAULT);
+      var maxRangeDuration = Lemoine.Info.ConfigSet.LoadAndGet (FIND_BY_MO_STRICTLY_BEFORE_MAX_RANGE_DURATION_KEY, FIND_BY_MO_STRICTLY_BEFORE_MAX_RANGE_DURATION_DEFAULT);
       var range = new UtcDateTimeRange (before.Subtract (maxRangeDuration), before);
       var slots = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<OperationSlot> ()
         .Add (Restrictions.Eq ("Machine.Id", machine.Id))
-        .Add (Restrictions.Eq ("Task.Id", task.Id))
+        .Add (Restrictions.Eq ("ManufacturingOrder.Id", manfacturingOrder.Id))
         .Add (OverlapRange (range))
         .AddOrder (Order.Desc ("DateTimeRange"))
         .List<IOperationSlot> ();
@@ -720,31 +721,31 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Find all the operation slots for the specified task
+    /// Find all the operation slots for the specified manufacturing order
     /// </summary>
     /// <param name="machine"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <returns></returns>
-    public IList<IOperationSlot> FindByTask (IMachine machine, ITask task)
+    public IList<IOperationSlot> FindByManufacturingOrder (IMachine machine, IManufacturingOrder manufacturingOrder)
     {
       IList<IOperationSlot> slots = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<OperationSlot> ()
         .Add (Restrictions.Eq ("Machine", machine))
-        .Add (Restrictions.Eq ("Task", task))
+        .Add (Restrictions.Eq ("ManufacturingOrder", manufacturingOrder))
         .List<IOperationSlot> ();
       return slots;
     }
 
     /// <summary>
-    /// Find all the operation slots for the specified task
+    /// Find all the operation slots for the specified manufacturing order
     /// </summary>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <returns></returns>
-    public IList<IOperationSlot> FindByTask (ITask task)
+    public IList<IOperationSlot> FindByManufacturingOrder (IManufacturingOrder manufacturingOrder)
     {
       IList<IOperationSlot> slots = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<OperationSlot> ()
-        .Add (Restrictions.Eq ("Task", task))
+        .Add (Restrictions.Eq ("ManufacturingOrder", manufacturingOrder))
         .List<IOperationSlot> ();
       return slots;
     }
@@ -993,7 +994,7 @@ namespace Lemoine.GDBPersistentClasses
 
       DateTime? day = null;
       IShift shift = null;
-      ITask task = null;
+      IManufacturingOrder manufacturingOrder = null;
       ILine line = null;
       IWorkOrder workOrder = null;
       IComponent component = null;
@@ -1025,16 +1026,16 @@ namespace Lemoine.GDBPersistentClasses
             }
           }
         }
-        // - task
-        if ((null != operationSlot.Task)
-            && (null != operationSlot.Operation) // To avoid any problem when a task is not associated to an operation
-            && operationSlot.DateTimeRange.ContainsElement (dateTime)) { // the tasks must be defined until now
-          task = operationSlot.Task;
+        // - manufacturingOrder
+        if ((null != operationSlot.ManufacturingOrder)
+            && (null != operationSlot.Operation) // To avoid any problem when a manufacturing order is not associated to an operation
+            && operationSlot.DateTimeRange.ContainsElement (dateTime)) { // the manufacturing orders must be defined until now
+          manufacturingOrder = operationSlot.ManufacturingOrder;
           workOrder = operationSlot.WorkOrder;
           component = operationSlot.Component;
           operation = operationSlot.Operation;
           log.DebugFormat ("GetEffective: " +
-                           "one task is defined, include this operation slot");
+                           "one manufcaturing order is defined, include this operation slot");
           effectiveSlots.Insert (0, operationSlot);
           if (onlyLast) {
             log.Debug ("GetEffective: " +
@@ -1045,11 +1046,11 @@ namespace Lemoine.GDBPersistentClasses
             continue;
           }
         }
-        if (null != task) {
-          if (!object.Equals (task, operationSlot.Task)) {
+        if (null != manufacturingOrder) {
+          if (!object.Equals (manufacturingOrder, operationSlot.ManufacturingOrder)) {
             log.Debug ("GetEffective: " +
-                       "another task, stop here");
-            break; // Another task => stop here
+                       "another manufacturing order, stop here");
+            break; // Another manufacturing order => stop here
           }
         }
         // - operation
@@ -1113,7 +1114,7 @@ namespace Lemoine.GDBPersistentClasses
                          "consider the operation slot id={0}",
                          operationSlot.Id);
         effectiveSlots.Insert (0, operationSlot);
-        if (onlyLast && (null != operation)) { // (null != task) is already processed
+        if (onlyLast && (null != operation)) { // (null != manufacturing order) is already processed
           log.Debug ("GetEffective: " +
                      "only last, stop here");
           break;
@@ -1131,7 +1132,7 @@ namespace Lemoine.GDBPersistentClasses
                                                                                 component,
                                                                                 workOrder,
                                                                                 line,
-                                                                                task,
+                                                                                manufacturingOrder,
                                                                                 day,
                                                                                 shift,
                                                                                 effectiveRange);

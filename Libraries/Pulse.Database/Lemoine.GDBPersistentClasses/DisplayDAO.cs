@@ -323,7 +323,7 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (display);
       }
       {
-        IDisplay display = new Display ("TaskFull");
+        IDisplay display = new Display ("manuforder1");
         display.Pattern = "<%WorkOrder.Display%>/<%Component.Display%>/<%Operation.Display%> on <%Machine.Display%>";
         InsertDefaultValue (display);
       }

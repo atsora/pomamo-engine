@@ -45,8 +45,8 @@ namespace Lemoine.WebDataAccess
       if (null != entity.WorkOrder) {
         requestUrl.Add ("WorkOrderId", ((Lemoine.Collections.IDataWithId<int>)entity.WorkOrder).Id);
       }
-      if (entity.ResetTask.HasValue) {
-        requestUrl.Add ("ResetTask", entity.ResetTask.Value);
+      if (entity.ResetManufacturingOrder.HasValue) {
+        requestUrl.Add ("ResetTask", entity.ResetManufacturingOrder.Value);
       }
       long id = WebServiceHelper.Save (requestUrl);
       ((WorkOrderMachineAssociation)entity).Id = id;

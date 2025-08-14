@@ -30,7 +30,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
             .MakeTransient (iwpSummary);
           IIntermediateWorkPieceByMachineSummary existing =
             new IntermediateWorkPieceByMachineSummaryDAO ()
-            .FindByKey (iwpSummary.Machine, iwpSummary.IntermediateWorkPiece, newComponent, iwpSummary.WorkOrder, iwpSummary.Line, iwpSummary.Task, iwpSummary.Day, iwpSummary.Shift);
+            .FindByKey (iwpSummary.Machine, iwpSummary.IntermediateWorkPiece, newComponent, iwpSummary.WorkOrder, iwpSummary.Line, iwpSummary.ManufacturingOrder, iwpSummary.Day, iwpSummary.Shift);
           if (null != existing) {
             existing.Counted += iwpSummary.Counted;
             existing.Corrected += iwpSummary.Corrected;
@@ -43,13 +43,13 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           else {
             IIntermediateWorkPieceByMachineSummary created =
               new IntermediateWorkPieceByMachineSummary (iwpSummary.Machine,
-                                                                                       iwpSummary.IntermediateWorkPiece,
-                                                                                       newComponent,
-                                                                                       iwpSummary.WorkOrder,
-                                                                                       iwpSummary.Line,
-                                                                                       iwpSummary.Task,
-                                                                                       iwpSummary.Day,
-                                                                                       iwpSummary.Shift);
+                iwpSummary.IntermediateWorkPiece,
+                newComponent,
+                iwpSummary.WorkOrder,
+                iwpSummary.Line,
+                iwpSummary.ManufacturingOrder,
+                iwpSummary.Day,
+                iwpSummary.Shift);
             created.Counted = iwpSummary.Counted;
             created.Corrected = iwpSummary.Corrected;
             created.Checked = iwpSummary.Checked;

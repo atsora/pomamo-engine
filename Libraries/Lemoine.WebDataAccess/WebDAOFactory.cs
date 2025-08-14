@@ -987,16 +987,16 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
-    public ITaskDAO TaskDAO
+    public IManufacturingOrderDAO ManufacturingOrderDAO
     {
       get {
         throw new NotImplementedException ();
       }
     }
-    public ITaskMachineAssociationDAO TaskMachineAssociationDAO
+    public IManufacturingOrderMachineAssociationDAO ManufacturingOrderMachineAssociationDAO
     {
       get {
-        return new TaskMachineAssociationDAO ();
+        return new ManufacturingOrderMachineAssociationDAO ();
       }
     }
     public ITimeConfigDAO TimeConfigDAO

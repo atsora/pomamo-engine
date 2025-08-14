@@ -32,32 +32,32 @@ namespace Lemoine.GDBMigration
     /// Reference to a day slot
     /// </summary>
     public static readonly string DAY = "day";
-    
+
     /// <summary>
     /// ID of the cnc alarm table
     /// </summary>
     public static readonly string CNC_ALARM_ID = TableName.CNC_ALARM + "id";
-    
+
     /// <summary>
     /// ID of the cnc alarm severity table
     /// </summary>
     public static readonly string CNC_ALARM_SEVERITY_ID = TableName.CNC_ALARM_SEVERITY + "id";
-    
+
     /// <summary>
     /// ID of the cnc alarm severity pattern table
     /// </summary>
     public static readonly string CNC_ALARM_SEVERITY_PATTERN_ID = TableName.CNC_ALARM_SEVERITY_PATTERN + "id";
-    
+
     /// <summary>
     /// ID of the computer table
     /// </summary>
     public static readonly string COMPUTER_ID = "computerid";
-    
+
     /// <summary>
     /// ID of the company table
     /// </summary>
     public static readonly string COMPANY_ID = "companyid";
-    
+
     /// <summary>
     /// ID of the deliverablepiece table
     /// </summary>
@@ -70,7 +70,7 @@ namespace Lemoine.GDBMigration
     /// version column of the deliverablepiece table
     /// </summary>
     public static readonly string DELIVERABLE_PIECE_VERSION = "deliverablepieceversion";
-    
+
     /// <summary>
     /// ID of the department table
     /// </summary>
@@ -107,17 +107,17 @@ namespace Lemoine.GDBMigration
     /// Order of a machine filter item table
     /// </summary>
     public static readonly string MACHINE_FILTER_ITEM_RULE = TableName.MACHINE_FILTER + "itemrule";
-    
+
     /// <summary>
     /// ID of the machinemodule table
     /// </summary>
     public static readonly string MACHINE_MODULE_ID = "machinemoduleid";
-    
+
     /// <summary>
     /// ID of the cncacquisition table
     /// </summary>
     public static readonly string CNC_ACQUISITION_ID = "cncacquisitionid";
-    
+
     /// <summary>
     /// ID of the machinemodecategory table
     /// </summary>
@@ -127,22 +127,22 @@ namespace Lemoine.GDBMigration
     /// ID of the machinemode table
     /// </summary>
     public static readonly string MACHINE_MODE_ID = "machinemodeid";
-    
+
     /// <summary>
     /// ID of the work order table
     /// </summary>
     public static readonly string WORK_ORDER_ID = "workorderid";
-    
+
     /// <summary>
     /// ID of the project table
     /// </summary>
     public static readonly string PROJECT_ID = "projectid";
-    
+
     /// <summary>
     /// IF of the workorderproject table
     /// </summary>
     public static readonly string WORK_ORDER_PROJECT_ID = "workorderprojectid";
-    
+
     /// <summary>
     /// ID of the component table
     /// </summary>
@@ -152,22 +152,22 @@ namespace Lemoine.GDBMigration
     /// ID of the customer table
     /// </summary>
     public static readonly string CUSTOMER_ID = "customerid";
-    
+
     /// <summary>
     /// ID of the intermediateworkpiece table
     /// </summary>
     public static readonly string INTERMEDIATE_WORK_PIECE_ID = "intermediateworkpieceid";
-    
+
     /// <summary>
     /// ID of the componentintermediateworkpiece table
     /// </summary>
     public static readonly string COMPONENT_INTERMEDIATE_WORK_PIECE_ID = "componentintermediateworkpieceid";
-    
+
     /// <summary>
     /// ID of the operation table
     /// </summary>
     public static readonly string OPERATION_ID = "operationid";
-    
+
     /// <summary>
     /// ID of the old sequence (= process) table
     /// </summary>
@@ -176,7 +176,7 @@ namespace Lemoine.GDBMigration
     /// ID of the sequence table
     /// </summary>
     public static readonly string SEQUENCE_ID = "sequenceid";
-    
+
     /// <summary>
     /// ID of the path table
     /// </summary>
@@ -191,72 +191,72 @@ namespace Lemoine.GDBMigration
     /// number of the path table
     /// </summary>
     public static readonly string PATH_NUMBER = "pathnumber";
-    
+
     /// <summary>
     /// ID of the stamp table
     /// </summary>
     public static readonly string STAMP_ID = "stampid";
-    
+
     /// <summary>
     /// Key of the ncprogramcode table
     /// </summary>
     public static readonly string NC_PROGRAM_CODE_KEY = TableName.NC_PROGRAM_CODE + "key";
-    
+
     /// <summary>
     /// ID of the cadmodel table
     /// </summary>
     public static readonly string CAD_MODEL_ID = "cadmodelid";
-    
+
     /// <summary>
     /// ID of the unit table
     /// </summary>
     public static readonly string UNIT_ID = "unitid";
-    
+
     /// <summary>
     /// ID of the isofile table
     /// </summary>
     public static readonly string ISO_FILE_ID = "isofileid";
-    
+
     /// <summary>
     /// ID of the tool table
     /// </summary>
     public static readonly string TOOL_ID = TableName.TOOL + "id";
-    
+
     /// <summary>
     /// ID of the tool position table
     /// </summary>
     public static readonly string TOOL_POSITION_ID = TableName.TOOL_POSITION + "id";
-    
+
     /// <summary>
     /// ID of the tool life table
     /// </summary>
     public static readonly string TOOL_LIFE_ID = TableName.TOOL_LIFE + "id";
-    
+
     /// <summary>
     /// ID of the tool data acquisition table
     /// </summary>
     public static readonly string TOOL_DATA_ACQUISITION_ID = TableName.TOOL_DATA_ACQUISITION + "id";
-    
+
     /// <summary>
     /// ID of the field table
     /// </summary>
     public static readonly string FIELD_ID = "fieldid";
-    
+
     /// <summary>
     /// ID of the machine observation state table
     /// </summary>
     public static readonly string MACHINE_OBSERVATION_STATE_ID = "machineobservationstateid";
-    
+
     /// <summary>
     /// ID of the machine state template table
     /// </summary>
     public static readonly string MACHINE_STATE_TEMPLATE_ID = "machinestatetemplateid";
-    
+
     /// <summary>
     /// ID of the machine state template category table
     /// </summary>
     public static readonly string MACHINE_STATE_TEMPLATE_CATEGORY_ID = "machinestatetemplatecategoryid";
-    
+
     /// <summary>
     /// ID of the user table
     /// </summary>
@@ -271,17 +271,17 @@ namespace Lemoine.GDBMigration
     /// ID of the reason table
     /// </summary>
     public static readonly string REASON_ID = "reasonid";
-    
+
     /// <summary>
     /// Extra reason
     /// </summary>
     public static readonly string REASON_DETAILS = "reasondetails";
-    
+
     /// <summary>
     /// ID of the reasongroup table
     /// </summary>
     public static readonly string REASON_GROUP_ID = "reasongroupid";
-    
+
     /// <summary>
     /// ID of the revision table
     /// </summary>
@@ -298,7 +298,7 @@ namespace Lemoine.GDBMigration
     /// Priority in the modification table
     /// </summary>
     public static readonly string MODIFICATION_PRIORITY = "modificationpriority";
-    
+
     /// <summary>
     /// Id of the old auto-process (now autosequence) table
     /// </summary>
@@ -307,12 +307,12 @@ namespace Lemoine.GDBMigration
     /// Id of the new autosequence (previously autoprocess) table
     /// </summary>
     public static readonly string AUTO_SEQUENCE_ID = "autosequenceid";
-    
+
     /// <summary>
     /// Id of the table operationcycle
     /// </summary>
     public static readonly string OPERATION_CYCLE_ID = "operationcycleid";
-    
+
     /// <summary>
     /// Id of the table operationcycledeliverablepiece
     /// </summary>
@@ -321,12 +321,12 @@ namespace Lemoine.GDBMigration
     /// Version of the table operationcycledeliverablepiece
     /// </summary>
     public static readonly string OPERATION_CYCLE_DELIVERABLE_PIECE_VERSION = "operationcycledeliverablepieceversion";
-    
+
     /// <summary>
     /// serial number
     /// </summary>
     public static readonly string SERIAL_NUMBER = "serialnumber";
-    
+
     /// <summary>
     /// Id of the table workorderslot
     /// </summary>
@@ -367,7 +367,7 @@ namespace Lemoine.GDBMigration
     /// Version of the table reasonslot
     /// </summary>
     public static readonly string REASON_SLOT_VERSION = "reasonslotversion";
-    
+
     /// <summary>
     /// Id of the table machineactivitysummary
     /// </summary>
@@ -384,12 +384,12 @@ namespace Lemoine.GDBMigration
     /// Version of the table reasonsummary
     /// </summary>
     public static readonly string REASON_SUMMARY_VERSION = "reasonsummaryversion";
-    
+
     /// <summary>
     /// ID of a log table
     /// </summary>
     public static readonly string LOG_ID = "logid";
-    
+
     /// <summary>
     /// Id of eventcncvalueconfig table
     /// </summary>
@@ -426,12 +426,12 @@ namespace Lemoine.GDBMigration
     /// Trigger duration of an event
     /// </summary>
     public static readonly string EVENT_TRIGGER_DURATION = "eventtriggerduration";
-    
+
     /// <summary>
     /// Id of the new fact table
     /// </summary>
     public static readonly string FACT_ID = "factid";
-    
+
     /// <summary>
     /// Id of the stampingvalue table
     /// </summary>
@@ -441,122 +441,122 @@ namespace Lemoine.GDBMigration
     /// Version of the stampingvalue table
     /// </summary>
     public static readonly string STAMPINGVALUE_VERSION = "stampingvalueversion";
-    
+
     /// <summary>
     /// "stamping value as string" column
     /// </summary>
     public static readonly string STAMPINGVALUE_STRING = "stampingvaluestring";
-    
+
     /// <summary>
     /// "stamping value as int" column
     /// </summary>
     public static readonly string STAMPINGVALUE_INT = "stampingvalueint";
-    
+
     /// <summary>
     /// "stamping value as double" column
     /// </summary>
     public static readonly string STAMPINGVALUE_DOUBLE = "stampingvaluedouble";
-    
+
     /// <summary>
     /// Id of the shift table
     /// </summary>
     public static readonly string SHIFT_ID = "shiftid";
-    
+
     /// <summary>
     /// Id of the shiftslot table
     /// </summary>
     public static readonly string SHIFT_SLOT_ID = "shiftslotid";
-    
+
     /// <summary>
     /// Id of the shifttemplate table
     /// </summary>
     public static readonly string SHIFT_TEMPLATE_ID = "shifttemplateid";
-    
+
     /// <summary>
     /// Id of the machinemoduledetection table
     /// </summary>
     public static readonly string MACHINE_MODULE_DETECTION_ID = TableName.MACHINE_MODULE_DETECTION + "id";
-    
+
     /// <summary>
     /// Id of the role table
     /// </summary>
     public static readonly string ROLE_ID = "roleid";
-    
+
     /// <summary>
     /// Id of the right table
     /// </summary>
     public static readonly string RIGHT_ID = "rightid";
-    
+
     /// <summary>
     /// access privilege of the right table
     /// </summary>
     public static readonly string RIGHT_ACCESS_PRIVILEGE = "rightaccessprivilege";
-    
+
     /// <summary>
     /// Id of the nonconformancereason table
     /// </summary>
     public static readonly string NON_CONFORMANCE_REASON_ID = TableName.NON_CONFORMANCE_REASON + "id";
-        
+
     /// <summary>
     /// Id of the nonconformancereport table
     /// </summary>
     public static readonly string NON_CONFORMANCE_REPORT_ID = TableName.NON_CONFORMANCE_REPORT + "id";
-    
+
     /// <summary>
     /// Id of the line table
     /// </summary>
     public static readonly string LINE_ID = TableName.LINE_OLD + "id";
-    
+
     /// <summary>
     /// Id of the line component table
     /// </summary>
     public static readonly string LINE_COMPONENT_ID = TableName.LINE_COMPONENT + "id";
-    
+
     /// <summary>
     /// Id of the linemachine table
     /// </summary>
     public static readonly string LINE_MACHINE_ID = TableName.LINE_MACHINE + "id";
-    
+
     /// <summary>
     /// Id of the workorderline table
     /// </summary>
     public static readonly string WORK_ORDER_LINE_ID = TableName.WORK_ORDER_LINE + "id";
-    
+
     /// <summary>
     /// Id of the workorderlinequantity table
     /// </summary>
     public static readonly string WORK_ORDER_LINE_QUANTITY_ID = TableName.WORK_ORDER_LINE_QUANTITY + "id";
-    
+
     /// <summary>
     /// Id of the operationsourceworkpiece table
     /// </summary>
     public static readonly string OPERATION_SOURCE_WORKPIECE_ID = TableName.OPERATION_SOURCE_WORKPIECE + "id";
-    
+
     /// <summary>
     /// Id of the daytemplate table
     /// </summary>
     public static readonly string DAY_TEMPLATE_ID = TableName.DAY_TEMPLATE + "id";
-    
+
     /// <summary>
     /// Id of the task table
     /// </summary>
     public static readonly string TASK_ID = TableName.TASK + "id";
-    
+
     /// <summary>
     /// Id of the taskstatus table
     /// </summary>
     public static readonly string TASK_STATUS_ID = TableName.TASK_STATUS + "id";
-    
+
     /// <summary>
     /// Id of the plugin table
     /// </summary>
     public static readonly string PLUGIN_ID = TableName.PLUGIN + "id";
-    
+
     /// <summary>
     /// Id of the extension table
     /// </summary>
     public static readonly string PACKAGE_PLUGIN_ASSOCIATION_ID = TableName.PACKAGE_PLUGIN_ASSOCIATION + "id";
-    
+
     /// <summary>
     /// Id of the package table
     /// </summary>
@@ -571,9 +571,15 @@ namespace Lemoine.GDBMigration
     /// Id of the stampingconfigbyname table
     /// </summary>
     public static readonly string STAMPING_CONFIG_BY_NAME_ID = TableName.STAMPING_CONFIG_BY_NAME + "id";
+
     /// <summary>
     /// stamping config column of stampingconfigbyname table
     /// </summary>
     public static readonly string STAMPING_CONFIG = "stampingconfig";
+
+    /// <summary>
+    /// Id of the manuforder table
+    /// </summary>
+    public static readonly string MANUFACTURING_ORDER_ID = $"{TableName.MANUFACTURING_ORDER}id";
   }
 }

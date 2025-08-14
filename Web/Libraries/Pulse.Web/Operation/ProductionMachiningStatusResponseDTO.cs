@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -42,9 +43,9 @@ namespace Pulse.Web.Operation
     public WorkOrderDTO WorkOrder { get; set; }
 
     /// <summary>
-    /// Current task (nullable)
+    /// Current manufacturing order (nullable)
     /// </summary>
-    public TaskDTO Task { get; set; }
+    public ManufacturingOrderDTO ManufacturingOrder { get; set; }
 
     /// <summary>
     /// UTC date/time range of the effective operation

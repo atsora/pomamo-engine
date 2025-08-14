@@ -1342,17 +1342,17 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
     /// </summary>
-    public ITaskDAO TaskDAO
+    public IManufacturingOrderDAO ManufacturingOrderDAO
     {
-      get { return new TaskDAO (); }
+      get { return new ManufacturingOrderDAO (); }
     }
 
     /// <summary>
     /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
     /// </summary>
-    public ITaskMachineAssociationDAO TaskMachineAssociationDAO
+    public IManufacturingOrderMachineAssociationDAO ManufacturingOrderMachineAssociationDAO
     {
-      get { return new TaskMachineAssociationDAO (); }
+      get { return new ManufacturingOrderMachineAssociationDAO (); }
     }
 
     /// <summary>

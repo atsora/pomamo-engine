@@ -195,12 +195,12 @@ namespace Lemoine.GDBPersistentClasses
                            active: false);
       InsertDefaultValue (config);
       config = new Config (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.ExtendOperationPropagation),
-                           "Analysis config: extend operation propagation options - 1: work order - 2: component - 4: line - 8: task",
+                           "Analysis config: extend operation propagation options - 1: work order - 2: component - 4: line - 8: manufacturing order",
                            (int)PropagationOption.All,
                            active: false);
       InsertDefaultValue (config);
       config = new Config (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.AutoOperationPropagation),
-                           "Analysis config: auto-operation propagation options - 1: work order - 2: component - 4: line - 8: task",
+                           "Analysis config: auto-operation propagation options - 1: work order - 2: component - 4: line - 8: manufacturing order",
                            (int)PropagationOption.All,
                            active: false);
       InsertDefaultValue (config);
@@ -216,8 +216,8 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
       InsertDefaultValue (config);
-      config = new Config (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.TaskManagement),
-                           "Analysis config: task management activation",
+      config = new Config (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.ManufacturingOrderManagement),
+                           "Analysis config: manufacturing order management activation",
                            false,
                            active: false);
       InsertDefaultValue (config);

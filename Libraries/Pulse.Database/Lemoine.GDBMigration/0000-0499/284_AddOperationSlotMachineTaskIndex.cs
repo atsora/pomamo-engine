@@ -11,29 +11,43 @@ namespace Lemoine.GDBMigration
   /// <summary>
   /// Migration 284:
   /// </summary>
-  [Migration(284)]
-  public class AddOperationSlotMachineTaskIndex: MigrationExt
+  [Migration (284)]
+  public class AddOperationSlotMachineTaskIndex : MigrationExt
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (AddOperationSlotMachineTaskIndex).FullName);
-    
+    static readonly ILog log = LogManager.GetLogger (typeof (AddOperationSlotMachineTaskIndex).FullName);
+
     /// <summary>
     /// Update the database
     /// </summary>
     override public void Up ()
     {
-      AddIndex (TableName.OPERATION_SLOT,
-                ColumnName.MACHINE_ID,
-                ColumnName.TASK_ID);
+      if (Database.TableExists (TableName.MANUFACTURING_ORDER_IMPLEMENTATION)) {
+        AddIndex (TableName.OPERATION_SLOT,
+                  ColumnName.MACHINE_ID,
+                  ColumnName.MANUFACTURING_ORDER_ID);
+      }
+      else {
+        AddIndex (TableName.OPERATION_SLOT,
+                  ColumnName.MACHINE_ID,
+                  ColumnName.TASK_ID);
+      }
     }
-    
+
     /// <summary>
     /// Downgrade the database
     /// </summary>
     override public void Down ()
     {
-      RemoveIndex(TableName.OPERATION_SLOT,
+      if (Database.TableExists (TableName.MANUFACTURING_ORDER_IMPLEMENTATION)) {
+        RemoveIndex (TableName.OPERATION_SLOT,
+                  ColumnName.MACHINE_ID,
+                  ColumnName.MANUFACTURING_ORDER_ID);
+      }
+      else {
+        RemoveIndex (TableName.OPERATION_SLOT,
                   ColumnName.MACHINE_ID,
                   ColumnName.TASK_ID);
+      }
     }
   }
 }

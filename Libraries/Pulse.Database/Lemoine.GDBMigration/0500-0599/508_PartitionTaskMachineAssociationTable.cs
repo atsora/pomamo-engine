@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,9 +23,14 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      if (IsPartitioned (TableName.MACHINE_MODIFICATION)
-          && !IsPartitioned (TableName.TASK_MACHINE_ASSOCIATION)) {
-        PartitionTable (TableName.TASK_MACHINE_ASSOCIATION, TableName.MACHINE);
+      if (IsPartitioned (TableName.MACHINE_MODIFICATION)) {
+        if (Database.TableExists (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION) && !IsPartitioned (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION)) {
+          PartitionTable (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, TableName.MACHINE);
+        }
+
+        if (Database.TableExists (TableName.TASK_MACHINE_ASSOCIATION) && !IsPartitioned (TableName.TASK_MACHINE_ASSOCIATION)) {
+          PartitionTable (TableName.TASK_MACHINE_ASSOCIATION, TableName.MACHINE);
+        }
       }
     }
     
@@ -33,7 +39,11 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Down ()
     {
-      if (IsPartitioned (TableName.TASK_MACHINE_ASSOCIATION)) {
+      if (Database.TableExists (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION) && IsPartitioned (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION)) {
+        UnpartitionTable (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION);
+      }
+
+      if (Database.TableExists (TableName.TASK_MACHINE_ASSOCIATION) && IsPartitioned (TableName.TASK_MACHINE_ASSOCIATION)) {
         UnpartitionTable (TableName.TASK_MACHINE_ASSOCIATION);
       }
     }

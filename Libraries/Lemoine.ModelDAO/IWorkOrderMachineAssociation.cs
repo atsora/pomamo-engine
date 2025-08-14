@@ -32,12 +32,12 @@ namespace Lemoine.Model
     /// <summary>
     /// Task to associate to a machine with a work order
     /// </summary>
-    ITask Task { get; set; }
+    IManufacturingOrder ManufacturingOrder { get; set; }
 
     /// <summary>
-    /// Is the option to reset the task active ?
+    /// Is the option to reset the manufacturing order active ?
     /// </summary>
-    bool? ResetTask { get; set; }
+    bool? ResetManufacturingOrder { get; set; }
 
     /// <summary>
     /// Association option
