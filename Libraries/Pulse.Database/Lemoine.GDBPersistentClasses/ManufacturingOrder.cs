@@ -136,10 +136,10 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Manufacturing order status
     /// </summary>
-    [XmlAttribute("TaskStatus"), MergeAuto]
-    public virtual Lemoine.Model.TaskStatus TaskStatus {
-      get { return m_taskStatus; }
-      set { m_taskStatus = value; }
+    [XmlAttribute("ManufacturingOrderStatus"), MergeAuto]
+    public virtual ManufacturingOrderStatus ManufacturingOrderStatus {
+      get { return m_manufacturingOrderStatus; }
+      set { m_manufacturingOrderStatus = value; }
     }
     
     /// <summary>
