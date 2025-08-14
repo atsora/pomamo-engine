@@ -33,8 +33,8 @@
                  class="Lemoine.GDBPersistentClasses.Line"
                  access="nosetter.camelcase-m-underscore"
                  cascade="none" />
-    <many-to-one name="Task" column="taskid"
-                 class="Lemoine.GDBPersistentClasses.Task"
+    <many-to-one name="ManufacturingOrder" column="manuforderid"
+                 class="Lemoine.GDBPersistentClasses.ManufacturingOrder"
                  access="nosetter.camelcase-m-underscore"
                  not-found="ignore"
                  cascade="none" />

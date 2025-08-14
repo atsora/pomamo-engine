@@ -798,25 +798,37 @@ namespace Lemoine.GDBMigration
     /// </summary>
     public static readonly string GOALTYPE = "goaltype";
     /// <summary>
-    /// task view name
+    /// Deprecated task view name (now manuforder)
     /// </summary>
     public static readonly string TASK = "task";
     /// <summary>
-    /// Full implementation of the task view
+    /// Deprecated full implementation of the task view (now manuforder1)
     /// </summary>
     public static readonly string TASK_FULL = "taskfull";
     /// <summary>
-    /// taskstatus table name
+    /// Deprecated taskstatus table name (now manuforderstatus)
     /// </summary>
     public static readonly string TASK_STATUS = "taskstatus";
     /// <summary>
-    /// taskmachineassociation modification table name
+    /// Deprecated taskmachineassociation modification table name (now manufordermachineassociation)
     /// </summary>
     public static readonly string TASK_MACHINE_ASSOCIATION = "taskmachineassociation";
     /// <summary>
-    /// taskslot table name
+    /// manuforder (manufacturing order) view name
     /// </summary>
-    public static readonly string TASK_SLOT = "taskslot";
+    public static readonly string MANUFACTURING_ORDER = "manuforder";
+    /// <summary>
+    /// Full implementation of the manuforder view
+    /// </summary>
+    public static readonly string MANUFACTURING_ORDER_IMPLEMENTATION = "manuforder1";
+    /// <summary>
+    /// manuforderstatus table name
+    /// </summary>
+    public static readonly string MANUFACTURING_ORDER_STATUS = "manuforderstatus";
+    /// <summary>
+    /// manufordermachineassociation modification table name
+    /// </summary>
+    public static readonly string MANUFACTURING_ORDER_MACHINE_ASSOCIATION = "manufordermachineassociation";
     /// <summary>
     /// productionanalysisstatus table name
     /// </summary>

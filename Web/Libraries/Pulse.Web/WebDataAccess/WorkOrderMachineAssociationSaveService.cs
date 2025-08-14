@@ -80,8 +80,8 @@ namespace Pulse.Web.WebDataAccess
             workOrderMachineAssociation = ModelDAOHelper.ModelFactory
               .CreateWorkOrderMachineAssociation (machine, null, range);
           }
-          if (request.ResetTask.HasValue) {
-            workOrderMachineAssociation.ResetTask = true;
+          if (request.ResetManufacturingOrder.HasValue) {
+            workOrderMachineAssociation.ResetManufacturingOrder = true;
           }
           if (request.RevisionId.HasValue) {
             if (-1 == request.RevisionId.Value) { // auto-revision

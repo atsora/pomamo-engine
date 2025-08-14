@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -37,7 +38,7 @@ namespace Lemoine.Plugin.CycleCountSummary
     /// <param name="shift"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="component"></param>
     /// <param name="operation">not null</param>
     /// <returns></returns>
@@ -46,7 +47,7 @@ namespace Lemoine.Plugin.CycleCountSummary
                                          IShift shift,
                                          IWorkOrder workOrder,
                                          ILine line,
-                                         ITask task,
+                                         IManufacturingOrder manufacturingOrder,
                                          IComponent component,
                                          IOperation operation)
     {
@@ -81,11 +82,11 @@ namespace Lemoine.Plugin.CycleCountSummary
       else {
         criteria.Add (Restrictions.Eq ("Line.Id", line.Id));
       }
-      if (null == task) {
-        criteria.Add (Restrictions.IsNull ("Task"));
+      if (null == manufacturingOrder) {
+        criteria.Add (Restrictions.IsNull ("ManufacturingOrder"));
       }
       else {
-        criteria.Add (Restrictions.Eq ("Task.Id", ((IDataWithId)task).Id));
+        criteria.Add (Restrictions.Eq ("ManufacturingOrder.Id", ((IDataWithId)manufacturingOrder).Id));
       }
       if (null == component) {
         criteria.Add (Restrictions.IsNull ("Component"));
@@ -149,7 +150,7 @@ namespace Lemoine.Plugin.CycleCountSummary
     /// <param name="shift"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="component"></param>
     /// <param name="operation"></param>
     /// <param name="incrementValue"></param>
@@ -159,22 +160,20 @@ namespace Lemoine.Plugin.CycleCountSummary
                           IShift shift,
                           IWorkOrder workOrder,
                           ILine line,
-                          ITask task,
+                          IManufacturingOrder manufacturingOrder,
                           IComponent component,
                           IOperation operation,
                           int incrementValue,
                           int partialIncrementValue)
     {
       if ((0 == incrementValue) && (0 == partialIncrementValue)) {
-        log.DebugFormat ("UpdateDay: " +
-                         "incrementValue is 0: " +
-                         "=> do nothing");
+        log.Debug ("UpdateDay: incrementValue is 0: => do nothing");
         return;
       }
 
       // Find any existing analysis in database
       ICycleCountSummary cycleCountSummary =
-        FindByKey (machine, day, shift, workOrder, line, task, component, operation);
+        FindByKey (machine, day, shift, workOrder, line, manufacturingOrder, component, operation);
       if (null == cycleCountSummary) {
         // The persistent class does not exist in database, create it
         cycleCountSummary = new CycleCountSummary (machine,
@@ -182,7 +181,7 @@ namespace Lemoine.Plugin.CycleCountSummary
                                                    shift,
                                                    workOrder,
                                                    line,
-                                                   task,
+                                                   manufacturingOrder,
                                                    component,
                                                    operation);
         if ((0 == incrementValue) && (0 == partialIncrementValue)) {

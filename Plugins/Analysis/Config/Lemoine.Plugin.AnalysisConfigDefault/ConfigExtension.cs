@@ -41,7 +41,7 @@ namespace Lemoine.Plugin.AnalysisConfigDefault
     static readonly int DEFAULT_EXTEND_OPERATION_PROPAGATION = (int)PropagationOption.All;
     static readonly int DEFAULT_AUTO_OPERATION_PROPAGATION = (int)PropagationOption.All;
     static readonly bool DEFAULT_LINE_MANAGEMENT = false;
-    static readonly bool DEFAULT_TASK_MANAGEMENT = false;
+    static readonly bool DEFAULT_MANUFACTURING_ORDER_MANAGEMENT = false;
     static readonly bool DEFAULT_LINE_FROM_MACHINE_OPERATION = true;
     static readonly bool DEFAULT_OPERATION_SLOT_RUN_TIME = true;
     static readonly bool DEFAULT_OPERATION_SLOT_PRODUCTION_DURATION = true;
@@ -160,8 +160,8 @@ namespace Lemoine.Plugin.AnalysisConfigDefault
       else if (key.Equals (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.SplitCycleSummaryByShift))) {
         return DEFAULT_SPLIT_CYCLE_SUMMARY_BY_SHIFT;
       }
-      else if (key.Equals (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.TaskManagement))) {
-        return DEFAULT_TASK_MANAGEMENT;
+      else if (key.Equals (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.ManufacturingOrderManagement))) {
+        return DEFAULT_MANUFACTURING_ORDER_MANAGEMENT;
       }
       else {
         throw new Lemoine.Info.ConfigKeyNotFoundException (key);

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,58 +13,35 @@ using Lemoine.Model;
 using Lemoine.Extensions.Interfaces;
 using Pulse.Extensions.Plugin;
 
-namespace Lemoine.Plugin.PushTask
+namespace Lemoine.Plugin.PushManufacturingOrder
 {
   /// <summary>
   /// Description of Plugin.
   /// </summary>
   public class Plugin : PluginNoConfig, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "Push task"; } }
+    public override string Name => "Push manufacturing order";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Plugin to add a new web service to push a task into the system";
-      }
-    }
+    public override string Description => "Plugin to add a new web service to push a manufacturing order into the system";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Web;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Web;
 
     /// <summary>
     /// Multiple configurations
     /// </summary>
-    public override bool MultipleConfigurations
-    {
-      get { return false; }
-    }
+    public override bool MultipleConfigurations => false;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
-
-    #region Methods
-    #endregion // Methods
   }
 }

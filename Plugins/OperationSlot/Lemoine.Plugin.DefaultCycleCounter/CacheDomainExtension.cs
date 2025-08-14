@@ -36,7 +36,7 @@ namespace Lemoine.Plugin.OperationSlotByMachineShift
       case "operationassociation":
       case "productioninformation":
       case "stopcycle":
-      case "taskassociation":
+      case "manufacturingorderassociation":
         return cacheClient.ClearDomainByMachine ("business.operation.cyclecounter", machineId);
       default:
         if (log.IsDebugEnabled) {

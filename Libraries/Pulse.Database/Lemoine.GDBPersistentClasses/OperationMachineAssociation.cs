@@ -53,7 +53,7 @@ namespace Lemoine.GDBPersistentClasses
     IOperation m_operation;
     IWorkOrder m_workOrder = null;
     ILine m_line = null;
-    ITask m_task = null;
+    IManufacturingOrder m_manufacturingOrder = null;
     IComponent m_component = null;
     bool m_partOfDetectionAnalysis;
     #endregion // Members
@@ -117,9 +117,9 @@ namespace Lemoine.GDBPersistentClasses
     /// Task that was determined from the operation
     /// </summary>
     [XmlIgnore]
-    public virtual ITask Task {
-      get { return m_task; }
-      set { m_task = value; }
+    public virtual IManufacturingOrder ManufacturingOrder {
+      get { return m_manufacturingOrder; }
+      set { m_manufacturingOrder = value; }
     }
     
     /// <summary>
@@ -354,7 +354,7 @@ namespace Lemoine.GDBPersistentClasses
                                                                                    false);
         association.DateTime = this.DateTime;
         association.Operation = this.Operation;
-        association.Task = this.Task;
+        association.ManufacturingOrder = this.ManufacturingOrder;
         association.Option = this.Option;
         association.Caller = this;
         association.Analyze ();
@@ -832,7 +832,7 @@ and autoSequence.Sequence.Operation<>:operation")
               noShiftAssociation.Operation = this.Operation;
               noShiftAssociation.WorkOrder = m_workOrder;
               noShiftAssociation.Line = m_line;
-              noShiftAssociation.Task = m_task;
+              noShiftAssociation.ManufacturingOrder = m_manufacturingOrder;
               noShiftAssociation.Component = m_component;
               noShiftAssociation.Shift = null;
               UpdatePreFetchedOperationSlots (range, ref preFetchedOperationSlots);
@@ -862,7 +862,7 @@ and autoSequence.Sequence.Operation<>:operation")
               association.Operation = this.Operation;
               association.WorkOrder = m_workOrder;
               association.Line = m_line;
-              association.Task = m_task;
+              association.ManufacturingOrder = m_manufacturingOrder;
               association.Component = m_component;
               association.Day = slot.Day;
               association.Shift = slot.Shift;
@@ -892,7 +892,7 @@ and autoSequence.Sequence.Operation<>:operation")
           association.Operation = this.Operation;
           association.WorkOrder = m_workOrder;
           association.Line = m_line;
-          association.Task = m_task;
+          association.ManufacturingOrder = m_manufacturingOrder;
           association.Component = m_component;
           association.Shift = null;
           UpdatePreFetchedOperationSlots (range, ref preFetchedOperationSlots);
@@ -909,7 +909,7 @@ and autoSequence.Sequence.Operation<>:operation")
         association.Operation = this.Operation;
         association.WorkOrder = m_workOrder;
         association.Line = m_line;
-        association.Task = m_task;
+        association.ManufacturingOrder = m_manufacturingOrder;
         association.Component = m_component;
         association.Shift = null;
         association.Analyze (preFetchedOperationSlots);

@@ -1866,7 +1866,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="component"></param>
     /// <param name="workOrder"></param>
     /// <param name="line"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="day"></param>
     /// <param name="shift"></param>
     /// <param name="range"></param>
@@ -1876,12 +1876,12 @@ namespace Lemoine.GDBPersistentClasses
                                               IComponent component,
                                               IWorkOrder workOrder,
                                               ILine line,
-                                              ITask task,
+                                              IManufacturingOrder manufacturingOrder,
                                               DateTime? day,
                                               IShift shift,
                                               UtcDateTimeRange range)
     {
-      return new OperationSlot (machine, operation, component, workOrder, line, task, day, shift, range);
+      return new OperationSlot (machine, operation, component, workOrder, line, manufacturingOrder, day, shift, range);
     }
 
     /// <summary>
@@ -2560,29 +2560,29 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
     /// </summary>
-    /// <param name="taskId"></param>
+    /// <param name="manufacturingOrderId"></param>
     /// <returns></returns>
-    public ITask CreateTask (int taskId)
+    public IManufacturingOrder CreateManufacturingOrder (int manufacturingOrderId)
     {
-      var task = new Task (taskId);
-      return task;
+      var manufacturingOrder = new ManufacturingOrder (manufacturingOrderId);
+      return manufacturingOrder;
     }
 
     /// <summary>
     /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
     /// </summary>
     /// <param name="machine"></param>
-    /// <param name="task"></param>
+    /// <param name="manufacturingOrder"></param>
     /// <param name="range"></param>
     /// <returns></returns>
-    public ITaskMachineAssociation CreateTaskMachineAssociation (IMachine machine,
-                                                                ITask task,
-                                                                UtcDateTimeRange range)
+    public IManufacturingOrderMachineAssociation CreateManufacturingOrderMachineAssociation (IMachine machine,
+      IManufacturingOrder manufacturingOrder,
+      UtcDateTimeRange range)
     {
-      var taskMachineAssociation = new TaskMachineAssociation (machine,
+      var machineAssociation = new ManufacturingOrderMachineAssociation (machine,
                                                               range);
-      taskMachineAssociation.Task = task;
-      return taskMachineAssociation;
+      machineAssociation.ManufacturingOrder = manufacturingOrder;
+      return machineAssociation;
     }
 
     /// <summary>

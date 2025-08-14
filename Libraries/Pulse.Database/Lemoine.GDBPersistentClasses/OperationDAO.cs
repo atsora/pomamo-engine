@@ -105,10 +105,10 @@ namespace Lemoine.GDBPersistentClasses
                            lineMachine, oldOperation, newOperation);
           lineMachine.Operation = newOperation;
         }
-        IList<ITask> tasks = ModelDAOHelper.DAOFactory.TaskDAO
+        IList<IManufacturingOrder> manufacturingOrders = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
           .FindAllByOperation (oldOperation);
-        foreach (ITask task in tasks) {
-          ((Task)task).Operation = newOperation;
+        foreach (IManufacturingOrder manufacturingOrder in manufacturingOrders) {
+          ((ManufacturingOrder)manufacturingOrder).Operation = newOperation;
         }
         // TODO: Operation Goal
         // - Modification

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,51 +26,34 @@ namespace Lemoine.Plugin.CycleCountSummary
 
     static readonly string CYCLE_COUNT_SUMMARY = "cyclecountsummary";
 
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "CycleCountSummary"; } }
+    public override string Name => "CycleCountSummary";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Support of a cyclecountsummary table. Used by MachineCycleCount and MachinePartCount reports";
-      }
-    }
+    public override string Description => "Support of a cyclecountsummary table. Used by MachineCycleCount and MachinePartCount reports";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Config | PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web; // Web: for a later use, to support the merge of components / operations
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Config | PluginFlag.NHibernateExtension | PluginFlag.Analysis | PluginFlag.OperationExplorer | PluginFlag.Web; // Web: for a later use, to support the merge of components / operations
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
+    public override int Version => 2;
 
     TransformationProviderExt Database
     {
-      get
-      {
+      get {
         if (null == m_database) {
           m_database = new TransformationProviderExt ();
         }
         return m_database;
       }
     }
-    #endregion // Getters / Setters
 
     #region Methods
     /// <summary>
@@ -81,11 +65,14 @@ namespace Lemoine.Plugin.CycleCountSummary
     protected override void InstallVersion (int version)
     {
       switch (version) {
-      case 1: // First installation
-        Install1 ();
-        break;
-      default:
-        throw new InvalidOperationException ();
+        case 1: // First installation
+          Install1 ();
+          break;
+        case 2: // Rename Task into Manufacturing Order
+          Install2 ();
+          break;
+        default:
+          throw new InvalidOperationException ();
       }
     }
 
@@ -109,8 +96,7 @@ CREATE TABLE public.cyclecountsummary
   cyclecountsummaryfull integer NOT NULL DEFAULT 0,
   cyclecountsummarypartial integer NOT NULL DEFAULT 0,
   lineid integer,
-  taskfullid integer,
-  taskid integer,
+  manuforderid integer,
   CONSTRAINT cyclecountsummary_pkey PRIMARY KEY (cyclecountsummaryid),
   CONSTRAINT fk_cyclecountsummary_component FOREIGN KEY (componentid)
       REFERENCES public.component (componentid) MATCH SIMPLE
@@ -130,7 +116,7 @@ CREATE TABLE public.cyclecountsummary
   CONSTRAINT fk_cyclecountsummary_workorder FOREIGN KEY (workorderid)
       REFERENCES public.workorder (workorderid) MATCH SIMPLE
       ON UPDATE RESTRICT ON DELETE RESTRICT,
-  CONSTRAINT cyclecountsummary_unique UNIQUE (machineid, cyclecountsummaryday, shiftid, operationid, componentid, workorderid, lineid, taskid),
+  CONSTRAINT cyclecountsummary_unique UNIQUE (machineid, cyclecountsummaryday, shiftid, operationid, componentid, workorderid, lineid, manuforderid),
   CONSTRAINT cyclecountsummaryfull_positive CHECK (cyclecountsummaryfull >= 0),
   CONSTRAINT cyclecountsummarypartial_positive CHECK (cyclecountsummarypartial >= 0)
 )
@@ -143,6 +129,16 @@ GRANT ALL ON TABLE public.cyclecountsummary TO ""{GDBConnectionParameters.Databa
 GRANT SELECT ON TABLE public.cyclecountsummary TO PUBLIC;
 ");
       Database.PartitionTable (CYCLE_COUNT_SUMMARY, "monitoredmachine");
+    }
+
+    void Install2 ()
+    {
+      if (Database.ColumnExists (CYCLE_COUNT_SUMMARY, ColumnName.TASK_ID)) {
+        Database.RenameColumn (CYCLE_COUNT_SUMMARY, ColumnName.TASK_ID, ColumnName.MANUFACTURING_ORDER_ID);
+      }
+      if (Database.ColumnExists (CYCLE_COUNT_SUMMARY, "taskfullid")) {
+        Database.RemoveColumnCascade (CYCLE_COUNT_SUMMARY, "taskfullid");
+      }
     }
 
     /// <summary>

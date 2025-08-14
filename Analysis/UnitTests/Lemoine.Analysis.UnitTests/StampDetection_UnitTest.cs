@@ -2890,7 +2890,7 @@ namespace Lemoine.Analysis.UnitTests
                         operationSlot.Component,
                         operationSlot.WorkOrder,
                         operationSlot.Line,
-                        operationSlot.Task,
+                        operationSlot.ManufacturingOrder,
                         operationSlot.Day,
                         operationSlot.Shift);
           if (null == summary) {
@@ -2899,7 +2899,7 @@ namespace Lemoine.Analysis.UnitTests
                                                             operationSlot.Component,
                                                             operationSlot.WorkOrder,
                                                             operationSlot.Line,
-                                                            operationSlot.Task,
+                                                            operationSlot.ManufacturingOrder,
                                                             operationSlot.Day,
                                                             operationSlot.Shift);
           }

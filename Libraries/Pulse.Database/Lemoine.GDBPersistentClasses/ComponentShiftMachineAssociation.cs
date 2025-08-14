@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -205,20 +206,20 @@ namespace Lemoine.GDBPersistentClasses
                                          oldOperationSlot.Line));
         }
         
-        // If the task is compatible with the new component,
+        // If the manufacturing order is compatible with the new component,
         // keep it ! Else reset it
-        if ( (null != newOperationSlot.Task)
-          && !Lemoine.Business.Operation.OperationRelations.IsTaskCompatibleWithMachineComponent (oldOperationSlot.Task, 
+        if ( (null != newOperationSlot.ManufacturingOrder)
+          && !Lemoine.Business.Operation.OperationRelations.IsManufacturingOrderCompatibleWithMachineComponent (oldOperationSlot.ManufacturingOrder, 
             this.Machine, this.Component)) {
-          Debug.Assert (null != oldOperationSlot.Task, "Unexpected null task");
-          ((OperationSlot)newOperationSlot).Task = null;
-          ((OperationSlot)newOperationSlot).AutoTask = null;
+          Debug.Assert (null != oldOperationSlot.ManufacturingOrder, "Unexpected null manufacturing order");
+          ((OperationSlot)newOperationSlot).ManufacturingOrder = null;
+          ((OperationSlot)newOperationSlot).AutoManufacturingOrder = null;
           AddAnalysisLog (LogLevel.INFO,
-                          string.Format ("Reset the task because " +
+                          string.Format ("Reset the manufacturing order because " +
                                          "the new component {0} is not compatible " +
-                                         "with the old task {1}",
+                                         "with the old manufacturing order {1}",
                                          this.Component,
-                                         oldOperationSlot.Task));
+                                         oldOperationSlot.ManufacturingOrder));
         }
         
         // If the operation is compatible with the new component,

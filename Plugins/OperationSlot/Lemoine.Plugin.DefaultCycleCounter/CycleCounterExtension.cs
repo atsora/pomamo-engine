@@ -95,8 +95,8 @@ namespace Lemoine.Plugin.DefaultCycleCounter
 
           var withOperationSlot = operationCycles
             .Where (c => (null != c.OperationSlot))
-            .GroupBy (c => (operation: c.OperationSlot.Operation, task: c.OperationSlot.Task))
-            .Select (x => new CycleCounterValue (x.Key.operation, x.Key.task, GetDuration (x, range), x.Count (), x.Count (c => c.Quantity.HasValue), x.Where (c => c.Quantity.HasValue).Sum (c => c.Quantity.Value), GetInProgress (x, range)));
+            .GroupBy (c => (operation: c.OperationSlot.Operation, manufacturingOrder: c.OperationSlot.ManufacturingOrder))
+            .Select (x => new CycleCounterValue (x.Key.operation, x.Key.manufacturingOrder, GetDuration (x, range), x.Count (), x.Count (c => c.Quantity.HasValue), x.Where (c => c.Quantity.HasValue).Sum (c => c.Quantity.Value), GetInProgress (x, range)));
           var withoutOperationSlot = operationCycles
             .Where (c => (null == c.OperationSlot))
             .Select (x => new CycleCounterValue (null, null, GetDuration (x), 1, x.Quantity.HasValue ? 1 : 0, x.Quantity.HasValue ? x.Quantity.Value : 0, GetInProgress (new List<IOperationCycle> { x }, range)));

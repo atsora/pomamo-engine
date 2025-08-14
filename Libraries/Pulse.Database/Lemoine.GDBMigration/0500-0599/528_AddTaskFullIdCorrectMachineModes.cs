@@ -37,11 +37,24 @@ namespace Lemoine.GDBMigration
 
     void AddTaskFullId ()
     {
-      Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION public.taskfullid(taskfull)
+      if (Database.TableExists (TableName.MANUFACTURING_ORDER_IMPLEMENTATION)) {
+        Database.ExecuteNonQuery ($"""
+          CREATE OR REPLACE FUNCTION public.{TableName.MANUFACTURING_ORDER_IMPLEMENTATION}id({TableName.MANUFACTURING_ORDER_IMPLEMENTATION})
+           RETURNS integer
+           LANGUAGE sql
+           IMMUTABLE
+          AS $function$SELECT $1.{ColumnName.MANUFACTURING_ORDER_ID}$function$
+          ;
+          """);
+      }
+
+      if (Database.TableExists (TableName.TASK_FULL)) {
+        Database.ExecuteNonQuery (@"CREATE OR REPLACE FUNCTION public.taskfullid(taskfull)
 RETURNS integer AS
 $BODY$SELECT $1.taskid$BODY$
 LANGUAGE sql IMMUTABLE
 COST 100;");
+      }
     }
 
     void CorrectMachineModes ()

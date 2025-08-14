@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Lemoine.Plugin.PushTask
+namespace Lemoine.Plugin.PushManufacturingOrder
 {
   public class WebExtension
     : Lemoine.Extensions.Web.IWebExtension

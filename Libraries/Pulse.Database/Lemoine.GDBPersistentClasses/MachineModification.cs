@@ -30,7 +30,7 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude (typeof (ProcessMachineStateTemplate)),
    XmlInclude (typeof (ProductionInformation)),
    XmlInclude (typeof (ProductionInformationShift)),
-   XmlInclude (typeof (TaskMachineAssociation))]
+   XmlInclude (typeof (ManufacturingOrderMachineAssociation))]
   public abstract class MachineModification : Modification, IMachineModification
   {
     #region Members

@@ -21,7 +21,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Reference to the task or null if unknown / not applicable
     /// </summary>
-    ITask Task { get; }
+    IManufacturingOrder ManufacturingOrder { get; }
     
     /// <summary>
     /// Reference to the work order

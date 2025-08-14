@@ -99,10 +99,10 @@ namespace Lemoine.GDBPersistentClasses
         foreach (IStamp stamp in stamps) {
           stamp.Component = newComponent;
         }
-        IList<ITask> tasks = ModelDAOHelper.DAOFactory.TaskDAO
+        IList<IManufacturingOrder> manufacturingOrders = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
           .FindAllByComponent (oldComponent);
-        foreach (ITask task in tasks) {
-          task.Component = newComponent;
+        foreach (IManufacturingOrder manufacturingOrder in manufacturingOrders) {
+          manufacturingOrder.Component = newComponent;
         }
         { // Line
           IList<ILine> otherLines = ModelDAOHelper.DAOFactory.LineDAO
