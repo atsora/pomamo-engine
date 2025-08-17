@@ -12,6 +12,7 @@ using Lemoine.Extensions.Business.DynamicTimes;
 using Pulse.Extensions;
 using Lemoine.Extensions;
 using Lemoine.Extensions.ExtensionsProvider;
+using Lemoine.Plugin.IfApplicableDynamicTime;
 
 namespace Lemoine.Plugin.DynamicTime.UnitTests
 {
@@ -107,11 +108,23 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
 
           Lemoine.Extensions.ExtensionManager.Add (typeof (DynamicEndExtensionIfApplicable));
+          Lemoine.Extensions.ExtensionManager.Add (typeof (IfApplicable));
 
           // Reference data
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (2);
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (machine);
+
+          {
+            var response = Lemoine.Business.DynamicTimes.DynamicTime.GetDynamicTime ("IfApplicable(RunIfApplicable)", machine, T(0));
+            Assert.That (response.NoData, Is.False);
+          }
+          DynamicEndExtensionIfApplicable.GoToNextStep ();
+          {
+            var response = Lemoine.Business.DynamicTimes.DynamicTime.GetDynamicTime ("IfApplicable(RunIfApplicable)", machine, T (0));
+            Assert.That (response.Final, Is.EqualTo (T (0)));
+          }
+          DynamicEndExtensionIfApplicable.ResetStep ();
 
           {
             var extension = new Lemoine.Plugin.IfApplicableDynamicTime.IfApplicable ();

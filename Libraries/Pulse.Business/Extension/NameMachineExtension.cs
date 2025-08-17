@@ -73,7 +73,7 @@ namespace Lemoine.Business.Extension
 
     static Func<T, string, IMachine, bool> ConvertFilter (Func<T, IMachine, bool> f)
     {
-      return (ext, name, machine) => f (ext, machine) && NameFilter (ext, name);
+      return (ext, name, machine) => NameFilter (ext, name) && f (ext, machine);
     }
 
     static bool NameFilter (T ext, string name)
