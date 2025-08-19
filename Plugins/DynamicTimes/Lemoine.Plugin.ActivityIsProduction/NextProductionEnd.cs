@@ -90,7 +90,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
         var suffix = "NextProductionEnd";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }

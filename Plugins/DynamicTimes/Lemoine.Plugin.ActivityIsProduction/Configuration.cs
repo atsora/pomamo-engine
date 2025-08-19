@@ -221,9 +221,6 @@ namespace Lemoine.Plugin.ActivityIsProduction
     /// <see cref="Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>
     /// </summary>
     /// <returns></returns>
-    protected override bool IsMachineFilterRequired ()
-    {
-      return false;
-    }
+    protected override bool IsMachineFilterRequired () => false;
   }
 }

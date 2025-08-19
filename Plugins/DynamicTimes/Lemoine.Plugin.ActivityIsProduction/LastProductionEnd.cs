@@ -41,7 +41,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
         var suffix = "LastProductionEnd";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }
@@ -144,21 +144,25 @@ namespace Lemoine.Plugin.ActivityIsProduction
           }
           if (null == first) {
             if (IsFactAfter (dateTime)) {
-              log.DebugFormat ("Get: no fact in range {0}", range);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Get: no fact in range {range}");
+              }
               return this.CreateNoData ();
             }
             else {
-              log.DebugFormat ("Get: waiting for some coming facts");
+              log.Debug ("Get: waiting for some coming facts");
               return this.CreatePending ();
             }
           }
           else { // null != first
             if (isFactAfter) {
-              log.DebugFormat ("Get: no activity in range {0}", range);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Get: no activity in range {range}");
+              }
               return this.CreateNoData ();
             }
             else {
-              log.DebugFormat ("Get: waiting for some coming facts");
+              log.Debug ("Get: waiting for some coming facts");
               return this.CreatePending ();
             }
           }

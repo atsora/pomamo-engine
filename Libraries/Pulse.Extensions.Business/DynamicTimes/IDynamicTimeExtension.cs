@@ -301,9 +301,7 @@ namespace Lemoine.Extensions.Business.DynamicTimes
     /// <param name="final"></param>
     /// <returns></returns>
     public static IDynamicTimeResponse CreateFinal (this IDynamicTimeExtension extension, DateTime final)
-    {
-      return DynamicTimeResponse.CreateFinal (extension.GetType (), final);
-    }
+      => DynamicTimeResponse.CreateFinal (extension.GetType (), final);
 
     /// <summary>
     /// Create a response with a hint date/time range
@@ -311,45 +309,34 @@ namespace Lemoine.Extensions.Business.DynamicTimes
     /// <param name="hint"></param>
     /// <returns></returns>
     public static IDynamicTimeResponse CreateWithHint (this IDynamicTimeExtension extension, UtcDateTimeRange hint)
-    {
-      return DynamicTimeResponse.CreateWithHint (extension.GetType (), hint);
-    }
+      => DynamicTimeResponse.CreateWithHint (extension.GetType (), hint);
 
     /// <summary>
     /// No date/time can be returned yet
     /// </summary>
     /// <returns></returns>
     public static IDynamicTimeResponse CreatePending (this IDynamicTimeExtension extension)
-    {
-      return DynamicTimeResponse.CreatePending (extension.GetType ());
-    }
+      => DynamicTimeResponse.CreatePending (extension.GetType ());
 
     /// <summary>
     /// No dynamic time could be found in the limit (interrupted)
     /// </summary>
     /// <returns></returns>
     public static IDynamicTimeResponse CreateNoData (this IDynamicTimeExtension extension)
-    {
-      return DynamicTimeResponse.CreateNoData (extension.GetType ());
-    }
+      => DynamicTimeResponse.CreateNoData (extension.GetType ());
 
     /// <summary>
     /// This dynamic time is currently not applicable for this machine
     /// </summary>
     /// <returns></returns>
     public static IDynamicTimeResponse CreateNotApplicable (this IDynamicTimeExtension extension)
-    {
-      return DynamicTimeResponse.CreateNotApplicable (extension.GetType ());
-    }
+      => DynamicTimeResponse.CreateNotApplicable (extension.GetType ());
 
     /// <summary>
     /// The dynamic time request ended in timeout
     /// </summary>
     /// <returns></returns>
     public static IDynamicTimeResponse CreateTimeout (this IDynamicTimeExtension extension)
-    {
-      return DynamicTimeResponse.CreateTimeout (extension.GetType ());
-    }
-
+      => DynamicTimeResponse.CreateTimeout (extension.GetType ());
   }
 }

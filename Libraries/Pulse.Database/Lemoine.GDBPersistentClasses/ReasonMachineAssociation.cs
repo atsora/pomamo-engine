@@ -1273,7 +1273,8 @@ namespace Lemoine.GDBPersistentClasses
     void MakeAnalysisDynamicStart (string dynamicStart)
     {
       // Note: for the moment, all the dynamic starts finish in error
-      SetModificationInError ("Dynamic start => error");
+      log.Fatal ($"MakeAnalysisDynamicStart: dynamic start is not supported yet");
+      SetModificationInError ("Dynamic start not implemented"); // Previously: Dynamic start => error
       return;
       // Reconnect the code below later if needed
       /*
