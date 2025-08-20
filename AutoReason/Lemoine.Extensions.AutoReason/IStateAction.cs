@@ -10,20 +10,8 @@ namespace Lemoine.Extensions.AutoReason
   /// <summary>
   /// Action to update an auto-reason state
   /// </summary>
-  public interface IStateAction
+  public interface IStateAction: IAutoReasonAction
   {
-    /// <summary>
-    /// Name of the action
-    /// </summary>
-    string Name { get; }
-
-    /// <summary>
-    /// Apply the action (update an auto-reason state)
-    /// 
-    /// Done in a read/write transaction with a ReadCommitted transaction level
-    /// </summary>
-    void Run ();
-
     /// <summary>
     /// Reset some internal values in case of failure
     /// </summary>

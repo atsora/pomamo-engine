@@ -35,7 +35,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         IComponent component = ModelDAOHelper.DAOFactory.ComponentDAO.FindById(1);
         Assert.That (component.Display, Is.EqualTo ("COMPONENT1 <CAVITY>"));
         component = ModelDAOHelper.DAOFactory.ComponentDAO.FindById(4);
-        Assert.That (component.Display, Is.EqualTo ("C3A02-2 <Undefined>"));
+        Assert.That (component.Display, Is.AnyOf ("C3A02-2 <Undefined>", "C3A02-2 <Non défini>"));
       }
     }
     

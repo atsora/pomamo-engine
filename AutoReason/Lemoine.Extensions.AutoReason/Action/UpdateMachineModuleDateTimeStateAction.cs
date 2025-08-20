@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,6 +20,7 @@ namespace Lemoine.Extensions.AutoReason.Action
   {
     readonly ILog log = LogManager.GetLogger (typeof (UpdateMachineModuleDateTimeStateAction).FullName);
 
+    readonly int m_commitNumber = 0;
     readonly IMachineModule m_machineModule;
     readonly IMachineModuleDateTimeStateAutoReason m_autoReason;
     readonly DateTime m_previousDateTime;
@@ -30,7 +32,7 @@ namespace Lemoine.Extensions.AutoReason.Action
     /// <param name="autoReason">not null</param>
     /// <param name="machineModule">not null</param>
     /// <param name="dateTime"></param>
-    public UpdateMachineModuleDateTimeStateAction (IMachineModuleDateTimeStateAutoReason autoReason, IMachineModule machineModule, DateTime dateTime)
+    public UpdateMachineModuleDateTimeStateAction (IMachineModuleDateTimeStateAutoReason autoReason, IMachineModule machineModule, DateTime dateTime, int commitNumber = 0)
     {
       Debug.Assert (null != autoReason);
 
@@ -38,15 +40,18 @@ namespace Lemoine.Extensions.AutoReason.Action
       m_machineModule = machineModule;
       m_previousDateTime = autoReason.GetDateTime (machineModule);
       m_dateTime = dateTime;
+      m_commitNumber = commitNumber;
     }
 
     /// <summary>
     /// <see cref="IStateAction"/>
     /// </summary>
-    public string Name
-    {
-      get { return "UpdateDateTime"; }
-    }
+    public string Name => "UpdateDateTime";
+
+    /// <summary>
+    /// <see cref="IStateAction"/>
+    /// </summary>
+    public int CommitNumber => m_commitNumber;
 
     /// <summary>
     /// <see cref="IStateAction"/>

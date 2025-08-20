@@ -19,6 +19,7 @@ namespace Lemoine.Extensions.AutoReason.Action
   {
     readonly ILog log = LogManager.GetLogger (typeof (ApplyReasonDynamicEndBeforeRealEndAction).FullName);
 
+    readonly int m_commitNumber = 0;
     readonly IApplyReasonDynamicEndBeforeRealEndAutoReason m_autoReason;
     readonly IMachine m_machine;
     readonly IReason m_reason;
@@ -37,9 +38,11 @@ namespace Lemoine.Extensions.AutoReason.Action
     /// <param name="details"></param>
     /// <param name="overwriteRequired"></param>
     public ApplyReasonDynamicEndBeforeRealEndAction (IApplyReasonDynamicEndBeforeRealEndAutoReason
-      autoReason, UtcDateTimeRange range, string dynamic, string details = "", bool overwriteRequired = false)
-      : this (autoReason, autoReason.Machine, autoReason.Reason, autoReason.ReasonScore, range, dynamic, details, overwriteRequired)
+      autoReason, UtcDateTimeRange range, string dynamic, string details = "", bool overwriteRequired = false, int commitNumber = 0)
+      : this (autoReason, autoReason.Machine, autoReason.Reason, autoReason.ReasonScore, range, dynamic, details, overwriteRequired, commitNumber: commitNumber)
     {
+      m_commitNumber = commitNumber;
+
     }
 
     /// <summary>
@@ -52,8 +55,8 @@ namespace Lemoine.Extensions.AutoReason.Action
     /// <param name="details"></param>
     /// <param name="overwriteRequired"></param>
     public ApplyReasonDynamicEndBeforeRealEndAction (IApplyReasonDynamicEndBeforeRealEndAutoReason
-      autoReason, IMachine machine, UtcDateTimeRange range, string dynamic, string details = "", bool overwriteRequired = false)
-      : this (autoReason, machine, autoReason.Reason, autoReason.ReasonScore, range, dynamic, details, overwriteRequired)
+      autoReason, IMachine machine, UtcDateTimeRange range, string dynamic, string details = "", bool overwriteRequired = false, int commitNumber = 0)
+      : this (autoReason, machine, autoReason.Reason, autoReason.ReasonScore, range, dynamic, details, overwriteRequired, commitNumber: commitNumber)
     {
     }
 
@@ -69,12 +72,13 @@ namespace Lemoine.Extensions.AutoReason.Action
     /// <param name="details"></param>
     /// <param name="overwriteRequired"></param>
     public ApplyReasonDynamicEndBeforeRealEndAction (IApplyReasonDynamicEndBeforeRealEndAutoReason
-      autoReason, IMachine machine, IReason reason, double reasonScore, UtcDateTimeRange range, string dynamic, string details = "", bool overwriteRequired = false)
+      autoReason, IMachine machine, IReason reason, double reasonScore, UtcDateTimeRange range, string dynamic, string details = "", bool overwriteRequired = false, int commitNumber = 0)
     {
       Debug.Assert (null != autoReason);
       Debug.Assert (null != machine);
       Debug.Assert (null != reason);
 
+      m_commitNumber = commitNumber;
       m_autoReason = autoReason;
       m_machine = machine;
       m_reason = reason;
@@ -86,12 +90,14 @@ namespace Lemoine.Extensions.AutoReason.Action
     }
 
     /// <summary>
-    /// 
+    /// <see cref="IAutoReasonAction.Name"/>
     /// </summary>
-    public string Name
-    {
-      get { return "ApplyReasonDynamicEndBeforeRealEnd";  }
-    }
+    public string Name => "ApplyReasonDynamicEndBeforeRealEnd";
+
+    /// <summary>
+    /// <see cref="IAutoReasonAction.CommitNumber"/>
+    /// </summary>
+    public int CommitNumber => m_commitNumber;
 
     /// <summary>
     /// 

@@ -45,8 +45,7 @@ namespace Lemoine.Extensions.AutoReason
     string m_defaultReasonTranslationValue;
     readonly string m_pluginKey;
 
-    readonly IList<IStateAction> m_delayedStateActions = new List<IStateAction> ();
-    readonly IList<IReasonAction> m_delayedReasonActions = new List<IReasonAction> ();
+    readonly IList<IAutoReasonAction> m_delayedActions = new List<IAutoReasonAction> ();
 
     DateTime m_dateTime = DateTime.UtcNow;
     IRevision m_revision = null;
@@ -56,12 +55,7 @@ namespace Lemoine.Extensions.AutoReason
     /// <summary>
     /// <see cref="IAutoReasonExtension"/>
     /// </summary>
-    public IEnumerable<IStateAction> DelayedStateActions => m_delayedStateActions;
-
-    /// <summary>
-    /// <see cref="IAutoReasonExtension"/>
-    /// </summary>
-    public IEnumerable<IReasonAction> DelayedReasonActions => m_delayedReasonActions;
+    public IEnumerable<IAutoReasonAction> DelayedActions => m_delayedActions;
 
     /// <summary>
     /// Logger
@@ -354,35 +348,25 @@ namespace Lemoine.Extensions.AutoReason
     /// </summary>
     public void ResetDelayedActions ()
     {
-      m_delayedStateActions.Clear ();
-      m_delayedReasonActions.Clear ();
+      m_delayedActions.Clear ();
     }
 
     /// <summary>
-    /// Add a delayed state action
+    /// Add a delayed action
     /// </summary>
     /// <param name="action"></param>
-    protected void AddDelayedAction (IStateAction action)
+    protected void AddDelayedAction (IAutoReasonAction action)
     {
-      m_delayedStateActions.Add (action);
-    }
-
-    /// <summary>
-    /// Add a delayed reason action
-    /// </summary>
-    /// <param name="action"></param>
-    protected void AddDelayedAction (IReasonAction action)
-    {
-      m_delayedReasonActions.Add (action);
+      m_delayedActions.Add (action);
     }
 
     /// <summary>
     /// Add a delayed action to update the date/time
     /// </summary>
     /// <param name="dateTime"></param>
-    protected void AddUpdateDateTimeDelayedAction (DateTime dateTime)
+    protected void AddUpdateDateTimeDelayedAction (DateTime dateTime, int commitNumber = 0)
     {
-      var action = new Action.UpdateDateTimeStateAction (this, dateTime);
+      var action = new Action.UpdateDateTimeStateAction (this, dateTime, commitNumber: commitNumber);
       AddDelayedAction (action);
     }
 
@@ -391,11 +375,11 @@ namespace Lemoine.Extensions.AutoReason
     /// </summary>
     /// <param name="machineModule">not null</param>
     /// <param name="dateTime"></param>
-    protected void AddUpdateMachineModuleDateTimeDelayedAction (IMachineModule machineModule, DateTime dateTime)
+    protected void AddUpdateMachineModuleDateTimeDelayedAction (IMachineModule machineModule, DateTime dateTime, int commitNumber = 0)
     {
       Debug.Assert (null != machineModule);
 
-      var action = new Action.UpdateMachineModuleDateTimeStateAction (this, machineModule, dateTime);
+      var action = new Action.UpdateMachineModuleDateTimeStateAction (this, machineModule, dateTime, commitNumber: commitNumber);
       AddDelayedAction (action);
     }
 
@@ -579,7 +563,7 @@ namespace Lemoine.Extensions.AutoReason
     /// </summary>
     protected virtual void InitializeRevisionIfRequired ()
     {
-      if (this.DelayedReasonActions.Any ()
+      if (this.DelayedActions.Any (x => x is IReasonAction)
         && Lemoine.Info.ConfigSet.LoadAndGet (USE_REVISION_KEY, USE_REVISION_DEFAULT)) {
         InitializeRevision ();
       }

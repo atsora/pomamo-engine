@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,6 +19,7 @@ namespace Lemoine.Extensions.AutoReason.Action
   {
     readonly ILog log = LogManager.GetLogger (typeof (UpdateDateTimeStateAction).FullName);
 
+    readonly int m_commitNumber = 0;
     readonly IDateTimeStateAutoReason m_autoReason;
     readonly DateTime m_previousDateTime;
     readonly DateTime m_dateTime;
@@ -27,10 +29,11 @@ namespace Lemoine.Extensions.AutoReason.Action
     /// </summary>
     /// <param name="autoReason">not null</param>
     /// <param name="dateTime"></param>
-    public UpdateDateTimeStateAction (IDateTimeStateAutoReason autoReason, DateTime dateTime)
+    public UpdateDateTimeStateAction (IDateTimeStateAutoReason autoReason, DateTime dateTime, int commitNumber = 0)
     {
       Debug.Assert (null != autoReason);
 
+      m_commitNumber = commitNumber;
       m_autoReason = autoReason;
       m_previousDateTime = autoReason.DateTime;
       m_dateTime = dateTime;
@@ -39,9 +42,12 @@ namespace Lemoine.Extensions.AutoReason.Action
     /// <summary>
     /// <see cref="IStateAction"/>
     /// </summary>
-    public string Name {
-      get { return "UpdateDateTime"; }
-    }
+    public string Name => "UpdateDateTime";
+
+    /// <summary>
+    /// <see cref="IStateAction"/>
+    /// </summary>
+    public int CommitNumber => m_commitNumber;
 
     /// <summary>
     /// <see cref="IStateAction"/>

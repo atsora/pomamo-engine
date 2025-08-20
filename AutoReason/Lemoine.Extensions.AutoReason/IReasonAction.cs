@@ -10,18 +10,7 @@ namespace Lemoine.Extensions.AutoReason
   /// <summary>
   /// Action to apply a reason
   /// </summary>
-  public interface IReasonAction
+  public interface IReasonAction: IAutoReasonAction
   {
-    /// <summary>
-    /// Name of the action
-    /// </summary>
-    string Name { get; }
-
-    /// <summary>
-    /// Apply the action (update an auto-reason state)
-    /// 
-    /// Done in a read/write transaction with a ReadCommitted transaction level
-    /// </summary>
-    void Run ();
   }
 }
