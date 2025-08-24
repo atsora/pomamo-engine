@@ -73,6 +73,7 @@
     <PackageReference Include="NModbus4.NetCore" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="StrongNamer" />
     <PackageReference Include="NModbus4" />
   </ItemGroup>
 
