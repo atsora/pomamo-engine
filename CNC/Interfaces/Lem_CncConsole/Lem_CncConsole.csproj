@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <Platforms>x86</Platforms>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
@@ -49,6 +49,7 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
+    <PackageReference Include="S7netplus" />
     <PackageReference Include="System.IO.Ports" /><!--indirect dependency for Lemoine.Cnc.Serial -->
     <PackageReference Include="System.Data.SQLite.Core" /><!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
     <PackageReference Include="System.Net.Primitives" />
@@ -67,6 +68,12 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.Data\Lemoine.Cnc.Data.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.SQLiteQueue\Lemoine.Cnc.SQLiteQueue.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.SystemQueue\Lemoine.Cnc.SystemQueue.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <PackageReference Include="NModbus4.NetCore" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="NModbus4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -100,12 +107,19 @@
     <None Remove="bin\VS\net48\x86\SQLite.Interop.dll" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="System.Data.DataSetExtensions" />
     <None Include="app.config" />
     <None Include="..\Lem_CncService\Lem_CncService.template.exe.config" />
     <None Include="..\Lem_CncService\Lem_CncService.exe.log4net" Link="$(ProjectName).exe.log4net" CopyToOutputDirectory="Always" Visible="false" />
     <None Include="$(ProjectName).exe.defaultoptions" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <None Include="app.config" CopyToOutputDirectory="Never" />
+    <None Include="..\Lem_CncCoreService\Lem_CncCoreService.nh.cfg.xml" Link="$(ProjectName).nh.cfg.xml" CopyToOutputDirectory="Always" Visible="false" />
+    <None Include="..\Lem_CncCoreService\Lem_CncCoreService.dll.log4net" Link="$(ProjectName).dll.log4net" CopyToOutputDirectory="Always" Visible="false" />
+    <None Include="$(ProjectName).exe.defaultoptions" Link="$(ProjectName).dll.defaultoptions" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

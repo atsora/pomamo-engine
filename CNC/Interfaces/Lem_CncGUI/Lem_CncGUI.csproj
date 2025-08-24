@@ -38,6 +38,7 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
+    <PackageReference Include="S7netplus" />
     <PackageReference Include="System.IO.Ports" /> <!--indirect dependency for Lemoine.Cnc.Serial -->
     <PackageReference Include="System.Data.SQLite.Core" /><!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
     <PackageReference Include="System.Net.Primitives" />
@@ -57,6 +58,12 @@
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.CncAlarm\Lemoine.Cnc.CncAlarm.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.Data\Lemoine.Cnc.Data.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.SQLiteQueue\Lemoine.Cnc.SQLiteQueue.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
+    <PackageReference Include="NModbus4.NetCore" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="NModbus4" />
   </ItemGroup>
 
   <!--ItemGroup Condition=" '$(PlatformTarget)' == 'x86' ">
