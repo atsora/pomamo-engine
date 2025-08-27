@@ -22,6 +22,12 @@ namespace Pulse.PluginImplementation.Analysis
   /// Extract informations from a program comment
   /// 
   /// The supported group names are:
+  /// <item>jobName</item>
+  /// <item>jobComponent</item>
+  /// <item>projectName</item>
+  /// <item>projectComponent</item>
+  /// <item>componentName</item>
+  /// <item>componentCode</item>
   /// <item>partName</item>
   /// <item>partCode</item>
   /// <item>opName</item>
@@ -78,6 +84,156 @@ namespace Pulse.PluginImplementation.Analysis
     /// Deprecated: use ISequenceCreateExtension now
     /// </summary>
     public bool CreateSequences { get; set; } = false;
+
+    IProject GetProject (Match match)
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+
+        // Check first projectName, then projectCode
+        if (!TryGetOpData (match, "projectName", out var projectName)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetProject: no valid regexMatchToOpData for projectName");
+          }
+          var projectNameGroup = match.Groups["projectName"];
+          if (projectNameGroup.Success) {
+            projectName = projectNameGroup.Value.Trim ();
+            if (string.IsNullOrEmpty (projectName)) {
+              log.Warn ($"GetProject: projectName is empty in {m_programComment} for regex {m_regex}");
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetProject: projectName={projectName} in {m_programComment} for {m_regex}");
+              }
+            }
+          }
+        }
+
+        if (!TryGetOpData (match, "projectCode", out var projectCode)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetProject: no valid regexMatchToOpData for projectCode");
+          }
+          var projectCodeGroup = match.Groups["projectCode"];
+          if (projectCodeGroup.Success) {
+            projectCode = projectCodeGroup.Value.Trim ();
+            if (string.IsNullOrEmpty (projectCode)) {
+              log.Warn ($"GetProject: projectCode is empty in {m_programComment} for regex {m_regex}");
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetProject: projectCode={projectCode} in {m_programComment} for regex {m_regex}");
+              }
+            }
+          }
+        }
+
+        projectName = projectName?.Trim ();
+        projectCode = projectCode?.Trim ();
+        if (string.IsNullOrEmpty (projectName) && string.IsNullOrEmpty (projectCode)) {
+          log.Error ($"GetProject: no project information in {m_programComment}, regex={m_regex}");
+          return null;
+        }
+
+        IProject project = null;
+        if (!string.IsNullOrEmpty (projectName)) {
+          project = ModelDAOHelper.DAOFactory.ProjectDAO.FindByName (projectName);
+          if ((null != project)
+            && !string.IsNullOrEmpty (projectCode)
+            && (!project.Code.Equals (projectCode, StringComparison.InvariantCultureIgnoreCase))) {
+            log.Warn ($"GetProject: project with name {projectName} has a code {project.Code} that does not match {projectCode}");
+          }
+        }
+        else if (!string.IsNullOrEmpty (projectCode)) {
+          project = ModelDAOHelper.DAOFactory.ProjectDAO.FindByCode (projectCode);
+        }
+        if (project is null) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetProject: projectName={projectName} does not exist, create it");
+          }
+          var workorderStatus = ModelDAOHelper.DAOFactory.WorkOrderStatusDAO
+            .FindById (1); // 1: undefined
+          project = ModelDAOHelper.ModelFactory.CreateProjectFromName (projectName);
+          project.Code = projectCode;
+          ModelDAOHelper.DAOFactory.ProjectDAO.MakePersistent (project);
+        }
+
+        return project;
+      }
+    }
+
+    IJob GetJob (Match match)
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+
+        // Check first jobName, then jobCode
+        if (!TryGetOpData (match, "jobName", out var jobName)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetJob: no valid regexMatchToOpData for jobName");
+          }
+          var jobNameGroup = match.Groups["jobName"];
+          if (jobNameGroup.Success) {
+            jobName = jobNameGroup.Value.Trim ();
+            if (string.IsNullOrEmpty (jobName)) {
+              log.Warn ($"GetJob: jobName is empty in {m_programComment} for regex {m_regex}");
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetJob: jobName={jobName} in {m_programComment} for {m_regex}");
+              }
+            }
+          }
+        }
+
+        if (!TryGetOpData (match, "jobCode", out var jobCode)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetJob: no valid regexMatchToOpData for jobCode");
+          }
+          var jobCodeGroup = match.Groups["jobCode"];
+          if (jobCodeGroup.Success) {
+            jobCode = jobCodeGroup.Value.Trim ();
+            if (string.IsNullOrEmpty (jobCode)) {
+              log.Warn ($"GetJob: jobCode is empty in {m_programComment} for regex {m_regex}");
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetJob: jobCode={jobCode} in {m_programComment} for regex {m_regex}");
+              }
+            }
+          }
+        }
+
+        jobName = jobName?.Trim ();
+        jobCode = jobCode?.Trim ();
+        if (string.IsNullOrEmpty (jobName) && string.IsNullOrEmpty (jobCode)) {
+          log.Error ($"GetJob: no job information in {m_programComment}, regex={m_regex}");
+          return null;
+        }
+
+        IJob job = null;
+        if (!string.IsNullOrEmpty (jobName)) {
+          job = ModelDAOHelper.DAOFactory.ProjectDAO.FindByName (jobName)?.Job;
+          if ((null != job)
+            && !string.IsNullOrEmpty (jobCode)
+            && (!job.Code.Equals (jobCode, StringComparison.InvariantCultureIgnoreCase))) {
+            log.Warn ($"GetJob: job with name {jobName} has a code {job.Code} that does not match {jobCode}");
+          }
+        }
+        else if (!string.IsNullOrEmpty (jobCode)) {
+          job = ModelDAOHelper.DAOFactory.ProjectDAO.FindByCode (jobCode)?.Job;
+        }
+        if (job is null) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetJob: jobName={jobName} does not exist, create it");
+          }
+          var workorderStatus = ModelDAOHelper.DAOFactory.WorkOrderStatusDAO
+            .FindById (1); // 1: undefined
+          job = ModelDAOHelper.ModelFactory.CreateJobFromName (workorderStatus, jobName);
+          job.Code = jobCode;
+          ModelDAOHelper.DAOFactory.JobDAO.MakePersistent (job);
+        }
+
+        return job;
+      }
+    }
 
     IPart GetPart (Match match)
     {
@@ -155,19 +311,95 @@ namespace Pulse.PluginImplementation.Analysis
       }
     }
 
+    IComponent GetComponent (IProject project, Match match)
+    {
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+
+        // Check first componentName, then componentCode
+        if (!TryGetOpData (match, "componentName", out var componentName)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetComponent: no valid regexMatchToOpData for componentName");
+          }
+          var componentNameGroup = match.Groups["componentName"];
+          if (componentNameGroup.Success) {
+            componentName = componentNameGroup.Value.Trim ();
+            if (string.IsNullOrEmpty (componentName)) {
+              log.Warn ($"GetComponent: componentName is empty in {m_programComment} for regex {m_regex}");
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetComponent: componentName={componentName} in {m_programComment} for {m_regex}");
+              }
+            }
+          }
+        }
+
+        if (!TryGetOpData (match, "componentCode", out var componentCode)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetComponent: no valid regexMatchToOpData for componentCode");
+          }
+          var componentCodeGroup = match.Groups["componentCode"];
+          if (componentCodeGroup.Success) {
+            componentCode = componentCodeGroup.Value.Trim ();
+            if (string.IsNullOrEmpty (componentCode)) {
+              log.Warn ($"GetComponent: componentCode is empty in {m_programComment} for regex {m_regex}");
+            }
+            else {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetComponent: componentCode={componentCode} in {m_programComment} for regex {m_regex}");
+              }
+            }
+          }
+        }
+
+        componentName = componentName?.Trim ();
+        componentCode = componentCode?.Trim ();
+        if (string.IsNullOrEmpty (componentName) && string.IsNullOrEmpty (componentCode)) {
+          log.Error ($"GetComponent: no component information in {m_programComment}, regex={m_regex}");
+          return null;
+        }
+
+        IComponent component = null;
+        if (!string.IsNullOrEmpty (componentName)) {
+          component = ModelDAOHelper.DAOFactory.ComponentDAO.FindByNameAndProject (componentName, project);
+          if ((null != component)
+            && !string.IsNullOrEmpty (componentCode)
+            && (!component.Code.Equals (componentCode, StringComparison.InvariantCultureIgnoreCase))) {
+            log.Warn ($"GetComponent: component with name {componentName} has a code {component.Code} that does not match {componentCode}");
+          }
+        }
+        else if (!string.IsNullOrEmpty (componentCode)) {
+          component = ModelDAOHelper.DAOFactory.ComponentDAO.FindByCodeAndProject (componentCode, project);
+        }
+        if (component is null) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetComponent: componentName={componentName} does not exist, create it");
+          }
+          var componentType = ModelDAOHelper.DAOFactory.ComponentTypeDAO
+            .FindById (1); // 1: undefined
+          component = ModelDAOHelper.ModelFactory.CreateComponentFromType (project, componentType);
+          component.Name = componentName;
+          component.Code = componentCode;
+          ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistent (component);
+        }
+
+        return component;
+      }
+    }
+
     /// <summary>
     /// Get the operation
     /// </summary>
-    /// <param name="part">not null</param>
+    /// <param name="component">not null</param>
     /// <param name="match"></param>
     /// <returns></returns>
-    IOperation GetOperation (IPart part, Match match)
+    IOperation GetOperation (IComponent component, Match match)
     {
-      Debug.Assert (null != part);
+      Debug.Assert (null != component);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
 
-        var operations = part
+        var operations = component
           .ComponentIntermediateWorkPieces
           .Select (ciwp => ciwp.IntermediateWorkPiece.Operation)
           .Distinct ();
@@ -226,7 +458,7 @@ namespace Pulse.PluginImplementation.Analysis
         else if (log.IsDebugEnabled) {
           log.Debug ($"GetOperation: opName={opName} from plugin");
         }
-        
+
         // opCode / op1Code / op2Code
         string op1Code = null;
         string op2Code = null;
@@ -364,7 +596,7 @@ namespace Pulse.PluginImplementation.Analysis
               iwp1.OperationQuantity = qty1;
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (iwp1);
-            var l1 = part.AddIntermediateWorkPiece (iwp1);
+            var l1 = component.AddIntermediateWorkPiece (iwp1);
             ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l1);
             var iwp2 = ModelDAOHelper.ModelFactory.CreateIntermediateWorkPiece (operation);
             iwp2.Name = op2Name;
@@ -373,9 +605,9 @@ namespace Pulse.PluginImplementation.Analysis
               iwp2.OperationQuantity = qty2;
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (iwp2);
-            var l2 = part.AddIntermediateWorkPiece (iwp2);
+            var l2 = component.AddIntermediateWorkPiece (iwp2);
             ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l2);
-            ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
+            ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistent (component);
           }
           else { // !op1op2
             intermediateWorkPiece = ModelDAOHelper.ModelFactory.CreateIntermediateWorkPiece (operation);
@@ -385,9 +617,9 @@ namespace Pulse.PluginImplementation.Analysis
               intermediateWorkPiece.OperationQuantity = qty;
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
-            var l = part.AddIntermediateWorkPiece (intermediateWorkPiece);
+            var l = component.AddIntermediateWorkPiece (intermediateWorkPiece);
             ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l);
-            ModelDAOHelper.DAOFactory.PartDAO.MakePersistent (part);
+            ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistent (component);
           }
           if (null != m_sequenceCreator) {
             if (log.IsDebugEnabled) {
@@ -450,14 +682,33 @@ namespace Pulse.PluginImplementation.Analysis
       }
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        var part = GetPart (match);
-        if (part is null) {
+        IProject project = null;
+        IComponent component = null;
+        bool projectComponentIsPart = Lemoine.Info.ConfigSet
+          .Get<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.ProjectComponentIsPart));
+        bool workOrderProjectIsJob = Lemoine.Info.ConfigSet
+          .Get<bool> (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.WorkOrderProjectIsJob));
+        if (workOrderProjectIsJob) {
+          var job = GetJob (match);
+          project = job.Project;
+          component = GetComponent (project, match);
+        }
+        else if (projectComponentIsPart) {
+          var part = GetPart (match);
+          project = part.Project;
+          component = part.Component;
+        }
+        else { // WorkOrder > Project > Component
+          project = GetProject (match);
+          component = GetComponent (project, match);
+        }
+        if (component is null) {
           if (log.IsWarnEnabled) {
-            log.Warn ($"GetOperation: part is null in {m_programComment} for regex {m_regex} => return null");
+            log.Warn ($"GetOperation: component/part is null in {m_programComment} for regex {m_regex} => return null");
           }
           return null;
         }
-        var operation = GetOperation (part, match);
+        var operation = GetOperation (component, match);
         if (operation is null) {
           if (log.IsWarnEnabled) {
             log.Warn ($"GetOperation: operation is null in {m_programComment} for regex {m_regex} => return null");
