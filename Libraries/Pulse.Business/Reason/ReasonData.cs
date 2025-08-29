@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2024 Atsora Solutions
+﻿// Copyright (C) 2024-2025 Atsora Solutions
 
 using Lemoine.Business.Extension;
 using Lemoine.Core.Log;
@@ -25,51 +25,68 @@ namespace Pulse.Business.Reason
     /// <summary>
     /// Deserialize a value
     /// </summary>
-    /// <param name="json">not null</param>
-    /// <returns></returns>
     public static async Task<IDictionary<string, object>> DeserializeAsync (string json)
     {
-      Debug.Assert (null != json);
-      var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-      var extensions = await Lemoine.Business.ServiceProvider.GetAsync (extensionRequest);
-      return Deserialize (json, extensions);
+      if (IsJsonNullOrEmpty (json)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"DeserializeAsync: json is null or empty => return an empty dictionary");
+        }
+        return new Dictionary<string, object> ();
+      }
+      else {
+        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+        var extensions = await Lemoine.Business.ServiceProvider.GetAsync (extensionRequest);
+        return Deserialize (json, extensions);
+      }
     }
 
     /// <summary>
     /// Deserialize a value
     /// </summary>
-    /// <param name="jsonElement"></param>
-    /// <returns></returns>
     public static IDictionary<string, object> Deserialize (string json)
     {
-      Debug.Assert (null != json);
-      var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
-      var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
-      return Deserialize (json, extensions);
+      if (IsJsonNullOrEmpty (json)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Deserialize: json is null or empty => return an empty dictionary");
+        }
+        return new Dictionary<string, object> ();
+      }
+      else {
+        var extensionRequest = new GlobalExtensions<IReasonDataExtension> (x => x.Initialize ());
+        var extensions = Lemoine.Business.ServiceProvider.Get (extensionRequest);
+        return Deserialize (json, extensions);
+      }
     }
 
     /// <summary>
     /// Deserialize a value if the extensions are known
     /// </summary>
-    /// <param name="json">not null</param>
+    /// <param name="json"></param>
     /// <param name="extensions"></param>
     /// <returns></returns>
     public static IDictionary<string, object> Deserialize (string json, IEnumerable<IReasonDataExtension> extensions)
     {
-      Debug.Assert (null != json);
-      try {
-        var a = JsonSerializer.Deserialize<IDictionary<string, JsonElement>> (json);
-        var d = new Dictionary<string, object> ();
-        foreach (var kv in a) {
-          if (TryDeserializeItem (kv, extensions, out var v)) {
-            d[kv.Key] = v;
-          }
+      if (IsJsonNullOrEmpty (json)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Deserialize: json is null or empty => return an empty dictionary");
         }
-        return d;
+        return new Dictionary<string, object> ();
       }
-      catch (Exception ex) {
-        log.Error ($"Deserialize: exception for json={json}", ex);
-        throw;
+      else {
+        try {
+          var a = JsonSerializer.Deserialize<IDictionary<string, JsonElement>> (json);
+          var d = new Dictionary<string, object> ();
+          foreach (var kv in a) {
+            if (TryDeserializeItem (kv, extensions, out var v)) {
+              d[kv.Key] = v;
+            }
+          }
+          return d;
+        }
+        catch (Exception ex) {
+          log.Error ($"Deserialize: exception for json={json}", ex);
+          throw;
+        }
       }
     }
 
@@ -270,11 +287,11 @@ namespace Pulse.Business.Reason
     /// <returns></returns>
     public static bool AreJsonEqual (string json1, string json2)
     {
-      if (string.IsNullOrEmpty (json1)) {
-        return string.IsNullOrEmpty (json2);
+      if (IsJsonNullOrEmpty (json1)) {
+        return IsJsonNullOrEmpty (json2);
       }
       else { // json1 not null or empty 
-        if (string.IsNullOrEmpty (json2)) {
+        if (IsJsonNullOrEmpty (json2)) {
           return false;
         }
         else { // both are not null or empty

@@ -31,7 +31,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ReasonSlot : GenericMachineRangeSlot, IReasonSlot
   {
-    #region Members
     IMachineMode m_machineMode;
     IReason m_reason = null;
     IMachineObservationState m_machineObservationState;
@@ -51,11 +50,9 @@ namespace Lemoine.GDBPersistentClasses
 
     IEnumerable<IReasonExtension> m_reasonExtensions;
     IEnumerable<IProductionStateExtension> m_productionStateExtensions;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (ReasonSlot).FullName);
 
-    #region Constructors and factory methods
     /// <summary>
     /// The default constructor is forbidden
     /// and is only used by NHibernate
@@ -89,9 +86,7 @@ namespace Lemoine.GDBPersistentClasses
                          System.Environment.StackTrace);
       }
     }
-    #endregion // Constructors and factory methods
 
-    #region Getters / Setters
     /// <summary>
     /// Reason slot change
     /// </summary>
@@ -240,7 +235,7 @@ namespace Lemoine.GDBPersistentClasses
         || !this.ReasonSource.IsSameMainSource (reasonSlot.ReasonSource)
         || !Pulse.Business.Reason.ReasonData.AreJsonEqual (this.JsonData, reasonSlot.JsonData)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MergeWithNextSlot: switch to processing because incompatible reasons");
+          log.Debug ("MergeWithNextSlot: switch to processing because incompatible reasons");
         }
         this.ReasonSource = this.ReasonSource.Add (reasonSlot.ReasonSource);
         if (0 < reasonSlot.AutoReasonNumber) {
@@ -780,7 +775,6 @@ namespace Lemoine.GDBPersistentClasses
     /// Reason data in Json format
     /// </summary>
     public virtual string JsonData { get; set; } = null;
-    #endregion // Getters / Setters
 
     #region IPossibleReason implementation
     /// <summary>

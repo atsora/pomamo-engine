@@ -26,7 +26,6 @@ namespace Lemoine.Business.Reason
   {
     ILog log = LogManager.GetLogger(typeof (ReasonSelectionSlot).FullName);
 
-    #region Members
     readonly IMachine m_machine;
     readonly IReason m_reason;
     readonly string m_jsonData;
@@ -39,9 +38,7 @@ namespace Lemoine.Business.Reason
     DayRange m_dayRange;
     readonly IList<IMachineModeSubSlot> m_machineModeSlots = new List<IMachineModeSubSlot> ();
     readonly IList<IMachineObservationStateSubSlot> m_machineObservationStateSlots = new List<IMachineObservationStateSubSlot> ();
-    #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
@@ -151,22 +148,16 @@ namespace Lemoine.Business.Reason
         m_machineObservationStateSlots.Add (subSlot);
       }
     }
-    #endregion // Constructors
-    
-    #region Getters / Setters
+
     /// <summary>
     /// Reference to the machine
     /// </summary>
-    public virtual IMachine Machine {
-      get { return m_machine; }
-    }
+    public virtual IMachine Machine => m_machine;
 
     /// <summary>
     /// Reference to the reason
     /// </summary>
-    public virtual IReason Reason {
-      get { return m_reason; }
-    }
+    public virtual IReason Reason => m_reason;
 
     /// <summary>
     /// Reason data in Json format
@@ -176,37 +167,27 @@ namespace Lemoine.Business.Reason
     /// <summary>
     /// Running
     /// </summary>
-    public virtual bool Running {
-      get { return m_running; }
-    }
-    
+    public virtual bool Running => m_running;
+
     /// <summary>
     /// Overwrite required ?
     /// </summary>
-    public virtual bool OverwriteRequired {
-      get { return m_overwriteRequired; }
-    }
-    
+    public virtual bool OverwriteRequired => m_overwriteRequired;
+
     /// <summary>
     /// Reason details
     /// </summary>
-    public virtual string ReasonDetails {
-      get { return m_reasonDetails; }
-    }
-    
+    public virtual string ReasonDetails => m_reasonDetails;
+
     /// <summary>
     /// Default reason ?
     /// </summary>
-    public virtual bool DefaultReason {
-      get { return m_defaultReason; }
-    }
-    
+    public virtual bool DefaultReason => m_defaultReason;
+
     /// <summary>
     /// Selectable reasons
     /// </summary>
-    public virtual HashSet<IReason> SelectableReasons {
-      get { return m_selectableReasons; }
-    }
+    public virtual HashSet<IReason> SelectableReasons => m_selectableReasons;
     
     /// <summary>
     /// Date/time range of the slot
@@ -219,35 +200,26 @@ namespace Lemoine.Business.Reason
         m_dayRange = ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (m_dateTimeRange));
       }
     }
-    
+
     /// <summary>
     /// Day range of the slot
     /// </summary>
-    public virtual DayRange DayRange {
-      get { return m_dayRange; }
-    }
+    public virtual DayRange DayRange => m_dayRange;
     
     /// <summary>
     /// Duration of the slot
     /// </summary>
-    public virtual TimeSpan? Duration {
-      get { return m_dateTimeRange.Duration; }
-    }
-    
-    /// <summary>
-    /// Sub-slots
-    /// </summary>
-    public virtual IList<IMachineModeSubSlot> MachineModeSlots {
-      get { return m_machineModeSlots; }
-    }
+    public virtual TimeSpan? Duration => m_dateTimeRange.Duration;
 
     /// <summary>
     /// Sub-slots
     /// </summary>
-    public virtual IList<IMachineObservationStateSubSlot> MachineObservationStateSlots {
-      get { return m_machineObservationStateSlots; }
-    }
-    #endregion // Getters / Setters
+    public virtual IList<IMachineModeSubSlot> MachineModeSlots => m_machineModeSlots;
+
+    /// <summary>
+    /// Sub-slots
+    /// </summary>
+    public virtual IList<IMachineObservationStateSubSlot> MachineObservationStateSlots => m_machineObservationStateSlots;
 
     /// <summary>
     /// IMergeable implementation

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,7 +21,6 @@ namespace Lemoine.GDBPersistentClasses
     , IVersionable
     , IEquatable<IReasonProposal>
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -31,42 +31,28 @@ namespace Lemoine.GDBPersistentClasses
     ReasonProposalKind m_kind;
     string m_reasonDetails;
     string m_jsonData;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ReasonProposal).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Id
     /// </summary>
-    public virtual int Id
-    {
-      get { return this.m_id; }
-    }
+    public virtual int Id => this.m_id;
 
     /// <summary>
     /// Version
     /// </summary>
-    public virtual int Version
-    {
-      get { return this.m_version; }
-    }
+    public virtual int Version => this.m_version;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
-    public virtual IMachine Machine
-    {
-      get { return m_machine; }
-    }
+    public virtual IMachine Machine => m_machine;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
-    public virtual long ModificationId
-    {
-      get { return m_modificationId; }
-    }
+    public virtual long ModificationId => m_modificationId;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
@@ -80,56 +66,37 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
-    public virtual IReason Reason
-    {
-      get { return m_reason; }
-    }
+    public virtual IReason Reason => m_reason;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
-    public virtual double ReasonScore
-    {
-      get { return m_reasonScore; }
-    }
+    public virtual double ReasonScore => m_reasonScore;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
-    public virtual ReasonProposalKind Kind
-    {
-      get { return m_kind; }
-    }
+    public virtual ReasonProposalKind Kind => m_kind;
 
     /// <summary>
     /// <see cref="IReasonProposal"/>
     /// </summary>
-    public virtual string ReasonDetails
-    {
-      get { return m_reasonDetails; }
-    }
+    public virtual string ReasonDetails => m_reasonDetails;
 
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual bool OverwriteRequired
-    {
-      get { return this.Kind.IsOverwriteRequired (); }
-    }
+    public virtual bool OverwriteRequired => this.Kind.IsOverwriteRequired ();
 
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual ReasonSource ReasonSource
-    {
-      get { return this.Kind.ConvertToReasonSource (); }
-    }
+    public virtual ReasonSource ReasonSource => this.Kind.ConvertToReasonSource ();
 
     /// <summary>
     /// Reason data in Json format
     /// </summary>
     public virtual string JsonData => m_jsonData;
-    #endregion // Getters / Setters
 
     #region IPossibleReason implementation
     /// <summary>
@@ -140,26 +107,17 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual UtcDateTimeRange RestrictedRange
-    {
-      get { return this.DateTimeRange; }
-    }
+    public virtual UtcDateTimeRange RestrictedRange => this.DateTimeRange;
 
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual IMachineMode RestrictedMachineMode
-    {
-      get { return null; }
-    }
+    public virtual IMachineMode RestrictedMachineMode => null;
 
     /// <summary>
     /// <see cref="IPossibleReason"/>
     /// </summary>
-    public virtual IMachineObservationState RestrictedMachineObservationState
-    {
-      get { return null; }
-    }
+    public virtual IMachineObservationState RestrictedMachineObservationState => null;
     #endregion // IPossibleReason implementation
 
     #region Constructors

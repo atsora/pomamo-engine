@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -35,19 +36,13 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     UtcDateTimeRange m_cacheRange;
     IEnumerable<IReasonProposal> m_cacheData = null;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public ReasonModificationAuto ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     void ResetCache ()
     {
       m_cacheRange = new UtcDateTimeRange ();
@@ -120,7 +115,6 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
       return Lemoine.Business.ServiceProvider
         .Get (request);
     }
-    #endregion // Methods
 
     #region IPossibleReasonExtension implementation
     /// <summary>
