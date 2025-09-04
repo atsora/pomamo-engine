@@ -194,7 +194,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion
 
-    #region Constructors
     /// <summary>
     /// Default Constructor
     /// </summary>
@@ -210,7 +209,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Login = login;
       this.Password = password;
     }
-    #endregion
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

@@ -238,7 +238,6 @@ namespace Lemoine.Business.Machine
 
     readonly string m_login;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -246,7 +245,6 @@ namespace Lemoine.Business.Machine
     {
       m_login = login;
     }
-    #endregion // Constructors
 
     #region IRequest implementation
     /// <summary>

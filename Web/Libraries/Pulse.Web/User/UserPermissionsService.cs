@@ -25,12 +25,10 @@ namespace Pulse.Web.User
   {
     static readonly ILog log = LogManager.GetLogger (typeof (UserPermissionsService).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public UserPermissionsService () { }
-    #endregion // Constructors
 
     /// <summary>
     /// Post method

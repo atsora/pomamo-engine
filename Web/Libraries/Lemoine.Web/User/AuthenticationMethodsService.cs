@@ -27,7 +27,6 @@ namespace Lemoine.Web.User
     const string USER_PASSWORD_AUTHENTICATION_KEY = "Web.User.UserPasswordAuthentication";
     const bool USER_PASSWORD_AUTHENTICATION_DEFAULT = true;
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -35,9 +34,7 @@ namespace Lemoine.Web.User
       : base (Lemoine.Core.Cache.CacheTimeOut.Config)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -77,6 +74,5 @@ namespace Lemoine.Web.User
       }
       return string.Equals (ext.ApplicationName, applicationName);
     }
-    #endregion // Methods
   }
 }
