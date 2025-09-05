@@ -21,12 +21,20 @@ namespace Lemoine.IO
 
     /// <summary>
     /// Is the file ready for reading (not locked by another process)
+    /// 
+    /// true is returned if the files does not exist any more
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
     public static bool IsFileReady (string path)
     {
       try {
+        if (!System.IO.File.Exists (path)) {
+          if (slog.IsDebugEnabled) {
+            slog.Debug ($"IsFileReady: file does not exist any more => return true");
+          }
+          return true; // file does not exist any more
+        }
         using (var stream = System.IO.File.Open (path, FileMode.Open, FileAccess.Read, FileShare.None)) {
           return stream.Length > 0; // file is ready
         }
@@ -85,7 +93,7 @@ namespace Lemoine.IO
         }
         else {
           if (slog.IsDebugEnabled) {
-            slog.Debug ($"WaitForFileReady: file {path} is ready");
+            slog.Debug ($"WaitForFileReady: file {path} is ready or does not exist any more");
           }
           return true;
         }
