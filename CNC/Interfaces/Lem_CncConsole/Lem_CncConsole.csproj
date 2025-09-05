@@ -7,7 +7,8 @@
     <OutputType>Exe</OutputType>
     <Platforms>x86</Platforms>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+    <!-- Temporary work around -->
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' Or '$(Configuration)'=='VS'">
@@ -50,8 +51,10 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="S7netplus" />
-    <PackageReference Include="System.IO.Ports" /><!--indirect dependency for Lemoine.Cnc.Serial -->
-    <PackageReference Include="System.Data.SQLite.Core" /><!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
+    <PackageReference Include="System.IO.Ports" />
+    <!--indirect dependency for Lemoine.Cnc.Serial -->
+    <PackageReference Include="System.Data.SQLite.Core" />
+    <!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
     <PackageReference Include="System.Net.Primitives" />
 
     <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
@@ -73,8 +76,7 @@
     <PackageReference Include="NModbus4.NetCore" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="StrongNamer" />
-    <PackageReference Include="NModbus4" />
+    <None Include="..\..\..\..\pomamo-cnc-extern\NModbus4\NModbus4.dll" Visible="False" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>9.0.4.0</AssemblyVersion>
+    <AssemblyVersion>9.0.5.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

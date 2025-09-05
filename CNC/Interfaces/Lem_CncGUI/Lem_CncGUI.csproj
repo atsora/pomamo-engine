@@ -11,7 +11,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RootNamespace>Lem_CncGUI</RootNamespace>
     <AssemblyName>Lem_CncGUI</AssemblyName>
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+    <!-- Temporary work around -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
-  
+
   <!-- CNC Module and plugin dependencies -->
   <ItemGroup>
     <None Include="..\..\..\..\pomamo-cnc-extern\EthernetIP\plctag.dll" Visible="False" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
@@ -39,8 +40,10 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="S7netplus" />
-    <PackageReference Include="System.IO.Ports" /> <!--indirect dependency for Lemoine.Cnc.Serial -->
-    <PackageReference Include="System.Data.SQLite.Core" /><!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
+    <PackageReference Include="System.IO.Ports" />
+    <!--indirect dependency for Lemoine.Cnc.Serial -->
+    <PackageReference Include="System.Data.SQLite.Core" />
+    <!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
     <PackageReference Include="System.Net.Primitives" />
     <PackageReference Include="System.Text.Json" />
 
@@ -63,8 +66,7 @@
     <PackageReference Include="NModbus4.NetCore" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="StrongNamer" />
-    <PackageReference Include="NModbus4" />
+    <None Include="..\..\..\..\pomamo-cnc-extern\NModbus4\NModbus4.dll" Visible="False" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
   </ItemGroup>
 
   <!--ItemGroup Condition=" '$(PlatformTarget)' == 'x86' ">
@@ -96,7 +98,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
-    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />    
+    <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
@@ -118,5 +120,5 @@
   <ItemGroup>
     <Folder Include="bin\VS\net8.0\runtimes\win-x86\native\" />
   </ItemGroup>
-  
+
 </Project>

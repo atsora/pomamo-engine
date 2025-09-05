@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,6 +33,12 @@ namespace Lemoine.IO
       }
       catch (IOException) { // File is still locked
         return false;
+      }
+      catch (UnauthorizedAccessException ex) {
+        var isDirectory = System.IO.Directory.Exists (path);
+        var isFile = System.IO.File.Exists (path);
+        slog.Error ($"IsFileReady: unauthorized access for {path}. IsDirectory={isDirectory}, IsFile={isFile}", ex);
+        throw;
       }
     }
 

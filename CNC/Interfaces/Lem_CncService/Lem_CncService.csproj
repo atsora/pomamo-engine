@@ -7,7 +7,8 @@
     <OutputType>Exe</OutputType>
     <Platforms>x86</Platforms>
     <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+    <!-- Temporary work around -->
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
@@ -37,13 +38,13 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
     <PackageReference Include="MQTTnet" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="NModbus4" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="S7netplus" />
-    <PackageReference Include="StrongNamer" />
-    <PackageReference Include="System.IO.Ports" /> <!-- indirect dependency for Lemoine.Cnc.Serial -->
-    <PackageReference Include="System.Data.SQLite.Core" /><!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
+    <PackageReference Include="System.IO.Ports" />
+    <!-- indirect dependency for Lemoine.Cnc.Serial -->
+    <PackageReference Include="System.Data.SQLite.Core" />
+    <!-- indirect dependency for Lemoine.Cnc.SQLiteQueue -->
     <PackageReference Include="System.Net.Primitives" />
     <PackageReference Include="System.Text.Json" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.FSharp\Lemoine.FSharp.fsproj" AdditionalProperties="TargetPlatform=AnyCPU" />
@@ -79,6 +80,9 @@
     <ProjectReference Include="..\..\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Cnc.DataRepository\Lemoine.Cnc.DataRepository.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <None Include="..\..\..\..\pomamo-cnc-extern\NModbus4\NModbus4.dll" Visible="False" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+  </ItemGroup>
 
   <ItemGroup Condition="( '$(PlatformTarget)' == 'x86' ) and ( '$(TargetFramework)' != 'net40' )">
     <None Include="bin\$(ProductDir)\$(Configuration)\$(TargetFramework)\x86\SQLite.Interop.dll" CopyToPublishDirectory="Always" Link="SQLite.Interop.dll" />
@@ -98,11 +102,11 @@
     <ProjectReference Include="..\..\Lemoine.Cnc.Engine\Lemoine.Cnc.Engine.csproj" AdditionalProperties="TargetFramework=net40" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.ServiceCore\Lemoine.ServiceCore.csproj" AdditionalProperties="TargetFramework=net40" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />
   </ItemGroup>
-    
+
   <ItemGroup>
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.ServiceModel" />
@@ -119,5 +123,5 @@
     <None Include="Lem_CncService.exe.options" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
     <None Include="Lem_CncService.template.exe.config" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
   </ItemGroup>
-  
+
 </Project>
