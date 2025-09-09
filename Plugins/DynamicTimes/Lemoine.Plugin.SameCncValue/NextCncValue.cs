@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,7 +19,7 @@ namespace Lemoine.Plugin.SameCncValue
   /// Identify the time of the next cnc value.
   /// This dynamic time takes the following parameters:
   /// <item>either the field ID</item>
-  /// <item>or the machine mode ID followed by the field ID</item>
+  /// <item>or the machine module ID followed by the field ID</item>
   /// 
   /// Examples:
   /// <item>GetDynamicTime ("NextCncValue(118)")</item>
@@ -43,10 +44,7 @@ namespace Lemoine.Plugin.SameCncValue
 
     public string Name => "NextCncValue";
 
-    public bool IsApplicable ()
-    {
-      return true;
-    }
+    public bool IsApplicable () => true;
 
     public DynamicTimeApplicableStatus IsApplicableAt (DateTime at)
     {
@@ -63,7 +61,7 @@ namespace Lemoine.Plugin.SameCncValue
             }
             else {
               if (log.IsWarnEnabled) {
-                log.WarnFormat ("IsApplicableAt: gap between {0} and {1} => NotApplicable", at, nextCncValue.Begin);
+                log.Warn ($"IsApplicableAt: gap between {at} and {nextCncValue.Begin} => NotApplicable");
               }
               return DynamicTimeApplicableStatus.NoAtDateTime;
             }
@@ -88,7 +86,7 @@ namespace Lemoine.Plugin.SameCncValue
         .Intersects (new UtcDateTimeRange (dateTime)));
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Get: dateTime={0} limit={1} hint={2} => No data", dateTime, limit, hint);
+          log.Debug ($"Get: dateTime={dateTime} limit={limit} hint={hint} => No data");
         }
         return this.CreateNoData ();
       }
@@ -122,7 +120,7 @@ namespace Lemoine.Plugin.SameCncValue
             if (null == v) {
               if (!cncValue.DateTimeRange.ContainsElement (dateTime)) {
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: no cnc value at {0} (initial gap) => NotApplicable", dateTime);
+                  log.Warn ($"Get: no cnc value at {dateTime} (initial gap) => NotApplicable");
                 }
                 return this.CreateNotApplicable ();
               }
@@ -132,7 +130,7 @@ namespace Lemoine.Plugin.SameCncValue
               Debug.Assert (null != v);
               if (lastCncValueEnd < cncValue.Begin) { // Gap
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: gap {0}-{1} => approximative final", lastCncValueEnd, cncValue.Begin);
+                  log.Warn ($"Get: gap {lastCncValueEnd}-{cncValue.Begin} => approximative final");
                 }
                 return this.CreateFinal (lastCncValueEnd);
               }
@@ -224,7 +222,7 @@ namespace Lemoine.Plugin.SameCncValue
       }
       else {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetInitialGap: initial gap between {0} and {1} => NotApplicable", dateTime, nextCncValue.Begin);
+          log.Warn ($"GetInitialGap: initial gap between {dateTime} and {nextCncValue.Begin} => NotApplicable");
         }
         return this.CreateNotApplicable ();
       }
@@ -281,7 +279,7 @@ namespace Lemoine.Plugin.SameCncValue
 
       int fieldId;
       if (!int.TryParse (fieldIdParameter, out fieldId)) {
-        log.ErrorFormat ("Initialize: invalid fieldId {0}", fieldIdParameter);
+        log.Error ($"Initialize: invalid fieldId {fieldIdParameter}");
         return false;
       }
 
@@ -289,7 +287,7 @@ namespace Lemoine.Plugin.SameCncValue
         m_field = ModelDAOHelper.DAOFactory.FieldDAO
           .FindById (fieldId);
         if (null == m_field) {
-          log.ErrorFormat ("Initialize: unknown field id {0}", fieldId);
+          log.Error ($"Initialize: unknown field id {fieldId}");
           return false;
         }
 
@@ -301,13 +299,13 @@ namespace Lemoine.Plugin.SameCncValue
         else { // null != m_machine
           int machineModuleId;
           if (!int.TryParse (machineModuleIdParameter, out machineModuleId)) {
-            log.ErrorFormat ("Initialize: invalid machine module id {0}", machineModuleIdParameter);
+            log.Error ($"Initialize: invalid machine module id {machineModuleIdParameter}");
             return false;
           }
           m_machineModule = ModelDAOHelper.DAOFactory.MachineModuleDAO
             .FindById (machineModuleId);
           if (null == m_machineModule) {
-            log.ErrorFormat ("Initialize: unknown machine module id {0}", machineModuleId);
+            log.Error ($"Initialize: unknown machine module id {machineModuleId}");
             return false;
           }
         }

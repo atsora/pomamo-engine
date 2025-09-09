@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -9,6 +10,8 @@ using System.Linq;
 using Lemoine.Extensions.Configuration.GuiBuilder;
 using Lemoine.Core.Log;
 using Lemoine.ModelDAO;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Lemoine.Plugin.CncValueTime
 {
@@ -18,7 +21,6 @@ namespace Lemoine.Plugin.CncValueTime
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name prefix (mandatory)
     /// 
@@ -39,8 +41,16 @@ namespace Lemoine.Plugin.CncValueTime
     /// <summary>
     /// Lambda condition
     /// </summary>
-    [PluginConf ("Text", "Lambda condition", Description = "A lambda expression object => bool to define the condition", Optional = false)]
-    public string LambdaCondition { get; set; }
+    [PluginConf ("Text", "Lambda condition", Description = "A lambda expression object => bool to define the condition", Optional = true)]
+    [DefaultValue("")]
+    public string LambdaCondition { get; set; } = "";
+
+    /// <summary>
+    /// Lambda condition
+    /// </summary>
+    [PluginConf ("Text", "Regex condition", Description = "A regex to define the condition", Optional = true)]
+    [DefaultValue ("")]
+    public string RegexCondition { get; set; } = "";
 
     /// <summary>
     /// Optionally a cache time out
@@ -59,9 +69,7 @@ namespace Lemoine.Plugin.CncValueTime
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -84,9 +92,19 @@ namespace Lemoine.Plugin.CncValueTime
         errorList.Add ("Invalid NamePrefix (empty)");
         result = false;
       }
-      if (string.IsNullOrEmpty (this.LambdaCondition)) {
-        errorList.Add ("Invalid lambda (empty)");
+      if (string.IsNullOrEmpty (this.LambdaCondition) && string.IsNullOrEmpty (this.RegexCondition)) {
+        errorList.Add ("Both conditions empty (lambda an regex)");
         result = false;
+      }
+      if (!string.IsNullOrEmpty (this.RegexCondition)) {
+        try {
+          new Regex (this.RegexCondition);
+        }
+        catch (Exception ex) {
+          log.Error ($"IsValid: invalid regex {this.RegexCondition}", ex);
+          errorList.Add ("Invalid regex condition");
+          return false;
+        }
       }
       if (0 == this.FieldId) {
         errorList.Add ("Invalid field (empty)");
@@ -106,7 +124,6 @@ namespace Lemoine.Plugin.CncValueTime
       errors = errors.Concat (errorList);
       return result;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="Lemoine.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>

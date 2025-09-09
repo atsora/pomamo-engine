@@ -2,18 +2,19 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using Lemoine.Core.Cache;
+using Lemoine.Core.Log;
+using Lemoine.Extensions;
+using Lemoine.Extensions.Business.DynamicTimes;
+using Lemoine.Model;
+using Lemoine.ModelDAO;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Lemoine.Core.Log;
-using Lemoine.ModelDAO;
-using Lemoine.Extensions;
-using Lemoine.Extensions.Business.DynamicTimes;
-using Lemoine.Model;
-using Lemoine.Core.Cache;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Lemoine.Plugin.CncValueTime
@@ -35,7 +36,8 @@ namespace Lemoine.Plugin.CncValueTime
     IField m_field;
     string m_lambdaCondition;
     readonly ScriptOptions m_scriptOptions;
-    Func<object, bool> m_lambda;
+    Func<object, bool> m_lambda = null;
+    Regex m_regexCondition = null;
 
     public IMachine Machine
     {
@@ -72,6 +74,10 @@ namespace Lemoine.Plugin.CncValueTime
         })
         .AddImports (new string[] { "System" });
     }
+
+    bool IsMatch (ICncValue cncValue) =>
+      (m_lambda?.Invoke (cncValue.Value) ?? true)
+      && (m_regexCondition?.IsMatch (cncValue.Value.ToString ()) ?? true);
 
     public IDynamicTimeResponse Get (DateTime dateTime, UtcDateTimeRange hint, UtcDateTimeRange limit)
     {
@@ -121,7 +127,7 @@ namespace Lemoine.Plugin.CncValueTime
 
             lastCncValue = cncValue;
 
-            if (m_lambda.Invoke (cncValue.Value)) {
+            if (IsMatch (cncValue)) {
               if (range.ContainsElement (cncValue.End)) {
                 if (log.IsDebugEnabled) {
                   log.Debug ($"Get: condition met at {cncValue.End}");
@@ -219,17 +225,28 @@ namespace Lemoine.Plugin.CncValueTime
         }
       }
 
+      if (string.IsNullOrEmpty (m_configuration.LambdaCondition) && string.IsNullOrEmpty (m_configuration.RegexCondition)) {
+        log.Error ($"Initialize: no condition was defined");
+        return false;
+      }
       m_lambdaCondition = m_configuration.LambdaCondition;
-      if (string.IsNullOrEmpty (m_lambdaCondition)) {
-        log.Error ($"Initialize: no lambda condition was defined");
-        return false;
+      if (!string.IsNullOrEmpty (m_configuration.LambdaCondition)) {
+        try {
+          m_lambda = Task.Run (() => CSharpScript.EvaluateAsync<Func<object, bool>> (m_lambdaCondition, m_scriptOptions)).Result;
+        }
+        catch (Exception ex) {
+          log.Error ($"Initialize: invalid expression {m_lambdaCondition}", ex);
+          return false;
+        }
       }
-      try {
-        m_lambda = Task.Run (() => CSharpScript.EvaluateAsync<Func<object, bool>> (m_lambdaCondition, m_scriptOptions)).Result;
-      }
-      catch (Exception ex) {
-        log.Error ($"Initialize: invalid expression {m_lambdaCondition}", ex);
-        return false;
+      if (!string.IsNullOrEmpty (m_configuration.RegexCondition)) {
+        try {
+          m_regexCondition = new Regex (m_configuration.RegexCondition);
+        }
+        catch (Exception ex) {
+          log.Error ($"Initialize: invalid regex {m_configuration.RegexCondition}", ex);
+          return false;
+        }
       }
 
       return true;
