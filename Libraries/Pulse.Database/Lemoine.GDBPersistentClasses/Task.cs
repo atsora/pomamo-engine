@@ -25,7 +25,7 @@ namespace Lemoine.GDBPersistentClasses
     IOperation m_operation = null;
     IComponent m_component = null;
     IWorkOrder m_workOrder = null;
-    TaskStatus m_taskStatus = TaskStatus.New;
+    Lemoine.Model.TaskStatus m_taskStatus = Lemoine.Model.TaskStatus.New;
     int? m_quantity = null;
     TimeSpan? m_setupDuration = null;
     TimeSpan? m_cycleDuration = null;
@@ -139,7 +139,7 @@ namespace Lemoine.GDBPersistentClasses
     /// Task status
     /// </summary>
     [XmlAttribute("TaskStatus"), MergeAuto]
-    public virtual TaskStatus TaskStatus {
+    public virtual Lemoine.Model.TaskStatus TaskStatus {
       get { return m_taskStatus; }
       set { m_taskStatus = value; }
     }
