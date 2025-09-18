@@ -435,7 +435,7 @@ namespace Lemoine.CncEngine
     Repository CreateRepositoryFromLocalFileParameters (string localFilePath, string parameters, IDictionary<string, string> keyParams)
     {
       var name = Path.GetFileNameWithoutExtension (localFilePath);
-      var cncAcquisition = ModelDAO.ModelDAOHelper.ModelFactory.CreateCncAcquisition ();
+      ICncAcquisition cncAcquisition = new CncAcquisitionLocal ();
       cncAcquisition.Name = name;
       cncAcquisition.ConfigFile = localFilePath;
       cncAcquisition.ConfigParameters = parameters;
