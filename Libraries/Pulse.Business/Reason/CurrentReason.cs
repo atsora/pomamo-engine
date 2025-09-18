@@ -132,7 +132,7 @@ namespace Lemoine.Business.Reason
         DateTime? periodStart = null;
 
         // Transaction 1
-        using (IDAOTransaction transaction = session.BeginReadOnlyDeferrableTransaction ("Web.CurrentReason")) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyDeferrableTransaction ("Web.CurrentReason", transactionLevel: TransactionLevel.Serializable)) {
 
           // Current reason slot ok ?
           var machineStatus = GetFromMachineStatus (m_machine, m_period, m_notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
@@ -165,7 +165,8 @@ namespace Lemoine.Business.Reason
 
         // Transaction 2
         if ((null != machineMode) && (reason is null)) {
-          using (IDAOTransaction transaction = session.BeginReadOnlyDeferrableTransaction ("Web.CurrentReason.GuessReasonFromMachineMode")) {
+          using (IDAOTransaction transaction = session.BeginReadOnlyDeferrableTransaction ("Web.CurrentReason.GuessReasonFromMachineMode", transactionLevel: TransactionLevel.Serializable)) {
+            // Note: use a serializable transaction to avoid that a reason slot is updated during the process
             if (log.IsDebugEnabled) {
               log.Debug ($"Get: try to guess reason from machineMode {machineMode.Id}");
             }

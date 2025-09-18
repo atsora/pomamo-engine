@@ -725,7 +725,7 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
           throw new InvalidOperationException ("Invalid reason slot, with an empty range");
         }
         else if (Bound.Compare<DateTime> (reasonSlotAfter.DateTimeRange.Upper, dateTimeAfter) <= 0) {
-          log.Fatal ($"ExtendToRight: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not after reason slot range={range}");
+          log.Fatal ($"ExtendToRight: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not after reason slot range={range} dateTimeAfter={dateTimeAfter}");
           throw new Exception ("Invalid reason slot after");
         }
         else if (!reasonSlotAfter.DateTimeRange.Lower.Value.Equals (range.Upper.Value)) {
