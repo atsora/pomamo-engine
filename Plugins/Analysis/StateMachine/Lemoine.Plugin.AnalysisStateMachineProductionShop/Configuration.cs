@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -23,69 +24,75 @@ namespace Lemoine.Plugin.AnalysisStateMachineProductionShop
     static readonly TimeSpan VERY_LOW_PRIORITY_FREQUENCY_DEFAULT = TimeSpan.FromMinutes (5);
     static readonly int AUTO_PRIORITY_DEFAULT = 50;
 
-    #region Getters / Setters
     [PluginConf ("DoubleAsNumericUpDown", "ConfigPriority. Default is 30.0", Description = "Config priority", Parameters = "99999.99")]
     [DefaultValue (30.0)]
     public double ConfigPriority
     {
       get; set;
-    }
+    } = 30.0;
 
     [PluginConf ("DoubleAsNumericUpDown", "StateMachinePriority. Default is 10.0", Description = "State machine priority", Parameters = "99999.99")]
     [DefaultValue (10.0)]
     public double StateMachinePriority
     {
       get; set;
-    }
+    } = 10.0;
 
     [PluginConf ("DurationPicker", "Maximum time", Description = "Maximum time for the state machine execution. Default is 0:01:30", Parameters = "0:00:10")]
     [DefaultValue ("0:01:30")]
     public TimeSpan MaxTime
     {
       get; set;
-    }
+    } = TimeSpan.FromSeconds (90);
 
     [PluginConf ("DurationPicker", "Machine state template analysis maximum time", Description = "Maximum time for the analysis of the machine state templates. Default is 0:02:00", Parameters = "0:00:10")]
     [DefaultValue ("0:02:00")]
     public TimeSpan MachineStateTemplatesMaxTime
     {
       get; set;
-    }
+    } = TimeSpan.FromMinutes (2);
 
     [PluginConf ("DurationPicker", "Pending modifications maximum time", Description = "Maximum time for the analysis of the pending modifications. Default is 0:01:30", Parameters = "0:00:10")]
     [DefaultValue ("0:01:30")]
     public TimeSpan PendingModificationsMaxTime
     {
       get; set;
-    }
+    } = TimeSpan.FromSeconds (90);
+
+    [PluginConf ("IntAsNumericUpDown", "High modification priority", Description = "Maximum priority of a high priority modification. Default is 200", Parameters = "999999")]
+    [DefaultValue (200)]
+    public int HighModificationPriority
+    {
+      get; set;
+    } = 200;
 
     [PluginConf ("IntAsNumericUpDown", "Normal modification priority", Description = "Maximum priority of a normal priority modification. Default is 100", Parameters = "999999")]
     [DefaultValue (100)]
     public int NormalModificationPriority
     {
       get; set;
-    }
+    } = NORMAL_PRIORITY_DEFAULT;
 
     [PluginConf ("IntAsNumericUpDown", "Low modification priority", Description = "Maximum priority of a low priority modification. Default is 50", Parameters = "999999")]
     [DefaultValue (50)]
     public int LowModificationPriority
     {
       get; set;
-    }
+    } = LOW_PRIORITY_DEFAULT;
 
     [PluginConf ("DurationPicker", "Low priority frequency", Description = "Frequency for the low priority modifications. Default is 0:02:00", Parameters = "0:00:10")]
     [DefaultValue ("0:02:00")]
     public TimeSpan LowPriorityFrequency
     {
       get; set;
-    }
+    } = LOW_PRIORITY_FREQUENCY_DEFAULT;
 
     [PluginConf ("DurationPicker", "Very low priority frequency", Description = "Frequency for the low priority modifications. Default is 0:05:00", Parameters = "0:00:10")]
     [DefaultValue ("0:05:00")]
     public TimeSpan VeryLowPriorityFrequency
     {
       get; set;
-    }
+    } = VERY_LOW_PRIORITY_FREQUENCY_DEFAULT;
 
     [PluginConf ("IntAsNumericUpDown", "Auto modification priority", Description = "Priority of an auto modification. Default is 50", Parameters = "999999")]
     [DefaultValue (50)]
@@ -99,50 +106,39 @@ namespace Lemoine.Plugin.AnalysisStateMachineProductionShop
     public int FactNumber
     {
       get; set;
-    }
+    } = 50;
 
     [PluginConf ("DurationPicker", "Processing reason slots analysis maximum time", Description = "Maximum time for the analysis of the processing reason slots. Default is 0:00:30", Parameters = "0:00:10")]
     [DefaultValue ("0:00:30")]
     public TimeSpan ProcessingReasonSlotsMaxTime
     {
       get; set;
-    }
+    } = TimeSpan.FromSeconds (30);
 
     [PluginConf ("DurationPicker", "Detection analysis maximum time", Description = "Maximum time for the detection analysis. Default is 0:01:00", Parameters = "0:00:10")]
     [DefaultValue ("0:01:00")]
     public TimeSpan DetectionMaxTime
     {
       get; set;
-    }
+    } = TimeSpan.FromMinutes (1);
 
     [PluginConf ("DurationPicker", "Auto-sequences analysis maximum time", Description = "Maximum time for the analysis of the auto-sequences. Default is 0:00:40", Parameters = "0:00:10")]
     [DefaultValue ("0:00:40")]
     public TimeSpan AutoSequencesMaxTime
     {
       get; set;
-    }
+    } = TimeSpan.FromSeconds (40);
 
-    #endregion // Getters / Setters
+    [PluginConf ("Bool", "Manual reason", Description = "Are manual reasons active? Give a higher priority to them. Default: false")]
+    [DefaultValue (false)]
+    public bool ManualReason
+    { get; set; } = false;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public Configuration ()
     {
-      this.ConfigPriority = 30.0;
-      this.StateMachinePriority = 10.0;
-      this.MaxTime = TimeSpan.FromSeconds (90);
-      this.MachineStateTemplatesMaxTime = TimeSpan.FromMinutes (2);
-      this.PendingModificationsMaxTime = TimeSpan.FromSeconds (90);
-      this.NormalModificationPriority = NORMAL_PRIORITY_DEFAULT;
-      this.LowModificationPriority = LOW_PRIORITY_DEFAULT;
-      this.LowPriorityFrequency = LOW_PRIORITY_FREQUENCY_DEFAULT;
-      this.VeryLowPriorityFrequency = VERY_LOW_PRIORITY_FREQUENCY_DEFAULT;
-      this.FactNumber = 50;
-      this.ProcessingReasonSlotsMaxTime = TimeSpan.FromSeconds (30);
-      this.DetectionMaxTime = TimeSpan.FromMinutes (1);
-      this.AutoSequencesMaxTime = TimeSpan.FromSeconds (40);
     }
 
     /// <summary>
@@ -166,6 +162,5 @@ namespace Lemoine.Plugin.AnalysisStateMachineProductionShop
       errors = errorList;
       return true;
     }
-    #endregion // Constructors
   }
 }

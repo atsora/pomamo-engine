@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -40,15 +41,37 @@ namespace Lemoine.Plugin.AnalysisStateMachineProductionShop
         return false;
       }
 
+      var highPriority = m_configuration.HighModificationPriority;
+
       m_context = context;
       IState<IMonitoredMachineActivityAnalysis> nextState;
       var endState = new EndState<IMonitoredMachineActivityAnalysis> ();
       nextState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("CleanFlaggedModifications", "CleanFLaggedModifications", (c, t) => c.CleanFlaggedModifications (t), endState, endState, maxTimeState: endState);
       nextState = new ConditionState<IMonitoredMachineActivityAnalysis> ("TestIsCleanFlaggedModificationsRequired",
         m_context.IsCleanFlaggedModificationsRequired, nextState, endState);
-      nextState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("AutoSequence", (c, t) => c.RunAutoSequenceAnalysis (t), nextState, nextState, maxTimeState: endState);
-      nextState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("Detection", (c, t) => c.RunDetectionAnalysis (t), nextState, nextState, maxTimeState: nextState);
-      nextState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("ProcessingReasonSlots", (c, t) => c.RunProcessingReasonSlotsAnalysis (t), nextState, nextState, maxTimeState: nextState);
+      var autoSequenceState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("AutoSequence", (c, t) => c.RunAutoSequenceAnalysis (t), nextState, nextState, maxTimeState: endState);
+      nextState = autoSequenceState;
+      
+      var processingState2 = new AnalysisState<IMonitoredMachineActivityAnalysis> ("ProcessingReasonSlots2", "ProcessingReasonSlots", (c, t) => c.RunProcessingReasonSlotsAnalysis (t), autoSequenceState, autoSequenceState, maxTimeState: autoSequenceState);
+      var beforeProcessingState2 = new CheckMaxTime<IMonitoredMachineActivityAnalysis> (autoSequenceState, processingState2);
+      var modificationsState2 = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications2", "PendingModificationsHigh", (c, t) => c.RunPendingModificationsAnalysis (t, highPriority, highPriority), beforeProcessingState2, beforeProcessingState2, maxTimeState: autoSequenceState);
+      var beforeModificationsState2 = new CheckMaxTime<IMonitoredMachineActivityAnalysis> (autoSequenceState, modificationsState2);
+      if (m_configuration.ManualReason) {
+        nextState = beforeModificationsState2;
+      }
+
+      var detectionState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("Detection", (c, t) => c.RunDetectionAnalysis (t), nextState, nextState, maxTimeState: autoSequenceState);
+      nextState = detectionState;
+
+      var processingState1 = new AnalysisState<IMonitoredMachineActivityAnalysis> ("ProcessingReasonSlots1", "ProcessingReasonSlots", (c,t) => c.RunProcessingReasonSlotsAnalysis (t), detectionState, detectionState, maxTimeState: detectionState);
+      var beforeProcessingState1 = new CheckMaxTime<IMonitoredMachineActivityAnalysis> (detectionState, processingState1);
+      var modificationsState1 = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications1", "PendingModificationsHigh", (c, t) => c.RunPendingModificationsAnalysis (t, highPriority, highPriority), beforeProcessingState1, beforeProcessingState1, maxTimeState: detectionState);
+      var beforeModificationsState1 = new CheckMaxTime<IMonitoredMachineActivityAnalysis> (detectionState, modificationsState1);
+      if (m_configuration.ManualReason) {
+        nextState = beforeModificationsState1;
+      }
+
+      nextState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("ProcessingReasonSlots", (c, t) => c.RunProcessingReasonSlotsAnalysis (t), nextState, nextState, maxTimeState: detectionState);
       var activityStateExceptionState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("ProcessingReasonSlots", (c, t) => c.RunProcessingReasonSlotsAnalysis (t), endState, endState, maxTimeState: endState);
       nextState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("Activity", (c, t) => c.RunActivityAnalysis (t), nextState, activityStateExceptionState, maxTimeState: nextState);
       var activityState = nextState;
