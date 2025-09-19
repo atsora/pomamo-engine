@@ -24,18 +24,12 @@ namespace Lemoine.Business.Operation
     static readonly string IN_PROGRESS_CACHE_TIME_OUT_KEY = "Business.Operation.CycleCounter.InProgressCacheTimeOut";
     static readonly TimeSpan IN_PROGRESS_CACHE_TIME_OUT_DEFAULT = TimeSpan.FromSeconds (5);
 
-    #region Members
     readonly IMonitoredMachine m_machine;
     readonly UtcDateTimeRange m_range;
     readonly UtcDateTimeRange m_preLoadRange;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (CycleCounter).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -52,10 +46,6 @@ namespace Lemoine.Business.Operation
 
       log = LogManager.GetLogger ($"{typeof (CycleCounter).FullName}.{machine.Id}");
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

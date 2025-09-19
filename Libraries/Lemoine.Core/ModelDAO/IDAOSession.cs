@@ -72,5 +72,12 @@ namespace Lemoine.ModelDAO
     /// Clear the first level cache
     /// </summary>
     void Clear ();
+
+    /// <summary>
+    /// Check if the persistent instance is in the session cache
+    /// </summary>
+    /// <param name="persistent"></param>
+    /// <returns></returns>
+    bool Contains (object persistent);
   }
 }

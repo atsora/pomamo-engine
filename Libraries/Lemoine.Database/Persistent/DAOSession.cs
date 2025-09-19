@@ -26,7 +26,6 @@ namespace Lemoine.Database.Persistent
     const string SEND_MESSAGES_METHOD_KEY = "Database.Session.SendMessagesMethod";
     const string SEND_MESSAGES_METHOD_DEFAULT = ""; // "pool" or "thread" or "async" (previous default but could drive to a deadlock) or "nowait" or default ("sync" / "")
 
-    #region Members
     static volatile ISession s_uniqueSession = null;
 
     ISession m_session;
@@ -38,18 +37,14 @@ namespace Lemoine.Database.Persistent
                          // If m_valid is false, DAOSession is not in a correct state
 
     IEnumerable<Lemoine.Extensions.Database.ITransactionExtension> m_transactionExtensions = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DAOSession).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated NHibernate Session
     /// </summary>
     internal ISession Session => m_session;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor with the default SessionFactory
     /// </summary>
@@ -121,7 +116,6 @@ namespace Lemoine.Database.Persistent
         throw new NullReferenceException ("m_session");
       }
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Force to use a unique session in all the asynchronous tasks
@@ -352,6 +346,13 @@ namespace Lemoine.Database.Persistent
       m_session.Clear ();
       m_valid = true;
     }
+
+    /// <summary>
+    /// <see cref="IDAOSession"/>
+    /// </summary>
+    /// <param name="persistent"></param>
+    /// <returns></returns>
+    public bool Contains (object persistent) => m_session.Contains (persistent);
 
     void CheckNoTempView ()
     {

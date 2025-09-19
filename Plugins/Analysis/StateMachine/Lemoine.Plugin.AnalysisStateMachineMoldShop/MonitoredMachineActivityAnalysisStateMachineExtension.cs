@@ -83,9 +83,9 @@ namespace Lemoine.Plugin.AnalysisStateMachineProductionShop
         .LoadAndGet (LOW_PRIORITY_KEY, LOW_PRIORITY_DEFAULT);
       var veryLowPriorityFrequency = Lemoine.Info.ConfigSet
         .LoadAndGet (VERY_LOW_PRIORITY_FREQUENCY_KEY, VERY_LOW_PRIORITY_FREQUENCY_DEFAULT);
-      var allPendingModificationsState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications", "PendingModificationsAll", (c,t) => c.RunPendingModificationsAnalysis (t, 0, 0), nextState, nextState, maxTimeState: activityState);
-      var lowPendingModificationsState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications", "PendingModificationsLow", (c,t) => c.RunPendingModificationsAnalysis (t, 0, lowPriority), nextState, nextState, maxTimeState: activityState);
-      var normalPendingModificationsState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications", "PendingModificationsNormal", (c,t) => c.RunPendingModificationsAnalysis (t, 0, normalPriority), nextState, nextState, maxTimeState: activityState);
+      var allPendingModificationsState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications", "PendingModificationsAll", (c, t) => c.RunPendingModificationsAnalysis (t, 0, 0), nextState, nextState, maxTimeState: activityState);
+      var lowPendingModificationsState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications", "PendingModificationsLow", (c, t) => c.RunPendingModificationsAnalysis (t, 0, lowPriority), nextState, nextState, maxTimeState: activityState);
+      var normalPendingModificationsState = new AnalysisState<IMonitoredMachineActivityAnalysis> ("PendingModifications", "PendingModificationsNormal", (c, t) => c.RunPendingModificationsAnalysis (t, 0, normalPriority), nextState, nextState, maxTimeState: activityState);
       var lowOrNormalState = new FrequencyState<IMonitoredMachineActivityAnalysis> ("PendingModificationsSwitch", lowPriorityFrequency, lowPendingModificationsState, normalPendingModificationsState);
       nextState = new FrequencyState<IMonitoredMachineActivityAnalysis> ("PendingModificationsSwitch", veryLowPriorityFrequency, allPendingModificationsState, lowOrNormalState);
 

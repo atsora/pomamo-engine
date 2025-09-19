@@ -58,6 +58,7 @@ namespace Lemoine.WebDataAccess
     }
     #endregion
     #region IBaseGenericDAO implementation
+    public virtual bool IsAttachedToSession (Lemoine.Model.ITranslation persistent) => true;
     public System.Collections.Generic.IList<Lemoine.Model.ITranslation> FindAll()
     {
       throw new NotImplementedException();

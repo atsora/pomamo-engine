@@ -118,6 +118,7 @@ namespace Lemoine.WebDataAccess
     }
     #endregion
     #region IBaseGenericDAO implementation
+    public virtual bool IsAttachedToSession (Lemoine.Model.IMachineModification persistent) => true;
     public System.Collections.Generic.IList<Lemoine.Model.IMachineModification> FindAll()
     {
       throw new NotImplementedException();

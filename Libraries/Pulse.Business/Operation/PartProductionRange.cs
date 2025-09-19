@@ -75,21 +75,15 @@ namespace Lemoine.Business.Operation
     static readonly string IN_PROGRESS_CACHE_TIME_OUT_KEY = "Business.Operation.PartProductionRange.InProgressCacheTimeOut";
     static readonly TimeSpan IN_PROGRESS_CACHE_TIME_OUT_DEFAULT = TimeSpan.FromMinutes (5);
 
-    #region Members
     readonly IMachine m_machine;
     IMonitoredMachine m_monitoredMachine;
     readonly UtcDateTimeRange m_range;
     readonly UtcDateTimeRange m_preLoadRange;
     readonly Func<IEnumerable<IObservationStateSlot>> m_observationStateSlotsPreLoader;
     DateTime? m_operationDetectionStatusCache = null;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (PartProductionRange).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -119,10 +113,6 @@ namespace Lemoine.Business.Operation
 
       log = LogManager.GetLogger ($"{typeof (PartProductionRange).FullName}.{m_machine.Id}");
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

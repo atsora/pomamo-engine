@@ -67,11 +67,8 @@ namespace Lemoine.Database.Persistent
   {
     static readonly ILog log = LogManager.GetLogger (typeof (NHibernateHelper).FullName);
 
-    #region Members
     static ISession s_uniqueSession = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Initializing status
     /// </summary>
@@ -127,9 +124,7 @@ namespace Lemoine.Database.Persistent
       get { return SessionFactoryInitializer.ExtensionsProvider; }
       set { SessionFactoryInitializer.ExtensionsProvider = value; }
     }
-    #endregion
 
-    #region Methods
     /// <summary>
     /// Add persistent class models to analyze for persistent classes
     /// 
@@ -215,6 +210,5 @@ namespace Lemoine.Database.Persistent
     {
       return Lemoine.Model.Comparison.EqualsNullable<T, U> (a, b, equals);
     }
-    #endregion
   }
 }

@@ -11,16 +11,22 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using NHibernate;
 using System.Threading.Tasks;
+using Lemoine.Database.Persistent;
 
 namespace Lemoine.GDBPersistentClasses
 {
   /// <summary>
   /// Description of JobDAO.
   /// </summary>
-  public class JobDAO
-    : IJobDAO
+  public class JobDAO : IJobDAO
   {
     static readonly ILog log = LogManager.GetLogger(typeof (JobDAO).FullName);
+
+    public virtual bool IsAttachedToSession (Lemoine.Model.IJob persistent)
+    {
+      var session = NHibernateHelper.GetCurrentSession ();
+      return session.Contains (persistent.Project) && session.Contains (persistent.WorkOrder);
+    }
 
     #region IMergeDAO implementation
     /// <summary>

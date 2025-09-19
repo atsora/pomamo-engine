@@ -45,10 +45,7 @@ namespace Lemoine.Analysis
       /// <param name="lastModificationId"></param>
       /// <param name="lastPriority"></param>
       /// <returns></returns>
-      public static PendingModificationsProgress CreateDefault ()
-      {
-        return new PendingModificationsProgress (0, int.MaxValue, 0);
-      }
+      public static PendingModificationsProgress CreateDefault () => new PendingModificationsProgress (0, int.MaxValue, 0);
 
       /// <summary>
       /// Constructor
@@ -93,10 +90,7 @@ namespace Lemoine.Analysis
       /// To string method
       /// </summary>
       /// <returns></returns>
-      public override string ToString ()
-      {
-        return $"PendingModificationsProcess LastPriority={this.LastPriority} LastModificationId={this.LastModificationId} MinPriority={MinPriority}";
-      }
+      public override string ToString () => $"PendingModificationsProcess LastPriority={this.LastPriority} LastModificationId={this.LastModificationId} MinPriority={MinPriority}";
     }
 
     static readonly string EXIT_IF_THREAD_ABORT_KEY = "Analysis.Modification.ExitIfThreadAbort";
@@ -112,7 +106,6 @@ namespace Lemoine.Analysis
     static readonly string TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_KEY = "Analysis.PendingModificationAnalysis.TemporaryWithDelayException.Sleep";
     static readonly TimeSpan TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (2);
 
-    #region Members
     bool m_disposed = false;
     bool m_threadExecution = true;
     TimeSpan m_modificationTimeout = TimeSpan.FromMinutes (2);
@@ -135,7 +128,6 @@ namespace Lemoine.Analysis
     protected IEnumerable<Lemoine.Extensions.Analysis.IPendingModificationAnalysisExtension> m_extensions;
 
     IChecked m_checkedParent = null;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (PendingModificationAnalysis<I, T>).FullName);
 
@@ -152,10 +144,7 @@ namespace Lemoine.Analysis
     /// <summary>
     /// Activity analysis
     /// </summary>
-    protected IActivityAnalysis ActivityAnalysis
-    {
-      get { return m_activityAnalysis; }
-    }
+    protected IActivityAnalysis ActivityAnalysis => m_activityAnalysis;
 
     /// <summary>
     /// Reference to the checked parent
@@ -244,7 +233,6 @@ namespace Lemoine.Analysis
         .ToList (); // ToList is mandatory else the result of the Linq command is not cached
     }
 
-    #region Methods
     /// <summary>
     /// 
     /// </summary>
@@ -378,10 +366,7 @@ namespace Lemoine.Analysis
     /// Logger
     /// </summary>
     /// <returns></returns>
-    public override ILog GetLogger ()
-    {
-      return log;
-    }
+    public override ILog GetLogger () => log;
 
     /// <summary>
     /// Create locked tables
@@ -449,7 +434,7 @@ namespace Lemoine.Analysis
     }
 
     /// <summary>
-    /// process all pending modifications at at given DateTime
+    /// process all pending modifications at a given DateTime
     /// proceeds batch per batch
     /// </summary>
     /// <param name="cancellationToken"></param>
@@ -468,7 +453,7 @@ namespace Lemoine.Analysis
 
         // Get the maximum modification ID
         long? maxModificationId = GetMaxModificationId ();
-        if (object.Equals (maxModificationId, m_maxModificationIdAllCompleted)) { // maxModificationId has already been processed
+        if (object.Equals (maxModificationId,  m_maxModificationIdAllCompleted)) { // maxModificationId has already been processed
           if (GetLogger ().IsDebugEnabled) {
             GetLogger ().Debug ($"MakeAnalysis: Max ModificationId {maxModificationId} has already been flagged as completed (no change) => nothing to do (except cleaning the modifications)");
           }
@@ -1176,7 +1161,6 @@ namespace Lemoine.Analysis
     /// </summary>
     /// <returns></returns>
     protected abstract long GetLimitNewAnalysisStatus ();
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

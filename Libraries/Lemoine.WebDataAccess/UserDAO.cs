@@ -51,6 +51,7 @@ namespace Lemoine.WebDataAccess
     }
     #endregion
     #region IBaseGenericDAO implementation
+    public virtual bool IsAttachedToSession (Lemoine.Model.IUser persistent) => true;
     public System.Collections.Generic.IList<Lemoine.Model.IUser> FindAll()
     {
       throw new NotImplementedException();

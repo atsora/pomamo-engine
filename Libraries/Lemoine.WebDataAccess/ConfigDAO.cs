@@ -22,17 +22,12 @@ namespace Lemoine.WebDataAccess
   {
     readonly ILog log = LogManager.GetLogger (typeof (ConfigDAO).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public ConfigDAO ()
     {
     }
-    #endregion // Constructors
 
     #region IConfigDAO implementation
 
@@ -40,6 +35,7 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException ();
     }
+    public virtual bool IsAttachedToSession (Lemoine.Model.IConfig persistent) => true;
 
     public IList<IConfig> FindAll ()
     {

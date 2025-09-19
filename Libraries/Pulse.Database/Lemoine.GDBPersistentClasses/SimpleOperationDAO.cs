@@ -23,6 +23,8 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger(typeof (SimpleOperationDAO).FullName);
 
+    public virtual bool IsAttachedToSession (Lemoine.Model.ISimpleOperation persistent) => NHibernateHelper.GetCurrentSession ().Contains (persistent.Operation);
+
     #region IMergeDAO implementation
     /// <summary>
     /// Merge one old SimpleOperation into a new one

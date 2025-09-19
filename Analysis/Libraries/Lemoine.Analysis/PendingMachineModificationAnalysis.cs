@@ -61,17 +61,11 @@ namespace Lemoine.Analysis
     static readonly int SUB_MODIFICATION_ATTEMPT_WARNING = 100;
     static readonly int SUB_MODIFICATION_ATTEMPT_FATAL = 10000;
 
-    #region Members
     readonly IMachine m_machine;
     long m_lastModificationStatusId = 0;
-    #endregion // Members
-
+ 
     readonly ILog log = LogManager.GetLogger (typeof (PendingMachineModificationAnalysis).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// 
@@ -171,9 +165,7 @@ namespace Lemoine.Analysis
         extension.Initialize (machine);
       }
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Logger
     /// </summary>
@@ -680,6 +672,5 @@ namespace Lemoine.Analysis
       }
       return !limitReached;
     }
-    #endregion // Methods
   }
 }

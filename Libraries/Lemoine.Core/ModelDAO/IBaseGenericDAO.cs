@@ -18,6 +18,13 @@ namespace Lemoine.ModelDAO
   public interface IBaseGenericDAO<T, ID>
   {
     /// <summary>
+    /// Does the current session contain the persistent instance?
+    /// </summary>
+    /// <param name="persistent"></param>
+    /// <returns></returns>
+    bool IsAttachedToSession (T persistent);
+
+    /// <summary>
     /// Find all the entities
     /// </summary>
     /// <returns></returns>

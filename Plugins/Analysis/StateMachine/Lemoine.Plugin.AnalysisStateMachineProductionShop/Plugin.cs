@@ -21,44 +21,23 @@ namespace Lemoine.Plugin.AnalysisStateMachineProductionShop
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "AnalysisStateMachineProductionShop"; } }
+    public override string Name => "AnalysisStateMachineProductionShop";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Analysis state machine for a production shop. Optimized when no manual reason is set and the auto-reasons are activated";
-      }
-    }
+    public override string Description => "Analysis state machine for a production shop. Optimized when no manual reason is set and the auto-reasons are activated";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis;
 
     public override bool MultipleConfigurations => false;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
+    public override int Version => 1;
   }
 }

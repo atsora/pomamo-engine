@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using Lemoine.Core.Log;
 using Lemoine.ModelDAO;
+using Org.BouncyCastle.Asn1.BC;
 
 namespace Lemoine.WebDataAccess
 {
@@ -45,6 +46,7 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException();
     }
+    public bool Contains (object persistent) => true;
     #endregion
     #region IDisposable implementation
     public void Dispose()

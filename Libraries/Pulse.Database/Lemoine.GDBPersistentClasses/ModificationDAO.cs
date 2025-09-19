@@ -158,8 +158,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      log.FatalFormat ("GetNumberOfRemainingModifications: " +
-                       "no modification with Id {0}",
+      log.FatalFormat ("GetNumberOfRemainingModifications: no modification with Id {0}",
                        modificationId);
       throw new ArgumentException ("Invalid modification Id", "modificationId");
     }
@@ -177,8 +176,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != modification);
       if (null == modification) {
-        log.Fatal ("GetCompletion: " +
-                   "null modification in argument");
+        log.Fatal ("GetCompletion: null modification in argument");
         throw new ArgumentNullException ("modification");
       }
 

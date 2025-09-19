@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Lemoine.Core.Log;
+using Lemoine.Database.Persistent;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 
@@ -26,6 +27,8 @@ namespace Lemoine.GDBPersistentClasses
     public OperationRevisionDAO ()
     {
     }
+
+    public virtual bool IsAttachedToSession (Lemoine.Model.IOperationRevision persistent) => NHibernateHelper.GetCurrentSession ().Contains (persistent.Operation);
 
     /// <summary>
     /// <see cref="IOperationRevisionDAO"/>

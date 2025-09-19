@@ -25,6 +25,7 @@ namespace Lemoine.WebDataAccess
     }
     #endregion
     #region IBaseGenericDAO implementation
+    public virtual bool IsAttachedToSession (Lemoine.Model.IWorkOrderMachineAssociation persistent) => true;
     public System.Collections.Generic.IList<Lemoine.Model.IWorkOrderMachineAssociation> FindAll()
     {
       throw new NotImplementedException();

@@ -26,7 +26,6 @@ namespace Pulse.Web.Operation
   {
     static readonly ILog log = LogManager.GetLogger (typeof (PartProductionRangeService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -34,9 +33,7 @@ namespace Pulse.Web.Operation
       : base (Lemoine.Core.Cache.CacheTimeOut.CurrentLong)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -156,6 +153,5 @@ namespace Pulse.Web.Operation
 
       return response;
     }
-    #endregion // Methods
   }
 }

@@ -97,6 +97,7 @@ namespace Lemoine.WebDataAccess
     }
     #endregion
     #region IBaseGenericDAO implementation
+    public virtual bool IsAttachedToSession (Lemoine.Model.IGlobalModification persistent) => true;
     public IList<IGlobalModification> FindAll()
     {
       throw new NotImplementedException();

@@ -22,6 +22,13 @@ namespace Lemoine.Database.Persistent
     static readonly ILog log = LogManager.GetLogger(typeof (BaseGenericNHibernateDAO<T, I, ID>).FullName);
 
     /// <summary>
+    /// Does the current session contain the persistent instance?
+    /// </summary>
+    /// <param name="persistent"></param>
+    /// <returns></returns>
+    public virtual bool IsAttachedToSession (I persistent) => NHibernateHelper.GetCurrentSession ().Contains (persistent);
+
+    /// <summary>
     /// FindAll implementation
     /// </summary>
     /// <returns></returns>

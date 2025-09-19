@@ -22,6 +22,12 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger(typeof (PartDAO).FullName);
 
+    public virtual bool IsAttachedToSession (Lemoine.Model.IPart persistent)
+    {
+      var session = NHibernateHelper.GetCurrentSession ();
+      return session.Contains (persistent.Component) && session.Contains (persistent.Project);
+    }
+
     #region IMergeDAO implementation
     /// <summary>
     /// Merge one old Part into a new one

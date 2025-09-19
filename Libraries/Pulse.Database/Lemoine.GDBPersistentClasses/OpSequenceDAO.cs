@@ -23,6 +23,8 @@ namespace Lemoine.GDBPersistentClasses
   {
     ILog log = LogManager.GetLogger<OpSequenceDAO> ();
 
+    public virtual bool IsAttachedToSession (Lemoine.Model.ISequence persistent) => NHibernateHelper.GetCurrentSession ().Contains (persistent);
+
     /// <summary>
     /// FindById implementation
     /// </summary>
