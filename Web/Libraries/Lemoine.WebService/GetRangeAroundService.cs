@@ -54,7 +54,21 @@ namespace Lemoine.WebService
               slot.EndDay.HasValue ? slot.EndDay.Value : (DateTime?)null);
             rangeOutput.DateTimeRange.Begin = Lemoine.DTO.ConvertDTO.DateTimeUtcToIsoString (slot.BeginDateTime);
             rangeOutput.DateTimeRange.End = Lemoine.DTO.ConvertDTO.DateTimeUtcToIsoString (slot.EndDateTime);
-            rangeOutput.RangeDisplay = (slot.Shift == null) ? "" : slot.Shift.Display;
+            if (null == slot.Shift) {
+              rangeOutput.RangeDisplay = "";
+            }
+            else { // null != slot.Shift
+              if (slot.DateTimeRange.ContainsElement (DateTime.UtcNow)) {
+                rangeOutput.RangeDisplay = slot.Shift.Display;
+              }
+              else if (slot.Day.HasValue) {
+                rangeOutput.RangeDisplay = $"{slot.Shift.Display} {slot.Day.Value.ToString ("d")}";
+              }
+              else { 
+                log.Warn ($"GetRangeAroundService: shift {slot.Shift.Id} but no day");
+                rangeOutput.RangeDisplay = "";
+              }
+            }
             transaction.Commit ();
             return rangeOutput;
           }

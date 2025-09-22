@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,7 +23,9 @@ namespace Pulse.Web.Time
   {
     static readonly ILog log = LogManager.GetLogger(typeof (RangeAroundService).FullName);
 
-    #region Constructors
+    static readonly string SHIFT_DAY_FORMAT_KEY = "Web.RangeAround.ShiftDay.Format";
+    static readonly string SHIFT_DAY_FORMAT_DEFAULT = "d";
+
     /// <summary>
     /// 
     /// </summary>
@@ -30,9 +33,7 @@ namespace Pulse.Web.Time
       : base(Lemoine.Core.Cache.CacheTimeOut.CurrentShort) // Config for Lemoine.Business.RangeAroundDay
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -64,14 +65,28 @@ namespace Pulse.Web.Time
           if (null != slot) {
             response.DateTimeRange = slot.DateTimeRange.ToString (r => ConvertDTO.DateTimeUtcToIsoString (r));
             response.DayRange = slot.DayRange.ToString (r => ConvertDTO.DayToIsoString (r));
-            response.Display = (null == slot.Shift) ? "" : slot.Shift.Display;
+            if (slot.Shift is null) {
+              response.Display = "";
+            }
+            else { // slot.Shift is not null
+              if (slot.DateTimeRange.ContainsElement (DateTime.UtcNow)) {
+                response.Display = slot.Shift.Display;
+              }
+              else if (slot.Day.HasValue) {
+                var format = Lemoine.Info.ConfigSet
+                  .LoadAndGet<string> (SHIFT_DAY_FORMAT_KEY, SHIFT_DAY_FORMAT_DEFAULT);
+                response.Display = $"{slot.Shift.Display} {slot.Day.Value.ToString (format)}";
+              }
+              else {
+                log.Warn ($"GetWithoutCache: shift {slot.Shift.Id} but no day");
+                response.Display = "";
+              }
+            }
             transaction.Commit ();
             return response;
           }
           else { // No shift slot was found => fallback to day
-            log.InfoFormat ("GetWithoutCache: no shift found at {0} " +
-                            "=> fallback to day",
-                            aroundDateTime);
+            log.Info ($"GetWithoutCache: no shift found at {aroundDateTime} => fallback to day");
             rangeType = "day";
           }
         }
@@ -91,79 +106,5 @@ namespace Pulse.Web.Time
         return response;
       }
     }
-    
-    DayRange ConvertRangeType (DateTime day, string rangeType)
-    {
-      if (rangeType.Equals ("day", StringComparison.CurrentCultureIgnoreCase)) {
-        return new DayRange (day, day);
-      }
-      else if (rangeType.Equals ("week", StringComparison.CurrentCultureIgnoreCase)) {
-        DayOfWeek firstDayOfWeek = Lemoine.Info.ConfigSet
-          .LoadAndGet<DayOfWeek> (ConfigKeys.GetCalendarConfigKey (CalendarConfigKey.FirstDayOfWeek),
-                                  DayOfWeek.Monday);
-        DateTime firstDay = day;
-        while (!firstDay.DayOfWeek.Equals (firstDayOfWeek)) {
-          firstDay.AddDays (-1);
-        }
-        return new DayRange (firstDay, firstDay.AddDays (6));
-      }
-      else if (rangeType.Equals ("month", StringComparison.CurrentCultureIgnoreCase)) {
-        var monthStart = new DateTime (day.Year, day.Month, 1);
-        var monthEnd = monthStart.AddMonths (1).AddDays (-1);
-        return new DayRange (monthStart, monthEnd);
-      }
-      else if (rangeType.Equals ("quarter", StringComparison.CurrentCultureIgnoreCase)) {
-        var quarterStart = new DateTime (day.Year, (day.Month-1)%3+1, 1);
-        var quarterEnd = quarterStart.AddMonths (3).AddDays (-1);
-        return new DayRange (quarterStart, quarterEnd);
-      }
-      else if (rangeType.Equals ("semester", StringComparison.CurrentCultureIgnoreCase)) {
-        var semesterStart = new DateTime (day.Year, (day.Month-1)%6+1, 1);
-        var semesterEnd = semesterStart.AddMonths (6).AddDays (-1);
-        return new DayRange (semesterStart, semesterEnd);
-      }
-      else if (rangeType.Equals ("year", StringComparison.CurrentCultureIgnoreCase)) {
-        var yearStart = new DateTime (day.Year, 1, 1);
-        var yearEnd = yearStart.AddYears (1).AddDays (-1);
-        return new DayRange (yearStart, yearEnd);
-      }
-      else {
-        log.FatalFormat ("ConvertRangeType: " +
-                         "range type {0} not supported",
-                         rangeType);
-        throw new NotImplementedException ("Range type " + rangeType);
-      }
-    }
-    
-    DateTime AddOffset (Bound<DateTime> day, string rangeType, int offset)
-    {
-      Debug.Assert (day.HasValue);
-      
-      if (rangeType.Equals ("day", StringComparison.CurrentCultureIgnoreCase)) {
-        return day.Value.AddDays (offset);
-      }
-      else if (rangeType.Equals ("week", StringComparison.CurrentCultureIgnoreCase)) {
-        return day.Value.AddDays (7*offset);
-      }
-      else if (rangeType.Equals ("month", StringComparison.CurrentCultureIgnoreCase)) {
-        return day.Value.AddMonths (offset);
-      }
-      else if (rangeType.Equals ("quarter", StringComparison.CurrentCultureIgnoreCase)) {
-        return day.Value.AddMonths (3*offset);
-      }
-      else if (rangeType.Equals ("semester", StringComparison.CurrentCultureIgnoreCase)) {
-        return day.Value.AddMonths (6*offset);
-      }
-      else if (rangeType.Equals ("year", StringComparison.CurrentCultureIgnoreCase)) {
-        return day.Value.AddYears (offset);
-      }
-      else {
-        log.FatalFormat ("AddOffset: " +
-                         "range type {0} not supported",
-                         rangeType);
-        throw new NotImplementedException ("Range type " + rangeType);
-      }
-    }
-    #endregion // Methods
   }
 }
