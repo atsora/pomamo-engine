@@ -10,9 +10,6 @@ using Lemoine.ModelDAO;
 using Lemoine.DTO;
 
 using Lemoine.Core.Log;
-#if NSERVICEKIT
-using NServiceKit.ServiceInterface; // Define GetCacheClient
-#endif // NSERVICEKIT
 
 namespace Lemoine.WebService
 {
@@ -21,18 +18,16 @@ namespace Lemoine.WebService
   /// 
   /// Deprecated: use Lemoine.Web.Time.RangeAroundService instead
   /// </summary>
-  public class GetRangeAroundService: GenericCachedService<Lemoine.DTO.GetRangeAround>
+  public class GetRangeAroundService : GenericCachedService<Lemoine.DTO.GetRangeAround>
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (GetRangeAroundService).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (GetRangeAroundService).FullName);
 
-#region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
-    public GetRangeAroundService () : base(Lemoine.Core.Cache.CacheTimeOut.CurrentShort) // Config for Lemoine.Business.Time.RangeAroundDay
+    public GetRangeAroundService () : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort) // Config for Lemoine.Business.Time.RangeAroundDay
     {
     }
-#endregion // Constructors
 
     /// <summary>
     /// Response to GET request (no cache)
@@ -41,34 +36,34 @@ namespace Lemoine.WebService
     /// <returns></returns>
     public override object GetWithoutCache (Lemoine.DTO.GetRangeAround request)
     {
-      Lemoine.DTO.RangeDTO rangeOutput = new Lemoine.DTO.RangeDTO();
+      Lemoine.DTO.RangeDTO rangeOutput = new Lemoine.DTO.RangeDTO ();
 
       string rangeType = request.RangeType;
       int rangeSize = request.RangeSize.HasValue ? request.RangeSize.Value : 1;
-      DateTime? datetime = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc(request.Around);
+      DateTime? datetime = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc (request.Around);
       DateTime aroundDateTime = datetime.HasValue ? datetime.Value : DateTime.UtcNow;
-      
+
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-        using (IDAOTransaction transaction = session.BeginTransaction ("WebService.GetRangeAroundService"))
-      {
-        if ( "shift" == rangeType ) { // Old GetShiftAroundService - ignore Range Size
+      using (IDAOTransaction transaction = session.BeginTransaction ("WebService.GetRangeAroundService")) {
+        if ("shift" == rangeType) { // Old GetShiftAroundService - ignore Range Size
           IShiftSlot slot = ModelDAOHelper.DAOFactory.ShiftSlotDAO.FindAt (aroundDateTime);
           if (null != slot) { // SHIFT DEFINED
-            rangeOutput.DayRange.Begin = Lemoine.DTO.ConvertDTO.DayToString(
-              slot.BeginDay.HasValue ? slot.BeginDay.Value : (DateTime?) null);
-            rangeOutput.DayRange.End   = Lemoine.DTO.ConvertDTO.DayToString(
-              slot.EndDay.HasValue ? slot.EndDay.Value : (DateTime?) null);
-            rangeOutput.DateTimeRange.Begin = Lemoine.DTO.ConvertDTO.DateTimeUtcToIsoString(slot.BeginDateTime);
-            rangeOutput.DateTimeRange.End   = Lemoine.DTO.ConvertDTO.DateTimeUtcToIsoString(slot.EndDateTime);
+            rangeOutput.DayRange.Begin = Lemoine.DTO.ConvertDTO.DayToString (
+              slot.BeginDay.HasValue ? slot.BeginDay.Value : (DateTime?)null);
+            rangeOutput.DayRange.End = Lemoine.DTO.ConvertDTO.DayToString (
+              slot.EndDay.HasValue ? slot.EndDay.Value : (DateTime?)null);
+            rangeOutput.DateTimeRange.Begin = Lemoine.DTO.ConvertDTO.DateTimeUtcToIsoString (slot.BeginDateTime);
+            rangeOutput.DateTimeRange.End = Lemoine.DTO.ConvertDTO.DateTimeUtcToIsoString (slot.EndDateTime);
             rangeOutput.RangeDisplay = (slot.Shift == null) ? "" : slot.Shift.Display;
             transaction.Commit ();
             return rangeOutput;
-          } else {
+          }
+          else {
             // NO SLOT found, use day
             rangeType = "day";
           }
         }
-        
+
         var aroundDay = ModelDAOHelper.DAOFactory.DaySlotDAO
           .GetDay (aroundDateTime);
         var rangeAroundDayRequest = new Lemoine.Business.Time.RangeAroundDay (aroundDay);
@@ -76,7 +71,7 @@ namespace Lemoine.WebService
         rangeAroundDayRequest.RangeType = rangeType;
         var rangeAroundDayResponse = Lemoine.Business.ServiceProvider
           .Get (rangeAroundDayRequest);
-        
+
         rangeOutput.DayRange.Begin = Lemoine.DTO.ConvertDTO.DayToString (rangeAroundDayResponse.DayRange.Lower.Value);
         rangeOutput.DayRange.End = Lemoine.DTO.ConvertDTO.DayToString (rangeAroundDayResponse.DayRange.Upper.Value);
         rangeOutput.DateTimeRange.Begin = Lemoine.DTO.ConvertDTO.DateTimeUtcToIsoString (rangeAroundDayResponse.DateTimeRange.Lower.Value);

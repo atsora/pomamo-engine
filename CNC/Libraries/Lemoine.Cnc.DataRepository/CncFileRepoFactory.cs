@@ -829,7 +829,7 @@ namespace Lemoine.Cnc.DataRepository
         }
       }
 
-      log.DebugFormat ("GetQueueConfiguration: no specific queue");
+      log.Debug ("GetQueueConfiguration: no specific queue");
       return "";
     }
 
