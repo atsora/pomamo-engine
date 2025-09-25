@@ -101,6 +101,9 @@ namespace Lemoine.Model
 
     /// <summary>
     /// Direction change: list of axis names for which the direction changed at the end of the segment
+    /// 
+    /// A direction change is considered for a specific axis when its projection goes from + to - or from - to +.
+    /// If it goes from + to 0, then to -, it is not a direction change
     /// </summary>
     public IList<string> DC { get; set; } = null;
 
@@ -188,12 +191,21 @@ namespace Lemoine.Model
     public IList<Segment> Segments { get; set; } = null;
 
     /// <summary>
-    /// Number of times an axis direction changes
+    /// Number of times an axis direction changes,
+    /// including at the end of the path, excluding at the beginning of the path
+    /// 
+    /// A direction change is counted when the direction of one of the axis is inverted:
+    /// For example, if X goes from + to - or from - to +, it is a direction change
+    /// If X goes from + to 0, then to -, it is not a direction change
     /// </summary>
     public int? DirectionChanges { get; set; } = null;
 
     /// <summary>
-    /// Angles (that are greater than a min angle in configuration)
+    /// Angles (that are greater than a min angle in configuration).
+    /// 
+    /// The angles are in degrees.
+    /// 
+    /// It includes the latest angle of the path (between this path and the next one).
     /// </summary>
     public IList<double> Angles { get; set; } = null;
 
@@ -256,7 +268,12 @@ namespace Lemoine.Model
     public double? RapidDistance { get; set; }
 
     /// <summary>
-    /// Number of times an axis direction changes
+    /// Number of times an axis direction changes,
+    /// including at the end of the sequence, excluding at the beginning of the sequence
+    /// 
+    /// A direction change is counted when the direction of one of the axis is inverted:
+    /// For example, if X goes from + to - or from - to +, it is a direction change
+    /// If X goes from + to 0, then to -, it is not a direction change
     /// </summary>
     public int? DirectionChanges { get; set; } = null;
 
