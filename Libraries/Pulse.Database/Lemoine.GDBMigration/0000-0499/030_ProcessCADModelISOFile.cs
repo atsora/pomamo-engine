@@ -205,46 +205,6 @@ namespace Lemoine.GDBMigration
                                    Migrator.Framework.ForeignKeyConstraint.SetNull);
       AddUniqueIndex (TableName.FIELD,
                       FIELD_CODE);
-      #region DBFIELD
-      // Only the deprecated one
-      // TODO: to remove once the old stamping is removed
-      Database.Insert (TableName.TRANSLATION,
-                       new string[] {ColumnName.LOCALE, ColumnName.TRANSLATION_KEY, ColumnName.TRANSLATION_VALUE},
-                       new string[] {"", "FieldComponentTypeKey", "Component type key"});
-      Database.Insert (TableName.FIELD,
-                       new string[] {ColumnName.FIELD_ID, FIELD_CODE, FIELD_TRANSLATION_KEY, FIELD_TYPE, STAMPING_DATA_TYPE, FIELD_CUSTOM},
-                       new string[] {"5", "ComponentTypeKey", "FieldComponentTypeKey", "String", "1", "0"});
-      Database.Insert (TableName.TRANSLATION,
-                       new string[] {ColumnName.LOCALE, ColumnName.TRANSLATION_KEY, ColumnName.TRANSLATION_VALUE},
-                       new string[] {"", "FieldComponentTypeId", "Component type ID"});
-      Database.Insert (TableName.FIELD,
-                       new string[] {ColumnName.FIELD_ID, FIELD_CODE, FIELD_TRANSLATION_KEY, FIELD_TYPE, STAMPING_DATA_TYPE, FIELD_ASSOCIATED_CLASS, FIELD_ASSOCIATED_PROPERTY, FIELD_CUSTOM},
-                       new string[] {"6", "ComponentTypeId", "FieldComponentTypeId", "Int32", "3", "ComponentType", "Id", "0"});
-      Database.Insert (TableName.TRANSLATION,
-                       new string[] {ColumnName.LOCALE, ColumnName.TRANSLATION_KEY, ColumnName.TRANSLATION_VALUE},
-                       new string[] {"", "FieldOperationTypeKey", "Operation type key"});
-      Database.Insert (TableName.FIELD,
-                       new string[] {ColumnName.FIELD_ID, FIELD_CODE, FIELD_TRANSLATION_KEY, FIELD_TYPE, STAMPING_DATA_TYPE, FIELD_CUSTOM},
-                       new string[] {"9", "OperationTypeKey", "FieldOperationTypeKey", "String", "1", "0"});
-      Database.Insert (TableName.TRANSLATION,
-                       new string[] {ColumnName.LOCALE, ColumnName.TRANSLATION_KEY, ColumnName.TRANSLATION_VALUE},
-                       new string[] {"", "FieldOperationTypeId", "Operation type ID"});
-      Database.Insert (TableName.FIELD,
-                       new string[] {ColumnName.FIELD_ID, FIELD_CODE, FIELD_TRANSLATION_KEY, FIELD_TYPE, STAMPING_DATA_TYPE, FIELD_ASSOCIATED_CLASS, FIELD_ASSOCIATED_PROPERTY, FIELD_CUSTOM},
-                       new string[] {"10", "OperationTypeId", "FieldOperationTypeId", "Int32", "3", "OperationType", "Id", "0"});
-      Database.Insert (TableName.TRANSLATION,
-                       new string[] {ColumnName.LOCALE, ColumnName.TRANSLATION_KEY, ColumnName.TRANSLATION_VALUE},
-                       new string[] {"", "FieldToolCode", "Tool code"});
-      Database.Insert (TableName.FIELD,
-                       new string[] {ColumnName.FIELD_ID, FIELD_CODE, FIELD_TRANSLATION_KEY, FIELD_TYPE, STAMPING_DATA_TYPE, FIELD_ASSOCIATED_CLASS, FIELD_ASSOCIATED_PROPERTY, FIELD_CUSTOM},
-                       new string[] {"20", "ToolCode", "FieldToolCode", "String", "3", "Tool", "Code", "0"});
-      Database.Insert (TableName.TRANSLATION,
-                       new string[] {ColumnName.LOCALE, ColumnName.TRANSLATION_KEY, ColumnName.TRANSLATION_VALUE},
-                       new string[] {"", "FieldToolName", "Tool name"});
-      Database.Insert (TableName.FIELD,
-                       new string[] {ColumnName.FIELD_ID, FIELD_CODE, FIELD_TRANSLATION_KEY, FIELD_TYPE, STAMPING_DATA_TYPE, FIELD_ASSOCIATED_CLASS, FIELD_ASSOCIATED_PROPERTY, FIELD_CUSTOM},
-                       new string[] {"21", "ToolName", "FieldToolName", "String", "3", "Tool", "Name", "0"});
-      #endregion // DBFIELD
       SetSequence (TableName.FIELD, ColumnName.FIELD_ID, 200);
     }
     

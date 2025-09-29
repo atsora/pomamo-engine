@@ -81,7 +81,13 @@ namespace Lemoine.GDBPersistentClasses
       field.AssociatedClass = "OperationType";
       field.AssociatedProperty = "Code";
       InsertDefaultValue (field);
-      // Deprecated: 9: OperationTypeKey, 10: OperationTypeId, 20: ToolCode, 21: ToolName
+      // Deprecated: 9: OperationTypeKey, 10: OperationTypeId, 20: ToolCode
+      // - 21: ToolName
+      field = new Field (21, "ToolName");
+      field.TranslationKey = "FieldToolName";
+      field.Type = FieldType.String;
+      field.CncDataAggregationType = CncDataAggregationType.NewValue; // Previously also StampingDataType.DbField: Tool.Name
+      InsertDefaultValue (field);
       // - 22: ToolDiameter
       field = new Field (22, "ToolDiameter");
       field.TranslationKey = "FieldToolDiameter";

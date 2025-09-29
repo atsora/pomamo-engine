@@ -2671,6 +2671,22 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       {
+        ITranslation translation = new Translation ("", "FieldToolName");
+        translation.TranslationValue = "Tool name";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "FieldToolName");
+        translation.TranslationValue = "Nom d'outil";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "FieldToolName");
+        translation.TranslationValue = "Werkzeugname";
+        InsertDefaultValue (translation);
+      }
+
+      {
         ITranslation translation = new Translation ("", "FieldToolNumber");
         translation.TranslationValue = "Tool number";
         InsertDefaultValue (translation);
