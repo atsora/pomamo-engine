@@ -12,6 +12,10 @@ namespace Lemoine.Model
   public enum FieldId
   {
     /// <summary>
+    /// Program name field
+    /// </summary>
+    ProgramName = 109,
+    /// <summary>
     /// Dry run field
     /// </summary>
     DryRun = 118,

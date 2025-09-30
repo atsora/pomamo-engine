@@ -19,11 +19,8 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   internal class PeriodAssociationInsertImplementation
   {
-    #region Members
     readonly IPeriodAssociationInsert m_periodAssociation;
-    #endregion // Members
     
-    #region Getters / Setters
     LowerBound<DateTime> Begin {
       get { return m_periodAssociation.Begin; }
     }
@@ -43,9 +40,7 @@ namespace Lemoine.GDBPersistentClasses
     AssociationOption? Option {
       get { return m_periodAssociation.Option; }
     }
-    #endregion // Getters / Setters
     
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -54,9 +49,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       m_periodAssociation = periodAssociation;
     }
-    #endregion // Constructors
     
-    #region Methods
     void SetActive ()
     {
       m_periodAssociation.SetActive ();
@@ -90,8 +83,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (Bound.Equals<DateTime> (Begin,
                                   End)) {
-        GetLogger ().Info ("Insert: " +
-                           "empty association, do nothing");
+        GetLogger ().Info ("Insert: empty association, do nothing");
         return;
       }
       Debug.Assert (Bound.Compare<DateTime> (Begin, End) <= 0);
@@ -99,16 +91,14 @@ namespace Lemoine.GDBPersistentClasses
       // A. Get the impacted existing slots
       IList<I> impactedSlots =
         GetImpactedSlots<TSlot, I, TSlotDAO> (slotDAO, pastOnly, preFetchedImpactedSlots);
-      GetLogger ().DebugFormat ("Insert: " +
-                                "got impacted slots",
+      GetLogger ().DebugFormat ("Insert: got impacted slots",
                                 impactedSlots.Count);
       SetActive ();
       
       // B. Merge the data of the existing slots with newMachineSlot
       //    This results in getting several new machine slots
       TSlot newSlot = ConvertToSlot<TSlot> (); // may be null !
-      GetLogger ().DebugFormat ("Insert: " +
-                                "new slot is {0}",
+      GetLogger ().DebugFormat ("Insert: new slot is {0}",
                                 newSlot);
       Debug.Assert ( (null == newSlot)
                     || (Bound.Equals<DateTime> (newSlot.BeginDateTime, Begin)
@@ -116,9 +106,7 @@ namespace Lemoine.GDBPersistentClasses
       // + Same Machine / MachineModule / Line / User
       ConsecutiveSlotList<TSlot> newSlots = new ConsecutiveSlotList<TSlot> ();
       if ((0 == impactedSlots.Count) && (null != newSlot) && !newSlot.IsEmpty ()) {
-        GetLogger ().Debug ("Insert: " +
-                            "no impacted slot, " +
-                            "push the not null new slot");
+        GetLogger ().Debug ("Insert: no impacted slot, push the not null new slot");
         newSlots.Push (newSlot);
       }
       else { // There are some impacted slots => merge
@@ -127,10 +115,8 @@ namespace Lemoine.GDBPersistentClasses
           var impactedSlot = impactedSlots [0];
           if (impactedSlot.DateTimeRange.Equals (this.Range)
               && impactedSlot.ReferenceDataEquals (newSlot)) {
-            GetLogger ().DebugFormat ("Insert: " +
-                                      "no change is required on slot {0}, " +
-                                      "new slot {1} " +
-                                      "=> return",
+            GetLogger ().DebugFormat ("Insert: no change is required on slot {0}, " +
+                                      "new slot {1} => return",
                                       impactedSlot, newSlot);
             return;
           }
@@ -155,8 +141,7 @@ namespace Lemoine.GDBPersistentClasses
               (TSlot) newSlot.Clone (new UtcDateTimeRange ((LowerBound<DateTime>)endLatestProcessedPeriod,
                                                            impactedSlot.BeginDateTime.Value));
             newSlots.Push (newPartialSlot);
-            GetLogger ().DebugFormat ("Insert: " +
-                                      "push the partial slot {0}",
+            GetLogger ().DebugFormat ("Insert: push the partial slot {0}",
                                       newPartialSlot);
           }
           UtcDateTimeRange mergedRange = new UtcDateTimeRange (this.Range.Intersects (impactedSlot.DateTimeRange));
@@ -167,8 +152,7 @@ namespace Lemoine.GDBPersistentClasses
               mergedSlot.UpdateDateTimeRange (mergedRange);
               if (!mergedSlot.IsEmpty ()) {
                 newSlots.Push (mergedSlot);
-                GetLogger ().DebugFormat ("Insert: " +
-                                          "push the merged slot {0}",
+                GetLogger ().DebugFormat ("Insert: push the merged slot {0}",
                                           mergedSlot);
               }
             }
@@ -245,8 +229,7 @@ namespace Lemoine.GDBPersistentClasses
             // All the next slots are in the future => break
             break;
           }
-          GetLogger ().DebugFormat ("GetImpactedSlots: " +
-                                    "Add slot with range {0}",
+          GetLogger ().DebugFormat ("GetImpactedSlots: Add slot with range {0}",
                                     slot.DateTimeRange);
           impactedSlots.Add (slot);
         }
@@ -278,6 +261,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       m_periodAssociation.CheckStepTimeout ();
     }
-    #endregion // Methods
   }
 }
