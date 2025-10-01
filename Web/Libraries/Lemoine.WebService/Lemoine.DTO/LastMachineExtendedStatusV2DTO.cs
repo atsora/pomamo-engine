@@ -22,6 +22,11 @@ namespace Lemoine.DTO
     /// Required reason in the past hours ?
     /// </summary>
     public bool RequiredReason { get; set; }
+
+    /// <summary>
+    /// Number of reasons that require to be overridden
+    /// </summary>
+    public int RequiredNumber { get; set; }
     
     /// <summary>
     /// Reason is too old?

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -11,6 +12,7 @@ using Lemoine.DTO;
 
 
 using Lemoine.Core.Log;
+using System.Linq;
 
 namespace Lemoine.WebService
 {
@@ -21,14 +23,12 @@ namespace Lemoine.WebService
   {
     static readonly ILog log = LogManager.GetLogger(typeof (GetLastMachineStatusV2Service).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public GetLastMachineStatusV2Service () : base(Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
     {
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Response to GET request (no cache)
@@ -52,25 +52,20 @@ namespace Lemoine.WebService
           return ServiceHelper.NoReasonSlotErrorDTO(machineId);
         }
         
-        bool reasonRequired = false;
-        
         DateTime? datetime = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc(request.Begin);
         DateTime beginDate =
           datetime.HasValue ? datetime.Value :
           dateOfRequest.Subtract(ServiceHelper.GetCurrentPeriodDuration(machine));
         
-        IList<IReasonSlot> reasonSlotList =
+        var reasonSlots =
           ModelDAOHelper.DAOFactory.ReasonSlotDAO
           .FindAllInUtcRangeWithReasonMachineObservationStateMachineMode (machine,
                                                                           new UtcDateTimeRange (beginDate));
-
-        foreach(IReasonSlot reasonSlotElt in reasonSlotList) {
-          reasonRequired |= reasonSlotElt.OverwriteRequired;
-          if (reasonRequired) break;
-        }
+        var reasonRequired = reasonSlots.Any (x => x.OverwriteRequired);
+        var reasonRequiredNumber = reasonSlots.Count (x => x.OverwriteRequired);
         
         Lemoine.DTO.LastMachineExtendedStatusV2DTO lastMachineExtendedStatusV2DTO =
-          (new Lemoine.DTO.LastMachineExtendedStatusV2DTOAssembler()).Assemble(new Tuple<IReasonSlot,bool>(reasonSlot, reasonRequired));
+          (new Lemoine.DTO.LastMachineExtendedStatusV2DTOAssembler()).Assemble(new Tuple<IReasonSlot,bool, int>(reasonSlot, reasonRequired, reasonRequiredNumber));
         
         // last reason slot is set too old if more than 1 minute old
         if ( (reasonSlot.EndDateTime.HasValue)
@@ -115,8 +110,7 @@ namespace Lemoine.WebService
                 defaultReason = null;
               }
               if (null != defaultReason) {
-                log.InfoFormat ("GetWithoutCache: " +
-                                "compute live the default reason from the current machine mode");
+                log.Info ("GetWithoutCache: compute live the default reason from the current machine mode");
                 lastMachineExtendedStatusV2DTO.MachineStatus.MachineMode = (new MachineModeDTOAssembler()).Assemble(defaultReason.MachineMode);
                 lastMachineExtendedStatusV2DTO.MachineStatus.MachineObservationState = (new MachineObservationStateDTOAssembler()).Assemble(defaultReason.MachineObservationState);
                 lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.Begin = ConvertDTO.DateTimeUtcToIsoString(range.Lower);

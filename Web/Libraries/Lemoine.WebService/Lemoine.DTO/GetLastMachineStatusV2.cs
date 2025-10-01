@@ -1,14 +1,11 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Core.Log;
 
 namespace Lemoine.DTO
@@ -30,6 +27,5 @@ namespace Lemoine.DTO
     /// Optional start of period in ISO format
     /// </summary>
     public string Begin { get; set; }
-
   }
 }
