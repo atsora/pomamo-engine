@@ -1,5 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2025 Atsora Solutions
+﻿// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,16 +24,16 @@ namespace Pulse.Web.Operation
   /// <summary>
   /// Description of XxxService
   /// </summary>
-  public class ReserveCapacityCurrentShiftService
-    : GenericAsyncCachedService<ReserveCapacityCurrentShiftRequestDTO>
+  public class OperationCurrentShiftTargetService
+    : GenericAsyncCachedService<OperationCurrentShiftTargetRequestDTO>
   {
-    static readonly ILog log = LogManager.GetLogger (typeof (ReserveCapacityCurrentShiftService).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (OperationCurrentShiftTargetService).FullName);
 
     /// <summary>
     /// 
     /// </summary>
-    public ReserveCapacityCurrentShiftService ()
-      : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
+    public OperationCurrentShiftTargetService ()
+      : base (Lemoine.Core.Cache.CacheTimeOut.CurrentLong)
     {
     }
 
@@ -43,7 +42,7 @@ namespace Pulse.Web.Operation
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public override async System.Threading.Tasks.Task<object> Get (ReserveCapacityCurrentShiftRequestDTO request)
+    public override async System.Threading.Tasks.Task<object> Get (OperationCurrentShiftTargetRequestDTO request)
     {
       Debug.Assert (null != request);
 
@@ -60,22 +59,18 @@ namespace Pulse.Web.Operation
       }
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        var businessRequest = new ReserveCapacityCurrentShift (group);
-        var reserveCapacityCurrentShift = await Lemoine.Business.ServiceProvider
+        var businessRequest = new OperationCurrentShiftTarget (group);
+        var operationCurrentShiftTarget = await Lemoine.Business.ServiceProvider
           .GetAsync (businessRequest);
-        Debug.Assert (null != reserveCapacityCurrentShift);
+        Debug.Assert (null != operationCurrentShiftTarget);
 
-        var responseDto = new ReserveCapacityCurrentShiftResponseDTO () {
-          DateTime = reserveCapacityCurrentShift.DateTime,
-          NbPieceCurrentShift = reserveCapacityCurrentShift.NbPiecesCurrentShift,
-          GoalNowShift = reserveCapacityCurrentShift.GoalCurrentShift,
-          ShiftGoal = reserveCapacityCurrentShift.ShiftGoal,
-          RemainingCapacity = reserveCapacityCurrentShift.RemainingCapacity,
-          ReserveCapacity = reserveCapacityCurrentShift.ReserveCapacity
+        var responseDto = new OperationCurrentShiftTargetResponseDTO () {
+          DateTime = operationCurrentShiftTarget.DateTime,
+          ShiftGoal = operationCurrentShiftTarget.ShiftGoal
         };
 
-        var component = Initialize<IComponent> (reserveCapacityCurrentShift.Component, ModelDAOHelper.DAOFactory.ComponentDAO.FindById);
-        var operation = Initialize<IOperation> (reserveCapacityCurrentShift.Operation, ModelDAOHelper.DAOFactory.OperationDAO.FindById);
+        var component = Initialize<IComponent> (operationCurrentShiftTarget.Component, ModelDAOHelper.DAOFactory.ComponentDAO.FindById);
+        var operation = Initialize<IOperation> (operationCurrentShiftTarget.Operation, ModelDAOHelper.DAOFactory.OperationDAO.FindById);
 
         if (null != operation) {
           responseDto.Operation = new OperationDTOAssembler ()
@@ -87,13 +82,13 @@ namespace Pulse.Web.Operation
         }
 
         // - Day/shift
-        if (reserveCapacityCurrentShift.Day.HasValue) {
-          responseDto.Day = ConvertDTO.DayToIsoString (reserveCapacityCurrentShift.Day.Value);
+        if (operationCurrentShiftTarget.Day.HasValue) {
+          responseDto.Day = ConvertDTO.DayToIsoString (operationCurrentShiftTarget.Day.Value);
         }
-        if (null != reserveCapacityCurrentShift.Shift) {
-          responseDto.Shift = new ShiftDTOAssembler ().Assemble (reserveCapacityCurrentShift.Shift);
+        if (null != operationCurrentShiftTarget.Shift) {
+          responseDto.Shift = new ShiftDTOAssembler ().Assemble (operationCurrentShiftTarget.Shift);
         }
-        var range = reserveCapacityCurrentShift.Range;
+        var range = operationCurrentShiftTarget.Range;
         if (!(range?.IsEmpty () ?? true)) {
           responseDto.Range = range.ToString (x => ConvertDTO.DateTimeUtcToIsoString (x));
         }
@@ -117,7 +112,7 @@ namespace Pulse.Web.Operation
       }
       if (!Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.IsInitialized (v)) {
         using (var session = Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.OpenSession ()) {
-          using (var transaction = session.BeginReadOnlyTransaction ("Web.ReserveCapacityCurrentShift.Initialize")) {
+          using (var transaction = session.BeginReadOnlyTransaction ("Web.OperationCurrentShiftTarget.Initialize")) {
             var initialized = findById (v.Id);
             if (null == initialized) {
               log.Error ($"Initialize: object with type {typeof (T)} and id {v.Id} does not exist");

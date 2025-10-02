@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,27 +19,15 @@ namespace Lemoine.Business.Shift
   public sealed class CurrentShift
     : IRequest<IShiftSlot>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (CurrentShift).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public CurrentShift ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
-    #region IRequest implementation
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
@@ -121,6 +110,5 @@ namespace Lemoine.Business.Shift
         return Bound.Compare<DateTime> (data.Value.EndDateTime, DateTime.UtcNow) <= 0;
       }
     }
-    #endregion // IRequest implementation
   }
 }

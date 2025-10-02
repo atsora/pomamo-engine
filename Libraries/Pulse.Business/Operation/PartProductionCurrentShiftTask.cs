@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -37,17 +38,11 @@ namespace Lemoine.Business.Operation
     /// </summary>
     static readonly TimeSpan CURRENT_NO_OPERATION_MIN_DURATION_DEFAULT = TimeSpan.FromSeconds (10);
 
-    #region Members
     readonly IMonitoredMachine m_machine;
     readonly DateTime? m_dateTime;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (PartProductionCurrentShiftTask).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -70,10 +65,6 @@ namespace Lemoine.Business.Operation
     {
       m_dateTime = dateTime;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

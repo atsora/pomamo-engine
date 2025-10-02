@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -30,21 +31,12 @@ namespace Lemoine.Business.Operation
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
-    public EffectiveOperationCurrentShift (IMachine machine)
+    /// <param name="dateTime"></param>
+    public EffectiveOperationCurrentShift (IMachine machine, DateTime? dateTime = null)
     {
       Debug.Assert (null != machine);
 
       m_machine = machine;
-    }
-
-    /// <summary>
-    /// Alternative constructor
-    /// </summary>
-    /// <param name="machine">not null</param>
-    /// <param name="dateTime"></param>
-    public EffectiveOperationCurrentShift (IMachine machine, DateTime dateTime)
-      : this (machine)
-    {
       m_dateTime = dateTime;
     }
 

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -29,20 +30,8 @@ namespace Pulse.Web.Cache
 
     static readonly ILog log = LogManager.GetLogger(typeof (ClearDomainByMachineService).FullName);
 
-#if !NSERVICEKIT
-    readonly
-#endif // NSERVICEKIT
-    Lemoine.Core.Cache.ICacheClient m_cacheClient;
+    readonly Lemoine.Core.Cache.ICacheClient m_cacheClient;
 
-    #region Constructors
-#if NSERVICEKIT
-    /// <summary>
-    /// 
-    /// </summary>
-    public ClearDomainByMachineService ()
-    {
-    }
-#else // !NSERVICEKIT
     /// <summary>
     /// 
     /// </summary>
@@ -50,10 +39,7 @@ namespace Pulse.Web.Cache
     {
       m_cacheClient = cacheClient;
     }
-#endif // NSERVICEKIT
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -65,15 +51,6 @@ namespace Pulse.Web.Cache
         log.Error ("GetWithoutCache: empty domain");
         return new ErrorDTO ("empty domain", ErrorStatus.WrongRequestParameter);
       }
-
-#if NSERVICEKIT
-      if (!(this.NServiceKitCacheClient is Lemoine.Core.Cache.ICacheClient)) {
-        log.Fatal ("GetWithoutCache: cache client is not a Lemoine.Core.Cache.ICacheClient");
-        return new ErrorDTO ("Cache client not a Lemoine.Core.Cache.ICacheClient", ErrorStatus.UnexpectedError);
-      }
-      m_cacheClient = this.NServiceKitCacheClient as Lemoine.Core.Cache.ICacheClient;
-      Debug.Assert (null != m_cacheClient);
-#endif // NSERVICEKIT
 
       try {
         var task = ClearDomainAsync (m_cacheClient, request.Domain, request.MachineId, request.Broadcast, rethrow: request.Wait);
@@ -128,7 +105,5 @@ namespace Pulse.Web.Cache
         }
       }
     }
-    
-#endregion // Methods    
   }
 }

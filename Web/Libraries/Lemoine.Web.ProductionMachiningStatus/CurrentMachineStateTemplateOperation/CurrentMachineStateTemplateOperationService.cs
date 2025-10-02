@@ -21,7 +21,6 @@ namespace Lemoine.Web.ProductionMachiningStatus.CurrentMachineStateTemplateOpera
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CurrentMachineStateTemplateOperationService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -29,9 +28,7 @@ namespace Lemoine.Web.ProductionMachiningStatus.CurrentMachineStateTemplateOpera
       : base(Lemoine.Core.Cache.CacheTimeOut.CurrentLong)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -93,6 +90,5 @@ namespace Lemoine.Web.ProductionMachiningStatus.CurrentMachineStateTemplateOpera
                      since);
       }
     }
-    #endregion // Methods
   }
 }

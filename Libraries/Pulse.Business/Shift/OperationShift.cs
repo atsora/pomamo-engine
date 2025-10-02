@@ -22,18 +22,12 @@ namespace Lemoine.Business.Shift
   public sealed class OperationShift
     : IRequest<UtcDateTimeRange>
   {
-    #region Members
     readonly IMachine m_machine;
     readonly DateTime m_day;
     readonly IShift m_shift;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationShift).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -50,10 +44,6 @@ namespace Lemoine.Business.Shift
       m_day = day;
       m_shift = shift;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

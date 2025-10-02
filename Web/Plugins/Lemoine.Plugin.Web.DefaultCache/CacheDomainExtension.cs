@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -42,8 +43,12 @@ namespace Lemoine.Plugin.Web.DefaultCache
         return new List<string> { "(Time/)?RangeAround" };
       case "shifttemplateassociation":
         return new List<string> { };
-      case "componentintermediateworkpieceupdate":
       case "intermediateworkpieceoperationupdate":
+          return new List<string> {
+            "Operation/OperationCurrentShiftTarget",
+            "Operation/ReserveCapacityCurrentShift",
+          };
+      case "componentintermediateworkpieceupdate":
       case "projectcomponentupdate":
       case "workorderprojectupdate":
       case "workorderlineassociation":
@@ -135,14 +140,18 @@ namespace Lemoine.Plugin.Web.DefaultCache
             "(MachineStateTemplate/)?ObservationStateSlots",
             "Reason/?ColorSlots",
             "(Reason/)?ReasonOnlySlots",
-            "CurrentMachineStateTemplateOperation"
+            "CurrentMachineStateTemplateOperation",
+            "Operation/OperationCurrentShiftTarget",
+            "Operation/ReserveCapacityCurrentShift",
           };
       case "operationassociation":
         return new List<string> {
             "Operation/?Slots",
             "(Operation/)?CycleProgress",
+            "Operation/OperationCurrentShiftTarget",
             "(Operation/)?OperationProgress",
             "GetProductionMachiningStatus",
+            "Operation/ReserveCapacityCurrentShift",
             "(Operation/)?SequenceSlots"
           };
       case "startcycle":
@@ -160,7 +169,11 @@ namespace Lemoine.Plugin.Web.DefaultCache
             "(Reason/)?ReasonOnlySlots"
           };
       case "shiftassociation":
-        return new List<string> { "(MachineStateTemplate/)?ObservationStateSlots" };
+        return new List<string> {
+          "(MachineStateTemplate/)?ObservationStateSlots",
+          "Operation/OperationCurrentShiftTarget",
+          "Operation/ReserveCapacityCurrentShift",
+        };
       case "serialnumberstamp":
         return new List<string> { };
       case "taskassociation":

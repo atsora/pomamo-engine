@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -32,7 +33,6 @@ namespace Lemoine.Business.Operation
 
     readonly ILog log = LogManager.GetLogger (typeof (CycleProgress).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -45,9 +45,7 @@ namespace Lemoine.Business.Operation
     /// Default: consider the last cycle and now
     /// </summary>
     public DateTime? At { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -61,10 +59,6 @@ namespace Lemoine.Business.Operation
       log = LogManager.GetLogger (string.Format ("{0}.{1}",
         typeof (CycleProgress).FullName, machine.Id));
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

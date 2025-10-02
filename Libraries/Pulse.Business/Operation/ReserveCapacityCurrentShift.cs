@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -44,18 +45,12 @@ namespace Lemoine.Business.Operation
   public sealed class ReserveCapacityCurrentShift
     : IRequest<ReserveCapacityCurrentShiftResponse>
   {
-    #region Members
     readonly IMachine m_machine;
     readonly IGroup m_group;
     readonly string m_groupId;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (ReserveCapacityCurrentShift).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -100,10 +95,6 @@ namespace Lemoine.Business.Operation
 
       log = LogManager.GetLogger ($"{typeof (ReserveCapacityCurrentShift).FullName}.{m_groupId}");
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -519,7 +510,7 @@ namespace Lemoine.Business.Operation
     /// <returns></returns>
     public string GetCacheKey ()
     {
-      return "Business.Shift.ReserveCapacityCurrentShift." + m_groupId;
+      return "Business.Operation.ReserveCapacityCurrentShift." + m_groupId;
     }
 
     /// <summary>

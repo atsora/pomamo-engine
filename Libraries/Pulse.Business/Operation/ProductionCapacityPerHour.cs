@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,18 +26,12 @@ namespace Lemoine.Business.Operation
   public sealed class ProductionCapacityPerHour
     : IRequest<double?>
   {
-    #region Members
     readonly IMachine m_machine;
     readonly IIntermediateWorkPiece m_intermediateWorkPiece;
     readonly IOperation m_operation;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProductionCapacityPerHour).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -66,7 +61,6 @@ namespace Lemoine.Business.Operation
       m_intermediateWorkPiece = null;
       m_operation = operation;
     }
-    #endregion // Constructors
 
     #region IRequest implementation
     /// <summary>
