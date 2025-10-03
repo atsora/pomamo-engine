@@ -279,6 +279,13 @@ in the install directory and rename the copy into CncQueues.overwrite.xml
                        writepriority="82"
                        readpriority="-1" />
       </queue>
+      <queue>
+        <configuration suffix="-CV-ToolName"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^ToolName"
+                       writepriority="83"
+                       readpriority="-1" />
+      </queue>
 
       <!-- Speeds (9x) -->
       <!-- 1: sub queue for feedrate -->
