@@ -25,12 +25,10 @@ namespace Lemoine.Cnc.Data
     , IListStringConfigReader
     , IListConfigReader
   {
-    #region Members
     readonly IExtensionsProvider m_extensionsProvider;
     string m_rootType = null;
     readonly IDictionary<string, string> m_configurations = new Dictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
     readonly IList<QueueConfigurationFull> m_subQueues = new List<QueueConfigurationFull> ();
-    #endregion // Members
 
     static readonly string QUEUE_CONFIG_DIRECTORY_KEY = "Cnc.QueueConfigDirectory";
     static readonly string QUEUE_CONFIG_DIRECTORY_DEFAULT = Lemoine.Info.PulseInfo.CommonConfigurationDirectory;
@@ -41,27 +39,18 @@ namespace Lemoine.Cnc.Data
     static readonly string CONF_FILENAME = "CncQueues.xml";
     static readonly string CONF_OVERWRITE_FILENAME = "CncQueues.overwrite.xml";
 
-    #region Getters / Setters
     /// <summary>
     /// Subqueues
     /// </summary>
-    public IEnumerable<QueueConfigurationFull> SubQueues
-    {
-      get { return m_subQueues; }
-    }
+    public IEnumerable<QueueConfigurationFull> SubQueues => m_subQueues;
 
     /// <summary>
     /// Root type (type="")
     /// 
     /// null if not defined
     /// </summary>
-    public string RootType
-    {
-      get { return m_rootType; }
-    }
-    #endregion // Getters / Setters
+    public string RootType => m_rootType;
 
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// 
@@ -142,7 +131,6 @@ namespace Lemoine.Cnc.Data
       // Process the sub queue configuration
       ProcessConfiguration (this, node, nsmgr);
     }
-    #endregion // Constructors
 
     /// <summary>
     /// This method must be called for testing purposes only

@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2023 Atsora Solutions
+// Copyright (C) 2023-2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,7 +25,6 @@ namespace Lemoine.CncDataImport
   {
     static readonly TimeSpan DEFAULT_SKIP_OLD_SECONDARY_CNC_VALUES_AFTER = TimeSpan.FromHours (2);
 
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
     readonly CacheCncValue m_cache;
@@ -33,9 +32,7 @@ namespace Lemoine.CncDataImport
     readonly IEnumerable<Lemoine.Extensions.Cnc.IImportCncValuesExtension> m_importCncValuesExtensions;
     readonly IEnumerable<Lemoine.Extensions.Cnc.IImportCncValueExtension> m_importCncValueExtensions;
     //readonly IAutoConverter m_converter = new DefaultAutoConverter ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
@@ -46,9 +43,7 @@ namespace Lemoine.CncDataImport
     /// Duration after which a secondary cnc value is considered old and thus skipped
     /// </summary>
     TimeSpan? SkipOldSecondaryCncValuesAfter { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// cncCache must be the same than in ImportDataStopCncValues
     /// </summary>
@@ -82,7 +77,6 @@ namespace Lemoine.CncDataImport
         .Where (extension => extension.Initialize (m_machineModule))
         .ToList ();
     }
-    #endregion // Constructors
 
     #region Lemoine.Threading.IChecked implementation
     /// <summary>
