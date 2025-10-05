@@ -24,7 +24,7 @@ namespace Pulse.Web.Machine
   [ApiResponse (HttpStatusCode.InternalServerError, "Oops, something broke")]
   [Route ("/Machine/Groups/", "GET", Summary = "Get all the groups", Notes = "")]
   [Route ("/MachineGroups/", "GET", Summary = "Get all the groups", Notes = "")]
-  [AllowAnonymous] // Temporary solution to use this service in PulseReporting, until the full authentication in PulseReporting is supported
+  [AllowAnonymous] // Temporary solution to use this service in AtrackingReporting, until the full authentication in AtrackingReporting is supported
   public class GroupsRequestDTO : IReturn<GroupsResponseDTO>
   {
     /// <summary>

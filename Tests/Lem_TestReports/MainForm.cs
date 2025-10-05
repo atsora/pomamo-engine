@@ -51,7 +51,7 @@ namespace Lem_TestReports
 
   public enum ViewerType
   {
-    PULSEREPORTING = 1
+    ATRACKINGREPORTING = 1
   }
 
   /// <summary>
@@ -62,7 +62,7 @@ namespace Lem_TestReports
     static readonly int NAME_COLUMN_INDEX = (int)TestGridColumns.NAME;
     static readonly int URL_COLUMN_INDEX = (int)TestGridColumns.URL;
 
-    static readonly Regex REGEX_PULSEREPORTING = new Regex (@"http://(.)*:(\d)+/pulsereporting(/)?(.)*");
+    static readonly Regex REGEX_ATRACKINGREPORTING = new Regex (@"http://(.)*:(\d)+/atrackingreporting(/)?(.)*");
 
     static readonly string DIFFPDF_KEY = "DIFFPDF";
     static readonly string DIFFPDF_DEFAULT = @"C:\Devel\pulsetests\FunctionalTests\bin\diffpdf\diffpdf.exe";
@@ -259,7 +259,7 @@ namespace Lem_TestReports
       string viewUrl = null;
       string[] baseUrlParts;
       ViewerType viewerType = getViewerType (baseUrl);
-      if (viewerType == ViewerType.PULSEREPORTING) {
+      if (viewerType == ViewerType.ATRACKINGREPORTING) {
         baseUrlParts = baseUrl.Split (new char[] { '?' });
         viewUrl = this.ViewerUrl + "viewer" + "?" + baseUrlParts[1];
       }
@@ -792,7 +792,7 @@ namespace Lem_TestReports
     Uri GetExportUri (string baseUrl)
     {
       ViewerType viewerType = getViewerType (baseUrl);
-      if (viewerType == ViewerType.PULSEREPORTING) {
+      if (viewerType == ViewerType.ATRACKINGREPORTING) {
         string[] baseUrlParts = baseUrl.Split (new char[] { '?' });
         string shortenUrl = baseUrlParts[1];
         return new Uri (new Uri (viewerUrlTextBox.Text),
@@ -830,7 +830,7 @@ namespace Lem_TestReports
     {
       dataGridView1.Rows.Clear ();
       if (string.IsNullOrEmpty (Options.ViewerUrl)) {
-        this.ViewerUrl = @"http://lctr:8080/pulsereporting/";
+        this.ViewerUrl = @"http://lctr:8080/atrackingreporting/";
       }
       else {
         this.ViewerUrl = Options.ViewerUrl;
@@ -933,7 +933,7 @@ namespace Lem_TestReports
           if(sepIndex != -1){
             string queryString = url.Substring(sepIndex+1);
             m_parameterLists.Add(row, Parameter.retrieveParameterList(queryString, 
-            ViewerType.PULSEREPORTING));
+            ViewerType.ATRACKINGREPORTING));
           }
         }
       }
@@ -1125,8 +1125,8 @@ namespace Lem_TestReports
 
     ViewerType getViewerType (String url)
     {
-      if (REGEX_PULSEREPORTING.IsMatch (url)) {
-        return ViewerType.PULSEREPORTING;
+      if (REGEX_ATRACKINGREPORTING.IsMatch (url)) {
+        return ViewerType.ATRACKINGREPORTING;
       }
       else {
         throw new Exception ("URL value has unknown format : " + url);
@@ -1140,23 +1140,23 @@ namespace Lem_TestReports
       ViewerType viewerType;
       switch (index) {
       case 0:
-        viewerType = ViewerType.PULSEREPORTING;
+        viewerType = ViewerType.ATRACKINGREPORTING;
         break;
       default:
         throw new Exception ("Invalid value for ComboBox selected index");
       }
 
       Regex regex;
-      if (viewerUrlTextBox.Text.Contains ("pulsereporting")) {
-        regex = new Regex (@"pulsereporting");
+      if (viewerUrlTextBox.Text.Contains ("atrackingreporting")) {
+        regex = new Regex (@"atrackingreporting");
       }
       else {
         throw new Exception ("Invalid value for viewer URL");
       }
 
       switch (viewerType) {
-      case ViewerType.PULSEREPORTING:
-        viewerUrlTextBox.Text = regex.Replace (viewerUrlTextBox.Text, "pulsereporting");
+      case ViewerType.ATRACKINGREPORTING:
+        viewerUrlTextBox.Text = regex.Replace (viewerUrlTextBox.Text, "atrackingreporting");
         break;
       default:
         throw new Exception ("Invalid value for ViewerType");
@@ -1168,7 +1168,7 @@ namespace Lem_TestReports
           DataGridViewTextBoxCell urlCell = (DataGridViewTextBoxCell)row.Cells[(int)TestGridColumns.URL];
           string newQueryString = Parameter.buildViewerUrl (parameterList, viewerType);
           switch (viewerType) {
-          case ViewerType.PULSEREPORTING:
+          case ViewerType.ATRACKINGREPORTING:
             urlCell.Value = viewerUrlTextBox.Text + "viewer?" + newQueryString;
             break;
           default:

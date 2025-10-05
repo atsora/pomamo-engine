@@ -24,7 +24,7 @@ namespace Lem_TestReports
     [Option ('f', "logfile", HelpText = "Path of the log file (else get it from the input file)")]
     public string LogFile { get; set; } = null;
 
-    [Option ('u', "url", HelpText = "Force a specific viewer Url. For example: http://lctr:8080/pulsereporting/ (else get it from the input file)")]
+    [Option ('u', "url", HelpText = "Force a specific viewer Url. For example: http://lctr:8080/atrackingeporting/ (else get it from the input file)")]
     public string ViewerUrl { get; set; } = null;
 
     [Option ('o', "out", HelpText = "Force an output directory (else get it from the input file)")]

@@ -197,7 +197,7 @@ namespace Lem_TestReports
       this.changeViewer_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.changeViewer_comboBox.FormattingEnabled = true;
       this.changeViewer_comboBox.Items.AddRange(new object[] {
-            "PulseReporting"});
+            "atrackingreporting"});
       this.changeViewer_comboBox.Location = new System.Drawing.Point(1269, 35);
       this.changeViewer_comboBox.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
       this.changeViewer_comboBox.Name = "changeViewer_comboBox";
@@ -386,7 +386,7 @@ namespace Lem_TestReports
       this.viewerUrlTextBox.Name = "viewerUrlTextBox";
       this.viewerUrlTextBox.Size = new System.Drawing.Size(1097, 31);
       this.viewerUrlTextBox.TabIndex = 1;
-      this.viewerUrlTextBox.Text = "http://lctr:8080/pulsereporting/";
+      this.viewerUrlTextBox.Text = "http://lctr:8080/atrackingreporting/";
       // 
       // viewerUrlLabel
       // 

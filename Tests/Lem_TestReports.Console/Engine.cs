@@ -21,7 +21,7 @@ namespace Lem_TestReports.Console
   /// </summary>
   public class Engine
   {
-    static readonly Regex REGEX_PULSEREPORTING = new Regex (@"http://(.)*:(\d)+/pulsereporting(/)?(.)*");
+    static readonly Regex REGEX_PULSEREPORTING = new Regex (@"http://(.)*:(\d)+/atrackingreporting(/)?(.)*");
 
     static readonly string COMPAREPDF_KEY = "COMPAREPDF";
     static readonly string COMPAREPDF_DEFAULT = @"C:\Devel\pulsetests\FunctionalTests\bin\comparepdf\comparepdf.exe";

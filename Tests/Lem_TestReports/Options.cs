@@ -27,7 +27,7 @@ namespace Lem_TestReports
     [Option ('a', "auto-diff", HelpText = "Select the auto-diff option")]
     public bool AutoDiff { get; set; } = false;
 
-    [Option ('u', "url", HelpText = "Force a specific viewer Url. For example: http://lctr:8080/pulsereporting/ (else get it from the input file)")]
+    [Option ('u', "url", HelpText = "Force a specific viewer Url. For example: http://lctr:8080/atrackingreporting/ (else get it from the input file)")]
     public string ViewerUrl { get; set; } = null;
 
     [Option ('o', "out", HelpText = "Force an output directory (else get it from the input file)")]
