@@ -211,7 +211,6 @@ namespace Lemoine.Plugin.OperationSlotByMachineShift
       Debug.Assert (null != operationSlot);
 
       var detectionDateTime = GetDetectionDateTime ();
-
       if (!detectionDateTime.HasValue) {
         log.Error ("IsInProgress: detection date/time is not known");
         return false;

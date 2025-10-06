@@ -10,6 +10,7 @@ using Lemoine.Core.Log;
 using System.Collections.Generic;
 using Lemoine.Extensions.Configuration;
 using Pulse.Extensions.Configuration.Implementation;
+using Pulse.Extensions.Configuration;
 
 namespace Pulse.PluginImplementation
 {
@@ -19,7 +20,7 @@ namespace Pulse.PluginImplementation
   /// <typeparam name="TConfiguration"></typeparam>
   public abstract class FilteredByMachineExtension<TConfiguration>
     : Lemoine.Extensions.MultipleInstanceConfigurableExtension<TConfiguration>
-    where TConfiguration : ConfigurationWithMachineFilter, new()
+    where TConfiguration : IConfigurationWithMachineFilter, new()
   {
     ILog log = LogManager.GetLogger (typeof (FilteredByMachineExtension<TConfiguration>).FullName);
 

@@ -27,15 +27,12 @@ namespace Lemoine.DataRepository
   /// </summary>
   public class XMLFactory : IFactory
   {
-    #region Members
     XmlSourceType m_source;
     string m_xmlString;
     string m_url;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (XMLFactory).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Source of the XML: raw string or file/url
     /// </summary>
@@ -62,9 +59,7 @@ namespace Lemoine.DataRepository
       get { return m_url; }
       set { m_url = value; }
     }
-    #endregion
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -82,9 +77,7 @@ namespace Lemoine.DataRepository
           break;
       }
     }
-    #endregion
 
-    #region Methods
     /// <summary>
     /// Specialized method to build the DOMDocument
     /// </summary>
@@ -162,6 +155,5 @@ namespace Lemoine.DataRepository
       // Do nothing special for the moment
       return;
     }
-    #endregion
   }
 }

@@ -36,6 +36,11 @@ namespace Lemoine.Business.Operation
     {
       Debug.Assert (null != machine);
 
+      if (machine is null) {
+        log.Fatal ($"Ctr: machine is null at {System.Environment.StackTrace}");
+        throw new ArgumentNullException ("machine");
+      }
+
       m_machine = machine;
       m_dateTime = dateTime;
     }

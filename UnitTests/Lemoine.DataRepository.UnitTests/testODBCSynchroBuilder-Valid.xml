@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="testodbcbuilder.xsd"
-      xmlns:pulse="urn:pulse.lemoinetechnologies.com:synchro:odbc"
-      pulse:dsnname="LemoineUnitTests" pulse:user="DatabaseUser" pulse:password="DatabasePassword">
-  <element id="" pulse:request="UPDATE testodbcbuilder SET id={@id}" />
-</root>

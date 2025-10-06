@@ -74,7 +74,7 @@ namespace Lem_TestReports
     public static String buildViewerUrl(IList<Parameter> parameterList, ViewerType viewerType) {
       StringBuilder parameterString = new StringBuilder();
       switch (viewerType) {
-        case ViewerType.PULSEREPORTING:
+        case ViewerType.ATRACKINGREPORTING:
           foreach (Parameter parameter in parameterList) {
             if (null == parameter.Values) {
               parameterString.Append("&__isnull=");
@@ -120,7 +120,7 @@ namespace Lem_TestReports
           continue;
         }
         switch (viewerType) {
-          case ViewerType.PULSEREPORTING:
+          case ViewerType.ATRACKINGREPORTING:
             if(String.Equals(words[0],"__session",StringComparison.Ordinal)) {
               break;
             }

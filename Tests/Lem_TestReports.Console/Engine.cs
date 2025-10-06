@@ -21,7 +21,7 @@ namespace Lem_TestReports.Console
   /// </summary>
   public class Engine
   {
-    static readonly Regex REGEX_PULSEREPORTING = new Regex (@"http://(.)*:(\d)+/atrackingreporting(/)?(.)*");
+    static readonly Regex REGEX_ATRACKINGREPORTING = new Regex (@"http://(.)*:(\d)+/atrackingreporting(/)?(.)*");
 
     static readonly string COMPAREPDF_KEY = "COMPAREPDF";
     static readonly string COMPAREPDF_DEFAULT = @"C:\Devel\pulsetests\FunctionalTests\bin\comparepdf\comparepdf.exe";
@@ -46,7 +46,7 @@ namespace Lem_TestReports.Console
 
     public enum ViewerType
     {
-      PULSEREPORTING = 1
+      ATRACKINGREPORTING = 1
     }
 
     IList<SingleTest> m_tests = new List<SingleTest> ();
@@ -177,7 +177,7 @@ namespace Lem_TestReports.Console
     Uri GetExportUri (string baseUrl)
     {
       ViewerType viewerType = getViewerType (baseUrl);
-      if (viewerType == ViewerType.PULSEREPORTING) {
+      if (viewerType == ViewerType.ATRACKINGREPORTING) {
         string[] baseUrlParts = baseUrl.Split (new char[] { '?' });
         string shortenUrl = baseUrlParts[1];
         return new Uri (new Uri (this.ViewerUrl),
@@ -398,8 +398,8 @@ namespace Lem_TestReports.Console
 
     ViewerType getViewerType (String url)
     {
-      if (REGEX_PULSEREPORTING.IsMatch (url)) {
-        return ViewerType.PULSEREPORTING;
+      if (REGEX_ATRACKINGREPORTING.IsMatch (url)) {
+        return ViewerType.ATRACKINGREPORTING;
       }
       else {
         throw new Exception ("URL value has unknown format : " + url);

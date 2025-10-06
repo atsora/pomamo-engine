@@ -60,6 +60,9 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       if (log.IsDebugEnabled) {
         log.Debug ($"GetNumberOfCyclesAsync: detection date/time is {detectionDateTime}");
       }
+      if (!detectionDateTime.HasValue) {
+        log.Warn ($"GetNumberOfCyclesAsync: detection date/time is unknown");
+      }
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Plugin.HourlyOperationSummary.CycleCounter")) {
           var dao = new HourlyOperationSummaryDAO ();
@@ -300,7 +303,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       Debug.Assert (null != summary);
 
       if (!detectionDateTime.HasValue) {
-        log.Error ("IsInProgress: detection date/time is not known");
+        log.Error ("IsInProgress: detection date/time is not known => return false");
         return false;
       }
 

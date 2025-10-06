@@ -45,7 +45,7 @@ namespace Lemoine.Business.Operation
   public sealed class ReserveCapacityCurrentShift
     : IRequest<ReserveCapacityCurrentShiftResponse>
   {
-    readonly IMachine m_machine;
+    readonly IMachine m_requestedMachine;
     readonly IGroup m_group;
     readonly string m_groupId;
 
@@ -59,7 +59,7 @@ namespace Lemoine.Business.Operation
     {
       Debug.Assert (null != group);
 
-      m_machine = null;
+      m_requestedMachine = null;
       m_group = group;
       m_groupId = group.Id;
 
@@ -74,7 +74,7 @@ namespace Lemoine.Business.Operation
     {
       Debug.Assert (!string.IsNullOrEmpty (groupId));
 
-      m_machine = null;
+      m_requestedMachine = null;
       m_group = null;
       m_groupId = groupId;
 
@@ -89,7 +89,7 @@ namespace Lemoine.Business.Operation
     {
       Debug.Assert (null != machine);
 
-      m_machine = machine;
+      m_requestedMachine = machine;
       m_group = null;
       m_groupId = machine.Id.ToString ();
 
@@ -107,8 +107,8 @@ namespace Lemoine.Business.Operation
         log.Debug ($"Get: ...");
       }
 
-      if (null != m_machine) {
-        return GetByMachine (m_machine);
+      if (null != m_requestedMachine) {
+        return GetByMachine (m_requestedMachine);
       }
 
       var group = m_group;
@@ -139,8 +139,8 @@ namespace Lemoine.Business.Operation
         log.Debug ($"GetAsync: ...");
       }
 
-      if (null != m_machine) {
-        return await GetByMachineAsync (m_machine);
+      if (null != m_requestedMachine) {
+        return await GetByMachineAsync (m_requestedMachine);
       }
 
       var group = m_group;

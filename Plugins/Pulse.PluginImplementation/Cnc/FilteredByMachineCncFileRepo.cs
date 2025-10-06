@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Lemoine.Extensions.Configuration;
 using Pulse.Extensions.Configuration.Implementation;
 using System.Linq;
+using Pulse.Extensions.Configuration;
 
 namespace Pulse.PluginImplementation.Cnc
 {
@@ -22,7 +23,7 @@ namespace Pulse.PluginImplementation.Cnc
   public abstract class FilteredByMachineCncFileRepo<TConfiguration>
     : Lemoine.Extensions.MultipleInstanceConfigurableExtension<TConfiguration>
     , ICncFileRepoExtension
-    where TConfiguration : ConfigurationWithMachineFilter, new()
+    where TConfiguration : IConfigurationWithMachineFilter, new()
   {
     ILog log = LogManager.GetLogger (typeof (FilteredByMachineCncFileRepo<TConfiguration>).FullName);
 

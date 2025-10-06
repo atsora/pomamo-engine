@@ -14,6 +14,7 @@ using Lemoine.Info.ConfigReader.TargetSpecific;
 using Lemoine.ModelDAO.Interfaces;
 using Lemoine.FileRepository;
 using Lemoine.Core.Hosting;
+using Remotion.Linq.Parsing;
 
 namespace Lem_SynchronizationService
 {
@@ -41,18 +42,14 @@ namespace Lem_SynchronizationService
     static readonly string TEST_SYNCHRO_SUFFIX_KEY = "Synchro.Test.Synchro.Suffix";
     static readonly string TEST_SYNCHRO_SUFFIX_DEFAULT = ".testsynchro.xml";
 
-    #region Members
     readonly IApplicationInitializer m_applicationInitializer;
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     bool m_disposed = false;
     IDictionary<string, Synchronizer> m_synchronizers =
       new Dictionary<string, Synchronizer> (); // configuration => synchronizer
-    #endregion
-
 
     static readonly ILog log = LogManager.GetLogger (typeof (SynchronizationService).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -62,9 +59,7 @@ namespace Lem_SynchronizationService
 
       m_applicationInitializer = applicationInitializer;
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Use the default OnStart method
     /// </summary>
@@ -97,9 +92,8 @@ namespace Lem_SynchronizationService
         string configurationFiles =
           Lemoine.Info.ConfigSet.Get<string> (CONFIGURATION_FILES_KEY);
         foreach (string configurationFile in configurationFiles.Split (new char[] { ',' })) {
-          ODBCFactory factory =
-            new ODBCFactory (XmlSourceType.URI, configurationFile, new ClassicConnectionParameters ());
-          Repository repository = new Repository ();
+          IFactory factory = new DummyFactory (); // TODO: define factory
+          var repository = new Repository ();
           repository.MainFactory = factory;
           repository.CopyBuilder =
             new LemoineGDBBuilder ();
@@ -189,14 +183,13 @@ namespace Lem_SynchronizationService
     /// <param name="factory"></param>
     /// <param name="everyAttribute">every or nodataevery</param>
     /// <returns></returns>
-    static TimeSpan GetEveryParameter (ODBCFactory factory,
+    static TimeSpan GetEveryParameter (IFactory factory,
                                        string everyAttribute)
     {
       TimeSpan every = DEFAULT_EVERY;
 
       try {
         string xpath = string.Format ("/root/@{0}", everyAttribute);
-        every = TimeSpan.Parse (factory.GetConfigurationValue (xpath));
       }
       catch (Exception ex) {
         log.Info ("GetEveryParameter: factory.GetConfigurationValue failed", ex);
@@ -206,8 +199,6 @@ namespace Lem_SynchronizationService
           new Dictionary<string, string> ();
         prefixToNamespace["config"] = PulseResolver.PULSE_ODBCGDBCONFIG_NAMESPACE;
         string xpath = string.Format ("/config:root/@config:{0}", everyAttribute);
-        every = TimeSpan.Parse (factory.GetConfigurationValue (xpath,
-                                                               prefixToNamespace));
       }
       catch (Exception ex) {
         log.Info ("GetEveryParameter: factory.GetConfigurationValue with namespace failed", ex);
@@ -217,8 +208,6 @@ namespace Lem_SynchronizationService
           new Dictionary<string, string> ();
         prefixToNamespace["config"] = PulseResolver.PULSE_ODBCGDBCONFIG_NAMESPACE;
         string xpath = string.Format ("/root/@config:{0}", everyAttribute);
-        every = TimeSpan.Parse (factory.GetConfigurationValue (xpath,
-                                                               prefixToNamespace));
       }
       catch (Exception ex) {
         log.Info ("GetEveryParameter: factory.GetConfigurationValue with namespace failed", ex);
@@ -226,7 +215,6 @@ namespace Lem_SynchronizationService
 
       return every;
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

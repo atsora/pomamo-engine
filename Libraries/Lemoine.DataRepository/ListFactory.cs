@@ -40,10 +40,8 @@ namespace Lemoine.DataRepository
       }
     }
 
-    #region Members
     ICollection<T> m_list = null;
     ListMaker<T> m_listMaker = null;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (ListFactory<T>).FullName);
 

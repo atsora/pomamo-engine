@@ -20,7 +20,6 @@ namespace Pulse.Extensions.Configuration.Implementation
   {
     static readonly ILog log = LogManager.GetLogger (typeof (ConfigurationWithMachineFilter).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Machine filter ID
     /// 
@@ -31,18 +30,14 @@ namespace Pulse.Extensions.Configuration.Implementation
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public ConfigurationWithMachineFilter ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -111,6 +106,5 @@ namespace Pulse.Extensions.Configuration.Implementation
         }
       }
     }
-    #endregion // Methods
   }
 }

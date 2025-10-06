@@ -1896,7 +1896,7 @@ namespace Lemoine.JobControls
         exportFileDialog.Filter = "Excel files|*.xls|All files|*.*";
         DialogResult result = exportFileDialog.ShowDialog ();
         if (result == DialogResult.OK) {
-          Lemoine.ExcelDataGrid.ExcelExporter exporter = new Lemoine.ExcelDataGrid.ExcelExporter (this.RemoveNonActiveFieldsFromImportExport);
+          var exporter = new Lemoine.JobControls.ExcelExporter (this.RemoveNonActiveFieldsFromImportExport);
           exporter.ColumnPropertyIdentifiers = (string[])this.ColumnPropertyIdentifiers.Clone ();
           exporter.ColumnFieldIdentifiers = (string[])this.ColumnFieldIdentifiers.Clone ();
           exporter.ExportPathAsFile (selectedPath, exportFileDialog.FileName);
@@ -1920,7 +1920,7 @@ namespace Lemoine.JobControls
         importFileDialog.Filter = "Excel files|*.xls|All files|*.*";
         DialogResult result = importFileDialog.ShowDialog ();
         if (result == DialogResult.OK) {
-          Lemoine.ExcelDataGrid.ExcelExporter exporter = new Lemoine.ExcelDataGrid.ExcelExporter (this.RemoveNonActiveFieldsFromImportExport);
+          var exporter = new Lemoine.JobControls.ExcelExporter (this.RemoveNonActiveFieldsFromImportExport);
           exporter.ColumnPropertyIdentifiers = (string[])this.ColumnPropertyIdentifiers.Clone ();
           exporter.ColumnFieldIdentifiers = (string[])this.ColumnFieldIdentifiers.Clone ();
           try {
@@ -1928,14 +1928,14 @@ namespace Lemoine.JobControls
             // update sequence nodes
             BuildTreeNodes (treeNode);
           }
-          catch (Lemoine.ExcelDataGrid.ExcelImporterFileAccessException) {
+          catch (Lemoine.JobControls.ExcelImporterFileAccessException) {
             string errorMsg = String.Format ("{0} {1}.\n{2}.",
                                             PulseCatalog.GetString ("ProblemOnFileOpenA"),
                                             importFileDialog.FileName,
                                             PulseCatalog.GetString ("CheckNotOpenedInOtherApp"));
             MessageBox.Show (errorMsg);
           }
-          catch (Lemoine.ExcelDataGrid.ExcelImporterBadFormatException) {
+          catch (Lemoine.JobControls.ExcelImporterBadFormatException) {
             string errorMsg = String.Format ("{0} {1}.", PulseCatalog.GetString ("ProblemOnFileProcessA"),
                                             importFileDialog.FileName);
             MessageBox.Show (errorMsg);
