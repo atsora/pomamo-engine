@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -32,7 +33,6 @@ namespace Lemoine.Plugin.ProductionTracker
     const string PAST_LIMIT_KEY = "Plugin.ProductionTracker.PastLimit";
     static readonly TimeSpan PAST_LIMIT_DEFAULT = TimeSpan.FromDays (365);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -40,9 +40,7 @@ namespace Lemoine.Plugin.ProductionTracker
       : base (Lemoine.Core.Cache.CacheTimeOut.CurrentLong)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -90,9 +88,14 @@ namespace Lemoine.Plugin.ProductionTracker
       Debug.Assert (null != request);
 
       var groupId = request.GroupId;
+      if (request.GroupId is null) {
+        log.Error ($"Get: no group");
+        return new ErrorDTO ("No group was specified",
+                             ErrorStatus.WrongRequestParameter);
+      }
       var groupRequest = new Lemoine.Business.Machine.GroupFromId (groupId);
-      var group = Lemoine.Business.ServiceProvider
-        .Get (groupRequest);
+      var group = await Lemoine.Business.ServiceProvider
+        .GetAsync (groupRequest);
 
       var range = new UtcDateTimeRange (request.Range);
 
@@ -296,6 +299,5 @@ namespace Lemoine.Plugin.ProductionTracker
 
       return perHourData;
     }
-    #endregion // Methods
   }
 }

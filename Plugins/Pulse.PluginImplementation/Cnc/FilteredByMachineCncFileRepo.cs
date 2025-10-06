@@ -10,7 +10,6 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Collections.Generic;
 using Lemoine.Extensions.Configuration;
-using Pulse.Extensions.Configuration.Implementation;
 using System.Linq;
 using Pulse.Extensions.Configuration;
 

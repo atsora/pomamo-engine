@@ -9,7 +9,6 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using System.Collections.Generic;
 using Lemoine.Extensions.Configuration;
-using Pulse.Extensions.Configuration.Implementation;
 using Pulse.Extensions.Configuration;
 
 namespace Pulse.PluginImplementation

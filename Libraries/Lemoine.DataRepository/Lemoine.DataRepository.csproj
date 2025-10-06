@@ -5,17 +5,13 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net40;net48;net8.0</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>2.0.3.0</AssemblyVersion>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <Reference Include="NHibernate">
       <HintPath>..\..\..\pomamo-extern\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
-    <PackageReference Include="System.Data.Odbc" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">

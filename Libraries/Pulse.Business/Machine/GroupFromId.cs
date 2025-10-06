@@ -353,7 +353,12 @@ namespace Lemoine.Business.Machine
     {
       Debug.Assert (!string.IsNullOrEmpty (groupId));
 
-      this.GroupId = groupId.Trim ();
+      if (groupId is null) {
+        log.Error ($"Ctr: groupId is null");
+        throw new ArgumentNullException ("groupId");
+      }
+
+      this.GroupId = groupId?.Trim ();
     }
 
     /// <summary>
