@@ -46,13 +46,13 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (day.Kind == DateTimeKind.Unspecified);
       Debug.Assert (null != shift);
 
-      var dayRange = new DayRange (day.AddDays (-1), day.AddDays (+1), true, true);
+      var dayRange = new DayRange (day, day, true, true);
       var result = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<ObservationStateSlot> ()
         .Add (Restrictions.Eq ("Machine.Id", machine.Id))
-        .Add (Restrictions.Eq ("Day", day))
+        .Add (Restrictions.IsNotNull ("Shift"))
         .Add (Restrictions.Eq ("Shift.Id", shift.Id))
-        .Add (new SimpleExpression ("DayRange", dayRange, "&&")) // Overlap, only for possible optimization
+        .Add (new SimpleExpression ("DayRange", dayRange, "&&"))
         .AddOrder (Order.Asc ("DateTimeRange"))
         .List<IObservationStateSlot> ();
       return result;
@@ -71,13 +71,13 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (day.Kind == DateTimeKind.Unspecified);
       Debug.Assert (null != shift);
 
-      var dayRange = new DayRange (day.AddDays (-1), day.AddDays (+1), true, true);
+      var dayRange = new DayRange (day, day, true, true);
       var result = await NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<ObservationStateSlot> ()
         .Add (Restrictions.Eq ("Machine.Id", machine.Id))
-        .Add (Restrictions.Eq ("Day", day))
+        .Add (Restrictions.IsNotNull ("Shift"))
         .Add (Restrictions.Eq ("Shift.Id", shift.Id))
-        .Add (new SimpleExpression ("DayRange", dayRange, "&&")) // Overlap, only for possible optimization
+        .Add (new SimpleExpression ("DayRange", dayRange, "&&"))
         .AddOrder (Order.Asc ("DateTimeRange"))
         .ListAsync<IObservationStateSlot> ();
       return result;

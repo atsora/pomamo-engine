@@ -24,17 +24,14 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string MACHINE_STATE_TEMPLATE_PROCESS_MAX_RANGE_KEY = "MachineStateTemplate.Process.MaxRange";
     static readonly TimeSpan MACHINE_STATE_TEMPLATE_PROCESS_MAX_RANGE_DEFAULT = TimeSpan.FromDays (1);
     
-    #region Members
     IMachineObservationState m_machineObservationState;
     IMachineStateTemplate m_machineStateTemplate;
     IUser m_user;
     IShift m_shift;
     bool? m_production;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (ObservationStateSlot).FullName);
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
@@ -53,9 +50,7 @@ namespace Lemoine.GDBPersistentClasses
       : base (true, machine, range)
     {
     }
-    #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the Machine Observation State
     /// </summary>
@@ -114,7 +109,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return true; }
       set { }
     }
-    #endregion // Getters / Setters
     
     #region Slot implementation
     /// <summary>
