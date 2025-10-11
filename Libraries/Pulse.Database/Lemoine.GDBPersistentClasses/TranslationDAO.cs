@@ -35,7 +35,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "UndefinedValue");
-        translation.TranslationValue = "Non défini";
+        translation.TranslationValue = "Non dï¿½fini";
         InsertDefaultValue (translation);
       }
       {
@@ -67,7 +67,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ProjectComponentIsPart");
-        translation.TranslationValue = "Projet + Composant = Pièce";
+        translation.TranslationValue = "Projet + Composant = Piï¿½ce";
         InsertDefaultValue (translation);
       }
       {
@@ -83,12 +83,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "IntermediateWorkPieceOperationIsSimpleOperation");
-        translation.TranslationValue = "Pièce intermédiaire + Opération = Opération simple";
+        translation.TranslationValue = "Piï¿½ce intermï¿½diaire + Opï¿½ration = Opï¿½ration simple";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "IntermediateWorkPieceOperationIsSimpleOperation");
-        translation.TranslationValue = "Zwischenwerkstück + Operation = Einfache Operation";
+        translation.TranslationValue = "Zwischenwerkstï¿½ck + Operation = Einfache Operation";
         InsertDefaultValue (translation);
       }
 
@@ -99,7 +99,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "UniqueWorkOrderFromProjectOrComponent");
-        translation.TranslationValue = "Projet/Composant/Pièce => 1 OF";
+        translation.TranslationValue = "Projet/Composant/Piï¿½ce => 1 OF";
         InsertDefaultValue (translation);
       }
       {
@@ -115,7 +115,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "UniqueComponentFromOperation");
-        translation.TranslationValue = "Opération => 1 Composant/Pièce";
+        translation.TranslationValue = "Opï¿½ration => 1 Composant/Piï¿½ce";
         InsertDefaultValue (translation);
       }
       {
@@ -131,7 +131,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ComponentFromOperationOnly");
-        translation.TranslationValue = "Projet/Composant/Pièce <= Opération seulement";
+        translation.TranslationValue = "Projet/Composant/Piï¿½ce <= Opï¿½ration seulement";
         InsertDefaultValue (translation);
       }
       {
@@ -147,7 +147,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "WorkOrderFromComponentOnly");
-        translation.TranslationValue = "OF <= Projet/Composant/Pièce seulement";
+        translation.TranslationValue = "OF <= Projet/Composant/Piï¿½ce seulement";
         InsertDefaultValue (translation);
       }
       {
@@ -212,7 +212,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeCategoryUnknown");
-        translation.TranslationValue = "État inconnu";
+        translation.TranslationValue = "ï¿½tat inconnu";
         InsertDefaultValue (translation);
       }
       {
@@ -228,12 +228,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeCategoryEco");
-        translation.TranslationValue = "Éco";
+        translation.TranslationValue = "ï¿½co";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeCategoryEco");
-        translation.TranslationValue = "Öko";
+        translation.TranslationValue = "ï¿½ko";
         InsertDefaultValue (translation);
       }
 
@@ -277,7 +277,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeUnknown");
-        translation.TranslationValue = "État inconnu";
+        translation.TranslationValue = "ï¿½tat inconnu";
         InsertDefaultValue (translation);
       }
       {
@@ -293,7 +293,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeInactiveOn");
-        translation.TranslationValue = "Inactif (Allumé)";
+        translation.TranslationValue = "Inactif (Allumï¿½)";
         InsertDefaultValue (translation);
       }
       {
@@ -373,7 +373,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeJogActive");
-        translation.TranslationValue = "Actif (Déplacement manuel)";
+        translation.TranslationValue = "Actif (Dï¿½placement manuel)";
         InsertDefaultValue (translation);
       }
       {
@@ -421,7 +421,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeNoData");
-        translation.TranslationValue = "Pas de données (pas d'acquisition)";
+        translation.TranslationValue = "Pas de donnï¿½es (pas d'acquisition)";
         InsertDefaultValue (translation);
       }
       {
@@ -442,7 +442,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeUnavailable");
-        translation.TranslationValue = "Maschine nicht verfügbar";
+        translation.TranslationValue = "Maschine nicht verfï¿½gbar";
         InsertDefaultValue (translation);
       }
 
@@ -469,7 +469,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeOff");
-        translation.TranslationValue = "Éteint";
+        translation.TranslationValue = "ï¿½teint";
         InsertDefaultValue (translation);
       }
       {
@@ -533,7 +533,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeReady");
-        translation.TranslationValue = "Programme prêt";
+        translation.TranslationValue = "Programme prï¿½t";
         InsertDefaultValue (translation);
       }
       {
@@ -549,7 +549,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeStopped");
-        translation.TranslationValue = "Programme arrêté";
+        translation.TranslationValue = "Programme arrï¿½tï¿½";
         InsertDefaultValue (translation);
       }
       {
@@ -565,7 +565,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeFinished");
-        translation.TranslationValue = "Programme terminé";
+        translation.TranslationValue = "Programme terminï¿½";
         InsertDefaultValue (translation);
       }
       {
@@ -581,12 +581,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeReset");
-        translation.TranslationValue = "Programme réinitialisé";
+        translation.TranslationValue = "Programme rï¿½initialisï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeReset");
-        translation.TranslationValue = "Programm zurückgesetzt";
+        translation.TranslationValue = "Programm zurï¿½ckgesetzt";
         InsertDefaultValue (translation);
       }
 
@@ -597,7 +597,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeNotReady");
-        translation.TranslationValue = "Programme non prêt";
+        translation.TranslationValue = "Programme non prï¿½t";
         InsertDefaultValue (translation);
       }
       {
@@ -613,12 +613,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoError");
-        translation.TranslationValue = "Erreur dans l'exécution du programme";
+        translation.TranslationValue = "Erreur dans l'exï¿½cution du programme";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeAutoError");
-        translation.TranslationValue = "Fehler bei der Programmausführung";
+        translation.TranslationValue = "Fehler bei der Programmausfï¿½hrung";
         InsertDefaultValue (translation);
       }
 
@@ -629,12 +629,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoErrorCleared");
-        translation.TranslationValue = "Erreur dans l'exécution du programme réinitialisée";
+        translation.TranslationValue = "Erreur dans l'exï¿½cution du programme rï¿½initialisï¿½e";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeAutoErrorCleared");
-        translation.TranslationValue = "Fehler bei der Programmausführung behoben";
+        translation.TranslationValue = "Fehler bei der Programmausfï¿½hrung behoben";
         InsertDefaultValue (translation);
       }
 
@@ -645,7 +645,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoEmergency");
-        translation.TranslationValue = "Arrêt d'urgence (Auto)";
+        translation.TranslationValue = "Arrï¿½t d'urgence (Auto)";
         InsertDefaultValue (translation);
       }
       {
@@ -665,7 +665,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeAutoNullOverride");
-        translation.TranslationValue = "Programm durch eine Vorschubüberschreibung 0 angehalten";
+        translation.TranslationValue = "Programm durch eine Vorschubï¿½berschreibung 0 angehalten";
         InsertDefaultValue (translation);
       }
 
@@ -681,7 +681,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeAutoNullFeedrateOverride");
-        translation.TranslationValue = "Programm durch eine Vorschubgeschwindigkeitsüberschreibung 0 angehalten";
+        translation.TranslationValue = "Programm durch eine Vorschubgeschwindigkeitsï¿½berschreibung 0 angehalten";
         InsertDefaultValue (translation);
       }
 
@@ -692,12 +692,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoNullRapidTraverseOverride");
-        translation.TranslationValue = "Programme suspendu par une correction de déplacement rapide 0";
+        translation.TranslationValue = "Programme suspendu par une correction de dï¿½placement rapide 0";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeAutoNullRapidTraverseOverride");
-        translation.TranslationValue = "Programm durch eine Schnellvorschubüberschreibung 0 angehalten";
+        translation.TranslationValue = "Programm durch eine Schnellvorschubï¿½berschreibung 0 angehalten";
         InsertDefaultValue (translation);
       }
 
@@ -740,7 +740,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoRapidTraverse");
-        translation.TranslationValue = "Déplacement rapide (Auto)";
+        translation.TranslationValue = "Dï¿½placement rapide (Auto)";
         InsertDefaultValue (translation);
       }
       {
@@ -772,7 +772,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeRapidTraverse");
-        translation.TranslationValue = "Déplacement rapide (Auto ou Manuel)";
+        translation.TranslationValue = "Dï¿½placement rapide (Auto ou Manuel)";
         InsertDefaultValue (translation);
       }
       {
@@ -788,7 +788,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoOtherOperation");
-        translation.TranslationValue = "Opération non usinage (Auto)";
+        translation.TranslationValue = "Opï¿½ration non usinage (Auto)";
         InsertDefaultValue (translation);
       }
       {
@@ -820,12 +820,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoLaserCheck");
-        translation.TranslationValue = "Vérification laser (Auto)";
+        translation.TranslationValue = "Vï¿½rification laser (Auto)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeAutoLaserCheck");
-        translation.TranslationValue = "Laserprüfung (Auto)";
+        translation.TranslationValue = "Laserprï¿½fung (Auto)";
         InsertDefaultValue (translation);
       }
 
@@ -883,7 +883,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeMStop");
-        translation.TranslationValue = "Arrêt machine programmé";
+        translation.TranslationValue = "Arrï¿½t machine programmï¿½";
         InsertDefaultValue (translation);
       }
       {
@@ -899,7 +899,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeM0");
-        translation.TranslationValue = "M0 (Arrêt)";
+        translation.TranslationValue = "M0 (Arrï¿½t)";
         InsertDefaultValue (translation);
       }
       {
@@ -915,7 +915,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeM1");
-        translation.TranslationValue = "M1 (Arrêt optionnel)";
+        translation.TranslationValue = "M1 (Arrï¿½t optionnel)";
         InsertDefaultValue (translation);
       }
       {
@@ -931,7 +931,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeM60");
-        translation.TranslationValue = "M60 (Changement de palette et arrêt)";
+        translation.TranslationValue = "M60 (Changement de palette et arrï¿½t)";
         InsertDefaultValue (translation);
       }
       {
@@ -947,7 +947,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeMWait");
-        translation.TranslationValue = "Attente d'entrée opérateur programmée";
+        translation.TranslationValue = "Attente d'entrï¿½e opï¿½rateur programmï¿½e";
         InsertDefaultValue (translation);
       }
       {
@@ -963,7 +963,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeEmergency");
-        translation.TranslationValue = "Arrêt d'urgence";
+        translation.TranslationValue = "Arrï¿½t d'urgence";
         InsertDefaultValue (translation);
       }
       {
@@ -1027,7 +1027,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeJogInactive");
-        translation.TranslationValue = "Inactif (Déplacement manuel)";
+        translation.TranslationValue = "Inactif (Dï¿½placement manuel)";
         InsertDefaultValue (translation);
       }
       {
@@ -1122,7 +1122,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeJog");
-        translation.TranslationValue = "Inconnu (Déplacement manuel)";
+        translation.TranslationValue = "Inconnu (Dï¿½placement manuel)";
         InsertDefaultValue (translation);
       }
       {
@@ -1170,12 +1170,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeReference");
-        translation.TranslationValue = "Retour manuel à la référence";
+        translation.TranslationValue = "Retour manuel ï¿½ la rï¿½fï¿½rence";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeReference");
-        translation.TranslationValue = "Manuelle Rückkehr zur Referenz";
+        translation.TranslationValue = "Manuelle Rï¿½ckkehr zur Referenz";
         InsertDefaultValue (translation);
       }
 
@@ -1186,7 +1186,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeDryRun");
-        translation.TranslationValue = "Simulation à vide";
+        translation.TranslationValue = "Simulation ï¿½ vide";
         InsertDefaultValue (translation);
       }
       {
@@ -1218,12 +1218,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoNormalActive");
-        translation.TranslationValue = "Actif (auto, exécution normale)";
+        translation.TranslationValue = "Actif (auto, exï¿½cution normale)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeAutoNormalActive");
-        translation.TranslationValue = "Aktiv (auto, normale Ausführung)";
+        translation.TranslationValue = "Aktiv (auto, normale Ausfï¿½hrung)";
         InsertDefaultValue (translation);
       }
 
@@ -1250,12 +1250,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeMissingInfo");
-        translation.TranslationValue = "Informations manquantes pour obtenir l'activité";
+        translation.TranslationValue = "Informations manquantes pour obtenir l'activitï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineModeMissingInfo");
-        translation.TranslationValue = "Fehlende Informationen zur Aktivitätsermittlung";
+        translation.TranslationValue = "Fehlende Informationen zur Aktivitï¿½tsermittlung";
         InsertDefaultValue (translation);
       }
 
@@ -1266,7 +1266,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeNoMotion");
-        translation.TranslationValue = "Aucun mouvement (ni avance ni déplacement rapide)";
+        translation.TranslationValue = "Aucun mouvement (ni avance ni dï¿½placement rapide)";
         InsertDefaultValue (translation);
       }
       {
@@ -1346,7 +1346,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeJogNoMotion");
-        translation.TranslationValue = "Aucun mouvement en mode Déplacement manuel";
+        translation.TranslationValue = "Aucun mouvement en mode Dï¿½placement manuel";
         InsertDefaultValue (translation);
       }
       {
@@ -1378,7 +1378,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeProbablyOff");
-        translation.TranslationValue = "Probablement éteint";
+        translation.TranslationValue = "Probablement ï¿½teint";
         InsertDefaultValue (translation);
       }
       {
@@ -1410,7 +1410,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAlarmStop");
-        translation.TranslationValue = "Arrêté en raison d'une alarme";
+        translation.TranslationValue = "Arrï¿½tï¿½ en raison d'une alarme";
         InsertDefaultValue (translation);
       }
       {
@@ -1426,7 +1426,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineModeAutoAlarmStop");
-        translation.TranslationValue = "Arrêté en raison d'une alarme (auto)";
+        translation.TranslationValue = "Arrï¿½tï¿½ en raison d'une alarme (auto)";
         InsertDefaultValue (translation);
       }
       {
@@ -1443,12 +1443,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonGroupDefault");
-        translation.TranslationValue = "Raisons non classifiées";
+        translation.TranslationValue = "Raisons non classifiï¿½es";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "ReasonGroupDefault");
-        translation.TranslationValue = "Nicht klassifizierte Gründe";
+        translation.TranslationValue = "Nicht klassifizierte Grï¿½nde";
         InsertDefaultValue (translation);
       }
 
@@ -1475,7 +1475,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonGroupShort");
-        translation.TranslationValue = "Temps d'inactivité court";
+        translation.TranslationValue = "Temps d'inactivitï¿½ court";
         InsertDefaultValue (translation);
       }
       {
@@ -1491,12 +1491,28 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonGroupIdle");
-        translation.TranslationValue = "Inactivité";
+        translation.TranslationValue = "Inactivitï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "ReasonGroupIdle");
         translation.TranslationValue = "Leerlauf";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "ReasonGroupUnanswered");
+        translation.TranslationValue = "Unanswered";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "ReasonGroupUnanswered");
+        translation.TranslationValue = "Non classifiÃ©";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "ReasonGroupUnanswered");
+        translation.TranslationValue = "Unbeantwortet";
         InsertDefaultValue (translation);
       }
 
@@ -1528,7 +1544,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "ReasonGroupAuto");
-        translation.TranslationValue = "Automatische Gründe";
+        translation.TranslationValue = "Automatische Grï¿½nde";
         InsertDefaultValue (translation);
       }
 
@@ -1556,7 +1572,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonShort");
-        translation.TranslationValue = "Temps d'inactivité court";
+        translation.TranslationValue = "Temps d'inactivitï¿½ court";
         InsertDefaultValue (translation);
       }
       {
@@ -1572,7 +1588,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonUnanswered");
-        translation.TranslationValue = "Non renseigné";
+        translation.TranslationValue = "Non classifiÃ©";
         InsertDefaultValue (translation);
       }
       {
@@ -1588,7 +1604,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonUnattended");
-        translation.TranslationValue = "Non surveillé";
+        translation.TranslationValue = "Non surveillï¿½";
         InsertDefaultValue (translation);
       }
       {
@@ -1604,7 +1620,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonOff");
-        translation.TranslationValue = "Éteint";
+        translation.TranslationValue = "ï¿½teint";
         InsertDefaultValue (translation);
       }
       {
@@ -1685,12 +1701,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MonitoringTypeMonitored");
-        translation.TranslationValue = "Surveillé";
+        translation.TranslationValue = "Surveillï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MonitoringTypeMonitored");
-        translation.TranslationValue = "Überwacht";
+        translation.TranslationValue = "ï¿½berwacht";
         InsertDefaultValue (translation);
       }
 
@@ -1701,12 +1717,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MonitoringTypeNotMonitored");
-        translation.TranslationValue = "Non surveillé";
+        translation.TranslationValue = "Non surveillï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MonitoringTypeNotMonitored");
-        translation.TranslationValue = "Nicht überwacht";
+        translation.TranslationValue = "Nicht ï¿½berwacht";
         InsertDefaultValue (translation);
       }
 
@@ -1717,7 +1733,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MonitoringTypeOutsource");
-        translation.TranslationValue = "Externalisé";
+        translation.TranslationValue = "Externalisï¿½";
         InsertDefaultValue (translation);
       }
       {
@@ -1733,7 +1749,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MonitoringTypeObsolete");
-        translation.TranslationValue = "Obsolète";
+        translation.TranslationValue = "Obsolï¿½te";
         InsertDefaultValue (translation);
       }
       {
@@ -1750,12 +1766,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateAttended");
-        translation.TranslationValue = "Machine ALLUMÉE avec opérateur (surveillée)";
+        translation.TranslationValue = "Machine ALLUMï¿½E avec opï¿½rateur (surveillï¿½e)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineObservationStateAttended");
-        translation.TranslationValue = "Maschine EIN mit Bediener (überwacht)";
+        translation.TranslationValue = "Maschine EIN mit Bediener (ï¿½berwacht)";
         InsertDefaultValue (translation);
       }
 
@@ -1766,7 +1782,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateUnattended");
-        translation.TranslationValue = "Machine ALLUMÉE sans opérateur (non surveillée)";
+        translation.TranslationValue = "Machine ALLUMï¿½E sans opï¿½rateur (non surveillï¿½e)";
         InsertDefaultValue (translation);
       }
       {
@@ -1782,7 +1798,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateOnSite");
-        translation.TranslationValue = "Machine ALLUMÉE avec opérateur (sur site)";
+        translation.TranslationValue = "Machine ALLUMï¿½E avec opï¿½rateur (sur site)";
         InsertDefaultValue (translation);
       }
       {
@@ -1798,12 +1814,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateOnCall");
-        translation.TranslationValue = "Machine ALLUMÉE avec opérateur d'astreinte (hors site)";
+        translation.TranslationValue = "Machine ALLUMï¿½E avec opï¿½rateur d'astreinte (hors site)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineObservationStateOnCall");
-        translation.TranslationValue = "Maschine EIN mit Bereitschaftsbediener (außerhalb)";
+        translation.TranslationValue = "Maschine EIN mit Bereitschaftsbediener (auï¿½erhalb)";
         InsertDefaultValue (translation);
       }
 
@@ -1814,7 +1830,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateOff");
-        translation.TranslationValue = "Machine ÉTEINTE";
+        translation.TranslationValue = "Machine ï¿½TEINTE";
         InsertDefaultValue (translation);
       }
       {
@@ -1846,7 +1862,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateSetUp");
-        translation.TranslationValue = "Réglage";
+        translation.TranslationValue = "Rï¿½glage";
         InsertDefaultValue (translation);
       }
       {
@@ -1862,12 +1878,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateQualityCheck");
-        translation.TranslationValue = "Contrôle qualité";
+        translation.TranslationValue = "Contrï¿½le qualitï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineObservationStateQualityCheck");
-        translation.TranslationValue = "Qualitätsprüfung";
+        translation.TranslationValue = "Qualitï¿½tsprï¿½fung";
         InsertDefaultValue (translation);
       }
 
@@ -1975,12 +1991,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateAttended");
-        translation.TranslationValue = "Machine ALLUMÉE avec opérateur (surveillée)";
+        translation.TranslationValue = "Machine ALLUMï¿½E avec opï¿½rateur (surveillï¿½e)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineStateTemplateAttended");
-        translation.TranslationValue = "Maschine EIN mit Bediener (überwacht)";
+        translation.TranslationValue = "Maschine EIN mit Bediener (ï¿½berwacht)";
         InsertDefaultValue (translation);
       }
 
@@ -1991,7 +2007,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateUnattended");
-        translation.TranslationValue = "Machine ALLUMÉE sans opérateur (non surveillée)";
+        translation.TranslationValue = "Machine ALLUMï¿½E sans opï¿½rateur (non surveillï¿½e)";
         InsertDefaultValue (translation);
       }
       {
@@ -2007,7 +2023,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateOnSite");
-        translation.TranslationValue = "Machine ALLUMÉE avec opérateur (sur site)";
+        translation.TranslationValue = "Machine ALLUMï¿½E avec opï¿½rateur (sur site)";
         InsertDefaultValue (translation);
       }
       {
@@ -2023,12 +2039,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateOnCall");
-        translation.TranslationValue = "Machine ALLUMÉE avec opérateur d'astreinte (hors site)";
+        translation.TranslationValue = "Machine ALLUMï¿½E avec opï¿½rateur d'astreinte (hors site)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineStateTemplateOnCall");
-        translation.TranslationValue = "Maschine EIN mit Bereitschaftsbediener (außerhalb)";
+        translation.TranslationValue = "Maschine EIN mit Bereitschaftsbediener (auï¿½erhalb)";
         InsertDefaultValue (translation);
       }
 
@@ -2039,7 +2055,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateOff");
-        translation.TranslationValue = "Machine ÉTEINTE";
+        translation.TranslationValue = "Machine ï¿½TEINTE";
         InsertDefaultValue (translation);
       }
       {
@@ -2055,7 +2071,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateSetUp");
-        translation.TranslationValue = "Réglage";
+        translation.TranslationValue = "Rï¿½glage";
         InsertDefaultValue (translation);
       }
       {
@@ -2071,12 +2087,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateQualityCheck");
-        translation.TranslationValue = "Contrôle qualité";
+        translation.TranslationValue = "Contrï¿½le qualitï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineStateTemplateQualityCheck");
-        translation.TranslationValue = "Qualitätsprüfung";
+        translation.TranslationValue = "Qualitï¿½tsprï¿½fung";
         InsertDefaultValue (translation);
       }
 
@@ -2120,7 +2136,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldCADModelName");
-        translation.TranslationValue = "Nom du modèle CAO";
+        translation.TranslationValue = "Nom du modï¿½le CAO";
         InsertDefaultValue (translation);
       }
       {
@@ -2184,7 +2200,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldOperationName");
-        translation.TranslationValue = "Nom de l'opération";
+        translation.TranslationValue = "Nom de l'opï¿½ration";
         InsertDefaultValue (translation);
       }
       {
@@ -2200,7 +2216,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldOperationTypeCode");
-        translation.TranslationValue = "Code du type d'opération";
+        translation.TranslationValue = "Code du type d'opï¿½ration";
         InsertDefaultValue (translation);
       }
       {
@@ -2216,7 +2232,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldToolDiameter");
-        translation.TranslationValue = "Diamètre de l'outil";
+        translation.TranslationValue = "Diamï¿½tre de l'outil";
         InsertDefaultValue (translation);
       }
       {
@@ -2248,7 +2264,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldStrategy");
-        translation.TranslationValue = "Stratégie";
+        translation.TranslationValue = "Stratï¿½gie";
         InsertDefaultValue (translation);
       }
       {
@@ -2312,7 +2328,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldTolerance");
-        translation.TranslationValue = "Tolérance";
+        translation.TranslationValue = "Tolï¿½rance";
         InsertDefaultValue (translation);
       }
       {
@@ -2328,12 +2344,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldStock");
-        translation.TranslationValue = "Surépaisseur";
+        translation.TranslationValue = "Surï¿½paisseur";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "FieldStock");
-        translation.TranslationValue = "Aufmaß";
+        translation.TranslationValue = "Aufmaï¿½";
         InsertDefaultValue (translation);
       }
       {
@@ -2343,7 +2359,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldProgrammedFeedrate");
-        translation.TranslationValue = "Vitesse d'avance programmée";
+        translation.TranslationValue = "Vitesse d'avance programmï¿½e";
         InsertDefaultValue (translation);
       }
       {
@@ -2359,7 +2375,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldProgrammedSpindleSpeed");
-        translation.TranslationValue = "Vitesse de broche programmée";
+        translation.TranslationValue = "Vitesse de broche programmï¿½e";
         InsertDefaultValue (translation);
       }
       {
@@ -2428,7 +2444,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "FieldFeedrateOverride");
-        translation.TranslationValue = "Vorschubgeschwindigkeitsüberschreibung";
+        translation.TranslationValue = "Vorschubgeschwindigkeitsï¿½berschreibung";
         InsertDefaultValue (translation);
       }
 
@@ -2444,7 +2460,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "FieldSpindleSpeedOverride");
-        translation.TranslationValue = "Spindeldrehzahlüberschreibung";
+        translation.TranslationValue = "Spindeldrehzahlï¿½berschreibung";
         InsertDefaultValue (translation);
       }
 
@@ -2455,7 +2471,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldRapidTraverse");
-        translation.TranslationValue = "Déplacement rapide";
+        translation.TranslationValue = "Dï¿½placement rapide";
         InsertDefaultValue (translation);
       }
       {
@@ -2487,7 +2503,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldRapidTraverseRate");
-        translation.TranslationValue = "Vitesse de déplacement rapide";
+        translation.TranslationValue = "Vitesse de dï¿½placement rapide";
         InsertDefaultValue (translation);
       }
       {
@@ -2518,7 +2534,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldRapidTraverseRateUS");
-        translation.TranslationValue = "Vitesse de déplacement rapide (US)";
+        translation.TranslationValue = "Vitesse de dï¿½placement rapide (US)";
         InsertDefaultValue (translation);
       }
       {
@@ -2629,7 +2645,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldOptionalStopSwitch");
-        translation.TranslationValue = "Interrupteur d'arrêt optionnel";
+        translation.TranslationValue = "Interrupteur d'arrï¿½t optionnel";
         InsertDefaultValue (translation);
       }
       {
@@ -2650,7 +2666,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "FieldBlockDeleteSwitch");
-        translation.TranslationValue = "Blocklöschschalter";
+        translation.TranslationValue = "Blocklï¿½schschalter";
         InsertDefaultValue (translation);
       }
 
@@ -2661,7 +2677,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldDryRun");
-        translation.TranslationValue = "Simulation à vide";
+        translation.TranslationValue = "Simulation ï¿½ vide";
         InsertDefaultValue (translation);
       }
       {
@@ -2693,7 +2709,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldToolNumber");
-        translation.TranslationValue = "Numéro d'outil";
+        translation.TranslationValue = "Numï¿½ro d'outil";
         InsertDefaultValue (translation);
       }
       {
@@ -2773,7 +2789,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldPalletNumber");
-        translation.TranslationValue = "Numéro de palette";
+        translation.TranslationValue = "Numï¿½ro de palette";
         InsertDefaultValue (translation);
       }
       {
@@ -2789,7 +2805,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldPalletReady");
-        translation.TranslationValue = "Palette prête";
+        translation.TranslationValue = "Palette prï¿½te";
         InsertDefaultValue (translation);
       }
       {
@@ -2852,7 +2868,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldCncPartCount");
-        translation.TranslationValue = "Nombre de pièces CNC";
+        translation.TranslationValue = "Nombre de piï¿½ces CNC";
         InsertDefaultValue (translation);
       }
       {
@@ -2868,7 +2884,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldCncSequenceNumber");
-        translation.TranslationValue = "Numéro de séquence CNC";
+        translation.TranslationValue = "Numï¿½ro de sï¿½quence CNC";
         InsertDefaultValue (translation);
       }
       {
@@ -2884,7 +2900,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldBlockNumber");
-        translation.TranslationValue = "Numéro de bloc";
+        translation.TranslationValue = "Numï¿½ro de bloc";
         InsertDefaultValue (translation);
       }
       {
@@ -2900,7 +2916,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldFlow");
-        translation.TranslationValue = "Débit";
+        translation.TranslationValue = "Dï¿½bit";
         InsertDefaultValue (translation);
       }
       {
@@ -2931,7 +2947,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldFanucRunningStatus");
-        translation.TranslationValue = "Statut d'exécution (Fanuc)";
+        translation.TranslationValue = "Statut d'exï¿½cution (Fanuc)";
         InsertDefaultValue (translation);
       }
       {
@@ -2963,7 +2979,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldMTConnectControllerMode");
-        translation.TranslationValue = "Mode du contrôleur (MTConnect)";
+        translation.TranslationValue = "Mode du contrï¿½leur (MTConnect)";
         InsertDefaultValue (translation);
       }
       {
@@ -2979,12 +2995,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldMTConnectExecution");
-        translation.TranslationValue = "Exécution (MTConnect)";
+        translation.TranslationValue = "Exï¿½cution (MTConnect)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "FieldMTConnectExecution");
-        translation.TranslationValue = "Ausführung (MTConnect)";
+        translation.TranslationValue = "Ausfï¿½hrung (MTConnect)";
         InsertDefaultValue (translation);
       }
 
@@ -2995,7 +3011,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldMoriSeikiOperationMode");
-        translation.TranslationValue = "Mode d'opération (Mori Seiki)";
+        translation.TranslationValue = "Mode d'opï¿½ration (Mori Seiki)";
         InsertDefaultValue (translation);
       }
       {
@@ -3011,12 +3027,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldHeidenhainExecutionMode");
-        translation.TranslationValue = "Mode d'exécution (Heidenhain)";
+        translation.TranslationValue = "Mode d'exï¿½cution (Heidenhain)";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "FieldHeidenhainExecutionMode");
-        translation.TranslationValue = "Ausführungsmodus (Heidenhain)";
+        translation.TranslationValue = "Ausfï¿½hrungsmodus (Heidenhain)";
         InsertDefaultValue (translation);
       }
 
@@ -3059,7 +3075,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldRoedersState");
-        translation.TranslationValue = "État (Roeders)";
+        translation.TranslationValue = "ï¿½tat (Roeders)";
         InsertDefaultValue (translation);
       }
       {
@@ -3075,7 +3091,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "FieldSelcaNCStatusCode");
-        translation.TranslationValue = "Code d'état NC (Selca)";
+        translation.TranslationValue = "Code d'ï¿½tat NC (Selca)";
         InsertDefaultValue (translation);
       }
       {
@@ -3125,7 +3141,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "NoShift");
-        translation.TranslationValue = "Pas d'équipe";
+        translation.TranslationValue = "Pas d'ï¿½quipe";
         InsertDefaultValue (translation);
       }
       {
@@ -3142,7 +3158,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "RoleOperator");
-        translation.TranslationValue = "Opérateur";
+        translation.TranslationValue = "Opï¿½rateur";
         InsertDefaultValue (translation);
       }
       {
@@ -3158,7 +3174,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "RoleSetup");
-        translation.TranslationValue = "Régleur";
+        translation.TranslationValue = "Rï¿½gleur";
         InsertDefaultValue (translation);
       }
       {
@@ -3174,12 +3190,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "RoleQuality");
-        translation.TranslationValue = "Qualité";
+        translation.TranslationValue = "Qualitï¿½";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "RoleQuality");
-        translation.TranslationValue = "Qualität";
+        translation.TranslationValue = "Qualitï¿½t";
         InsertDefaultValue (translation);
       }
 
@@ -3255,7 +3271,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "GoalQuantityVsProductionCycleDuration");
-        translation.TranslationValue = "Quantité attendue (%) du taux de production théorique";
+        translation.TranslationValue = "Quantitï¿½ attendue (%) du taux de production thï¿½orique";
         InsertDefaultValue (translation);
       }
       {
@@ -3336,7 +3352,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "UnitNumberOfParts");
-        translation.TranslationValue = "pièces";
+        translation.TranslationValue = "piï¿½ces";
         InsertDefaultValue (translation);
       }
       {
@@ -3421,7 +3437,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "UnitDistanceFeet");
-        translation.TranslationValue = "Füße";
+        translation.TranslationValue = "Fï¿½ï¿½e";
         InsertDefaultValue (translation);
       }
 
@@ -3626,7 +3642,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "CadModelNull");
-        translation.TranslationValue = "Aucun modèle CAO";
+        translation.TranslationValue = "Aucun modï¿½le CAO";
         InsertDefaultValue (translation);
       }
       {
@@ -3674,7 +3690,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "CompanyNull");
-        translation.TranslationValue = "Aucune société";
+        translation.TranslationValue = "Aucune sociï¿½tï¿½";
         InsertDefaultValue (translation);
       }
       {
@@ -3722,7 +3738,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "DepartmentNull");
-        translation.TranslationValue = "Aucun département";
+        translation.TranslationValue = "Aucun dï¿½partement";
         InsertDefaultValue (translation);
       }
       {
@@ -3738,7 +3754,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "EventLevelNull");
-        translation.TranslationValue = "Aucun niveau d'événement";
+        translation.TranslationValue = "Aucun niveau d'ï¿½vï¿½nement";
         InsertDefaultValue (translation);
       }
       {
@@ -3786,7 +3802,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineCategoryNull");
-        translation.TranslationValue = "Aucune catégorie de machine";
+        translation.TranslationValue = "Aucune catï¿½gorie de machine";
         InsertDefaultValue (translation);
       }
       {
@@ -3855,7 +3871,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("de", "MachineMonitoringTypeNull");
-        translation.TranslationValue = "Kein Überwachungstyp";
+        translation.TranslationValue = "Kein ï¿½berwachungstyp";
         InsertDefaultValue (translation);
       }
 
@@ -3866,7 +3882,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateNull");
-        translation.TranslationValue = "Aucun état planifié de machine";
+        translation.TranslationValue = "Aucun ï¿½tat planifiï¿½ de machine";
         InsertDefaultValue (translation);
       }
       {
@@ -3882,7 +3898,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineStateTemplateNull");
-        translation.TranslationValue = "Aucun calendrier d'état de machine";
+        translation.TranslationValue = "Aucun calendrier d'ï¿½tat de machine";
         InsertDefaultValue (translation);
       }
       {
@@ -3898,7 +3914,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MachineSubCategoryNull");
-        translation.TranslationValue = "Aucune sous-catégorie de machine";
+        translation.TranslationValue = "Aucune sous-catï¿½gorie de machine";
         InsertDefaultValue (translation);
       }
       {
@@ -3914,12 +3930,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "MonitoredMachineNull");
-        translation.TranslationValue = "Aucune machine surveillée";
+        translation.TranslationValue = "Aucune machine surveillï¿½e";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MonitoredMachineNull");
-        translation.TranslationValue = "Keine überwachte Maschine";
+        translation.TranslationValue = "Keine ï¿½berwachte Maschine";
         InsertDefaultValue (translation);
       }
 
@@ -3930,7 +3946,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "OperationCycleNull");
-        translation.TranslationValue = "Aucun cycle d'opération";
+        translation.TranslationValue = "Aucun cycle d'opï¿½ration";
         InsertDefaultValue (translation);
       }
       {
@@ -3946,7 +3962,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "OperationSlotNull");
-        translation.TranslationValue = "Aucun période avec opération";
+        translation.TranslationValue = "Aucun pï¿½riode avec opï¿½ration";
         InsertDefaultValue (translation);
       }
       {
@@ -3962,7 +3978,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonGroupNull");
-        translation.TranslationValue = "Aucun groupe d'arrêt machine";
+        translation.TranslationValue = "Aucun groupe d'arrï¿½t machine";
         InsertDefaultValue (translation);
       }
       {
@@ -3978,7 +3994,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonReasonGroupNull");
-        translation.TranslationValue = "Aucun groupe d'arrêt machine";
+        translation.TranslationValue = "Aucun groupe d'arrï¿½t machine";
         InsertDefaultValue (translation);
       }
       {
@@ -3994,7 +4010,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "RoleNull");
-        translation.TranslationValue = "Aucun rôle";
+        translation.TranslationValue = "Aucun rï¿½le";
         InsertDefaultValue (translation);
       }
       {
@@ -4010,7 +4026,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "ShiftNull");
-        translation.TranslationValue = "Pas d'équipe";
+        translation.TranslationValue = "Pas d'ï¿½quipe";
         InsertDefaultValue (translation);
       }
       {
@@ -4026,7 +4042,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "TimePeriodOfDayNull");
-        translation.TranslationValue = "Aucune période de la journée";
+        translation.TranslationValue = "Aucune pï¿½riode de la journï¿½e";
         InsertDefaultValue (translation);
       }
       {
@@ -4058,12 +4074,12 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "TranslationKeyNull");
-        translation.TranslationValue = "Aucune clé de traduction";
+        translation.TranslationValue = "Aucune clï¿½ de traduction";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "TranslationKeyNull");
-        translation.TranslationValue = "Kein Übersetzungsschlüssel";
+        translation.TranslationValue = "Kein ï¿½bersetzungsschlï¿½ssel";
         InsertDefaultValue (translation);
       }
 
@@ -4074,7 +4090,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       {
         ITranslation translation = new Translation ("fr", "UnitNull");
-        translation.TranslationValue = "Aucune unité";
+        translation.TranslationValue = "Aucune unitï¿½";
         InsertDefaultValue (translation);
       }
       {

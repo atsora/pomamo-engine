@@ -21,7 +21,6 @@
     <ProjectReference Include="..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\Libraries\Lemoine.Database\Lemoine.Database.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\Libraries\Lemoine.ExcelDataGrid\Lemoine.ExcelDataGrid.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\Libraries\Lemoine.ModelDAO\Lemoine.ModelDAO.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
   </ItemGroup>
 
