@@ -43,7 +43,7 @@ namespace Lemoine.Plugin.ReportingConfig
 
     public bool CheckConfig ()
     {
-      return Task.Run (CheckConfigAsync).Result;
+      return Task.Run (CheckConfigAsync).GetAwaiter ().GetResult ();
     }
 
     public async Task<bool> CheckConfigAsync ()
@@ -70,7 +70,7 @@ namespace Lemoine.Plugin.ReportingConfig
 
     public bool RemoveConfig ()
     {
-      return Task.Run (RemoveConfigAsync).Result;
+      return Task.Run (RemoveConfigAsync).GetAwaiter ().GetResult ();
     }
 
     public async Task<bool> RemoveConfigAsync ()

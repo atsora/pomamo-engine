@@ -116,7 +116,7 @@ namespace Lemoine.Business.Operation
         .OrderByDescending (ext => ext.Score);
       foreach (var extension in productionCapacityExtensions) {
         try {
-          var productionCapacityPerHour = Task.Run (async () => await extension.GetCapacityPerHourAsync (m_intermediateWorkPiece)).Result;
+          var productionCapacityPerHour = Task.Run(() => extension.GetCapacityPerHourAsync (m_intermediateWorkPiece)).GetAwaiter ().GetResult ();
           if (log.IsDebugEnabled) {
             log.Debug ($"GetForIntermediateWorkPiece: production Capacity per hour={productionCapacityPerHour} from extension {extension} for intermediateworkpiece {((IDataWithId)m_intermediateWorkPiece).Id}");
           }

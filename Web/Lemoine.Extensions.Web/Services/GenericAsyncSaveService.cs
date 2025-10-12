@@ -64,8 +64,7 @@ namespace Lemoine.Extensions.Web.Services
     /// <returns></returns>
     public object GetSync (InputDTO request)
     {
-      return System.Threading.Tasks.Task
-        .Run (async () => await Get (request)).Result;
+      return Task.Run (() => Get (request)).GetAwaiter ().GetResult ();
     }
 
     /// <summary>

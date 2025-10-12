@@ -48,7 +48,7 @@ namespace Lemoine.Plugin.WebAppConfig
 
     public bool CheckConfig ()
     {
-      return Task.Run (CheckConfigAsync).Result;
+      return Task.Run (CheckConfigAsync).GetAwaiter ().GetResult ();
     }
 
     public async Task<bool> CheckConfigAsync ()
@@ -75,7 +75,7 @@ namespace Lemoine.Plugin.WebAppConfig
 
     public bool RemoveConfig ()
     {
-      return Task.Run (RemoveConfigAsync).Result;
+      return Task.Run (RemoveConfigAsync).GetAwaiter ().GetResult ();
     }
 
     public async Task<bool> RemoveConfigAsync ()
@@ -275,7 +275,7 @@ namespace Lemoine.Plugin.WebAppConfig
           File.Copy (bakPath, path, true);
           throw;
         }
-        
+
         try {
           File.Delete (bakPath);
         }

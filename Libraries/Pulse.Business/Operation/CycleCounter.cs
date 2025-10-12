@@ -54,7 +54,7 @@ namespace Lemoine.Business.Operation
     /// <returns></returns>
     public IEnumerable<CycleCounterValue> Get ()
     {
-      return System.Threading.Tasks.Task.Run (async () => await GetAsync ()).Result;
+      return System.Threading.Tasks.Task.Run (() => GetAsync ()).GetAwaiter ().GetResult ();
     }
 
     /// <summary>

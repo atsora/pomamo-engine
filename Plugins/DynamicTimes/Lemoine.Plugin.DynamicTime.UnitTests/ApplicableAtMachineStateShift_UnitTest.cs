@@ -42,16 +42,14 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
     public string Name
     {
-      get
-      {
+      get {
         return "B";
       }
     }
 
     public bool UniqueInstance
     {
-      get
-      {
+      get {
         return true;
       }
     }
@@ -156,7 +154,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           var observationStateSlotAt0 = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindAt (machine, T (0));
           var observationStateSlotAtAsync0 = System.Threading.Tasks.Task.Run (async () => await ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
-            .FindAtAsync (machine, T (0))).Result;
+            .FindAtAsync (machine, T (0))).GetAwaiter ().GetResult ();
 
           Lemoine.Extensions.Package.PackageFile
             .InstallOrUpgradeJsonString (@"

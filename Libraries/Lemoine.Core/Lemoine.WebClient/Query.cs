@@ -140,7 +140,7 @@ namespace Lemoine.WebClient
     public string StringResult (RequestUrl requestUrl)
     {
 #if NETSTANDARD
-      return Task.Run (() => StringResultAsync (requestUrl)).Result;
+      return Task.Run (() => StringResultAsync (requestUrl)).GetAwaiter ().GetResult ();
     }
 
     /// <summary>
@@ -214,7 +214,7 @@ namespace Lemoine.WebClient
     public byte[] BinaryResult (RequestUrl requestUrl)
     {
 #if NETSTANDARD
-      return Task.Run (() => BinaryResultAsync (requestUrl)).Result;
+      return Task.Run (() => BinaryResultAsync (requestUrl)).GetAwaiter ().GetResult ();
     }
 
     /// <summary>
@@ -344,7 +344,7 @@ namespace Lemoine.WebClient
         throw;
       }
 #else // NETSTANDARD
-      return Task.Run (() => UniqueResultAsync<I, T> (requestUrl, postData, contentType, cancellationToken)).Result;
+      return Task.Run (() => UniqueResultAsync<I, T> (requestUrl, postData, contentType, cancellationToken)).GetAwaiter ().GetResult ();
 #endif // NETSTANDARD
     }
 
@@ -482,7 +482,7 @@ namespace Lemoine.WebClient
         return converted.ToList ();
       }
 #else // NETSTANDARD
-      return Task.Run (() => ListAsync<I, T> (requestUrl)).Result;
+      return Task.Run (() => ListAsync<I, T> (requestUrl)).GetAwaiter ().GetResult ();
 #endif // NETSTANDARD
     }
 

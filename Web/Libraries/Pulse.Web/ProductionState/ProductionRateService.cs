@@ -220,7 +220,7 @@ namespace Pulse.Web.ProductionState
 
     DayRange ParseDayRange (string range)
     {
-      return ParseDayRangeAsync (range).Result;
+      return Task.Run (() => ParseDayRangeAsync (range)).GetAwaiter ().GetResult ();
     }
 
     async Task<DayRange> ParseDayRangeAsync (string range)
@@ -237,7 +237,7 @@ namespace Pulse.Web.ProductionState
 
     UtcDateTimeRange ParseRange (string range)
     {
-      return ParseRangeAsync (range).Result;
+      return Task.Run (() => ParseRangeAsync (range)).GetAwaiter ().GetResult ();
     }
 
     async Task<UtcDateTimeRange> ParseRangeAsync (string range)

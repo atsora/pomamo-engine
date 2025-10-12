@@ -46,8 +46,7 @@ namespace Lemoine.Plugin.CncValueTime
 
     public string Name
     {
-      get
-      {
+      get {
         var suffix = "BeforeEnd";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
@@ -232,7 +231,7 @@ namespace Lemoine.Plugin.CncValueTime
       m_lambdaCondition = m_configuration.LambdaCondition;
       if (!string.IsNullOrEmpty (m_configuration.LambdaCondition)) {
         try {
-          m_lambda = Task.Run (() => CSharpScript.EvaluateAsync<Func<object, bool>> (m_lambdaCondition, m_scriptOptions)).Result;
+          m_lambda = Task.Run (() => CSharpScript.EvaluateAsync<Func<object, bool>> (m_lambdaCondition, m_scriptOptions)).GetAwaiter ().GetResult ();
         }
         catch (Exception ex) {
           log.Error ($"Initialize: invalid expression {m_lambdaCondition}", ex);

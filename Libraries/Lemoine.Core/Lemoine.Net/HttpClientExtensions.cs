@@ -40,12 +40,12 @@ namespace Lemoine.Net
         log.Debug ($"Download: url={url} to={path}");
       }
 
-      var response = httpClient.GetAsync (url).Result;
+      var response = Task.Run (() => httpClient.GetAsync (url)).GetAwaiter ().GetResult ();
       response.EnsureSuccessStatusCode ();
 #if NET5_0_OR_GREATER
       using (var stream = response.Content.ReadAsStream (cancellationToken)) {
 #else // !NET5_0_OR_GREATER
-      using (var stream = response.Content.ReadAsStreamAsync ().Result) {
+      using (var stream = Task.Run (() => response.Content.ReadAsStreamAsync ()).GetAwaiter ().GetResult ()) {
 #endif // !NET5_0_OR_GREATER
         using (var fs = File.Create (path)) {
           stream.Seek (0, SeekOrigin.Begin);

@@ -120,7 +120,7 @@ namespace Lemoine.Plugin.ActiveEventCncValue
 
       if (!String.IsNullOrEmpty (m_configuration.LambdaCondition)) {
         try {
-          m_lambda = Task.Run (() => CSharpScript.EvaluateAsync<Func<object, bool>> (m_configuration.LambdaCondition, m_scriptOptions)).Result;
+          m_lambda = Task.Run (() => CSharpScript.EvaluateAsync<Func<object, bool>> (m_configuration.LambdaCondition, m_scriptOptions)).GetAwaiter ().GetResult ();
         }
         catch (Exception ex) {
           log.Error ($"InitializeAdditionalConfigurations: invalid expression {m_configuration.LambdaCondition}", ex);
