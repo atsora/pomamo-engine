@@ -89,7 +89,7 @@ namespace Lemoine.CncEngine
     public IEnumerable<ICncAcquisition> GetRegisteredCncAcquisitions (CancellationToken cancellationToken)
     {
       // - Get the list of cncAcquisitions
-      log.DebugFormat ("GetRegisteredCncAcquisitions: initialize the cnc acquisitions repository");
+      log.Debug ("GetRegisteredCncAcquisitions: initialize the cnc acquisitions repository");
       string cncAcquisitionListPath = m_repositoryCacheFileName;
       string cncDirectory = Path.Combine (PulseInfo.LocalConfigurationDirectory, "Cnc");
       if (Directory.Exists (cncDirectory)) {
