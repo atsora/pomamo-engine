@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -14,6 +15,10 @@ using Lemoine.ModelDAO;
 
 namespace Lemoine.Plugin.NGoodCyclesIsProduction
 {
+  /// <summary>
+  /// Default implementation of <see cref="IGoodCycleExtension"/> that considers a cycle as good if its machining duration is not too long
+  /// It is set just in case no other specific GoodCycleExtension is available
+  /// </summary>
   public class GoodCycleExtension
     : MultipleInstanceConfigurableExtension<Configuration>
     , IGoodCycleExtension
@@ -23,10 +28,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     IMachine m_machine;
     Configuration m_configuration;
 
-    public double Score
-    {
-      get { return 1.0; }
-    }
+    public double Score => 10.0;
 
     public bool Initialize (IMachine machine)
     {
@@ -42,6 +44,13 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
         return false;
       }
 
+      if (m_configuration.DeactivateGoodCycleExtension) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Initialize: the good cycle extension is deactivated");
+        }
+        return false;
+      }
+
       return m_configuration.CheckMachineFilter (machine);
     }
 
@@ -51,22 +60,22 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
         return GoodCycleExtensionResponse.KO;
       }
       if (!cycle.Begin.HasValue) {
-        log.Info ("IsGood: good cycle with no start, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGood: good cycle with no start, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
       if (!cycle.End.HasValue) {
-        log.Info ("IsGood: good cycle with no end, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGood: good cycle with no end, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
       if ((null == cycle.OperationSlot) || (null == cycle.OperationSlot.Operation)) {
-        log.Info ("IsGood: no operation slot or operation, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGood: no operation slot or operation, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
       else { // null != cycle.OperationSlot && null != cycle.OperationSlot.Operation
         var standardDuration = cycle.OperationSlot.Operation.MachiningDuration;
         if (!standardDuration.HasValue) {
-          log.Info ("IsGood: no standard duration for the operation, return true");
-          return GoodCycleExtensionResponse.OK;
+          log.Info ("IsGood: no standard duration for the operation, return N/A");
+          return GoodCycleExtensionResponse.NOT_APPLICABLE;
         }
         else {
           TimeSpan maxMachiningDuration = TimeSpan.FromSeconds (standardDuration.Value.TotalSeconds
@@ -88,15 +97,15 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
       }
 
       if ((null == cycle.OperationSlot) || (null == cycle.OperationSlot.Operation)) {
-        log.Info ("IsGoodLoadingTime: no operation slot or operation, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGoodLoadingTime: no operation slot or operation, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
       else { // null != cycle.OperationSlot && null != cycle.OperationSlot.Operation
         var operation = cycle.OperationSlot.Operation;
         Debug.Assert (null != operation);
         TimeSpan? standardBetweenCyclesDuration = operation.GetStandardBetweenCyclesDuration (monitoredMachine);
         if (!standardBetweenCyclesDuration.HasValue) {
-          return GoodCycleExtensionResponse.OK;
+          return GoodCycleExtensionResponse.NOT_APPLICABLE;
         }
         else {
           var maxDuration = TimeSpan.FromSeconds (standardBetweenCyclesDuration.Value.TotalSeconds * maxLoadingDurationMultiplicator);

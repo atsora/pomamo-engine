@@ -25,6 +25,10 @@ namespace Lemoine.Extensions.Business
     /// The result must be postponed to a later time
     /// </summary>
     POSTPONE,
+    /// <summary>
+    /// The plugin is not applicable for this kind of cycle, try to consider the next plugin
+    /// </summary>
+    NOT_APPLICABLE,
   }
 
   /// <summary>

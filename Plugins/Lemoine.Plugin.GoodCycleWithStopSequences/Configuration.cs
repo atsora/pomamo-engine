@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -8,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using Lemoine.Extensions.Configuration.GuiBuilder;
 using Lemoine.Core.Log;
+using System.ComponentModel;
 
 namespace Lemoine.Plugin.GoodCycleWithStopSequences
 {
@@ -17,18 +19,16 @@ namespace Lemoine.Plugin.GoodCycleWithStopSequences
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// My parameter
     /// </summary>
-    [PluginConf ("Double", "Score", Description = "Score to give to GoodCycleExtension")]
+    [PluginConf ("Double", "Score", Description = "Score to give to GoodCycleExtension. Default: 200.0")]
+    [DefaultValue (200.0)]
     public double Score
     {
       get; set;
-    }
-    #endregion // Getters / Setters
+    } = 200.0;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -41,19 +41,12 @@ namespace Lemoine.Plugin.GoodCycleWithStopSequences
     /// </summary>
     /// <param name="errors"></param>
     /// <returns></returns>
-    public override bool IsValid (out IEnumerable<string> errors)
-    {
-      return base.IsValid (out errors);
-    }
-    #endregion // Constructors
+    public override bool IsValid (out IEnumerable<string> errors) => base.IsValid (out errors);
 
     /// <summary>
     /// <see cref="Lemoine.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>
     /// </summary>
     /// <returns></returns>
-    protected override bool IsMachineFilterRequired ()
-    {
-      return false;
-    }
+    protected override bool IsMachineFilterRequired () => false;
   }
 }

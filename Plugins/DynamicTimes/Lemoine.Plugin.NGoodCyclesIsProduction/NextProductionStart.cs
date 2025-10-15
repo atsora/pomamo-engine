@@ -57,8 +57,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
 
     public string Name
     {
-      get
-      {
+      get {
         var suffix = "NextProductionStart";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
@@ -183,7 +182,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
 
             // Check the potential final value is still in limit
             var cycleMinDateTime = GetMinDateTime (cycle);
-            if ( (0 == nbGoodCycles) && (dateTime < cycleMinDateTime)) {
+            if ((0 == nbGoodCycles) && (dateTime < cycleMinDateTime)) {
               if (!correctedLimit.ContainsElement (cycleMinDateTime)) {
                 if (log.IsDebugEnabled) {
                   log.Debug ($"Get: cycle min date/time {cycleMinDateTime} is out of limit {correctedLimit} => return NoData");
@@ -196,20 +195,21 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             if (lastCycleEnd.HasValue && cycle.Begin.HasValue) { // Check loading time
               var goodLoadingTime = IsGoodLoadingTime (cycle, lastCycleEnd.Value);
               switch (goodLoadingTime) {
-              case GoodCycleExtensionResponse.OK:
-                break;
-              case GoodCycleExtensionResponse.KO:
-                nbGoodCycles = 0;
-                afterResponse = cycle.Begin.Value;
-                firstGoodCycleStart = null;
-                break;
-              case GoodCycleExtensionResponse.POSTPONE:
-                var newHint = hint;
-                if (afterResponse.HasValue) {
-                  newHint = new UtcDateTimeRange (hint
-                    .Intersects (new UtcDateTimeRange (afterResponse.Value)));
-                }
-                return this.CreateWithHint (newHint);
+                case GoodCycleExtensionResponse.OK:
+                  break;
+                case GoodCycleExtensionResponse.KO:
+                case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                  nbGoodCycles = 0;
+                  afterResponse = cycle.Begin.Value;
+                  firstGoodCycleStart = null;
+                  break;
+                case GoodCycleExtensionResponse.POSTPONE:
+                  var newHint = hint;
+                  if (afterResponse.HasValue) {
+                    newHint = new UtcDateTimeRange (hint
+                      .Intersects (new UtcDateTimeRange (afterResponse.Value)));
+                  }
+                  return this.CreateWithHint (newHint);
               }
             }
 
@@ -231,31 +231,32 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             // Check cycle
             var goodCycle = IsGoodCycle (cycle);
             switch (goodCycle) {
-            case GoodCycleExtensionResponse.OK:
-              ++nbGoodCycles;
-              if (!firstGoodCycleStart.HasValue) {
-                firstGoodCycleStart = cycleMinDateTime;
-              }
-              if (m_configuration.NumberOfGoodCycles <= nbGoodCycles) {
-                Debug.Assert (firstGoodCycleStart.HasValue);
-                return this.CreateFinal (firstGoodCycleStart.Value);
-              }
-              lastCycleEnd = cycle.End;
-              break;
-            case GoodCycleExtensionResponse.KO:
-              nbGoodCycles = 0;
-              if (cycle.Full) { // If partial, it may be ok in the future
-                afterResponse = cycle.DateTime;
-              }
-              firstGoodCycleStart = null;
-              break;
-            case GoodCycleExtensionResponse.POSTPONE:
-              var newHint = hint;
-              if (afterResponse.HasValue) {
-                newHint = new UtcDateTimeRange (hint
-                  .Intersects (new UtcDateTimeRange (afterResponse.Value)));
-              }
-              return this.CreateWithHint (newHint);
+              case GoodCycleExtensionResponse.OK:
+                ++nbGoodCycles;
+                if (!firstGoodCycleStart.HasValue) {
+                  firstGoodCycleStart = cycleMinDateTime;
+                }
+                if (m_configuration.NumberOfGoodCycles <= nbGoodCycles) {
+                  Debug.Assert (firstGoodCycleStart.HasValue);
+                  return this.CreateFinal (firstGoodCycleStart.Value);
+                }
+                lastCycleEnd = cycle.End;
+                break;
+              case GoodCycleExtensionResponse.KO:
+              case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                nbGoodCycles = 0;
+                if (cycle.Full) { // If partial, it may be ok in the future
+                  afterResponse = cycle.DateTime;
+                }
+                firstGoodCycleStart = null;
+                break;
+              case GoodCycleExtensionResponse.POSTPONE:
+                var newHint = hint;
+                if (afterResponse.HasValue) {
+                  newHint = new UtcDateTimeRange (hint
+                    .Intersects (new UtcDateTimeRange (afterResponse.Value)));
+                }
+                return this.CreateWithHint (newHint);
             }
           } // foreach cycle
           if (afterResponse.HasValue) {

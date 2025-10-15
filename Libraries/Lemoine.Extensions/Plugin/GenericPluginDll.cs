@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,13 +21,10 @@ namespace Lemoine.Extensions.Plugin
   {
     static readonly ILog log = LogManager.GetLogger (typeof (GenericPluginDll).FullName);
 
-    #region Members
     IPluginContext m_pluginContext = null;
     IEnumerable<Type> m_activeExtensionTypes;
     IList<IPluginInstance> m_instances = new List<IPluginInstance> ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Identifying name, based on the assembly name
     /// 
@@ -149,9 +147,7 @@ namespace Lemoine.Extensions.Plugin
         return m_instances;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Add an instance
     /// </summary>
@@ -239,7 +235,6 @@ namespace Lemoine.Extensions.Plugin
       }
       return errors;
     }
-    #endregion // Methods
 
     #region Equals and GetHashCode implementation
     /// <summary>

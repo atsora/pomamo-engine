@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,7 +23,6 @@ namespace Lemoine.Extensions.Plugin
 
     IPluginConfigurationControl m_configurationControl = null;
 
-    #region Constructors
     /// <summary>
     /// Constructor with a default configuration loader
     /// </summary>
@@ -39,7 +39,6 @@ namespace Lemoine.Extensions.Plugin
       : base (configurationLoader)
     {
     }
-    #endregion // Constructors
 
     #region IPlugin interface
     /// <summary>

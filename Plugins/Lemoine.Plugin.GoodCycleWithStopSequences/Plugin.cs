@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,42 +22,21 @@ namespace Lemoine.Plugin.GoodCycleWithStopSequences
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "GoodCycleWithStopSequences"; } }
+    public override string Name => "GoodCycleWithStopSequences";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Consider the stop sequences to determine if a cycle is a good cycle";
-      }
-    }
+    public override string Description => "Consider the stop sequences to determine if a cycle is a good cycle";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.AutoReason | PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.AutoReason | PluginFlag.Analysis;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

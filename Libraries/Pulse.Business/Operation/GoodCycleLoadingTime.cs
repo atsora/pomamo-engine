@@ -70,10 +70,20 @@ namespace Lemoine.Business.Operation
         }
         return GoodCycleExtensionResponse.KO;
       }
-      var firstExtension = goodCycleExtensions
-        .OrderByDescending (ext => ext.Score)
-        .First ();
-      return firstExtension.IsGoodLoadingTime (m_operationCycle, m_monitoredMachine, m_start, m_operationCycle.Begin.Value, m_multiplicator);
+      foreach (var ext in goodCycleExtensions.OrderByDescending (ext => ext.Score)) {
+        var result = ext.IsGoodLoadingTime (m_operationCycle, m_monitoredMachine, m_start, m_operationCycle.Begin.Value, m_multiplicator);
+        if (result != GoodCycleExtensionResponse.NOT_APPLICABLE) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Get: extension {ext} returned {result}");
+          }
+          return result;
+        }
+        else if (log.IsDebugEnabled) {
+          log.Debug ($"Get: extension {ext} returned NOT_APPLICABLE, try the next one");
+        }
+      }
+      log.Error ($"Get: all the {goodCycleExtensions.Count ()} extensions returned NOT_APPLICABLE");
+      return GoodCycleExtensionResponse.NOT_APPLICABLE;
     }
 
     /// <summary>
@@ -82,7 +92,30 @@ namespace Lemoine.Business.Operation
     /// <returns></returns>
     public async Task<GoodCycleExtensionResponse> GetAsync ()
     {
-      return await Task.FromResult (Get ());
+      var goodCycleExtensionsRequest = new Lemoine.Business.Extension
+        .MachineExtensions<IGoodCycleExtension> (m_operationCycle.Machine, (ext, m) => ext.Initialize (m));
+      var goodCycleExtensions = await Lemoine.Business.ServiceProvider
+        .GetAsync (goodCycleExtensionsRequest);
+      if (!goodCycleExtensions.Any ()) {
+        if (log.IsErrorEnabled) {
+          log.ErrorFormat ("GetAsync: no good cycle extension was registered");
+        }
+        return GoodCycleExtensionResponse.KO;
+      }
+      foreach (var ext in goodCycleExtensions.OrderByDescending (ext => ext.Score)) {
+        var result = ext.IsGoodLoadingTime (m_operationCycle, m_monitoredMachine, m_start, m_operationCycle.Begin.Value, m_multiplicator);
+        if (result != GoodCycleExtensionResponse.NOT_APPLICABLE) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetAsync: extension {ext} returned {result}");
+          }
+          return result;
+        }
+        else if (log.IsDebugEnabled) {
+          log.Debug ($"GetAsync: extension {ext} returned NOT_APPLICABLE, try the next one");
+        }
+      }
+      log.Error ($"GetAsync: all the {goodCycleExtensions.Count ()} extensions returned NOT_APPLICABLE");
+      return GoodCycleExtensionResponse.NOT_APPLICABLE;
     }
 
     /// <summary>

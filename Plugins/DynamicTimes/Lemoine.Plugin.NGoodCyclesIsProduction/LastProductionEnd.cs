@@ -220,6 +220,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
                 case GoodCycleExtensionResponse.OK:
                   break;
                 case GoodCycleExtensionResponse.KO:
+                case GoodCycleExtensionResponse.NOT_APPLICABLE:
                   nGoodCycles = 0;
                   end = null;
                   operationSlot = null;
@@ -265,6 +266,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
                 }
                 break;
               case GoodCycleExtensionResponse.KO:
+              case GoodCycleExtensionResponse.NOT_APPLICABLE:
                 nGoodCycles = 0;
                 end = null;
                 operationSlot = null;

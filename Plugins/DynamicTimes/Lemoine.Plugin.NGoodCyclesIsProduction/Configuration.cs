@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using Lemoine.Extensions.Configuration.GuiBuilder;
 using Lemoine.Core.Log;
+using System.ComponentModel;
 
 namespace Lemoine.Plugin.NGoodCyclesIsProduction
 {
@@ -69,6 +70,16 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     {
       get; set;
     }
+
+    /// <summary>
+    /// Optionally, deactivate the default internal good cycle extension
+    /// </summary>
+    [PluginConf ("Bool", "Deactive good cycle", Description = "Optionally, deactivate the default internal good cycle extension")]
+    [DefaultValue (false)]
+    public bool DeactivateGoodCycleExtension
+    {
+      get; set;
+    } = false;
 
     /// <summary>
     /// Constructor

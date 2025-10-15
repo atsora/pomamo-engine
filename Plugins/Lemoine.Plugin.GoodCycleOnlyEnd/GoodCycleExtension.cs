@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,10 +23,7 @@ namespace Lemoine.Plugin.GoodCycleOnlyEnd
     IMachine m_machine;
     Configuration m_configuration;
 
-    public double Score
-    {
-      get { return m_configuration.Score; }
-    }
+    public double Score => m_configuration.Score;
 
     public bool Initialize (IMachine machine)
     {
@@ -50,15 +48,15 @@ namespace Lemoine.Plugin.GoodCycleOnlyEnd
         return GoodCycleExtensionResponse.KO;
       }
       if (!cycle.Begin.HasValue) {
-        log.Info ("IsGood: full cycle with no start, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGood: full cycle with no start, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
       if (!cycle.End.HasValue) {
-        log.Info ("IsGood: full cycle with no end, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGood: full cycle with no end, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
 
-      // Postpone ? Because the operation may not be accurate ?
+      // Postpone? Because the operation may not be accurate?
       var operationDetectionStatusRequest = new Lemoine.Business.Operation
         .OperationDetectionStatus (m_machine);
       var operationDetectionStatus = Lemoine.Business.ServiceProvider
@@ -69,26 +67,22 @@ namespace Lemoine.Plugin.GoodCycleOnlyEnd
       }
 
       if ((null == cycle.OperationSlot) || (null == cycle.OperationSlot.Operation)) {
-        log.Info ("IsGood: no operation slot or operation, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGood: no operation slot or operation, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
       else { // null != cycle.OperationSlot && null != cycle.OperationSlot.Operation
         var standardDuration = cycle.OperationSlot.Operation.MachiningDuration;
         if (!standardDuration.HasValue) {
-          log.Info ("IsGood: no standard duration for the operation, return true");
-          return GoodCycleExtensionResponse.OK;
+          log.Info ("IsGood: no standard duration for the operation, return N/A");
+          return GoodCycleExtensionResponse.NOT_APPLICABLE;
         }
         else {
-          var range = new UtcDateTimeRange (cycle.Begin.Value, cycle.End.Value);
           TimeSpan maxMachiningDuration = TimeSpan.FromSeconds (standardDuration.Value.TotalSeconds
             * maxMachiningDurationMultiplicator);
-          var duration = range.Duration.Value;
-          if (duration <= maxMachiningDuration) {
-            return GoodCycleExtensionResponse.OK;
-          }
-          else {
-            return GoodCycleExtensionResponse.KO;
-          }
+          var duration = cycle.End.Value.Subtract (cycle.Begin.Value);
+          return duration <= maxMachiningDuration
+            ? GoodCycleExtensionResponse.OK
+            : GoodCycleExtensionResponse.KO;
         }
       }
     }

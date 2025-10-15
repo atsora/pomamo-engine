@@ -105,7 +105,6 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -124,7 +123,6 @@ namespace Lemoine.GDBPersistentClasses
     bool m_changeTrackerActive = false;
 
     Lemoine.Threading.IChecked m_caller = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationCycle).FullName);
 
@@ -216,18 +214,15 @@ namespace Lemoine.GDBPersistentClasses
           return m_begin.Value;
         }
         else if (m_end.HasValue) { // estimated
-          log.WarnFormat ("DateTime.get: " +
-                          "both date/time are estimated");
+          log.Warn ("DateTime.get: both date/time are estimated");
           return m_end.Value;
         }
         else if (m_begin.HasValue) { // estimated
-          log.WarnFormat ("DateTime.get: " +
-                          "both date/time are estimated");
+          log.Warn ("DateTime.get: both date/time are estimated");
           return m_begin.Value;
         }
         else {
-          log.FatalFormat ("DateTime.get: " +
-                           "no date/time, should not happen");
+          log.Fatal ("DateTime.get: no date/time, should not happen");
           throw new InvalidOperationException ();
         }
       }

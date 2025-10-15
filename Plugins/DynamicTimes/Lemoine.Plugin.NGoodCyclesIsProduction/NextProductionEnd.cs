@@ -38,7 +38,6 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     readonly ILog log = LogManager.GetLogger (typeof (NextProductionEnd).FullName);
 
     Configuration m_configuration;
-    IMonitoredMachine m_monitoredMachine;
     DateTime? m_operationDetectionDateTime;
 
     public bool Initialize (IMachine machine, string parameter)
@@ -58,8 +57,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
 
     public string Name
     {
-      get
-      {
+      get {
         var suffix = "NextProductionEnd";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
@@ -257,14 +255,15 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             if (afterCycle.Begin.HasValue) {
               var goodLoadingTime = IsGoodLoadingTime (afterCycle, lastDateTime);
               switch (goodLoadingTime) {
-              case GoodCycleExtensionResponse.OK:
-                break;
-              case GoodCycleExtensionResponse.KO:
-                return Stop (dateTime, operation, initialOperationSlot, nbGoodCyclesAfter, lastDateTime, firstCycle);
-              case GoodCycleExtensionResponse.POSTPONE:
-                var newHint = new UtcDateTimeRange (hint
-                  .Intersects (new UtcDateTimeRange (lastDateTime)));
-                return this.CreateWithHint (newHint);
+                case GoodCycleExtensionResponse.OK:
+                  break;
+                case GoodCycleExtensionResponse.KO:
+                case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                  return Stop (dateTime, operation, initialOperationSlot, nbGoodCyclesAfter, lastDateTime, firstCycle);
+                case GoodCycleExtensionResponse.POSTPONE:
+                  var newHint = new UtcDateTimeRange (hint
+                    .Intersects (new UtcDateTimeRange (lastDateTime)));
+                  return this.CreateWithHint (newHint);
               }
             }
 
@@ -274,16 +273,17 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             }
             var goodCycle = IsGoodCycle (afterCycle);
             switch (goodCycle) {
-            case GoodCycleExtensionResponse.OK:
-              Debug.Assert (afterCycle.End.HasValue);
-              ++nbGoodCyclesAfter;
-              lastDateTime = afterCycle.End.Value;
-              break;
-            case GoodCycleExtensionResponse.KO:
-              return Stop (dateTime, operation, initialOperationSlot, nbGoodCyclesAfter, lastDateTime, firstCycle);
-            case GoodCycleExtensionResponse.POSTPONE:
-              // TODO:
-              break;
+              case GoodCycleExtensionResponse.OK:
+                Debug.Assert (afterCycle.End.HasValue);
+                ++nbGoodCyclesAfter;
+                lastDateTime = afterCycle.End.Value;
+                break;
+              case GoodCycleExtensionResponse.KO:
+              case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                return Stop (dateTime, operation, initialOperationSlot, nbGoodCyclesAfter, lastDateTime, firstCycle);
+              case GoodCycleExtensionResponse.POSTPONE:
+                // TODO:
+                break;
             }
 
             // Check the potential final value is still in limit
@@ -466,37 +466,39 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
         if (cycle.End.HasValue && previousCycle.Begin.HasValue) { // First
           var goodLoadingTime = IsGoodLoadingTime (previousCycle, cycle.End.Value);
           switch (goodLoadingTime) {
-          case GoodCycleExtensionResponse.OK:
-            break;
-          case GoodCycleExtensionResponse.KO:
-            if (log.IsDebugEnabled) {
-              log.DebugFormat ("Stop: bad loading time for cycle {0}", previousCycle.Id);
-            }
-            return NotEnoughGoodCycles (nbGoodCycles);
-          case GoodCycleExtensionResponse.POSTPONE:
-            var newHint = new UtcDateTimeRange (stopDateTime, stopDateTime, "[]");
-            return this.CreateWithHint (newHint);
+            case GoodCycleExtensionResponse.OK:
+              break;
+            case GoodCycleExtensionResponse.KO:
+            case GoodCycleExtensionResponse.NOT_APPLICABLE:
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Stop: bad loading time for cycle {previousCycle.Id}");
+              }
+              return NotEnoughGoodCycles (nbGoodCycles);
+            case GoodCycleExtensionResponse.POSTPONE:
+              var newHint = new UtcDateTimeRange (stopDateTime, stopDateTime, "[]");
+              return this.CreateWithHint (newHint);
           }
         }
 
         var goodCycle = IsGoodCycle (cycle);
         switch (goodCycle) {
-        case GoodCycleExtensionResponse.OK:
-          ++nbGoodCycles;
-          if (m_configuration.NumberOfGoodCycles <= nbGoodCycles) {
-            Debug.Assert (m_configuration.NumberOfGoodCycles == nbGoodCycles);
-            if (log.IsDebugEnabled) {
-              log.DebugFormat ("Stop: enough good cycles detected");
+          case GoodCycleExtensionResponse.OK:
+            ++nbGoodCycles;
+            if (m_configuration.NumberOfGoodCycles <= nbGoodCycles) {
+              Debug.Assert (m_configuration.NumberOfGoodCycles == nbGoodCycles);
+              if (log.IsDebugEnabled) {
+                log.DebugFormat ("Stop: enough good cycles detected");
+              }
+              return this.CreateFinal (stopDateTime);
             }
-            return this.CreateFinal (stopDateTime);
-          }
-          previousCycle = cycle;
-          break;
-        case GoodCycleExtensionResponse.KO:
-          return NotEnoughGoodCycles (nbGoodCycles);
-        case GoodCycleExtensionResponse.POSTPONE:
-          var newHint = new UtcDateTimeRange (stopDateTime, stopDateTime, "[]");
-          return this.CreateWithHint (newHint);
+            previousCycle = cycle;
+            break;
+          case GoodCycleExtensionResponse.KO:
+          case GoodCycleExtensionResponse.NOT_APPLICABLE:
+            return NotEnoughGoodCycles (nbGoodCycles);
+          case GoodCycleExtensionResponse.POSTPONE:
+            var newHint = new UtcDateTimeRange (stopDateTime, stopDateTime, "[]");
+            return this.CreateWithHint (newHint);
         }
       }
       Debug.Assert (nbGoodCycles < m_configuration.NumberOfGoodCycles);
@@ -519,17 +521,6 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     GoodCycleExtensionResponse IsGoodLoadingTime (IOperationCycle cycle, DateTime start)
     {
       return cycle.IsGoodLoadingTime (start, m_configuration.MaxLoadingDurationMultiplicator);
-    }
-
-    IMonitoredMachine GetMonitoredMachine ()
-    {
-      if (null == m_monitoredMachine) {
-        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          m_monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
-            .FindById (this.Machine.Id);
-        }
-      }
-      return m_monitoredMachine;
     }
 
     public TimeSpan GetCacheTimeout (IDynamicTimeResponse data)
