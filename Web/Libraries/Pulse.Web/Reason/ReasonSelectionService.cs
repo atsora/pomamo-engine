@@ -98,7 +98,6 @@ namespace Pulse.Web.Reason
 
     Stream m_body;
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -106,9 +105,7 @@ namespace Pulse.Web.Reason
       : base (Lemoine.Core.Cache.CacheTimeOut.PastLong)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -218,7 +215,6 @@ namespace Pulse.Web.Reason
         return new List<ReasonSelectionResponseDTO> ();
       }
     }
-    #endregion // Methods
 
     bool IsExtraAutoReasons (IReasonSlot reasonSlot)
     {
@@ -237,23 +233,9 @@ namespace Pulse.Web.Reason
 
     IEnumerable<IReasonSelection> GetReasonSelections (IMonitoredMachine monitoredMachine, IReasonSlot reasonSlot, bool includeExtraAutoReasons)
     {
-      IEnumerable<IReasonSelection> result = new List<IReasonSelection> ();
-      var reasonSelectionExtensions = GetReasonSelectionExtensions (monitoredMachine);
-      foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
-        var extraReasonSelections = reasonSelectionExtension
-          .GetReasonSelections (reasonSlot.DateTimeRange, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons);
-        result = result
-        .Union (extraReasonSelections, new ReasonSelectionReasonEqualityComparer ());
-      }
-      return result;
-    }
-
-    IEnumerable<IReasonSelectionExtension> GetReasonSelectionExtensions (IMonitoredMachine machine)
-    {
-      Debug.Assert (null != machine);
-
+      var request = new Lemoine.Business.Reason.ReasonSelectionItems (monitoredMachine, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons, reasonSlot.DateTimeRange);
       return Lemoine.Business.ServiceProvider
-        .Get (new Lemoine.Business.Extension.MonitoredMachineExtensions<IReasonSelectionExtension> (machine, (x, m) => x.Initialize (m)));
+        .Get (request);
     }
 
     #region IBodySupport

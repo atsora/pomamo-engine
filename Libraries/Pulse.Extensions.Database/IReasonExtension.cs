@@ -289,6 +289,16 @@ namespace Pulse.Extensions.Database
     public string AlternativeDescription { get; set; }
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public bool TimeDependent { get; set; } = false;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public bool AdditionalData { get; set; } = false;
+
+    /// <summary>
     /// Data
     /// </summary>
     public IDictionary<string, object> Data { get; set; }
@@ -305,7 +315,7 @@ namespace Pulse.Extensions.Database
     /// <param name="machineObservationState"></param>
     /// <param name="reason"></param>
     /// <param name="reasonScore"></param>
-    public ExtraReasonSelection (IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, string alternativeText = null, IDictionary<string, object> data = null)
+    public ExtraReasonSelection (IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, string alternativeText = null, IDictionary<string, object> data = null, bool timeDependent = false, bool additionalData = false)
     {
       this.MachineMode = machineMode;
       this.MachineObservationState = machineObservationState;
@@ -314,6 +324,8 @@ namespace Pulse.Extensions.Database
       this.Selectable = true;
       this.AlternativeText = alternativeText;
       this.Data = data;
+      this.TimeDependent = timeDependent;
+      this.AdditionalData = additionalData;
     }
   }
 

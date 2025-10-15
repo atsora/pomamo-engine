@@ -1288,6 +1288,25 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       }
     }
 
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public IEnumerable<IReasonSelection> GetPossibleReasonSelections (IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
+    {
+      Debug.Assert (null != m_machine);
+      Debug.Assert (null != machineMode);
+      Debug.Assert (null != machineObservationState);
+
+      if (!includeExtraAutoReasons) {
+        return new List<IReasonSelection> ();
+      }
+
+      var machineModeDefaultReasons = GetMachineModeDefaultReasons (m_machine, machineObservationState, machineMode);
+      return machineModeDefaultReasons
+        .Where (x => x.Auto)
+        .Select (x => Convert (x));
+    }
+
     IReasonSelection Convert (IMachineModeDefaultReason machineModeDefaultReason)
     {
       var reasonScore = Lemoine.Info.ConfigSet.LoadAndGet<double> (REASON_SELECTION_SCORE_KEY,

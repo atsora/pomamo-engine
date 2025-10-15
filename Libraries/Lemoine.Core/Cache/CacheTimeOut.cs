@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -67,8 +68,8 @@ namespace Lemoine.Core.Cache
     static readonly TimeSpan DEFAULT_PAST_LONG_TIMEOUT = TimeSpan.FromSeconds (45);
     static readonly TimeSpan DEFAULT_OLD_SHORT_TIMEOUT = TimeSpan.FromSeconds (40);
     static readonly TimeSpan DEFAULT_OLD_LONG_TIMEOUT = TimeSpan.FromMinutes (2);
-    static readonly TimeSpan DEFAULT_CONFIG_TIMEOUT = TimeSpan.FromHours (4);
-    static readonly TimeSpan DEFAULT_STATIC_TIMEOUT = TimeSpan.FromHours (1);
+    static readonly TimeSpan DEFAULT_CONFIG_TIMEOUT = TimeSpan.FromHours (8);
+    static readonly TimeSpan DEFAULT_STATIC_TIMEOUT = TimeSpan.FromHours (12);
     static readonly TimeSpan DEFAULT_NO_CACHE_TIMEOUT = TimeSpan.FromSeconds (0);
     static readonly TimeSpan DEFAULT_PERMANENT_TIMEOUT = TimeSpan.FromDays (1);
 
@@ -83,8 +84,7 @@ namespace Lemoine.Core.Cache
     {
       string key = "Web.Cache." + cacheTimeOut.ToString ();
       TimeSpan timeSpan = ConfigSet.LoadAndGet<TimeSpan> (key, GetDefaultTimeSpan (cacheTimeOut));
-      log.DebugFormat ("GetTimeSpan: " +
-                       "timeSpan for {0} is {1}",
+      log.DebugFormat ("GetTimeSpan: timeSpan for {0} is {1}",
                        cacheTimeOut, timeSpan);
       return timeSpan;
     }

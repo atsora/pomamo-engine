@@ -998,12 +998,13 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
     /// <summary>
     /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
     /// </summary>
-    /// <param name="range"></param>
-    /// <param name="machineMode"></param>
-    /// <param name="machineObservationState"></param>
-    /// <param name="includeExtraAutoReasons"></param>
-    /// <returns></returns>
     public IEnumerable<IReasonSelection> GetReasonSelections (UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
+      => GetPossibleReasonSelections (machineMode, machineObservationState, includeExtraAutoReasons);
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public IEnumerable<IReasonSelection> GetPossibleReasonSelections (IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
     {
       Debug.Assert (null != m_machine);
       Debug.Assert (null != machineMode);

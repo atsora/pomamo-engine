@@ -579,10 +579,31 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
       var autoReasonProposal = GetAutoReasonProposals (range)
         .Where (a => a.DateTimeRange.ContainsRange (range));
       var extraReasonSelections = autoReasonProposal
-        .Select (a => new ExtraReasonSelection (machineMode, machineObservationState, a.Reason, GetManualScore (machineMode, machineObservationState, a) ?? -1, null, a.Data));
+        .Select (a => new ExtraReasonSelection (machineMode, machineObservationState, a.Reason, GetManualScore (machineMode, machineObservationState, a) ?? -1, null, a.Data, timeDependent: true));
       return extraReasonSelections
         .Where (s => 0 < s.ReasonScore)
         .Cast<IReasonSelection> ();
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public IEnumerable<IReasonSelection> GetPossibleReasonSelections (IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
+    {
+      if (!includeExtraAutoReasons) {
+        return new List<IReasonSelection> ();
+      }
+
+      var autoReasonExtensions = GetAutoReasonExtensions ();
+      var result = new List<IReasonSelection> ();
+      foreach (var ext in autoReasonExtensions.Where (x => x.ManualScore.HasValue)) {
+        if (ext.IsValidMatch (machineMode, machineObservationState, ext.Reason, ext.ReasonScore)) {
+          // AlternativeText and Data is not included here, but setting DependentTime to true should be enough for the moment
+          // TODO: check for alternative text
+          result.Add (new ExtraReasonSelection (machineMode, machineObservationState, ext.Reason, ext.ManualScore.Value, timeDependent: true));
+        }
+      }
+      return result;
     }
 
     double? GetManualScore (IMachineMode machineMode, IMachineObservationState machineObservationState, IReasonProposal reasonProposal)

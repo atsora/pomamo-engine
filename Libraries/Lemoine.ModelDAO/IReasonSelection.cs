@@ -92,6 +92,16 @@ namespace Lemoine.Model
     /// If null, all machines apply
     /// </summary>
     IMachineFilter MachineFilter { get; set; }
+
+    /// <summary>
+    /// Is the data dependent on time ?
+    /// </summary>
+    bool TimeDependent { get; }
+
+    /// <summary>
+    /// Are some additional data set or required?
+    /// </summary>
+    bool AdditionalData { get; }
   }
 
   /// <summary>
@@ -117,6 +127,7 @@ namespace Lemoine.Model
   /// <item>the reason</item>
   /// <item>the reason score</item>
   /// <item>the details required property</item>
+  /// <item>the alternative text</item>
   /// </summary>
   public class ReasonSelectionReasonEqualityComparer
     : IEqualityComparer<IReasonSelection>
@@ -130,7 +141,9 @@ namespace Lemoine.Model
     public bool Equals (IReasonSelection x, IReasonSelection y)
     {
       return (x.Reason.Id == y.Reason.Id) && (x.ReasonScore == y.ReasonScore)
-        && (x.DetailsRequired == y.DetailsRequired) && string.Equals (x.AlternativeText, y.AlternativeText, StringComparison.InvariantCultureIgnoreCase);
+        && (x.DetailsRequired == y.DetailsRequired)
+        && string.Equals (x.AlternativeText, y.AlternativeText, StringComparison.InvariantCultureIgnoreCase)
+        && ((!x.AdditionalData && !y.AdditionalData) || !string.IsNullOrEmpty (x.AlternativeText));
     }
 
     /// <summary>
@@ -146,6 +159,9 @@ namespace Lemoine.Model
         hashCode += 1000000009 * obj.ReasonScore.GetHashCode ();
         hashCode += 1000000011 * obj.DetailsRequired.GetHashCode ();
         hashCode += 1000000013 * (obj.AlternativeText?.GetHashCode () ?? 0);
+        if (obj.AdditionalData) { 
+          hashCode += 1000000021;
+        }
       }
       return hashCode;
     }

@@ -22,20 +22,15 @@ namespace Lemoine.Business.Machine
   public sealed class MonitoredMachineFromId
     : IRequest<IMonitoredMachine>
   {
-    #region Members
     readonly IMachine m_machine;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MonitoredMachineFromId).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Machine Id
     /// </summary>
     int MachineId { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -59,10 +54,6 @@ namespace Lemoine.Business.Machine
       this.MachineId = machine.Id;
       m_machine = machine;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

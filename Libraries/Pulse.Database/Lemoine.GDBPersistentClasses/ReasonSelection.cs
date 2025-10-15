@@ -30,7 +30,6 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string DEFAULT_MANUAL_SCORE_KEY = "Reason.DefaultManualScore";
     static readonly double DEFAULT_MANUAL_SCORE_DEFAULT = 100.0;
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineMode m_machineMode;
@@ -39,11 +38,9 @@ namespace Lemoine.GDBPersistentClasses
     bool m_selectable = true;
     bool m_detailsRequired = false;
     IMachineFilter m_machineFilter = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonSelection).FullName);
 
-    #region Constructors
     /// <summary>
     /// Default constructor is forbidden
     /// </summary>
@@ -83,7 +80,6 @@ namespace Lemoine.GDBPersistentClasses
       this.m_reason = reason;
       this.m_detailsRequired = detailsRequired;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// MachineModeDefaultReason ID
@@ -121,8 +117,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         if (null == value) {
           Debug.Assert (null != value);
-          log.ErrorFormat ("Reason.set: " +
-                           "a null reason is not allowed");
+          log.Error ("Reason.set: a null reason is not allowed");
           throw new ArgumentNullException ("ReasonSelection.Reason");
         }
         m_reason = value;
@@ -181,6 +176,16 @@ namespace Lemoine.GDBPersistentClasses
     /// <see cref="IReasonSelection"/>
     /// </summary>
     public virtual string AlternativeDescription => null;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual bool TimeDependent => false;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual bool AdditionalData => false;
 
     #region Equals and GetHashCode implementation
     /// <summary>

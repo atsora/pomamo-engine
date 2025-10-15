@@ -70,6 +70,12 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     /// <param name="includeExtraAutoReasons"></param>
     /// <returns></returns>
     public IEnumerable<IReasonSelection> GetReasonSelections (UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
+      => GetPossibleReasonSelections (machineMode, machineObservationState, includeExtraAutoReasons);
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public IEnumerable<IReasonSelection> GetPossibleReasonSelections (IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
     {
       var reasonSelectionFindRequest = new ReasonSelectionFind (m_machine, machineMode, machineObservationState);
       IEnumerable<IReasonSelection> reasonSelections = ServiceProvider

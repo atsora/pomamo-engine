@@ -23,5 +23,14 @@ namespace Pulse.Extensions.Database
     /// <param name="includeExtraAutoReasons">include in the reason selections the extra auto-reasons, else only consider the manual reasons</param>
     /// <returns></returns>
     IEnumerable<IReasonSelection> GetReasonSelections (UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons);
+
+    /// <summary>
+    /// Return all the reason selections that might be returned, at any time
+    /// </summary>
+    /// <param name="machineMode"></param>
+    /// <param name="machineObservationState"></param>
+    /// <param name="includeExtraAutoReasons">include in the reason selections the extra auto-reasons, else consider only the manual reasons</param>
+    /// <returns></returns>
+    IEnumerable<IReasonSelection> GetPossibleReasonSelections (IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons);
   }
 }

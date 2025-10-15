@@ -74,6 +74,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\VS\net8.0\Lemoine.Plugin.ReasonDefaultManagement.deps.json" />
+    <None Remove="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\VS\net8.0\Lemoine.Plugin.ReasonDefaultManagement.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Lem_AspService.dll.options" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
     <None Include="Lem_AspService.dll.defaultoptions" CopyToOutputDirectory="Always" />
     <None Include="Lem_AspService.dll.log4net" CopyToOutputDirectory="Always" />
