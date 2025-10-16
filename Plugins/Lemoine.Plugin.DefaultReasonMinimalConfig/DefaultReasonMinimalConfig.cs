@@ -998,6 +998,16 @@ namespace Lemoine.Plugin.DefaultReasonMinimalConfig
     /// <summary>
     /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
     /// </summary>
+    public bool TimeDependent => false;
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public bool DynamicData => false;
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
     public IEnumerable<IReasonSelection> GetReasonSelections (UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
       => GetPossibleReasonSelections (machineMode, machineObservationState, includeExtraAutoReasons);
 

@@ -296,7 +296,7 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// <see cref="IReasonSelection"/>
     /// </summary>
-    public bool AdditionalData { get; set; } = false;
+    public bool DynamicData { get; set; } = false;
 
     /// <summary>
     /// Data
@@ -325,7 +325,7 @@ namespace Pulse.Extensions.Database
       this.AlternativeText = alternativeText;
       this.Data = data;
       this.TimeDependent = timeDependent;
-      this.AdditionalData = additionalData;
+      this.DynamicData = additionalData;
     }
   }
 

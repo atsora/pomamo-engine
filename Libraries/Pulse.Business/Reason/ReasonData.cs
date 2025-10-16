@@ -307,6 +307,21 @@ namespace Pulse.Business.Reason
       }
     }
 
-    public static bool IsJsonNullOrEmpty (string json) => string.IsNullOrEmpty (json) || string.Equals (json.Trim (), "{}") || AreJsonEqual (json, "{}");
+    /// <summary>
+    /// Is a json null or empty
+    /// </summary>
+    /// <param name="json"></param>
+    /// <returns></returns>
+    public static bool IsJsonNullOrEmpty (string json) {
+      if (string.IsNullOrEmpty (json)) {
+        return true;
+      }
+      if (string.Equals (json.Trim (), "{}")) {
+        return true;
+      }
+      var node1 = System.Text.Json.Nodes.JsonNode.Parse (json);
+      var node2 = System.Text.Json.Nodes.JsonNode.Parse ("{}");
+      return System.Text.Json.Nodes.JsonNode.DeepEquals (node1, node2);
+    }
   }
 }

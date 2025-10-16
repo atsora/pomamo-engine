@@ -164,10 +164,10 @@ namespace Pulse.Web.UnitTests.Reason
                   "Test": 1.1
                 }
               """));
-            Assert.That (reasonMachineAssociation.Data, Has.Count.EqualTo (1));
-            Assert.That (reasonMachineAssociation.Data.Keys.Single (), Is.EqualTo ("Test"));
-            Assert.That (reasonMachineAssociation.Data.Values.Single (), Is.EqualTo (1.1));
           });
+          Assert.That (reasonMachineAssociation.Data, Has.Count.EqualTo (1));
+          Assert.That (reasonMachineAssociation.Data.Keys.Single (), Is.EqualTo ("Test"));
+          Assert.That (reasonMachineAssociation.Data.Values.Single (), Is.EqualTo (1.1));
         }
         finally {
           Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();

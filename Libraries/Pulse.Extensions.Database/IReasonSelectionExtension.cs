@@ -15,6 +15,16 @@ namespace Pulse.Extensions.Database
   public interface IReasonSelectionExtension : IInitializedByMachineExtension
   {
     /// <summary>
+    /// Are the returned reason selections time dependent?
+    /// </summary>
+    bool TimeDependent { get; }
+
+    /// <summary>
+    /// Do the returned reason selections return additional dynamic data?
+    /// </summary>
+    bool DynamicData { get; }
+
+    /// <summary>
     /// Try to get additional reason selections at the specified date/time range
     /// </summary>
     /// <param name="range"></param>

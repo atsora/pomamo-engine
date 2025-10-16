@@ -68,7 +68,7 @@ namespace Lemoine.Business.Reason
         .Union (extraReasonSelections, new ReasonSelectionReasonEqualityComparer ());
       }
       return reasonSelections
-        .Where (x => !x.TimeDependent || x.AdditionalData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
+        .Where (x => !x.TimeDependent || x.DynamicData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
         .ToList ();
     }
 
@@ -91,12 +91,12 @@ namespace Lemoine.Business.Reason
         .Union (extraReasonSelections, new ReasonSelectionReasonEqualityComparer ());
       }
       return reasonSelections
-        .Where (x => !x.TimeDependent || x.AdditionalData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
+        .Where (x => !x.TimeDependent || x.DynamicData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
         .ToList ();
     }
 
     bool ExistsTimeIndependentHigherScore (IReasonSelection a, IEnumerable<IReasonSelection> others)
-      => others.Any (b => !b.TimeDependent && !b.AdditionalData && (b.ReasonScore >= a.ReasonScore) && (b.Reason.Id == a.Reason.Id));
+      => others.Any (b => !b.TimeDependent && !b.DynamicData && (b.ReasonScore >= a.ReasonScore) && (b.Reason.Id == a.Reason.Id));
 
     IEnumerable<IReasonSelectionExtension> GetReasonSelectionExtensions (IMonitoredMachine machine)
     {
@@ -125,25 +125,32 @@ namespace Lemoine.Business.Reason
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public bool IsCacheValid (CacheValue<IEnumerable<IReasonSelection>> data)
-    {
-      var reasonSelections = data.Value;
-      if (reasonSelections.Any (x => x.TimeDependent || x.AdditionalData)) {
-        return false;
-      }
-      else { 
-        var possibleReasonSelectionsRequest = new PossibleReasonSelections (m_machine, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
-        var possibleReasonSelections = Lemoine.Business.ServiceProvider.Get (possibleReasonSelectionsRequest);
-        return possibleReasonSelections.All (x => !x.TimeDependent);
-      }
-    }
+    public bool IsCacheValid (CacheValue<IEnumerable<IReasonSelection>> data) => true;
 
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
     /// <returns></returns>
-    public TimeSpan GetCacheTimeout (IEnumerable<IReasonSelection> data)
-      => CacheTimeOut.Config.GetTimeSpan ();
+    public TimeSpan GetCacheTimeout (IEnumerable<IReasonSelection> reasonSelections)
+    {
+      if (reasonSelections.Any (x => x.TimeDependent || x.DynamicData)) {
+        return TimeSpan.Zero;
+      }
+
+      var reasonSelectionExtensions = GetReasonSelectionExtensions (m_machine);
+      if (reasonSelectionExtensions.All (x => !x.TimeDependent && !x.DynamicData)) {
+        return CacheTimeOut.Config.GetTimeSpan ();
+      }
+
+      var possibleReasonSelectionsRequest = new PossibleReasonSelections (m_machine, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
+      var possibleReasonSelections = Lemoine.Business.ServiceProvider.Get (possibleReasonSelectionsRequest);
+      if (possibleReasonSelections.All (x => !x.TimeDependent && !x.DynamicData)) {
+        return CacheTimeOut.Config.GetTimeSpan ();
+      }
+      else {
+        return TimeSpan.Zero;
+      }
+    }
     #endregion // IRequest implementation
   }
 }

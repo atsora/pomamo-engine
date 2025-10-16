@@ -1228,6 +1228,16 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
     /// <summary>
     /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
     /// </summary>
+    public bool TimeDependent => false;
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public bool DynamicData => false;
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
     /// <param name="range"></param>
     /// <param name="machineMode"></param>
     /// <param name="machineObservationState"></param>

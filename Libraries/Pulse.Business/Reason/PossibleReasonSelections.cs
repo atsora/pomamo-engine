@@ -66,7 +66,7 @@ namespace Lemoine.Business.Reason
         .Union (extraReasonSelections, new ReasonSelectionReasonEqualityComparer ());
       }
       return reasonSelections
-        .Where (x => !x.TimeDependent || x.AdditionalData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
+        .Where (x => !x.TimeDependent || x.DynamicData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
         .ToList ();
     }
 
@@ -89,12 +89,12 @@ namespace Lemoine.Business.Reason
         .Union (extraReasonSelections, new ReasonSelectionReasonEqualityComparer ());
       }
       return reasonSelections
-        .Where (x => !x.TimeDependent || x.AdditionalData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
+        .Where (x => !x.TimeDependent || x.DynamicData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
         .ToList ();
     }
 
     bool ExistsTimeIndependentHigherScore (IReasonSelection a, IEnumerable<IReasonSelection> others)
-      => others.Any (b => !b.TimeDependent && !b.AdditionalData && (b.ReasonScore >= a.ReasonScore) && (b.Reason.Id == a.Reason.Id) );
+      => others.Any (b => !b.TimeDependent && !b.DynamicData && (b.ReasonScore >= a.ReasonScore) && (b.Reason.Id == a.Reason.Id) );
 
     IEnumerable<IReasonSelectionExtension> GetReasonSelectionExtensions (IMonitoredMachine machine)
     {

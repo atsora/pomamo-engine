@@ -24,9 +24,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     , IReasonSelectionExtension
     , IReasonLegendExtension
   {
-    #region Members
     IMachine m_machine;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (ReasonSelectionTable).FullName);
 
@@ -60,6 +58,16 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
 
       return true;
     }
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public bool TimeDependent => false;
+
+    /// <summary>
+    /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
+    /// </summary>
+    public bool DynamicData => false;
 
     /// <summary>
     /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>

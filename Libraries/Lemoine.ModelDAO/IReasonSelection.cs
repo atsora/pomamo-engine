@@ -99,9 +99,9 @@ namespace Lemoine.Model
     bool TimeDependent { get; }
 
     /// <summary>
-    /// Are some additional data set or required?
+    /// Are some additional dynamic data set or required?
     /// </summary>
-    bool AdditionalData { get; }
+    bool DynamicData { get; }
   }
 
   /// <summary>
@@ -143,7 +143,7 @@ namespace Lemoine.Model
       return (x.Reason.Id == y.Reason.Id) && (x.ReasonScore == y.ReasonScore)
         && (x.DetailsRequired == y.DetailsRequired)
         && string.Equals (x.AlternativeText, y.AlternativeText, StringComparison.InvariantCultureIgnoreCase)
-        && ((!x.AdditionalData && !y.AdditionalData) || !string.IsNullOrEmpty (x.AlternativeText));
+        && ((!x.DynamicData && !y.DynamicData) || !string.IsNullOrEmpty (x.AlternativeText));
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ namespace Lemoine.Model
         hashCode += 1000000009 * obj.ReasonScore.GetHashCode ();
         hashCode += 1000000011 * obj.DetailsRequired.GetHashCode ();
         hashCode += 1000000013 * (obj.AlternativeText?.GetHashCode () ?? 0);
-        if (obj.AdditionalData) { 
+        if (obj.DynamicData) { 
           hashCode += 1000000021;
         }
       }

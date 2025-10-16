@@ -185,7 +185,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IReasonSelection"/>
     /// </summary>
-    public virtual bool AdditionalData => false;
+    public virtual bool DynamicData => false;
 
     #region Equals and GetHashCode implementation
     /// <summary>

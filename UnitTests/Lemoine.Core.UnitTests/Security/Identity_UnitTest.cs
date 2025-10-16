@@ -33,7 +33,7 @@ namespace Lemoine.Core.UnitTests.Security
     {
       if (RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
         var userName = Lemoine.Core.Security.Identity.RunImpersonatedAsExplorerUser (GetCurrentUser);
-        Assert.That (userName, Is.EqualTo ("NICOLAS-LAPTOP\\nrela"));
+        Assert.That (userName, Is.AnyOf ("NICOLAS-LAPTOP\\nrela", "NICOLAS-T14S\\nicolas"));
       }
     }
 
