@@ -65,10 +65,12 @@ namespace Lemoine.Business.Reason
         var extraReasonSelections = reasonSelectionExtension
           .GetReasonSelections (m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
         reasonSelections = reasonSelections
-        .Union (extraReasonSelections, new ReasonSelectionReasonEqualityComparer ());
+          .Concat (extraReasonSelections);
       }
+      reasonSelections = reasonSelections.ToList ();
       return reasonSelections
         .Where (x => !x.TimeDependent || x.DynamicData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
+        .Distinct (new ReasonSelectionReasonEqualityComparer ())
         .ToList ();
     }
 
@@ -88,10 +90,12 @@ namespace Lemoine.Business.Reason
         var extraReasonSelections = reasonSelectionExtension
           .GetReasonSelections (m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
         reasonSelections = reasonSelections
-        .Union (extraReasonSelections, new ReasonSelectionReasonEqualityComparer ());
+          .Concat (extraReasonSelections);
       }
+      reasonSelections = reasonSelections.ToList ();
       return reasonSelections
         .Where (x => !x.TimeDependent || x.DynamicData || !ExistsTimeIndependentHigherScore (x, reasonSelections))
+        .Distinct (new ReasonSelectionReasonEqualityComparer ())
         .ToList ();
     }
 

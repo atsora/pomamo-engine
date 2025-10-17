@@ -35,6 +35,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     bool m_batch = false;
     UtcDateTimeRange m_cacheRange;
     IEnumerable<IReasonProposal> m_cacheData = null;
+    bool? m_timeDependent = null; // To keep it in cache
 
     /// <summary>
     /// Constructor
@@ -565,7 +566,15 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     /// <summary>
     /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
     /// </summary>
-    public bool TimeDependent => true;
+    public bool TimeDependent
+    {
+      get {
+        if (!m_timeDependent.HasValue) {
+          m_timeDependent = GetAutoReasonExtensions ().Any ();
+        }
+        return m_timeDependent.Value;
+      }
+    }
 
     /// <summary>
     /// <see cref="Lemoine.Extensions.Database.IReasonSelectionExtension"/>
