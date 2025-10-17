@@ -148,9 +148,19 @@ namespace Lemoine.Plugin.GoodCycleWithoutStopSequences
           : GoodCycleExtensionResponse.KO;
       }
 
+      // Postpone ? Because the operation may not be accurate ?
+      var operationDetectionStatusRequest = new Lemoine.Business.Operation
+        .OperationDetectionStatus (m_machine);
+      var operationDetectionStatus = Lemoine.Business.ServiceProvider
+        .Get (operationDetectionStatusRequest);
+      if (operationDetectionStatus.HasValue
+        && operationDetectionStatus.Value < cycle.DateTime) {
+        return GoodCycleExtensionResponse.POSTPONE;
+      }
+
       if ((null == cycle.OperationSlot) || (null == cycle.OperationSlot.Operation)) {
-        log.Info ("IsGoodLoadingTime: no operation slot or operation, return true");
-        return GoodCycleExtensionResponse.OK;
+        log.Info ("IsGoodLoadingTime: no operation slot or operation, return N/A");
+        return GoodCycleExtensionResponse.NOT_APPLICABLE;
       }
       else { // null != cycle.OperationSlot && null != cycle.OperationSlot.Operation
         var operation = cycle.OperationSlot.Operation;
