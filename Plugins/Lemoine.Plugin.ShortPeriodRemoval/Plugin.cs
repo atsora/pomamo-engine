@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,31 +20,17 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "Short inactivity removal"; } }
+    public override string Name => "Short inactivity removal";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Remove the short periods of inactivity";
-      }
-    }
+    public override string Description => "Remove the short periods of inactivity";
 
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis;
 
     /// <summary>
     /// Multiple configurations
@@ -53,12 +40,8 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 4; } }
-    #endregion // Getters / Setters
+    public override int Version => 4;
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
-
-    #region Methods
-    #endregion // Methods
   }
 }

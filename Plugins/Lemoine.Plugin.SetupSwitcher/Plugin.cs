@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,46 +22,29 @@ namespace Lemoine.Plugin.SetupSwitcher
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public Plugin () : base (new ConfigurationLoader ())
     {
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "Setup switcher"; } }
+    public override string Name => "Setup switcher";
     
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description {
-      get {
-        return "Trigger a switch to a new machine state template when a new operation is detected";
-      }
-    }
+    public override string Description => "Trigger a switch to a new machine state template when a new operation is detected";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 3; } }
-    #endregion // Getters / Setters
+    public override int Version => 3;
     
     #region Methods
     #endregion // Methods

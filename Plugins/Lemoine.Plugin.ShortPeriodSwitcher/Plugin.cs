@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,31 +20,17 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "Short period switcher"; } }
+    public override string Name => "Short period switcher";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Switch the machine mode of some short periods";
-      }
-    }
+    public override string Description => "Switch the machine mode of some short periods";
 
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis;
 
     /// <summary>
     /// Multiple configurations
@@ -53,12 +40,8 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
-
-    #region Methods
-    #endregion // Methods
   }
 }

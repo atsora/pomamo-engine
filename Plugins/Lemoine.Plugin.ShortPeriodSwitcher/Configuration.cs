@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,7 +23,6 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
 
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Max duration
     /// </summary>
@@ -61,9 +61,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -71,9 +69,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
     {
       this.MaxDuration = MAX_DURATION_DEFAULT;
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -85,8 +81,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("ShortPeriodSwitcher.ConfigurationErrors")) {
           if (null == ModelDAOHelper.DAOFactory.MachineModeDAO
               .FindById (this.NewMachineModeId)) {
-            log.ErrorFormat ("GetConfigurationErrors: " +
-                             "NewMachineMode {0} does not exist",
+            log.ErrorFormat ("GetConfigurationErrors: NewMachineMode {0} does not exist",
                              this.NewMachineModeId);
             errorList.Add ("New MachineMode with ID "
                         + this.NewMachineModeId
@@ -94,8 +89,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
           }
           if (null == ModelDAOHelper.DAOFactory.MachineModeDAO
               .FindById (this.OldMachineModeId)) {
-            log.ErrorFormat ("GetConfigurationErrors: " +
-                             "OldMachineMode {0} does not exist",
+            log.ErrorFormat ("GetConfigurationErrors: OldMachineMode {0} does not exist",
                              this.OldMachineModeId);
             errorList.Add ("Old MachineMode with ID "
                         + this.OldMachineModeId
@@ -104,8 +98,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
           if (0 != this.MachineFilterId) {
             if (null == ModelDAOHelper.DAOFactory.MachineFilterDAO
                 .FindById (this.MachineFilterId)) {
-              log.ErrorFormat ("GetConfigurationErrors: " +
-                               "MachineFilter {0} does not exist",
+              log.ErrorFormat ("GetConfigurationErrors: MachineFilter {0} does not exist",
                                this.MachineFilterId);
               errorList.Add ("MachineFilter with ID "
                           + this.MachineFilterId
@@ -118,6 +111,5 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
       errors = errorList;
       return (0 == errorList.Count);
     }
-    #endregion // Methods
   }
 }

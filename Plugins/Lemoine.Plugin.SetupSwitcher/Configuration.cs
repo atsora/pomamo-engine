@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,12 +21,8 @@ namespace Lemoine.Plugin.SetupSwitcher
     : Pulse.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter
     , Pulse.Extensions.Configuration.IConfigurationWithMachineFilter
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Set-up Machine State Template ID
     /// </summary>
@@ -34,18 +31,14 @@ namespace Lemoine.Plugin.SetupSwitcher
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public Configuration ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -85,6 +78,5 @@ namespace Lemoine.Plugin.SetupSwitcher
     {
       return false;
     }
-    #endregion // Methods
   }
 }

@@ -20,17 +20,14 @@ namespace Lemoine.Plugin.SetupSwitcher
     : Lemoine.Extensions.MultipleInstanceConfigurableExtension<Configuration>
     , Lemoine.Extensions.Analysis.IOperationDetectionExtension
   {
-    #region Members
     bool m_initialized = false;
     bool m_active = false;
     IMonitoredMachine m_machine;
     IMachineFilter m_machineFilter = null;
     IMachineStateTemplate m_setupMachineStateTemplate = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OperationDetectionExtension).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -38,12 +35,7 @@ namespace Lemoine.Plugin.SetupSwitcher
       : base (new ConfigurationLoader ())
     {
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region IOperationDetectionExtension implementation
     public bool Initialize(IMonitoredMachine machine)
     {
       return true; // The initialization is done later by AddOperation
@@ -162,7 +154,5 @@ namespace Lemoine.Plugin.SetupSwitcher
       
       m_initialized = true;
     }
-    
-    #endregion
   }
 }

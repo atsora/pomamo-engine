@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,7 +25,6 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Max duration
     /// </summary>
@@ -54,18 +54,14 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
     {
       get; set;
     } = (int)MachineModeId.AutoActive;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public Configuration ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -104,10 +100,6 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
       return result && (!errors.Any ());
     }
 
-    protected override bool IsMachineFilterRequired ()
-    {
-      return false;
-    }
-    #endregion // Methods
+    protected override bool IsMachineFilterRequired () => false;
   }
 }
