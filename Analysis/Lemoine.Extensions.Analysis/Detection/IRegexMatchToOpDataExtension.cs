@@ -28,7 +28,11 @@ namespace Lemoine.Extensions.Analysis.Detection
     /// <item>partName</item>
     /// <item>partCode</item>
     /// <item>opName</item>
+    /// <item>op1Name</item>
+    /// <item>op2Name</item>
     /// <item>opCode</item>
+    /// <item>op1Code</item>
+    /// <item>op2Code</item>
     /// </summary>
     /// <param name="match"></param>
     /// <returns></returns>

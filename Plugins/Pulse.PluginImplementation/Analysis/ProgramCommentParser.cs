@@ -419,13 +419,17 @@ namespace Pulse.PluginImplementation.Analysis
           if (opNameGroup.Success) {
             opName = opNameGroup.Value.Trim ();
           }
-          var op1NameGroup = match.Groups["op1Name"];
-          if (op1NameGroup.Success) {
-            op1Name = op1NameGroup.Value.Trim ();
+          if (!TryGetOpData (match, "op1Name", out op1Name)) {
+            var op1NameGroup = match.Groups["op1Name"];
+            if (op1NameGroup.Success) {
+              op1Name = op1NameGroup.Value.Trim ();
+            }
           }
-          var op2NameGroup = match.Groups["op2Name"];
-          if (op2NameGroup.Success) {
-            op2Name = op2NameGroup.Value.Trim ();
+          if (!TryGetOpData (match, "op2Name", out op2Name)) {
+            var op2NameGroup = match.Groups["op2Name"];
+            if (op2NameGroup.Success) {
+              op2Name = op2NameGroup.Value.Trim ();
+            }
           }
           if (string.IsNullOrEmpty (opName)) {
             if (string.IsNullOrEmpty (op1Name)) {
@@ -470,13 +474,17 @@ namespace Pulse.PluginImplementation.Analysis
           if (opCodeGroup.Success) {
             opCode = opCodeGroup.Value.Trim ();
           }
-          var op1CodeGroup = match.Groups["op1Code"];
-          if (op1CodeGroup.Success) {
-            op1Code = op1CodeGroup.Value.Trim ();
+          if (!TryGetOpData (match, "op1Code", out op1Code)) {
+            var op1CodeGroup = match.Groups["op1Code"];
+            if (op1CodeGroup.Success) {
+              op1Code = op1CodeGroup.Value.Trim ();
+            }
           }
-          var op2CodeGroup = match.Groups["op2Code"];
-          if (op2CodeGroup.Success) {
-            op2Code = op2CodeGroup.Value.Trim ();
+          if (!TryGetOpData (match, "op2Code", out op2Code)) {
+            var op2CodeGroup = match.Groups["op2Code"];
+            if (op2CodeGroup.Success) {
+              op2Code = op2CodeGroup.Value.Trim ();
+            }
           }
           if (string.IsNullOrEmpty (opCode)) {
             if (string.IsNullOrEmpty (op1Code)) {
