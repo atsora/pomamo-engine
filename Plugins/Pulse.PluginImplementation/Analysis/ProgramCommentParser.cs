@@ -10,6 +10,7 @@ using Lemoine.ModelDAO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -62,6 +63,63 @@ namespace Pulse.PluginImplementation.Analysis
       m_defaultOpName = defaultOpName;
     }
 
+    /// <summary>
+    /// Create the sequence(s):
+    /// one by pallet
+    /// 
+    /// Deprecated: use ISequenceCreateExtension now
+    /// </summary>
+    public bool CreateSequences { get; set; } = false;
+
+    /// <summary>
+    /// Return a specific data from the program operation comment
+    /// </summary>
+    /// <param name="dataName"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public bool TryGetData (string dataName, out string data)
+    {
+      if (string.IsNullOrEmpty (m_programComment)) {
+        log.Debug ($"TryGetData: empty program comment => return null");
+        data = "";
+        return false;
+      }
+
+      var match = m_regex.Match (m_programComment);
+      if (!match.Success) {
+        log.Warn ($"TryGetData: program comment {m_programComment} does not match regex {m_regex}");
+        data = "";
+        return false;
+      }
+
+      return TryGetData (match, dataName, out data);
+    }
+
+    bool TryGetData (Match match, string dataName, out string data)
+    {
+      if (TryGetOpData (match, dataName, out data)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"TryGetData: return {data} for {dataName}");
+        }
+        return true;
+      }
+
+      var group = match.Groups[dataName];
+      if (group.Success) {
+        data = group.Value.Trim ();
+        if (log.IsDebugEnabled) {
+          log.Debug ($"TryGetData: get {data} for {dataName} directrly from regex");
+        }
+        return true;
+      }
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"TryGetData: no data could be determined for {dataName}");
+      }
+      data = "";
+      return false;
+    }
+
     bool TryGetOpData (Match match, string dataName, out string opData)
     {
       if (null != m_regexMatchToOpDatas) {
@@ -76,14 +134,6 @@ namespace Pulse.PluginImplementation.Analysis
       opData = null;
       return false;
     }
-
-    /// <summary>
-    /// Create the sequence(s):
-    /// one by pallet
-    /// 
-    /// Deprecated: use ISequenceCreateExtension now
-    /// </summary>
-    public bool CreateSequences { get; set; } = false;
 
     IProject GetProject (Match match)
     {
