@@ -90,7 +90,6 @@ namespace Lemoine.CncEngine
 
     static readonly string CNC_MODULES_DISTANT_DIRECTORY = "CncModules";
 
-    #region Members
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
     readonly int m_cncAcquisitionId = 0;
@@ -111,12 +110,10 @@ namespace Lemoine.CncEngine
     bool m_disposed = false;
 
     DateTime m_lastGarbageCollection = DateTime.UtcNow;
-    #endregion
 
     readonly ILog log = LogManager.GetLogger (typeof (CncDataHandler).FullName);
     ILog dataLog = LogManager.GetLogger (DATA_LOG);
 
-    #region Getters / Setters
     /// <summary>
     /// Cnc Acquisition ID
     /// </summary>
@@ -156,9 +153,7 @@ namespace Lemoine.CncEngine
     /// but this should be pretty rare (there is no global lock)
     /// </summary>
     public IDictionary<string, object> FinalData => m_finalData;
-    #endregion
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// 
@@ -541,7 +536,7 @@ namespace Lemoine.CncEngine
       }
 
       if (log.IsDebugEnabled) {
-        log.Debug ($"LoadModuleRef: module with ref {refAttribute} is {cncModuleExecutor}");
+        log.Debug ($"LoadModuleRef: module with ref {refAttribute} is {cncModuleExecutor?.CncModule}");
       }
 
       SetActive ();
@@ -735,7 +730,6 @@ namespace Lemoine.CncEngine
         }
       }
     }
-    #endregion
 
     /// <summary>
     /// Get a module that is associated to specific reference
@@ -1071,7 +1065,7 @@ namespace Lemoine.CncEngine
         }
       }
       catch (Exception ex) {
-        log.Error ($"ProcessStart: Start method of {cncModuleExecutor} failed => skip the elements of this module", ex);
+        log.Error ($"ProcessStart: Start method of {cncModuleExecutor?.CncModule} failed => skip the elements of this module", ex);
         RecordStartError (moduleElement, data);
         if (CheckException (ex)) {
           throw;
@@ -1099,7 +1093,7 @@ namespace Lemoine.CncEngine
       }
       catch (Exception ex) {
         if (log.IsDebugEnabled) {
-          log.Debug ($"ProcessFinish: Finish method of {cncModuleExecutor} failed", ex);
+          log.Debug ($"ProcessFinish: Finish method of {cncModuleExecutor?.CncModule} failed", ex);
         }
         if (CheckException (ex)) {
           throw;
@@ -1268,7 +1262,7 @@ namespace Lemoine.CncEngine
       }
       catch (Exception ex) {
         if (log.IsWarnEnabled) {
-          log.Warn ($"ProcessGetProperty: using the property {property} of {cncModuleExecutor} failed => do not store any value for it", ex);
+          log.Warn ($"ProcessGetProperty: using the property {property} of {cncModuleExecutor?.CncModule} failed => do not store any value for it", ex);
         }
         if (CheckException (ex)) {
           throw;
@@ -1300,8 +1294,7 @@ namespace Lemoine.CncEngine
         string method = instructionElement.GetAttribute ("method");
         if (0 < method.Length) { // If there is an attribute method, use it
           if (!ProcessSetMethod (cncModuleExecutor, instructionElement, method, datavalue)) {
-            log.FatalFormat ("ProcessSet: method {0} does not exist in module {1} element {2}",
-              method, cncModuleExecutor, instructionElement);
+            log.Fatal ($"ProcessSet: method {method} does not exist in module {cncModuleExecutor?.CncModule} element {instructionElement?.OuterXml}");
           }
           return;
         }
@@ -1309,7 +1302,7 @@ namespace Lemoine.CncEngine
         string property = instructionElement.GetAttribute ("property");
         if (0 < property.Length) {
           if (!ProcessSetProperty (cncModuleExecutor, instructionElement, property, datavalue)) {
-            log.Fatal ($"ProcessSet: property {property} does not exist in module {cncModuleExecutor} element {instructionElement}");
+            log.Fatal ($"ProcessSet: property {property} does not exist in module {cncModuleExecutor?.CncModule} element {instructionElement?.OuterXml}");
           }
           return;
         }
@@ -1321,11 +1314,10 @@ namespace Lemoine.CncEngine
         if (ProcessSetProperty (cncModuleExecutor, instructionElement, dataItem, datavalue)) {
           return;
         }
-        log.FatalFormat ("ProcessSet: no method or attribute found for {0} in module {1} element {2} => error in the configuration file",
-          dataItem, cncModuleExecutor, instructionElement.OuterXml);
+        log.Fatal ($"ProcessSet: no method or attribute found for {dataItem} in module {cncModuleExecutor?.CncModule} element {instructionElement?.OuterXml} => error in the configuration file");
       }
       catch (Exception ex) {
-        log.Error ($"ProcessSet: the set instruction {instructionElement.OuterXml} of module {cncModuleExecutor} failed", ex);
+        log.Error ($"ProcessSet: the set instruction {instructionElement.OuterXml} of module {cncModuleExecutor?.CncModule} failed", ex);
       }
     }
 
@@ -1348,7 +1340,7 @@ namespace Lemoine.CncEngine
         }
       }
       catch (Exception ex) {
-        log.Error ($"ProcessSetMethod: using the method {method} of {cncModuleExecutor} failed", ex);
+        log.Error ($"ProcessSetMethod: using the method {method} of {cncModuleExecutor?.CncModule} failed", ex);
         if (CheckException (ex)) {
           throw;
         }
@@ -1368,13 +1360,13 @@ namespace Lemoine.CncEngine
         }
         else {
           if (log.IsDebugEnabled) {
-            log.Debug ($"ProcessSetProperty: no property {property} in module {cncModuleExecutor.CncModule}");
+            log.Debug ($"ProcessSetProperty: no property {property} in module {cncModuleExecutor?.CncModule}");
           }
           return false;
         }
       }
       catch (Exception ex) {
-        log.Error ($"ProcessSetProperty: using the property {property} of {cncModuleExecutor.CncModule} failed", ex);
+        log.Error ($"ProcessSetProperty: using the property {property} of {cncModuleExecutor?.CncModule} failed", ex);
         if (CheckException (ex)) {
           throw;
         }

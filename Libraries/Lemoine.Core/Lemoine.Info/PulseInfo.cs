@@ -331,7 +331,7 @@ namespace Lemoine.Info
           .LoadAndGet<string> (LOCAL_CONFIGURATION_DIRECTORY_KEY,
                                defaultLocalConfigurationDirectory);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ($"LocalConfigurationDirectory: {localConfigurationDirectory}, default={defaultLocalConfigurationDirectory}");
+          log.Debug ($"LocalConfigurationDirectory: {localConfigurationDirectory}, default={defaultLocalConfigurationDirectory}");
         }
         if (!Directory.Exists (localConfigurationDirectory)) {
           if (log.IsDebugEnabled) {
