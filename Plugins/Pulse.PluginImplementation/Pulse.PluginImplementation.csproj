@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+<Project Sdk="Microsoft.NET.Sdk;Microsoft.Build.CentralPackageVersions/2.0.1">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
