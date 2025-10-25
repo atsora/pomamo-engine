@@ -37,6 +37,7 @@ namespace Lemoine.Plugins.UnitTests
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ()) {
           try {
+            Lemoine.Info.ConfigSet.ForceValue (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.ProjectComponentIsPart), true);
             var regex = new Regex ("Part=(?<partName>[0-9A-Za-z]+) Op=(?<opName>[0-9A-Za-z]+) Qty=(?<qty>[0-9]+)");
             {
               var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op123 Qty=2", new List<IRegexMatchToFileOpDataExtension> ());
@@ -101,6 +102,7 @@ namespace Lemoine.Plugins.UnitTests
             }
           }
           finally {
+            Lemoine.Info.ConfigSet.ResetForceValues ();
             transaction.Rollback ();
           }
         }
@@ -113,6 +115,7 @@ namespace Lemoine.Plugins.UnitTests
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ()) {
           try {
+            Lemoine.Info.ConfigSet.ForceValue (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.ProjectComponentIsPart), true);
             var regex = new Regex ("Part=(?<partName>\\w+) Op=(?<op1Name>\\w+)/(?<op2Name>\\w+) Qty=(?<qty1>\\d+)/(?<qty2>\\d+)");
             {
               var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2", new List<IRegexMatchToFileOpDataExtension> ());
@@ -156,6 +159,7 @@ namespace Lemoine.Plugins.UnitTests
             }
           }
           finally {
+            Lemoine.Info.ConfigSet.ResetForceValues ();
             transaction.Rollback ();
           }
         }
@@ -168,6 +172,7 @@ namespace Lemoine.Plugins.UnitTests
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ()) {
           try {
+            Lemoine.Info.ConfigSet.ForceValue (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.ProjectComponentIsPart), true);
             var regex = new Regex ("Part=(?<partName>\\w+) Op=(?<op1Name>\\w+)/(?<op2Name>\\w+) Qty=(?<qty1>\\d+)/(?<qty2>\\d+)");
             {
               var programCommentParser = new ProgramCommentParser (regex, "Part=P123 Op=Op1/Op2 Qty=2/2", new List<IRegexMatchToFileOpDataExtension> ()) {
@@ -221,6 +226,7 @@ namespace Lemoine.Plugins.UnitTests
             }
           }
           finally {
+            Lemoine.Info.ConfigSet.ResetForceValues ();
             transaction.Rollback ();
           }
         }
