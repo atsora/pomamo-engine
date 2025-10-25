@@ -107,8 +107,13 @@ namespace Pulse.PluginImplementation.Analysis
       var group = match.Groups[dataName];
       if (group.Success) {
         data = group.Value.Trim ();
-        if (log.IsDebugEnabled) {
-          log.Debug ($"TryGetData: get {data} for {dataName} directrly from regex");
+        if (string.IsNullOrEmpty (data)) {
+          if (log.IsWarnEnabled) {
+            log.Warn ($"TryGetData: {dataName} is empty in {m_programComment} for regex {m_regex}");
+          }
+        }
+        else if (log.IsDebugEnabled) {
+          log.Debug ($"TryGetData: get {data} for {dataName} directly from regex");
         }
         return true;
       }
@@ -123,7 +128,7 @@ namespace Pulse.PluginImplementation.Analysis
     bool TryGetOpData (Match match, string dataName, out string opData)
     {
       if (null != m_regexMatchToOpDatas) {
-        foreach (var regexMatchToOpData in m_regexMatchToOpDatas) {
+        foreach (var regexMatchToOpData in m_regexMatchToOpDatas.OrderByDescending (x => x.Priority)) {
           try {
             opData = regexMatchToOpData.GetOpData (match, dataName);
             return true;
@@ -140,42 +145,8 @@ namespace Pulse.PluginImplementation.Analysis
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
 
         // Check first projectName, then projectCode
-        if (!TryGetOpData (match, "projectName", out var projectName)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetProject: no valid regexMatchToOpData for projectName");
-          }
-          var projectNameGroup = match.Groups["projectName"];
-          if (projectNameGroup.Success) {
-            projectName = projectNameGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (projectName)) {
-              log.Warn ($"GetProject: projectName is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetProject: projectName={projectName} in {m_programComment} for {m_regex}");
-              }
-            }
-          }
-        }
-
-        if (!TryGetOpData (match, "projectCode", out var projectCode)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetProject: no valid regexMatchToOpData for projectCode");
-          }
-          var projectCodeGroup = match.Groups["projectCode"];
-          if (projectCodeGroup.Success) {
-            projectCode = projectCodeGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (projectCode)) {
-              log.Warn ($"GetProject: projectCode is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetProject: projectCode={projectCode} in {m_programComment} for regex {m_regex}");
-              }
-            }
-          }
-        }
-
+        TryGetData (match, "projectName", out var projectName);
+        TryGetData (match, "projectCode", out var projectCode);
         projectName = projectName?.Trim ();
         projectCode = projectCode?.Trim ();
         if (string.IsNullOrEmpty (projectName) && string.IsNullOrEmpty (projectCode)) {
@@ -215,42 +186,8 @@ namespace Pulse.PluginImplementation.Analysis
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
 
         // Check first jobName, then jobCode
-        if (!TryGetOpData (match, "jobName", out var jobName)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetJob: no valid regexMatchToOpData for jobName");
-          }
-          var jobNameGroup = match.Groups["jobName"];
-          if (jobNameGroup.Success) {
-            jobName = jobNameGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (jobName)) {
-              log.Warn ($"GetJob: jobName is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetJob: jobName={jobName} in {m_programComment} for {m_regex}");
-              }
-            }
-          }
-        }
-
-        if (!TryGetOpData (match, "jobCode", out var jobCode)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetJob: no valid regexMatchToOpData for jobCode");
-          }
-          var jobCodeGroup = match.Groups["jobCode"];
-          if (jobCodeGroup.Success) {
-            jobCode = jobCodeGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (jobCode)) {
-              log.Warn ($"GetJob: jobCode is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetJob: jobCode={jobCode} in {m_programComment} for regex {m_regex}");
-              }
-            }
-          }
-        }
-
+        TryGetData (match, "jobName", out var jobName);
+        TryGetData (match, "jobCode", out var jobCode);
         jobName = jobName?.Trim ();
         jobCode = jobCode?.Trim ();
         if (string.IsNullOrEmpty (jobName) && string.IsNullOrEmpty (jobCode)) {
@@ -290,42 +227,8 @@ namespace Pulse.PluginImplementation.Analysis
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
 
         // Check first partName, then partCode
-        if (!TryGetOpData (match, "partName", out var partName)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetPart: no valid regexMatchToOpData for partName");
-          }
-          var partNameGroup = match.Groups["partName"];
-          if (partNameGroup.Success) {
-            partName = partNameGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (partName)) {
-              log.Warn ($"GetPart: partName is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetPart: partName={partName} in {m_programComment} for {m_regex}");
-              }
-            }
-          }
-        }
-
-        if (!TryGetOpData (match, "partCode", out var partCode)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetPart: no valid regexMatchToOpData for partCode");
-          }
-          var partCodeGroup = match.Groups["partCode"];
-          if (partCodeGroup.Success) {
-            partCode = partCodeGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (partCode)) {
-              log.Warn ($"GetPart: partCode is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetPart: partCode={partCode} in {m_programComment} for regex {m_regex}");
-              }
-            }
-          }
-        }
-
+        TryGetData (match, "partName", out var partName);
+        TryGetData (match, "partCode", out var partCode);
         partName = partName?.Trim ();
         partCode = partCode?.Trim ();
         if (string.IsNullOrEmpty (partName) && string.IsNullOrEmpty (partCode)) {
@@ -366,42 +269,8 @@ namespace Pulse.PluginImplementation.Analysis
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
 
         // Check first componentName, then componentCode
-        if (!TryGetOpData (match, "componentName", out var componentName)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetComponent: no valid regexMatchToOpData for componentName");
-          }
-          var componentNameGroup = match.Groups["componentName"];
-          if (componentNameGroup.Success) {
-            componentName = componentNameGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (componentName)) {
-              log.Warn ($"GetComponent: componentName is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetComponent: componentName={componentName} in {m_programComment} for {m_regex}");
-              }
-            }
-          }
-        }
-
-        if (!TryGetOpData (match, "componentCode", out var componentCode)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetComponent: no valid regexMatchToOpData for componentCode");
-          }
-          var componentCodeGroup = match.Groups["componentCode"];
-          if (componentCodeGroup.Success) {
-            componentCode = componentCodeGroup.Value.Trim ();
-            if (string.IsNullOrEmpty (componentCode)) {
-              log.Warn ($"GetComponent: componentCode is empty in {m_programComment} for regex {m_regex}");
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetComponent: componentCode={componentCode} in {m_programComment} for regex {m_regex}");
-              }
-            }
-          }
-        }
-
+        TryGetData (match, "componentName", out var componentName);
+        TryGetData (match, "componentCode", out var componentCode);
         componentName = componentName?.Trim ();
         componentCode = componentCode?.Trim ();
         if (string.IsNullOrEmpty (componentName) && string.IsNullOrEmpty (componentCode)) {
@@ -461,111 +330,67 @@ namespace Pulse.PluginImplementation.Analysis
         // opName / op1Name / op2Name
         string op1Name = null;
         string op2Name = null;
-        if (!TryGetOpData (match, "opName", out var opName)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetOperation: no valid regexMatchToOperationName for opName");
+        if (!TryGetData (match, "opName", out var opName)) {
+          TryGetData (match, "op1Name", out op1Name);
+          TryGetData (match, "op2Name", out op2Name);
+          if (string.IsNullOrEmpty (op1Name)) {
+            log.Debug ($"GetOperation: nor opName, nor op1Name is defined");
           }
-          var opNameGroup = match.Groups["opName"];
-          if (opNameGroup.Success) {
-            opName = opNameGroup.Value.Trim ();
+          else if (string.IsNullOrEmpty (op2Name)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: op op2Name => opName=op1Name={op1Name}");
+            }
+            opName = op1Name;
           }
-          if (!TryGetOpData (match, "op1Name", out op1Name)) {
-            var op1NameGroup = match.Groups["op1Name"];
-            if (op1NameGroup.Success) {
-              op1Name = op1NameGroup.Value.Trim ();
+          else if (string.Equals (op1Name, op2Name, StringComparison.InvariantCultureIgnoreCase)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: op1Name=op2Name=opName={op1Name}");
             }
+            opName = op1Name;
           }
-          if (!TryGetOpData (match, "op2Name", out op2Name)) {
-            var op2NameGroup = match.Groups["op2Name"];
-            if (op2NameGroup.Success) {
-              op2Name = op2NameGroup.Value.Trim ();
+          else {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: op1Name={op1Name} op2Name={op2Name}");
             }
-          }
-          if (string.IsNullOrEmpty (opName)) {
-            if (string.IsNullOrEmpty (op1Name)) {
-              log.Debug ($"GetOperation: nor opName, nor op1Name is defined");
-            }
-            else if (string.IsNullOrEmpty (op2Name)) {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetOperation: op op2Name => opName=op1Name={op1Name}");
-              }
-              opName = op1Name;
-            }
-            else if (string.Equals (op1Name, op2Name, StringComparison.InvariantCultureIgnoreCase)) {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetOperation: op1Name=op2Name=opName={op1Name}");
-              }
-              opName = op1Name;
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetOperation: op1Name={op1Name} op2Name={op2Name}");
-              }
-              op1op2 = true;
-              opName = $"{op1Name}/{op2Name}";
-            }
-          }
-          else if (log.IsDebugEnabled) {
-            log.Debug ($"GetOperation: opName={opName} from regex");
+            op1op2 = true;
+            opName = $"{op1Name}/{op2Name}";
           }
         }
         else if (log.IsDebugEnabled) {
-          log.Debug ($"GetOperation: opName={opName} from plugin");
+          log.Debug ($"GetOperation: opName={opName} from plugin/regex");
         }
 
         // opCode / op1Code / op2Code
         string op1Code = null;
         string op2Code = null;
-        if (!TryGetOpData (match, "opCode", out var opCode)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"GetOperation: no valid regexMatchToOperationName for opCode");
+        if (!TryGetData (match, "opCode", out var opCode)) {
+          TryGetData (match, "op1Code", out op1Code);
+          TryGetData (match, "op2Code", out op2Code);
+          if (string.IsNullOrEmpty (op1Code)) {
+            log.Debug ($"GetOperation: nor opCode, nor op1Code is defined");
           }
-          var opCodeGroup = match.Groups["opCode"];
-          if (opCodeGroup.Success) {
-            opCode = opCodeGroup.Value.Trim ();
+          else if (string.IsNullOrEmpty (op2Code)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: op op2Code => opCode=op1Code={op1Code}");
+            }
+            opCode = op1Code;
           }
-          if (!TryGetOpData (match, "op1Code", out op1Code)) {
-            var op1CodeGroup = match.Groups["op1Code"];
-            if (op1CodeGroup.Success) {
-              op1Code = op1CodeGroup.Value.Trim ();
+          else if (string.Equals (op1Code, op2Code, StringComparison.InvariantCultureIgnoreCase)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: op1Code=op2Code=opCode={op1Code}");
             }
+            opCode = op1Code;
           }
-          if (!TryGetOpData (match, "op2Code", out op2Code)) {
-            var op2CodeGroup = match.Groups["op2Code"];
-            if (op2CodeGroup.Success) {
-              op2Code = op2CodeGroup.Value.Trim ();
+          else {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOperation: op1Code={op1Code} op2Code={op2Code}");
             }
-          }
-          if (string.IsNullOrEmpty (opCode)) {
-            if (string.IsNullOrEmpty (op1Code)) {
-              log.Debug ($"GetOperation: nor opCode, nor op1Code is defined");
-            }
-            else if (string.IsNullOrEmpty (op2Code)) {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetOperation: op op2Code => opCode=op1Code={op1Code}");
-              }
-              opCode = op1Code;
-            }
-            else if (string.Equals (op1Code, op2Code, StringComparison.InvariantCultureIgnoreCase)) {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetOperation: op1Code=op2Code=opCode={op1Code}");
-              }
-              opCode = op1Code;
-            }
-            else {
-              if (log.IsDebugEnabled) {
-                log.Debug ($"GetOperation: op1Code={op1Code} op2Code={op2Code}");
-              }
-              op1op2 = true;
-              opCode = $"{op1Code}/{op2Code}";
-            }
-          }
-          else if (log.IsDebugEnabled) {
-            log.Debug ($"GetOperation: opCode={opCode} from regex");
+            op1op2 = true;
+            opCode = $"{op1Code}/{op2Code}";
           }
         }
         else if (log.IsDebugEnabled) {
-          log.Debug ($"GetOperation: opCode={opCode} from plugin");
+          log.Debug ($"GetOperation: opCode={opCode} from plugin/regex");
         }
 
         if (string.IsNullOrEmpty (opName) && string.IsNullOrEmpty (opCode)) {

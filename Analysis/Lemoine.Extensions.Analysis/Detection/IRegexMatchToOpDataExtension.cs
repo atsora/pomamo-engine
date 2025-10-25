@@ -17,6 +17,7 @@ namespace Lemoine.Extensions.Analysis.Detection
   {
     /// <summary>
     /// Priority
+    /// TODO: convert it to double if needed
     /// </summary>
     int Priority { get; }
 
