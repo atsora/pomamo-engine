@@ -191,8 +191,8 @@ namespace Lemoine.Plugin.Business.DefaultCache
           return new List<string> {
           @"Business\.Operation\.CycleDetectionStatus",
         };
-      case "manufacturingorderassociation":
-        return new List<string> {
+        case "manufacturingorderassociation":
+          return new List<string> {
           @"Business\.Operation\.PartProductionCurrentShiftTask",
         };
         case "productioninformation":
@@ -224,9 +224,9 @@ namespace Lemoine.Plugin.Business.DefaultCache
           return new List<string> {
           @"Business\.Operation\.PartProductionCurrentShiftOperation",
         };
-        case "business.operation.partproductioncurrentshifttask":
+        case "business.operation.partproductioncurrentshiftmanufacturingorder":
           return new List<string> {
-          @"Business\.Operation\.PartProductionCurrentShiftTask",
+          @"Business\.Operation\.PartProductionCurrentShiftManufacturingOrder",
         };
         case "business.operation.partproductionrange":
           return new List<string> {
@@ -309,7 +309,7 @@ namespace Lemoine.Plugin.Business.DefaultCache
         case "nonconformancereport":
         case "shiftassociation":
         case "serialnumberstamp":
-        case "taskassociation":
+        case "manufacturingorderassociation":
           return new List<string> { };
         case "business.operation.cyclecounter":
           return new List<string>
