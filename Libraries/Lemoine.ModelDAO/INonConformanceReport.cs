@@ -11,8 +11,6 @@ namespace Lemoine.Model
   /// 
   /// This table tracks the nonconformance reason detected
   /// on deliverable piece during operation
-  /// 
-  /// 
   /// </summary>
   public interface INonConformanceReport: IMachineModification
   {
@@ -53,9 +51,7 @@ namespace Lemoine.Model
     
     /// <summary>
     /// Non conformance reason Details
-    /// 
     /// </summary>
     string NonConformanceDetails { get; set; }
-    
   }
 }

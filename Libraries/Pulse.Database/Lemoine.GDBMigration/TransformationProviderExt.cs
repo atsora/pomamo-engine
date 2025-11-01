@@ -1137,6 +1137,26 @@ WHERE modificationreferencedtable='{0}'",
                                                persistentClassName));
       Database.RemoveTable (persistentClassName);
     }
+
+    /// <summary>
+    /// Remove a globalmodification table
+    /// </summary>
+    /// <param name="persistentClassName">Camel case persistent class name (not lower case table name)</param>
+    public void RemoveGlobalModificationTable (string persistentClassName)
+    {
+      Database.ExecuteNonQuery ($"DELETE FROM globalmodification WHERE modificationreferencedtable='{persistentClassName}'");
+      Database.RemoveTable (persistentClassName);
+    }
+
+    /// <summary>
+    /// Remove a modification table
+    /// </summary>
+    /// <param name="persistentClassName">Camel case persistent class name (not lower case table name)</param>
+    public void RemoveMachineModificationTable (string persistentClassName)
+    {
+      Database.ExecuteNonQuery ($"DELETE FROM machinemodification WHERE modificationreferencedtable='{persistentClassName}'");
+      Database.RemoveTable (persistentClassName);
+    }
     #endregion // Modification table
 
     #region Partitioning

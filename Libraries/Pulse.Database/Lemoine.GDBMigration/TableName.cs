@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-
+using Lemoine.Business.Reason;
 using Lemoine.Core.Log;
 
 namespace Lemoine.GDBMigration
@@ -881,5 +881,13 @@ namespace Lemoine.GDBMigration
     /// stampingconfig table
     /// </summary>
     public static readonly string STAMPING_CONFIG_BY_NAME = "stampingconfigbyname";
+    /// <summary>
+    /// scrapreport table
+    /// </summary>
+    public static readonly string SCRAP_REPORT = "scrapreport";
+    /// <summary>
+    /// scrapreasonreport table
+    /// </summary>
+    public static readonly string SCRAP_REASON_REPORT = "scrapreasonreport";
   }
 }
