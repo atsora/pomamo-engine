@@ -46,7 +46,7 @@ namespace Lemoine.GDBMigration
                         new Column(ColumnName.MODIFICATION_ID, DbType.Int32, ColumnProperty.PrimaryKey),
                         new Column(ColumnName.DELIVERABLE_PIECE_ID, DbType.Int32, ColumnProperty.NotNull),
                         new Column(ColumnName.INTERMEDIATE_WORK_PIECE_ID, DbType.Int32),
-                        new Column(ColumnName.NON_CONFORMANCE_REASON_ID, DbType.Int32),                        
+                        new Column(ColumnName.NON_CONFORMANCE_REASON_ID, DbType.Int32),
                         new Column(ColumnName.MACHINE_ID, DbType.Int32, ColumnProperty.NotNull),                        
                         new Column("nonconformancefixable", DbType.Boolean),
                         new Column("nonconformanceoperationdatetime", DbType.DateTime));

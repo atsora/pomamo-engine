@@ -80,6 +80,8 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException ();
     }
+
+    public bool IsAttachedToSession (IManufacturingOrderMachineAssociation persistent) => true;
     #endregion
   }
 }

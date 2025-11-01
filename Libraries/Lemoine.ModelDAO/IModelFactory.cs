@@ -1507,6 +1507,11 @@ namespace Lemoine.Model
     IRole CreateRoleFromName (string name);
 
     /// <summary>
+    /// Create new <see cref="IScrapReport"/>
+    /// </summary>
+    IScrapReport CreateScrapReport (IOperationSlot operationSlot, UtcDateTimeRange dateTimeRange);
+
+    /// <summary>
     /// Create a new Sequence
     /// 
     /// Deprecated, use <see cref="CreateSequence(string, IOperation, IPath)"/>

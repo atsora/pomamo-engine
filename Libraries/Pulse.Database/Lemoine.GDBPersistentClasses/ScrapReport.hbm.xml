@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ScrapReasonReport" table="scrapreasonreport" mutable="false">
+    <id name="Id" column="scrapreasonreportid" access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">scrapreasonreport_scrapreasonreportid_seq</param>
+      </generator>
+    </id>
+    <many-to-one name="ScrapReport" column="modificationid" class="ScrapReport"
+                 not-found="ignore"
+                 cascade="none" />
+    <many-to-one name="Machine" column="machineid"
+                 access="nosetter.camelcase-m-underscore"
+                 secondary-key="true"
+                 class="Machine"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="NonConformanceReason" column="nonconformancereasonid" class="NonConformanceReason"
+                 not-found="exception"
+                 not-null="true"
+                 cascade="none" />
+    <property name="Quantity"
+              column="scrapreasonreportquantity"
+              not-null="true" />
+  </class>
+  <subclass name="ScrapReport"
+            extends="MachineModification, Pulse.Database"
+            discriminator-value="ScrapReport">
+    <join table="scrapreport"
+          fetch="select">
+      <key column="modificationid" />
+      <many-to-one name="Machine" column="machineid"
+                   secondary-key="true"
+                   class="Machine"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none"
+                   not-null="true"
+                   not-found="exception" />
+      <property name="DateTimeRange"
+                type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+                column="scrapreportdatetimerange"
+                not-null="true" />
+      <property name="Day"
+                column="operationslotday"
+                access="nosetter.camelcase-m-underscore" />
+      <many-to-one name="Shift" column="shiftid" class="Shift"
+                   access="nosetter.camelcase-m-underscore" />
+      <many-to-one name="Operation" column="operationid" class="Operation"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none" />
+      <many-to-one name="Component" column="componentid" class="Component"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none" />
+      <many-to-one name="WorkOrder" column="workorderid" class="WorkOrder"
+                   access="nosetter.camelcase-m-underscore"
+                   cascade="none" />
+      <many-to-one name="ManufacturingOrder" column="manuforderid" class="ManufacturingOrder"
+                   access="nosetter.camelcase-m-underscore"
+                   not-found="ignore"
+                   cascade="none" />
+      <property name="Details"
+                type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
+                column="scrapdetails" />
+      <many-to-one name="ReportUpdate"
+                   column="scrapreportupdate"
+                   class="ScrapReport"
+                   cascade="none"
+                   not-found="exception" />
+      <bag name="Reasons"
+           access="nosetter.camelcase-m-underscore"
+           table="scrapreasonreport"
+           cascade="none"
+           inverse="true" lazy="true">
+        <key column="modificationid" />
+        <one-to-many class="ScrapReasonReport" />
+      </bag>
+    </join>
+  </subclass>
+</hibernate-mapping>
