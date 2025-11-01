@@ -872,6 +872,7 @@
 					<xs:element ref="formula" />
 				</xs:choice>
 			</xs:sequence>
+      <xs:attribute name="secondary-key" type="xs:string" />
 			<xs:attribute name="name" use="required" type="xs:string" />
 			<xs:attribute name="access" type="xs:string" />
 			<xs:attribute name="class" type="xs:string" />

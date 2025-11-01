@@ -17,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineStateTemplate: DataWithTranslation, IMachineStateTemplate, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     MachineStateTemplateCategory? m_category = null;
@@ -28,11 +27,9 @@ namespace Lemoine.GDBPersistentClasses
     LinkDirection m_linkOperationDirection = LinkDirection.None;
     IList<IMachineStateTemplateItem> m_items = new List<IMachineStateTemplateItem> ();
     ISet<IMachineStateTemplateStop> m_stops = new HashSet<IMachineStateTemplateStop> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplate).FullName);
 
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -60,7 +57,6 @@ namespace Lemoine.GDBPersistentClasses
       this.TranslationKey = translationKey;
       m_userRequired = userRequired;
     }
-    #endregion // Constructors
     
     #region Getters / Setters
     /// <summary>

@@ -1185,6 +1185,8 @@ namespace Lemoine.WebDataAccess
 
     public IWorkOrderProjectDAO WorkOrderProjectDAO => throw new NotImplementedException ();
 
+    public IScrapReportDAO ScrapReportDAO => throw new NotImplementedException ();
+
     #endregion
   }
 }

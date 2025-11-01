@@ -1103,6 +1103,11 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
+    public IScrapReport CreateScrapReport (IOperationSlot operationSlot, UtcDateTimeRange dateTimeRange)
+    {
+      throw new NotImplementedException ();
+    }
+
     public Lemoine.ModelDAO.IDAOFactory DAOFactory {
       get { return m_daoFactory; }
     }

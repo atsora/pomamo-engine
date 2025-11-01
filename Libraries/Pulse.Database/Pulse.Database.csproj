@@ -634,6 +634,10 @@
       <DependentUpon>OperationCycleDeliverablePiece.cs</DependentUpon>
       <LogicalName>OperationCycleDeliverablePiece.hbm.xml</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ScrapReport.hbm.xml">
+      <DependentUpon>ScrapReport.cs</DependentUpon>
+      <LogicalName>ScrapReport.hbm.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Shift.hbm.xml">
       <DependentUpon>Shift.cs</DependentUpon>
       <LogicalName>Shift.hbm.xml</LogicalName>
