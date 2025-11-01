@@ -1527,5 +1527,10 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return new WorkOrderToOperationOnlySlotDAO (); }
     }
+
+    /// <summary>
+    /// <see cref="IDAOFactory" />
+    /// </summary>
+    public IScrapReportDAO ScrapReportDAO => new ScrapReportDAO ();
   }
 }
