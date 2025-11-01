@@ -616,8 +616,26 @@ namespace Lemoine.GDBMigration
     {
       m_transformationProviderExt.RemoveModificationTable (persistentClassName);
     }
+
+    /// <summary>
+    /// Remove a global modification table
+    /// </summary>
+    /// <param name="persistentClassName">Camel case persistent class name (not lower case table name)</param>
+    internal void RemoveGlobalModificationTable (string persistentClassName)
+    {
+      m_transformationProviderExt.RemoveGlobalModificationTable (persistentClassName);
+    }
+
+    /// <summary>
+    /// Remove a machine modification table
+    /// </summary>
+    /// <param name="persistentClassName">Camel case persistent class name (not lower case table name)</param>
+    internal void RemoveMachineModificationTable (string persistentClassName)
+    {
+      m_transformationProviderExt.RemoveMachineModificationTable (persistentClassName);
+    }
     #endregion // Modification table
-    
+
     #region Partitioning
     internal bool IsPartitioned (string tableName)
     {

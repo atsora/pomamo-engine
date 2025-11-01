@@ -2865,5 +2865,16 @@ namespace Lemoine.GDBPersistentClasses
       return workOrderStatus;
     }
 
+    /// <summary>
+    /// <see cref="IModelFactory"/>
+    /// </summary>
+    /// <param name="operationSlot"></param>
+    /// <param name="dateTimeRange"></param>
+    /// <returns></returns>
+    public IScrapReport CreateScrapReport (IOperationSlot operationSlot, UtcDateTimeRange dateTimeRange)
+    {
+      var scrapReport = new ScrapReport (operationSlot, dateTimeRange);
+      return scrapReport;
+    }
   }
 }

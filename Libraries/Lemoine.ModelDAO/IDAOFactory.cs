@@ -720,6 +720,11 @@ namespace Lemoine.ModelDAO
     IRoleDAO RoleDAO { get; }
 
     /// <summary>
+    /// Get a <see cref="IScrapReportDAO"/>
+    /// </summary>
+    IScrapReportDAO ScrapReportDAO { get; }
+
+    /// <summary>
     /// Get a ISequenceDAO
     /// </summary>
     ISequenceDAO SequenceDAO { get; }
