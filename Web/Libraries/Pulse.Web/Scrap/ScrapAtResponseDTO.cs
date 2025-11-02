@@ -28,9 +28,14 @@ namespace Pulse.Web.Scrap
     public string At { get; set; }
 
     /// <summary>
-    /// UTC Date/time range of the scrap report
+    /// UTC Date/time range of the scrap report (restricted to cycles)
     /// </summary>
     public string Range { get; set; }
+
+    /// <summary>
+    /// Extended UTC Date/time range of the scrap report (extended to the previous or next report)
+    /// </summary>
+    public string ExtendedRange { get; set; }
 
     /// <summary>
     /// Number of cycles in the period
