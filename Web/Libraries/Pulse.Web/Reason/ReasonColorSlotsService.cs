@@ -72,7 +72,6 @@ namespace Pulse.Web.Reason
       }
     }
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -80,9 +79,7 @@ namespace Pulse.Web.Reason
       : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -495,9 +492,7 @@ namespace Pulse.Web.Reason
         RunTotalTime? runTotalTime = ModelDAOHelper.DAOFactory.MachineActivitySummaryDAO
           .GetRunTotalTime (machine, dayRange);
         if (!runTotalTime.HasValue) {
-          log.ErrorFormat ("GetSplitByDayWithSummary: " +
-                           "no run/total time for machine {0} day range {1}",
-                           machine, dayRange);
+          log.Error ($"GetSplitByDayWithSummary: no run/total time for machine {machine} day range {dayRange}");
           // Fallback: alternative solution ?
         }
         else {
@@ -562,6 +557,5 @@ namespace Pulse.Web.Reason
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }
