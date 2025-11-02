@@ -13,12 +13,9 @@ using Lemoine.Info;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
-using System.Globalization;
-using Pulse.Extensions.Database;
 using Lemoine.Extensions.Web.Responses;
 using Lemoine.Web;
 using System.Threading.Tasks;
-using Pulse.Web.CommonResponseDTO;
 
 namespace Pulse.Web.Scrap
 {
@@ -53,25 +50,9 @@ namespace Pulse.Web.Scrap
     /// <returns></returns>
     protected override TimeSpan GetCacheTimeOut (string url, ScrapAtRequestDTO request)
     {
-      DateTime at;
-      if (string.IsNullOrEmpty (request.At)) {
-        at = DateTime.UtcNow;
-      }
-      else {
-        at = ParseDateTime (request.At);
-      }
-
-      // TODO: ...
-      TimeSpan cacheTimeSpan;
-      // Previous day => old
-      IDaySlot daySlot = ModelDAOHelper.DAOFactory.DaySlotDAO.FindProcessedAt (DateTime.UtcNow);
-      if (Bound.Compare<DateTime> (at, daySlot.DateTimeRange.Lower) < 0) { // Old
-        cacheTimeSpan = CacheTimeOut.OldShort.GetTimeSpan ();
-      }
-      else { // Past
-        cacheTimeSpan = CacheTimeOut.PastShort.GetTimeSpan ();
-      }
-
+      var cacheTimeSpan = string.IsNullOrEmpty (request.At)
+        ? CacheTimeOut.CurrentShort.GetTimeSpan ()
+        : CacheTimeOut.PastLong.GetTimeSpan ();
       if (log.IsDebugEnabled) {
         log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
       }
@@ -93,7 +74,7 @@ namespace Pulse.Web.Scrap
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (machineId);
           if (null == machine) {
-            log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
+            log.Error ($"Get: unknown machine with ID {machineId}");
             return new ErrorDTO ("No machine with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -102,7 +83,7 @@ namespace Pulse.Web.Scrap
         }
       }
       catch (Exception ex) {
-        log.Error ("GetWithoutCache: exception", ex);
+        log.Error ("Get: exception", ex);
         throw;
       }
     }
@@ -162,7 +143,8 @@ namespace Pulse.Web.Scrap
           var existingReports = await ModelDAOHelper.DAOFactory.ScrapReportDAO
             .FindOverlapsRange (machine, operationSlot.DateTimeRange);
           if (!existingReports.Any ()) {
-            if (0 == operationSlot.AdjustedCycles) {
+            response.ExtendedRange = operationSlot.DateTimeRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+            if (0 == operationSlot.TotalCycles) {
               if (log.IsDebugEnabled) {
                 log.Debug ($"GetAsync: no cycle in operation slot");
               }
@@ -178,19 +160,21 @@ namespace Pulse.Web.Scrap
               }
               var cycleRange = GetCycleRange (operationSlot);
               response.Range = cycleRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
-              response.NbCycles = operationSlot.AdjustedCycles;
-              response.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * operationSlot.AdjustedCycles;
+              response.NbCycles = operationSlot.TotalCycles;
+              response.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (operationSlot.TotalCycles - operationSlot.AdjustedCycles)
+                + operationSlot.AdjustedQuantity;
               response.SetOperationSlot (operationSlot);
               return response;
             }
           }
           else { // Existing reports
             // Check if the existing reports already cover all the cycles
-            if (existingReports.Sum (x => x.NbCycles) >= operationSlot.AdjustedCycles) {
+            if (existingReports.Sum (x => x.NbCycles) >= operationSlot.TotalCycles) {
               if (log.IsDebugEnabled) {
                 log.Debug ($"GetAsync: existing reports already cover all the cycles");
               }
               response.Range = "";
+              response.ExtendedRange = "";
               response.NbCycles = 0;
               response.NbParts = 0;
               response.SetOperationSlot (operationSlot);
@@ -214,6 +198,7 @@ namespace Pulse.Web.Scrap
                 betweenRange = new UtcDateTimeRange (betweenRange.Lower, after.DateTimeRange.Lower.Value);
               }
             }
+            response.ExtendedRange = betweenRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
 
             var cycles = await ModelDAOHelper.DAOFactory.OperationCycleDAO
               .FindOverlapsRangeAsync (machine, betweenRange);
@@ -225,12 +210,15 @@ namespace Pulse.Web.Scrap
               var cycleRange = new UtcDateTimeRange (cyclesLower, cyclesUpper);
               response.Range = cycleRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
               response.NbCycles = cycles.Count ();
-              response.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * response.NbCycles;
+              var adjustedCycles = cycles.Where (x => x.Quantity.HasValue).ToList ();
+              var adjustedCount = adjustedCycles.Count ();
+              response.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (response.NbCycles - adjustedCount)
+                + adjustedCycles.Sum (x => x.Quantity.Value);
               response.SetOperationSlot (operationSlot);
               return response;
             }
             else {
-              log.Fatal ($"GetCycleRange: no cycle in {operationSlot.DateTimeRange}");
+              log.Fatal ($"GetAsync: no cycle in {operationSlot.DateTimeRange}");
               return new ErrorDTO ("Missing cycles", ErrorStatus.UnexpectedError);
             }
           }
