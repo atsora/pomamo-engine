@@ -38,11 +38,15 @@ namespace Lemoine.GDBMigration
     override public void Down ()
     {
       if (Database.TableExists (TableName.SCRAP_REASON_REPORT)) {
-        UnpartitionTable (TableName.SCRAP_REASON_REPORT);
+        if (IsPartitioned (TableName.SCRAP_REASON_REPORT)) {
+          UnpartitionTable (TableName.SCRAP_REASON_REPORT);
+        }
         Database.RemoveTable (TableName.SCRAP_REASON_REPORT);
       }
       if (Database.TableExists (TableName.SCRAP_REPORT)) {
-        UnpartitionTable (TableName.SCRAP_REPORT);
+        if (IsPartitioned (TableName.SCRAP_REPORT)) {
+          UnpartitionTable (TableName.SCRAP_REPORT);
+        }
         RemoveMachineModificationTable (TableName.SCRAP_REPORT);
         Database.RemoveTable (TableName.SCRAP_REPORT);
       }
@@ -60,6 +64,8 @@ namespace Lemoine.GDBMigration
                         new Column (ColumnName.COMPONENT_ID, DbType.Int32),
                         new Column (ColumnName.WORK_ORDER_ID, DbType.Int32),
                         new Column (ColumnName.MANUFACTURING_ORDER_ID, DbType.Int32),
+                        new Column ("scrapreportcycles", DbType.Int32, ColumnProperty.NotNull),
+                        new Column ("scrapreportparts", DbType.Int32, ColumnProperty.NotNull),
                         new Column ("scrapdetails", DbType.String),
                         new Column (TableName.SCRAP_REPORT + "update", DbType.Int32, ColumnProperty.Null));
       // TODO: scrap summary ?

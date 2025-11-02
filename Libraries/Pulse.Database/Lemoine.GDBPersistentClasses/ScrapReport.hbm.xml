@@ -64,6 +64,12 @@
       <property name="Details"
                 type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
                 column="scrapdetails" />
+      <property name="NbCycles"
+                column="scrapreportcycles"
+                not-null="true" />
+      <property name="NbParts"
+                column="scrapreportparts"
+                not-null="true" />
       <many-to-one name="ReportUpdate"
                    column="scrapreportupdate"
                    class="ScrapReport"

@@ -153,6 +153,16 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IScrapReport"/>
     /// </summary>
+    public virtual int NbCycles { get; set; }
+
+    /// <summary>
+    /// <see cref="IScrapReport"/>
+    /// </summary>
+    public virtual int NbParts { get; set; }
+
+    /// <summary>
+    /// <see cref="IScrapReport"/>
+    /// </summary>
     public virtual string Details { get; set; }
 
     /// <summary>
