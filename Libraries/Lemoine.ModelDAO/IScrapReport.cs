@@ -88,6 +88,16 @@ namespace Lemoine.Model
     IManufacturingOrder ManufacturingOrder { get; }
 
     /// <summary>
+    /// Associated number of cycles
+    /// </summary>
+    int NbCycles { get; set; }
+
+    /// <summary>
+    /// Associated number of parts
+    /// </summary>
+    int NbParts { get; set; }
+
+    /// <summary>
     /// Scrap report details
     /// </summary>
     string Details { get; set; }
