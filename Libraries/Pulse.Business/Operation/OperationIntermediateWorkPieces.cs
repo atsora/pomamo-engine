@@ -21,16 +21,10 @@ namespace Lemoine.Business.Operation
   public sealed class OperationIntermediateWorkPieces
     : IRequest<ICollection<IIntermediateWorkPiece>>
   {
-    #region Members
     readonly IOperation m_operation;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationIntermediateWorkPieces).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -41,10 +35,6 @@ namespace Lemoine.Business.Operation
 
       m_operation = operation;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

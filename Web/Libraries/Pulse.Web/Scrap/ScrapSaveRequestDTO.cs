@@ -1,0 +1,113 @@
+﻿// Copyright (C) 2025 Atsora Solutions
+//
+// SPDX-License-Identifier: Apache-2.0
+
+using System;
+using System.Collections.Generic;
+using Lemoine.Extensions.Web.Attributes;
+using Lemoine.Extensions.Web.Interfaces;
+using Lemoine.Core.Log;
+
+using System.Net;
+using Pulse.Web.CommonResponseDTO;
+using System.Text.Json;
+
+
+namespace Pulse.Web.Scrap
+{
+  /// <summary>
+  /// Request DTO
+  /// </summary>
+  [Api ("Request DTO for ReasonSave service")]
+  [ApiResponse (HttpStatusCode.InternalServerError, "Oops, something broke")]
+  [Route ("/ScrapSave", "GET", Summary = "Service to save reasons for user interfaces", Notes = "To use with ?MachineId=&Range=&ReasonId=&ReasonDetails=")]
+  [Route ("/ScrapSave/Get/{MachineId}", "GET", Summary = "Service to save reasons for user interfaces", Notes = "To use with ?Range=&ReasonId=&ReasonDetails=")]
+  [Route ("/ScrapSave/Get/{MachineId}/{ReasonId}", "GET", Summary = "Service to save reasons for user interfaces", Notes = "To use with ?Range=&ReasonDetails=")]
+  [Route ("/Scrap/ScrapSave", "GET", Summary = "Service to save reasons for user interfaces", Notes = "To use with ?MachineId=&Range=&ReasonId=&ReasonDetails=")]
+  [Route ("/Scrap/ScrapSave/Get/{MachineId}", "GET", Summary = "Service to save reasons for user interfaces", Notes = "To use with ?Range=&ReasonId=&ReasonDetails=")]
+  [Route ("/Scrap/ScrapSave/Get/{MachineId}/{ReasonId}", "GET", Summary = "Service to save reasons for user interfaces", Notes = "To use with ?Range=&ReasonDetails=")]
+  public class ScrapSaveRequestDTO : IReturn<ScrapSaveResponseDTO>
+  {
+    /// <summary>
+    /// Machine ID
+    /// </summary>
+    [ApiMember (Name = "MachineId", Description = "", ParameterType = "path", DataType = "int", IsRequired = true)]
+    public int MachineId { get; set; }
+
+    /// <summary>
+    /// Range
+    /// </summary>
+    [ApiMember (Name = "Range", Description = "Required if GET is used", ParameterType = "path", DataType = "string", IsRequired = false)]
+    public string Range { get; set; }
+
+    /// <summary>
+    /// Reason ID
+    /// </summary>
+    [ApiMember (Name = "ReasonId", Description = "If not set, reset the reason", ParameterType = "path", DataType = "int", IsRequired = false)]
+    public int? ReasonId { get; set; }
+
+    /// <summary>
+    /// Reason data key
+    /// </summary>
+    [ApiMember (Name = "ReasonDataKey", Description = "If not set, no reason data", ParameterType = "path", DataType = "int", IsRequired = false)]
+
+    public string ReasonDataKey { get; set; }
+
+    /// <summary>
+    /// Reason data in string format
+    /// </summary>
+    [ApiMember (Name = "ReasonDataValue", Description = "If not set, no reason data", ParameterType = "path", DataType = "JsonElement", IsRequired = false)]
+    public JsonElement? ReasonDataValue { get; set; }
+
+    /// <summary>
+    /// Reason score to use (default: 100.0)
+    /// </summary>
+    [ApiMember (Name = "ReasonScore", Description = "Reason score", ParameterType = "path", DataType = "double", IsRequired = false)]
+    public double? ReasonScore { get; set; }
+
+    /// <summary>
+    /// Reason details
+    /// </summary>
+    [ApiMember (Name = "ReasonDetails", Description = "Reason details", ParameterType = "path", DataType = "string", IsRequired = false)]
+    public string ReasonDetails { get; set; }
+  }
+
+  /// <summary>
+  /// Request DTO
+  /// </summary>
+  [Api ("Request DTO for ReasonSave service")]
+  [ApiResponse (HttpStatusCode.InternalServerError, "Oops, something broke")]
+  [Route ("/ScrapSave/Post", "POST", Summary = "Service to save reasons for user interfaces. Compare to the /ReasonMachineAssociation/Save service, a post request is possible to post different ranges", Notes = "To use with ?MachineId=&ReasonId=&ReasonDetails=")]
+  [Route ("/ScrapSave/Post/{MachineId}/{ReasonId}", "POST", Summary = "Service to save reasons for user interfaces. Compare to the /ReasonMachineAssociation/Save service, a post request is possible to post different ranges", Notes = "")]
+  [Route ("/ScrapSave/Post/{MachineId}/{ReasonId}/{ReasonDetails}", "POST", Summary = "Service to save reasons for user interfaces. Compare to the /ReasonMachineAssociation/Save service, a post request is possible to post different ranges", Notes = "")]
+  [Route ("/Scrap/ScrapSave/Post", "POST", Summary = "Service to save reasons for user interfaces. Compare to the /ReasonMachineAssociation/Save service, a post request is possible to post different ranges", Notes = "To use with ?MachineId=&ReasonId=&ReasonDetails=")]
+  [Route ("/Scrap/ScrapSave/Post/{MachineId}/{ReasonId}", "POST", Summary = "Service to save reasons for user interfaces. Compare to the /ReasonMachineAssociation/Save service, a post request is possible to post different ranges", Notes = "")]
+  [Route ("/Scrap/ScrapSave/Post/{MachineId}/{ReasonId}/{ReasonDetails}", "POST", Summary = "Service to save reasons for user interfaces. Compare to the /ReasonMachineAssociation/Save service, a post request is possible to post different ranges", Notes = "")]
+  public class ScrapSavePostRequestDTO : IReturn<ScrapSaveResponseDTO>
+  {
+    /// <summary>
+    /// Machine ID
+    /// </summary>
+    [ApiMember (Name = "MachineId", Description = "", ParameterType = "path", DataType = "int", IsRequired = true)]
+    public int MachineId { get; set; }
+
+    /// <summary>
+    /// Reason ID
+    /// </summary>
+    [ApiMember (Name = "ReasonId", Description = "If not set, reset the reason", ParameterType = "path", DataType = "int", IsRequired = false)]
+    public int? ReasonId { get; set; }
+
+    /// <summary>
+    /// Reason score to use (default: 100.0)
+    /// </summary>
+    [ApiMember (Name = "ReasonScore", Description = "Reason score", ParameterType = "path", DataType = "double", IsRequired = false)]
+    public double? ReasonScore { get; set; }
+
+    /// <summary>
+    /// Reason details
+    /// </summary>
+    [ApiMember (Name = "ReasonDetails", Description = "Reason details", ParameterType = "path", DataType = "string", IsRequired = false)]
+    public string ReasonDetails { get; set; }
+  }
+
+}
