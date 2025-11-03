@@ -98,6 +98,26 @@ namespace Lemoine.Model
     int NbParts { get; set; }
 
     /// <summary>
+    /// Number of valid parts
+    /// </summary>
+    int NbValid { get; set; }
+
+    /// <summary>
+    /// Number of set-up parts
+    /// </summary>
+    int NbSetup { get; set; }
+
+    /// <summary>
+    /// Number of scrap parts
+    /// </summary>
+    int NbScrap { get; set; }
+
+    /// <summary>
+    /// Number of parts that can be fixed
+    /// </summary>
+    int NbFixable { get; set; }
+
+    /// <summary>
     /// Scrap report details
     /// </summary>
     string Details { get; set; }
