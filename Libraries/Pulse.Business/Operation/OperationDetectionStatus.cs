@@ -25,19 +25,13 @@ namespace Lemoine.Business.Operation
   public sealed class OperationDetectionStatus
     : IRequest<DateTime?>
   {
-    #region Members
     /// <summary>
     /// Reference machine
     /// </summary>
     IMachine Machine { get; set; }
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (OperationDetectionStatus).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -53,10 +47,6 @@ namespace Lemoine.Business.Operation
         log = LogManager.GetLogger (category);
       }
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

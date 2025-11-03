@@ -163,6 +163,26 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IScrapReport"/>
     /// </summary>
+    public virtual int NbValid { get; set; }
+
+    /// <summary>
+    /// <see cref="IScrapReport"/>
+    /// </summary>
+    public virtual int NbSetup { get; set; }
+
+    /// <summary>
+    /// <see cref="IScrapReport"/>
+    /// </summary>
+    public virtual int NbScrap { get; set; }
+
+    /// <summary>
+    /// <see cref="IScrapReport"/>
+    /// </summary>
+    public virtual int NbFixable { get; set; }
+
+    /// <summary>
+    /// <see cref="IScrapReport"/>
+    /// </summary>
     public virtual string Details { get; set; }
 
     /// <summary>

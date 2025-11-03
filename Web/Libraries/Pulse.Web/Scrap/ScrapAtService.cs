@@ -110,18 +110,25 @@ namespace Pulse.Web.Scrap
     async Task<object> GetAsync (IMonitoredMachine machine, DateTime at, bool current)
     {
       var response = new ScrapAtResponseDTO ();
+      if (current) {
+        response.Current = true;
+      }
 
       var operationSlotDateTime = at;
-      if (current) {
+      var recent = current || DateTime.UtcNow.AddHours (-12) <= at;
+      if (recent) {
         var operationDetectionStatusRequest = new Lemoine.Business.Operation.OperationDetectionStatus (machine);
         var operationDetectionStatus = await Lemoine.Business.ServiceProvider.GetAsync (operationDetectionStatusRequest);
         if (operationDetectionStatus.HasValue) {
           if (operationDetectionStatus.Value < at) {
             if (log.IsDebugEnabled) {
-              log.Debug ($"GeAsync: operationDetectionStatus {operationDetectionStatus.Value} before at={at}");
+              log.Debug ($"GetAsync: operationDetectionStatus {operationDetectionStatus.Value} before at={at}");
             }
             operationSlotDateTime = operationDetectionStatus.Value.AddSeconds (-1);
           }
+        }
+        else {
+          log.Error ($"GetAsync: operation detection status can't be retrieved");
         }
       }
       response.At = ConvertDTO.DateTimeUtcToIsoString (operationSlotDateTime);
@@ -140,18 +147,20 @@ namespace Pulse.Web.Scrap
             return new ErrorDTO ("No operation at the specified time",
               ErrorStatus.NotApplicable);
           }
+          bool currentOperationSlot = recent && (operationSlotDateTime <= operationSlot.DateTimeRange.Upper);
           var existingReports = await ModelDAOHelper.DAOFactory.ScrapReportDAO
             .FindOverlapsRange (machine, operationSlot.DateTimeRange);
           if (!existingReports.Any ()) {
             response.ExtendedRange = operationSlot.DateTimeRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+            response.Current = currentOperationSlot;
+            response.SetOperationSlot (operationSlot, currentOperationSlot);
             if (0 == operationSlot.TotalCycles) {
               if (log.IsDebugEnabled) {
                 log.Debug ($"GetAsync: no cycle in operation slot");
               }
               response.Range = "";
-              response.NbCycles = 0;
-              response.NbParts = 0;
-              response.SetOperationSlot (operationSlot);
+              response.FullCycleCount = 0;
+              response.TotalCount = 0;
               return response;
             }
             else {
@@ -160,10 +169,10 @@ namespace Pulse.Web.Scrap
               }
               var cycleRange = GetCycleRange (operationSlot);
               response.Range = cycleRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
-              response.NbCycles = operationSlot.TotalCycles;
-              response.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (operationSlot.TotalCycles - operationSlot.AdjustedCycles)
+              response.FullCycleCount = operationSlot.TotalCycles;
+              response.TotalCount = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (operationSlot.TotalCycles - operationSlot.AdjustedCycles)
                 + operationSlot.AdjustedQuantity;
-              response.SetOperationSlot (operationSlot);
+              response.UnclassifiedCount = response.TotalCount;
               return response;
             }
           }
@@ -175,51 +184,95 @@ namespace Pulse.Web.Scrap
               }
               response.Range = "";
               response.ExtendedRange = "";
-              response.NbCycles = 0;
-              response.NbParts = 0;
-              response.SetOperationSlot (operationSlot);
+              response.FullCycleCount = 0;
+              response.TotalCount = 0;
+              response.SetOperationSlot (operationSlot, current);
               return response;
             }
 
-            var betweenRange = operationSlot.DateTimeRange;
-            var before = existingReports
-              .Where (x => x.DateTimeRange.Upper <= operationSlotDateTime)
-              .OrderByDescending (x => x.DateTimeRange.Lower.Value)
-              .FirstOrDefault ();
-            if (null != before) {
-              betweenRange = new UtcDateTimeRange (before.DateTimeRange.Upper.Value, betweenRange.Upper);
-            }
-            if (!current) {
-              var after = existingReports
-                .Where (x => operationSlotDateTime <= x.DateTimeRange.Lower)
-                .OrderBy (x => x.DateTimeRange.Lower.Value)
+            // Check if one of the existing report matches the time
+            var matchingReport = existingReports.SingleOrDefault (x => x.DateTimeRange.ContainsElement (at));
+            if (matchingReport is not null) {
+              response.Range = matchingReport.DateTimeRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+              var betweenRange = operationSlot.DateTimeRange;
+              var before = existingReports
+                .Where (x => x.DateTimeRange.IsStrictlyLeftOf (matchingReport.DateTimeRange))
+                .OrderByDescending (x => x.DateTimeRange.Lower.Value)
                 .FirstOrDefault ();
-              if (null != after) {
-                betweenRange = new UtcDateTimeRange (betweenRange.Lower, after.DateTimeRange.Lower.Value);
+              if (null != before) {
+                betweenRange = new UtcDateTimeRange (before.DateTimeRange.Upper.Value, betweenRange.Upper, "(]");
               }
-            }
-            response.ExtendedRange = betweenRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
-
-            var cycles = await ModelDAOHelper.DAOFactory.OperationCycleDAO
-              .FindOverlapsRangeAsync (machine, betweenRange);
-            if (cycles.Any ()) {
-              var firstCycle = cycles.First ();
-              var cyclesLower = firstCycle.Begin.HasValue ? firstCycle.Begin.Value : firstCycle.DateTime;
-              var lastCycle = cycles.Last ();
-              var cyclesUpper = lastCycle.End.HasValue ? lastCycle.End.Value : lastCycle.DateTime;
-              var cycleRange = new UtcDateTimeRange (cyclesLower, cyclesUpper);
-              response.Range = cycleRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
-              response.NbCycles = cycles.Count ();
-              var adjustedCycles = cycles.Where (x => x.Quantity.HasValue).ToList ();
-              var adjustedCount = adjustedCycles.Count ();
-              response.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (response.NbCycles - adjustedCount)
-                + adjustedCycles.Sum (x => x.Quantity.Value);
-              response.SetOperationSlot (operationSlot);
+              var after = existingReports
+                  .Where (x => operationSlot.DateTimeRange.IsStrictlyRightOf (matchingReport.DateTimeRange))
+                  .OrderBy (x => x.DateTimeRange.Lower.Value)
+                  .FirstOrDefault ();
+              if (null != after) {
+                betweenRange = new UtcDateTimeRange (betweenRange.Lower, after.DateTimeRange.Lower.Value, "(]");
+              }
+              response.ExtendedRange = betweenRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+              response.FullCycleCount = matchingReport.NbCycles;
+              response.TotalCount = matchingReport.NbParts;
+              response.ValidCount = matchingReport.NbValid;
+              response.SetupCount = matchingReport.NbSetup;
+              response.ScrapCount = matchingReport.NbScrap;
+              response.FixableCount = matchingReport.NbFixable;
+              response.UnclassifiedCount = matchingReport.NbParts
+                - matchingReport.NbValid - matchingReport.NbSetup - matchingReport.NbSetup - matchingReport.NbScrap - matchingReport.NbFixable;
+              response.ScrapReport = new ScrapReportDTO ();
+              response.ScrapReport.Id = matchingReport.Id;
+              response.ScrapReport.Reasons = matchingReport.Reasons
+                .Select (x => new ScrapReasonDTO (x)).ToList ();
+              response.SetOperationSlot (operationSlot, currentOperationSlot);
               return response;
             }
             else {
-              log.Fatal ($"GetAsync: no cycle in {operationSlot.DateTimeRange}");
-              return new ErrorDTO ("Missing cycles", ErrorStatus.UnexpectedError);
+              var betweenRange = operationSlot.DateTimeRange;
+              var before = existingReports
+                .Where (x => x.DateTimeRange.Upper <= operationSlotDateTime)
+                .OrderByDescending (x => x.DateTimeRange.Lower.Value)
+                .FirstOrDefault ();
+              if (null != before) {
+                betweenRange = new UtcDateTimeRange (before.DateTimeRange.Upper.Value, betweenRange.Upper, "(]");
+              }
+              IScrapReport after = null;
+              if (!current) {
+                after = existingReports
+                  .Where (x => operationSlotDateTime <= x.DateTimeRange.Lower)
+                  .OrderBy (x => x.DateTimeRange.Lower.Value)
+                  .FirstOrDefault ();
+                if (null != after) {
+                  betweenRange = new UtcDateTimeRange (betweenRange.Lower, after.DateTimeRange.Lower.Value, "(]");
+                }
+              }
+              response.ExtendedRange = betweenRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+
+              var cycles = await ModelDAOHelper.DAOFactory.OperationCycleDAO
+                .FindOverlapsRangeAsync (machine, betweenRange);
+              if (cycles.Any ()) {
+                response.Current = (after is null) && currentOperationSlot;
+                var firstCycle = cycles.First ();
+                var cyclesLower = firstCycle.Begin.HasValue ? firstCycle.Begin.Value : firstCycle.DateTime;
+                var lastCycle = cycles.Last ();
+                var cyclesUpper = lastCycle.End.HasValue ? lastCycle.End.Value : lastCycle.DateTime;
+                var cycleRange = new UtcDateTimeRange (cyclesLower, cyclesUpper);
+                response.Range = cycleRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+                response.FullCycleCount = cycles.Count ();
+                var adjustedCycles = cycles.Where (x => x.Quantity.HasValue).ToList ();
+                var adjustedCount = adjustedCycles.Count ();
+                response.TotalCount = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (response.FullCycleCount - adjustedCount)
+                  + adjustedCycles.Sum (x => x.Quantity.Value);
+                response.SetOperationSlot (operationSlot, currentOperationSlot);
+                return response;
+              }
+              else {
+                log.Warn ($"GetAsync: no cycle at {at} between two scrap reports");
+                response.Range = betweenRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+                response.ExtendedRange = betweenRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+                response.FullCycleCount = 0;
+                response.TotalCount = 0;
+                response.SetOperationSlot (operationSlot, currentOperationSlot);
+                return response;
+              }
             }
           }
         }

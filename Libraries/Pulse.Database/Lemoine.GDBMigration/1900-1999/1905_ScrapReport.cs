@@ -66,9 +66,13 @@ namespace Lemoine.GDBMigration
                         new Column (ColumnName.MANUFACTURING_ORDER_ID, DbType.Int32),
                         new Column ("scrapreportcycles", DbType.Int32, ColumnProperty.NotNull),
                         new Column ("scrapreportparts", DbType.Int32, ColumnProperty.NotNull),
+                        new Column ("scrapreportvalid", DbType.Int32, ColumnProperty.NotNull),
+                        new Column ("scrapreportsetup", DbType.Int32, ColumnProperty.NotNull),
+                        new Column ("scrapreportscrap", DbType.Int32, ColumnProperty.NotNull),
+                        new Column ("scrapreportfixable", DbType.Int32, ColumnProperty.NotNull),
                         new Column ("scrapdetails", DbType.String),
-                        new Column (TableName.SCRAP_REPORT + "update", DbType.Int32, ColumnProperty.Null));
-      // TODO: scrap summary ?
+                        new Column (TableName.SCRAP_REPORT + "update", DbType.Int64, ColumnProperty.Null));
+      MakeColumnTsRange (TableName.SCRAP_REPORT, TableName.SCRAP_REPORT + "datetimerange");
 
       Database.GenerateForeignKey (TableName.SCRAP_REPORT, ColumnName.MODIFICATION_ID,
                                   TableName.MACHINE_MODIFICATION, ColumnName.MODIFICATION_ID,
@@ -93,9 +97,10 @@ namespace Lemoine.GDBMigration
                                   TableName.SCRAP_REPORT, ColumnName.MODIFICATION_ID,
                                   Migrator.Framework.ForeignKeyConstraint.Restrict);
 
-      SetMachineModificationTable (TableName.SCRAP_REPORT);
+      // Constraints
+      AddNoOverlapConstraintCondition (TableName.SCRAP_REPORT, "scrapreportupdate = NULL", TableName.SCRAP_REPORT + "datetimerange", ColumnName.MACHINE_ID);
 
-      MakeColumnTsRange (TableName.SCRAP_REPORT, TableName.SCRAP_REPORT + "datetimerange");
+      SetMachineModificationTable (TableName.SCRAP_REPORT);
 
       AddIndex (TableName.SCRAP_REPORT,
                 ColumnName.MACHINE_ID,
