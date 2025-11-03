@@ -572,16 +572,13 @@ SET DATA TYPE DATERANGE USING '[,)'::daterange",
         strTmp += columnName + " WITH =, ";
       }
 
-      Database.ExecuteNonQuery (string.Format (@"ALTER TABLE {0}
-  ADD CONSTRAINT {3} EXCLUDE USING gist ({1}{2} WITH &&)
-  WHERE ( {4} )
-  DEFERRABLE INITIALLY DEFERRED;",
-                                               table,
-                                               strTmp,
-                                               rangecolumn,
-                                               BuildName (table, "nooverlap"),
-                                               condition
-                                              ));
+      Database.ExecuteNonQuery ($"""
+        ALTER TABLE {table}
+        ADD CONSTRAINT {BuildName (table, "nooverlap")} EXCLUDE
+        USING gist ({strTmp}{rangecolumn} WITH &&)
+        WHERE ( {condition} )
+        DEFERRABLE INITIALLY DEFERRED;
+        """);
       if (IsPartitioned (table)) {
         Database.ExecuteNonQuery (
           string.Format (@"SELECT pgfkpart.dispatch_index ('public', '{0}')", table));

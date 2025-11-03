@@ -22,17 +22,11 @@ namespace Lemoine.Business.Operation
   public sealed class StandardCycleDuration
     : IRequest<TimeSpan?>
   {
-    #region Members
     readonly IMonitoredMachine m_machine;
     readonly IOperation m_operation;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (StandardCycleDuration).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -46,10 +40,6 @@ namespace Lemoine.Business.Operation
       m_machine = machine;
       m_operation = operation;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

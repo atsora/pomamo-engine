@@ -23,6 +23,11 @@ namespace Pulse.Web.Scrap
   public class ScrapAtResponseDTO
   {
     /// <summary>
+    /// Current data
+    /// </summary>
+    public bool Current { get; set; }
+
+    /// <summary>
     /// UTC Date/time of the request
     /// </summary>
     public string At { get; set; }
@@ -40,28 +45,56 @@ namespace Pulse.Web.Scrap
     /// <summary>
     /// Number of cycles in the period
     /// </summary>
-    public int NbCycles { get; set; }
+    public int FullCycleCount { get; set; }
 
     /// <summary>
     /// Number of parts in the period
     /// </summary>
-    public int NbParts { get; set; }
+    public int TotalCount { get; set; }
+
+    /// <summary>
+    /// Number of parts that were validated
+    /// </summary>
+    public int ValidCount { get; set; }
+
+    /// <summary>
+    /// Number of parts that are made of the set-up
+    /// </summary>
+    public int SetupCount { get; set; }
+
+    /// <summary>
+    /// Number of scrap parts
+    /// </summary>
+    public int ScrapCount { get; set; }
+
+    /// <summary>
+    /// Number of parts that can be fixed
+    /// </summary>
+    public int FixableCount { get; set; }
+
+    /// <summary>
+    /// Number of parts that were not classified yet
+    /// </summary>
+    public int UnclassifiedCount { get; set; }
 
     /// <summary>
     /// Full operation period
     /// </summary>
-    public ScrapAtOperationDTO OperationPeriod { get; set; }
+    public ScrapAtOperationSlotDTO OperationSlot { get; set; }
 
     /// <summary>
     /// Existing report
     /// </summary>
-    public ExistingReportDTO Existing { get; set; }
+    public ScrapReportDTO ScrapReport { get; set; }
 
-    public void SetOperationSlot (IOperationSlot operationSlot) {
-      this.OperationPeriod = new ScrapAtOperationDTO ();
-      this.OperationPeriod.Range = operationSlot.DateTimeRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
+    public void SetOperationSlot (IOperationSlot operationSlot, bool current)
+    {
+      this.OperationSlot = new ScrapAtOperationSlotDTO ();
+      this.OperationSlot.Current = current;
+      this.OperationSlot.Display = operationSlot.Display;
+      this.OperationSlot.Range = operationSlot.DateTimeRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
       if (operationSlot.Operation is not null) {
-        this.OperationPeriod.Operation = new OperationDTOAssembler ().Assemble (operationSlot.Operation);
+        this.OperationSlot.Operation = new OperationDTOAssembler ().Assemble (operationSlot.Operation);
       }
     }
   }
@@ -69,12 +102,22 @@ namespace Pulse.Web.Scrap
   /// <summary>
   /// Referenced full operation period
   /// </summary>
-  public class ScrapAtOperationDTO
+  public class ScrapAtOperationSlotDTO
   {
+    /// <summary>
+    /// Does this operation correspond to a current period
+    /// </summary>
+    public bool Current { get; set; }
+
     /// <summary>
     /// UTC date/time range of the full operation period
     /// </summary>
     public string Range { get; set; }
+
+    /// <summary>
+    /// Display of the operation slot
+    /// </summary>
+    public string Display { get; set; }
 
     /// <summary>
     /// Operation
@@ -85,8 +128,8 @@ namespace Pulse.Web.Scrap
   /// <summary>
   /// Existing report
   /// </summary>
-  public class ExistingReportDTO
-  { 
+  public class ScrapReportDTO
+  {
     /// <summary>
     /// Modification ID of the latest existing report
     /// </summary>
@@ -112,5 +155,20 @@ namespace Pulse.Web.Scrap
     /// Quantity
     /// </summary>
     public int Quantity { get; set; }
+
+    /// <summary>
+    /// Default constructor 
+    /// </summary>
+    public ScrapReasonDTO () { }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="scrapReasonReport"></param>
+    public ScrapReasonDTO (IScrapReasonReport scrapReasonReport)
+    {
+      this.Quantity = scrapReasonReport.Quantity;
+      this.Reason = new NonConformanceReasonDTOAssembler ().Assemble (scrapReasonReport.NonConformanceReason);
+    }
   }
 }
