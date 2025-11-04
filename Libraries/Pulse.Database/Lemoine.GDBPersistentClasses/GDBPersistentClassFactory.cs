@@ -2876,5 +2876,14 @@ namespace Lemoine.GDBPersistentClasses
       var scrapReport = new ScrapReport (operationSlot, dateTimeRange);
       return scrapReport;
     }
+
+    /// <summary>
+    /// Create new <see cref="IScrapReasonReport"/>
+    /// </summary>
+    public IScrapReasonReport CreateScrapReasonReport (IScrapReport scrapReport, INonConformanceReason reason, int quantity)
+    {
+      var scrapReasonReport = new ScrapReasonReport (scrapReport, reason, quantity);
+      return scrapReasonReport;
+    }
   }
 }

@@ -1108,6 +1108,9 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
+    public IScrapReasonReport CreateScrapReasonReport (IScrapReport scrapReport, INonConformanceReason reason, int quantity)
+      => throw new NotImplementedException ();
+
     public Lemoine.ModelDAO.IDAOFactory DAOFactory {
       get { return m_daoFactory; }
     }
