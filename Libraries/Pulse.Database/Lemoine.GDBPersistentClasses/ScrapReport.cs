@@ -205,6 +205,9 @@ namespace Lemoine.GDBPersistentClasses
         }
         return m_reasons;
       }
+      set {
+        m_reasons = value;
+      }
     }
 
     public override string ModificationType => "ScrapReport";
