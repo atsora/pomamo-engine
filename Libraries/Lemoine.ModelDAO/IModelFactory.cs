@@ -1512,6 +1512,11 @@ namespace Lemoine.Model
     IScrapReport CreateScrapReport (IOperationSlot operationSlot, UtcDateTimeRange dateTimeRange);
 
     /// <summary>
+    /// Create new <see cref="IScrapReasonReport"/>
+    /// </summary>
+    IScrapReasonReport CreateScrapReasonReport (IScrapReport scrapReport, INonConformanceReason reason, int quantity);
+
+    /// <summary>
     /// Create a new Sequence
     /// 
     /// Deprecated, use <see cref="CreateSequence(string, IOperation, IPath)"/>
