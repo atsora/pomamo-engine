@@ -130,6 +130,6 @@ namespace Lemoine.Model
     /// <summary>
     /// Reason reports
     /// </summary>
-    ICollection<IScrapReasonReport> Reasons { get; }
+    ICollection<IScrapReasonReport> Reasons { get; set; }
   }
 }
