@@ -120,12 +120,12 @@ namespace Lemoine.Model
     /// <summary>
     /// Number of times an axis movement was started
     /// </summary>
-    public double[] S { get; set; } = null;
+    public int[] S { get; set; } = null;
 
     /// <summary>
     /// Number of times an axis movement was stopped
     /// </summary>
-    public double[] E { get; set; } = null;
+    public int[] E { get; set; } = null;
   }
 
   /// <summary>
@@ -229,8 +229,10 @@ namespace Lemoine.Model
 
     /// <summary>
     /// Version of the sequence detail data structure
+    /// 
+    /// Version 5: Fix a bug with the Segments. The last segment of a machining path could be missing
     /// </summary>
-    public int Version { get; set; } = 4;
+    public int Version { get; set; } = 5;
 
     /// <summary>
     /// Sequence paths
