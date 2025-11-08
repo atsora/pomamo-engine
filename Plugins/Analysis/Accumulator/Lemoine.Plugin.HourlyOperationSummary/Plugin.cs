@@ -24,9 +24,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
     #region Getters / Setters
     /// <summary>

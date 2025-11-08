@@ -31,7 +31,7 @@ namespace Lem_OperationExplorer
     {
       return services
         .AddSingleton<IPluginSynchronizationTimeoutProvider> ((IServiceProvider sp) => new PluginSynchronizationTimeoutProviderFromConfigSet (PLUGIN_SYNCHRONIZATION_TIMEOUT_DEFAULT))
-        .CreateGuiServicesDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.OperationExplorer, Pulse.Extensions.Business.ExtensionInterfaceProvider.GetInterfaceProviders ())
+        .CreateGuiServicesDatabaseWithExtensions (Lemoine.Model.PluginFlag.OperationExplorer, Pulse.Extensions.Business.ExtensionInterfaceProvider.GetInterfaceProviders ())
         .ConfigureBusinessLruCache ()
         .SetApplicationInitializer<ApplicationInitializerWithExtensions, BusinessApplicationInitializer, PulseCatalogInitializer> ()
         .AddTransient<MainForm> ();

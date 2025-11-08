@@ -442,30 +442,5 @@ namespace Lemoine.WebService
       return TimeSpan.FromHours(12);
     }
     #endregion // Helper functions
-
-#if NSERVICEKIT
-#region RequestRemoteIp
-    /// <summary>
-    /// Fetch IP of request
-    /// </summary>
-    /// <returns></returns>
-    public static string RequestRemoteIp(NServiceKit.ServiceHost.IHttpRequest httpRequest) {
-      // string remoteIP = base.RequestContext.IpAddress; // does not work
-      if (httpRequest != null) {
-        System.Net.HttpListenerRequest httpListenerRequest = (System.Net.HttpListenerRequest) httpRequest.OriginalRequest;
-        if (httpListenerRequest != null) {
-          string ipAddress = httpListenerRequest.RemoteEndPoint.ToString();
-          // address is of the form ipv4:port
-          // or ipv6:port : so remove everything from last ':' onward
-          int lastColonIndex = ipAddress.LastIndexOf(':');
-          if (lastColonIndex != -1) {
-            return ipAddress.Remove(lastColonIndex, ipAddress.Length - lastColonIndex);
-          }
-        }
-      }
-      return null;
-    }
-#endregion // RequestRemoteIp
-#endif // NSERVICEKIT
   }
 }

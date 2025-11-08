@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,19 +20,13 @@ namespace Lemoine.Business.MachineObservationState
   public sealed class ProductionPeriods
     : IRequest<IEnumerable<(UtcDateTimeRange, bool?)>>
   {
-    #region Members
     readonly IMachine m_machine;
     readonly UtcDateTimeRange m_range;
     readonly UtcDateTimeRange m_preLoadRange = null;
     readonly Func<IEnumerable<IObservationStateSlot>> m_observationStateSlotsPreLoader = null;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (ProductionPeriods).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -59,10 +54,6 @@ namespace Lemoine.Business.MachineObservationState
       m_preLoadRange = preLoadRange;
       m_observationStateSlotsPreLoader = observationStateSlotsPreLoader;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

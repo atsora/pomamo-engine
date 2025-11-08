@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,17 +16,8 @@ namespace Lemoine.Plugin.ProductionTracker
   public class WebExtension
     : Lemoine.Extensions.Web.IWebExtension
   {
-    public bool UniqueInstance
-    {
-      get
-      {
-        return true;
-      }
-    }
+    public bool UniqueInstance => true;
 
-    public Assembly GetAssembly ()
-    {
-      return this.GetType ().Assembly;
-    }
+    public Assembly GetAssembly () => this.GetType ().Assembly;
   }
 }

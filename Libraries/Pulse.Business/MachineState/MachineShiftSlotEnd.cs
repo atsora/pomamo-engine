@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,17 +19,11 @@ namespace Lemoine.Business.MachineState
   public sealed class MachineShiftSlotEnd
     : IRequest<UpperBound<DateTime>?>
   {
-    #region Members
     readonly IMachine m_machine;
     readonly DateTime m_at;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachineShiftSlotEnd).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -41,10 +36,6 @@ namespace Lemoine.Business.MachineState
       m_machine = machine;
       m_at = at;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

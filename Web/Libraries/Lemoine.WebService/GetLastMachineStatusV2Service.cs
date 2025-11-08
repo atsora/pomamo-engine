@@ -30,6 +30,20 @@ namespace Lemoine.WebService
     {
     }
 
+    DateTime? GetCurrentShiftStart (IMachine machine)
+    {
+      var at = DateTime.UtcNow;
+      var machineShiftSlotAtRequest = new Lemoine.Business.MachineState.MachineShiftSlotAt (machine, at);
+      var machineShiftSlot = Lemoine.Business.ServiceProvider.Get (machineShiftSlotAtRequest);
+      if (machineShiftSlot is null) {
+        log.Error ($"GetCurrentShiftStart: no machine shift slot at {at} for machine id={machine.Id}");
+        return null;
+      }
+      else {
+        return machineShiftSlot.DateTimeRange.Lower.NullableValue;
+      }
+    }
+
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -52,15 +66,16 @@ namespace Lemoine.WebService
           return ServiceHelper.NoReasonSlotErrorDTO(machineId);
         }
         
-        DateTime? datetime = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc(request.Begin);
-        DateTime beginDate =
-          datetime.HasValue ? datetime.Value :
-          dateOfRequest.Subtract(ServiceHelper.GetCurrentPeriodDuration(machine));
+        DateTime? requestBegin = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc(request.Begin);
+        var beginDateTime =
+          requestBegin
+          ?? GetCurrentShiftStart (machine)
+          ?? dateOfRequest.Subtract (ServiceHelper.GetCurrentPeriodDuration (machine));
         
         var reasonSlots =
           ModelDAOHelper.DAOFactory.ReasonSlotDAO
           .FindAllInUtcRangeWithReasonMachineObservationStateMachineMode (machine,
-                                                                          new UtcDateTimeRange (beginDate));
+                                                                          new UtcDateTimeRange (beginDateTime));
         var reasonRequired = reasonSlots.Any (x => x.OverwriteRequired);
         var reasonRequiredNumber = reasonSlots.Count (x => x.OverwriteRequired);
         

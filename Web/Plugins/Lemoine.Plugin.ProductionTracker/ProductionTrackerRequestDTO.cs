@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,9 +19,6 @@ namespace Lemoine.Plugin.ProductionTracker
   [Api ("Request DTO for /ProductionTracker service")]
   [ApiResponse (HttpStatusCode.InternalServerError, "Oops, something broke")]
   [Route ("/ProductionTracker", "GET", Summary = "Return the data for the production tracker web page", Notes = "To use with ?GroupId=&Range=")]
-#if NSERVICEKIT
-  [NServiceKit.ServiceHost.Route ("/ProductionTracker/", "GET", Summary = "Return the data for the production tracker web page", Notes = "To use with ?GroupId=&Range=")]
-#endif // NSERVICEKIT
   public class ProductionTrackerRequestDTO : IReturn<ProductionTrackerResponseDTO>
   {
     /// <summary>

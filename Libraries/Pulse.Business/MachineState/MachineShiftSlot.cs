@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,14 +21,11 @@ namespace Lemoine.Business.MachineState
   {
     ILog log = LogManager.GetLogger<MachineShiftSlot> ();
 
-    #region Members
     IMachine m_machine;
     IShift m_shift;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
@@ -91,9 +89,7 @@ namespace Lemoine.Business.MachineState
       Debug.Assert (firstSlot.Machine.Id == lastSlot.Machine.Id);
       // And same shift
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -138,7 +134,6 @@ namespace Lemoine.Business.MachineState
     {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
 
     #region IMergeableItem<IMachineShiftSlot> implementation
     /// <summary>

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -340,8 +341,7 @@ namespace Lemoine.Business.MachineState
         else { // null != rightReasonSlot
           if (rightObservationStateSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRight: " +
-                             "empty right observation state slot slot {0}",
+            log.ErrorFormat ("ExtendRight: empty right observation state slot slot {0}",
                              rightObservationStateSlot);
             return slot;
           }
@@ -379,8 +379,7 @@ namespace Lemoine.Business.MachineState
         else { // null != rightReasonSlot
           if (rightObservationStateSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRightAsync: " +
-                             "empty right observation state slot slot {0}",
+            log.ErrorFormat ("ExtendRightAsync: empty right observation state slot slot {0}",
                              rightObservationStateSlot);
             return slot;
           }
