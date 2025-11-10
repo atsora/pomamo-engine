@@ -114,7 +114,7 @@ namespace Lemoine.Plugin.ProductionTracker
       }
     }
 
-    async System.Threading.Tasks.Task<ProductionTrackerResponseDTO> GetByGroupAsync (IGroup group, UtcDateTimeRange range, bool includeGlobalTarget, bool includeProductionCapacity)
+    async System.Threading.Tasks.Task<object> GetByGroupAsync (IGroup group, UtcDateTimeRange range, bool includeGlobalTarget, bool includeProductionCapacity)
     {
       Debug.Assert (null != group);
 
@@ -132,7 +132,14 @@ namespace Lemoine.Plugin.ProductionTracker
 
       var machineResponsesTasks = aggregatingPartsMachines
         .Select (m => GetByMachineAsync (m, range, includeGlobalTarget, includeProductionCapacity, localDateHourRanges));
-      var machineResponses = await Task.WhenAll (machineResponsesTasks);
+      var machineResponses1 = await Task.WhenAll (machineResponsesTasks);
+      var machineResponses = machineResponses1
+        .Where (x => x is ProductionTrackerResponseDTO)
+        .Select (x => x as ProductionTrackerResponseDTO);
+      if (machineResponses1.Any () && !machineResponses.Any ()) {
+        log.Error ($"GetByGroupAsync: no machine in {group} returned a valid data");
+        return new ErrorDTO ($"No valid data for any machine in group", ErrorStatus.NotApplicable);
+      }
 
       if (machineResponses.Any (x => x.GlobalTarget.HasValue)) {
         result.GlobalTarget = machineResponses.Sum (x => x?.GlobalTarget ?? 0.0);
@@ -170,7 +177,7 @@ namespace Lemoine.Plugin.ProductionTracker
       return result;
     }
 
-    async System.Threading.Tasks.Task<ProductionTrackerResponseDTO> GetByMachineAsync (IMachine machine, UtcDateTimeRange range, bool includeGlobalTarget, bool includeProductionCapacity)
+    async System.Threading.Tasks.Task<object> GetByMachineAsync (IMachine machine, UtcDateTimeRange range, bool includeGlobalTarget, bool includeProductionCapacity)
     {
       Debug.Assert (null != machine);
 
@@ -179,16 +186,23 @@ namespace Lemoine.Plugin.ProductionTracker
       return await GetByMachineAsync (machine, range, includeGlobalTarget, includeProductionCapacity, localDateHourRanges);
     }
 
-    async System.Threading.Tasks.Task<ProductionTrackerResponseDTO> GetByMachineAsync (IMachine machine, UtcDateTimeRange range, bool includeGlobalTarget, bool includeProductionCapacity, IDictionary<DateTime, UtcDateTimeRange> localDateHourRanges)
+    async System.Threading.Tasks.Task<object> GetByMachineAsync (IMachine machine, UtcDateTimeRange range, bool includeGlobalTarget, bool includeProductionCapacity, IDictionary<DateTime, UtcDateTimeRange> localDateHourRanges)
     {
       var result = new ProductionTrackerResponseDTO ();
 
       result.Range = range.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
 
-      var partProductionRangesTasks = localDateHourRanges
-        .Select (async x => (x.Key, await GetPartProductionRangeAsync (machine, x.Value, range)));
-      var partProductionRanges = (await Task.WhenAll (partProductionRangesTasks))
-        .ToDictionary (x => x.Item1, x => x.Item2);
+      IDictionary<DateTime, PartProductionRangeResponse> partProductionRanges;
+      try {
+        var partProductionRangesTasks = localDateHourRanges
+          .Select (async x => (x.Key, await GetPartProductionRangeAsync (machine, x.Value, range)));
+        partProductionRanges = (await Task.WhenAll (partProductionRangesTasks))
+          .ToDictionary (x => x.Item1, x => x.Item2);
+      }
+      catch (EntryPointNotFoundException ex) {
+        log.Error ($"GetByMachineAsync: machine {machine.Id} does not support the part count", ex);
+        return new ErrorDTO ("No part count support for this machine", ErrorStatus.NotApplicable);
+      }
 
       IOperation operation;
       if (includeProductionCapacity || includeGlobalTarget) {
