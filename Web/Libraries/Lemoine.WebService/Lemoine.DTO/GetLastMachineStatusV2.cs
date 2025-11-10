@@ -27,5 +27,10 @@ namespace Lemoine.DTO
     /// Optional start of period in ISO format
     /// </summary>
     public string Begin { get; set; }
+
+    /// <summary>
+    /// Optional end of period in ISO format
+    /// </summary>
+    public string End { get; set; }
   }
 }

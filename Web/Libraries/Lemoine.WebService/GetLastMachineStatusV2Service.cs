@@ -19,14 +19,14 @@ namespace Lemoine.WebService
   /// <summary>
   /// GetLastMachineStatus service
   /// </summary>
-  public class GetLastMachineStatusV2Service: GenericCachedService<Lemoine.DTO.GetLastMachineStatusV2>
+  public class GetLastMachineStatusV2Service : GenericCachedService<Lemoine.DTO.GetLastMachineStatusV2>
   {
-    static readonly ILog log = LogManager.GetLogger(typeof (GetLastMachineStatusV2Service).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (GetLastMachineStatusV2Service).FullName);
 
     /// <summary>
     /// Constructor
     /// </summary>
-    public GetLastMachineStatusV2Service () : base(Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
+    public GetLastMachineStatusV2Service () : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
     {
     }
 
@@ -53,39 +53,45 @@ namespace Lemoine.WebService
     {
       int machineId = request.Id;
       DateTime dateOfRequest = DateTime.UtcNow;
-      
-      using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById(machineId);
+
+      using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (machineId);
         if (machine == null) {
-          return ServiceHelper.NoMonitoredMachineWithIdErrorDTO(machineId);
+          return ServiceHelper.NoMonitoredMachineWithIdErrorDTO (machineId);
         }
-        
-        IReasonSlot reasonSlot = ModelDAOHelper.DAOFactory.ReasonSlotDAO.GetLast(machine);
+
+        IReasonSlot reasonSlot = ModelDAOHelper.DAOFactory.ReasonSlotDAO.GetLast (machine);
         if (reasonSlot == null) {
-          return ServiceHelper.NoReasonSlotErrorDTO(machineId);
+          return ServiceHelper.NoReasonSlotErrorDTO (machineId);
         }
-        
-        DateTime? requestBegin = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc(request.Begin);
+
+        DateTime? requestBegin = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc (request.Begin);
         var beginDateTime =
           requestBegin
           ?? GetCurrentShiftStart (machine)
           ?? dateOfRequest.Subtract (ServiceHelper.GetCurrentPeriodDuration (machine));
-        
+        UtcDateTimeRange requestRange;
+        if (string.IsNullOrEmpty (request.End)) {
+          requestRange = new UtcDateTimeRange (beginDateTime);
+        }
+        else { // request.End not empty and not null
+          var requestEnd = Lemoine.DTO.ConvertDTO.IsoStringToDateTimeUtc (request.End);
+          requestRange = new UtcDateTimeRange (beginDateTime, new UpperBound<DateTime> (requestEnd));
+        }
+
         var reasonSlots =
           ModelDAOHelper.DAOFactory.ReasonSlotDAO
-          .FindAllInUtcRangeWithReasonMachineObservationStateMachineMode (machine,
-                                                                          new UtcDateTimeRange (beginDateTime));
+          .FindAllInUtcRangeWithReasonMachineObservationStateMachineMode (machine, requestRange);
         var reasonRequired = reasonSlots.Any (x => x.OverwriteRequired);
         var reasonRequiredNumber = reasonSlots.Count (x => x.OverwriteRequired);
-        
+
         Lemoine.DTO.LastMachineExtendedStatusV2DTO lastMachineExtendedStatusV2DTO =
-          (new Lemoine.DTO.LastMachineExtendedStatusV2DTOAssembler()).Assemble(new Tuple<IReasonSlot,bool, int>(reasonSlot, reasonRequired, reasonRequiredNumber));
-        
+          (new Lemoine.DTO.LastMachineExtendedStatusV2DTOAssembler ()).Assemble (new Tuple<IReasonSlot, bool, int> (reasonSlot, reasonRequired, reasonRequiredNumber));
+
         // last reason slot is set too old if more than 1 minute old
-        if ( (reasonSlot.EndDateTime.HasValue)
-            && (reasonSlot.EndDateTime.Value.AddMinutes(1) < dateOfRequest)) {
-          ICurrentMachineMode currentMachineMode = ModelDAOHelper.DAOFactory.CurrentMachineModeDAO.Find(machine);
+        if ((reasonSlot.EndDateTime.HasValue)
+            && (reasonSlot.EndDateTime.Value.AddMinutes (1) < dateOfRequest)) {
+          ICurrentMachineMode currentMachineMode = ModelDAOHelper.DAOFactory.CurrentMachineModeDAO.Find (machine);
           // If currentMachineMode is tool old, return ReasonTooOld
           if (null == currentMachineMode) {
             lastMachineExtendedStatusV2DTO.ReasonTooOld = true;
@@ -105,7 +111,7 @@ namespace Lemoine.WebService
                 return lastMachineExtendedStatusV2DTO;
               }
               IObservationStateSlot observationSlot = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
-                .GetLastIntersectWithRange(machine, currentMachineMode.Change, currentMachineMode.DateTime);
+                .GetLastIntersectWithRange (machine, currentMachineMode.Change, currentMachineMode.DateTime);
               if (null == observationSlot) {
                 log.ErrorFormat ("GetWithoutCache: no observation state slot in range {0}-{1} for machine id {2}",
                   currentMachineMode.Change, currentMachineMode.DateTime, machine.Id);
@@ -114,10 +120,10 @@ namespace Lemoine.WebService
                 range = new UtcDateTimeRange (range.Intersects (observationSlot.DateTimeRange));
               }
               TimeSpan? duration = range.Duration;
-              
+
               IMachineModeDefaultReason defaultReason;
               if (duration.HasValue && (null != observationSlot) && (null != observationSlot.MachineObservationState)) {
-                defaultReason = ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.FindWith(machine, currentMachineMode.MachineMode,
+                defaultReason = ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.FindWith (machine, currentMachineMode.MachineMode,
                                                                                                observationSlot.MachineObservationState,
                                                                                                duration.Value);
               }
@@ -126,13 +132,13 @@ namespace Lemoine.WebService
               }
               if (null != defaultReason) {
                 log.Info ("GetWithoutCache: compute live the default reason from the current machine mode");
-                lastMachineExtendedStatusV2DTO.MachineStatus.MachineMode = (new MachineModeDTOAssembler()).Assemble(defaultReason.MachineMode);
-                lastMachineExtendedStatusV2DTO.MachineStatus.MachineObservationState = (new MachineObservationStateDTOAssembler()).Assemble(defaultReason.MachineObservationState);
-                lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.Begin = ConvertDTO.DateTimeUtcToIsoString(range.Lower);
-                lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.End = ConvertDTO.DateTimeUtcToIsoString(range.Upper);
-                lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.Reason = (new ReasonDTOAssembler()).Assemble(defaultReason.Reason);
+                lastMachineExtendedStatusV2DTO.MachineStatus.MachineMode = (new MachineModeDTOAssembler ()).Assemble (defaultReason.MachineMode);
+                lastMachineExtendedStatusV2DTO.MachineStatus.MachineObservationState = (new MachineObservationStateDTOAssembler ()).Assemble (defaultReason.MachineObservationState);
+                lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.Begin = ConvertDTO.DateTimeUtcToIsoString (range.Lower);
+                lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.End = ConvertDTO.DateTimeUtcToIsoString (range.Upper);
+                lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.Reason = (new ReasonDTOAssembler ()).Assemble (defaultReason.Reason);
                 lastMachineExtendedStatusV2DTO.MachineStatus.ReasonSlot.OverwriteRequired = defaultReason.OverwriteRequired;
-                
+
                 lastMachineExtendedStatusV2DTO.ReasonTooOld = false;
               }
               else { // null == defaultReason
@@ -144,11 +150,11 @@ namespace Lemoine.WebService
         else {
           lastMachineExtendedStatusV2DTO.ReasonTooOld = false;
         }
-        
+
         return lastMachineExtendedStatusV2DTO;
       }
-      
-      
+
+
     }
   }
 }

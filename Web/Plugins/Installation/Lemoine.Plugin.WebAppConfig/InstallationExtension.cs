@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -46,10 +47,7 @@ namespace Lemoine.Plugin.WebAppConfig
 
     public double Priority => 0.0;
 
-    public bool CheckConfig ()
-    {
-      return Task.Run (CheckConfigAsync).GetAwaiter ().GetResult ();
-    }
+    public bool CheckConfig () => Task.Run (CheckConfigAsync).GetAwaiter ().GetResult ();
 
     public async Task<bool> CheckConfigAsync ()
     {
@@ -73,10 +71,7 @@ namespace Lemoine.Plugin.WebAppConfig
       }
     }
 
-    public bool RemoveConfig ()
-    {
-      return Task.Run (RemoveConfigAsync).GetAwaiter ().GetResult ();
-    }
+    public bool RemoveConfig () => Task.Run (RemoveConfigAsync).GetAwaiter ().GetResult ();
 
     public async Task<bool> RemoveConfigAsync ()
     {

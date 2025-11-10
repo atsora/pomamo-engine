@@ -14,7 +14,6 @@ namespace Lemoine.Plugin.WebAppConfig
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Relative file path to the root directory of the web app
     /// </summary>
@@ -64,9 +63,7 @@ namespace Lemoine.Plugin.WebAppConfig
     {
       get; set;
     } = "*.html";
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -88,6 +85,5 @@ namespace Lemoine.Plugin.WebAppConfig
       errors = errorList;
       return true;
     }
-    #endregion // Constructors
   }
 }

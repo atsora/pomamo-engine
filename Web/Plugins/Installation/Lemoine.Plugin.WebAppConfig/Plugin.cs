@@ -19,42 +19,23 @@ namespace Lemoine.Plugin.WebAppConfig
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "WebAppConfig"; } }
+    public override string Name => "WebAppConfig";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Plugin to update a configuration in web app";
-      }
-    }
-
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Config;
-      }
-    }
+    public override string Description =>  "Plugin to update a configuration in web app";
+ 
+    public PluginFlag Flags => PluginFlag.Config;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
-
-    #region Methods
-
-    #endregion // Methods
   }
 }
