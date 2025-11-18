@@ -194,7 +194,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     /// <returns></returns>
     public bool IsCompatible (UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, ReasonSource reasonSource)
     {
-      return reasonScore.Equals (ReasonSource.Default) && reason.Id == (int)ReasonId.Undefined && 0.0 == reasonScore;
+      return reasonSource.IsDefault () && reason.Id == (int)ReasonId.Undefined && 0.0 == reasonScore;
     }
     #endregion
   }

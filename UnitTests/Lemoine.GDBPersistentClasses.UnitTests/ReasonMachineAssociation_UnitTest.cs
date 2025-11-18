@@ -151,6 +151,200 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     }
 
     /// <summary>
+    /// Test the method MakeAnalysis with the current period with two inactive periods
+    /// </summary>
+    [Test]
+    public void TestCurrent ()
+    {
+      try {
+        Lemoine.Info.ConfigSet
+          .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+        Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          try {
+            // Production state
+            Lemoine.Extensions.Package.PackageFile
+              .InstallOrUpgradeJsonString (@"
+{
+  ""Identifier"": ""ReasonMachineAssociation_TestMakeAnalysis_UnitTest"",
+  ""Name"": ""UnitTest"",
+  ""Description"": """",
+  ""Tags"": [],
+  ""Version"": 1,
+  ""Plugins"": [
+    {
+      ""Name"": ""RunningMachineModeIsProduction"",
+      ""Instances"": [
+        {
+          ""Name"": ""Test"",
+          ""Parameters"": {
+  ""Score"": 10.0,
+  ""ExcludeManual"": false,
+  ""UnknownIsNotRunning"": false
+          }
+        }
+      ]
+    }
+  ]
+}
+", true, true);
+            var assemblyLoader = new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader ();
+            var pluginFilter = new PluginFilterFromFlag (PluginFlag.Analysis);
+            var pluginsLoader = new PluginsLoader (assemblyLoader);
+            var extensionsProvider = new ExtensionsProvider (Lemoine.ModelDAO.ModelDAOHelper.DAOFactory, pluginFilter, Lemoine.Extensions.Analysis.ExtensionInterfaceProvider.GetInterfaceProviders (), pluginsLoader, new DummyPluginsLoader ());
+            Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
+            Lemoine.Extensions.ExtensionManager.Activate (false);
+            Lemoine.Extensions.ExtensionManager.Load ();
+
+            ISession session = NHibernateHelper.GetCurrentSession ();
+            // Reference data
+            IUser user1 = daoFactory.UserDAO.FindById (1);
+            IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+            IMachineObservationState attended =
+              daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+
+            IMachineObservationState unattended =
+              daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Unattended);
+            IReason reasonMotion = daoFactory.ReasonDAO.FindById (2);
+            IReason reasonShort = daoFactory.ReasonDAO.FindById (3);
+            IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+            IReason reasonUnattended = daoFactory.ReasonDAO.FindById (5);
+            IReason reasonSetup = daoFactory.ReasonDAO.FindById (16);
+            IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+            var interrupted = daoFactory.MachineModeDAO.FindById ((int)MachineModeId.Interrupted);
+            var feedHold = daoFactory.MachineModeDAO.FindById ((int)MachineModeId.Hold);
+            IMachineMode active = daoFactory.MachineModeDAO.FindById (2);
+            IMachineMode auto = daoFactory.MachineModeDAO.FindById (3);
+
+            // Existing ReasonSlot
+            {
+              IReasonSlot existingSlot =
+                new ReasonSlot (machine1,
+                                new UtcDateTimeRange (UtcDateTime.From (2011, 08, 01, 12, 00, 00),
+                                                      UtcDateTime.From (2011, 08, 01, 12, 10, 00)));
+              existingSlot.MachineMode = interrupted;
+              existingSlot.MachineObservationState = attended;
+              ((ReasonSlot)existingSlot).SetDefaultReason (reasonUnanswered, 10.0, true, false);
+              daoFactory.ReasonSlotDAO.MakePersistent (existingSlot);
+            }
+            {
+              IReasonSlot existingSlot =
+                new ReasonSlot (machine1,
+                                new UtcDateTimeRange (UtcDateTime.From (2011, 08, 01, 12, 10, 00),
+                                                      UtcDateTime.From (2011, 08, 01, 12, 30, 00)));
+              existingSlot.MachineMode = feedHold;
+              existingSlot.MachineObservationState = attended;
+              ((ReasonSlot)existingSlot).SetDefaultReason (reasonUnanswered, 10.0, true, false);
+              daoFactory.ReasonSlotDAO.MakePersistent (existingSlot);
+            }
+            // Existing MachineActivitySummary
+            {
+              IMachineActivitySummary summary;
+              summary = ModelDAOHelper.ModelFactory.CreateMachineActivitySummary (machine1,
+                                                                                  UtcDateTime.From (2011, 08, 01),
+                                                                                  attended, feedHold);
+              summary.Time = TimeSpan.FromMinutes (20);
+              daoFactory.MachineActivitySummaryDAO.MakePersistent (summary);
+              summary = ModelDAOHelper.ModelFactory.CreateMachineActivitySummary (machine1,
+                                                                                  UtcDateTime.From (2011, 08, 01),
+                                                                                  attended, interrupted);
+              summary.Time = TimeSpan.FromMinutes (10);
+              daoFactory.MachineActivitySummaryDAO.MakePersistent (summary);
+            }
+            // Existing ReasonSummary
+            {
+              IReasonSummary summary;
+              summary = new ReasonSummary (machine1,
+                                            UtcDateTime.From (2011, 08, 01), null,
+                                            attended, reasonUnanswered);
+              summary.Time = TimeSpan.FromMinutes (30);
+              summary.Number = 2;
+              daoFactory.ReasonSummaryDAO.MakePersistent (summary);
+            }
+            // MachineStatus
+            {
+              IMachineStatus machineStatus =
+                new MachineStatus (machine1);
+              machineStatus.CncMachineMode = inactive;
+              machineStatus.MachineMode = inactive;
+              machineStatus.MachineObservationState = attended;
+              machineStatus.ManualActivity = false;
+              machineStatus.Reason = reasonUnanswered;
+              machineStatus.ReasonSlotEnd =
+                UtcDateTime.From (2011, 08, 01, 12, 30, 00);
+              daoFactory.MachineStatusDAO.MakePersistent (machineStatus);
+            }
+
+            // New association 4 -> oo
+            {
+              var association =
+                new ReasonMachineAssociation ();
+              association.XmlSerializationMachine = (Machine)machine1;
+              association.SetManualReason (reasonSetup, (double?)null);
+              association.DateTime = UtcDateTime.From (2011, 08, 01, 12, 15, 00);
+              association.Begin = UtcDateTime.From (2011, 08, 01, 12, 00, 00);
+              association.End = new UpperBound<DateTime> (null);
+              association = (ReasonMachineAssociation)new ReasonMachineAssociationDAO ().MakePersistent (association);
+              association.MakeAnalysis (); // InProgress
+              association.MakeAnalysis ();
+            }
+
+            DAOFactory.EmptyAccumulators ();
+            ModelDAOHelper.DAOFactory.FlushData ();
+
+            var productionStates = ModelDAOHelper.DAOFactory.ProductionStateDAO.FindAll ();
+            var productionStateProduction = productionStates.Single (p => p.TranslationKey.Equals ("ProductionStateProduction"));
+            var productionStateNoProduction = productionStates.Single (p => p.TranslationKey.Equals ("ProductionStateNoProduction"));
+
+            // Check the values
+            {
+              IList<ReasonSlot> slots =
+                session.CreateCriteria<ReasonSlot> ()
+                .Add (Expression.Eq ("Machine", machine1))
+                .AddOrder (Order.Asc ("DateTimeRange"))
+                .List<ReasonSlot> ();
+              Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
+              int i = 0;
+              Assert.Multiple (() => {
+                Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+                Assert.That (slots[i].Reason, Is.EqualTo (reasonSetup));
+                Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+                Assert.That (slots[i].MachineMode, Is.EqualTo (interrupted));
+                Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+                Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 00, 00)));
+                Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 10, 00)));
+                Assert.That (slots[i].ProductionState, Is.EqualTo (productionStateNoProduction));
+              });
+              ++i;
+              Assert.Multiple (() => {
+                Assert.That (slots[i].Machine, Is.EqualTo (machine1));
+                Assert.That (slots[i].Reason, Is.EqualTo (reasonSetup));
+                Assert.That (slots[i].DefaultReason, Is.EqualTo (false));
+                Assert.That (slots[i].MachineMode, Is.EqualTo (feedHold));
+                Assert.That (slots[i].MachineObservationState, Is.EqualTo (attended));
+                Assert.That (slots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 10, 00)));
+                Assert.That (slots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2011, 08, 01, 12, 30, 00)));
+              });
+            }
+            // - AnalysisLogs
+            AnalysisUnitTests.CheckNumberOfAnalysisLogs (session, 0);
+          }
+          finally {
+            transaction.Rollback ();
+          }
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        Lemoine.Info.ConfigSet.ResetForceValues ();
+      }
+    }
+
+    /// <summary>
     /// Test the method MakeAnalysis
     /// </summary>
     [Test]

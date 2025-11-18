@@ -63,6 +63,10 @@ namespace Lemoine.GDBPersistentClasses
       "ReasonMachineAssociation.DynamicEndTracker.Priority";
     static readonly int DYNAMIC_END_TRACKER_PRIORITY_DEFAULT = 10;
 
+    static readonly string TRACK_SLOT_CHANGES_DYNAMIC_TIME_KEY =
+      "ReasonMachineAssociation.TrackSlotChangesDynamicTime";
+    static readonly string TRACK_SLOT_CHANGES_DYNAMIC_TIME_DEFAULT = "NextMachineMode";
+
     IReason m_reason = null;
     string m_reasonDetails = null;
     double? m_optionalReasonScore = null;
@@ -651,7 +655,9 @@ namespace Lemoine.GDBPersistentClasses
         if (null != this.Parent) {
           log.Error ($"MakeAnalysis: TrackSlotChanges option with a parent for modification id {this.Id}");
         }
-        MakeAnalysisDynamicEndAggressive ("NextMachineMode");
+        var trackSlotChangesDynamicTime = Lemoine.Info.ConfigSet
+          .LoadAndGet (TRACK_SLOT_CHANGES_DYNAMIC_TIME_KEY, TRACK_SLOT_CHANGES_DYNAMIC_TIME_DEFAULT);
+        MakeAnalysisDynamicEndAggressive (trackSlotChangesDynamicTime);
         return;
       }
 

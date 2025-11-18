@@ -79,11 +79,20 @@ namespace Lemoine.WebService
           requestRange = new UtcDateTimeRange (beginDateTime, new UpperBound<DateTime> (requestEnd));
         }
 
-        var reasonSlots =
-          ModelDAOHelper.DAOFactory.ReasonSlotDAO
-          .FindAllInUtcRangeWithReasonMachineObservationStateMachineMode (machine, requestRange);
-        var reasonRequired = reasonSlots.Any (x => x.OverwriteRequired);
-        var reasonRequiredNumber = reasonSlots.Count (x => x.OverwriteRequired);
+        int reasonRequiredNumber;
+        bool reasonRequired;
+        if (request.RequiredNumber) {
+          var reasonSelectionSlots = (new Lemoine.Business.Reason.ReasonSelectionSlotDAO ())
+            .FindOverlapsRange (machine, requestRange);
+          reasonRequiredNumber = reasonSelectionSlots.Count (x => x.OverwriteRequired);
+          reasonRequired = (0 < reasonRequiredNumber);
+        }
+        else {
+          var step = TimeSpan.FromHours (4);
+          var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO.FindOverlapsRangeAscending (machine, requestRange, step);
+          reasonRequiredNumber = -1;
+          reasonRequired = reasonSlots.Any (x => x.OverwriteRequired);
+        }
 
         Lemoine.DTO.LastMachineExtendedStatusV2DTO lastMachineExtendedStatusV2DTO =
           (new Lemoine.DTO.LastMachineExtendedStatusV2DTOAssembler ()).Assemble (new Tuple<IReasonSlot, bool, int> (reasonSlot, reasonRequired, reasonRequiredNumber));
