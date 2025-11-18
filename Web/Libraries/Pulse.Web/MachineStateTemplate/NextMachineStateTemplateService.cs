@@ -24,7 +24,6 @@ namespace Pulse.Web.MachineStateTemplate
   {
     static readonly ILog log = LogManager.GetLogger(typeof (NextMachineStateTemplateService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -32,9 +31,14 @@ namespace Pulse.Web.MachineStateTemplate
       : base(Lemoine.Core.Cache.CacheTimeOut.Config)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
+    DateTime ParseDateTime (string s)
+    {
+      var bound = ConvertDTO.IsoStringToDateTimeUtc (s);
+      Debug.Assert (bound.HasValue);
+      return bound.Value;
+    }
+
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -47,9 +51,29 @@ namespace Pulse.Web.MachineStateTemplate
         int currentMachineStateTemplateId = request.CurrentMachineStateTemplateId;
         IMachineStateTemplate currentMachineStateTemplate;
         if (0 == currentMachineStateTemplateId) {
-          log.Debug ("GetWithoutCache: " +
-                     "current machine state template ID 0");
-          currentMachineStateTemplate = null;
+          log.Debug ("GetWithoutCache: current machine state template ID is 0 => check At and MachineId");
+          if (string.IsNullOrEmpty (request.At)) {
+            log.Debug ("GetWithoutCache: current machine state template ID is 0 and At is not defined");
+            currentMachineStateTemplate = null;
+          }
+          else { // At set
+            if (0 == request.MachineId) {
+              log.Error ($"GetWithoutCache: At is set but not MachineId");
+              return new ErrorDTO ($"MachineId parameter is missing", ErrorStatus.WrongRequestParameter);
+            }
+            var machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById (request.MachineId);
+            if (machine is null) {
+              log.Error ($"GetWithoutCache: machine with id={request.MachineId} does not exist");
+              return new ErrorDTO ($"Invalid Machine Id", ErrorStatus.WrongRequestParameter);
+            }
+            var at = ParseDateTime (request.At);
+            var machineStateTemplateSlot = ModelDAOHelper.DAOFactory.MachineStateTemplateSlotDAO
+              .FindAt (machine, at);
+            currentMachineStateTemplate = machineStateTemplateSlot?.MachineStateTemplate;
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetWithoutCache: machine state template Id={currentMachineStateTemplate?.Id} at {at} machineId={machine.Id}");
+            }
+          }
         }
         else {
           currentMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
@@ -108,6 +132,5 @@ namespace Pulse.Web.MachineStateTemplate
         return result;
       }
     }
-    #endregion // Methods
   }
 }
