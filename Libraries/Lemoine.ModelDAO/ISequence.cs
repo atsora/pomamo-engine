@@ -210,7 +210,7 @@ namespace Lemoine.Model
     public IList<double> Angles { get; set; } = null;
 
     /// <summary>
-    /// Computed time
+    /// Computed time in seconds
     /// </summary>
     public double? Time { get; set; } = null;
 
