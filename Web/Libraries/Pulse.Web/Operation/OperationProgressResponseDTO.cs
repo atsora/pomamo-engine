@@ -8,12 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using Lemoine.Model;
 using Lemoine.Core.Log;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Pulse.Web.CommonResponseDTO;
 
 namespace Pulse.Web.Operation

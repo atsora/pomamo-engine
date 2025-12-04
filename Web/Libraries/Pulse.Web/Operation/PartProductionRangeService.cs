@@ -113,7 +113,7 @@ namespace Pulse.Web.Operation
       var partProductionRange = group.PartProductionRange (range, null);
 
       var response = new PartProductionRangeResponseDTO ();
-      response.Range = range.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
+      response.Range = range.ToString (ConvertDTO.DateTimeUtcToIsoString);
       response.NbPieces = partProductionRange.NbPieces;
       response.Goal = partProductionRange.Goal;
       response.InProgress = partProductionRange.InProgress;
@@ -146,7 +146,7 @@ namespace Pulse.Web.Operation
         .GetAsync (partProductionRangeRequest);
 
       var response = new PartProductionRangeResponseDTO ();
-      response.Range = range.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
+      response.Range = range.ToString (ConvertDTO.DateTimeUtcToIsoString);
       response.NbPieces = partProductionRange.NbPieces;
       response.Goal = partProductionRange.Goal;
       response.InProgress = partProductionRange.InProgress;

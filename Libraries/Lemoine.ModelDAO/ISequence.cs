@@ -231,8 +231,9 @@ namespace Lemoine.Model
     /// Version of the sequence detail data structure
     /// 
     /// Version 5: Fix a bug with the Segments. The last segment of a machining path could be missing
+    /// Version 6: Fix a bug with the detection of the new machining paths (first G1 after G0 was not detected)
     /// </summary>
-    public int Version { get; set; } = 5;
+    public int Version { get; set; } = 6;
 
     /// <summary>
     /// Sequence paths
