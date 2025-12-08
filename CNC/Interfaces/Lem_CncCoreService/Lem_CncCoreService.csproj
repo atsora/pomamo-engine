@@ -41,6 +41,7 @@
     <PackageReference Include="JmesPath.Net" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="MQTTnet" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NModbus4.NetCore" />
