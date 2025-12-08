@@ -41,6 +41,7 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="S7netplus" />
+    <PackageReference Include="SSH.NET" />
     <PackageReference Include="System.IO.Ports" />
     <!--indirect dependency for Lemoine.Cnc.Serial -->
     <PackageReference Include="System.Data.SQLite.Core" />
