@@ -103,6 +103,11 @@
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
   </ItemGroup>
 
+  <!-- Modules for tests -->
+  <ItemGroup Condition="'$(Configuration)'=='VS'">
+    <ProjectReference Include="..\..\pomamo-cncmodules\Lemoine.Cnc.OpcUaClient\Lemoine.Cnc.OpcUaClient.csproj" />
+  </ItemGroup>
+  
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="IIOPChannel">
       <HintPath>..\..\..\..\pomamo-extern\IIOP.NET\IIOPChannel.dll</HintPath>
