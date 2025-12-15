@@ -221,9 +221,19 @@ namespace Pulse.Extensions.Database
     }
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public bool NoDetails => false;
+
+    /// <summary>
     /// Id. Not used, always 0
     /// </summary>
     public int Id => 0;
+
+    /// <summary>
+    /// <see cref="IReaosnSelection"/>
+    /// </summary>
+    public string ClassificationId => this.Reason.Id.ToString ();
 
     /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
@@ -256,6 +266,11 @@ namespace Pulse.Extensions.Database
     {
       get; set;
     }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public IMachineStateTemplate MachineStateTemplate => null;
 
     /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />

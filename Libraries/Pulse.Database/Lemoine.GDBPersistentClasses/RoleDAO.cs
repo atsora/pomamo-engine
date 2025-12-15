@@ -9,6 +9,9 @@ using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using NHibernate;
+using System.Threading.Tasks;
+using NHibernate.Criterion;
+using System.Threading;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -20,6 +23,16 @@ namespace Lemoine.GDBPersistentClasses
     , IRoleDAO
   {
     static readonly ILog log = LogManager.GetLogger(typeof (RoleDAO).FullName);
+
+    /// <summary>
+    /// <see cref="IRoleDAO"/>
+    /// </summary>
+    public async Task<IRole> FindByKeyAsync (string roleKey, CancellationToken cancellationToken = default) =>
+      await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<Role> ()
+        .Add (Restrictions.Eq ("WebAppKey", roleKey))
+        .SetCacheable (true)
+        .UniqueResultAsync<Role> (cancellationToken);
 
     #region DefaultValues
     /// <summary>

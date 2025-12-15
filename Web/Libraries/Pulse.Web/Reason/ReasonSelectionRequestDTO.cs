@@ -6,12 +6,8 @@
 using System;
 
 using System.Net;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Core.Log;
 
 namespace Pulse.Web.Reason
@@ -40,6 +36,14 @@ namespace Pulse.Web.Reason
     /// </summary>
     [ApiMember(Name="Range", Description="Requested range. Default is [now, now]", ParameterType="path", DataType="string", IsRequired=false)]
     public string Range { get; set; }
+
+    /// <summary>
+    /// Key of the role that makes the request
+    /// 
+    /// Default: "" (not specified)
+    /// </summary>
+    [ApiMember (Name = "RoleKey", Description = "Role Key of the requester", ParameterType = "path", DataType = "string", IsRequired = false)]
+    public string RoleKey { get; set; }
   }
 
   /// <summary>
@@ -58,6 +62,14 @@ namespace Pulse.Web.Reason
     /// </summary>
     [ApiMember (Name = "MachineId", Description = "Machine Id", ParameterType = "path", DataType = "int", IsRequired = true)]
     public int MachineId { get; set; }
+
+    /// <summary>
+    /// Key of the role that makes the request
+    /// 
+    /// Default: "" (not specified)
+    /// </summary>
+    [ApiMember (Name = "RoleKey", Description = "Role Key of the requester", ParameterType = "path", DataType = "string", IsRequired = false)]
+    public string RoleKey { get; set; }
   }
 }
 

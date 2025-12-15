@@ -29,6 +29,12 @@ namespace Lemoine.Model
     int Id { get; }
 
     /// <summary>
+    /// Classification ID :
+    /// ReasonId or "MST" + MachineStateTemplateId
+    /// </summary>
+    string ClassificationId { get; }
+
+    /// <summary>
     /// Alternative text (if null or empty, not taken into account)
     /// 
     /// nullable
@@ -67,9 +73,14 @@ namespace Lemoine.Model
     IMachineObservationState MachineObservationState { get; }
 
     /// <summary>
-    /// Reference to the Reason (not null)
+    /// Reference to the Reason (Reason or MachineStateTemplate not null)
     /// </summary>
     IReason Reason { get; set; }
+
+    /// <summary>
+    /// Machine state template (Reason or MachineStateTemplate not null)
+    /// </summary>
+    IMachineStateTemplate MachineStateTemplate { get; }
 
     /// <summary>
     /// Return a recommended reason score
@@ -82,7 +93,12 @@ namespace Lemoine.Model
     bool Selectable { get; set; }
 
     /// <summary>
-    /// If TRUE, when this reason is selected, the operator must also enter a free detailed entry
+    /// Additional details are not allowed. 
+    /// </summary>
+    bool NoDetails { get; }
+
+    /// <summary>
+    /// If True, when this reason is selected, the operator must also enter a free detailed entry
     /// </summary>
     bool DetailsRequired { get; set; }
 
@@ -117,7 +133,7 @@ namespace Lemoine.Model
     public static IEnumerable<IReasonSelection> GroupSameReason (this IEnumerable<IReasonSelection> reasonSelections)
     {
       return reasonSelections
-        .GroupBy (s => $"{s.Reason.Id}-{s.AlternativeText ?? ""}")
+        .GroupBy (s => $"{s.ClassificationId}-{s.AlternativeText ?? ""}")
         .Select (g => g.OrderByDescending (a => a.ReasonScore).First ());
     }
   }
@@ -140,7 +156,9 @@ namespace Lemoine.Model
     /// <returns></returns>
     public bool Equals (IReasonSelection x, IReasonSelection y)
     {
-      return (x.Reason.Id == y.Reason.Id) && (x.ReasonScore == y.ReasonScore)
+      return (string.Equals (x.ClassificationId, y.ClassificationId, StringComparison.InvariantCultureIgnoreCase))
+        && (x.ReasonScore == y.ReasonScore)
+        && (x.NoDetails == y.NoDetails)
         && (x.DetailsRequired == y.DetailsRequired)
         && string.Equals (x.AlternativeText, y.AlternativeText, StringComparison.InvariantCultureIgnoreCase)
         && ((!x.DynamicData && !y.DynamicData) || !string.IsNullOrEmpty (x.AlternativeText));
@@ -155,10 +173,11 @@ namespace Lemoine.Model
     {
       int hashCode = 0;
       unchecked {
-        hashCode += 1000000007 * obj.Reason.Id;
+        hashCode += 1000000007 * obj.ClassificationId.GetHashCode ();
         hashCode += 1000000009 * obj.ReasonScore.GetHashCode ();
-        hashCode += 1000000011 * obj.DetailsRequired.GetHashCode ();
-        hashCode += 1000000013 * (obj.AlternativeText?.GetHashCode () ?? 0);
+        hashCode += 1000000011 * obj.NoDetails.GetHashCode ();
+        hashCode += 1000000013 * obj.DetailsRequired.GetHashCode ();
+        hashCode += 1000000015 * (obj.AlternativeText?.GetHashCode () ?? 0);
         if (obj.DynamicData) { 
           hashCode += 1000000021;
         }

@@ -86,37 +86,72 @@ namespace Pulse.Web.Reason
           }
           await ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistentAsync (revision);
 
-          IReason reason = null;
-          if (request.ReasonId.HasValue) {
-            reason = await ModelDAOHelper.DAOFactory.ReasonDAO
-              .FindByIdAsync (request.ReasonId.Value);
-            if (reason is null) {
-              log.Error ($"Get: No reason with ID {request.ReasonId.Value}");
+          var range = new UtcDateTimeRange (request.Range);
+          if (!string.IsNullOrEmpty (request.ClassificationId) && request.ClassificationId.StartsWith ("MST", StringComparison.CurrentCultureIgnoreCase)) {
+            if (int.TryParse (request.ClassificationId.Substring ("MST".Length), out var machineStateTemplateId)) {
+              var machineStateTemplate = await ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
+                .FindByIdAsync (machineStateTemplateId);
+              if (machineStateTemplate is null) {
+                log.Error ($"Get: No machine state template with ID {machineStateTemplateId}");
+                transaction.Commit ();
+                return new ErrorDTO ("No machine state template with id " + machineStateTemplateId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+              else {
+                CreateMachineStateTemplateModification (revision, machine, machineStateTemplate, range);
+              }
+            }
+            else {
+              log.Error ($"Get: invalid classification ID {request.ClassificationId}");
               transaction.Commit ();
-              return new ErrorDTO ("No reason with id " + request.ReasonId.Value,
+              return new ErrorDTO ("Invalid classification ID" + request.ClassificationId,
                                    ErrorStatus.WrongRequestParameter);
             }
           }
-
-          string jsonData;
-          if (string.IsNullOrEmpty (request.ReasonDataKey)) {
-            jsonData = null;
-          }
           else {
-            var reasonDataValue = ((JsonElement)request.ReasonDataValue).GetRawText ();
-            jsonData = $$"""
+            int reasonId = 0;
+            if (request.ReasonId.HasValue) {
+              reasonId = request.ReasonId.Value;
+            }
+            else if (!string.IsNullOrEmpty (request.ClassificationId)) {
+              if (!int.TryParse (request.ClassificationId, out reasonId)) {
+                log.Error ($"Get: invalid reason ID {request.ClassificationId}");
+                transaction.Commit ();
+                return new ErrorDTO ("Invalid reason ID" + request.ClassificationId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+            }
+            IReason reason = null;
+            if (0 != reasonId) {
+              reason = await ModelDAOHelper.DAOFactory.ReasonDAO
+                .FindByIdAsync (reasonId);
+              if (reason is null) {
+                log.Error ($"Get: No reason with ID {reasonId}");
+                transaction.Commit ();
+                return new ErrorDTO ("No reason with id " + reasonId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+            }
+
+            string jsonData;
+            if (string.IsNullOrEmpty (request.ReasonDataKey)) {
+              jsonData = null;
+            }
+            else {
+              var reasonDataValue = ((JsonElement)request.ReasonDataValue).GetRawText ();
+              jsonData = $$"""
               {
                 "{{request.ReasonDataKey}}": {{reasonDataValue}}
               }
               """;
+            }
+            CreateReasonModification (revision,
+                                machine,
+                                reason,
+                                request.ReasonScore,
+                                request.ReasonDetails,
+                                range, jsonData);
           }
-          UtcDateTimeRange range = new UtcDateTimeRange (request.Range);
-          CreateModification (revision,
-                              machine,
-                              reason,
-                              request.ReasonScore,
-                              request.ReasonDetails,
-                              range, jsonData);
 
           transaction.Commit ();
         }
@@ -126,7 +161,17 @@ namespace Pulse.Web.Reason
       return new ReasonSaveResponseDTO (revision);
     }
 
-    void CreateModification (IRevision revision, IMachine machine, IReason reason, double? reasonScore, string details, UtcDateTimeRange range, string jsonData)
+    void CreateMachineStateTemplateModification (IRevision revision, IMachine machine, IMachineStateTemplate machineStateTemplate, UtcDateTimeRange range)
+    {
+      var modificationId = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+        .Insert (machine, range, machineStateTemplate);
+
+      var modification = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+        .FindById (modificationId, machine);
+      revision.AddModification (modification);
+    }
+
+    void CreateReasonModification (IRevision revision, IMachine machine, IReason reason, double? reasonScore, string details, UtcDateTimeRange range, string jsonData)
     {
       long modificationId;
       if (null != reason) {
@@ -166,7 +211,7 @@ namespace Pulse.Web.Reason
 
           // Auto-revision by default
           revision = ModelDAOHelper.ModelFactory.CreateRevision ();
-          revision.Application = "Lem_AspService";
+          revision.Application = "AspService";
           revision.IPAddress = GetRequestRemoteIp ();
           var userId = this.GetAuthenticatedUserId ();
           if (userId.HasValue) {
@@ -204,7 +249,7 @@ namespace Pulse.Web.Reason
               jsonData = deserializedResult.ReasonData.Value.GetRawText ();
             }
             foreach (var range in deserializedResult.ExtractRanges ()) {
-              CreateModification (revision,
+              CreateReasonModification (revision,
                                   machine,
                                   reason,
                                   request.ReasonScore,

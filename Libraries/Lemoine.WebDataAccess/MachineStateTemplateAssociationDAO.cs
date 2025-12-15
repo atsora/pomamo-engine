@@ -18,6 +18,20 @@ namespace Lemoine.WebDataAccess
   /// </summary>
   public class MachineStateTemplateAssociationDAO: Lemoine.ModelDAO.IMachineStateTemplateAssociationDAO
   {
+    /// <summary>
+    /// Insert a new row in database with a new machine state template association
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="range"></param>
+    /// <param name="reason"></param>
+    /// <param name="reasonScore"></param>
+    /// <param name="details"></param>
+    /// <returns></returns>
+    public long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate)
+    {
+      throw new NotImplementedException ();
+    }
+
     #region IGenericByMachineDAO implementation
     public Lemoine.Model.IMachineStateTemplateAssociation FindById(long id, IMachine machine)
     {

@@ -14,6 +14,11 @@ namespace Lemoine.ModelDAO
   public interface IMachineStateTemplateAssociationDAO: IGenericByMachineDAO<IMachineStateTemplateAssociation, long>
   {
     /// <summary>
+    /// Insert a new row in database with a new machine state template association
+    /// </summary>
+    long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate);
+
+    /// <summary>
     /// Get all MachineStateTemplateAssociation for a specific machine within a period
     /// Valid segments have:
     /// - their beginning strictly inferior to the end of the period, AND

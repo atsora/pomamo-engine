@@ -24,8 +24,17 @@ namespace Pulse.Web.Reason
   {
     /// <summary>
     /// reason Id
+    /// 
+    /// 0 in case of a machine state template
     /// </summary>
     public int Id { get; set; }
+    
+    /// <summary>
+    /// Classification ID
+    /// 
+    /// Reason ID or MST + machine state template ID
+    /// </summary>
+    public string ClassificationId { get; set; }
 
     /// <summary>
     /// Additional data
@@ -56,6 +65,11 @@ namespace Pulse.Web.Reason
     /// Recommended reason score to apply
     /// </summary>
     public double ReasonScore { get; set; }
+
+    /// <summary>
+    /// Do not allow to set details
+    /// </summary>
+    public bool NoDetails { get; set; }
 
     /// <summary>
     /// Are details required for this reason ?
@@ -116,7 +130,7 @@ namespace Pulse.Web.Reason
       if (null == other) {
         return false;
       }
-      return object.Equals (this.Id, other.Id);
+      return object.Equals (this.ClassificationId, other.ClassificationId);
     }
 
     /// <summary>
@@ -127,7 +141,7 @@ namespace Pulse.Web.Reason
     {
       int hashCode = 0;
       unchecked {
-        hashCode += 1000000007 * this.Id;
+        hashCode += 1000000007 * this.ClassificationId.GetHashCode ();
       }
       return hashCode;
     }
@@ -150,6 +164,7 @@ namespace Pulse.Web.Reason
         var reason = reasonSelection.Reason;
         var reasonSelectionResponseDTO = new ReasonSelectionResponseDTO ();
         reasonSelectionResponseDTO.Id = reason.Id;
+        reasonSelectionResponseDTO.ClassificationId = reasonSelection.ClassificationId;
         if (!string.IsNullOrEmpty (reasonSelection.AlternativeText)) {
           reasonSelectionResponseDTO.Display = reasonSelection.AlternativeText;
           reasonSelectionResponseDTO.LongDisplay = string.IsNullOrEmpty (reasonSelection.AlternativeLongText)
@@ -165,6 +180,7 @@ namespace Pulse.Web.Reason
           : reasonSelection.AlternativeDescription;
         reasonSelectionResponseDTO.Color = reason.Color;
         reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
+        reasonSelectionResponseDTO.NoDetails = reasonSelection.NoDetails;
         reasonSelectionResponseDTO.DetailsRequired = reasonSelection.DetailsRequired;
         reasonSelectionResponseDTO.Data = reasonSelection.Data;
         reasonSelectionResponseDTO.ReasonGroupId = reason.ReasonGroup.Id;

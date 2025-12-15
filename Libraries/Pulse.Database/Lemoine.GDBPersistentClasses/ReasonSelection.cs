@@ -37,6 +37,7 @@ namespace Lemoine.GDBPersistentClasses
     IReason m_reason;
     bool m_selectable = true;
     bool m_detailsRequired = false;
+    bool m_noDetails = false;
     IMachineFilter m_machineFilter = null;
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonSelection).FullName);
@@ -87,6 +88,11 @@ namespace Lemoine.GDBPersistentClasses
     public virtual int Id => m_id;
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string ClassificationId => this.Id.ToString ();
+
+    /// <summary>
     /// Version
     /// </summary>
     public virtual int Version
@@ -125,6 +131,11 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual IMachineStateTemplate MachineStateTemplate => null;
+
+    /// <summary>
     /// Recommended reason score
     /// </summary>
     public virtual double ReasonScore {
@@ -147,6 +158,14 @@ namespace Lemoine.GDBPersistentClasses
       set { m_detailsRequired = value; }
     }
     
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual bool NoDetails {
+      get => m_noDetails;
+      set { m_noDetails = value; }
+    }
+
     /// <summary>
     /// Associated machine filter
     /// 

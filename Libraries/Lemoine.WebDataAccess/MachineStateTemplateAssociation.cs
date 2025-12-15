@@ -31,6 +31,10 @@ namespace Lemoine.WebDataAccess
     {
       get { throw new NotImplementedException (); }
     }
+    public IMachineStateTemplateAssociation Clone (UtcDateTimeRange range)
+    {
+      throw new NotImplementedException ();
+    }
     public void Apply()
     {
       throw new NotImplementedException();

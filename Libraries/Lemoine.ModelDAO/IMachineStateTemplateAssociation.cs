@@ -15,6 +15,13 @@ namespace Lemoine.Model
   public interface IMachineStateTemplateAssociation: IMachineAssociation
   {
     /// <summary>
+    /// Clone a MachineStateTemplateAssociation with a new date/time range
+    /// </summary>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    IMachineStateTemplateAssociation Clone (UtcDateTimeRange range);
+
+    /// <summary>
     /// Reference to the Machine State Template
     /// 
     /// Not null

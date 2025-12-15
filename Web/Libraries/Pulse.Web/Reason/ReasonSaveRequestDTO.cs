@@ -48,6 +48,12 @@ namespace Pulse.Web.Reason
     public int? ReasonId { get; set; }
 
     /// <summary>
+    /// Classification ID: Reason ID or MST + machine state template Id
+    /// </summary>
+    [ApiMember (Name = "ClassificationId", Description = "Reason Id or MST + machine state template Id. If not set, consider ReasonId", ParameterType = "path", DataType = "string", IsRequired = false)]
+    public string ClassificationId { get; set; }
+
+    /// <summary>
     /// Reason data key
     /// </summary>
     [ApiMember (Name = "ReasonDataKey", Description = "If not set, no reason data", ParameterType = "path", DataType = "int", IsRequired = false)]
@@ -97,6 +103,12 @@ namespace Pulse.Web.Reason
     /// </summary>
     [ApiMember (Name = "ReasonId", Description = "If not set, reset the reason", ParameterType = "path", DataType = "int", IsRequired = false)]
     public int? ReasonId { get; set; }
+
+    /// <summary>
+    /// Classification ID: Reason ID or MST + machine state template Id
+    /// </summary>
+    [ApiMember (Name = "ClassificationId", Description = "Reason Id or MST + machine state template Id. If not set, consider ReasonId", ParameterType = "path", DataType = "string", IsRequired = false)]
+    public string ClassificationId { get; set; }
 
     /// <summary>
     /// Reason score to use (default: 100.0)

@@ -24,6 +24,7 @@ namespace Lemoine.Business.Reason
     : IRequest<IEnumerable<IReasonSelection>>
   {
     readonly IMonitoredMachine m_machine;
+    readonly IRole m_role;
     readonly IMachineMode m_machineMode;
     readonly IMachineObservationState m_machineObservationState;
     readonly bool m_includeExtraAutoReasons;
@@ -35,13 +36,14 @@ namespace Lemoine.Business.Reason
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
-    public ReasonSelectionItems (IMonitoredMachine machine, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons, UtcDateTimeRange range)
+    public ReasonSelectionItems (IMonitoredMachine machine, IRole role, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons, UtcDateTimeRange range)
     {
       Debug.Assert (null != machine);
       Debug.Assert (null != machineMode);
       Debug.Assert (null != machineObservationState);
 
       m_machine = machine;
+      m_role = role;
       m_machineMode = machineMode;
       m_machineObservationState = machineObservationState;
       m_includeExtraAutoReasons = includeExtraAutoReasons;
@@ -56,14 +58,14 @@ namespace Lemoine.Business.Reason
     public IEnumerable<IReasonSelection> Get ()
     {
       if (log.IsDebugEnabled) {
-        log.Debug ($"Get: machineId={m_machine.Id} machineModeId={m_machineMode.Id} machineObservationStateId={m_machineObservationState.Id} includeExtraAutoReason={m_includeExtraAutoReasons}");
+        log.Debug ($"Get: machineId={m_machine.Id} roleId={m_role?.Id ?? 0} machineModeId={m_machineMode.Id} machineObservationStateId={m_machineObservationState.Id} includeExtraAutoReason={m_includeExtraAutoReasons}");
       }
 
       IEnumerable<IReasonSelection> reasonSelections = new List<IReasonSelection> ();
       var reasonSelectionExtensions = GetReasonSelectionExtensions (m_machine);
       foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
         var extraReasonSelections = reasonSelectionExtension
-          .GetReasonSelections (m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
+          .GetReasonSelections (m_role, m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
         reasonSelections = reasonSelections
           .Concat (extraReasonSelections);
       }
@@ -81,14 +83,14 @@ namespace Lemoine.Business.Reason
     public async Task<IEnumerable<IReasonSelection>> GetAsync ()
     {
       if (log.IsDebugEnabled) {
-        log.Debug ($"GetAsync: machineId={m_machine.Id} machineModeId={m_machineMode.Id} machineObservationStateId={m_machineObservationState.Id} includeExtraAutoReason={m_includeExtraAutoReasons}");
+        log.Debug ($"GetAsync: machineId={m_machine.Id} role={m_role?.Id ?? 0} machineModeId={m_machineMode.Id} machineObservationStateId={m_machineObservationState.Id} includeExtraAutoReason={m_includeExtraAutoReasons}");
       }
 
       IEnumerable<IReasonSelection> reasonSelections = new List<IReasonSelection> ();
       var reasonSelectionExtensions = await GetReasonSelectionExtensionsAsync (m_machine);
       foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
         var extraReasonSelections = reasonSelectionExtension
-          .GetReasonSelections (m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
+          .GetReasonSelections (m_role, m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
         reasonSelections = reasonSelections
           .Concat (extraReasonSelections);
       }

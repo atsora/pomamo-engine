@@ -19,7 +19,7 @@ namespace Lemoine.GDBPersistentClasses
   /// Persistent class of table MachineStateTemplateAssociation
   /// </summary>
   [Serializable]
-  public class MachineStateTemplateAssociation: MachineAssociation, IMachineStateTemplateAssociation
+  public class MachineStateTemplateAssociation : MachineAssociation, IMachineStateTemplateAssociation
   {
     /// <summary>
     /// Minimum duration of the association when the 'by period' process applies: key
@@ -28,34 +28,31 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Minimum duration of the association when the 'by period' process applies: default value
     /// </summary>
-    static readonly TimeSpan BY_PERIOD_MIN_DURATION_DEFAULT = TimeSpan.FromHours  (4);
+    static readonly TimeSpan BY_PERIOD_MIN_DURATION_DEFAULT = TimeSpan.FromHours (4);
 
     /// <summary>
     /// Default priority for the process machine state template
     /// </summary>
     static readonly string PROCESS_MACHINE_STATE_TEMPLATE_PRIORITY_KEY = "Analysis.ProcessMachineStateTemplate.Priority";
     static readonly int PROCESS_MACHINE_STATE_TEMPLATE_PRIORITY_DEFAULT = 1;
-    
+
     /// <summary>
     /// Create an asynchronous process machine state template, else leave the analysis service manage the uncompleted machine state templates
     /// </summary>
     static readonly string CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_KEY = "Analysis.MachineStateTemplateAssociation.CreateAsyncProcessMachineStateTemplate";
     static readonly bool CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_DEFAULT = false;
-    
-    #region Members
+
     IMachineStateTemplate m_MachineStateTemplate;
     IUser m_user;
     IShift m_shift;
     bool m_force = false;
-    #endregion // Members
-    
-    #region Constructors
+
     /// <summary>
     /// Default constructor
     /// </summary>
     protected MachineStateTemplateAssociation ()
     { }
-    
+
     /// <summary>
     /// Constructor for some existing unit tests
     /// </summary>
@@ -69,7 +66,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       this.MachineStateTemplate = machineStateTemplate;
     }
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -83,7 +80,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       this.MachineStateTemplate = machineStateTemplate;
     }
-    
+
     /// <summary>
     /// Constructor for abstract modifications, that are kept transient
     /// 
@@ -101,17 +98,34 @@ namespace Lemoine.GDBPersistentClasses
     {
       this.MachineStateTemplate = machineStateTemplate;
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
+    /// <summary>
+    /// UTC date/time range of the association
+    /// </summary>
+    [XmlIgnore]
+    public override UtcDateTimeRange Range
+    {
+      get {
+        if (!string.IsNullOrEmpty (this.Dynamic) && this.Dynamic.EndsWith ("+")) {
+          return new UtcDateTimeRange (this.Begin);
+        }
+        else {
+          return base.Range;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Range to use to clone a reason machine association
+    /// </summary>
+    [XmlIgnore]
+    UtcDateTimeRange CloneRange => base.Range;
+
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
     [XmlIgnore]
-    public override string ModificationType
-    {
-      get { return "MachineStateTemplateAssociation"; }
-    }
+    public override string ModificationType => "MachineStateTemplateAssociation";
 
     /// <summary>
     /// Reference to the Machine State Template
@@ -122,8 +136,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IMachineStateTemplate MachineStateTemplate
     {
       get { return m_MachineStateTemplate; }
-      set
-      {
+      set {
         Debug.Assert (null != value);
         if (null == value) {
           log.ErrorFormat ("MachineStateTemplate.set: " +
@@ -133,17 +146,17 @@ namespace Lemoine.GDBPersistentClasses
         m_MachineStateTemplate = value;
       }
     }
-    
+
     /// <summary>
     /// Reference to the Machine Observation State for Xml Serialization
     /// </summary>
-    [XmlElement("MachineStateTemplate")]
+    [XmlElement ("MachineStateTemplate")]
     public virtual MachineStateTemplate XmlSerializationMachineStateTemplate
     {
       get { return this.MachineStateTemplate as MachineStateTemplate; }
       set { this.MachineStateTemplate = value; }
     }
-    
+
     /// <summary>
     /// Reference to the User, according the Machine Observation State
     /// </summary>
@@ -153,12 +166,12 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_user; }
       set { m_user = value; }
     }
-    
+
     /// <summary>
     /// Reference to the User, according the Machine Observation State
     /// for Xml Serialization
     /// </summary>
-    [XmlElement("User")]
+    [XmlElement ("User")]
     public virtual User XmlSerializationUser
     {
       get { return this.User as User; }
@@ -174,18 +187,18 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_shift; }
       set { m_shift = value; }
     }
-    
+
     /// <summary>
     /// Reference to the Shift
     /// for Xml Serialization
     /// </summary>
-    [XmlElement("Shift")]
+    [XmlElement ("Shift")]
     public virtual Shift XmlSerializationShift
     {
       get { return this.Shift as Shift; }
       set { this.Shift = value; }
     }
-    
+
     /// <summary>
     /// Force re-building the machine state template
     /// 
@@ -197,14 +210,27 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_force; }
       set { m_force = value; }
     }
-    #endregion // Getters / Setters
-    
+
+    /// <summary>
+    /// Clone a MachineStateTemplateAssociation with a new date/time range
+    /// </summary>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public virtual IMachineStateTemplateAssociation Clone (UtcDateTimeRange range)
+    {
+      var clone = new MachineStateTemplateAssociation (this.Machine, this.MachineStateTemplate, range);
+      clone.Option = this.Option;
+      clone.Dynamic = this.Dynamic;
+      clone.Priority = this.StatusPriority;
+      return clone;
+    }
+
     #region MachineAssociation implementation
     /// <summary>
     /// <see cref="PeriodAssociation.ConvertToSlot" />
     /// </summary>
     /// <returns></returns>
-    public override TSlot ConvertToSlot<TSlot>()
+    public override TSlot ConvertToSlot<TSlot> ()
     {
       if (IsStopProcess ()) { // Stop must be processed first
         System.Diagnostics.Debug.Assert (false);
@@ -215,7 +241,7 @@ namespace Lemoine.GDBPersistentClasses
           GenericMachineRangeSlot.Create (typeof (TSlot), this.Machine, new UtcDateTimeRange (this.Begin, this.End)) as TSlot;
         slot.Consolidated = false;
 
-        if (slot is ObservationStateSlot ) {
+        if (slot is ObservationStateSlot) {
           var observationStateSlot = slot as ObservationStateSlot;
           Debug.Assert (null == observationStateSlot.MachineObservationState);
           observationStateSlot.MachineStateTemplate = this.MachineStateTemplate;
@@ -229,14 +255,14 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    
+
     /// <summary>
     /// <see cref="PeriodAssociation.MergeDataWithOldSlot" />
     /// </summary>
     /// <param name="oldSlot"></param>
     /// <param name="range">merge period range</param>
     /// <returns></returns>
-    public override TSlot MergeDataWithOldSlot<TSlot>(TSlot oldSlot,
+    public override TSlot MergeDataWithOldSlot<TSlot> (TSlot oldSlot,
                                                       UtcDateTimeRange range)
     {
       if (IsStopProcess ()) { // Stop must be processed first
@@ -246,16 +272,16 @@ namespace Lemoine.GDBPersistentClasses
       else { // Stop already processed
         Debug.Assert (null != oldSlot);
         Debug.Assert (this.Machine.Equals ((oldSlot as IPartitionedByMachine).Machine));
-        
+
         if (oldSlot is ObservationStateSlot) {
           IObservationStateSlot oldObservationStateSlot =
             oldSlot as ObservationStateSlot;
           IObservationStateSlot newObservationStateSlot =
-            (IObservationStateSlot) oldObservationStateSlot.Clone ();
+            (IObservationStateSlot)oldObservationStateSlot.Clone ();
 
           Debug.Assert (object.Equals (newObservationStateSlot.Machine,
                                        this.Machine));
-          
+
           if (!object.Equals (oldObservationStateSlot.MachineStateTemplate, this.MachineStateTemplate)) {
             // change of MachineStateTemplate
             newObservationStateSlot.MachineStateTemplate = this.MachineStateTemplate;
@@ -267,7 +293,7 @@ namespace Lemoine.GDBPersistentClasses
             newObservationStateSlot.Production = null;
           }
           // Merge user and shift (is it pertinent ?)
-          newObservationStateSlot.User = ( (null == this.User) && this.MachineStateTemplate.UserRequired)
+          newObservationStateSlot.User = ((null == this.User) && this.MachineStateTemplate.UserRequired)
             ? oldObservationStateSlot.User
             : this.User;
           newObservationStateSlot.Shift = this.Shift;
@@ -283,7 +309,7 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
     #endregion // MachineAssociation implementation
-    
+
     #region Modification implementation
     /// <summary>
     /// Mark the modification as completed (Done) or partially completed (InProgress)
@@ -293,31 +319,31 @@ namespace Lemoine.GDBPersistentClasses
     protected override void MarkAsCompleted (string message, DateTime? effectiveEnd)
     {
       if (null == this.Parent) { // Only if that modification is the main one, create or not a processmachinestatetemplate modification
-      bool synchronous = this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.Synchronous);
-      if (synchronous
-          || Lemoine.Info.ConfigSet.LoadAndGet<bool> (CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_KEY,
-                                                      CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_DEFAULT)) {
-        UtcDateTimeRange applicationRange =
-          new UtcDateTimeRange (this.Range.Intersects (new UtcDateTimeRange (new LowerBound<DateTime> (null),
-                                                                             DateTime.UtcNow)));
-        if (!applicationRange.IsEmpty ()) {
-          ProcessMachineStateTemplate subModification =
-            new ProcessMachineStateTemplate (this.Machine, applicationRange);
-          (new ProcessMachineStateTemplateDAO ()).MakePersistent (subModification);
-          if (synchronous) {
-            subModification.Parent = this.MainModification ?? this;
-            subModification.Priority = this.StatusPriority;
-          }
-          else { // Not really a sub-modification but an independent modification so that it is processed asynchronously
-            subModification.Priority = Lemoine.Info.ConfigSet
-              .LoadAndGet<int> (PROCESS_MACHINE_STATE_TEMPLATE_PRIORITY_KEY,
-                                PROCESS_MACHINE_STATE_TEMPLATE_PRIORITY_DEFAULT);
-            subModification.Auto = true; // so that it is deleted once processed
+        bool synchronous = this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.Synchronous);
+        if (synchronous
+            || Lemoine.Info.ConfigSet.LoadAndGet<bool> (CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_KEY,
+                                                        CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_DEFAULT)) {
+          UtcDateTimeRange applicationRange =
+            new UtcDateTimeRange (this.Range.Intersects (new UtcDateTimeRange (new LowerBound<DateTime> (null),
+                                                                               DateTime.UtcNow)));
+          if (!applicationRange.IsEmpty ()) {
+            ProcessMachineStateTemplate subModification =
+              new ProcessMachineStateTemplate (this.Machine, applicationRange);
+            (new ProcessMachineStateTemplateDAO ()).MakePersistent (subModification);
+            if (synchronous) {
+              subModification.Parent = this.MainModification ?? this;
+              subModification.Priority = this.StatusPriority;
+            }
+            else { // Not really a sub-modification but an independent modification so that it is processed asynchronously
+              subModification.Priority = Lemoine.Info.ConfigSet
+                .LoadAndGet<int> (PROCESS_MACHINE_STATE_TEMPLATE_PRIORITY_KEY,
+                                  PROCESS_MACHINE_STATE_TEMPLATE_PRIORITY_DEFAULT);
+              subModification.Auto = true; // so that it is deleted once processed
+            }
           }
         }
       }
-      }
-      
+
       base.MarkAsCompleted (message, effectiveEnd);
     }
 
@@ -330,7 +356,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (!IsAnalysisCompleted ());
 
       Debug.Assert (null != this.MachineStateTemplate);
-      
+
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
@@ -338,37 +364,37 @@ namespace Lemoine.GDBPersistentClasses
                          "{0} " +
                          "=> finish in error",
                          message);
-        AddAnalysisLog(LogLevel.ERROR, message);
+        AddAnalysisLog (LogLevel.ERROR, message);
         MarkAsError ();
         return;
       }
-      
+
       if ((AnalysisStatus.New == this.AnalysisStatus) && (null == this.Parent)
         && (null != this.MachineStateTemplate) && (LinkDirection.None != this.MachineStateTemplate.LinkOperationDirection)) {
         // Create the associated link operation modification if applicable (not on a sub-modification)
-          IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
-            .FindById (this.Machine.Id);
-          if (null == monitoredMachine) {
-            log.WarnFormat ("MakeAnalysis: " +
-                            "no monitored machine with ID {0} " +
-                            "=> do not process any LinkOperation",
-                            this.Machine.Id);
-          }
-          else {
-            log.DebugFormat ("MakeAnalysis: " +
-                             "create link operation {0}",
-                             this.MachineStateTemplate.LinkOperationDirection);
-            ILinkOperation linkOperation = ModelDAOHelper.ModelFactory
-              .CreateLinkOperation (monitoredMachine, this.MachineStateTemplate.LinkOperationDirection,
-                                    this.Range);
-            ModelDAOHelper.DAOFactory.LinkOperationDAO.MakePersistent (linkOperation);
-            linkOperation.Parent = this.MainModification ?? this;
-            linkOperation.Priority = this.Priority;
+        IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+          .FindById (this.Machine.Id);
+        if (null == monitoredMachine) {
+          log.WarnFormat ("MakeAnalysis: " +
+                          "no monitored machine with ID {0} " +
+                          "=> do not process any LinkOperation",
+                          this.Machine.Id);
         }
-            MarkAsInProgress (null);
-            return;
-          }
-      
+        else {
+          log.DebugFormat ("MakeAnalysis: " +
+                           "create link operation {0}",
+                           this.MachineStateTemplate.LinkOperationDirection);
+          ILinkOperation linkOperation = ModelDAOHelper.ModelFactory
+            .CreateLinkOperation (monitoredMachine, this.MachineStateTemplate.LinkOperationDirection,
+                                  this.Range);
+          ModelDAOHelper.DAOFactory.LinkOperationDAO.MakePersistent (linkOperation);
+          linkOperation.Parent = this.MainModification ?? this;
+          linkOperation.Priority = this.Priority;
+        }
+        MarkAsInProgress (null);
+        return;
+      }
+
       if (IsStopProcess ()) { // Stop must be processed first
         UtcDateTimeRange range = new UtcDateTimeRange (this.Range.Lower, GetStop ());
         Debug.Assert (this.Range.ContainsRange (range));
@@ -385,7 +411,7 @@ namespace Lemoine.GDBPersistentClasses
         MarkAsCompleted ("", null);
         return;
       }
-      
+
       if (!IsProcessByPeriod ()) { // Apply directly the changes, do not split it by period
         // Get the adjusted step range
         UtcDateTimeRange range = GetNotAppliedRange ();
@@ -402,14 +428,14 @@ namespace Lemoine.GDBPersistentClasses
         association.Shift = this.Shift;
         association.Caller = this;
         association.Analyze ();
-        
+
         // Analysis is done
         MarkAsCompleted ("Cache/ClearDomainByMachine/MachineStateTemplateAssociation/" + this.Machine.Id + "?Broadcast=true",
                          (DateTime?)range.Upper); // => InProgress or Done
       }
       else { // Try to split the process by periods where a change is really required
         IEnumerable<IWithRange> noChangeRequiredSlots;
-        if ( (null != this.Shift) || (null != this.User)) {
+        if ((null != this.Shift) || (null != this.User)) {
           noChangeRequiredSlots = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindMatchingMachineStateTemplateAssociation (this.Machine, this.Range, this.MachineStateTemplate,
                                                           this.Shift, this.User)
@@ -461,7 +487,7 @@ namespace Lemoine.GDBPersistentClasses
           association.Priority = this.StatusPriority;
           associationCreated = true;
         }
-        
+
         if (!associationCreated) {
           log.DebugFormat ("MakeAnalysis: " +
                            "no change was required");
@@ -469,7 +495,7 @@ namespace Lemoine.GDBPersistentClasses
         MarkAsCompleted ("", null);
       }
     }
-    
+
     /// <summary>
     /// Apply the modifications
     /// 
@@ -494,7 +520,7 @@ namespace Lemoine.GDBPersistentClasses
         association.Apply ();
         return;
       }
-      
+
       if (!this.IsProcessByPeriod ()) { // Apply directly the changes, do not split it by period
         this.Analyze ();
       }
@@ -553,7 +579,7 @@ namespace Lemoine.GDBPersistentClasses
     void Analyze ()
     {
       Debug.Assert (!IsStopProcess ());
-      
+
       {
         ObservationStateSlotDAO observationStateSlotDAO = new ObservationStateSlotDAO ();
         observationStateSlotDAO.Caller = this;
@@ -566,7 +592,7 @@ namespace Lemoine.GDBPersistentClasses
       return (!this.Option.HasValue || !this.Option.Value.HasFlag (AssociationOption.NoStop))
         && this.MachineStateTemplate.Stops.Any ();
     }
-    
+
     bool IsProcessByPeriod ()
     {
       if (this.Range.Duration.HasValue
@@ -576,11 +602,11 @@ namespace Lemoine.GDBPersistentClasses
       }
       return !this.Force && (!this.Option.HasValue || !this.Option.Value.HasFlag (AssociationOption.NotByPeriod));
     }
-    
+
     UpperBound<DateTime> GetStop ()
     {
       UpperBound<DateTime> end = this.End;
-      
+
       foreach (IMachineStateTemplateStop stop in this.MachineStateTemplate.Stops) {
         if (!this.Begin.HasValue) {
           // No begin date/time, stops can't be processed
@@ -607,7 +633,7 @@ namespace Lemoine.GDBPersistentClasses
                              "infinite loop is detected");
             break;
           }
-          
+
           if (stop.WeekDays.HasFlagDayOfWeek (currentDay.DayOfWeek)) { // Day of week is ok
             // Compute the potential stop date/time
             DateTime stopDateTime = currentDay;
@@ -629,10 +655,10 @@ namespace Lemoine.GDBPersistentClasses
           currentDay = currentDay.AddDays (1);
         }
       }
-      
+
       return end;
     }
-    
+
     /// <summary>
     /// Get the impacted activity analysis
     /// so that the activity analysis makes a pause
@@ -645,7 +671,7 @@ namespace Lemoine.GDBPersistentClasses
       return list;
     }
     #endregion // Modification implementation
-    
+
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>

@@ -111,7 +111,7 @@ namespace Pulse.Web.Reason
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public override object GetWithoutCache (ReasonSelectionRequestDTO request)
+    public async override Task<object> Get (ReasonSelectionRequestDTO request)
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         int machineId = request.MachineId;
@@ -121,6 +121,18 @@ namespace Pulse.Web.Reason
           log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
+        }
+
+        var roleKey = request.RoleKey;
+        IRole role = null;
+        if (!string.IsNullOrEmpty (roleKey)) {
+          role = await ModelDAOHelper.DAOFactory.RoleDAO
+            .FindByKeyAsync (roleKey);
+          if (role is null) {
+            log.Error ($"GetWithoutCache: unknown role with ID {roleKey}");
+            return new ErrorDTO ("No role with the specified key",
+                                 ErrorStatus.WrongRequestParameter);
+          }
         }
 
         UtcDateTimeRange range;
@@ -142,7 +154,7 @@ namespace Pulse.Web.Reason
           .Select (reasonSlot => new ReasonSelectionKey (reasonSlot.MachineMode, reasonSlot.MachineObservationState))
           .Distinct ();
 
-        return BuildResponseDTO (machine, reasonSelectionKeys, reasonSlots);
+        return BuildResponseDTO (machine, role, reasonSelectionKeys, reasonSlots);
       }
     }
 
@@ -165,6 +177,18 @@ namespace Pulse.Web.Reason
                                ErrorStatus.WrongRequestParameter);
         }
 
+        var roleKey = request.RoleKey;
+        IRole role = null;
+        if (!string.IsNullOrEmpty (roleKey)) {
+          role = await ModelDAOHelper.DAOFactory.RoleDAO
+            .FindByKeyAsync (roleKey);
+          if (role is null) {
+            log.Error ($"GetWithoutCache: unknown role with ID {roleKey}");
+            return new ErrorDTO ("No role with the specified key",
+                                 ErrorStatus.WrongRequestParameter);
+          }
+        }
+        
         // 2- Get data (= one period or more )
         // Ranges
         RangesPostDTO deserializedResult = PostDTO.Deserialize<RangesPostDTO> (m_body);
@@ -181,11 +205,11 @@ namespace Pulse.Web.Reason
           reasonSelectionKeys = reasonSelectionKeys.Union (newReasonSelectionKeys);
         }
 
-        return BuildResponseDTO (machine, reasonSelectionKeys, reasonSlots);
+        return BuildResponseDTO (machine, role, reasonSelectionKeys, reasonSlots);
       }
     }
 
-    object BuildResponseDTO (IMonitoredMachine machine, IEnumerable<ReasonSelectionKey> reasonSelectionKeys, IEnumerable<IReasonSlot> reasonSlots)
+    object BuildResponseDTO (IMonitoredMachine machine, IRole role, IEnumerable<ReasonSelectionKey> reasonSelectionKeys, IEnumerable<IReasonSlot> reasonSlots)
     {
       var reasonSelectionEqualityComparer = new ReasonSelectionReasonEqualityComparer ();
 
@@ -193,7 +217,7 @@ namespace Pulse.Web.Reason
 
       IEnumerable<IReasonSelection> reasonSelections = null;
       foreach (var reasonSlot in reasonSlots) {
-        var nextExtraReasonSelections = GetReasonSelections (machine, reasonSlot, isExtraAutoReasons)
+        var nextExtraReasonSelections = GetReasonSelections (machine, role, reasonSlot, isExtraAutoReasons)
           .Where (s => reasonSlot.ReasonScore <= s.ReasonScore);
         if (null == reasonSelections) {
           reasonSelections = nextExtraReasonSelections;
@@ -231,11 +255,10 @@ namespace Pulse.Web.Reason
       }
     }
 
-    IEnumerable<IReasonSelection> GetReasonSelections (IMonitoredMachine monitoredMachine, IReasonSlot reasonSlot, bool includeExtraAutoReasons)
+    IEnumerable<IReasonSelection> GetReasonSelections (IMonitoredMachine monitoredMachine, IRole role, IReasonSlot reasonSlot, bool includeExtraAutoReasons)
     {
-      var request = new Lemoine.Business.Reason.ReasonSelectionItems (monitoredMachine, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons, reasonSlot.DateTimeRange);
-      return Lemoine.Business.ServiceProvider
-        .Get (request);
+      var request = new Lemoine.Business.Reason.ReasonSelectionItems (monitoredMachine, role, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons, reasonSlot.DateTimeRange);
+      return Lemoine.Business.ServiceProvider.Get (request);
     }
 
     #region IBodySupport
