@@ -77,7 +77,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     /// <param name="machineObservationState"></param>
     /// <param name="includeExtraAutoReasons"></param>
     /// <returns></returns>
-    public IEnumerable<IReasonSelection> GetReasonSelections (UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
+    public IEnumerable<IReasonSelection> GetReasonSelections (IRole role, UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
       => GetPossibleReasonSelections (machineMode, machineObservationState, includeExtraAutoReasons);
 
     /// <summary>

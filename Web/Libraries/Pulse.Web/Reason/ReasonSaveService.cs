@@ -226,40 +226,84 @@ namespace Pulse.Web.Reason
           }
           ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistent (revision);
 
-          IReason reason = null;
-          if (request.ReasonId.HasValue) {
-            reason = await ModelDAOHelper.DAOFactory.ReasonDAO
-              .FindByIdAsync (request.ReasonId.Value);
-            if (null == reason) {
-              log.Error ($"Get: No reason with ID {request.ReasonId.Value}");
+          if (!string.IsNullOrEmpty (request.ClassificationId) && request.ClassificationId.StartsWith ("MST", StringComparison.CurrentCultureIgnoreCase)) {
+            if (int.TryParse (request.ClassificationId.Substring ("MST".Length), out var machineStateTemplateId)) {
+              var machineStateTemplate = await ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
+                .FindByIdAsync (machineStateTemplateId);
+              if (machineStateTemplate is null) {
+                log.Error ($"Get: No machine state template with ID {machineStateTemplateId}");
+                transaction.Commit ();
+                return new ErrorDTO ("No machine state template with id " + machineStateTemplateId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+              else {
+                try {
+                  var deserializedResult = PostDTO.Deserialize<ReasonSavePostDTO> (m_body);
+                  foreach (var range in deserializedResult.ExtractRanges ()) {
+                    CreateMachineStateTemplateModification (revision, machine, machineStateTemplate, range);
+                  }
+                }
+                catch (Exception ex) {
+                  log.Error ($"Post: exception in deserialization or modification", ex);
+                  throw;
+                }
+              }
+            }
+            else {
+              log.Error ($"Get: invalid classification ID {request.ClassificationId}");
               transaction.Commit ();
-              return new ErrorDTO ("No reason with id " + request.ReasonId.Value,
+              return new ErrorDTO ("Invalid classification ID" + request.ClassificationId,
                                    ErrorStatus.WrongRequestParameter);
             }
           }
+          else {
+            int reasonId = 0;
+            if (request.ReasonId.HasValue) {
+              reasonId = request.ReasonId.Value;
+            }
+            else if (!string.IsNullOrEmpty (request.ClassificationId)) {
+              if (!int.TryParse (request.ClassificationId, out reasonId)) {
+                log.Error ($"Get: invalid reason ID {request.ClassificationId}");
+                transaction.Commit ();
+                return new ErrorDTO ("Invalid reason ID" + request.ClassificationId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+            }
+            IReason reason = null;
+            if (0 != reasonId) {
+              reason = await ModelDAOHelper.DAOFactory.ReasonDAO
+                .FindByIdAsync (reasonId);
+              if (reason is null) {
+                log.Error ($"Get: No reason with ID {reasonId}");
+                transaction.Commit ();
+                return new ErrorDTO ("No reason with id " + reasonId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+            }
 
-          // Ranges + jsonData
-          try {
-            var deserializedResult = PostDTO.Deserialize<ReasonSavePostDTO> (m_body);
-            string jsonData;
-            if (deserializedResult.ReasonData is null) {
-              jsonData = null;
+            // Ranges + jsonData
+            try {
+              var deserializedResult = PostDTO.Deserialize<ReasonSavePostDTO> (m_body);
+              string jsonData;
+              if (deserializedResult.ReasonData is null) {
+                jsonData = null;
+              }
+              else {
+                jsonData = deserializedResult.ReasonData.Value.GetRawText ();
+              }
+              foreach (var range in deserializedResult.ExtractRanges ()) {
+                CreateReasonModification (revision,
+                                    machine,
+                                    reason,
+                                    request.ReasonScore,
+                                    request.ReasonDetails,
+                                    range, jsonData);
+              }
             }
-            else {
-              jsonData = deserializedResult.ReasonData.Value.GetRawText ();
+            catch (Exception ex) {
+              log.Error ($"Post: exception in deserialization or modification", ex);
+              throw;
             }
-            foreach (var range in deserializedResult.ExtractRanges ()) {
-              CreateReasonModification (revision,
-                                  machine,
-                                  reason,
-                                  request.ReasonScore,
-                                  request.ReasonDetails,
-                                  range, jsonData);
-            }
-          }
-          catch (Exception ex) {
-            log.Error ($"Post: exception in deserialization or modification", ex);
-            throw;
           }
 
           transaction.Commit ();

@@ -3,16 +3,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Lemoine.Core.Log;
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
+using Lemoine.Web;
 using Pulse.Web.CommonResponseDTO;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Pulse.Web.Reason
 {
@@ -22,13 +23,15 @@ namespace Pulse.Web.Reason
   [Api ("ReasonSelection Response DTO")]
   public class ReasonSelectionResponseDTO
   {
+    ILog log = LogManager.GetLogger<ReasonSelectionResponseDTO> ();
+
     /// <summary>
     /// reason Id
     /// 
     /// 0 in case of a machine state template
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Classification ID
     /// 
@@ -153,6 +156,8 @@ namespace Pulse.Web.Reason
   /// </summary>
   public class ReasonSelectionResponseDTOAssembler : IGenericDTOAssembler<ReasonSelectionResponseDTO, Lemoine.Model.IReasonSelection>
   {
+    ILog log = LogManager.GetLogger<ReasonSelectionResponseDTOAssembler> ();
+
     /// <summary>
     /// ReasonSelectionDTO assembler
     /// </summary>
@@ -162,8 +167,9 @@ namespace Pulse.Web.Reason
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         var reason = reasonSelection.Reason;
+        var machineStateTemplate = reasonSelection.MachineStateTemplate;
         var reasonSelectionResponseDTO = new ReasonSelectionResponseDTO ();
-        reasonSelectionResponseDTO.Id = reason.Id;
+        reasonSelectionResponseDTO.Id = reason?.Id ?? 0;
         reasonSelectionResponseDTO.ClassificationId = reasonSelection.ClassificationId;
         if (!string.IsNullOrEmpty (reasonSelection.AlternativeText)) {
           reasonSelectionResponseDTO.Display = reasonSelection.AlternativeText;
@@ -171,24 +177,48 @@ namespace Pulse.Web.Reason
             ? reasonSelection.AlternativeText
             : reasonSelection.AlternativeLongText;
         }
-        else {
+        else if (null != reason) {
           reasonSelectionResponseDTO.Display = reason.Display;
           reasonSelectionResponseDTO.LongDisplay = reason.LongDisplay;
         }
-        reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
-          ? reason.DescriptionOrTranslation
-          : reasonSelection.AlternativeDescription;
-        reasonSelectionResponseDTO.Color = reason.Color;
+        else if (null != machineStateTemplate) {
+          reasonSelectionResponseDTO.Display = machineStateTemplate.Display;
+          reasonSelectionResponseDTO.LongDisplay = machineStateTemplate.Display;
+        }
+        else {
+          log.Fatal ($"Assemble: reason or machineStateTemplate must not be null");
+          throw new InvalidOperationException ("Assemble: reason and machineStateTemplate are null");
+        }
+        if (null != reason) {
+          reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
+              ? reason.DescriptionOrTranslation
+              : reasonSelection.AlternativeDescription;
+          reasonSelectionResponseDTO.Color = reason.Color;
+        }
+        else if (null != machineStateTemplate) {
+          reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
+            ? ""
+            : reasonSelection.AlternativeDescription;
+          reasonSelectionResponseDTO.Color = ColorGenerator.GetColor ("MachineStateTemplate", machineStateTemplate.Id);
+          // TODO: store the color
+        }
+        else {
+          log.Fatal ($"Assemble: reason or machineStateTemplate must not be null");
+          throw new InvalidOperationException ("Assemble: reason and machineStateTemplate are null");
+        }
+
+        var reasonGroup = reasonSelection.ReasonGroup;
+        reasonSelectionResponseDTO.ReasonGroupId = reasonGroup.Id;
+        // The extensions may not initialize the reason group
+        reasonGroup = ModelDAOHelper.DAOFactory.ReasonGroupDAO.FindById (reasonGroup.Id);
+        reasonSelectionResponseDTO.ReasonGroupDisplay = reasonGroup.Display;
+        reasonSelectionResponseDTO.ReasonGroupLongDisplay = reasonGroup.LongDisplay;
+        reasonSelectionResponseDTO.ReasonGroupDescription = reasonGroup.DescriptionOrTranslation;
+
         reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
         reasonSelectionResponseDTO.NoDetails = reasonSelection.NoDetails;
         reasonSelectionResponseDTO.DetailsRequired = reasonSelection.DetailsRequired;
         reasonSelectionResponseDTO.Data = reasonSelection.Data;
-        reasonSelectionResponseDTO.ReasonGroupId = reason.ReasonGroup.Id;
-        // The extensions may not initialize the reason group
-        var reasonGroup = ModelDAOHelper.DAOFactory.ReasonGroupDAO.FindById (reason.ReasonGroup.Id);
-        reasonSelectionResponseDTO.ReasonGroupDisplay = reasonGroup.Display;
-        reasonSelectionResponseDTO.ReasonGroupLongDisplay = reasonGroup.LongDisplay;
-        reasonSelectionResponseDTO.ReasonGroupDescription = reasonGroup.DescriptionOrTranslation;
         return reasonSelectionResponseDTO;
       }
     }

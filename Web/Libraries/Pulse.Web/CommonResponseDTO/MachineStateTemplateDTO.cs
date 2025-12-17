@@ -7,12 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Lemoine.Core.Log;
-#if NSERVICEKIT
-using NServiceKit.ServiceHost;
-#else // !NSERVICEKIT
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-#endif // NSERVICEKIT
 using Lemoine.Web;
 
 namespace Pulse.Web.CommonResponseDTO

@@ -130,8 +130,11 @@ namespace Lemoine.Business.Reason
       var reasonSelectionExtensions = Lemoine.Business.ServiceProvider
         .Get (reasonSelectionExtensionsRequest);
       foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
-        var reasonSelections = reasonSelectionExtension.GetReasonSelections (reasonSlot.DateTimeRange, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons: true);
-        IEnumerable<IReason> reasons = reasonSelections.Select (reasonSelection => reasonSelection.Reason);
+        // no restriction on role
+        var reasonSelections = reasonSelectionExtension.GetReasonSelections (null, reasonSlot.DateTimeRange, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons: true);
+        IEnumerable<IReason> reasons = reasonSelections
+          .Where (reasonSelection => null != reasonSelection.Reason)
+          .Select (reasonSelection => reasonSelection.Reason);
         m_selectableReasons.UnionWith (reasons);
       }
       

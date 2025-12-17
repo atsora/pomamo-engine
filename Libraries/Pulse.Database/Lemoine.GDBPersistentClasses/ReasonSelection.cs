@@ -95,24 +95,17 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Version
     /// </summary>
-    public virtual int Version
-    {
-      get { return this.m_version; }
-    }
+    public virtual int Version => m_version;
 
     /// <summary>
     /// Reference to the Machine Mode
     /// </summary>
-    public virtual IMachineMode MachineMode {
-      get { return m_machineMode; }
-    }
-    
+    public virtual IMachineMode MachineMode => m_machineMode;
+
     /// <summary>
     /// Reference to the Machine Observation State
     /// </summary>
-    public virtual IMachineObservationState MachineObservationState {
-      get { return m_machineObservationState; }
-    }
+    public virtual IMachineObservationState MachineObservationState => m_machineObservationState;
     
     /// <summary>
     /// Reference to the Reason
@@ -136,11 +129,14 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IMachineStateTemplate MachineStateTemplate => null;
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual IReasonGroup ReasonGroup => this.Reason.ReasonGroup;
+
+    /// <summary>
     /// Recommended reason score
     /// </summary>
-    public virtual double ReasonScore {
-      get { return Lemoine.Info.ConfigSet.LoadAndGet<double> (DEFAULT_MANUAL_SCORE_KEY, DEFAULT_MANUAL_SCORE_DEFAULT); }
-    }
+    public virtual double ReasonScore => Lemoine.Info.ConfigSet.LoadAndGet<double> (DEFAULT_MANUAL_SCORE_KEY, DEFAULT_MANUAL_SCORE_DEFAULT);
 
     /// <summary>
     /// Can this reason be selected by the user ? 

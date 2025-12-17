@@ -83,6 +83,11 @@ namespace Lemoine.Model
     IMachineStateTemplate MachineStateTemplate { get; }
 
     /// <summary>
+    /// Associated reason group (not null)
+    /// </summary>
+    IReasonGroup ReasonGroup { get;  }
+
+    /// <summary>
     /// Return a recommended reason score
     /// </summary>
     double ReasonScore { get; }

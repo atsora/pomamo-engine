@@ -98,7 +98,7 @@ namespace Lemoine.Business.Reason
     }
 
     bool ExistsTimeIndependentHigherScore (IReasonSelection a, IEnumerable<IReasonSelection> others)
-      => others.Any (b => !b.TimeDependent && !b.DynamicData && (b.ReasonScore >= a.ReasonScore) && (b.Reason.Id == a.Reason.Id) );
+      => others.Any (b => !b.TimeDependent && !b.DynamicData && (b.ReasonScore >= a.ReasonScore) && string.Equals (b.ClassificationId, a.ClassificationId, StringComparison.CurrentCultureIgnoreCase));
 
     IEnumerable<IReasonSelectionExtension> GetReasonSelectionExtensions (IMonitoredMachine machine)
     {

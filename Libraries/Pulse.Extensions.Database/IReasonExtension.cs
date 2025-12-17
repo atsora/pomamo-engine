@@ -212,6 +212,8 @@ namespace Pulse.Extensions.Database
   /// </summary>
   public class ExtraReasonSelection : IReasonSelection
   {
+    ILog log = LogManager.GetLogger<ExtraReasonSelection> ();
+
     /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
     /// </summary>
@@ -261,6 +263,8 @@ namespace Pulse.Extensions.Database
 
     /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// 
+    /// Not null here
     /// </summary>
     public IReason Reason
     {
@@ -271,6 +275,11 @@ namespace Pulse.Extensions.Database
     /// <see cref="IReasonSelection"/>
     /// </summary>
     public IMachineStateTemplate MachineStateTemplate => null;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public IReasonGroup ReasonGroup => this.Reason.ReasonGroup;
 
     /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
@@ -326,12 +335,29 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="machineMode"></param>
-    /// <param name="machineObservationState"></param>
-    /// <param name="reason"></param>
+    /// <param name="machineMode">not null</param>
+    /// <param name="machineObservationState">not null</param>
+    /// <param name="reason">not null</param>
     /// <param name="reasonScore"></param>
     public ExtraReasonSelection (IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, string alternativeText = null, IDictionary<string, object> data = null, bool timeDependent = false, bool additionalData = false)
     {
+      Debug.Assert (null != machineMode);
+      Debug.Assert (null != machineObservationState);
+      Debug.Assert (null != reason);
+
+      if (machineMode is null) {
+        log.Fatal ($"ExtraReasonSelection: machineMode is null");
+        throw new ArgumentNullException ("machineMode");
+      }
+      if (machineObservationState is null) {
+        log.Fatal ($"ExtraReasonSelection: machineObervationState is null");
+        throw new ArgumentNullException ("machineObservationState");
+      }
+      if (reason is null) {
+        log.Fatal ($"ExtraReasonSelection: reason is null");
+        throw new ArgumentNullException ("reason");
+      }
+
       this.MachineMode = machineMode;
       this.MachineObservationState = machineObservationState;
       this.Reason = reason;

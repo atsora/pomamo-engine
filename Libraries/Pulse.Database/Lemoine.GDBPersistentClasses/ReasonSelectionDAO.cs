@@ -271,6 +271,7 @@ namespace Lemoine.GDBPersistentClasses
         .Fetch (SelectMode.Fetch, "Reason")
         .Fetch (SelectMode.Fetch, "Reason.ReasonGroup")
         .List<IReasonSelection>()
+        .Where (s => null != s.Reason)
         .Select (s => s.Reason)
         .Distinct ();
     }
