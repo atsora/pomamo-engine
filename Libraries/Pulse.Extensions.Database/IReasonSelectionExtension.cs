@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -27,13 +28,14 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// Try to get additional reason selections at the specified date/time range
     /// </summary>
-    /// <param name="role"></param>
+    /// <param name="machine">not null</param>
+    /// <param name="role">nullable</param>
     /// <param name="range"></param>
     /// <param name="machineMode"></param>
     /// <param name="machineObservationState"></param>
     /// <param name="includeExtraAutoReasons">include in the reason selections the extra auto-reasons, else only consider the manual reasons</param>
     /// <returns></returns>
-    IEnumerable<IReasonSelection> GetReasonSelections (IRole role, UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons);
+    IEnumerable<IReasonSelection> GetReasonSelections (IMachine machine, IRole role, UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons);
 
     /// <summary>
     /// Return all the reason selections that might be returned, at any time

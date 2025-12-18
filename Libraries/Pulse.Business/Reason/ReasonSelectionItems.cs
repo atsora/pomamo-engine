@@ -65,7 +65,7 @@ namespace Lemoine.Business.Reason
       var reasonSelectionExtensions = GetReasonSelectionExtensions (m_machine);
       foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
         var extraReasonSelections = reasonSelectionExtension
-          .GetReasonSelections (m_role, m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
+          .GetReasonSelections (m_machine, m_role, m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
         reasonSelections = reasonSelections
           .Concat (extraReasonSelections);
       }
@@ -90,7 +90,7 @@ namespace Lemoine.Business.Reason
       var reasonSelectionExtensions = await GetReasonSelectionExtensionsAsync (m_machine);
       foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
         var extraReasonSelections = reasonSelectionExtension
-          .GetReasonSelections (m_role, m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
+          .GetReasonSelections (m_machine, m_role, m_range, m_machineMode, m_machineObservationState, m_includeExtraAutoReasons);
         reasonSelections = reasonSelections
           .Concat (extraReasonSelections);
       }

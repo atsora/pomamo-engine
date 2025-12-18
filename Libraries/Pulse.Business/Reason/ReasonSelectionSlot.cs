@@ -131,7 +131,7 @@ namespace Lemoine.Business.Reason
         .Get (reasonSelectionExtensionsRequest);
       foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
         // no restriction on role
-        var reasonSelections = reasonSelectionExtension.GetReasonSelections (null, reasonSlot.DateTimeRange, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons: true);
+        var reasonSelections = reasonSelectionExtension.GetReasonSelections (m_machine, null, reasonSlot.DateTimeRange, reasonSlot.MachineMode, reasonSlot.MachineObservationState, includeExtraAutoReasons: true);
         IEnumerable<IReason> reasons = reasonSelections
           .Where (reasonSelection => null != reasonSelection.Reason)
           .Select (reasonSelection => reasonSelection.Reason);

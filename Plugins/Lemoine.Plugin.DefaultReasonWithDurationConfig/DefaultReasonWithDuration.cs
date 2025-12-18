@@ -1243,7 +1243,7 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
     /// <param name="machineObservationState"></param>
     /// <param name="includeExtraAutoReasons"></param>
     /// <returns></returns>
-    public IEnumerable<IReasonSelection> GetReasonSelections (IRole role, UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
+    public IEnumerable<IReasonSelection> GetReasonSelections (IMachine machine, IRole role, UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, bool includeExtraAutoReasons)
     {
       Debug.Assert (null != m_machine);
       Debug.Assert (null != machineMode);

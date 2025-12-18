@@ -475,7 +475,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
             Debug.Assert (null != manualReasonProposal.Reason);
             // Check if it could be still selected
             var isCompatible = GetReasonSelectionExtensions ()
-              .Any (ext => IsMatch (manualReasonProposal, ext.GetReasonSelections (null, range, machineMode, machineObservationState, true)));
+              .Any (ext => IsMatch (manualReasonProposal, ext.GetReasonSelections (m_machine, null, range, machineMode, machineObservationState, true)));
             if (isCompatible) {
               return new List<IPossibleReason> { manualReasonProposal };
             }
@@ -517,7 +517,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
       }
       var reasonSelectionExtensions = GetReasonSelectionExtensions ();
       foreach (var reasonSelectionExtension in reasonSelectionExtensions) {
-        var reasonSelections = reasonSelectionExtension.GetReasonSelections (null, range, machineMode, machineObservationState, true);
+        var reasonSelections = reasonSelectionExtension.GetReasonSelections (m_machine, null, range, machineMode, machineObservationState, true);
         if (reasonSelections.Any (s => (null != s.Reason) && s.Reason.Id == reason.Id && s.ReasonScore == reasonScore)) {
           return true;
         }

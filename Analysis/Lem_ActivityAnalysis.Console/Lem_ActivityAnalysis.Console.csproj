@@ -50,9 +50,9 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(Configuration)'=='VS'">   <!-- include plugins .dll files for tests (intsead of ProjectReference) - projects must be compiled in sln -->
-    <None Include="..\..\Plugins\Lemoine.Plugin.CncSummaryByStateSlot2\bin\$(Configuration)\net8.0\Lemoine.Plugin.CncSummaryByStateSlot2.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\..\Plugins\Lemoine.Plugin.IdleTimePerPeriod2\bin\$(Configuration)\net8.0\Lemoine.Plugin.IdleTimePerPeriod2.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
-    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\$(Configuration)\net8.0\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.CncSummaryByStateSlot2\bin\nd\$(Configuration)\net8.0\Lemoine.Plugin.CncSummaryByStateSlot2.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.IdleTimePerPeriod2\bin\nd\$(Configuration)\net8.0\Lemoine.Plugin.IdleTimePerPeriod2.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+    <None Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\bin\nd\$(Configuration)\net8.0\Lemoine.Plugin.ReasonDefaultManagement.dll" Visible="true" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup>

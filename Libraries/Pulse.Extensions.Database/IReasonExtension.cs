@@ -371,6 +371,180 @@ namespace Pulse.Extensions.Database
   }
 
   /// <summary>
+  /// Consider a machine state template as a reason selection
+  /// </summary>
+  public class MachineStateTemplateAsReasonSelection : IReasonSelection
+  {
+    ILog log = LogManager.GetLogger<ExtraReasonSelection> ();
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// </summary>
+    public bool DetailsRequired
+    {
+      get => false;
+      set => throw new InvalidOperationException ();
+    }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public bool NoDetails => true;
+
+    /// <summary>
+    /// Id. Not used, always 0
+    /// </summary>
+    public int Id => 0;
+
+    /// <summary>
+    /// <see cref="IReaosnSelection"/>
+    /// </summary>
+    public string ClassificationId => "MST" + this.MachineStateTemplate.Id.ToString ();
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// </summary>
+    public IMachineFilter MachineFilter
+    {
+      get; set;
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// </summary>
+    public IMachineMode MachineMode
+    {
+      get; private set;
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// </summary>
+    public IMachineObservationState MachineObservationState
+    {
+      get; private set;
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// 
+    /// Always null here
+    /// </summary>
+    public IReason Reason
+    {
+      get => null;
+      set => throw new InvalidOperationException ();
+    }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// 
+    /// Not null here
+    /// </summary>
+    public IMachineStateTemplate MachineStateTemplate
+    {
+      get; set;
+    }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public IReasonGroup ReasonGroup
+    {
+      get; set;
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// 
+    /// Meaningless here
+    /// </summary>
+    public double ReasonScore => 100.0;
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IReasonSelection" />
+    /// </summary>
+    public bool Selectable
+    {
+      get => true;
+      set => throw new InvalidOperationException ();
+    }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string AlternativeText { get; set; }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string AlternativeLongText { get; set; }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string AlternativeDescription { get; set; }
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public bool TimeDependent { get; set; } = false;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public bool DynamicData { get; set; } = false;
+
+    /// <summary>
+    /// Data
+    /// </summary>
+    public IDictionary<string, object> Data { get; set; } = null;
+
+    /// <summary>
+    /// Version. Not used (always 0)
+    /// </summary>
+    public int Version => 0;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="reasonGroup">not null</param>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <param name="machineMode">not null</param>
+    /// <param name="machineObservationState">not null</param>
+    /// <param name="reason">not null</param>
+    /// <param name="reasonScore"></param>
+    public MachineStateTemplateAsReasonSelection (IReasonGroup reasonGroup, IMachineStateTemplate machineStateTemplate, IMachineMode machineMode, IMachineObservationState machineObservationState, string alternativeText = null, bool timeDependent = false)
+    {
+      Debug.Assert (null != reasonGroup);
+      Debug.Assert (null != machineStateTemplate);
+      Debug.Assert (null != machineMode);
+      Debug.Assert (null != machineObservationState);
+
+      if (reasonGroup is null) {
+        log.Fatal ($"MachineStateTemplateAsReasonSelection: machineMode is null");
+        throw new ArgumentNullException ("machineMode");
+      }
+      if (machineMode is null) {
+        log.Fatal ($"MachineStateTemplateAsReasonSelection: machineMode is null");
+        throw new ArgumentNullException ("machineMode");
+      }
+      if (machineObservationState is null) {
+        log.Fatal ($"MachineStateTemplateAsReasonSelection: machineObervationState is null");
+        throw new ArgumentNullException ("machineObservationState");
+      }
+
+      this.ReasonGroup = reasonGroup;
+      this.MachineStateTemplate = machineStateTemplate;
+      this.MachineMode = machineMode;
+      this.MachineObservationState = machineObservationState;
+      this.AlternativeText = alternativeText ?? machineStateTemplate.Display;
+      this.TimeDependent = timeDependent;
+      this.DynamicData = false;
+    }
+  }
+
+  /// <summary>
   /// Interface for the plugins to update the default reason
   /// </summary>
   public interface IReasonExtension : IExtension, IInitializedByMachineExtension
