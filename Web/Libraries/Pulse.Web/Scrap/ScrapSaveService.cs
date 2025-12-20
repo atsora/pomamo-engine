@@ -129,6 +129,8 @@ namespace Pulse.Web.Scrap
             }
             scrapReport.Reasons = reasons;
 
+            // TODO: scrapReport and details...
+
             revision.AddModification (scrapReport);
           }
           catch (Exception ex) {
