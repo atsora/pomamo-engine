@@ -2,20 +2,22 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-
-using System.Collections.Generic;
-using System.Linq;
+using Lemoine.Core.Log;
+using Lemoine.Extensions.ExtensionsProvider;
+using Lemoine.Extensions.Plugin;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
-using Pulse.Web.Reason;
-using Pulse.Web.CommonResponseDTO;
-using Lemoine.Core.Log;
 using NUnit.Framework;
-using System.Threading.Tasks;
-using System.Text.Json;
+using Pulse.Extensions;
+using Pulse.Web.CommonResponseDTO;
+using Pulse.Web.Reason;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Pulse.Web.UnitTests.Reason
 {
@@ -100,11 +102,11 @@ namespace Pulse.Web.UnitTests.Reason
           Assert.Multiple (() => {
             Assert.That (reasonMachineAssociation.ReasonDetails, Is.EqualTo (details), "bad details");
             Assert.That (reasonMachineAssociation.Reason.Id, Is.EqualTo (reason1.Id));
-            Assert.That (reasonMachineAssociation.JsonData, Is.EqualTo ($$"""
+            Assert.That (reasonMachineAssociation.JsonData.Replace ("\r", ""), Is.EqualTo ($$"""
               {
                 "Test": 1.1
               }
-              """));
+              """.Replace ("\r", "\r")));
             Assert.That (reasonMachineAssociation.Data, Has.Count.EqualTo (1));
             Assert.That (reasonMachineAssociation.Data.Keys.Single (), Is.EqualTo ("Test"));
             Assert.That (reasonMachineAssociation.Data.Values.Single (), Is.EqualTo (1.1));
@@ -168,6 +170,79 @@ namespace Pulse.Web.UnitTests.Reason
           Assert.That (reasonMachineAssociation.Data, Has.Count.EqualTo (1));
           Assert.That (reasonMachineAssociation.Data.Keys.Single (), Is.EqualTo ("Test"));
           Assert.That (reasonMachineAssociation.Data.Values.Single (), Is.EqualTo (1.1));
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    [Test]
+    public async Task TestReasonSavePostWithMachineStateTemplate ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.Package.PackageFile.InstallOrUpgradeJsonString ($$"""
+{
+  "Identifier": "MachineStateTemplateReasonSelection_UnitTest",
+  "Name": "UnitTest",
+  "Description": "",
+  "Tags": [],
+  "Version": 1,
+  "Plugins": [
+    {
+      "Name": "MachineStateTemplateReasonSelection",
+      "Instances": [
+        {
+          "Name": "Test",
+          "Parameters": {
+  "ReasonGroupId": 1
+          }
+        }
+      ]
+    }
+  ]
+}
+""", true, true);
+          var assemblyLoader = new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader ();
+          var pluginFilter = new PluginFilterFromFlag (PluginFlag.Web);
+          var pluginsLoader = new PluginsLoader (assemblyLoader);
+          var extensionsProvider = new ExtensionsProvider (Lemoine.ModelDAO.ModelDAOHelper.DAOFactory, pluginFilter, Lemoine.Extensions.Analysis.ExtensionInterfaceProvider.GetInterfaceProviders (), pluginsLoader, new DummyPluginsLoader ());
+          Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
+          Lemoine.Extensions.ExtensionManager.Activate (false);
+          Lemoine.Extensions.ExtensionManager.Load ();
+          const string details = "my details";
+          IReason reason1 = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (1);
+
+          var request = new ReasonSavePostRequestDTO ();
+          request.MachineId = 1;
+          request.ClassificationId = "MST1";
+
+          var json = """
+            {
+              "Ranges": [ "[2013-09-06T14:59:00Z,2013-09-06T15:00:00Z)" ],
+              "ReasonData": {
+                "Test": 1.1
+              }
+            }
+            """;
+          using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (json))) {
+            var reasonSaveService = new ReasonSaveService ();
+            reasonSaveService.SetBody (stream);
+            var response = await reasonSaveService.Post (request) as ReasonSaveResponseDTO;
+            Assert.That (response, Is.Not.Null);
+          }
+
+          // just test there is a pending modification of the right type
+          IList<IModification> modifications = ModelDAOHelper.DAOFactory.ModificationDAO.FindAll ().ToList ();
+          Assert.That (modifications, Is.Not.Null, "no modification");
+          Assert.That (modifications, Has.Count.EqualTo (1), "not 1 modification");
+          IModification modification = modifications[0];
+          var machineStateTemplateAssociation = modification as IMachineStateTemplateAssociation;
+          Assert.That (machineStateTemplateAssociation, Is.Not.Null, "not a machine state template association");
+          Assert.That (machineStateTemplateAssociation.MachineStateTemplate.Id, Is.EqualTo (1));
         }
         finally {
           Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();

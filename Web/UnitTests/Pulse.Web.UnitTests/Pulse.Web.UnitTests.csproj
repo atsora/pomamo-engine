@@ -26,6 +26,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\Reason\Lemoine.Plugin.MachineStateTemplateReasonSelection\Lemoine.Plugin.MachineStateTemplateReasonSelection.fsproj" />
     <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\Reason\Lemoine.Plugin.TestReasonData\Lemoine.Plugin.TestReasonData.fsproj" />
     <ProjectReference Include="..\..\..\..\customer-specific\Tycos\Plugins\Lemoine.Plugin.Tycos.MaintenanceWO\Lemoine.Plugin.Tycos.MaintenanceWO.fsproj" />
     <ProjectReference Include="..\..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />

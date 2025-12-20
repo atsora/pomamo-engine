@@ -1,20 +1,22 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-
-using System.Collections.Generic;
-using System.Linq;
-using Lemoine.ModelDAO;
-using Pulse.Web.Reason;
-using Pulse.Web.CommonResponseDTO;
 using Lemoine.Core.Log;
-using NUnit.Framework;
 using Lemoine.Extensions.ExtensionsProvider;
 using Lemoine.Extensions.Plugin;
+using Lemoine.Model;
+using Lemoine.ModelDAO;
+using NUnit.Framework;
 using Pulse.Extensions;
+using Pulse.Web.CommonResponseDTO;
+using Pulse.Web.Reason;
+using System;
+using System.Collections.Generic;
 using System.Data.Odbc;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Pulse.Web.UnitTests.Reason
 {
@@ -29,7 +31,7 @@ namespace Pulse.Web.UnitTests.Reason
     Pulse.Web.Reason.ReasonSelectionService m_service;
 
     [Test]
-    public void TestReasonSelection ()
+    public async Task TestReasonSelectionAsync ()
     {
       Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
 
@@ -40,7 +42,7 @@ namespace Pulse.Web.UnitTests.Reason
           request.MachineId = 1;
           request.Range = "[2011-11-22T08:30:00Z,2011-11-22T08:30:00Z]";
 
-          var response = m_service.GetWithoutCache (request) as IList<ReasonSelectionResponseDTO>;
+          var response = await m_service.Get (request) as IList<ReasonSelectionResponseDTO>;
 
           Assert.That (response, Is.Not.Null);
           Assert.That (response, Has.Count.EqualTo (9));
@@ -59,7 +61,7 @@ namespace Pulse.Web.UnitTests.Reason
     }
 
     [Test]
-    public void TestReasonSelectionWithReasonData ()
+    public async Task TestReasonSelectionWithReasonData ()
     {
       Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
 
@@ -74,7 +76,7 @@ namespace Pulse.Web.UnitTests.Reason
           request.MachineId = 1;
           request.Range = "[2011-11-22T08:30:00Z,2011-11-22T08:30:00Z]";
 
-          var response = m_service.GetWithoutCache (request) as IList<ReasonSelectionResponseDTO>;
+          var response = await m_service.Get (request) as IList<ReasonSelectionResponseDTO>;
 
           Assert.That (response, Is.Not.Null);
           Assert.That (response, Has.Count.EqualTo (11));
@@ -97,7 +99,7 @@ namespace Pulse.Web.UnitTests.Reason
     }
 
     [Test]
-    public void TestReasonSelectionTycos ()
+    public async Task TestReasonSelectionTycos ()
     {
       Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
 
@@ -149,7 +151,7 @@ namespace Pulse.Web.UnitTests.Reason
           request.MachineId = 1;
           request.Range = "[2011-11-22T08:30:00Z,2011-11-22T08:30:00Z]";
 
-          var response = m_service.GetWithoutCache (request) as IList<ReasonSelectionResponseDTO>;
+          var response = await m_service.Get (request) as IList<ReasonSelectionResponseDTO>;
 
           Assert.That (response, Is.Not.Null);
           Assert.That (response, Has.Count.EqualTo (12));
@@ -165,6 +167,74 @@ namespace Pulse.Web.UnitTests.Reason
           Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
           transaction.Rollback ();
           Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    [Test]
+    public async Task TestReasonSelectionMachineStateTemplate ()
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.Package.PackageFile.InstallOrUpgradeJsonString ($$"""
+{
+  "Identifier": "MachineStateTemplateReasonSelection_UnitTest",
+  "Name": "UnitTest",
+  "Description": "",
+  "Tags": [],
+  "Version": 1,
+  "Plugins": [
+    {
+      "Name": "MachineStateTemplateReasonSelection",
+      "Instances": [
+        {
+          "Name": "Test",
+          "Parameters": {
+  "ReasonGroupId": 1
+          }
+        }
+      ]
+    }
+  ]
+}
+""", true, true);
+          var assemblyLoader = new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader ();
+          var pluginFilter = new PluginFilterFromFlag (PluginFlag.Web);
+          var pluginsLoader = new PluginsLoader (assemblyLoader);
+          var extensionsProvider = new ExtensionsProvider (Lemoine.ModelDAO.ModelDAOHelper.DAOFactory, pluginFilter, Lemoine.Extensions.Analysis.ExtensionInterfaceProvider.GetInterfaceProviders (), pluginsLoader, new DummyPluginsLoader ());
+          Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
+          Lemoine.Extensions.ExtensionManager.Activate (false);
+          Lemoine.Extensions.ExtensionManager.Load ();
+
+          var unattendedMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO.FindById (2);
+          var attendedMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO.FindById (1);
+          var nextMachineStateTemplate = ModelDAOHelper.ModelFactory
+            .CreateMachineStateTemplateFlow (unattendedMachineStateTemplate, attendedMachineStateTemplate);
+          ModelDAOHelper.DAOFactory.MachineStateTemplateFlowDAO.MakePersistent (nextMachineStateTemplate);
+
+          var request = new ReasonSelectionRequestDTO ();
+          request.MachineId = 1;
+          request.Range = "[2011-11-22T08:30:00Z,2011-11-22T08:30:00Z]";
+
+          var response = await m_service.Get (request) as IList<ReasonSelectionResponseDTO>;
+
+          Assert.That (response, Is.Not.Null);
+          Assert.That (response, Has.Count.EqualTo (10));
+
+          var withDataSelections = response.Where (item => item.ClassificationId.StartsWith ("MST"));
+          Assert.Multiple (() => {
+            Assert.That (withDataSelections.ToList (), Has.Count.EqualTo (1));
+            Assert.That (withDataSelections.Select (x => x.ClassificationId), Has.One.With.EqualTo ("MST1"));
+            Assert.That (withDataSelections.Select (x => x.Display), Has.One.With.EqualTo ("MachineStateTemplateAttended"));
+          });
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
         }
       }
     }
