@@ -61,6 +61,7 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateShiftRequiredColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.machineStateTemplateOnSiteColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.machineStateTemplateSiteAttendanceChangeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.machineStateTemplateColorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn ();
       this.linkOperationDirectionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.machineStateTemplateDataGridView)).BeginInit();
       this.splitContainer1.Panel1.SuspendLayout();
@@ -95,6 +96,7 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateShiftRequiredColumn,
       this.machineStateTemplateOnSiteColumn,
       this.machineStateTemplateSiteAttendanceChangeColumn,
+      this.machineStateTemplateColorColumn,
       this.linkOperationDirectionColumn});
       this.machineStateTemplateDataGridView.Cursor = System.Windows.Forms.Cursors.Default;
       this.machineStateTemplateDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -104,6 +106,7 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
       this.machineStateTemplateDataGridView.Size = new System.Drawing.Size(304, 441);
       this.machineStateTemplateDataGridView.TabIndex = 0;
+      this.machineStateTemplateDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler (this.DataGridViewCellDoubleClick);
       this.machineStateTemplateDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewCellValueChanged);
       this.machineStateTemplateDataGridView.SelectionChanged += new System.EventHandler(this.MachineStateTemplateDataGridViewSelectionChanged);
       this.machineStateTemplateDataGridView.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.DataGridViewUserDeletingRow);
@@ -401,6 +404,13 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateSiteAttendanceChangeColumn.Name = "machineStateTemplateSiteAttendanceChangeColumn";
       this.machineStateTemplateSiteAttendanceChangeColumn.Width = 142;
       // 
+      // machineStateTemplateColorColumn
+      // 
+      this.machineStateTemplateColorColumn.DataPropertyName = "Color";
+      this.machineStateTemplateColorColumn.HeaderText = "Color";
+      this.machineStateTemplateColorColumn.Name = "machineStateTemplateColorColumn";
+      this.machineStateTemplateColorColumn.Width = 56;
+      // 
       // linkOperationDirectionColumn
       // 
       this.linkOperationDirectionColumn.DataPropertyName = "LinkOperationDirection";
@@ -469,6 +479,7 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.SplitContainer splitContainer1;
     private Lemoine.BaseControls.SortableDataGridView machineStateTemplateDataGridView;
     private System.Windows.Forms.DataGridViewTextBoxColumn categoryColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateColorColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn linkOperationDirectionColumn;
   }
 }
