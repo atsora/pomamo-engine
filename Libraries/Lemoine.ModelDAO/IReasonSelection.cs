@@ -98,9 +98,9 @@ namespace Lemoine.Model
     bool Selectable { get; set; }
 
     /// <summary>
-    /// Additional details are not allowed. 
+    /// Additional details are not allowed. Default: false
     /// </summary>
-    bool NoDetails { get; }
+    bool NoDetails { get; set;  }
 
     /// <summary>
     /// If True, when this reason is selected, the operator must also enter a free detailed entry
