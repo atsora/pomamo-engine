@@ -225,7 +225,10 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// <see cref="IReasonSelection"/>
     /// </summary>
-    public bool NoDetails => false;
+    public bool NoDetails
+    {
+      get; set;
+    } = false;
 
     /// <summary>
     /// <see cref="IReasonSelection"/>
@@ -412,7 +415,11 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// <see cref="IReasonSelection"/>
     /// </summary>
-    public bool NoDetails => true;
+    public bool NoDetails
+    {
+      get => true;
+      set => throw new InvalidOperationException ();
+    }
 
     /// <summary>
     /// Id. Not used, always 0
