@@ -1,19 +1,20 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
-
 using Iesi.Collections.Generic;
 using Lemoine.BaseControls;
+using Lemoine.Core.Log;
 using Lemoine.DataReferenceControls;
 using Lemoine.I18N;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
-using Lemoine.Core.Log;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace Lemoine.ConfigControls
 {
@@ -22,7 +23,6 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class MachineStateTemplateConfig : UserControl, IConfigControlObservable<IMachineStateTemplate>
   {
-    #region Members
     SortableBindingList<IMachineStateTemplate> m_machineStateTemplates = new SortableBindingList<IMachineStateTemplate>();
     
     BindingList<IMachineStateTemplateItem> m_machineStateTemplateItems = null;
@@ -36,11 +36,9 @@ namespace Lemoine.ConfigControls
     IDictionary<int,IList<IMachineStateTemplateStop>> m_stopDeleteList = new Dictionary<int,IList<IMachineStateTemplateStop>>();
     
     ISet<IConfigControlObserver<IMachineStateTemplate>> m_observers = new HashSet<IConfigControlObserver<IMachineStateTemplate>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateConfig).FullName);
 
-    #region Getter / Setter
     IMachineStateTemplate SelectedMachineStateTemplate {
       get {
         if (machineStateTemplateDataGridView.SelectedRows.Count == 1) {
@@ -71,9 +69,7 @@ namespace Lemoine.ConfigControls
         return null;
       }
     }
-    #endregion //Getter/Setter
-    
-    #region Constructors
+
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -160,6 +156,7 @@ namespace Lemoine.ConfigControls
       machineStateTemplateNameColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateNameColumn");
       machineStateTemplateTranslationkeyColum.HeaderText = PulseCatalog.GetString ("MachineStateTemplateTranslationkeyColum");
       machineStateTemplateIdColumn.HeaderText = PulseCatalog.GetString ("Id");
+      machineStateTemplateColorColumn.HeaderText = PulseCatalog.GetString ("Color", "Color");
       
       machineStateTemplateDataGridView.AutoGenerateColumns = false;
       
@@ -178,7 +175,6 @@ namespace Lemoine.ConfigControls
         machineStateTemplateTranslationkeyColum.CellTemplate = cell;
       }
     }
-    #endregion // Constructors
     
     #region MachineStateTemplate
     void MachineStateTemplateConfigLoad(object sender, EventArgs e)
@@ -331,6 +327,42 @@ namespace Lemoine.ConfigControls
           as IMachineStateTemplate;
         if (null != machineStateTemplate) {
           m_updateSet.Add (row);
+        }
+      }
+    }
+
+    void DataGridViewCellDoubleClick (object sender, DataGridViewCellEventArgs e)
+    {
+      if (0 <= e.RowIndex) {
+        if (this.machineStateTemplateDataGridView.Columns[e.ColumnIndex].Name == "machineStateTemplateColorColumn"
+           || this.machineStateTemplateDataGridView.Columns[e.ColumnIndex].Name == "machineStateTemplateColorColumn") {
+          ColorDialog colorDialog = new ColorDialog ();
+          DataGridViewCell selectedCell = this.machineStateTemplateDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+          string cellValue = (string)selectedCell.Value;
+          if (!String.IsNullOrEmpty (cellValue)) {
+            colorDialog.Color = System.Drawing.ColorTranslator.FromHtml (cellValue);
+          }
+          DialogResult dialogResult = colorDialog.ShowDialog ();
+          Color selectedColor = Color.White;
+          switch (dialogResult) {
+            case DialogResult.OK: {
+                selectedColor = colorDialog.Color;
+                break;
+              }
+            case DialogResult.Cancel: {
+                if (!String.IsNullOrEmpty (cellValue)) {
+                  selectedColor = System.Drawing.ColorTranslator.FromHtml (cellValue);
+                }
+                break;
+              }
+            default: {
+                selectedColor = Color.White;
+                break;
+              }
+          }
+          selectedCell.Style.BackColor = selectedColor;
+          selectedCell.Value = "#" + selectedColor.R.ToString ("X2") + selectedColor.G.ToString ("X2") + selectedColor.B.ToString ("X2");
+          this.machineStateTemplateDataGridView.RefreshEdit ();
         }
       }
     }

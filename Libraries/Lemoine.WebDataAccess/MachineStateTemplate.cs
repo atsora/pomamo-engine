@@ -12,139 +12,162 @@ namespace Lemoine.WebDataAccess
   /// <summary>
   /// Description of MachineStateTemplate.
   /// </summary>
-  public class MachineStateTemplate: Lemoine.Model.IMachineStateTemplate
+  public class MachineStateTemplate : Lemoine.Model.IMachineStateTemplate
   {
     #region IMachineStateTemplate implementation
-    public Lemoine.Model.IMachineStateTemplateItem AddItem(Lemoine.Model.IMachineObservationState machineObservationState)
+    public Lemoine.Model.IMachineStateTemplateItem AddItem (Lemoine.Model.IMachineObservationState machineObservationState)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException ();
     }
-    public Lemoine.Model.IMachineStateTemplateItem InsertItem(int position, Lemoine.Model.IMachineObservationState machineObservationState)
+    public Lemoine.Model.IMachineStateTemplateItem InsertItem (int position, Lemoine.Model.IMachineObservationState machineObservationState)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException ();
     }
-    public Lemoine.Model.IMachineStateTemplateStop AddStop()
+    public Lemoine.Model.IMachineStateTemplateStop AddStop ()
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException ();
     }
-    public int Id {
+    public int Id
+    {
       get; set;
     }
-    public string Name {
+    public string Name
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public string TranslationKey {
+    public string TranslationKey
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public string NameOrTranslation {
+    public string NameOrTranslation
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
 
-    public Lemoine.Model.MachineStateTemplateCategory? Category {
+    public Lemoine.Model.MachineStateTemplateCategory? Category
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
 
-    public bool UserRequired {
+    public bool UserRequired
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public bool ShiftRequired {
+    public bool ShiftRequired
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public bool? OnSite {
+    public bool? OnSite
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public Lemoine.Model.IMachineStateTemplate SiteAttendanceChange {
+    public Lemoine.Model.IMachineStateTemplate SiteAttendanceChange
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public System.Collections.Generic.IList<Lemoine.Model.IMachineStateTemplateItem> Items {
+    public System.Collections.Generic.IList<Lemoine.Model.IMachineStateTemplateItem> Items
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public ISet<Lemoine.Model.IMachineStateTemplateStop> Stops {
+    public ISet<Lemoine.Model.IMachineStateTemplateStop> Stops
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
-    public Lemoine.Model.LinkDirection LinkOperationDirection {
+    public Lemoine.Model.LinkDirection LinkOperationDirection
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
       set {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
+      }
+    }
+    public string Color
+    {
+      get => throw new NotImplementedException ();
+      set {
+        throw new NotImplementedException ();
       }
     }
     #endregion
     #region ISerializableModel implementation
-    public void Unproxy()
+    public void Unproxy ()
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException ();
     }
     #endregion
     #region IDisplayable implementation
-    public string GetDisplay(string variant)
+    public string GetDisplay (string variant)
     {
-      throw new NotImplementedException();
+      throw new NotImplementedException ();
     }
-    public string Display {
+    public string Display
+    {
       get; set;
     }
     #endregion
     #region IDataWithVersion implementation
-    public int Version {
+    public int Version
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
     #endregion
     #region ISelectionable implementation
-    public string SelectionText {
+    public string SelectionText
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
     #endregion
     #region IDataWithIdentifiers implementation
-    public string[] Identifiers {
+    public string[] Identifiers
+    {
       get {
-        throw new NotImplementedException();
+        throw new NotImplementedException ();
       }
     }
     #endregion

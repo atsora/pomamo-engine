@@ -331,6 +331,19 @@ namespace Pulse.Extensions.Database
     public IDictionary<string, object> Data { get; set; }
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string Color => this.Reason.Color;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string Description =>
+      !string.IsNullOrEmpty (this.AlternativeDescription)
+      ? this.AlternativeDescription
+      : this.Reason.DescriptionOrTranslation;
+
+    /// <summary>
     /// Version. Not used (always 0)
     /// </summary>
     public int Version => 0;
@@ -506,6 +519,19 @@ namespace Pulse.Extensions.Database
     /// Data
     /// </summary>
     public IDictionary<string, object> Data { get; set; } = null;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public string Color => this.MachineStateTemplate.Color;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string Description =>
+      !string.IsNullOrEmpty (this.AlternativeDescription)
+      ? this.AlternativeDescription
+      : "";
 
     /// <summary>
     /// Version. Not used (always 0)

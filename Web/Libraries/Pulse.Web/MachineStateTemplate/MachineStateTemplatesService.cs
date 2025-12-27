@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,7 +25,6 @@ namespace Pulse.Web.MachineStateTemplate
   {
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplatesService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -32,9 +32,7 @@ namespace Pulse.Web.MachineStateTemplate
       : base(Lemoine.Core.Cache.CacheTimeOut.Config)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -81,6 +79,5 @@ namespace Pulse.Web.MachineStateTemplate
         return result;
       }
     }
-    #endregion // Methods
   }
 }
