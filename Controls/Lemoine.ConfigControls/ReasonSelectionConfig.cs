@@ -43,7 +43,6 @@ namespace Lemoine.ConfigControls
     static readonly string DISPLAYED_PROPERTY = "SelectionText";
     static readonly string NAME_PROPERTY = "Name";
     
-    #region Getters / Setters
     IList<IMachineMode> MachineModes {
       get
       {
@@ -69,9 +68,7 @@ namespace Lemoine.ConfigControls
         }
       }
     }
-    #endregion // Getters / Setters
-    
-    #region Constructors
+
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -85,6 +82,7 @@ namespace Lemoine.ConfigControls
       reasonColumn.HeaderText = PulseCatalog.GetString ("Reason");
       selectableColumn.HeaderText = PulseCatalog.GetString ("ReasonSelectable");
       detailsRequiredColumn.HeaderText = PulseCatalog.GetString ("ReasonDetailsRequired");
+      noDetailsColumn.HeaderText = PulseCatalog.GetString ("ReasonNoDetails", "No detail");
       machineFilterColumn.HeaderText = PulseCatalog.GetString ("MachineFilter");
       setAllOverColumn.HeaderText = PulseCatalog.GetString("SetAllOver");
       
@@ -110,7 +108,6 @@ namespace Lemoine.ConfigControls
         machineFilterColumn.CellTemplate = cell;
       }
     }
-    #endregion // Constructors
 
     void ReasonSelectionConfigLoad(object sender, EventArgs e)
     {
