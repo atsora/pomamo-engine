@@ -15,7 +15,7 @@ namespace Lemoine.GDBPersistentClasses
   /// Persistent class of table MachineStateTemplate
   /// </summary>
   [Serializable]
-  public class MachineStateTemplate: DataWithTranslation, IMachineStateTemplate, IVersionable
+  public class MachineStateTemplate : DataWithTranslation, IMachineStateTemplate, IVersionable
   {
     int m_id = 0;
     int m_version = 0;
@@ -28,14 +28,14 @@ namespace Lemoine.GDBPersistentClasses
     IList<IMachineStateTemplateItem> m_items = new List<IMachineStateTemplateItem> ();
     ISet<IMachineStateTemplateStop> m_stops = new HashSet<IMachineStateTemplateStop> ();
 
-    static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplate).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (MachineStateTemplate).FullName);
 
     /// <summary>
     /// Default constructor
     /// </summary>
     internal protected MachineStateTemplate ()
     { }
-    
+
     /// <summary>
     /// Constructor for default values
     /// </summary>
@@ -57,7 +57,7 @@ namespace Lemoine.GDBPersistentClasses
       this.TranslationKey = translationKey;
       m_userRequired = userRequired;
     }
-    
+
     #region Getters / Setters
     /// <summary>
     /// Possible identifiers
@@ -65,18 +65,18 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     public override string[] Identifiers
     {
-      get { return new string[] {"Id", "Name", "TranslationKey"}; }
+      get { return new string[] { "Id", "Name", "TranslationKey" }; }
     }
-    
+
     /// <summary>
     /// MachineStateTemplate ID
     /// </summary>
-    [XmlAttribute("Id")]
+    [XmlAttribute ("Id")]
     public virtual int Id
     {
       get { return this.m_id; }
     }
-    
+
     /// <summary>
     /// Version
     /// </summary>
@@ -85,34 +85,37 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return this.m_version; }
     }
-    
+
     /// <summary>
     /// Category
     /// </summary>
     [XmlIgnore]
-    public virtual MachineStateTemplateCategory? Category {
+    public virtual MachineStateTemplateCategory? Category
+    {
       get { return m_category; }
       set { m_category = value; }
     }
-    
+
     /// <summary>
     /// Is a user required for this observation state ?
     /// </summary>
-    [XmlAttribute("UserRequired")]
-    public virtual bool UserRequired {
+    [XmlAttribute ("UserRequired")]
+    public virtual bool UserRequired
+    {
       get { return m_userRequired; }
       set { m_userRequired = value; }
     }
-    
+
     /// <summary>
     /// Is a shift required for this observation state ?
     /// </summary>
-    [XmlAttribute("ShiftRequired")]
-    public virtual bool ShiftRequired {
+    [XmlAttribute ("ShiftRequired")]
+    public virtual bool ShiftRequired
+    {
       get { return m_shiftRequired; }
       set { m_shiftRequired = value; }
     }
-    
+
     /// <summary>
     /// Does this Machine Observation State mean the associated user
     /// is on site ?
@@ -120,32 +123,35 @@ namespace Lemoine.GDBPersistentClasses
     /// null in case of not applicable
     /// </summary>
     [XmlIgnore]
-    public virtual bool? OnSite {
+    public virtual bool? OnSite
+    {
       get { return m_onSite; }
       set { m_onSite = value; }
     }
-    
+
     /// <summary>
     /// use for Xml serialization of Onsite
     /// </summary>
-    [XmlAttribute("OnSite")]
-    public virtual bool XmlSerializationOnSite {
+    [XmlAttribute ("OnSite")]
+    public virtual bool XmlSerializationOnSite
+    {
       get { return m_onSite.Value; }
       set { m_onSite = value; }
     }
-    
+
     /// <summary>
     /// used to serialize OnSite only when not null
     /// </summary>
-    public virtual bool XmlSerializationOnSiteSpecified{ get { return m_onSite.HasValue; } }
-    
+    public virtual bool XmlSerializationOnSiteSpecified { get { return m_onSite.HasValue; } }
+
     /// <summary>
     /// In which new MachineStateTemplate should this MachineStateTemplate
     /// be changed in case the site attendance change of the associated user
     /// changes ?
     /// </summary>
     [XmlIgnore]
-    public virtual IMachineStateTemplate SiteAttendanceChange {
+    public virtual IMachineStateTemplate SiteAttendanceChange
+    {
       get { return m_siteAttendanceChange; }
       set { m_siteAttendanceChange = value; }
     }
@@ -154,37 +160,59 @@ namespace Lemoine.GDBPersistentClasses
     /// Does this machine state template imply an operation should be automatically set before or after it
     /// </summary>
     [XmlIgnore]
-    public virtual LinkDirection LinkOperationDirection {
+    public virtual LinkDirection LinkOperationDirection
+    {
       get { return m_linkOperationDirection; }
       set { m_linkOperationDirection = value; }
     }
-    
+
+    /// <summary>
+    /// Optional color
+    /// 
+    /// <see cref="IMachineStateTemplate"/>
+    /// </summary>
+    [XmlAttribute ("Color")]
+    public virtual string Color
+    {
+      get; set;
+    }
+
+    /// <summary>
+    /// used to serialize Color only when not null or empty
+    /// </summary>
+    public virtual bool ColorSpecified => !string.IsNullOrEmpty (this.Color);
+
     /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]
-    public virtual string SelectionText {
-      get { return string.Format ("{0}: {1}{2}",
-                                  this.Id, this.Name, this.TranslationKey); }
+    public virtual string SelectionText
+    {
+      get {
+        return string.Format ("{0}: {1}{2}",
+                                  this.Id, this.Name, this.TranslationKey);
+      }
     }
-    
+
     /// <summary>
     /// List of items that are part of the machine state template
     /// </summary>
     [XmlIgnore] // For the moment
-    public virtual IList<IMachineStateTemplateItem> Items {
+    public virtual IList<IMachineStateTemplateItem> Items
+    {
       get { return m_items; }
     }
-    
+
     /// <summary>
     /// Set of stop conditions
     /// </summary>
     [XmlIgnore] // For the moment
-    public virtual ISet<IMachineStateTemplateStop> Stops {
+    public virtual ISet<IMachineStateTemplateStop> Stops
+    {
       get { return m_stops; }
     }
     #endregion // Getters / Setters
-        
+
     /// <summary>
     /// Append an item with the specified machine observation state
     /// </summary>
@@ -196,7 +224,7 @@ namespace Lemoine.GDBPersistentClasses
       m_items.Add (newTemplateItem);
       return newTemplateItem;
     }
-    
+
     /// <summary>
     /// Insert an item at the specified position
     /// </summary>
@@ -209,7 +237,7 @@ namespace Lemoine.GDBPersistentClasses
       m_items.Insert (position, newTemplateItem);
       return newTemplateItem;
     }
-    
+
     /// <summary>
     /// Add a stop condition
     /// </summary>
@@ -220,7 +248,7 @@ namespace Lemoine.GDBPersistentClasses
       m_stops.Add (newStop);
       return newStop;
     }
-    
+
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
@@ -235,9 +263,9 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="obj">The object to compare with the current object</param>
     /// <returns>true if the specified Object is equal to the current Object; otherwise, false</returns>
-    public override bool Equals(object obj)
+    public override bool Equals (object obj)
     {
-      if (object.ReferenceEquals(this,obj)) {
+      if (object.ReferenceEquals (this, obj)) {
         return true;
       }
 
@@ -256,17 +284,17 @@ namespace Lemoine.GDBPersistentClasses
       }
       return false;
     }
-    
+
     /// <summary>
     ///   Serves as a hash function for a particular type
     /// </summary>
     /// <returns>A hash code for the current Object</returns>
-    public override int GetHashCode()
+    public override int GetHashCode ()
     {
       if (0 != Id) {
         int hashCode = 0;
         unchecked {
-          hashCode += 1000000007 * Id.GetHashCode();
+          hashCode += 1000000007 * Id.GetHashCode ();
         }
         return hashCode;
       }

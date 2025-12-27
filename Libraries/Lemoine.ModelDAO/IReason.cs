@@ -119,7 +119,6 @@ namespace Lemoine.Model
     /// </summary>
     string Color { get; }
     
-
     /// <summary>
     /// Color to use when the reason is displayed in a report
     /// </summary>
