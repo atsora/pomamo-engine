@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -44,6 +45,7 @@ namespace Lemoine.ConfigControls
       this.reasonColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.selectableColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.detailsRequiredColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.noDetailsColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn ();
       this.machineFilterColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.setAllOverColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
@@ -68,6 +70,7 @@ namespace Lemoine.ConfigControls
                   this.reasonColumn,
                   this.selectableColumn,
                   this.detailsRequiredColumn,
+                  this.noDetailsColumn,
                   this.machineFilterColumn,
                   this.setAllOverColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -194,6 +197,13 @@ namespace Lemoine.ConfigControls
       this.detailsRequiredColumn.Name = "detailsRequiredColumn";
       this.detailsRequiredColumn.Width = 88;
       // 
+      // detailsRequiredColumn
+      // 
+      this.detailsRequiredColumn.DataPropertyName = "NoDetails";
+      this.detailsRequiredColumn.HeaderText = "No detail";
+      this.detailsRequiredColumn.Name = "noDetailsColumn";
+      this.detailsRequiredColumn.Width = 68;
+      // 
       // machineFilterColumn
       // 
       this.machineFilterColumn.DataPropertyName = "MachineFilter";
@@ -229,6 +239,7 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewCheckBoxColumn setAllOverColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn machineFilterColumn;
     private System.Windows.Forms.DataGridViewCheckBoxColumn detailsRequiredColumn;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn noDetailsColumn;
     private System.Windows.Forms.DataGridViewCheckBoxColumn selectableColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn reasonColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn machineObservationStateColumn;

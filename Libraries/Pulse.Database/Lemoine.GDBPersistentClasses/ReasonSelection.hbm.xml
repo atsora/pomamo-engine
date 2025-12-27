@@ -35,6 +35,9 @@
     <property name="DetailsRequired"
               column="reasonselectiondetailsrequired"
               not-null="true" />
+    <property name="NoDetails"
+              column="reasonselectionnodetails"
+              not-null="true" />
     <many-to-one name="MachineFilter" column="machinefilterid"
                  class="MachineFilter"
                  cascade="none"
