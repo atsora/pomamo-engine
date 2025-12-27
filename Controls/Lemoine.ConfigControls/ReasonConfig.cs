@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -26,7 +27,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IReasonGroup>
     , IConfigControlObservable<IReason>
   {
-    #region Members
     SortableBindingList<IReason> m_reasons
       = new SortableBindingList<IReason>();
     
@@ -37,11 +37,9 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IReason> > m_observers =
       new HashSet<IConfigControlObserver<IReason> > ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonConfig).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -91,7 +89,6 @@ namespace Lemoine.ConfigControls
         reasonGroupColumn.CellTemplate = cell;
       }
     }
-    #endregion // Constructors
     
     void ReasonConfigLoad(object sender, EventArgs e)
     {

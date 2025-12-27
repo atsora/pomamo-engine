@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,7 +21,6 @@ namespace Lemoine.Model
     /// </summary>
     SetUp = 2,
   }
-  
   
   /// <summary>
   /// Model of table machinestatetemplate
@@ -119,6 +119,11 @@ namespace Lemoine.Model
     /// Does this machine state template imply an operation should be automatically set before or after it
     /// </summary>
     LinkDirection LinkOperationDirection { get; set; }
+
+    /// <summary>
+    /// Optional color
+    /// </summary>
+    string Color { get; set; }
   }
 
   /// <summary>

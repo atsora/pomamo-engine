@@ -202,6 +202,19 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual bool DynamicData => false;
 
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string Color => this.Reason.Color;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public virtual string Description =>
+      !string.IsNullOrEmpty (this.AlternativeDescription)
+      ? this.AlternativeDescription
+      : this.Reason.DescriptionOrTranslation;
+
     #region Equals and GetHashCode implementation
     /// <summary>
     /// <see cref="Object.Equals(object)" />

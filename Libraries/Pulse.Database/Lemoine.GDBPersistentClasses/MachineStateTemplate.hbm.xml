@@ -24,6 +24,8 @@
     <property name="LinkOperationDirection"
               column="machinestatetemplatelinkoperation"
               not-null="true" />
+    <property name="Color"
+              column="machinestatetemplatecolor" />
     <list name="Items"
           access="nosetter.camelcase-m-underscore"
           inverse="false"

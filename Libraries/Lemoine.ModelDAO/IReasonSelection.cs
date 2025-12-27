@@ -85,7 +85,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Associated reason group (not null)
     /// </summary>
-    IReasonGroup ReasonGroup { get;  }
+    IReasonGroup ReasonGroup { get; }
 
     /// <summary>
     /// Return a recommended reason score
@@ -100,7 +100,7 @@ namespace Lemoine.Model
     /// <summary>
     /// Additional details are not allowed. Default: false
     /// </summary>
-    bool NoDetails { get; set;  }
+    bool NoDetails { get; set; }
 
     /// <summary>
     /// If True, when this reason is selected, the operator must also enter a free detailed entry
@@ -123,6 +123,16 @@ namespace Lemoine.Model
     /// Are some additional dynamic data set or required?
     /// </summary>
     bool DynamicData { get; }
+
+    /// <summary>
+    /// Color to propose. If null or empty, a color must be automatically generated
+    /// </summary>
+    string Color { get; }
+
+    /// <summary>
+    /// Description
+    /// </summary>
+    string Description { get;  }
   }
 
   /// <summary>

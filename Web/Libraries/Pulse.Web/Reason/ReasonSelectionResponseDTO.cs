@@ -189,23 +189,11 @@ namespace Pulse.Web.Reason
           log.Fatal ($"Assemble: reason or machineStateTemplate must not be null");
           throw new InvalidOperationException ("Assemble: reason and machineStateTemplate are null");
         }
-        if (null != reason) {
-          reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
-              ? reason.DescriptionOrTranslation
-              : reasonSelection.AlternativeDescription;
-          reasonSelectionResponseDTO.Color = reason.Color;
+        reasonSelectionResponseDTO.Color = reasonSelection.Color;
+        if (string.IsNullOrEmpty (reasonSelectionResponseDTO.Color)) {
+          reasonSelectionResponseDTO.Color = ColorGenerator.GetColor ("ReasonSelection", reasonSelection.ClassificationId);
         }
-        else if (null != machineStateTemplate) {
-          reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
-            ? ""
-            : reasonSelection.AlternativeDescription;
-          reasonSelectionResponseDTO.Color = ColorGenerator.GetColor ("MachineStateTemplate", machineStateTemplate.Id);
-          // TODO: store the color
-        }
-        else {
-          log.Fatal ($"Assemble: reason or machineStateTemplate must not be null");
-          throw new InvalidOperationException ("Assemble: reason and machineStateTemplate are null");
-        }
+        reasonSelectionResponseDTO.Description = reasonSelection.Description;
 
         var reasonGroup = reasonSelection.ReasonGroup;
         reasonSelectionResponseDTO.ReasonGroupId = reasonGroup.Id;

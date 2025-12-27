@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -65,10 +66,16 @@ namespace Pulse.Web.CommonResponseDTO
       if (null == machineStateTemplate) {
         return null;
       }
-      MachineStateTemplateDTO machineStateTemplateDTO = new MachineStateTemplateDTO();
+      var machineStateTemplateDTO = new MachineStateTemplateDTO();
       machineStateTemplateDTO.Id = ((Lemoine.Collections.IDataWithId<int>)machineStateTemplate).Id;
       machineStateTemplateDTO.Display = machineStateTemplate.Display;
-      machineStateTemplateDTO.BgColor = ColorGenerator.GetColor ("MachineStateTemplate", machineStateTemplateDTO.Id);
+      var color = machineStateTemplate.Color;
+      if (!string.IsNullOrEmpty (color)) {
+        machineStateTemplateDTO.BgColor = color;
+      }
+      else {
+        machineStateTemplateDTO.BgColor = ColorGenerator.GetColor ("MachineStateTemplate", machineStateTemplateDTO.Id);
+      }
       machineStateTemplateDTO.FgColor = ColorGenerator.GetContrastColor (machineStateTemplateDTO.BgColor);
       return machineStateTemplateDTO;
     }
