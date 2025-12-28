@@ -22,9 +22,9 @@ namespace Lemoine.Plugin.ReasonToProductionState
     /// <summary>
     /// Score of the plugin
     /// </summary>
-    [PluginConf ("Double", "Score", Description = "Score. Default: 20.0", Parameters = "100000:3", Multiple = false, Optional = false)]
-    [DefaultValue (20.0)]
-    public double Score { get; set; } = 20.0;
+    [PluginConf ("Double", "Score", Description = "Score. Default: 3.0", Parameters = "100000:3", Multiple = false, Optional = false)]
+    [DefaultValue (3.0)]
+    public double Score { get; set; } = 3.0;
 
     /// <summary>
     /// Associated running production state id. If 0, consider a default production state
