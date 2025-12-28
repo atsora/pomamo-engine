@@ -29,6 +29,34 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     internal void InsertDefaultValues ()
     {
+      { // Production
+        var productionState = new ProductionState ((int)ProductionStateId.Production, "ProductionStateProduction", "#008000"); // Green
+        InsertDefaultValue (productionState);
+      }
+      { // NoProduction
+        var productionState = new ProductionState ((int)ProductionStateId.NoProduction, "ProductionStateNoProduction", "#FFFF00"); // Yellow
+        InsertDefaultValue (productionState);
+      }
+      {
+        var productionState = new ProductionState ((int)ProductionStateId.UnplannedStop, "ProductionStateUnplanned", "#AA0909"); // Red
+        InsertDefaultValue (productionState);
+      }
+      {
+        var productionState = new ProductionState ((int)ProductionStateId.PlannedStop, "ProductionStatePlanned", "#FFFF00"); // Yellow
+        InsertDefaultValue (productionState);
+      }
+      {
+        var productionState = new ProductionState ((int)ProductionStateId.Unscheduled, "ProductionStateUnscheduled", "#F3F3F3"); // Very light grey
+        InsertDefaultValue (productionState);
+      }
+      {
+        var productionState = new ProductionState ((int)ProductionStateId.Setup, "ProductionStateSetup", "#3498DB"); // Blue
+        InsertDefaultValue (productionState);
+      }
+      {
+        var productionState = new ProductionState ((int)ProductionStateId.Unknown, "ProductionStateUnknown", "#808080"); // Grey
+        InsertDefaultValue (productionState);
+      }
     }
 
     /// <summary>

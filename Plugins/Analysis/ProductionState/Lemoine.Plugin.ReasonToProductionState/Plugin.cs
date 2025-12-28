@@ -21,39 +21,22 @@ namespace Lemoine.Plugin.ReasonToProductionState
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "ReasonToProductionState"; } }
+    public override string Name => "ReasonToProductionState";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Determine a production state from a reason";
-      }
-    }
+    public override string Description => "Determine a production state from a reason";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     #region Methods
 
