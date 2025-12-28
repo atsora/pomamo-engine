@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -152,5 +153,10 @@ namespace Lemoine.Model
     /// Labor cost associated with this machine observation state
     /// </summary>
     double? LaborCost { get; set; }
+
+    /// <summary>
+    /// Associated production state (nullable)
+    /// </summary>
+    IProductionState ProductionState { get; set; }
   }
 }

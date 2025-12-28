@@ -155,6 +155,7 @@ namespace Lemoine.WebDataAccess
     public string LongDisplay {
       get; set;
     }
+    public IProductionState ProductionState { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
     #region IComparable implementation
     /// <summary>
     /// <see cref="IComparable"/>

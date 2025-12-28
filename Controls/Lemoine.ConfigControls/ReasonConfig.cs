@@ -65,6 +65,7 @@ namespace Lemoine.ConfigControls
       linkOperationDirectionColumn.HeaderText = PulseCatalog.GetString ("LinkOperationDirection");
       reasonGroupColumn.HeaderText = PulseCatalog.GetString ("ReasonGroup");
       displayPriorityColumn.HeaderText = PulseCatalog.GetString ("DisplayPriority");
+      productionStateColumn.HeaderText = PulseCatalog.GetString ("ProductionState");
 
       m_reasons.SortColumns = false;
       
@@ -87,6 +88,14 @@ namespace Lemoine.ConfigControls
         dialog.DisplayedProperty = "SelectionText";
         DataGridViewCell cell = new DataGridViewSelectionableCell<IReasonGroup> (dialog);
         reasonGroupColumn.CellTemplate = cell;
+      }
+      {
+        ProductionStateDialog dialog =
+          new ProductionStateDialog ();
+        dialog.Nullable = true;
+        dialog.DisplayedProperty = "SelectionText";
+        DataGridViewCell cell = new DataGridViewSelectionableCell<IProductionState> (dialog);
+        productionStateColumn.CellTemplate = cell;
       }
     }
     

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -148,6 +149,11 @@ namespace Lemoine.Model
     /// Priority to use to display it in the reports or in the applications
     /// </summary>
     int? DisplayPriority { get; set; }
+
+    /// <summary>
+    /// Associated production state (nullable)
+    /// </summary>
+    IProductionState ProductionState { get; set; }
   }
 
 

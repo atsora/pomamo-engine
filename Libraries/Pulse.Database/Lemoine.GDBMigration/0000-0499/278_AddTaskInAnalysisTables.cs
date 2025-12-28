@@ -17,9 +17,6 @@ namespace Lemoine.GDBMigration
   {
     // Keep the options until all customers were upgraded to version >= 19.0.0
     // And after version >= 19.0.0 was installed at new customers
-    static readonly string USE_DEPRECATED_TASK_STATUS_KEY = "Migration.UseDeprecatedTaskStatus";
-    static readonly bool USE_DEPRECATED_TASK_STATUS_DEFAULT = false;
-
     static readonly string USE_DEPRECATED_TASK_KEY = "Migration.UseDeprecatedTask";
     static readonly bool USE_DEPRECATED_TASK_DEFAULT = false;
 
@@ -43,7 +40,7 @@ namespace Lemoine.GDBMigration
     override public void Down ()
     {
       CycleCountSummaryDown ();
-      CycleCountSummaryDown ();
+      CycleDurationSummaryDown ();
       IntermediateWorkPieceByMachineSummaryDown ();
       OperationSlotDown ();
       WorkOrderSlotDown ();
