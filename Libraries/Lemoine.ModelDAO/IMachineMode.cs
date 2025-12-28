@@ -415,6 +415,11 @@ namespace Lemoine.Model
     /// Parent machine mode (nullable)
     /// </summary>
     IMachineMode Parent { get; set; }
+
+    /// <summary>
+    /// Machine cost associated with this machine mode (nullable)
+    /// </summary>
+    double? MachineCost { get; set; }
     
     /// <summary>
     /// Check if it is the descendant of the specified machine mode

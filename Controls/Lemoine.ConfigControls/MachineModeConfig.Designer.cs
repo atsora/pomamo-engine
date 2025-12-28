@@ -45,6 +45,7 @@ namespace Lemoine.ConfigControls
       this.autoSequenceColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn ();
       this.colorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn ();
       this.machineModeCategoryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn ();
+      this.machineCostColumn = new System.Windows.Forms.DataGridViewTextBoxColumn ();
       this.nameOrTranslationKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn ();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit ();
       this.SuspendLayout ();
@@ -67,6 +68,7 @@ namespace Lemoine.ConfigControls
             this.autoSequenceColumn,
             this.colorColumn,
             this.machineModeCategoryColumn,
+            this.machineCostColumn,
             this.nameOrTranslationKeyColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point (0, 0);
@@ -160,6 +162,12 @@ namespace Lemoine.ConfigControls
       this.machineModeCategoryColumn.HeaderText = "MachineModeCategory";
       this.machineModeCategoryColumn.Name = "machineModeCategoryColumn";
       // 
+      // machineCostColumn
+      // 
+      this.machineCostColumn.DataPropertyName = "MachineCost";
+      this.machineCostColumn.HeaderText = "MachineCost";
+      this.machineCostColumn.Name = "machineCostColumn";
+      // 
       // nameOrTranslationKeyColumn
       // 
       this.nameOrTranslationKeyColumn.DataPropertyName = "NameOrTranslation";
@@ -194,6 +202,7 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewCheckBoxColumn autoSequenceColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn colorColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn machineModeCategoryColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn machineCostColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn nameOrTranslationKeyColumn;
   }
 }

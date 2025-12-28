@@ -142,5 +142,15 @@ namespace Lemoine.Model
     /// Does it correspond to a production time ?
     /// </summary>
     bool IsProduction { get; set; }
+
+    /// <summary>
+    /// Does it correspond to a setup time ?
+    /// </summary>
+    bool IsSetup { get; set; }
+
+    /// <summary>
+    /// Labor cost associated with this machine observation state
+    /// </summary>
+    double? LaborCost { get; set; }
   }
 }
