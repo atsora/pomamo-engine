@@ -26,5 +26,6 @@
               not-null="true" />
     <many-to-one name="Parent" column="parentmachinemodeid" class="MachineMode"
                  lazy="false" not-found="exception" />
+    <property name="MachineCost" column="machinemodemachinecost" />
   </class>
 </hibernate-mapping>

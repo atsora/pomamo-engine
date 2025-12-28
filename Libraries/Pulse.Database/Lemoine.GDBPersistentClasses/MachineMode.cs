@@ -32,6 +32,7 @@ namespace Lemoine.GDBPersistentClasses
     string m_color = DEFAULT_MACHINE_MODE_COLOR;
     MachineModeCategoryId m_machineModeCategory = MachineModeCategoryId.Inactive;
     IMachineMode m_parent = null;
+    double? m_machineCost = null;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineMode).FullName);
@@ -162,6 +163,31 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_parent; }
       set { m_parent = value; }
     }
+
+    /// <summary>
+    /// Machine cost associated with this machine mode
+    /// 
+    /// Nullable
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? MachineCost {
+      get { return m_machineCost; }
+      set { m_machineCost = value; }
+    }
+
+    /// <summary>
+    /// MachineCost attribute for Xml serialization
+    /// </summary>
+    [XmlAttribute("MachineCost")]
+    public virtual double XmlSerializationMachineCost {
+      get { return this.MachineCost.Value; }
+      set { this.MachineCost = value; }
+    }
+
+    /// <summary>
+    /// used to serialize MachineCost only when not null
+    /// </summary>
+    public virtual bool XmlSerializationMachineCostSpecified{ get { return this.MachineCost.HasValue; } }
 
     /// <summary>
     /// Text to use in a selection dialog
