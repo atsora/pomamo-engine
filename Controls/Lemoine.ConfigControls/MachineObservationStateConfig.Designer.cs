@@ -44,6 +44,8 @@ namespace Lemoine.ConfigControls
       this.nameOrTranslationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.linkOperationDirectionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.isProductionColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.isSetupColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.laborCostColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
       this.SuspendLayout();
       // 
@@ -63,7 +65,9 @@ namespace Lemoine.ConfigControls
                   this.versionColumn,
                   this.nameOrTranslationColumn,
                   this.linkOperationDirectionColumn,
-                  this.isProductionColumn});
+                  this.isProductionColumn,
+                  this.isSetupColumn,
+                  this.laborCostColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point(0, 0);
       this.dataGridView.Name = "dataGridView";
@@ -162,6 +166,20 @@ namespace Lemoine.ConfigControls
       this.isProductionColumn.Name = "isProductionColumn";
       this.isProductionColumn.Width = 72;
       // 
+      // isSetupColumn
+      // 
+      this.isSetupColumn.DataPropertyName = "IsSetup";
+      this.isSetupColumn.HeaderText = "IsSetup";
+      this.isSetupColumn.Name = "isSetupColumn";
+      this.isSetupColumn.Width = 70;
+      // 
+      // laborCostColumn
+      // 
+      this.laborCostColumn.DataPropertyName = "LaborCost";
+      this.laborCostColumn.HeaderText = "LaborCost";
+      this.laborCostColumn.Name = "laborCostColumn";
+      this.laborCostColumn.Width = 82;
+      // 
       // MachineObservationStateConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -175,6 +193,8 @@ namespace Lemoine.ConfigControls
       this.ResumeLayout(false);
     }
     private System.Windows.Forms.DataGridViewCheckBoxColumn isProductionColumn;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn isSetupColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn laborCostColumn;
     private System.Windows.Forms.DataGridViewCheckBoxColumn shiftRequiredColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn nameOrTranslationColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn versionColumn;

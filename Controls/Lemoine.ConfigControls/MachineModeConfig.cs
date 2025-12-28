@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,7 +26,6 @@ namespace Lemoine.ConfigControls
     : UserControl
     , IConfigControlObservable<IMachineMode>
   {
-    #region Members
     SortableBindingList<IMachineMode> m_machineModes = new SortableBindingList<IMachineMode>();
     
     ISet<DataGridViewRow> m_updateSet =
@@ -35,11 +35,9 @@ namespace Lemoine.ConfigControls
 
     ISet<IConfigControlObserver<IMachineMode> > m_observers =
       new HashSet<IConfigControlObserver<IMachineMode> > ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineModeConfig).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -62,6 +60,7 @@ namespace Lemoine.ConfigControls
       autoSequenceColumn.HeaderText = PulseCatalog.GetString ("MachineModeAutoSequence");
       colorColumn.HeaderText = PulseCatalog.GetString ("Color");
       machineModeCategoryColumn.HeaderText = PulseCatalog.GetString ("MachineModeCategory");
+      machineCostColumn.HeaderText = PulseCatalog.GetString ("MachineCost", "Machine cost");
 
       m_machineModes.SortColumns = false;
       
@@ -74,7 +73,6 @@ namespace Lemoine.ConfigControls
         parentColumn.CellTemplate = cell;
       }
     }
-    #endregion // Constructors
     
     void MachineModeConfigLoad(object sender, EventArgs e)
     {
@@ -85,8 +83,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("MachineModeConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("MachineModeConfigLoad: no DAO factory is defined");
         return;
       }
       

@@ -26,5 +26,10 @@
     <property name="IsProduction"
               column="machineobservationstateisproduction"
               not-null="true" />
+    <property name="IsSetup"
+              column="machineobservationstateissetup"
+              not-null="true" />
+    <property name="LaborCost"
+              column="machineobservationstatelaborcost" />
   </class>
 </hibernate-mapping>

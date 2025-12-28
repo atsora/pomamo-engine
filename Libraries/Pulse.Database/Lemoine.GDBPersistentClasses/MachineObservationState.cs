@@ -33,6 +33,8 @@ namespace Lemoine.GDBPersistentClasses
     IMachineObservationState m_siteAttendanceChange;
     LinkDirection m_linkOperationDirection = LinkDirection.None;
     bool m_isProduction = false;
+    bool m_isSetup = false;
+    double? m_laborCost = null;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineObservationState).FullName);
@@ -158,7 +160,40 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_isProduction; }
       set { m_isProduction = value; }
     }
-    
+
+    /// <summary>
+    /// Does it correspond to a setup time ?
+    /// </summary>
+    [XmlAttribute("IsSetup")]
+    public virtual bool IsSetup {
+      get { return m_isSetup; }
+      set { m_isSetup = value; }
+    }
+
+    /// <summary>
+    /// Labor cost associated with this machine observation state
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? LaborCost {
+      get { return m_laborCost; }
+      set { m_laborCost = value; }
+    }
+
+    /// <summary>
+    /// use for Xml serialization of LaborCost
+    /// </summary>
+    [XmlAttribute ("LaborCost")]
+    public virtual double XmlSerializationLaborCost
+    {
+      get { return m_laborCost.Value; }
+      set { m_laborCost = value; }
+    }
+
+    /// <summary>
+    /// used to serialize LaborCost only when not null
+    /// </summary>
+    public virtual bool XmlSerializationLaborCostSpecified => m_laborCost.HasValue;
+
     /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
