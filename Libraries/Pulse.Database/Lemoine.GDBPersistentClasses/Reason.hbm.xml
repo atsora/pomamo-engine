@@ -45,5 +45,10 @@
                  not-found="exception"
                  not-null="true" />
     <property name="DisplayPriority" column="reasondisplaypriority" />
+    <many-to-one name="ProductionState"
+                 column="productionstateid"
+                 class="ProductionState"
+                 lazy="false"
+                 not-found="exception" />
   </class>
 </hibernate-mapping>

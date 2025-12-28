@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -35,6 +36,7 @@ namespace Lemoine.GDBPersistentClasses
     bool m_isProduction = false;
     bool m_isSetup = false;
     double? m_laborCost = null;
+    IProductionState m_productionState = null;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineObservationState).FullName);
@@ -193,6 +195,15 @@ namespace Lemoine.GDBPersistentClasses
     /// used to serialize LaborCost only when not null
     /// </summary>
     public virtual bool XmlSerializationLaborCostSpecified => m_laborCost.HasValue;
+
+    /// <summary>
+    /// Associated production state (nullable)
+    /// </summary>
+    [XmlIgnore]
+    public virtual IProductionState ProductionState {
+      get { return m_productionState; }
+      set { m_productionState = value; }
+    }
 
     /// <summary>
     /// Text to use in a selection dialog

@@ -59,6 +59,9 @@ namespace Lemoine.ConfigControls
       siteAttendanceChangeColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateSiteAttendanceChange");
       linkOperationDirectionColumn.HeaderText = PulseCatalog.GetString ("LinkOperationDirection");
       isProductionColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateIsProduction");
+      isSetupColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateIsSetup");
+      laborCostColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateLaborCost");
+      productionStateColumn.HeaderText = PulseCatalog.GetString ("ProductionState");
       
       m_machineObservationStates.SortColumns = false;
       
@@ -75,6 +78,14 @@ namespace Lemoine.ConfigControls
         dialog.DisplayedProperty = "SelectionText";
         DataGridViewCell cell = new DataGridViewSelectionableCell<IMachineObservationState> (dialog);
         siteAttendanceChangeColumn.CellTemplate = cell;
+      }
+      {
+        ProductionStateDialog dialog =
+          new ProductionStateDialog ();
+        dialog.Nullable = true;
+        dialog.DisplayedProperty = "SelectionText";
+        DataGridViewCell cell = new DataGridViewSelectionableCell<IProductionState> (dialog);
+        productionStateColumn.CellTemplate = cell;
       }
     }
     #endregion // Constructors
