@@ -19,7 +19,6 @@ namespace Lemoine.Plugin.MachineModeToProductionState
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Score of the plugin
     /// </summary>
@@ -77,9 +76,7 @@ namespace Lemoine.Plugin.MachineModeToProductionState
     /// </summary>
     [PluginConf ("TimeSpan", "Max duration", Description = "Max duration", Multiple = false, Optional = true)]
     public TimeSpan? MaxDuration { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -158,6 +155,5 @@ namespace Lemoine.Plugin.MachineModeToProductionState
     {
       return false;
     }
-    #endregion // Constructors
   }
 }

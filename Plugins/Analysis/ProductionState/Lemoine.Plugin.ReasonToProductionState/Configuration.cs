@@ -19,7 +19,6 @@ namespace Lemoine.Plugin.ReasonToProductionState
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Score of the plugin
     /// </summary>
@@ -71,9 +70,7 @@ namespace Lemoine.Plugin.ReasonToProductionState
     /// </summary>
     [PluginConf ("Reason", "Reason", Description = "Reason that is the source of the production state", Multiple = false, Optional = false)]
     public int ReasonId { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -152,6 +149,5 @@ namespace Lemoine.Plugin.ReasonToProductionState
     {
       return false;
     }
-    #endregion // Constructors
   }
 }
