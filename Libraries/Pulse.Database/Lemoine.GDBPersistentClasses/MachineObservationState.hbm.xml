@@ -31,5 +31,10 @@
               not-null="true" />
     <property name="LaborCost"
               column="machineobservationstatelaborcost" />
+    <many-to-one name="ProductionState"
+                 column="productionstateid"
+                 class="ProductionState"
+                 lazy="false"
+                 not-found="exception" />
   </class>
 </hibernate-mapping>
