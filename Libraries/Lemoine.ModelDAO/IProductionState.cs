@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -7,6 +8,41 @@ using System.Collections.Generic;
 
 namespace Lemoine.Model
 {
+  /// <summary>
+  /// List of some base default Ids for Reasons
+  /// </summary>
+  public enum ProductionStateId
+  {
+    /// <summary>
+    /// Production
+    /// </summary>
+    Production = 1,
+    /// <summary>
+    /// No production
+    /// </summary>
+    NoProduction = 2,
+    /// <summary>
+    /// Unplanned stop
+    /// </summary>
+    UnplannedStop = 3,
+    /// <summary>
+    /// Planned stop
+    /// </summary>
+    PlannedStop = 4,
+    /// <summary>
+    /// Not scheduled time
+    /// </summary>
+    Unscheduled = 5,
+    /// <summary>
+    /// Set-up phase
+    /// </summary>
+    Setup = 6,
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    Unknown = 7,
+  }
+
   /// <summary>
   /// Model of table ProductionState
   /// </summary>
