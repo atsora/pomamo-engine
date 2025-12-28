@@ -49,6 +49,7 @@ namespace Lemoine.ConfigControls
       this.customReportColorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.linkOperationDirectionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.reasonGroupColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.productionStateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
       this.SuspendLayout();
       // 
@@ -73,7 +74,8 @@ namespace Lemoine.ConfigControls
             this.customColorColumn,
             this.customReportColorColumn,
             this.linkOperationDirectionColumn,
-            this.reasonGroupColumn});
+            this.reasonGroupColumn,
+            this.productionStateColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point(0, 0);
       this.dataGridView.Name = "dataGridView";
@@ -219,6 +221,13 @@ namespace Lemoine.ConfigControls
       this.reasonGroupColumn.Name = "reasonGroupColumn";
       this.reasonGroupColumn.Width = 93;
       // 
+      // productionStateColumn
+      // 
+      this.productionStateColumn.DataPropertyName = "ProductionState";
+      this.productionStateColumn.HeaderText = "ProductionState";
+      this.productionStateColumn.Name = "productionStateColumn";
+      this.productionStateColumn.Width = 105;
+      // 
       // ReasonConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -249,5 +258,6 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn customReportColorColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn linkOperationDirectionColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn reasonGroupColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn productionStateColumn;
   }
 }

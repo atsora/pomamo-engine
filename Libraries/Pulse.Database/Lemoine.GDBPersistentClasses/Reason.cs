@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -44,6 +45,7 @@ namespace Lemoine.GDBPersistentClasses
     LinkDirection m_linkOperationDirection = LinkDirection.None;
     IReasonGroup m_reasonGroup;
     int? m_displayPriority;
+    IProductionState m_productionState = null;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Reason).FullName);
@@ -259,6 +261,15 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_displayPriority; }
       set { m_displayPriority = value; }
+    }
+
+    /// <summary>
+    /// Associated production state (nullable)
+    /// </summary>
+    [XmlIgnore]
+    public virtual IProductionState ProductionState {
+      get { return m_productionState; }
+      set { m_productionState = value; }
     }
     #endregion // Getters / Setters
 

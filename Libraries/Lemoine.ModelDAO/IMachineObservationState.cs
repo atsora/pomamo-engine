@@ -157,5 +157,10 @@ namespace Lemoine.Model
     /// Labor cost associated with this machine observation state
     /// </summary>
     double? LaborCost { get; set; }
+
+    /// <summary>
+    /// Associated production state (nullable)
+    /// </summary>
+    IProductionState ProductionState { get; set; }
   }
 }
