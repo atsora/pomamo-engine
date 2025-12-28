@@ -56,8 +56,8 @@ namespace Lemoine.Plugin.RunningMachineModeIsProduction
     /// If null or empty, a default running production state color is set in the plugin
     /// </summary>
     [PluginConf ("Text", "Default running production state color", Description = "optionally a default running production state color in case no running production state is set. Default: blue #0080FF", Multiple = false, Optional = true)]
-    [DefaultValue ("#0080FF")]
-    public string DefaultRunningProductionStateColor { get; set; } = "#3498DB"; // Blue. Previously #0080FF
+    [DefaultValue ("#008000")]
+    public string DefaultRunningProductionStateColor { get; set; } = "#008000"; // Green
 
     /// <summary>
     /// Associated not running production state id. If 0, consider a default production state
@@ -89,8 +89,8 @@ namespace Lemoine.Plugin.RunningMachineModeIsProduction
     /// If null or empty, a default not running production state color is set in the plugin
     /// </summary>
     [PluginConf ("Text", "Default not running production state color", Description = "optionally a default not running production state color in case no running production state is set. Default: red #AA0909", Multiple = false, Optional = true)]
-    [DefaultValue ("#AA0909")]
-    public string DefaultNotRunningProductionStateColor { get; set; } = "#AA0909"; // Red
+    [DefaultValue ("#FFFF00")]
+    public string DefaultNotRunningProductionStateColor { get; set; } = "#FFFF00"; // Yellow
 
     /// <summary>
     /// Exclude manual

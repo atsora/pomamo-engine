@@ -25,7 +25,6 @@ namespace Lemoine.GDBPersistentClasses
     , IComparable, IComparable<IProductionState>
     , IEquatable<IProductionState>
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name; // Can't be empty but can be null
@@ -34,11 +33,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_descriptionTranslationKey; // Can't be empty but can be null
     string m_color;
     int? m_displayPriority;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProductionState).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -196,9 +193,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_displayPriority; }
       set { m_displayPriority = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -226,10 +221,20 @@ namespace Lemoine.GDBPersistentClasses
       m_id = id;
       this.TranslationKey = translationKey;
     }
-    #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
+    /// <summary>
+    /// Constructor for default values
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="translationKey"></param>
+    internal protected ProductionState (int id, string translationKey, string color)
+    {
+      Debug.Assert (!string.IsNullOrEmpty (color));
+
+      m_id = id;
+      this.TranslationKey = translationKey;
+      m_color = color;
+    }
 
     #region Equals and GetHashCode implementation
     /// <summary>

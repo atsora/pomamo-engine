@@ -24,7 +24,6 @@ namespace Lemoine.Plugin.ResetProductionState
     [DefaultValue (0.0)]
     public double Score { get; set; } = 0.0;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -44,6 +43,5 @@ namespace Lemoine.Plugin.ResetProductionState
       errors = errorList;
       return true;
     }
-    #endregion // Constructors
   }
 }
