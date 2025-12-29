@@ -41,6 +41,10 @@ namespace Lemoine.Model
     /// Unknown
     /// </summary>
     Unknown = 7,
+    /// <summary>
+    /// Extra production (outside the production periods)
+    /// </summary>
+    Extra = 8,
   }
 
   /// <summary>
@@ -110,5 +114,10 @@ namespace Lemoine.Model
     /// Priority to use to display it in the reports or in the applications
     /// </summary>
     int? DisplayPriority { get; set; }
+
+    /// <summary>
+    /// Default rate associated with this production state
+    /// </summary>
+    double? DefaultRate { get; set; }
   }
 }
