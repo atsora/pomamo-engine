@@ -38,44 +38,29 @@ namespace Lemoine.Plugin.DefaultAccumulators
     readonly IShift m_shift;
     readonly int m_hashCode;
 
-    public IMachine Machine
-    {
-      get { return m_machine; }
-    }
+    public IMachine Machine => m_machine;
 
     /// <summary>
     /// Machine observation state
     /// </summary>
-    public IMachineObservationState MachineObservationState
-    {
-      get { return m_machineObservationState; }
-    }
+    public IMachineObservationState MachineObservationState => m_machineObservationState;
 
     /// <summary>
     /// ProductionState
     /// </summary>
-    public IProductionState ProductionState
-    {
-      get { return m_productionState; }
-    }
+    public IProductionState ProductionState => m_productionState;
 
     /// <summary>
     /// Day
     /// </summary>
-    public DateTime Day
-    {
-      get { return m_day; }
-    }
+    public DateTime Day => m_day;
 
     /// <summary>
     /// Shift
     /// 
     /// nullable
     /// </summary>
-    public IShift Shift
-    {
-      get { return m_shift; }
-    }
+    public IShift Shift => m_shift;
 
     /// <summary>
     /// Constructor
@@ -160,10 +145,7 @@ namespace Lemoine.Plugin.DefaultAccumulators
     ///   Serves as a hash function for a particular type
     /// </summary>
     /// <returns>A hash code for the current Object</returns>
-    public override int GetHashCode ()
-    {
-      return m_hashCode;
-    }
+    public override int GetHashCode () => m_hashCode;
   };
 
   /// <summary>
@@ -173,26 +155,18 @@ namespace Lemoine.Plugin.DefaultAccumulators
     : Accumulator
     , IReasonSlotAccumulator
   {
-    #region Members
     readonly IDictionary<ProductionStateSummaryKey, TimeSpan> m_productionStateSummaryAccumulator =
       new Dictionary<ProductionStateSummaryKey, TimeSpan> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProductionStateSummaryAccumulator).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public ProductionStateSummaryAccumulator ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add some new data in the Summary accumulator
     /// </summary>
@@ -257,6 +231,5 @@ namespace Lemoine.Plugin.DefaultAccumulators
       }
       m_productionStateSummaryAccumulator.Clear ();
     }
-    #endregion // Methods
   }
 }

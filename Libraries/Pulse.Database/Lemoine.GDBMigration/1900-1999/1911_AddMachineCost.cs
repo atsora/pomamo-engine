@@ -9,7 +9,7 @@ using Migrator.Framework;
 namespace Lemoine.GDBMigration
 {
   /// <summary>
-  /// Migration to add MachineCost column to machinemode table
+  /// Migration to add MachineCost column to machine table
   /// </summary>
   [Migration(1911)]
   public class AddMachineModeMachineCost: MigrationExt
@@ -21,16 +21,22 @@ namespace Lemoine.GDBMigration
     /// </summary>
     public override void Up ()
     {
-      Database.AddColumn (TableName.MACHINE_MODE,
-                          new Column ($"{TableName.MACHINE_MODE}machinecost", System.Data.DbType.Double));
+      Database.AddColumn (TableName.MACHINE,
+                          new Column ($"{TableName.MACHINE}costoff", System.Data.DbType.Double));
+      Database.AddColumn (TableName.MACHINE,
+                          new Column ($"{TableName.MACHINE}costinactive", System.Data.DbType.Double));
+      Database.AddColumn (TableName.MACHINE,
+                          new Column ($"{TableName.MACHINE}costactive", System.Data.DbType.Double));
     }
-    
+
     /// <summary>
     /// Downgrade the database
     /// </summary>
     public override void Down ()
     {
-      Database.RemoveColumn (TableName.MACHINE_MODE, $"{TableName.MACHINE_MODE}machinecost");
+      Database.RemoveColumn (TableName.MACHINE, $"{TableName.MACHINE}costactive");
+      Database.RemoveColumn (TableName.MACHINE, $"{TableName.MACHINE}costinactive");
+      Database.RemoveColumn (TableName.MACHINE, $"{TableName.MACHINE}costoff");
     }
   }
 }
