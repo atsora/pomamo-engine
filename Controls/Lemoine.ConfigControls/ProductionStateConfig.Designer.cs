@@ -41,6 +41,7 @@ namespace Lemoine.ConfigControls
       this.descriptionTranslationKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.displayPriorityColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.colorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.defaultRateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.nameOrTranslationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.descriptionOrTranslationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.longDisplayColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -61,6 +62,7 @@ namespace Lemoine.ConfigControls
             this.descriptionTranslationKeyColumn,
             this.displayPriorityColumn,
             this.colorColumn,
+            this.defaultRateColumn,
             this.nameOrTranslationColumn,
             this.descriptionOrTranslationColumn,
             this.longDisplayColumn});
@@ -136,6 +138,13 @@ namespace Lemoine.ConfigControls
       this.colorColumn.Name = "colorColumn";
       this.colorColumn.Width = 56;
       // 
+      // defaultRateColumn
+      // 
+      this.defaultRateColumn.DataPropertyName = "DefaultRate";
+      this.defaultRateColumn.HeaderText = "Default Rate";
+      this.defaultRateColumn.Name = "defaultRateColumn";
+      this.defaultRateColumn.Width = 88;
+      // 
       // nameOrTranslationColumn
       // 
       this.nameOrTranslationColumn.DataPropertyName = "NameOrTranslation";
@@ -185,6 +194,7 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn descriptionTranslationKeyColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn displayPriorityColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn colorColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn defaultRateColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn nameOrTranslationColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn descriptionOrTranslationColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn longDisplayColumn;

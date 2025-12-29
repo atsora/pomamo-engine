@@ -28,5 +28,6 @@
     <property name="Color" column="productionstatecolor"
               not-null="true" />
     <property name="DisplayPriority" column="productionstatedisplaypriority" />
+    <property name="DefaultRate" column="productionstatedefaultrate" />
   </class>
 </hibernate-mapping>
