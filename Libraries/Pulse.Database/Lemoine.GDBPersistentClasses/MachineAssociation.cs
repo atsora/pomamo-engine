@@ -37,16 +37,13 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string DEFAULT_STEP_SPAN_NO_END_KEY = "Analysis.StepSpan.NoEnd";
     static readonly TimeSpan DEFAULT_STEP_SPAN_NO_END_DEFAULT = TimeSpan.FromDays (1);
 
-    #region Members
     LowerBound<DateTime> m_begin;
     UpperBound<DateTime> m_end;
     bool m_lowerStepSpanPossible = true;
     AssociationOption? m_associationOption;
     string m_dynamic;
     PeriodAssociationInsertImplementation m_insertImplementation;
-    #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// UTC date/time range of the association
     /// </summary>
@@ -277,9 +274,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -324,6 +319,35 @@ namespace Lemoine.GDBPersistentClasses
         m_begin = range.Lower;
         m_end = range.Upper;
       }
+
+      this.LoadConfig ();
+      m_insertImplementation = new PeriodAssociationInsertImplementation (this);
+    }
+
+    /// <summary>
+    /// Specific constructor when begin may be equal to end
+    /// because of the use of dynamic times
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="dynamic">dynamic times, not null or empty</param>
+    protected MachineAssociation (IMachine machine, UtcDateTimeRange range, string dynamic)
+      : base (machine)
+    {
+      Debug.Assert (!string.IsNullOrEmpty (dynamic));
+      Debug.Assert (!range.IsEmpty ());
+
+      if (range.IsEmpty ()) {
+        var dateTime = DateTime.UtcNow;
+        log.FatalFormat ("MachineAssociation: empty range, fallback use begin=end={0} StackTrace={1}", dateTime, System.Environment.StackTrace);
+        m_begin = dateTime;
+        m_end = dateTime;
+      }
+      else {
+        m_begin = range.Lower;
+        m_end = range.Upper;
+      }
+
+      m_dynamic = dynamic;
 
       this.LoadConfig ();
       m_insertImplementation = new PeriodAssociationInsertImplementation (this);
@@ -396,7 +420,6 @@ namespace Lemoine.GDBPersistentClasses
       ConfigSet.Load (DEFAULT_STEP_SPAN_NO_END_KEY,
                       DEFAULT_STEP_SPAN_NO_END_DEFAULT);
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Convert the Association to the given Slot

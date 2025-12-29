@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -76,7 +77,7 @@ namespace Lemoine.GDBPersistentClasses
     public IMachineModification InsertSub (IMachineStateTemplateAssociation association, UtcDateTimeRange range, Action<IMachineStateTemplateAssociation> preChange, IMachineModification parent)
     {
       if (log.IsDebugEnabled) {
-        log.Debug ($"InsertSub: parent.Id={(association).Id},Priority={association.Priority},StatusPriority={association.StatusPriority}");
+        log.Debug ($"InsertSub: parent.Id={association.Id},Priority={association.Priority},StatusPriority={association.StatusPriority}");
       }
 
       IMachineStateTemplateAssociation subModification = association.Clone (range);
@@ -87,7 +88,7 @@ namespace Lemoine.GDBPersistentClasses
       var persistentSubModification = ModelDAOHelper.DAOFactory.MachineModificationDAO
           .FindById (modificationId, association.Machine);
       Debug.Assert (null != persistentSubModification);
-      var mainModification = ((ReasonMachineAssociation)association).MainModification;
+      var mainModification = ((MachineStateTemplateAssociation)association).MainModification;
       persistentSubModification.Parent = parent ?? (mainModification ?? association);
 
       return persistentSubModification;
@@ -124,7 +125,7 @@ WHERE table_schema='pgfkpart'
             var insertIntoMachineModificationQuery = string.Format (@"
 INSERT INTO pgfkpart.machinemodification_p{0}
   (modificationreferencedtable, machinemodificationmachineid, modificationpriority, parentglobalmodificationid, parentmachinemodificationid, modificationauto)
-VALUES ('ReasonMachineAssociation', {0}, :Priority, :ParentGlobal, :ParentMachine, :Auto)
+VALUES ('MachineStateTemplateAssociation', {0}, :Priority, :ParentGlobal, :ParentMachine, :Auto)
 RETURNING modificationid;
 ",
               association.Machine.Id // 0
@@ -144,18 +145,18 @@ RETURNING modificationid;
               .SetBoolean ("Auto", association.Auto)
               .UniqueResult<long> ();
 
-            var insertIntoReasonMachineAssociationQuery = $"""
+            var insertIntoMachineStateTemplateAssociationQuery = $"""
 INSERT INTO pgfkpart.machinestatetemplateassociation_p{association.Machine.Id} (modificationid, machineid, machinestatetemplateid,
   userid, shiftid,
   machinestatetemplateassociationbegin, machinestatetemplateassociationend,
-  machinestatetemplateassociationforce, machinestatetemplateassociationoption)
-VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Force, :Option);
+  machinestatetemplateassociationforce, machinestatetemplateassociationoption, machinestatetemplateassociationdynamic)
+VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Force, :Option, :Dynamic);
 """;
             int? option = association.Option.HasValue
               ? (int?)association.Option.Value
               : null;
             NHibernateHelper.GetCurrentSession ()
-              .CreateSQLQuery (insertIntoReasonMachineAssociationQuery)
+              .CreateSQLQuery (insertIntoMachineStateTemplateAssociationQuery)
               .SetInt64 ("Id", modificationId)
               .SetEntity ("Machine", association.Machine)
               .SetParameter ("MachineStateTemplate", association.MachineStateTemplate, NHibernateUtil.Entity (typeof (MachineStateTemplate)))
@@ -165,6 +166,7 @@ VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Forc
               .SetParameter ("End", association.End, (NHibernate.Type.IType)new Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType ())
               .SetBoolean ("Force", association.Force)
               .SetParameter ("Option", option, NHibernateUtil.Int32)
+              .SetString ("Dynamic", association.Dynamic)
               .ExecuteUpdate ();
 
             if (fillStatus) {
