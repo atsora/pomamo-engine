@@ -60,7 +60,6 @@ namespace Lemoine.ConfigControls
       autoSequenceColumn.HeaderText = PulseCatalog.GetString ("MachineModeAutoSequence");
       colorColumn.HeaderText = PulseCatalog.GetString ("Color");
       machineModeCategoryColumn.HeaderText = PulseCatalog.GetString ("MachineModeCategory");
-      machineCostColumn.HeaderText = PulseCatalog.GetString ("MachineCost", "Machine cost");
 
       m_machineModes.SortColumns = false;
       

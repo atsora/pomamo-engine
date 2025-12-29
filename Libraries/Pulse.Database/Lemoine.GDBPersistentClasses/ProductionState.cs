@@ -33,6 +33,7 @@ namespace Lemoine.GDBPersistentClasses
     string m_descriptionTranslationKey; // Can't be empty but can be null
     string m_color;
     int? m_displayPriority;
+    double? m_defaultRate;
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProductionState).FullName);
 
@@ -192,6 +193,34 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_displayPriority; }
       set { m_displayPriority = value; }
+    }
+
+    /// <summary>
+    /// Default rate associated with this production state
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? DefaultRate
+    {
+      get { return m_defaultRate; }
+      set { m_defaultRate = value; }
+    }
+
+    /// <summary>
+    /// Default rate for XML serialization
+    /// </summary>
+    [XmlAttribute ("DefaultRate")]
+    public virtual double XmlSerializationDefaultRate
+    {
+      get { return m_defaultRate.Value; }
+      set { m_defaultRate = value; }
+    }
+
+    /// <summary>
+    /// Determine whether the DefaultRate property should be serialized
+    /// </summary>
+    public virtual bool ShouldSerializeXmlSerializationDefaultRate ()
+    {
+      return m_defaultRate.HasValue;
     }
 
     /// <summary>
