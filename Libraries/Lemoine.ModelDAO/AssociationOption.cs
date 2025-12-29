@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -71,6 +72,10 @@ namespace Lemoine.Model
     /// Skip the compatibility check
     /// </summary>
     NoCompatibilityCheck = 2048, // 1 << 11
+    /// <summary>
+    /// Track only a dynamic end
+    /// </summary>
+    TrackDynamicEnd = 4096, // 1 << 12
   };
   
   /// <summary>
