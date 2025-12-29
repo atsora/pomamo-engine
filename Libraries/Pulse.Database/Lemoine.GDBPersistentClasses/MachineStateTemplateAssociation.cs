@@ -45,6 +45,12 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_KEY = "Analysis.MachineStateTemplateAssociation.CreateAsyncProcessMachineStateTemplate";
     static readonly bool CREATE_ASYNC_PROCESS_MACHINE_STATE_TEMPLATE_DEFAULT = false;
 
+    /// <summary>
+    /// Default priority for the dynamic end tracker sub-modifications
+    /// </summary>
+    static readonly string DYNAMIC_END_TRACKER_PRIORITY_KEY = "MachineStateTemplateAssociation.DynamicEndTracker.Priority";
+    static readonly int DYNAMIC_END_TRACKER_PRIORITY_DEFAULT = 10;
+
     IMachineStateTemplate m_MachineStateTemplate;
     IUser m_user;
     IShift m_shift;
@@ -469,6 +475,12 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
 
+      // Handle TrackDynamicEnd option
+      if (this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.TrackDynamicEnd)) {
+        TrackDynamicEnd ();
+        return;
+      }
+
       // Handle dynamic times
       if (!string.IsNullOrEmpty (this.Dynamic)
         && !this.Dynamic.Equals (",")
@@ -574,6 +586,129 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
+    void TrackDynamicEnd ()
+    {
+      if (string.IsNullOrEmpty (this.DynamicEnd)) {
+        Debug.Assert (false, "TrackDynamicEnd with an empty or null DynamicEnd");
+        log.FatalFormat ("TrackDynamicEnd: invalid dynamic end {0}", this.DynamicEnd);
+        AddAnalysisLog (LogLevel.CRIT, "invalid dynamic end with option=TrackDynamicEnd");
+        SetModificationInError ("Invalid dynamic end");
+        return;
+      }
+
+      UtcDateTimeRange hint;
+      UtcDateTimeRange limit;
+      if (this.DynamicEnd.EndsWith ("+")) {
+        Debug.Assert (this.End.HasValue);
+        var appliedDateTime = this.AnalysisAppliedDateTime.HasValue
+          ? this.AnalysisAppliedDateTime.Value
+          : this.End.Value;
+        hint = new UtcDateTimeRange (appliedDateTime);
+        limit = new UtcDateTimeRange (this.End.Value);
+      }
+      else { // !this.DynamicEnd.EndsWith ("+")
+        Debug.Assert (this.Begin.HasValue);
+        var appliedDateTime = this.AnalysisAppliedDateTime.HasValue
+          ? this.AnalysisAppliedDateTime.Value
+          : this.Begin.Value;
+        Debug.Assert (Bound.Compare<DateTime> (appliedDateTime, this.End) <= 0);
+        hint = new UtcDateTimeRange (appliedDateTime);
+        limit = new UtcDateTimeRange (this.Begin, this.End, "[]");
+      }
+      Debug.Assert (!limit.IsEmpty ());
+      IDynamicTimeResponse dynamicEndResponse;
+      try {
+        dynamicEndResponse = Lemoine.Business.DynamicTimes.DynamicTime
+          .GetDynamicTime (this.DynamicEnd, this.Machine, this.DynamicTimeRange, hint, limit);
+      }
+      catch (NoDynamicTime ex) {
+        log.ErrorFormat ("TrackDynamicEnd: unknown dynamic end {0}", this.DynamicEnd, ex);
+        SetModificationInError ("Unknown dynamic end");
+        return;
+      }
+      SetActive ();
+      Debug.Assert (null != dynamicEndResponse);
+      
+      if (dynamicEndResponse.Timeout) {
+        if (log.IsWarnEnabled) {
+          log.WarnFormat ("TrackDynamicEnd: Timeout for dynamic end {0} at {1} => mark as not applicable", this.DynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.NotApplicable) {
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("TrackDynamicEnd: NotApplicable for dynamic end {0} at {1} => mark as not applicable", this.DynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.NoData) {
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("TrackDynamicEnd: NoData for dynamic end {0} at {1} => mark as not applicable", this.DynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.Final.HasValue) {
+        DateTime dynamicApplicableEnd;
+        if (this.DynamicEnd.EndsWith ("+")) { // Do not consider the option DynamicEndBeforeRealEnd
+          dynamicApplicableEnd = dynamicEndResponse.Final.Value;
+        }
+        else if (Bound.Compare<DateTime> (this.End, dynamicEndResponse.Final.Value) < 0) {
+          Debug.Assert (this.End.HasValue);
+          if (this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)) {
+            Debug.Assert (this.Begin.HasValue);
+            dynamicApplicableEnd = this.Begin.Value;
+          }
+          else {
+            dynamicApplicableEnd = this.End.Value;
+          }
+        }
+        else {
+          dynamicApplicableEnd = dynamicEndResponse.Final.Value;
+        }
+
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("TrackDynamicEnd: dynamic end is {0} applicable={1}", dynamicEndResponse.Final.Value, dynamicApplicableEnd);
+        }
+        ApplyDynamicEnd (dynamicApplicableEnd);
+        MarkAsCompleted ("");
+        return;
+      } // dynamicEndResponse.Final.HasValue
+      else if (this.DynamicEnd.EndsWith ("+")) { // Do not consider the option DynamicEndBeforeRealEnd
+        if (dynamicEndResponse.Hint.Lower.HasValue) {
+          MarkAsPending (dynamicEndResponse.Hint.Lower.Value);
+        }
+        else {
+          MarkAsPending (this.AnalysisAppliedDateTime);
+        }
+      }
+      else { // Not the "+" option
+        if (dynamicEndResponse.Hint.Lower.HasValue) {
+          if (log.IsDebugEnabled) {
+            log.DebugFormat ("TrackDynamicEnd: after is {0}", dynamicEndResponse.Hint.Lower.Value);
+          }
+          if (Bound.Compare<DateTime> (this.End, dynamicEndResponse.Hint.Lower.Value) < 0) {
+            Debug.Assert (this.End.HasValue);
+            MarkAsCompleted ("");
+          }
+          else if (Bound.Equals (this.End, dynamicEndResponse.Hint.Lower.Value)) {
+            MarkAsCompleted ("");
+          }
+          else {
+            MarkAsPending (dynamicEndResponse.Hint.Lower.Value);
+          }
+        }
+        else { // Pending
+          if (log.IsDebugEnabled) {
+            log.Debug ("TrackDynamicEnd: no end and no after");
+          }
+          MarkAsPending (this.AnalysisAppliedDateTime);
+        }
+      }
+    }
+
     void MakeAnalysisDynamicStart (string dynamicStart)
     {
       log.FatalFormat ("MakeAnalysisDynamicStart: dynamic start is not supported yet");
@@ -593,10 +728,20 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
+      if (this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.ProgressiveStrategy)) {
+        MakeAnalysisDynamicEndProgressive (dynamicEnd);
+      }
+      else { // Aggressive strategy (default)
+        MakeAnalysisDynamicEndAggressive (dynamicEnd);
+      }
+    }
+
+    void MakeAnalysisDynamicEndProgressive (string dynamicEnd)
+    {
       var notProcessedRange = GetNotPocessedRange ();
       if (notProcessedRange.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEnd: GetNotProcessedRange returned an empty range => completed");
+          log.DebugFormat ("MakeAnalysisDynamicEndProgressive: GetNotPocessedRange returned an empty range => completed");
         }
         MarkAsCompleted ("");
         return;
@@ -611,7 +756,7 @@ namespace Lemoine.GDBPersistentClasses
           .GetDynamicTime (dynamicEnd, this.Machine, this.DynamicTimeRange, new UtcDateTimeRange (notProcessedRange.Lower.Value), limit);
       }
       catch (NoDynamicTime) {
-        log.ErrorFormat ("MakeAnalysisDynamicEnd: unknown dynamic end {0}", dynamicEnd);
+        log.ErrorFormat ("MakeAnalysisDynamicEndProgressive: unknown dynamic end {0}", dynamicEnd);
         SetModificationInError ("Dynamic end " + dynamicEnd + " unknown");
         return;
       }
@@ -620,23 +765,23 @@ namespace Lemoine.GDBPersistentClasses
 
       if (dynamicEndResponse.Timeout) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("MakeAnalysisDynamicEnd: Timeout is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.WarnFormat ("MakeAnalysisDynamicEndProgressive: Timeout is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
         }
         MarkDynamicTimeNotApplicable ();
         return;
       }
       else if (dynamicEndResponse.NotApplicable) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEnd: NotApplicable is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.DebugFormat ("MakeAnalysisDynamicEndProgressive: NotApplicable is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
         }
         MarkDynamicTimeNotApplicable ();
         return;
       }
       else if (dynamicEndResponse.NoData) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEnd: NoData is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.DebugFormat ("MakeAnalysisDynamicEndProgressive: NoData is returned for {0} at {1} => apply from start", dynamicEnd, this.DynamicTimeRange);
         }
-        MarkDynamicTimeNotApplicable ();
+        ApplyDynamicEnd (notProcessedRange.Lower.Value);
         return;
       }
       else if (dynamicEndResponse.Final.HasValue) {
@@ -654,15 +799,149 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
+    void MakeAnalysisDynamicEndAggressive (string dynamicEnd)
+    {
+      if (log.IsDebugEnabled) {
+        log.Debug ("MakeAnalysisDynamicEndAggressive");
+      }
+
+      Debug.Assert (this.DynamicTimeRange.Lower.HasValue, "Dynamic time with no lower bound range");
+      IDynamicTimeResponse dynamicEndResponse;
+      try {
+        Debug.Assert (!this.Range.IsEmpty ());
+        // Note: make the upper limit inclusive
+        var limit = new UtcDateTimeRange (this.Range.Lower, this.Range.Upper, true, true);
+        dynamicEndResponse = Lemoine.Business.DynamicTimes.DynamicTime
+          .GetDynamicTime (dynamicEnd, this.Machine, this.DynamicTimeRange, new UtcDateTimeRange ("(,)"), limit);
+      }
+      catch (NoDynamicTime) {
+        log.ErrorFormat ("MakeAnalysisDynamicEndAggressive: No dynamic end {0}", dynamicEnd);
+        SetModificationInError ("Dynamic end " + dynamicEnd + " unknown");
+        return;
+      }
+      SetActive ();
+      Debug.Assert (null != dynamicEndResponse);
+      
+      if (dynamicEndResponse.Timeout) {
+        if (log.IsWarnEnabled) {
+          log.WarnFormat ("MakeAnalysisDynamicEndAggressive: Timeout is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.NotApplicable) {
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("MakeAnalysisDynamicEndAggressive: NotApplicable is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.NoData) {
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("MakeAnalysisDynamicEndAggressive: NoData is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.Final.HasValue) {
+        ApplyDynamicEnd (dynamicEndResponse.Final.Value);
+        return;
+      }
+      else {
+        if (!this.Range.Overlaps (dynamicEndResponse.Hint)
+          && this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)) {
+          MarkDynamicTimeNotApplicable ();
+          return;
+        }
+        
+        if (!this.Range.IsEmpty ()) {
+          var range = this.CloneRange;
+          bool removeDynamicPlus = false;
+          
+          if (range.IsEmpty ()) {
+            Debug.Assert (!string.IsNullOrEmpty (this.Dynamic) && this.Dynamic.EndsWith ("+"));
+            if (string.IsNullOrEmpty (this.Dynamic) || !this.Dynamic.EndsWith ("+")) {
+              log.FatalFormat ("MakeAnalysisDynamicEndAggressive: unexpected value range={0} dynamic={1}", this.Range, this.Dynamic);
+              MarkAsCompleted ("");
+              return;
+            }
+            range = this.Range;
+            removeDynamicPlus = true;
+            Debug.Assert (!range.Upper.HasValue);
+            // Note: in pre-change, range=[a,a) dynamic+ is converted into range=[a,) dynamic
+          }
+          
+          Debug.Assert (!range.IsEmpty ());
+          
+          // Two sub-modifications: one to apply the machine state template aggressively, one to track the dynamic end
+          // Apply the machine state template aggressively
+          var aggressiveSubModification = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+            .InsertSub (this, range, association => MakeAnalysisDynamicEndAggressiveSubChangeAggressive (dynamicEnd, association, removeDynamicPlus), null);
+          
+          { // One to track the dynamic end
+            if (!dynamicEndResponse.Hint.Overlaps (this.Range)) {
+              if (log.IsDebugEnabled) {
+                log.DebugFormat ("MakeAnalysisDynamicEndAggressive: hint does not overlap range => no DynamicEndTracker");
+              }
+            }
+            else {
+              var trackDynamicEndModification = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+                .InsertSub (this, range, association => MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (dynamicEnd, dynamicEndResponse.Hint, aggressiveSubModification, association, removeDynamicPlus), aggressiveSubModification);
+              if (dynamicEndResponse.Hint.Lower.HasValue) {
+                ((MachineStateTemplateAssociation)trackDynamicEndModification).MarkAsInProgress (dynamicEndResponse.Hint.Lower.Value);
+              }
+            }
+          }
+        } // !range.IsEmpty ()
+        MarkAsCompleted ("");
+        return;
+      }
+    }
+
+    static void MakeAnalysisDynamicEndAggressiveSubChangeAggressive (string dynamicEnd, IMachineStateTemplateAssociation association, bool removeDynamicPlus)
+    {
+      association.Dynamic = "?" + dynamicEnd;
+      if (removeDynamicPlus && association.Dynamic.EndsWith ("+")) {
+        association.Dynamic = association.Dynamic.Substring (0, association.Dynamic.Length - 1);
+      }
+      // Remove the option TrackSlotChanges
+      if (association.Option.HasValue && association.Option.Value.HasFlag (AssociationOption.TrackSlotChanges)) {
+        association.Option = association.Option.Value
+          .Remove (AssociationOption.TrackSlotChanges);
+      }
+    }
+
+    static void MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (string dynamicEnd, UtcDateTimeRange hint, IMachineModification parent, IMachineStateTemplateAssociation association, bool removeDynamicPlus)
+    {
+      association.Dynamic = "," + dynamicEnd;
+      if (removeDynamicPlus && association.Dynamic.EndsWith ("+")) {
+        association.Dynamic = association.Dynamic.Substring (0, association.Dynamic.Length - 1);
+      }
+      association.Option = AssociationOption.TrackDynamicEnd.Add (association.Option);
+      association.Priority = Lemoine.Info.ConfigSet
+        .LoadAndGet (DYNAMIC_END_TRACKER_PRIORITY_KEY, DYNAMIC_END_TRACKER_PRIORITY_DEFAULT);
+      // Remove the option TrackSlotChanges
+      if (association.Option.HasValue && association.Option.Value.HasFlag (AssociationOption.TrackSlotChanges)) {
+        association.Option = association.Option.Value
+          .Remove (AssociationOption.TrackSlotChanges);
+      }
+    }
+
     void ApplyDynamicEnd (DateTime dynamicApplicableEnd)
     {
+      if ((Bound.Compare<DateTime> (this.End, dynamicApplicableEnd) < 0)
+        && this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)) {
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+
       var range = this.GetNotPocessedRange ();
       if (range.IsEmpty ()) {
         if (log.IsFatalEnabled) {
           log.Fatal ("ApplyDynamicEnd: (unexpected) GetNotProcessedRange is empty => nothing to do");
         }
         Debug.Assert (false);
-        MarkAsCompleted ("");
+        ForceAsDone (""); // To skip the process of the sub-modifications TrackDynamicEnd
         return;
       }
 
@@ -682,6 +961,11 @@ namespace Lemoine.GDBPersistentClasses
     void ApplyDynamicEndSubChange (IMachineStateTemplateAssociation association)
     {
       association.Dynamic = null;
+      // Remove the TrackDynamicEnd option if present
+      if (association.Option.HasValue && association.Option.Value.HasFlag (AssociationOption.TrackDynamicEnd)) {
+        association.Option = association.Option.Value
+          .Remove (AssociationOption.TrackDynamicEnd);
+      }
     }
 
     /// <summary>
