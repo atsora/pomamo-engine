@@ -44,6 +44,9 @@ namespace Lemoine.ConfigControls
       this.categoryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.subCategoryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.displayPriorityColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.costOffColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.costInactiveColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.costActiveColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.versionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
       this.SuspendLayout();
@@ -67,6 +70,9 @@ namespace Lemoine.ConfigControls
                   this.categoryColumn,
                   this.subCategoryColumn,
                   this.displayPriorityColumn,
+                  this.costOffColumn,
+                  this.costInactiveColumn,
+                  this.costActiveColumn,
                   this.versionColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point(0, 0);
@@ -166,6 +172,30 @@ namespace Lemoine.ConfigControls
       this.displayPriorityColumn.Name = "displayPriorityColumn";
       this.displayPriorityColumn.Width = 92;
       // 
+      // costOffColumn
+      // 
+      this.costOffColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.costOffColumn.DataPropertyName = "CostOff";
+      this.costOffColumn.HeaderText = "Cost Off";
+      this.costOffColumn.Name = "costOffColumn";
+      this.costOffColumn.Width = 68;
+      // 
+      // costInactiveColumn
+      // 
+      this.costInactiveColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.costInactiveColumn.DataPropertyName = "CostInactive";
+      this.costInactiveColumn.HeaderText = "Cost Inactive";
+      this.costInactiveColumn.Name = "costInactiveColumn";
+      this.costInactiveColumn.Width = 92;
+      // 
+      // costActiveColumn
+      // 
+      this.costActiveColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.costActiveColumn.DataPropertyName = "CostActive";
+      this.costActiveColumn.HeaderText = "Cost Active";
+      this.costActiveColumn.Name = "costActiveColumn";
+      this.costActiveColumn.Width = 85;
+      // 
       // versionColumn
       // 
       this.versionColumn.DataPropertyName = "Version";
@@ -199,6 +229,9 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn codeColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn nameColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn idColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn costOffColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn costInactiveColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn costActiveColumn;
     private Lemoine.BaseControls.SortableDataGridView dataGridView;
   }
 }

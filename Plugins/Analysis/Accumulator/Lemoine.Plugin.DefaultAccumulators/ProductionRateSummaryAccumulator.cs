@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -37,36 +38,24 @@ namespace Lemoine.Plugin.DefaultAccumulators
     readonly IShift m_shift;
     readonly int m_hashCode;
 
-    public IMachine Machine
-    {
-      get { return m_machine; }
-    }
+    public IMachine Machine => m_machine;
 
     /// <summary>
     /// Machine observation state
     /// </summary>
-    public IMachineObservationState MachineObservationState
-    {
-      get { return m_machineObservationState; }
-    }
+    public IMachineObservationState MachineObservationState => m_machineObservationState;
 
     /// <summary>
     /// Day
     /// </summary>
-    public DateTime Day
-    {
-      get { return m_day; }
-    }
+    public DateTime Day => m_day;
 
     /// <summary>
     /// Shift
     /// 
     /// nullable
     /// </summary>
-    public IShift Shift
-    {
-      get { return m_shift; }
-    }
+    public IShift Shift => m_shift;
 
     /// <summary>
     /// Constructor
@@ -158,26 +147,18 @@ namespace Lemoine.Plugin.DefaultAccumulators
     : Accumulator
     , IReasonSlotAccumulator
   {
-    #region Members
     readonly IDictionary<ProductionRateSummaryKey, (double, TimeSpan)> m_productionRateSummaryAccumulator =
       new Dictionary<ProductionRateSummaryKey, (double, TimeSpan)> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProductionRateSummaryAccumulator).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
     public ProductionRateSummaryAccumulator ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add some new data in the Summary accumulator
     /// </summary>
@@ -254,6 +235,5 @@ namespace Lemoine.Plugin.DefaultAccumulators
       }
       m_productionRateSummaryAccumulator.Clear ();
     }
-    #endregion // Methods
   }
 }

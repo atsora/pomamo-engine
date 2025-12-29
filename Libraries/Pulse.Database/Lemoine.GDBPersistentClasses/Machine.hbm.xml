@@ -48,6 +48,9 @@
                  class="MachineSubCategory"
                  cascade="none"
                  not-found="ignore" />
+    <property name="CostOff" column="machinecostoff" />
+    <property name="CostInactive" column="machinecostinactive" />
+    <property name="CostActive" column="machinecostactive" />
     <joined-subclass name="MonitoredMachine" table="monitoredmachine">
       <key column="machineid" />
       <set name="MachineModules"

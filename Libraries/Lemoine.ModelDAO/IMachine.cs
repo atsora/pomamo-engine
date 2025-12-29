@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -80,6 +81,21 @@ namespace Lemoine.Model
     /// Associated sub-category
     /// </summary>
     IMachineSubCategory SubCategory { get; set; }
+    
+    /// <summary>
+    /// Cost when the machine is off
+    /// </summary>
+    double? CostOff { get; set; }
+    
+    /// <summary>
+    /// Cost when the machine is inactive
+    /// </summary>
+    double? CostInactive { get; set; }
+    
+    /// <summary>
+    /// Cost when the machine is active
+    /// </summary>
+    double? CostActive { get; set; }
     
     /// <summary>
     /// Is the machine monitored ?
