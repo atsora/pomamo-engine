@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,7 +26,6 @@ namespace Lemoine.GDBPersistentClasses
     , IMachine, IVersionable, Lemoine.Collections.IDataWithId
     , IDisplayPriorityCodeNameComparerItem, IComparable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -38,11 +38,12 @@ namespace Lemoine.GDBPersistentClasses
     ICell m_cell;
     IMachineCategory m_category;
     IMachineSubCategory m_subCategory;
-    #endregion // Members
+    double? m_costOff;
+    double? m_costInactive;
+    double? m_costActive;
 
     static readonly ILog log = LogManager.GetLogger(typeof (Machine).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -200,6 +201,84 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Cost when the machine is off
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? CostOff {
+      get { return m_costOff; }
+      set { m_costOff = value; }
+    }
+
+    /// <summary>
+    /// Cost when the machine is off for XML serialization
+    /// </summary>
+    [XmlAttribute("CostOff")]
+    public virtual double XmlSerializationCostOff {
+      get { return m_costOff.Value; }
+      set { m_costOff = value; }
+    }
+
+    /// <summary>
+    /// Determine whether the CostOff property should be serialized
+    /// </summary>
+    public virtual bool ShouldSerializeXmlSerializationCostOff ()
+    {
+      return m_costOff.HasValue;
+    }
+
+    /// <summary>
+    /// Cost when the machine is inactive
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? CostInactive {
+      get { return m_costInactive; }
+      set { m_costInactive = value; }
+    }
+
+    /// <summary>
+    /// Cost when the machine is inactive for XML serialization
+    /// </summary>
+    [XmlAttribute("CostInactive")]
+    public virtual double XmlSerializationCostInactive {
+      get { return m_costInactive.Value; }
+      set { m_costInactive = value; }
+    }
+
+    /// <summary>
+    /// Determine whether the CostInactive property should be serialized
+    /// </summary>
+    public virtual bool ShouldSerializeXmlSerializationCostInactive ()
+    {
+      return m_costInactive.HasValue;
+    }
+
+    /// <summary>
+    /// Cost when the machine is active
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? CostActive {
+      get { return m_costActive; }
+      set { m_costActive = value; }
+    }
+
+    /// <summary>
+    /// Cost when the machine is active for XML serialization
+    /// </summary>
+    [XmlAttribute("CostActive")]
+    public virtual double XmlSerializationCostActive {
+      get { return m_costActive.Value; }
+      set { m_costActive = value; }
+    }
+
+    /// <summary>
+    /// Determine whether the CostActive property should be serialized
+    /// </summary>
+    public virtual bool ShouldSerializeXmlSerializationCostActive ()
+    {
+      return m_costActive.HasValue;
+    }
+
+    /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]
@@ -207,9 +286,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return string.Format ("{0}: {1}",
                                   this.Id, this.Name); }
     }
-    #endregion // Getters / Setters
-    
-    #region Methods
+
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
@@ -309,7 +386,6 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert(this.MonitoringType != null);
       return this.MonitoringType.Id == (int)MachineMonitoringTypeId.Obsolete;
     }
-    #endregion // Methods
 
     #region IComparable implementation
     /// <summary>
