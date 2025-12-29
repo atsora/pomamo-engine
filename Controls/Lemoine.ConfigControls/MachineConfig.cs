@@ -70,6 +70,9 @@ namespace Lemoine.ConfigControls
       cellColumn.HeaderText = PulseCatalog.GetString ("Cell");
       categoryColumn.HeaderText = PulseCatalog.GetString ("MachineCategory");
       subCategoryColumn.HeaderText = PulseCatalog.GetString ("MachineSubCategory");
+      costOffColumn.HeaderText = PulseCatalog.GetString ("MachineCostOff", "Cost off");
+      costInactiveColumn.HeaderText = PulseCatalog.GetString ("MachineCostInactive", "Cost inactive");
+      costActiveColumn.HeaderText = PulseCatalog.GetString ("MachineCostActive", "Cost active");
 
       m_machines.SortColumns = false;
 
