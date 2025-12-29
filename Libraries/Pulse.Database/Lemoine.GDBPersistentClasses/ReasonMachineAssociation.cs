@@ -71,7 +71,7 @@ namespace Lemoine.GDBPersistentClasses
     string m_reasonDetails = null;
     double? m_optionalReasonScore = null;
     string m_jsonData = null;
-    ReasonMachineAssociationKind m_kind = ReasonMachineAssociationKind.Consolidate;
+    ReasonMachineAssociationKind m_kind = ReasonMachineAssociationKind.NotSet;
     bool m_dataCancelled = false;
 
     IEnumerable<IReasonExtension> m_reasonExtensions;
@@ -216,7 +216,7 @@ namespace Lemoine.GDBPersistentClasses
     internal protected virtual void SetReason (IReason reason, ReasonMachineAssociationKind kind, double score, string details, string jsonData = null)
     {
       Debug.Assert (null != reason);
-      Debug.Assert (ReasonMachineAssociationKind.Consolidate != kind);
+      Debug.Assert (ReasonMachineAssociationKind.NotSet != kind);
 
       m_reason = reason;
       m_kind = kind;
@@ -439,10 +439,8 @@ namespace Lemoine.GDBPersistentClasses
       newReasonSlot.SetOldSlotFromModification (oldReasonSlot, this);
       if (this.Reason is null) { // Reset the reason
         switch (this.Kind) {
-          case ReasonMachineAssociationKind.Consolidate: // Will be deprecated soon...
-            newReasonSlot.SetUnsafeAutoReasonNumber ();
-            newReasonSlot.SetUnsafeManualFlag ();
-            newReasonSlot.SwitchToProcessing ();
+          case ReasonMachineAssociationKind.NotSet:
+            log.Fatal ($"MergeDataWithOldSlot: kind is NotSet => do nothing");
             return newReasonSlot as TSlot;
           case ReasonMachineAssociationKind.Manual:
             ((ReasonSlot)newReasonSlot).ResetManualReason ();
@@ -638,11 +636,8 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      if (this.Kind.Equals (ReasonMachineAssociationKind.Consolidate)) {
-        // In case of 'Consolidate', no step process
-        this.Analyze ();
-        MarkAsCompleted ("Cache/ClearDomainByMachine/ReasonAssociation/" + this.Machine.Id + "?Broadcast=true",
-                         (DateTime?)this.Range.Upper); // => InProgress or Done
+      if (this.Kind.Equals (ReasonMachineAssociationKind.NotSet)) {
+        log.Fatal ("MakeAnalysis: kind is NotSet => do nothing");
         return;
       }
 
@@ -650,7 +645,7 @@ namespace Lemoine.GDBPersistentClasses
           && this.Option.Value.HasFlag (AssociationOption.TrackSlotChanges)
           && (null != this.Reason)
           && !this.End.HasValue) { // Current: check if the end date/time must be discontinued
-        Debug.Assert (!this.Kind.Equals (ReasonMachineAssociationKind.Consolidate));
+        Debug.Assert (!this.Kind.Equals (ReasonMachineAssociationKind.NotSet));
         Debug.Assert (null == this.Parent);
         if (null != this.Parent) {
           log.Error ($"MakeAnalysis: TrackSlotChanges option with a parent for modification id {this.Id}");
@@ -1335,8 +1330,8 @@ namespace Lemoine.GDBPersistentClasses
     void MakeAnalysisDynamicEnd (string dynamicEnd)
     {
       if (!this.AnalysisAppliedDateTime.HasValue) { // first time
-        if (this.Kind.Equals (ReasonMachineAssociationKind.Consolidate)) {
-          SetModificationInError ("Incompatible properties Kind=Consolidate VS DynamicEnd");
+        if (this.Kind.Equals (ReasonMachineAssociationKind.NotSet)) {
+          SetModificationInError ("Incompatible properties Kind=NotSet VS DynamicEnd");
           return;
         }
         if (null == this.Reason) {
@@ -1817,7 +1812,7 @@ namespace Lemoine.GDBPersistentClasses
       clone.Dynamic = this.Dynamic;
       clone.Priority = this.StatusPriority;
       if (null != this.Reason) {
-        Debug.Assert (!this.Kind.Equals (ReasonMachineAssociationKind.Consolidate));
+        Debug.Assert (!this.Kind.Equals (ReasonMachineAssociationKind.NotSet));
         Debug.Assert (this.OptionalReasonScore.HasValue);
         ((ReasonMachineAssociation)clone).SetReason (this.Reason, this.Kind, this.OptionalReasonScore.Value, this.ReasonDetails, this.JsonData);
       }

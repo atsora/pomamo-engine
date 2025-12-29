@@ -17,11 +17,11 @@ namespace Lemoine.Model
   public enum ReasonMachineAssociationKind
   {
     /// <summary>
-    /// Consolidate the reason
+    /// Not set (must be set to a different values before processing it)
     /// 
-    /// Deprecated... TODO: To be removed / renamed in the next version
+    /// It was previously Consolidate, which is now deprecated
     /// </summary>
-    Consolidate = 0,
+    NotSet = 0,
     /// <summary>
     /// Auto reason (no overwrite required)
     /// </summary>
