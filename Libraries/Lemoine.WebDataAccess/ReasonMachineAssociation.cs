@@ -286,13 +286,6 @@ namespace Lemoine.WebDataAccess
       this.OptionalReasonScore = null;
       this.Kind = ReasonMachineAssociationKind.Manual;
     }
-    public void ConsolidateReason ()
-    {
-      this.Reason = null;
-      this.ReasonDetails = null;
-      this.OptionalReasonScore = null;
-      this.Kind = ReasonMachineAssociationKind.Consolidate;
-    }
     public void SetAutoReason (IReason reason, double score, bool overwriteRequired, string details = null, string jsonData = null)
     {
       this.Reason = reason;

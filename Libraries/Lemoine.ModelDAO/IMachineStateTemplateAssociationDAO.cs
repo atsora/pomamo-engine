@@ -29,5 +29,17 @@ namespace Lemoine.ModelDAO
     /// <param name="end"></param>
     /// <returns></returns>
     IList<IMachineStateTemplateAssociation> FindByMachineAndPeriod(IMachine machine, DateTime start, DateTime end);
+
+    /// <summary>
+    /// Insert a row in database that corresponds to a sub-modification
+    /// 
+    /// Check first range is not null
+    /// </summary>
+    /// <param name="association"></param>
+    /// <param name="range">not null</param>
+    /// <param name="preChange"></param>
+    /// <param name="parent">optional: alternative parent</param>
+    /// <returns></returns>
+    IMachineModification InsertSub (IMachineStateTemplateAssociation association, UtcDateTimeRange range, Action<IMachineStateTemplateAssociation> preChange, IMachineModification parent);
   }
 }
