@@ -40,6 +40,9 @@
                 not-null="true" />
       <property name="Option"
                 column="machinestatetemplateassociationoption" />
+      <property name="Dynamic"
+                type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database"
+                column="machinestatetemplateassociationdynamic" />
     </join>
   </subclass>
 </hibernate-mapping>

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -76,7 +77,7 @@ namespace Lemoine.GDBPersistentClasses
     public IMachineModification InsertSub (IMachineStateTemplateAssociation association, UtcDateTimeRange range, Action<IMachineStateTemplateAssociation> preChange, IMachineModification parent)
     {
       if (log.IsDebugEnabled) {
-        log.Debug ($"InsertSub: parent.Id={(association).Id},Priority={association.Priority},StatusPriority={association.StatusPriority}");
+        log.Debug ($"InsertSub: parent.Id={association.Id},Priority={association.Priority},StatusPriority={association.StatusPriority}");
       }
 
       IMachineStateTemplateAssociation subModification = association.Clone (range);
@@ -148,8 +149,8 @@ RETURNING modificationid;
 INSERT INTO pgfkpart.machinestatetemplateassociation_p{association.Machine.Id} (modificationid, machineid, machinestatetemplateid,
   userid, shiftid,
   machinestatetemplateassociationbegin, machinestatetemplateassociationend,
-  machinestatetemplateassociationforce, machinestatetemplateassociationoption)
-VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Force, :Option);
+  machinestatetemplateassociationforce, machinestatetemplateassociationoption, machinestatetemplateassociationdynamic)
+VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Force, :Option, :Dynamic);
 """;
             int? option = association.Option.HasValue
               ? (int?)association.Option.Value
@@ -165,6 +166,7 @@ VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Forc
               .SetParameter ("End", association.End, (NHibernate.Type.IType)new Lemoine.NHibernateTypes.UtcUpperBoundDateTimeSecondsType ())
               .SetBoolean ("Force", association.Force)
               .SetParameter ("Option", option, NHibernateUtil.Int32)
+              .SetString ("Dynamic", association.Dynamic)
               .ExecuteUpdate ();
 
             if (fillStatus) {

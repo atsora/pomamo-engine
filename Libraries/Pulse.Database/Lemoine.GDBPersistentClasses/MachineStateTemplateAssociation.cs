@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,6 +13,8 @@ using Lemoine.Database.Persistent;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
+using Lemoine.Business.DynamicTimes;
+using Lemoine.Extensions.Business.DynamicTimes;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -82,6 +85,22 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Specific constructor when begin may be equal to end
+    /// because of the use of dynamic times
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <param name="dynamic">dynamic times, not null or empty</param>
+    internal protected MachineStateTemplateAssociation (IMachine machine,
+                                                        IMachineStateTemplate machineStateTemplate,
+                                                        UtcDateTimeRange range,
+                                                        string dynamic)
+      : base (machine, range, dynamic)
+    {
+      this.MachineStateTemplate = machineStateTemplate;
+    }
+
+    /// <summary>
     /// Constructor for abstract modifications, that are kept transient
     /// 
     /// You may add a mainModification reference to be used in the analysis logs
@@ -116,10 +135,26 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Range to use to clone a reason machine association
+    /// Range to use to clone a machine state template association
     /// </summary>
     [XmlIgnore]
     UtcDateTimeRange CloneRange => base.Range;
+
+    /// <summary>
+    /// Range to use for the dynamic time computation
+    /// </summary>
+    [XmlIgnore]
+    UtcDateTimeRange DynamicTimeRange
+    {
+      get {
+        if (!string.IsNullOrEmpty (this.Dynamic) && this.Dynamic.EndsWith ("+")) {
+          return new UtcDateTimeRange (this.Begin, this.End, "[]");
+        }
+        else {
+          return base.Range;
+        }
+      }
+    }
 
     /// <summary>
     /// <see cref="IModification"/>
@@ -222,6 +257,9 @@ namespace Lemoine.GDBPersistentClasses
       clone.Option = this.Option;
       clone.Dynamic = this.Dynamic;
       clone.Priority = this.StatusPriority;
+      clone.User = this.User;
+      clone.Shift = this.Shift;
+      clone.Force = this.Force;
       return clone;
     }
 
@@ -347,6 +385,21 @@ namespace Lemoine.GDBPersistentClasses
       base.MarkAsCompleted (message, effectiveEnd);
     }
 
+    void SetModificationInError (string message)
+    {
+      log.ErrorFormat ($"SetModificationInError: {message} => finish in error");
+      AddAnalysisLog (LogLevel.ERROR, message);
+      MarkAsError ();
+    }
+
+    /// <summary>
+    /// Mark the modification as not applicable
+    /// </summary>
+    void MarkDynamicTimeNotApplicable ()
+    {
+      base.MarkAsNotApplicable ();
+    }
+
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -360,12 +413,15 @@ namespace Lemoine.GDBPersistentClasses
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "{0} " +
-                         "=> finish in error",
-                         message);
-        AddAnalysisLog (LogLevel.ERROR, message);
-        MarkAsError ();
+        SetModificationInError (message);
+        return;
+      }
+
+      if (this.Range.IsEmpty ()) {
+        if (log.IsInfoEnabled) {
+          log.InfoFormat ("MakeAnalysis: empty range => nothing to do for modification id={0}", this.Id);
+        }
+        MarkAsCompleted ("");
         return;
       }
 
@@ -404,12 +460,31 @@ namespace Lemoine.GDBPersistentClasses
         association.Shift = this.Shift;
         association.User = this.User;
         association.Option = AssociationOption.NoStop.Add (this.Option);
+        association.Dynamic = this.Dynamic;
         ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
         association.Parent = this.MainModification ?? this;
         association.Priority = this.StatusPriority;
 
         MarkAsCompleted ("", null);
         return;
+      }
+
+      // Handle dynamic times
+      if (!string.IsNullOrEmpty (this.Dynamic)
+        && !this.Dynamic.Equals (",")
+        && !this.Dynamic.Equals (":")) {
+        var dynamicStart = this.DynamicStart;
+        if (!string.IsNullOrEmpty (dynamicStart)) {
+          MakeAnalysisDynamicStart (dynamicStart);
+          return;
+        }
+        if (!this.Dynamic.StartsWith ("?")) {
+          var dynamicEnd = this.DynamicEnd;
+          if (!string.IsNullOrEmpty (dynamicEnd)) {
+            MakeAnalysisDynamicEnd (dynamicEnd);
+            return;
+          }
+        }
       }
 
       if (!IsProcessByPeriod ()) { // Apply directly the changes, do not split it by period
@@ -426,6 +501,7 @@ namespace Lemoine.GDBPersistentClasses
         association.User = this.User;
         association.Force = this.Force;
         association.Shift = this.Shift;
+        association.Dynamic = this.Dynamic;
         association.Caller = this;
         association.Analyze ();
 
@@ -462,6 +538,7 @@ namespace Lemoine.GDBPersistentClasses
             association.User = this.User;
             association.Force = this.Force;
             association.Option = AssociationOption.NotByPeriod.Add (this.Option);
+            association.Dynamic = this.Dynamic;
             ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
             association.Parent = this.MainModification ?? this;
             association.Priority = this.StatusPriority;
@@ -482,6 +559,7 @@ namespace Lemoine.GDBPersistentClasses
           association.User = this.User;
           association.Force = this.Force;
           association.Option = AssociationOption.NotByPeriod.Add (this.Option);
+          association.Dynamic = this.Dynamic;
           ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
           association.Parent = this.MainModification ?? this;
           association.Priority = this.StatusPriority;
@@ -496,6 +574,134 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
+    void MakeAnalysisDynamicStart (string dynamicStart)
+    {
+      log.FatalFormat ("MakeAnalysisDynamicStart: dynamic start is not supported yet");
+      SetModificationInError ("Dynamic start not implemented");
+    }
+
+    void MakeAnalysisDynamicEnd (string dynamicEnd)
+    {
+      if (!this.AnalysisAppliedDateTime.HasValue) { // first time
+        if (!this.Begin.HasValue) {
+          SetModificationInError ("Incompatible properties Begin=null VS DynamicEnd");
+          return;
+        }
+        if (dynamicEnd.EndsWith ("+") && !this.End.HasValue) {
+          SetModificationInError ("Incompatible properties End=null VS DynamicEnd+");
+          return;
+        }
+      }
+
+      var notProcessedRange = GetNotPocessedRange ();
+      if (notProcessedRange.IsEmpty ()) {
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("MakeAnalysisDynamicEnd: GetNotProcessedRange returned an empty range => completed");
+        }
+        MarkAsCompleted ("");
+        return;
+      }
+
+      Debug.Assert (notProcessedRange.Lower.HasValue);
+      IDynamicTimeResponse dynamicEndResponse;
+      try {
+        Debug.Assert (!notProcessedRange.IsEmpty ());
+        var limit = new UtcDateTimeRange (notProcessedRange.Lower, notProcessedRange.Upper, true, true);
+        dynamicEndResponse = Lemoine.Business.DynamicTimes.DynamicTime
+          .GetDynamicTime (dynamicEnd, this.Machine, this.DynamicTimeRange, new UtcDateTimeRange (notProcessedRange.Lower.Value), limit);
+      }
+      catch (NoDynamicTime) {
+        log.ErrorFormat ("MakeAnalysisDynamicEnd: unknown dynamic end {0}", dynamicEnd);
+        SetModificationInError ("Dynamic end " + dynamicEnd + " unknown");
+        return;
+      }
+      SetActive ();
+      Debug.Assert (null != dynamicEndResponse);
+
+      if (dynamicEndResponse.Timeout) {
+        if (log.IsWarnEnabled) {
+          log.WarnFormat ("MakeAnalysisDynamicEnd: Timeout is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.NotApplicable) {
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("MakeAnalysisDynamicEnd: NotApplicable is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.NoData) {
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("MakeAnalysisDynamicEnd: NoData is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+        }
+        MarkDynamicTimeNotApplicable ();
+        return;
+      }
+      else if (dynamicEndResponse.Final.HasValue) {
+        ApplyDynamicEnd (dynamicEndResponse.Final.Value);
+        return;
+      }
+      else {
+        if (dynamicEndResponse.Hint.Lower.HasValue) {
+          MarkAsPending (dynamicEndResponse.Hint.Lower.Value);
+        }
+        else {
+          MarkAsPending (this.AnalysisAppliedDateTime);
+        }
+        return;
+      }
+    }
+
+    void ApplyDynamicEnd (DateTime dynamicApplicableEnd)
+    {
+      var range = this.GetNotPocessedRange ();
+      if (range.IsEmpty ()) {
+        if (log.IsFatalEnabled) {
+          log.Fatal ("ApplyDynamicEnd: (unexpected) GetNotProcessedRange is empty => nothing to do");
+        }
+        Debug.Assert (false);
+        MarkAsCompleted ("");
+        return;
+      }
+
+      UtcDateTimeRange restriction = new UtcDateTimeRange (new LowerBound<DateTime> (null), dynamicApplicableEnd);
+      UtcDateTimeRange restrictedRange = new UtcDateTimeRange (range.Intersects (restriction));
+      if (restrictedRange.IsEmpty ()) {
+        log.DebugFormat ("ApplyDynamicEnd: restricted range is empty => nothing to do");
+      }
+      else {
+        log.InfoFormat ("ApplyDynamicEnd: restrict {0} to {1}", this, dynamicApplicableEnd);
+        ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+          .InsertSub (this, restrictedRange, ApplyDynamicEndSubChange, null);
+      }
+      MarkAsCompleted ("");
+    }
+
+    void ApplyDynamicEndSubChange (IMachineStateTemplateAssociation association)
+    {
+      association.Dynamic = null;
+    }
+
+    /// <summary>
+    /// Get the UTC date/time range that has not been processed yet
+    /// </summary>
+    /// <returns></returns>
+    protected override UtcDateTimeRange GetNotPocessedRange ()
+    {
+      if (!string.IsNullOrEmpty (this.Dynamic)) {
+        if (this.Dynamic.EndsWith ("+")) {
+          return new UtcDateTimeRange (this.AnalysisAppliedDateTime.HasValue
+                                       ? this.AnalysisAppliedDateTime.Value
+                                       : this.Begin,
+                                       new UpperBound<DateTime> (null));
+        }
+      }
+
+      return base.GetNotPocessedRange ();
+    }
+
     /// <summary>
     /// Apply the modifications
     /// 
@@ -504,6 +710,11 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public override void Apply ()
     {
+      Debug.Assert (string.IsNullOrEmpty (this.Dynamic));
+      if (!string.IsNullOrEmpty (this.Dynamic)) {
+        log.FatalFormat ($"Apply: association {this} had a dynamic value {this.Dynamic}, which is unexpected");
+      }
+
       if (IsStopProcess ()) { // Stop must be processed first
         UtcDateTimeRange range = new UtcDateTimeRange (this.Range.Lower, GetStop ());
         Debug.Assert (this.Range.ContainsRange (range));
