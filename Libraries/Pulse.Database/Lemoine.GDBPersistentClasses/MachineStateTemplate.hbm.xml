@@ -26,6 +26,12 @@
               not-null="true" />
     <property name="Color"
               column="machinestatetemplatecolor" />
+    <property name="DynamicEnd"
+              column="machinestatetemplatedynamicend"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <many-to-one name="NextMachineStateTemplate"
+                 column="machinestatetemplatenextid"
+                 class="MachineStateTemplate" />
     <list name="Items"
           access="nosetter.camelcase-m-underscore"
           inverse="false"

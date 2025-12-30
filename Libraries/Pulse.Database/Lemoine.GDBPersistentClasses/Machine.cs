@@ -41,6 +41,7 @@ namespace Lemoine.GDBPersistentClasses
     double? m_costOff;
     double? m_costInactive;
     double? m_costActive;
+    IMachineStateTemplate m_defaultMachineStateTemplate;
 
     static readonly ILog log = LogManager.GetLogger(typeof (Machine).FullName);
 
@@ -279,6 +280,31 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Default machine state template to apply when a dynamic end is used in MachineStateTemplateAssociation
+    /// 
+    /// This is an optional (nullable) reference to a machine state template
+    /// </summary>
+    [XmlIgnore]
+    public virtual IMachineStateTemplate DefaultMachineStateTemplate {
+      get { return m_defaultMachineStateTemplate; }
+      set { m_defaultMachineStateTemplate = value; }
+    }
+
+    /// <summary>
+    /// Default machine state template for Xml Serialization
+    /// </summary>
+    [XmlElement("DefaultMachineStateTemplate")]
+    public virtual MachineStateTemplate XmlSerializationDefaultMachineStateTemplate {
+      get { return this.DefaultMachineStateTemplate as MachineStateTemplate; }
+      set { this.DefaultMachineStateTemplate = value; }
+    }
+
+    /// <summary>
+    /// used to serialize DefaultMachineStateTemplate only when not null
+    /// </summary>
+    public virtual bool XmlSerializationDefaultMachineStateTemplateSpecified => null != this.DefaultMachineStateTemplate;
+
+    /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]
@@ -293,6 +319,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void Unproxy ()
     {
       NHibernateHelper.Unproxy<IMachineMonitoringType> (ref m_monitoringType);
+      NHibernateHelper.Unproxy<IMachineStateTemplate> (ref m_defaultMachineStateTemplate);
     }
 
     /// <summary>
