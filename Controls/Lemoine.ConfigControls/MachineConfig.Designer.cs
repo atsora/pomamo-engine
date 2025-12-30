@@ -47,6 +47,7 @@ namespace Lemoine.ConfigControls
       this.costOffColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.costInactiveColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.costActiveColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.defaultMachineStateTemplateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.versionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
       this.SuspendLayout();
@@ -73,6 +74,7 @@ namespace Lemoine.ConfigControls
                   this.costOffColumn,
                   this.costInactiveColumn,
                   this.costActiveColumn,
+                  this.defaultMachineStateTemplateColumn,
                   this.versionColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point(0, 0);
@@ -196,6 +198,14 @@ namespace Lemoine.ConfigControls
       this.costActiveColumn.Name = "costActiveColumn";
       this.costActiveColumn.Width = 85;
       // 
+      // defaultMachineStateTemplateColumn
+      // 
+      this.defaultMachineStateTemplateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.defaultMachineStateTemplateColumn.DataPropertyName = "DefaultMachineStateTemplate";
+      this.defaultMachineStateTemplateColumn.HeaderText = "Default Machine State Template";
+      this.defaultMachineStateTemplateColumn.Name = "defaultMachineStateTemplateColumn";
+      this.defaultMachineStateTemplateColumn.Width = 185;
+      // 
       // versionColumn
       // 
       this.versionColumn.DataPropertyName = "Version";
@@ -232,6 +242,7 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn costOffColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn costInactiveColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn costActiveColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn defaultMachineStateTemplateColumn;
     private Lemoine.BaseControls.SortableDataGridView dataGridView;
   }
 }
