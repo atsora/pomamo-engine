@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -63,6 +64,8 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateSiteAttendanceChangeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.machineStateTemplateColorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn ();
       this.linkOperationDirectionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dynamicEndColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.nextMachineStateTemplateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.machineStateTemplateDataGridView)).BeginInit();
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.Panel2.SuspendLayout();
@@ -97,7 +100,9 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateOnSiteColumn,
       this.machineStateTemplateSiteAttendanceChangeColumn,
       this.machineStateTemplateColorColumn,
-      this.linkOperationDirectionColumn});
+      this.linkOperationDirectionColumn,
+      this.dynamicEndColumn,
+      this.nextMachineStateTemplateColumn});
       this.machineStateTemplateDataGridView.Cursor = System.Windows.Forms.Cursors.Default;
       this.machineStateTemplateDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.machineStateTemplateDataGridView.Location = new System.Drawing.Point(0, 0);
@@ -419,6 +424,20 @@ namespace Lemoine.ConfigControls
       this.linkOperationDirectionColumn.Name = "linkOperationDirectionColumn";
       this.linkOperationDirectionColumn.Width = 133;
       // 
+      // dynamicEndColumn
+      // 
+      this.dynamicEndColumn.DataPropertyName = "DynamicEnd";
+      this.dynamicEndColumn.HeaderText = "Dynamic End";
+      this.dynamicEndColumn.Name = "dynamicEndColumn";
+      this.dynamicEndColumn.Width = 92;
+      // 
+      // nextMachineStateTemplateColumn
+      // 
+      this.nextMachineStateTemplateColumn.DataPropertyName = "NextMachineStateTemplate";
+      this.nextMachineStateTemplateColumn.HeaderText = "Next Machine State Template";
+      this.nextMachineStateTemplateColumn.Name = "nextMachineStateTemplateColumn";
+      this.nextMachineStateTemplateColumn.Width = 178;
+      // 
       // MachineStateTemplateConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -481,5 +500,7 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn categoryColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateColorColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn linkOperationDirectionColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn dynamicEndColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn nextMachineStateTemplateColumn;
   }
 }

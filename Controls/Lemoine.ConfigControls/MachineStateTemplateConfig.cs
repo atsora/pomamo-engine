@@ -157,6 +157,8 @@ namespace Lemoine.ConfigControls
       machineStateTemplateTranslationkeyColum.HeaderText = PulseCatalog.GetString ("MachineStateTemplateTranslationkeyColum");
       machineStateTemplateIdColumn.HeaderText = PulseCatalog.GetString ("Id");
       machineStateTemplateColorColumn.HeaderText = PulseCatalog.GetString ("Color", "Color");
+      dynamicEndColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateDynamicEnd", "Dynamic End");
+      nextMachineStateTemplateColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateNextMachineStateTemplate", "Next Machine State Template");
       
       machineStateTemplateDataGridView.AutoGenerateColumns = false;
       
@@ -173,6 +175,14 @@ namespace Lemoine.ConfigControls
         dialog.Nullable = false;
         DataGridViewCell cell = new DataGridViewSelectionableCell<String>(dialog);
         machineStateTemplateTranslationkeyColum.CellTemplate = cell;
+      }
+      {
+        MachineStateTemplateDialog dialog = new MachineStateTemplateDialog ();
+        dialog.Nullable = true;
+        dialog.MultiSelect = false;
+        dialog.DisplayedProperty = "Display";
+        DataGridViewCell cell = new DataGridViewSelectionableCell<IMachineStateTemplate> (dialog);
+        nextMachineStateTemplateColumn.CellTemplate = cell;
       }
     }
     

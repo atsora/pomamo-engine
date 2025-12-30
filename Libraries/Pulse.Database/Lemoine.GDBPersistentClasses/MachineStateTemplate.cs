@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -8,6 +9,7 @@ using System.Xml.Serialization;
 
 using Lemoine.Model;
 using Lemoine.Core.Log;
+using Lemoine.Database.Persistent;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -27,6 +29,8 @@ namespace Lemoine.GDBPersistentClasses
     LinkDirection m_linkOperationDirection = LinkDirection.None;
     IList<IMachineStateTemplateItem> m_items = new List<IMachineStateTemplateItem> ();
     ISet<IMachineStateTemplateStop> m_stops = new HashSet<IMachineStateTemplateStop> ();
+    string m_dynamicEnd;
+    IMachineStateTemplate m_nextMachineStateTemplate;
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachineStateTemplate).FullName);
 
@@ -183,6 +187,50 @@ namespace Lemoine.GDBPersistentClasses
     public virtual bool ColorSpecified => !string.IsNullOrEmpty (this.Color);
 
     /// <summary>
+    /// Dynamic end to be applied when there is no upper bound in range in MachineStateTemplateAssociation
+    /// 
+    /// Note an empty string is converted to null.
+    /// </summary>
+    [XmlAttribute ("DynamicEnd")]
+    public virtual string DynamicEnd
+    {
+      get { return m_dynamicEnd; }
+      set { m_dynamicEnd = value; }
+    }
+
+    /// <summary>
+    /// used to serialize DynamicEnd only when not null or empty
+    /// </summary>
+    public virtual bool DynamicEndSpecified => !string.IsNullOrEmpty (this.DynamicEnd);
+
+    /// <summary>
+    /// Next machine state template to use when dynamic end is analyzed
+    /// 
+    /// Nullable foreign key to another machine state template
+    /// </summary>
+    [XmlIgnore]
+    public virtual IMachineStateTemplate NextMachineStateTemplate
+    {
+      get { return m_nextMachineStateTemplate; }
+      set { m_nextMachineStateTemplate = value; }
+    }
+
+    /// <summary>
+    /// Next machine state template for Xml Serialization
+    /// </summary>
+    [XmlElement ("NextMachineStateTemplate")]
+    public virtual MachineStateTemplate XmlSerializationNextMachineStateTemplate
+    {
+      get { return this.NextMachineStateTemplate as MachineStateTemplate; }
+      set { this.NextMachineStateTemplate = value; }
+    }
+
+    /// <summary>
+    /// used to serialize NextMachineStateTemplate only when not null
+    /// </summary>
+    public virtual bool XmlSerializationNextMachineStateTemplateSpecified => null != this.NextMachineStateTemplate;
+
+    /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]
@@ -254,7 +302,8 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual void Unproxy ()
     {
-      // Nothing to do here for the moment
+      NHibernateHelper.Unproxy<IMachineStateTemplate> (ref m_siteAttendanceChange);
+      NHibernateHelper.Unproxy<IMachineStateTemplate> (ref m_nextMachineStateTemplate);
     }
 
     /// <summary>

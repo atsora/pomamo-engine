@@ -124,6 +124,20 @@ namespace Lemoine.Model
     /// Optional color
     /// </summary>
     string Color { get; set; }
+
+    /// <summary>
+    /// Dynamic end to be applied when there is no upper bound in range in MachineStateTemplateAssociation
+    /// 
+    /// Note an empty string is converted to null.
+    /// </summary>
+    string DynamicEnd { get; set; }
+
+    /// <summary>
+    /// Next machine state template to use when dynamic end is analyzed
+    /// 
+    /// Nullable foreign key to another machine state template
+    /// </summary>
+    IMachineStateTemplate NextMachineStateTemplate { get; set; }
   }
 
   /// <summary>
