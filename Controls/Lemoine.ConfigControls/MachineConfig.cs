@@ -73,6 +73,7 @@ namespace Lemoine.ConfigControls
       costOffColumn.HeaderText = PulseCatalog.GetString ("MachineCostOff", "Cost off");
       costInactiveColumn.HeaderText = PulseCatalog.GetString ("MachineCostInactive", "Cost inactive");
       costActiveColumn.HeaderText = PulseCatalog.GetString ("MachineCostActive", "Cost active");
+      defaultMachineStateTemplateColumn.HeaderText = PulseCatalog.GetString ("MachineDefaultMachineStateTemplate", "Default Machine State Template");
 
       m_machines.SortColumns = false;
 
@@ -123,6 +124,14 @@ namespace Lemoine.ConfigControls
         dialog.DisplayedProperty = "SelectionText";
         DataGridViewCell cell = new DataGridViewSelectionableCell<IMachineMonitoringType> (dialog);
         monitoringTypeColumn.CellTemplate = cell;
+      }
+      {
+        MachineStateTemplateDialog dialog =
+          new MachineStateTemplateDialog ();
+        dialog.Nullable = true;
+        dialog.DisplayedProperty = "SelectionText";
+        DataGridViewCell cell = new DataGridViewSelectionableCell<IMachineStateTemplate> (dialog);
+        defaultMachineStateTemplateColumn.CellTemplate = cell;
       }
     }
     #endregion // Constructors

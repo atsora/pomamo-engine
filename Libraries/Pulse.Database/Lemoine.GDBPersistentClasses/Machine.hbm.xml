@@ -51,6 +51,11 @@
     <property name="CostOff" column="machinecostoff" />
     <property name="CostInactive" column="machinecostinactive" />
     <property name="CostActive" column="machinecostactive" />
+    <many-to-one name="DefaultMachineStateTemplate"
+                 column="machinedefaultmachinestatetemplateid"
+                 class="MachineStateTemplate"
+                 cascade="none"
+                 not-found="ignore" />
     <joined-subclass name="MonitoredMachine" table="monitoredmachine">
       <key column="machineid" />
       <set name="MachineModules"

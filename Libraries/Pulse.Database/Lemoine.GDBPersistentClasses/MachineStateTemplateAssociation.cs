@@ -499,27 +499,98 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
+      UtcDateTimeRange endHint = new UtcDateTimeRange ("(,)");
+      if (!string.IsNullOrEmpty (this.Dynamic)) {
+        if (this.Dynamic.StartsWith ("?")) { // Recompute for optimization the dynamic end
+          var dynamicEnd = this.DynamicEnd;
+          var notProcessedRange = GetNotPocessedRange ();
+          if (notProcessedRange.IsEmpty ()) {
+            if (log.IsFatalEnabled) {
+              log.FatalFormat ("MakeAnalysis: (unexpected) GetNotPocessedRange returned an empty range => completed");
+            }
+            Debug.Assert (false);
+            ForceAsDone (""); // To skip the process of the sub-modifications TrackDynamicEnd
+            return;
+          }
+          var hint = new UtcDateTimeRange (notProcessedRange.Lower, notProcessedRange.Upper, true, true);
+          IDynamicTimeResponse dynamicEndResponse;
+          try {
+            Debug.Assert (!this.Range.IsEmpty ());
+            // Note: make the upper limit inclusive
+            var limit = new UtcDateTimeRange (this.Range.Lower, this.Range.Upper, true, true);
+            dynamicEndResponse = Lemoine.Business.DynamicTimes.DynamicTime
+              .GetDynamicTime (this.DynamicEnd, this.Machine, this.DynamicTimeRange, hint, limit);
+          }
+          catch (NoDynamicTime) {
+            log.ErrorFormat ("MakeAnalysis: unknown dynamic end {0}", dynamicEnd);
+            SetModificationInError ("Unknown dynamic end");
+            return;
+          }
+          Debug.Assert (null != dynamicEndResponse);
+          if (dynamicEndResponse.Timeout) {
+            if (log.IsWarnEnabled) {
+              log.WarnFormat ("MakeAnalysis: Timeout for dynamic end {0} range {1} hint {2} => completed", dynamicEnd, this.Range, hint);
+            }
+            MarkDynamicTimeNotApplicable ();
+            return;
+          }
+          else if (dynamicEndResponse.NotApplicable) {
+            if (log.IsDebugEnabled) {
+              log.DebugFormat ("MakeAnalysis: NotApplicable for dynamic end {0} range {1} hint {2} => completed", dynamicEnd, this.Range, hint);
+            }
+            MarkDynamicTimeNotApplicable ();
+            return;
+          }
+          else if (dynamicEndResponse.NoData) {
+            if (log.IsDebugEnabled) {
+              log.DebugFormat ("MakeAnalysis: no data for dynamic end {0} range {1} hint {2} => completed", dynamicEnd, this.Range, hint);
+            }
+            MarkDynamicTimeNotApplicable ();
+            return;
+          }
+          else if (dynamicEndResponse.Final.HasValue) {
+            ApplyDynamicEnd (dynamicEndResponse.Final.Value);
+            return;
+          }
+          else {
+            endHint = dynamicEndResponse.Hint;
+          }
+        }
+      }
+
       if (!IsProcessByPeriod ()) { // Apply directly the changes, do not split it by period
         // Get the adjusted step range
         UtcDateTimeRange range = GetNotAppliedRange ();
+        UtcDateTimeRange restrictedRange = range;
+        if (endHint.Upper.HasValue
+          && (Bound.Compare<DateTime> (endHint.Upper, range.Upper) < 0)) {
+          restrictedRange = new UtcDateTimeRange (range.Lower, endHint.Upper);
+        }
+        if (log.IsDebugEnabled) {
+          log.DebugFormat ("MakeAnalysis: consider step {0} restricted={1}", range, restrictedRange);
+        }
+        if (restrictedRange.IsEmpty ()) { // Already completed
+          MarkAsCompleted ("");
+        }
+        else { // restrictedRange not empty
+          // Analyze ! with the adjusted begin and end
+          MachineStateTemplateAssociation association = new MachineStateTemplateAssociation (this.Machine,
+                                                                                             this.MachineStateTemplate,
+                                                                                             restrictedRange,
+                                                                                             this);
+          association.Option = this.Option;
+          association.DateTime = this.DateTime;
+          association.User = this.User;
+          association.Force = this.Force;
+          association.Shift = this.Shift;
+          association.Dynamic = this.Dynamic;
+          association.Caller = this;
+          association.Analyze ();
 
-        // Analyze ! with the adjusted begin and end
-        MachineStateTemplateAssociation association = new MachineStateTemplateAssociation (this.Machine,
-                                                                                           this.MachineStateTemplate,
-                                                                                           range,
-                                                                                           this);
-        association.Option = this.Option;
-        association.DateTime = this.DateTime;
-        association.User = this.User;
-        association.Force = this.Force;
-        association.Shift = this.Shift;
-        association.Dynamic = this.Dynamic;
-        association.Caller = this;
-        association.Analyze ();
-
-        // Analysis is done
-        MarkAsCompleted ("Cache/ClearDomainByMachine/MachineStateTemplateAssociation/" + this.Machine.Id + "?Broadcast=true",
-                         (DateTime?)range.Upper); // => InProgress or Done
+          // Analysis is done
+          MarkAsCompleted ("Cache/ClearDomainByMachine/MachineStateTemplateAssociation/" + this.Machine.Id + "?Broadcast=true",
+                           (DateTime?)range.Upper); // => InProgress or Done
+        }
       }
       else { // Try to split the process by periods where a change is really required
         IEnumerable<IWithRange> noChangeRequiredSlots;
@@ -590,7 +661,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (string.IsNullOrEmpty (this.DynamicEnd)) {
         Debug.Assert (false, "TrackDynamicEnd with an empty or null DynamicEnd");
-        log.FatalFormat ("TrackDynamicEnd: invalid dynamic end {0}", this.DynamicEnd);
+        log.Fatal ($"TrackDynamicEnd: invalid dynamic end {this.DynamicEnd}");
         AddAnalysisLog (LogLevel.CRIT, "invalid dynamic end with option=TrackDynamicEnd");
         SetModificationInError ("Invalid dynamic end");
         return;
@@ -711,7 +782,7 @@ namespace Lemoine.GDBPersistentClasses
 
     void MakeAnalysisDynamicStart (string dynamicStart)
     {
-      log.FatalFormat ("MakeAnalysisDynamicStart: dynamic start is not supported yet");
+      log.Fatal ("MakeAnalysisDynamicStart: dynamic start is not supported yet");
       SetModificationInError ("Dynamic start not implemented");
     }
 
@@ -741,7 +812,7 @@ namespace Lemoine.GDBPersistentClasses
       var notProcessedRange = GetNotPocessedRange ();
       if (notProcessedRange.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEndProgressive: GetNotPocessedRange returned an empty range => completed");
+          log.Debug ("MakeAnalysisDynamicEndProgressive: GetNotPocessedRange returned an empty range => completed");
         }
         MarkAsCompleted ("");
         return;
@@ -881,7 +952,7 @@ namespace Lemoine.GDBPersistentClasses
           { // One to track the dynamic end
             if (!dynamicEndResponse.Hint.Overlaps (this.Range)) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("MakeAnalysisDynamicEndAggressive: hint does not overlap range => no DynamicEndTracker");
+                log.Debug ("MakeAnalysisDynamicEndAggressive: hint does not overlap range => no DynamicEndTracker");
               }
             }
             else {

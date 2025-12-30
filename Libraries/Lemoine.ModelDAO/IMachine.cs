@@ -96,6 +96,13 @@ namespace Lemoine.Model
     /// Cost when the machine is active
     /// </summary>
     double? CostActive { get; set; }
+
+    /// <summary>
+    /// Default machine state template to apply when a dynamic end is used in machine state template association
+    /// 
+    /// This is an optional (nullable) reference to a machine state template
+    /// </summary>
+    IMachineStateTemplate DefaultMachineStateTemplate { get; set; }
     
     /// <summary>
     /// Is the machine monitored ?
