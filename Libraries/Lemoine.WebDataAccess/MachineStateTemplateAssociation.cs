@@ -329,6 +329,11 @@ namespace Lemoine.WebDataAccess
     }
 
     public int StatusPriority { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
+    public string Dynamic { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
+
+    public string DynamicStart => throw new NotImplementedException ();
+
+    public string DynamicEnd => throw new NotImplementedException ();
     #endregion
   }
 }
