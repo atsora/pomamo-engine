@@ -72,10 +72,6 @@ namespace Lemoine.Model
     /// Skip the compatibility check
     /// </summary>
     NoCompatibilityCheck = 2048, // 1 << 11
-    /// <summary>
-    /// Track only a dynamic end
-    /// </summary>
-    TrackDynamicEnd = 4096, // 1 << 12
   };
   
   /// <summary>

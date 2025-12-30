@@ -26,7 +26,7 @@ namespace Lemoine.Model
     /// 
     /// Not null
     /// </summary>
-    IMachineStateTemplate MachineStateTemplate { get; }
+    IMachineStateTemplate MachineStateTemplate { get; set; }
     
     /// <summary>
     /// Optional reference to the User
