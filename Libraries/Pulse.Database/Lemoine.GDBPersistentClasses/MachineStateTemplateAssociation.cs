@@ -504,7 +504,7 @@ namespace Lemoine.GDBPersistentClasses
               log.FatalFormat ("MakeAnalysis: (unexpected) GetNotPocessedRange returned an empty range => completed");
             }
             Debug.Assert (false);
-            ForceAsDone (""); // To skip the process of the sub-modifications
+            ForceAsDone (""); // To skip the process of the sub-modifications TrackDynamicEnd
             return;
           }
           var hint = new UtcDateTimeRange (notProcessedRange.Lower, notProcessedRange.Upper, true, true);
@@ -657,7 +657,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (string.IsNullOrEmpty (this.DynamicEnd)) {
         Debug.Assert (false, "TrackDynamicEnd with an empty or null DynamicEnd");
-        log.FatalFormat ("TrackDynamicEnd: invalid dynamic end {0}", this.DynamicEnd);
+        log.Fatal ($"TrackDynamicEnd: invalid dynamic end {this.DynamicEnd}");
         AddAnalysisLog (LogLevel.CRIT, "invalid dynamic end with option=TrackDynamicEnd");
         SetModificationInError ("Invalid dynamic end");
         return;
