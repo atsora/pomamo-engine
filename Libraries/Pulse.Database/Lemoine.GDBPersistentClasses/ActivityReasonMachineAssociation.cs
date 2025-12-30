@@ -35,7 +35,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="machine"></param>
     /// <param name="range"></param>
     public ActivityReasonMachineAssociation (IMachine machine, UtcDateTimeRange range)
-      : base (machine, range, null)
+      : base (machine, range)
     {
     }
 
