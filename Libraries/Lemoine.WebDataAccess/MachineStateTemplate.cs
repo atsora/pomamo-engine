@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 
 using Lemoine.Core.Log;
+using Lemoine.Model;
 
 namespace Lemoine.WebDataAccess
 {
@@ -170,6 +171,9 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+
+    public string DynamicEnd { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
+    public IMachineStateTemplate NextMachineStateTemplate { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
     #endregion
   }
 }

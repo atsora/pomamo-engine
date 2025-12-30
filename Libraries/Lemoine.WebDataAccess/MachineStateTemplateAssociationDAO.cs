@@ -101,6 +101,11 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException ();
     }
+
+    public IMachineModification InsertSub (IMachineStateTemplateAssociation association, UtcDateTimeRange range, Action<IMachineStateTemplateAssociation> preChange, IMachineModification parent)
+    {
+      throw new NotImplementedException ();
+    }
     #endregion
   }
 }
