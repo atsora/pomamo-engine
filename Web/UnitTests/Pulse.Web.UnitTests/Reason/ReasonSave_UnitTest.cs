@@ -213,7 +213,6 @@ namespace Pulse.Web.UnitTests.Reason
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
           Lemoine.Extensions.ExtensionManager.Activate (false);
           Lemoine.Extensions.ExtensionManager.Load ();
-          const string details = "my details";
           IReason reason1 = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (1);
 
           var request = new ReasonSavePostRequestDTO ();
