@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -23,16 +24,13 @@ namespace Lem_Configuration
   /// </summary>
   public partial class MainForm : Form
   {
-    #region Members
     readonly bool m_advancedMode = false;
     bool m_availableOptionsLoaded = false;
     readonly IDictionary<CheckBox, string> availabilityCheckBoxes =
       new Dictionary<CheckBox, string> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -44,9 +42,7 @@ namespace Lem_Configuration
 
       InitializeComponent ();
     }
-    #endregion // Constructors
 
-    #region Methods
     void MainFormLoad (object sender, EventArgs e)
     {
       // - i18n
@@ -249,7 +245,6 @@ namespace Lem_Configuration
         transaction.Commit ();
       }
     }
-    #endregion // Methods
 
     private void MainForm_FormClosed (object sender, FormClosedEventArgs e)
     {
