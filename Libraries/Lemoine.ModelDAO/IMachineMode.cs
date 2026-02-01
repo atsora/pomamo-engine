@@ -356,6 +356,10 @@ namespace Lemoine.Model
     /// Stopping
     /// </summary>
     Stopping = 6,
+    /// <summary>
+    /// Manual (active or not)
+    /// </summary>
+    Manual = 7,
   }
   
   /// <summary>
