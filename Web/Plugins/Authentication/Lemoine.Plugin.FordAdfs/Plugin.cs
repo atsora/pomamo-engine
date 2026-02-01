@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,37 +22,22 @@ namespace Lemoine.Plugin.FordAdfs
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "FordAdfs"; } }
+    public override string Name => "FordAdfs";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Ford Adfs Oauth2 authentication";
-      }
-    }
+    public override string Description => "Ford Adfs Oauth2 authentication";
 
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Web;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Web;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     #region Methods
 
