@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -17,7 +18,6 @@ namespace Lemoine.Plugin.FordAdfs
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// My parameter
     /// </summary>
@@ -84,9 +84,7 @@ namespace Lemoine.Plugin.FordAdfs
     {
       get; set;
     } = "";
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -111,6 +109,5 @@ namespace Lemoine.Plugin.FordAdfs
       errors = errorList;
       return true;
     }
-    #endregion // Constructors
   }
 }
