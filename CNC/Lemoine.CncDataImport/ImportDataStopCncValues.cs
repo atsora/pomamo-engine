@@ -20,21 +20,16 @@ namespace Lemoine.CncDataImport
   /// </summary>
   internal sealed class ImportDataStopCncValues: IImportData
   {
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
     readonly Cache.CacheCncValue m_cache;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
     /// </summary>
     public DateTime LastVisitDateTime { get; set; }
-    #endregion // Getters / Setters
     
-    #region Constructors
     /// <summary>
     /// cncCache must be the same than in ImportDataCncValues
     /// </summary>
@@ -51,7 +46,6 @@ namespace Lemoine.CncDataImport
                                                  machineModule.Id));
       m_cache = cncCache;
     }
-    #endregion // Constructors
     
     #region IImportData implementation
     /// <summary>

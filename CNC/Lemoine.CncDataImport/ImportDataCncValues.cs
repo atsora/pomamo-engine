@@ -346,8 +346,7 @@ namespace Lemoine.CncDataImport
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         */
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
-          log.FatalFormat ("ImportCncValue: " +
-                           "the session is still active before reloading m_cncValues");
+          log.Fatal ("ImportCncValue: the session is still active before reloading m_cncValues");
         }
         if (null != field) {
           m_cache.ReloadCncValue (field.Id);

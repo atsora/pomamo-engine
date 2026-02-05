@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -18,20 +19,15 @@ namespace Lemoine.CncDataImport
   /// </summary>
   internal sealed class ImportDataDetectionTimestamp : IImportData
   {
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
     /// </summary>
     public DateTime LastVisitDateTime { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -46,7 +42,6 @@ namespace Lemoine.CncDataImport
                                                  machineModule.MonitoredMachine.Id,
                                                  machineModule.Id));
     }
-    #endregion // Constructors
 
     #region IImportData implementation
     /// <summary>

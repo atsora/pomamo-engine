@@ -21,11 +21,9 @@ namespace Lemoine.CncDataImport
   {
     static readonly TimeSpan DEFAULT_MAX_MACHINE_MODULE_ACTIVITY_GAP = TimeSpan.FromMinutes (1);
 
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
     IMachineModuleActivity m_machineModuleActivity = null;
-    #endregion // Members
 
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited

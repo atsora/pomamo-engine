@@ -48,7 +48,6 @@ namespace Lemoine.CncDataImport
     static readonly string MAX_TRY_ATTEMPT_KEY = "Cnc.DataImport.MachineMode.MaxTryAttempt";
     static readonly int MAX_TRY_ATTEMPT_DEFAULT = 3;
 
-    #region Members
     bool m_disposed = false;
     int? m_notEnoughDataFirstQueueIndex = null; // For MultiXXXCncDataQueue only
     internal ICncDataQueue m_cncDataQueue = null;
@@ -56,11 +55,9 @@ namespace Lemoine.CncDataImport
     DateTime m_lastBreakDateTime = DateTime.UtcNow;
     DateTime m_lastCleanDetections = new DateTime (0, DateTimeKind.Utc);
     readonly IDictionary<ExchangeDataCommand, IImportData> m_importData = new Dictionary<ExchangeDataCommand, IImportData> ();
-    #endregion // Members
 
     readonly ILog log; // Defined in constructor
 
-    #region Getters / Setters
     /// <summary>
     /// Sleep time once all the work is done
     /// Default is 2s
@@ -112,9 +109,7 @@ namespace Lemoine.CncDataImport
     /// Use it only to force the use of a kind of Queue (for test purposes)
     /// </summary>
     public string Type { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -168,7 +163,6 @@ namespace Lemoine.CncDataImport
         importData.LastVisitDateTime = DateTime.UtcNow;
       }
     }
-    #endregion // Constructors
 
     #region Methods
     /// <summary>
