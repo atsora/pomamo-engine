@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2023-2025 Atsora Solutions
+// Copyright (C) 2023-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -293,7 +293,7 @@ namespace Lemoine.CncDataImport
                     }
                   }
                   catch (InvalidCastException ex) { // New value can't be converted correctly
-                                                 // => skip it
+                                                    // => skip it
                     log.Error ("ImportCncValue: InvalidCastException, skip it", ex);
                   }
                 }

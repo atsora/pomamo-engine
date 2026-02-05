@@ -115,17 +115,16 @@ namespace Lemoine.CncDataImport
     #region Private methods
     void ImportMachineModuleActivity (string key, object v, DateTime beginDateTime, DateTime endDateTime)
     {
-      log.DebugFormat ("ImportMachineModuleActivity: /B " +
-                       "period={0}-{1}",
-                       beginDateTime, endDateTime);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ImportMachineModuleActivity: period={beginDateTime}-{endDateTime}");
+      }
       try {
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
 
           // Get and check last machineModuleActivity
           if (null == m_machineModuleActivity) {
-            log.Info ("ImportMachineModuleActivity: " +
-                      "initialize m_machineModuleActivity");
+            log.Info ("ImportMachineModuleActivity: initialize m_machineModuleActivity");
             m_machineModuleActivity = daoFactory.MachineModuleActivityDAO.GetLast (m_machineModule);
             if (log.IsDebugEnabled) {
               log.Debug ($"ImportMachineModuleActivity: initialize m_machineModuleActivity with {m_machineModuleActivity}");
@@ -133,18 +132,11 @@ namespace Lemoine.CncDataImport
           }
           if (null != m_machineModuleActivity) {
             if (beginDateTime < m_machineModuleActivity.End) {
-              log.FatalFormat ("ImportMachineModuleActivity: " +
-                               "recorded machine mode at {0} comes before last machine module activity end {1} " +
-                               "=> skip it " +
-                               "(this should not happen)",
-                               beginDateTime, m_machineModuleActivity.End);
+              log.Fatal ($"ImportMachineModuleActivity: recorded machine mode at {beginDateTime} comes before last machine module activity end {m_machineModuleActivity.End} => skip it (this should not happen)");
               return;
             }
             if (m_machineModuleActivity.End < m_machineModuleActivity.Begin) {
-              log.ErrorFormat ("ImportMachineModuleActivity: " +
-                               "something strange happened, m_machineModuleActivity {0} with end {1} < begin {2} " +
-                               "=> reset m_machineModuleActivity",
-                               m_machineModuleActivity, m_machineModuleActivity.End, m_machineModuleActivity.Begin);
+              log.Error ($"ImportMachineModuleActivity: something strange happened, m_machineModuleActivity {m_machineModuleActivity} with end {m_machineModuleActivity.End} < begin {m_machineModuleActivity.Begin} => reset m_machineModuleActivity");
               m_machineModuleActivity = null;
             }
           }
@@ -162,9 +154,7 @@ namespace Lemoine.CncDataImport
               Debug.Assert (m_machineModuleActivity.End <= beginDateTime); // Condition check made above
               if (beginDateTime.Subtract (m_machineModuleActivity.End) <= MaxMachineModuleActivityGap) { // => make the activity longer
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("ImportMachineModuleActivity: " +
-                                   "the gap {0}-{1} is short => make the activity longer",
-                                   m_machineModuleActivity.End, beginDateTime);
+                  log.Debug ($"ImportMachineModuleActivity: the gap {m_machineModuleActivity.End}-{beginDateTime} is short => make the activity longer");
                 }
                 if (0 != m_machineModuleActivity.Id) { // Re-associate the activity
                   daoFactory.MachineModuleActivityDAO.UpgradeLock (m_machineModuleActivity); // Ok, beause read-committed transaction
@@ -173,9 +163,7 @@ namespace Lemoine.CncDataImport
                 if (!m_machineModuleActivity.Begin.Equals (m_machineModuleActivity.End) &&
                     TimeSpan.FromSeconds (1) <= m_machineModuleActivity.Length) { // Only if the length of the activity is long enough to be stored in the database
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("ImportMachineModuleActivity: " +
-                                     "the activity {0} {1}-{2} is long enough to be stored",
-                                     m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                    log.Debug ($"ImportMachineModuleActivity: the activity {m_machineModuleActivity} {m_machineModuleActivity.Begin}-{m_machineModuleActivity.End} is long enough to be stored");
                   }
                   Debug.Assert (m_machineModuleActivity.Begin < m_machineModuleActivity.End);
                   daoFactory.MachineModuleActivityDAO.MakePersistent (m_machineModuleActivity);
@@ -183,10 +171,7 @@ namespace Lemoine.CncDataImport
               }
               else { // m_maxFactGap < dateTime - m_machineModuleActivity.End => create a gap
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("ImportMachineModuleActivity: " +
-                                   "dateTime {0} long after activity.End {1} " +
-                                   "=> create a gap",
-                                   beginDateTime, m_machineModuleActivity.End);
+                  log.Debug ($"ImportMachineModuleActivity: dateTime {beginDateTime} long after activity.End {m_machineModuleActivity.End} => create a gap");
                 }
                 m_machineModuleActivity = ModelDAOHelper.ModelFactory.CreateMachineModuleActivity (
                   m_machineModule, beginDateTime, endDateTime, machineMode);
@@ -195,9 +180,7 @@ namespace Lemoine.CncDataImport
                 if (!m_machineModuleActivity.Begin.Equals (m_machineModuleActivity.End) &&
                     TimeSpan.FromSeconds (1) <= m_machineModuleActivity.Length) { // Only if the length of the activity is long enough to be stored in the database
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("ImportMachineModuleActivity: " +
-                                     "the activity {0} {1}-{2} is long enough to be stored",
-                                     m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                    log.Debug ($"ImportMachineModuleActivity: the activity {m_machineModuleActivity} {m_machineModuleActivity.Begin}-{m_machineModuleActivity.End} is long enough to be stored");
                   }
                   Debug.Assert (m_machineModuleActivity.Begin < m_machineModuleActivity.End);
                   daoFactory.MachineModuleActivityDAO.MakePersistent (m_machineModuleActivity);
@@ -209,10 +192,7 @@ namespace Lemoine.CncDataImport
               if (null != m_machineModuleActivity &&
                   beginDateTime.Subtract (m_machineModuleActivity.End) <= MaxMachineModuleActivityGap) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("ImportMachineModuleActivity: " +
-                                   "new machine mode and the the gap {0}-{1} is short " +
-                                   "=> make the previous activity longer",
-                                   m_machineModuleActivity.End, beginDateTime);
+                  log.Debug ($"ImportMachineModuleActivity: new machine mode and the gap {m_machineModuleActivity.End}-{beginDateTime} is short => make the previous activity longer");
                 }
                 if (0 != m_machineModuleActivity.Id) { // Re-associate the fact
                   daoFactory.MachineModuleActivityDAO.UpgradeLock (m_machineModuleActivity); // Ok, because read-committed transaction
@@ -233,9 +213,7 @@ namespace Lemoine.CncDataImport
               if (!m_machineModuleActivity.Begin.Equals (m_machineModuleActivity.End) &&
                   TimeSpan.FromSeconds (1) <= m_machineModuleActivity.Length) { // Only if the length of the activity is long enough to be stored in the database
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("ImportMachineModuleActivity: " +
-                                   "the activity {0} {1}-{2} is long enough to be stored",
-                                   m_machineModuleActivity, m_machineModuleActivity.Begin, m_machineModuleActivity.End);
+                  log.Debug ($"ImportMachineModuleActivity: the activity {m_machineModuleActivity} {m_machineModuleActivity.Begin}-{m_machineModuleActivity.End} is long enough to be stored");
                 }
                 Debug.Assert (m_machineModuleActivity.Begin < m_machineModuleActivity.End);
                 daoFactory.MachineModuleActivityDAO.MakePersistent (m_machineModuleActivity);
@@ -250,8 +228,7 @@ namespace Lemoine.CncDataImport
         log.Error ($"ImportMachineModuleActivity: exception => try to reload m_machineModuleActivity {m_machineModuleActivity}", ex);
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
-          log.FatalFormat ("ImportMachineModuleActivity: " +
-                           "the session is still active before reloading m_machineModuleActivity");
+          log.Fatal ($"ImportMachineModuleActivity: the session is still active before reloading m_machineModuleActivity");
         }
         ReloadMachineModuleActivity ();
         throw;
@@ -277,9 +254,7 @@ namespace Lemoine.CncDataImport
         }
 
         if (machineMode == null) {
-          log.ErrorFormat ("ImportMachineMode: " +
-                           "MachineMode id={0} does not exist => skip it",
-                           (int)v);
+          log.Error ($"ImportMachineMode: MachineMode id={(int)v} does not exist => skip it");
         }
       }
       else if (key.Equals (ExchangeData.MACHINE_MODE_TRANSLATION_KEY_OR_NAME)) {
@@ -290,13 +265,11 @@ namespace Lemoine.CncDataImport
         }
 
         if (machineMode == null) {
-          log.ErrorFormat ("ImportMachineMode: " +
-                           "MachineMode TranslationKeyOrName={0} does not exist => skip it",
-                           (string)v);
+          log.Error ($"ImportMachineMode: MachineMode TranslationKeyOrName={(string)v} does not exist => skip it");
         }
       }
       else {
-        log.ErrorFormat ("ImportMachineMode: key {0} is invalid => skip the record", key);
+        log.Error ($"ImportMachineMode: key {key} is invalid => skip the record");
       }
 
       return machineMode;

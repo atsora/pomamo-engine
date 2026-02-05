@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,20 +20,15 @@ namespace Lemoine.CncDataImport
   /// </summary>
   internal sealed class ImportDataSequenceMilestone : IImportData
   {
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
     /// </summary>
     public DateTime LastVisitDateTime { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -44,7 +40,6 @@ namespace Lemoine.CncDataImport
       m_machineModule = machineModule;
       log = LogManager.GetLogger ($"{typeof (ImportDataSequenceMilestone).FullName}.{machineModule.MonitoredMachine.Id}.{machineModule.Id}");
     }
-    #endregion // Constructors
 
     #region IImportData implementation
     /// <summary>
@@ -72,7 +67,6 @@ namespace Lemoine.CncDataImport
     }
     #endregion // IImportData implementation
 
-    #region Private methods
     void ImportSequenceMilestone (string key, double sequenceMilestone, DateTime dateTime)
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
@@ -99,6 +93,5 @@ namespace Lemoine.CncDataImport
         }
       }
     }
-    #endregion // Private methods
   }
 }

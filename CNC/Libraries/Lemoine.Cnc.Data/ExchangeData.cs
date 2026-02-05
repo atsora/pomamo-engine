@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2024 Atsora Solutions
+// Copyright (C) 2024-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -111,16 +111,13 @@ namespace Lemoine.Cnc.Data
 
     DateTime m_dateTime = DateTime.UtcNow;
     
-    #region Helper Method
     static DateTime TruncateToSeconds (DateTime dt)
     {
       return new DateTime (dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond), dt.Kind);
     }
-    #endregion // Helper Method
 
     static readonly ILog log = LogManager.GetLogger (typeof (ExchangeData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Machine Id
     /// </summary>
@@ -159,7 +156,6 @@ namespace Lemoine.Cnc.Data
     /// Value
     /// </summary>
     public object Value { get; set; }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Private constructor

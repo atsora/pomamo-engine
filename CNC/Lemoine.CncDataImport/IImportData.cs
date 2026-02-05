@@ -19,19 +19,19 @@ namespace Lemoine.CncDataImport
     /// (automatically set by ImportCncValueFromQueue)
     /// </summary>
     DateTime LastVisitDateTime { get; set; }
-    
+
     /// <summary>
     /// Return true if otherData can be merged with data
     /// </summary>
     /// <param name="data"></param>
     /// <param name="otherData"></param>
     /// <returns></returns>
-    bool IsMergeable(ExchangeData data, ExchangeData otherData);
-    
+    bool IsMergeable (ExchangeData data, ExchangeData otherData);
+
     /// <summary>
     /// Import data that has been previously merged
     /// </summary>
     /// <param name="data"></param>
-    void ImportDatas(IList<ExchangeData> data, CancellationToken cancellationToken = default);
+    void ImportDatas (IList<ExchangeData> data, CancellationToken cancellationToken = default);
   }
 }

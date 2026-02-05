@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -32,7 +33,6 @@ namespace Lemoine.CncDataImport.Cache
       m_machineModule = machineModule;
     }
 
-    #region Methods
     /// <summary>
     /// Set a cnc alarm, not stored in the database yet
     /// </summary>
@@ -63,8 +63,7 @@ namespace Lemoine.CncDataImport.Cache
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetStoredCncAlarm: return {0} for machineModuleId={1} alarmKey={2}",
-                        cncAlarm, m_machineModule.Id, alarmKey);
+        log.Debug ($"GetStoredCncAlarm: return {cncAlarm} for machineModuleId={m_machineModule.Id} alarmKey={alarmKey}");
       }
 
       return cncAlarm;
@@ -97,8 +96,7 @@ namespace Lemoine.CncDataImport.Cache
     public void ResetCncAlarm (AlarmKey alarmKey)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("ResetCncAlarm: MachineModuleId={0} alarmKey={1}",
-                        m_machineModule.Id, alarmKey);
+        log.Debug ($"ResetCncAlarm: MachineModuleId={m_machineModule.Id} alarmKey={alarmKey}");
       }
       m_cncAlarms.Remove (alarmKey);
     }
@@ -138,7 +136,7 @@ namespace Lemoine.CncDataImport.Cache
               cncAlarm = ModelDAOHelper.DAOFactory.CncAlarmDAO.FindById (cncAlarm.Id, cncAlarm.MachineModule);
             }
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("ReloadCncAlarm: reloaded alarm is {0}", cncAlarm);
+              log.Debug ($"ReloadCncAlarm: reloaded alarm is {cncAlarm}");
             }
             if (cncAlarm != null) {
               m_cncAlarms[alarmKey] = cncAlarm;
@@ -154,6 +152,5 @@ namespace Lemoine.CncDataImport.Cache
         }
       }
     }
-    #endregion // Methods
   }
 }

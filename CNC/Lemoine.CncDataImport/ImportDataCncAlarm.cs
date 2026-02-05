@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2023 Atsora Solutions
+// Copyright (C) 2023-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -298,8 +298,7 @@ namespace Lemoine.CncDataImport
       ICncAlarm cachedCncAlarm = m_cache.GetStoredReattachedCncAlarm (alarmKey);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("ProcessCncAlarm: /B new alarm={0} at {1} for key={2} and machineModule={3}",
-                        cncAlarm, startDatetime, alarmKey, m_machineModule);
+        log.Debug ($"ProcessCncAlarm: /B new alarm={cncAlarm} at {startDatetime} for key={alarmKey} and machineModule={m_machineModule}");
       }
 
       if (cachedCncAlarm != null) {
@@ -312,8 +311,7 @@ namespace Lemoine.CncDataImport
 
         // Make the previous CncAlarm longer
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ProcessCncAlarm: make the previous CncAlarm {0} longer to {1}",
-                          cachedCncAlarm, endDatetime);
+          log.Debug ($"ProcessCncAlarm: make the previous CncAlarm {cachedCncAlarm} longer to {endDatetime}");
         }
         cachedCncAlarm.Extend (new UpperBound<DateTime> (endDatetime), true);
       }

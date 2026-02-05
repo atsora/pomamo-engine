@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2023-2025 Atsora Solutions
+// Copyright (C) 2023-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -34,7 +34,6 @@ namespace Lemoine.CncDataImport
     /// </summary>
     public DateTime LastVisitDateTime { get; set; }
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -54,7 +53,6 @@ namespace Lemoine.CncDataImport
         .Where (i => i.Initialize (machineModule))
         .ToList ();
     }
-    #endregion // Constructors
 
     #region IImportData implementation
     /// <summary>
@@ -96,7 +94,6 @@ namespace Lemoine.CncDataImport
     }
     #endregion // IImportData implementation
 
-    #region Private methods
     void ImportCncVariableSet (IDictionary<string, object> cncVariableSet, DateTime startDatetime)
     {
       IDictionary<string, object> changedVariables = new Dictionary<string, object> ();
@@ -283,6 +280,5 @@ namespace Lemoine.CncDataImport
         }
       }
     }
-    #endregion // Private methods
   }
 }

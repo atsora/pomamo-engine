@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -17,23 +18,17 @@ namespace Lemoine.CncDataImport
   /// <summary>
   /// Description of ImportDataAction.
   /// </summary>
-  internal sealed class ImportDataAction: IImportData
+  internal sealed class ImportDataAction : IImportData
   {
-    #region Members
     readonly ILog log;
     readonly IMachineModule m_machineModule;
-    #endregion // Members
-    
-    #region Getters / Setters
+
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
     /// (automatically set by ImportCncValueFromQueue)
     /// </summary>
     public DateTime LastVisitDateTime { get; set; }
-    #endregion // Getters / Setters
-    
-    
-    #region Constructors
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -41,15 +36,14 @@ namespace Lemoine.CncDataImport
     public ImportDataAction (IMachineModule machineModule)
     {
       Debug.Assert (null != machineModule);
-      
+
       m_machineModule = machineModule;
       log = LogManager.GetLogger (string.Format ("{0}.{1}.{2}",
                                                  typeof (ImportDataAction).FullName,
                                                  machineModule.MonitoredMachine.Id,
                                                  machineModule.Id));
     }
-    #endregion // Constructors
-    
+
     #region IImportData implementation
     /// <summary>
     /// Return true if otherData can be merged with data
@@ -57,37 +51,34 @@ namespace Lemoine.CncDataImport
     /// <param name="data"></param>
     /// <param name="otherData"></param>
     /// <returns></returns>
-    public bool IsMergeable(ExchangeData data, ExchangeData otherData)
+    public bool IsMergeable (ExchangeData data, ExchangeData otherData)
     {
       log.Debug ("IsDataCompatible: Action datas are never compatible (occur once)");
       return false;
     }
-    
+
     /// <summary>
     /// Import data that has been previously merged
     /// </summary>
     /// <param name="datas"></param>
-    public void ImportDatas(IList<ExchangeData> datas, CancellationToken cancellationToken = default)
+    public void ImportDatas (IList<ExchangeData> datas, CancellationToken cancellationToken = default)
     {
       Debug.Assert (1 == datas.Count);
       var firstData = datas[0];
       ImportAction (firstData.Key, firstData.Value, firstData.DateTime);
     }
     #endregion // IImportData implementation
-    
-    #region Private methods
-    void ImportAction(string actionKey, object v, DateTime dateTime)
+
+    void ImportAction (string actionKey, object v, DateTime dateTime)
     {
-      log.DebugFormat ("ImportAction: " +
-                       "machineModuleId={0} action={1}",
-                       m_machineModule.Id, actionKey);
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ImportAction: machineModuleId={m_machineModule.Id} action={actionKey}");
+      }
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         DateTime effectiveDateTime = NullableDateTime.TruncateToSeconds (dateTime);
-        using (IDAOTransaction transaction = session.BeginTransaction(
-          "CncData.ImportAction", TransactionLevel.ReadCommitted))
-        {
+        using (IDAOTransaction transaction = session.BeginTransaction (
+          "CncData.ImportAction", TransactionLevel.ReadCommitted)) {
           // - MachineModuleDetection
           IMachineModuleDetection detection = ModelDAOHelper.ModelFactory
             .CreateMachineModuleDetection (m_machineModule, effectiveDateTime); // machine module
@@ -108,15 +99,15 @@ namespace Lemoine.CncDataImport
           }
           else if (actionKey.Equals (ExchangeData.ACTION_QUANTITY)) {
             detection.StopCycle = true;
-            detection.Quantity = (int) v;
+            detection.Quantity = (int)v;
           }
           else if (actionKey.Equals (ExchangeData.ACTION_OPERATIONCODE_QUANTITY)) {
             detection.StopCycle = true;
             if (null != v) {
               // Last character or number is the quantity
               if (v is int) {
-                detection.OperationCode = (((int) v) / 10).ToString ();
-                detection.Quantity = ((int) v) % 10;
+                detection.OperationCode = (((int)v) / 10).ToString ();
+                detection.Quantity = ((int)v) % 10;
               }
               else { // v is string
                 string s = v.ToString ();
@@ -135,13 +126,10 @@ namespace Lemoine.CncDataImport
             }
           }
           else {
-            log.ErrorFormat ("ImportAction: " +
-                             "key {0} is invalid " +
-                             "=> skip the record",
-                             actionKey);
+            log.Error ($"ImportAction: key {actionKey} is invalid => skip the record");
             return;
           }
-          ModelDAOHelper.DAOFactory.MachineModuleDetectionDAO.MakePersistent(detection);
+          ModelDAOHelper.DAOFactory.MachineModuleDetectionDAO.MakePersistent (detection);
 
           // - DetectionTimeStamp
           var detectionTimeStamp = ModelDAOHelper.DAOFactory.AcquisitionStateDAO.GetAcquisitionState (m_machineModule, AcquisitionStateKey.Detection);
@@ -149,13 +137,12 @@ namespace Lemoine.CncDataImport
             detectionTimeStamp = ModelDAOHelper.ModelFactory.CreateAcquisitionState (m_machineModule, AcquisitionStateKey.Detection);
           }
           detectionTimeStamp.DateTime = effectiveDateTime;
-          ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent(detectionTimeStamp);
-          
+          ModelDAOHelper.DAOFactory.AcquisitionStateDAO.MakePersistent (detectionTimeStamp);
+
           // - Commit
-          transaction.Commit();
+          transaction.Commit ();
         }
       }
     }
-    #endregion // Private methods
   }
 }
