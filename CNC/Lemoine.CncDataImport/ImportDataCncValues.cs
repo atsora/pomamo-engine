@@ -55,10 +55,7 @@ namespace Lemoine.CncDataImport
       Debug.Assert (null != machineModule);
 
       m_machineModule = machineModule;
-      log = LogManager.GetLogger (string.Format ("{0}.{1}.{2}",
-                                                 typeof (ImportDataCncValues).FullName,
-                                                 machineModule.MonitoredMachine.Id,
-                                                 machineModule.Id));
+      log = LogManager.GetLogger ($"{typeof (ImportDataCncValues).FullName}.{machineModule.MonitoredMachine.Id}.{machineModule.Id}");
       m_cache = cncCache;
       m_caller = caller;
 
@@ -157,7 +154,6 @@ namespace Lemoine.CncDataImport
     }
     #endregion // IImportData implementation
 
-    #region Private methods
     void ImportCncValue (string key, IList<ExchangeData> datas)
     {
       Debug.Assert (0 < datas.Count);
@@ -772,7 +768,6 @@ namespace Lemoine.CncDataImport
       m_cache.SetCncValue (field, cncValue);
       m_cache.SaveOrUpdateCncValue (cncValue);
     }
-    #endregion // Private methods
 
     #region Utility methods for Average Cnc Data
     double CombineAverage (double average1, TimeSpan period1, double average2, TimeSpan period2)

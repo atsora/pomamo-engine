@@ -62,6 +62,10 @@ namespace Lemoine.Cnc.Data
     /// Sequence milestone (in seconds)
     /// </summary>
     SequenceMilestone = 11,
+    /// <summary>
+    /// Set directly a machine mode period (with a start date/time)
+    /// </summary>
+    MachineModePeriod = 12,
   }
 
   /// <summary>
@@ -166,11 +170,7 @@ namespace Lemoine.Cnc.Data
     /// ToString method
     /// </summary>
     /// <returns></returns>
-    public override string ToString ()
-    {
-      return string.Format ("[ExchangeData MachineModuleId={0} Command={1} Key={2} Value={3} Date={4}]",
-                            MachineModuleId, Command, Key, Value, DateTime);
-    }
+    public override string ToString () => $"[ExchangeData MachineModuleId={MachineModuleId} Command={Command} Key={Key} Value={Value} Date={DateTime}]";
 
     /// <summary>
     ///   Determines whether the specified Object
@@ -602,6 +602,18 @@ namespace Lemoine.Cnc.Data
       return BuildExchangeData (machineId, machineModuleId, dateTime,
                                ExchangeDataCommand.MachineModuleActivity,
                                ExchangeData.MACHINE_MODE_TRANSLATION_KEY_OR_NAME, v);
+    }
+
+    /// <summary>
+    /// Build an exchange data corresponding to a machine mode period (with a start date/time)
+    /// </summary>
+    /// <returns></returns>
+    public static ExchangeData
+      BuildMachineModeIdPeriod (int machineId, int machineModuleId, string machineModeKey, DateTime startDateTime, DateTime endDateTime)
+    {
+      return BuildExchangeData (machineId, machineModuleId, endDateTime,
+                               ExchangeDataCommand.MachineModePeriod,
+                               machineModeKey, startDateTime);
     }
 
     #region ISerializable interface

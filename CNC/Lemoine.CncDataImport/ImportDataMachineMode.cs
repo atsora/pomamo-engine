@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,7 +13,6 @@ using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
 using Lemoine.Core.ExceptionManagement;
 using System.Threading;
-using Lemoine.Threading;
 
 namespace Lemoine.CncDataImport
 {
