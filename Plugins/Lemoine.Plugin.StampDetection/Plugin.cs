@@ -19,7 +19,6 @@ namespace Lemoine.Plugin.StampDetection
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -41,7 +40,6 @@ namespace Lemoine.Plugin.StampDetection
     /// Version of the plugin
     /// </summary>
     public override int Version => 1;
-    #endregion // Getters / Setters
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
   }
