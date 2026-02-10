@@ -88,7 +88,25 @@ namespace Pulse.Web.Reason
 
           var range = new UtcDateTimeRange (request.Range);
           if (!string.IsNullOrEmpty (request.ClassificationId) && request.ClassificationId.StartsWith ("MST", StringComparison.CurrentCultureIgnoreCase)) {
-            if (int.TryParse (request.ClassificationId.Substring ("MST".Length), out var machineStateTemplateId)) {
+            if (request.ClassificationId.StartsWith ("MSTNE", StringComparison.CurrentCultureIgnoreCase)
+              && int.TryParse (request.ClassificationId.Substring ("MSTNE".Length), out var noEndMachineStateTemplateId)) {
+              var noEndMachineStateTemplate = await ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
+                .FindByIdAsync (noEndMachineStateTemplateId);
+              if (noEndMachineStateTemplate is null) {
+                log.Error ($"Get: No machine state template with ID {noEndMachineStateTemplateId}");
+                transaction.Commit ();
+                return new ErrorDTO ("No machine state template with id " + noEndMachineStateTemplateId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+              else {
+                var noEndRange = new UtcDateTimeRange (range.Lower);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Get: create machine state template modification for range={noEndRange} mstid={noEndMachineStateTemplateId}");
+                }
+                CreateMachineStateTemplateModification (revision, machine, noEndMachineStateTemplate, noEndRange);
+              }
+            }
+            else if (int.TryParse (request.ClassificationId.Substring ("MST".Length), out var machineStateTemplateId)) {
               var machineStateTemplate = await ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
                 .FindByIdAsync (machineStateTemplateId);
               if (machineStateTemplate is null) {
@@ -98,6 +116,9 @@ namespace Pulse.Web.Reason
                                      ErrorStatus.WrongRequestParameter);
               }
               else {
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Get: create machine state template modification for range={range} mstid={machineStateTemplateId}");
+                }
                 CreateMachineStateTemplateModification (revision, machine, machineStateTemplate, range);
               }
             }
@@ -114,7 +135,12 @@ namespace Pulse.Web.Reason
               reasonId = request.ReasonId.Value;
             }
             else if (!string.IsNullOrEmpty (request.ClassificationId)) {
-              if (!int.TryParse (request.ClassificationId, out reasonId)) {
+              if (int.TryParse (request.ClassificationId, out reasonId)) {
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Get: reason id={reasonId} from classificationId={request.ClassificationId}");
+                }
+              }
+              else {
                 log.Error ($"Get: invalid reason ID {request.ClassificationId}");
                 transaction.Commit ();
                 return new ErrorDTO ("Invalid reason ID" + request.ClassificationId,

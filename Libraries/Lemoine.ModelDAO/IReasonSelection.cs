@@ -30,7 +30,7 @@ namespace Lemoine.Model
 
     /// <summary>
     /// Classification ID :
-    /// ReasonId or "MST" + MachineStateTemplateId
+    /// ReasonId or "MST" + MachineStateTemplateId or "MSTNE" + MachineStateTemplateId (no end option)
     /// </summary>
     string ClassificationId { get; }
 

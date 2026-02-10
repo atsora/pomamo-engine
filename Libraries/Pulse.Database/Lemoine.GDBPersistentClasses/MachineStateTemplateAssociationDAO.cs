@@ -87,7 +87,7 @@ namespace Lemoine.GDBPersistentClasses
       var persistentSubModification = ModelDAOHelper.DAOFactory.MachineModificationDAO
           .FindById (modificationId, association.Machine);
       Debug.Assert (null != persistentSubModification);
-      var mainModification = ((ReasonMachineAssociation)association).MainModification;
+      var mainModification = ((MachineStateTemplateAssociation)association).MainModification;
       persistentSubModification.Parent = parent ?? (mainModification ?? association);
 
       return persistentSubModification;
@@ -124,7 +124,7 @@ WHERE table_schema='pgfkpart'
             var insertIntoMachineModificationQuery = string.Format (@"
 INSERT INTO pgfkpart.machinemodification_p{0}
   (modificationreferencedtable, machinemodificationmachineid, modificationpriority, parentglobalmodificationid, parentmachinemodificationid, modificationauto)
-VALUES ('ReasonMachineAssociation', {0}, :Priority, :ParentGlobal, :ParentMachine, :Auto)
+VALUES ('MachineStateTemplateAssociation', {0}, :Priority, :ParentGlobal, :ParentMachine, :Auto)
 RETURNING modificationid;
 ",
               association.Machine.Id // 0
@@ -144,7 +144,7 @@ RETURNING modificationid;
               .SetBoolean ("Auto", association.Auto)
               .UniqueResult<long> ();
 
-            var insertIntoReasonMachineAssociationQuery = $"""
+            var insertIntoMachineStateTemplateAssociationQuery = $"""
 INSERT INTO pgfkpart.machinestatetemplateassociation_p{association.Machine.Id} (modificationid, machineid, machinestatetemplateid,
   userid, shiftid,
   machinestatetemplateassociationbegin, machinestatetemplateassociationend,
@@ -155,7 +155,7 @@ VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Forc
               ? (int?)association.Option.Value
               : null;
             NHibernateHelper.GetCurrentSession ()
-              .CreateSQLQuery (insertIntoReasonMachineAssociationQuery)
+              .CreateSQLQuery (insertIntoMachineStateTemplateAssociationQuery)
               .SetInt64 ("Id", modificationId)
               .SetEntity ("Machine", association.Machine)
               .SetParameter ("MachineStateTemplate", association.MachineStateTemplate, NHibernateUtil.Entity (typeof (MachineStateTemplate)))

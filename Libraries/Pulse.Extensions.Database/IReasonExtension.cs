@@ -399,7 +399,7 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// <see cref="IReaosnSelection"/>
     /// </summary>
-    public string ClassificationId => "MST" + this.MachineStateTemplate.Id.ToString ();
+    public string ClassificationId => (this.NoEnd ? "MSTNE" : "MST") + this.MachineStateTemplate.Id.ToString ();
 
     /// <summary>
     /// <see cref="Lemoine.Model.IReasonSelection" />
@@ -506,15 +506,18 @@ namespace Pulse.Extensions.Database
     public int Version => 0;
 
     /// <summary>
+    /// Omit the end time, to only start a machine state template period
+    /// </summary>
+    public bool NoEnd { get; set; }
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="reasonGroup">not null</param>
     /// <param name="machineStateTemplate">not null</param>
     /// <param name="machineMode">not null</param>
     /// <param name="machineObservationState">not null</param>
-    /// <param name="reason">not null</param>
-    /// <param name="reasonScore"></param>
-    public MachineStateTemplateAsReasonSelection (IReasonGroup reasonGroup, IMachineStateTemplate machineStateTemplate, IMachineMode machineMode, IMachineObservationState machineObservationState, string alternativeText = null, bool timeDependent = false)
+    public MachineStateTemplateAsReasonSelection (IReasonGroup reasonGroup, IMachineStateTemplate machineStateTemplate, IMachineMode machineMode, IMachineObservationState machineObservationState, string alternativeText = null, bool timeDependent = false, bool noEnd = false)
     {
       Debug.Assert (null != reasonGroup);
       Debug.Assert (null != machineStateTemplate);
@@ -541,6 +544,7 @@ namespace Pulse.Extensions.Database
       this.AlternativeText = alternativeText ?? machineStateTemplate.Display;
       this.TimeDependent = timeDependent;
       this.DynamicData = false;
+      this.NoEnd = noEnd;
     }
   }
 
