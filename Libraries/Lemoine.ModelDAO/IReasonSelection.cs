@@ -108,6 +108,11 @@ namespace Lemoine.Model
     bool DetailsRequired { get; set; }
 
     /// <summary>
+    /// If true, the reason is displayed in the second level, under the reason group
+    /// </summary>
+    bool AlwaysSecondLevel { get; }
+
+    /// <summary>
     /// Associated MachineFilter
     /// 
     /// If null, all machines apply

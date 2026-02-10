@@ -228,6 +228,11 @@ namespace Pulse.Extensions.Database
     public bool NoDetails => false;
 
     /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
+    public bool AlwaysSecondLevel { get; set; } = false;
+
+    /// <summary>
     /// Id. Not used, always 0
     /// </summary>
     public int Id => 0;
@@ -389,6 +394,11 @@ namespace Pulse.Extensions.Database
     /// <summary>
     /// <see cref="IReasonSelection"/>
     /// </summary>
+    public bool AlwaysSecondLevel { get; set; } = false;
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// </summary>
     public bool NoDetails => true;
 
     /// <summary>
@@ -517,7 +527,7 @@ namespace Pulse.Extensions.Database
     /// <param name="machineStateTemplate">not null</param>
     /// <param name="machineMode">not null</param>
     /// <param name="machineObservationState">not null</param>
-    public MachineStateTemplateAsReasonSelection (IReasonGroup reasonGroup, IMachineStateTemplate machineStateTemplate, IMachineMode machineMode, IMachineObservationState machineObservationState, string alternativeText = null, bool timeDependent = false, bool noEnd = false)
+    public MachineStateTemplateAsReasonSelection (IReasonGroup reasonGroup, IMachineStateTemplate machineStateTemplate, IMachineMode machineMode, IMachineObservationState machineObservationState, string alternativeText = null, bool timeDependent = false, bool noEnd = false, bool alwaysSecondLevel = false)
     {
       Debug.Assert (null != reasonGroup);
       Debug.Assert (null != machineStateTemplate);
@@ -545,6 +555,7 @@ namespace Pulse.Extensions.Database
       this.TimeDependent = timeDependent;
       this.DynamicData = false;
       this.NoEnd = noEnd;
+      this.AlwaysSecondLevel = alwaysSecondLevel;
     }
   }
 

@@ -80,6 +80,11 @@ namespace Pulse.Web.Reason
     public bool DetailsRequired { get; set; }
 
     /// <summary>
+    /// Always displayed in the second level, under the reason group
+    /// </summary>
+    public bool AlwaysSecondLevel { get; set; }
+
+    /// <summary>
     /// Display of associated reason group
     /// </summary>
     public string ReasonGroupDisplay { get; set; }
@@ -218,6 +223,7 @@ namespace Pulse.Web.Reason
         reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
         reasonSelectionResponseDTO.NoDetails = reasonSelection.NoDetails;
         reasonSelectionResponseDTO.DetailsRequired = reasonSelection.DetailsRequired;
+        reasonSelectionResponseDTO.AlwaysSecondLevel = reasonSelection.AlwaysSecondLevel;
         reasonSelectionResponseDTO.Data = reasonSelection.Data;
         return reasonSelectionResponseDTO;
       }
