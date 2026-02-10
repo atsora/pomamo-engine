@@ -69,7 +69,6 @@ namespace Lemoine.CncDataImport
       }
       if (data.DateTime < otherData.DateTime) {
         log.Fatal ($"IsMergeable: new data {data} is before the last data {otherData} => this should not happen");
-        Debug.Assert (false);
         return false;
       }
 
@@ -131,7 +130,7 @@ namespace Lemoine.CncDataImport
           if (m_fact != null) {
             if (startDateTime < m_fact.End) {
               if (endDateTime <= m_fact.End) {
-                log.Fatal ($"ImportMachineMode: recorded machine mode at {startDateTime}-{endDateTime} comes before last fact end {m_fact.End} => skip it (this should not happen)");
+                log.Error ($"ImportMachineMode: recorded machine mode at {startDateTime}-{endDateTime} comes before last fact end {m_fact.End} => skip it (this should not happen)");
                 return;
               }
               else {
@@ -157,7 +156,6 @@ namespace Lemoine.CncDataImport
               if (!m_fact.End.Equals (adjustedStart)) { // Gap
                 if (adjustedStart < m_fact.End) {
                   log.Fatal ($"ImportMachineMode: this case should not happen adjustedStart={adjustedStart} < m_fact.End={m_fact.End}");
-                  Debug.Assert (m_fact.End <= adjustedStart, "adjustedStart before m_fact.End");
                   throw new InvalidOperationException ();
                 }
                 else if (TimeSpan.FromSeconds (1) <= adjustedStart.Subtract (m_fact.End)) {

@@ -153,7 +153,14 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_detailsRequired; }
       set { m_detailsRequired = value; }
     }
-    
+
+    /// <summary>
+    /// <see cref="IReasonSelection"/>
+    /// 
+    /// For the moment always false. But a new parameter could be added to the table in the future
+    /// </summary>
+    public virtual bool AlwaysSecondLevel => false;
+
     /// <summary>
     /// <see cref="IReasonSelection"/>
     /// </summary>

@@ -608,8 +608,7 @@ namespace Lemoine.Cnc.Data
     /// Build an exchange data corresponding to a machine mode period (with a start date/time)
     /// </summary>
     /// <returns></returns>
-    public static ExchangeData
-      BuildMachineModeIdPeriod (int machineId, int machineModuleId, string machineModeKey, DateTime startDateTime, DateTime endDateTime)
+    public static ExchangeData BuildMachineModePeriod (int machineId, int machineModuleId, string machineModeKey, DateTime startDateTime, DateTime endDateTime)
     {
       return BuildExchangeData (machineId, machineModuleId, endDateTime,
                                ExchangeDataCommand.MachineModePeriod,
