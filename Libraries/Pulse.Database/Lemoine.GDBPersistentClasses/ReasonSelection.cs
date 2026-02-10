@@ -90,7 +90,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IReasonSelection"/>
     /// </summary>
-    public virtual string ClassificationId => this.Id.ToString ();
+    public virtual string ClassificationId => this.Reason.Id.ToString ();
 
     /// <summary>
     /// Version
