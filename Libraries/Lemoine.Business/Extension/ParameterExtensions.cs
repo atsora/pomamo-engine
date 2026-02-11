@@ -27,7 +27,7 @@ namespace Lemoine.Business.Extension
   {
     U m_parameter;
 
-    Func<T, U, bool> m_filter = ( (x, m) => true);
+    Func<T, U, bool> m_filter = ((x, m) => true);
     Func<U, string> m_parameterKey;
 
     static readonly ILog log = LogManager.GetLogger (typeof (GlobalExtensions<T>).FullName);
@@ -63,13 +63,11 @@ namespace Lemoine.Business.Extension
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
     /// <returns>Group or null if not found</returns>
-    public virtual IEnumerable<T> Get ()
-    {
-      return Lemoine.Extensions.ExtensionManager
+    public virtual IEnumerable<T> Get () =>
+      Lemoine.Extensions.ExtensionManager
         .GetExtensions<T> ()
         .Where (ext => m_filter (ext, m_parameter))
         .ToList (); // ToList is mandatory else the result of the Linq command is not cached
-    }
 
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation

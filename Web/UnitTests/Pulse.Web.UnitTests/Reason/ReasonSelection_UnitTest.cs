@@ -193,7 +193,8 @@ namespace Pulse.Web.UnitTests.Reason
         {
           "Name": "Test",
           "Parameters": {
-            "ReasonGroupId": 1
+            "ReasonGroupId": 1,
+            "MachineFilterId": 3797
           }
         }
       ]
@@ -240,7 +241,7 @@ namespace Pulse.Web.UnitTests.Reason
     }
 
     [Test]
-    public async Task TestReasonSelectionFilteredMachineStateTemplate ()
+    public async Task TestReasonSelectionMachineStateTemplateFiltered ()
     {
       Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
 
@@ -261,9 +262,10 @@ namespace Pulse.Web.UnitTests.Reason
         {
           "Name": "Test",
           "Parameters": {
-            "MachineStateTemplateIds": [ 1 ],
             "ReasonGroupId": 1,
+            "MachineStateTemplateIds": [ 1, 2, 3 ],
             "NoEnd": true,
+            "AlwaysSecondLevel": true,
             "AlternativeText": "alternative text"
           }
         }
@@ -285,6 +287,103 @@ namespace Pulse.Web.UnitTests.Reason
           var nextMachineStateTemplate = ModelDAOHelper.ModelFactory
             .CreateMachineStateTemplateFlow (unattendedMachineStateTemplate, attendedMachineStateTemplate);
           ModelDAOHelper.DAOFactory.MachineStateTemplateFlowDAO.MakePersistent (nextMachineStateTemplate);
+
+          var request = new ReasonSelectionRequestDTO ();
+          request.MachineId = 1;
+          request.Range = "[2011-11-22T08:30:00Z,2011-11-22T08:30:00Z]";
+
+          var response = await m_service.Get (request) as IList<ReasonSelectionResponseDTO>;
+
+          Assert.That (response, Is.Not.Null);
+          Assert.That (response, Has.Count.EqualTo (10));
+
+          var withDataSelections = response.Where (item => item.ClassificationId.StartsWith ("MST"));
+          Assert.Multiple (() => {
+            Assert.That (withDataSelections.ToList (), Has.Count.EqualTo (1));
+            Assert.That (withDataSelections.Select (x => x.ClassificationId), Has.One.With.EqualTo ("MSTNE1"));
+            Assert.That (withDataSelections.Select (x => x.Display), Has.One.With.EqualTo ("alternative text"));
+          });
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    [Test]
+    public async Task TestReasonSelectionMachineStateMultiple ()
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.Package.PackageFile.InstallOrUpgradeJsonString ($$"""
+{
+  "Identifier": "MachineStateTemplateReasonSelection_UnitTest",
+  "Name": "UnitTest",
+  "Description": "",
+  "Tags": [],
+  "Version": 1,
+  "Plugins": [
+    {
+      "Name": "MachineStateTemplateReasonSelection",
+      "Instances": [
+        {
+          "Name": "Test1",
+          "Parameters": {
+            "ReasonGroupId": 1,
+            "MachineStateTemplateIds": [ 2, 3 ],
+            "AlwaysSecondLevel": true
+          }
+        },
+        {
+          "Name": "Test2",
+          "Parameters": {
+            "ReasonGroupId": 1,
+            "MachineStateTemplateIds": [ 1 ],
+            "NoEnd": true,
+            "AlwaysSecondLevel": true,
+            "AlternativeText": "alternative text"
+          }
+        },
+        {
+          "Name": "Test3",
+          "Parameters": {
+            "ReasonGroupId": 1,
+            "MachineStateTemplateIds": [ 4 ],
+            "NoEnd": true,
+            "AlwaysSecondLevel": true,
+            "AlternativeText": "alternative text 3"
+          }
+        }
+      ]
+    }
+  ]
+}
+""", true, true);
+          var assemblyLoader = new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader ();
+          var pluginFilter = new PluginFilterFromFlag (PluginFlag.Web);
+          var pluginsLoader = new PluginsLoader (assemblyLoader);
+          var extensionsProvider = new ExtensionsProvider (Lemoine.ModelDAO.ModelDAOHelper.DAOFactory, pluginFilter, Lemoine.Extensions.Analysis.ExtensionInterfaceProvider.GetInterfaceProviders (), pluginsLoader, new DummyPluginsLoader ());
+          Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
+          Lemoine.Extensions.ExtensionManager.Activate (false);
+          Lemoine.Extensions.ExtensionManager.Load ();
+
+          var unattendedMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO.FindById (2);
+          var attendedMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO.FindById (1);
+          {
+            var nextMachineStateTemplate = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateFlow (unattendedMachineStateTemplate, attendedMachineStateTemplate);
+            ModelDAOHelper.DAOFactory.MachineStateTemplateFlowDAO.MakePersistent (nextMachineStateTemplate);
+          }
+          {
+            var nextMachineStateTemplate = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateFlow (attendedMachineStateTemplate, unattendedMachineStateTemplate);
+            ModelDAOHelper.DAOFactory.MachineStateTemplateFlowDAO.MakePersistent (nextMachineStateTemplate);
+          }
 
           var request = new ReasonSelectionRequestDTO ();
           request.MachineId = 1;
