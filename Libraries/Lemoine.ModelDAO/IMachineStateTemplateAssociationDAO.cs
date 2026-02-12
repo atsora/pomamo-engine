@@ -16,7 +16,7 @@ namespace Lemoine.ModelDAO
     /// <summary>
     /// Insert a new row in database with a new machine state template association
     /// </summary>
-    long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate);
+    long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate, AssociationOption option);
 
     /// <summary>
     /// Get all MachineStateTemplateAssociation for a specific machine within a period

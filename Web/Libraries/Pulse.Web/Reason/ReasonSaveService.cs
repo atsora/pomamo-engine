@@ -190,7 +190,7 @@ namespace Pulse.Web.Reason
     void CreateMachineStateTemplateModification (IRevision revision, IMachine machine, IMachineStateTemplate machineStateTemplate, UtcDateTimeRange range)
     {
       var modificationId = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
-        .Insert (machine, range, machineStateTemplate);
+        .Insert (machine, range, machineStateTemplate, AssociationOption.Synchronous);
 
       var modification = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
         .FindById (modificationId, machine);
@@ -253,7 +253,44 @@ namespace Pulse.Web.Reason
           ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistent (revision);
 
           if (!string.IsNullOrEmpty (request.ClassificationId) && request.ClassificationId.StartsWith ("MST", StringComparison.CurrentCultureIgnoreCase)) {
-            if (int.TryParse (request.ClassificationId.Substring ("MST".Length), out var machineStateTemplateId)) {
+            if (request.ClassificationId.StartsWith ("MSTNE", StringComparison.CurrentCultureIgnoreCase)
+              && int.TryParse (request.ClassificationId.Substring ("MSTNE".Length), out var noEndMachineStateTemplateId)) {
+              var noEndMachineStateTemplate = await ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
+                .FindByIdAsync (noEndMachineStateTemplateId);
+              if (noEndMachineStateTemplate is null) {
+                log.Error ($"Get: No machine state template with ID {noEndMachineStateTemplateId}");
+                transaction.Commit ();
+                return new ErrorDTO ("No machine state template with id " + noEndMachineStateTemplateId,
+                                     ErrorStatus.WrongRequestParameter);
+              }
+              else {
+                try {
+                  var deserializedResult = PostDTO.Deserialize<ReasonSavePostDTO> (m_body);
+                  var ranges = deserializedResult.ExtractRanges ();
+                  if (ranges.Any ()) {
+                    if (1 < ranges.Count ()) {
+                      log.Info ($"Post: multiple ranges detected for MSTNE");
+                    }
+                    var minLower = ranges
+                      .Select (r => r.Lower)
+                      .Min ();
+                    var noEndRange = new UtcDateTimeRange (minLower);
+                    if (log.IsDebugEnabled) {
+                      log.Debug ($"Post: create machine state template modification for range={noEndRange} mstid={noEndMachineStateTemplateId}");
+                    }
+                    CreateMachineStateTemplateModification (revision, machine, noEndMachineStateTemplate, noEndRange);
+                  }
+                  else {
+                    log.Warn ($"Post: no range in deserialized result, do nothing");
+                  }
+                }
+                catch (Exception ex) {
+                  log.Error ($"Post: exception in deserialization or modification", ex);
+                  throw;
+                }
+              }
+            }
+            else if (int.TryParse (request.ClassificationId.Substring ("MST".Length), out var machineStateTemplateId)) {
               var machineStateTemplate = await ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
                 .FindByIdAsync (machineStateTemplateId);
               if (machineStateTemplate is null) {

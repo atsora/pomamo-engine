@@ -56,10 +56,10 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// Insert a new row in database with a new manual reason
     /// </summary>
-    public long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate)
+    public long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate, AssociationOption option)
     {
       var association = ModelDAO.ModelDAOHelper.ModelFactory.CreateMachineStateTemplateAssociation (machine, machineStateTemplate, range);
-      association.Option = AssociationOption.TrackSlotChanges;
+      association.Option = option;
       association.Priority = Lemoine.Info.ConfigSet
         .LoadAndGet (PRIORITY_KEY, PRIORITY_DEFAULT);
       return InsertModification (association, false, false);

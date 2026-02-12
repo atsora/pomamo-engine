@@ -213,7 +213,6 @@ namespace Pulse.Web.UnitTests.Reason
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
           Lemoine.Extensions.ExtensionManager.Activate (false);
           Lemoine.Extensions.ExtensionManager.Load ();
-          const string details = "my details";
           IReason reason1 = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (1);
 
           var request = new ReasonSavePostRequestDTO ();
@@ -243,6 +242,83 @@ namespace Pulse.Web.UnitTests.Reason
           var machineStateTemplateAssociation = modification as IMachineStateTemplateAssociation;
           Assert.That (machineStateTemplateAssociation, Is.Not.Null, "not a machine state template association");
           Assert.That (machineStateTemplateAssociation.MachineStateTemplate.Id, Is.EqualTo (1));
+          Assert.That (machineStateTemplateAssociation.Range.Upper.HasValue, Is.True);
+          Assert.That (machineStateTemplateAssociation.Range.Lower.Value, Is.EqualTo (new DateTime (2013, 09, 06, 14, 59, 00, DateTimeKind.Utc)));
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    [Test]
+    public async Task TestReasonSavePostWithMachineStateTemplateNoEnd ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          Lemoine.Extensions.Package.PackageFile.InstallOrUpgradeJsonString ($$"""
+{
+  "Identifier": "MachineStateTemplateReasonSelection_UnitTest",
+  "Name": "UnitTest",
+  "Description": "",
+  "Tags": [],
+  "Version": 1,
+  "Plugins": [
+    {
+      "Name": "MachineStateTemplateReasonSelection",
+      "Instances": [
+        {
+          "Name": "Test",
+          "Parameters": {
+            "NoEnd": true,
+            "ReasonGroupId": 1
+          }
+        }
+      ]
+    }
+  ]
+}
+""", true, true);
+          var assemblyLoader = new Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader ();
+          var pluginFilter = new PluginFilterFromFlag (PluginFlag.Web);
+          var pluginsLoader = new PluginsLoader (assemblyLoader);
+          var extensionsProvider = new ExtensionsProvider (Lemoine.ModelDAO.ModelDAOHelper.DAOFactory, pluginFilter, Lemoine.Extensions.Analysis.ExtensionInterfaceProvider.GetInterfaceProviders (), pluginsLoader, new DummyPluginsLoader ());
+          Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider);
+          Lemoine.Extensions.ExtensionManager.Activate (false);
+          Lemoine.Extensions.ExtensionManager.Load ();
+          IReason reason1 = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (1);
+
+          var request = new ReasonSavePostRequestDTO ();
+          request.MachineId = 1;
+          request.ClassificationId = "MSTNE1";
+
+          var json = """
+            {
+              "Ranges": [ "[2013-09-06T14:59:00Z,2013-09-06T15:00:00Z)" ],
+              "ReasonData": {
+                "Test": 1.1
+              }
+            }
+            """;
+          using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (json))) {
+            var reasonSaveService = new ReasonSaveService ();
+            reasonSaveService.SetBody (stream);
+            var response = await reasonSaveService.Post (request) as ReasonSaveResponseDTO;
+            Assert.That (response, Is.Not.Null);
+          }
+
+          // just test there is a pending modification of the right type
+          IList<IModification> modifications = ModelDAOHelper.DAOFactory.ModificationDAO.FindAll ().ToList ();
+          Assert.That (modifications, Is.Not.Null, "no modification");
+          Assert.That (modifications, Has.Count.EqualTo (1), "not 1 modification");
+          IModification modification = modifications[0];
+          var machineStateTemplateAssociation = modification as IMachineStateTemplateAssociation;
+          Assert.That (machineStateTemplateAssociation, Is.Not.Null, "not a machine state template association");
+          Assert.That (machineStateTemplateAssociation.MachineStateTemplate.Id, Is.EqualTo (1));
+          Assert.That (machineStateTemplateAssociation.Range.Upper.HasValue, Is.False);
+          Assert.That (machineStateTemplateAssociation.Range.Lower.Value, Is.EqualTo (new DateTime (2013, 09, 06, 14, 59, 00, DateTimeKind.Utc)));
         }
         finally {
           Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();

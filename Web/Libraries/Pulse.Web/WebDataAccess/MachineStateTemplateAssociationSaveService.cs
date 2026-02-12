@@ -34,16 +34,13 @@ namespace Pulse.Web.WebDataAccess
     /// </summary>
     public HttpContext HttpContext { get; set; }
     
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
     public MachineStateTemplateMachineAssociationSaveService ()
     {
     }
-#endregion // Constructors
 
-#region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -60,9 +57,7 @@ namespace Pulse.Web.WebDataAccess
           IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
             .FindById (request.MachineId);
           if (null == machine) {
-            log.ErrorFormat ("Get: " +
-                             "Machine with {0} does not exist",
-                             request.MachineId);
+            log.Error ($"Get: Machine with {request.MachineId} does not exist");
             transaction.Commit ();
             return new ErrorDTO ("No machine with id " + request.MachineId,
                                  ErrorStatus.WrongRequestParameter);
@@ -73,9 +68,7 @@ namespace Pulse.Web.WebDataAccess
           IMachineStateTemplate machineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
             .FindById (request.MachineStateTemplateId);
           if (null == machineStateTemplate) {
-            log.ErrorFormat ("Get: " +
-                             "No reason with ID {0}",
-                             request.MachineStateTemplateId);
+            log.Error ($"Get: no reason with ID {request.MachineStateTemplateId}");
             transaction.Commit ();
             return new ErrorDTO ("No machine state template with id " + request.MachineStateTemplateId,
                                  ErrorStatus.WrongRequestParameter);
@@ -89,9 +82,7 @@ namespace Pulse.Web.WebDataAccess
             IUser user = ModelDAOHelper.DAOFactory.UserDAO
               .FindById (request.UserId.Value);
             if (null == user) {
-              log.ErrorFormat ("Get: " +
-                               "no user with ID {0}",
-                               request.UserId);
+              log.Error ($"Get: no user with ID {request.UserId}");
               transaction.Commit ();
               return new ErrorDTO ("No user with the specified ID",
                                    ErrorStatus.WrongRequestParameter);
@@ -104,9 +95,7 @@ namespace Pulse.Web.WebDataAccess
             IShift shift = ModelDAOHelper.DAOFactory.ShiftDAO
               .FindById (request.ShiftId.Value);
             if (null == shift) {
-              log.ErrorFormat ("Get: " +
-                               "no shift with ID {0}",
-                               request.ShiftId);
+              log.Error ($"Get: no shift with ID {request.ShiftId}");
               transaction.Commit ();
               return new ErrorDTO ("No shift with the specified ID",
                                    ErrorStatus.WrongRequestParameter);
@@ -141,9 +130,7 @@ namespace Pulse.Web.WebDataAccess
               IRevision revision = ModelDAOHelper.DAOFactory.RevisionDAO
                 .FindById (request.RevisionId.Value);
               if (null == revision) {
-                log.WarnFormat ("Get: " +
-                                "No revision with ID {0}",
-                                request.RevisionId.Value);
+                log.Warn ($"Get: no revision with ID {request.RevisionId.Value}");
               }
               else {
                 machineStateTemplateAssociation.Revision = revision;
@@ -161,6 +148,5 @@ namespace Pulse.Web.WebDataAccess
       Debug.Assert (null != machineStateTemplateAssociation);
       return new SaveModificationResponseDTO (machineStateTemplateAssociation);
     }
-#endregion // Methods
   }
 }

@@ -27,7 +27,7 @@ namespace Lemoine.WebDataAccess
     /// <param name="reasonScore"></param>
     /// <param name="details"></param>
     /// <returns></returns>
-    public long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate)
+    public long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate, AssociationOption option)
     {
       throw new NotImplementedException ();
     }
