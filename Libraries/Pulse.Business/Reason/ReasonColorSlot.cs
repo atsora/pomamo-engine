@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -30,7 +31,6 @@ namespace Lemoine.Business.Reason
     static readonly string GUESS_COLOR_FOR_PROCESSING_KEY = "ReasonColorSlot.Processing.GuessColor";
     static readonly bool GUESS_COLOR_FOR_PROCESSING_DEFAULT = true;
 
-    #region Members
     IMachine m_machine;
     bool m_processing = false;
     string m_color;
@@ -40,9 +40,7 @@ namespace Lemoine.Business.Reason
     bool m_notRunning;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
@@ -165,9 +163,7 @@ namespace Lemoine.Business.Reason
       m_dateTimeRange = reasonSlot.DateTimeRange;
       m_dayRange = reasonSlot.DayRange;
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -250,7 +246,6 @@ namespace Lemoine.Business.Reason
     {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
 
     IPossibleReason GuessPossibleReasonFromProcessingReasonSlot (IReasonSlot reasonSlot)
     {

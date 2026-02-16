@@ -23,7 +23,7 @@ namespace Lemoine.Model
     bool Processing { get; }
 
     /// <summary>
-    /// Reason colot
+    /// Reason color
     /// 
     /// An empty string may be returned, which means a transparent period
     /// </summary>
