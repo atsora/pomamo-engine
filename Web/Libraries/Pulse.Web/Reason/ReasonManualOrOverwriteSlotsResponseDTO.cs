@@ -14,15 +14,15 @@ using Pulse.Web.CommonResponseDTO;
 namespace Pulse.Web.Reason
 {
   /// <summary>
-  /// Response DTO for ReasonOverwriteRequiredSlots
+  /// Response DTO for ReasonManualOrOverwriteSlots
   /// </summary>
-  [Api ("ReasonOverwriteRequiredSlots Response DTO")]
-  public class ReasonOverwriteRequiredSlotsResponseDTO
+  [Api ("ReasonManualOrOverwriteSlots Response DTO")]
+  public class ReasonManualOrOverwriteSlotsResponseDTO
   {
     /// <summary>
     /// Reference to the slots
     /// </summary>
-    public List<ReasonOverwriteRequiredSlotDTO> ReasonOverwriteRequiredSlots { get; set; }
+    public List<ReasonManualOrOverwriteSlotDTO> ReasonManualOrOverwriteSlots { get; set; }
 
     /// <summary>
     /// Range
@@ -31,16 +31,14 @@ namespace Pulse.Web.Reason
   }
 
   /// <summary>
-  /// Reason overwrite required slot DTO
+  /// Reason manual or overwrite slot DTO
   /// </summary>
-  public class ReasonOverwriteRequiredSlotDTO : SlotDTO
+  public class ReasonManualOrOverwriteSlotDTO : SlotDTO
   {
     /// <summary>
-    /// Reason color
-    /// 
-    /// transparent may be returned
+    /// Overwrite required property
     /// </summary>
-    public string Color { get; set; }
+    public bool OverwriteRequired { get; set; }
 
     /// <summary>
     /// true if it may be considered as the current slot
