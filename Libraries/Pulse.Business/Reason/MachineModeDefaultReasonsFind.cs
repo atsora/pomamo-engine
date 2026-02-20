@@ -29,7 +29,6 @@ namespace Lemoine.Business.Reason
   {
     static readonly ILog log = LogManager.GetLogger (typeof (MachineModeDefaultReasonFind).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine mode
     /// 
@@ -50,7 +49,6 @@ namespace Lemoine.Business.Reason
     /// Not null
     /// </summary>
     public IMachine Machine { get; set; }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor
@@ -68,8 +66,6 @@ namespace Lemoine.Business.Reason
       this.MachineMode = machineMode;
       this.MachineObservationState = machineObservationState;
     }
-
-    #region IRequest implementation
 
     /// <summary>
     /// IRequest implementation
@@ -144,7 +140,5 @@ namespace Lemoine.Business.Reason
     {
       return CacheTimeOut.Config.GetTimeSpan ();
     }
-
-    #endregion
   }
 }

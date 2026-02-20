@@ -21,8 +21,8 @@ namespace Lemoine.Business.Reason
     static readonly string FETCH_MARGIN_KEY = "ReasonOnlySlotDAO.FetchMargin";
     static readonly TimeSpan FETCH_MARGIN_DEFAULT = TimeSpan.FromHours (12);
 
-    readonly ILog log = LogManager.GetLogger(typeof (ReasonOnlySlotDAO).FullName);
-    
+    readonly ILog log = LogManager.GetLogger (typeof (ReasonOnlySlotDAO).FullName);
+
     #region IReasonOnlySlotDAO implementation
     /// <summary>
     /// Find the unique slot at the specified UTC date/time not trying to extend the slots
@@ -30,14 +30,12 @@ namespace Lemoine.Business.Reason
     /// <param name="machine">not null</param>
     /// <param name="dateTime">in UTC</param>
     /// <returns></returns>
-    public IReasonOnlySlot FindAt(IMachine machine, DateTime dateTime)
+    public IReasonOnlySlot FindAt (IMachine machine, DateTime dateTime)
     {
       Debug.Assert (null != machine);
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindAt2"))
-        {
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindAt2")) {
           return new ReasonOnlySlot (
             ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindAt (machine, dateTime));
@@ -52,12 +50,10 @@ namespace Lemoine.Business.Reason
     /// <param name="extend">Try to extend the slots</param>
     /// <param name="dateTime">in UTC</param>
     /// <returns></returns>
-    public IReasonOnlySlot FindAt(IMachine machine, DateTime dateTime, bool extend)
+    public IReasonOnlySlot FindAt (IMachine machine, DateTime dateTime, bool extend)
     {
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindAt3"))
-        {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindAt3")) {
           if (extend) {
             bool lowerExtendReached, upperExtendReached;
             return FindAt (machine, dateTime,
@@ -80,15 +76,13 @@ namespace Lemoine.Business.Reason
     /// <param name="lowerExtendLimitReached">the lower value of extendLimitRange was reached</param>
     /// <param name="upperExtendLimitReached">the upper value of extendLimitRange was reached</param>
     /// <returns></returns>
-    public IReasonOnlySlot FindAt(IMachine machine, DateTime dateTime,
+    public IReasonOnlySlot FindAt (IMachine machine, DateTime dateTime,
                                   UtcDateTimeRange extendLimitRange, out bool lowerExtendLimitReached, out bool upperExtendLimitReached)
     {
       Debug.Assert (null != machine);
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindAt5"))
-        {
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindAt5")) {
           IReasonOnlySlot slot = this.FindAt (machine, dateTime);
           if (null != slot) {
             slot = ExtendLeft (slot, extendLimitRange.Lower, out lowerExtendLimitReached);
@@ -102,7 +96,7 @@ namespace Lemoine.Business.Reason
         }
       }
     }
-    
+
     /// <summary>
     /// Find all the slots that overlap the specified range not trying to extend the slots
     /// 
@@ -114,11 +108,9 @@ namespace Lemoine.Business.Reason
     public IList<IReasonOnlySlot> FindOverlapsRange (IMachine machine, UtcDateTimeRange range)
     {
       Debug.Assert (null != machine);
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindOverlapsRange2"))
-        {
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindOverlapsRange2")) {
           IList<IReasonSlot> reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindOverlapsRange (machine, range);
           return Merge (reasonSlots);
@@ -163,11 +155,9 @@ namespace Lemoine.Business.Reason
                                                      UtcDateTimeRange extendLimitRange, out bool lowerExtendLimitReached, out bool upperExtendLimitReached)
     {
       Debug.Assert (null != machine);
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindOverlapsRange5"))
-        {
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindOverlapsRange5")) {
           UtcDateTimeRange fetchRange = GetFetchRange (range, extendLimitRange);
           IList<IReasonSlot> reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindOverlapsRange (machine, fetchRange);
@@ -175,7 +165,7 @@ namespace Lemoine.Business.Reason
         }
       }
     }
-    
+
     /// <summary>
     /// Find all the slots that overlap the specified range
     /// with an early fetch of the reason
@@ -193,11 +183,9 @@ namespace Lemoine.Business.Reason
                                                                UtcDateTimeRange extendLimitRange, out bool lowerExtendLimitReached, out bool upperExtendLimitReached)
     {
       Debug.Assert (null != machine);
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindOverlapsRangeWithReason5"))
-        {
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Business.Reason.ReasonOnlySlotDAO.FindOverlapsRangeWithReason5")) {
           UtcDateTimeRange fetchRange = GetFetchRange (range, extendLimitRange);
           IList<IReasonSlot> reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindAllInUtcRangeWithMachineModeReason (machine, fetchRange);
@@ -205,7 +193,7 @@ namespace Lemoine.Business.Reason
         }
       }
     }
-    
+
     UtcDateTimeRange GetFetchRange (UtcDateTimeRange range, UtcDateTimeRange extendLimitRange)
     {
       var lowerBound = range.Lower;
@@ -242,11 +230,11 @@ namespace Lemoine.Business.Reason
         log.Error ("IsMergeable: right range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
-      
+
       return left.ReferenceDataEquals (right)
         && left.DateTimeRange.IsAdjacentTo (right.DateTimeRange);
     }
-    
+
     /// <summary>
     /// Merge two mergeable items
     /// </summary>
@@ -257,13 +245,13 @@ namespace Lemoine.Business.Reason
     {
       Debug.Assert (IsMergeable (left, right));
       Debug.Assert (left.DateTimeRange.IsStrictlyLeftOf (right.DateTimeRange));
-      
+
       // Note: the Union function supports empty ranges
       UtcDateTimeRange newRange =
         new UtcDateTimeRange (left.DateTimeRange.Union (right.DateTimeRange));
       DayRange newDayRange =
         new DayRange (left.DayRange.Union (right.DayRange));
-      
+
       IReasonOnlySlot result = new ReasonOnlySlot (left.Machine,
                                                    left.Reason,
                                                    left.JsonData,
@@ -282,9 +270,9 @@ namespace Lemoine.Business.Reason
         }
         foreach (var subSlot in right.MachineModeSlots) {
           IMachineModeSubSlot lastSubSlot = result.MachineModeSlots.LastOrDefault ();
-          if ( (null != lastSubSlot) && (MergeableItem.IsMergeable (lastSubSlot, subSlot))) {
+          if ((null != lastSubSlot) && (MergeableItem.IsMergeable (lastSubSlot, subSlot))) {
             IMachineModeSubSlot merged = MergeableItem.Merge (lastSubSlot, subSlot);
-            result.MachineModeSlots [result.MachineModeSlots.Count - 1] = merged;
+            result.MachineModeSlots[result.MachineModeSlots.Count - 1] = merged;
           }
           else {
             result.MachineModeSlots.Add (subSlot);
@@ -297,9 +285,9 @@ namespace Lemoine.Business.Reason
         }
         foreach (var subSlot in right.MachineObservationStateSlots) {
           IMachineObservationStateSubSlot lastSubSlot = result.MachineObservationStateSlots.LastOrDefault ();
-          if ( (null != lastSubSlot) && (MergeableItem.IsMergeable (lastSubSlot, subSlot))) {
+          if ((null != lastSubSlot) && (MergeableItem.IsMergeable (lastSubSlot, subSlot))) {
             IMachineObservationStateSubSlot merged = MergeableItem.Merge (lastSubSlot, subSlot);
-            result.MachineObservationStateSlots [result.MachineObservationStateSlots.Count - 1] = merged;
+            result.MachineObservationStateSlots[result.MachineObservationStateSlots.Count - 1] = merged;
           }
           else {
             result.MachineObservationStateSlots.Add (subSlot);
@@ -308,16 +296,16 @@ namespace Lemoine.Business.Reason
       }
       return result;
     }
-    
+
     IList<IReasonOnlySlot> Merge (IEnumerable<IReasonSlot> reasonSlots)
     {
       IList<IReasonOnlySlot> result = new List<IReasonOnlySlot> ();
       foreach (var reasonSlot in reasonSlots) {
         IReasonOnlySlot newSlot = new ReasonOnlySlot (reasonSlot);
-        if ( (1 <= result.Count)
-            && IsMergeable (result [result.Count - 1], newSlot)) {
-          result [result.Count - 1] =
-            Merge (result [result.Count - 1], newSlot);
+        if ((1 <= result.Count)
+            && IsMergeable (result[result.Count - 1], newSlot)) {
+          result[result.Count - 1] =
+            Merge (result[result.Count - 1], newSlot);
         }
         else {
           result.Add (newSlot);
@@ -334,56 +322,56 @@ namespace Lemoine.Business.Reason
         extendRight = false;
         return result;
       }
-      
+
       // - Extend on the left
       extendLeft = true;
       foreach (var leftSlot in reasonSlots
                .Where (s => s.DateTimeRange.IsStrictlyLeftOf (range))
                .OrderBy (s => s.DateTimeRange)
                .Reverse ()) {
-        if (leftSlot.IsEmpty ()){
+        if (leftSlot.IsEmpty ()) {
           Debug.Assert (false);
           log.ErrorFormat ("Merge: empty left reason slot {0}",
                            leftSlot);
           continue;
         }
-        var firstSlot = result [0];
+        var firstSlot = result[0];
         var leftReasonOnlySlot = new ReasonOnlySlot (leftSlot);
         if (IsMergeable (leftReasonOnlySlot, firstSlot)) { // Extend it
           var merged =
             Merge (leftReasonOnlySlot, firstSlot);
-          result [0] = merged;
+          result[0] = merged;
         }
         else { // Not mergeable: this is not useful to try to extend it on the left afterwards
           extendLeft = false;
           break;
         }
       }
-      
+
       // - Extend on the right
       extendRight = true;
       foreach (var rightSlot in reasonSlots
                .Where (s => s.DateTimeRange.IsStrictlyRightOf (range))
                .OrderBy (s => s.DateTimeRange)) {
-        if (rightSlot.IsEmpty ()){
+        if (rightSlot.IsEmpty ()) {
           Debug.Assert (false);
           log.ErrorFormat ("Merge: empty right reason slot {0}",
                            rightSlot);
           continue;
         }
-        var lastSlot = result [result.Count - 1];
+        var lastSlot = result[result.Count - 1];
         var rightReasonOnlySlot = new ReasonOnlySlot (rightSlot);
         if (IsMergeable (lastSlot, rightReasonOnlySlot)) { // Extend it
           var merged =
             Merge (lastSlot, rightReasonOnlySlot);
-          result [result.Count - 1] = merged;
+          result[result.Count - 1] = merged;
         }
         else { // Not mergeable: this is not useful to try to extend it on the left afterwards
           extendRight = false;
           break;
         }
       }
-      
+
       return result;
     }
 
@@ -394,13 +382,13 @@ namespace Lemoine.Business.Reason
       IList<IReasonOnlySlot> result = Merge (reasonSlots, range, out extendLeft, out extendRight);
       if (0 < result.Count) {
         if (extendLeft) {
-          result [0] = ExtendLeft (result [0], extendLimitRange.Lower, out lowerExtendLimitReached);
+          result[0] = ExtendLeft (result[0], extendLimitRange.Lower, out lowerExtendLimitReached);
         }
         else {
           lowerExtendLimitReached = false;
         }
         if (extendRight) {
-          result [result.Count - 1] = ExtendRight (result [result.Count - 1], extendLimitRange.Upper, out upperExtendLimitReached);
+          result[result.Count - 1] = ExtendRight (result[result.Count - 1], extendLimitRange.Upper, out upperExtendLimitReached);
         }
         else {
           upperExtendLimitReached = false;
@@ -412,7 +400,7 @@ namespace Lemoine.Business.Reason
       }
       return result;
     }
-    
+
     /// <summary>
     /// Extend a slot to the left
     /// </summary>
@@ -444,7 +432,7 @@ namespace Lemoine.Business.Reason
           return slot;
         }
         else { // null != leftReasonSlot
-          if (leftReasonSlot.IsEmpty ()){
+          if (leftReasonSlot.IsEmpty ()) {
             Debug.Assert (false);
             log.ErrorFormat ("ExtendLeft: empty left reason slot {0}",
                              leftReasonSlot);
@@ -498,7 +486,7 @@ namespace Lemoine.Business.Reason
           return slot;
         }
         else { // null != rightReasonSlot
-          if (rightReasonSlot.IsEmpty ()){
+          if (rightReasonSlot.IsEmpty ()) {
             Debug.Assert (false);
             log.ErrorFormat ("ExtendRight: empty right reason slot {0}",
                              rightReasonSlot);

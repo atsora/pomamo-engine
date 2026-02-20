@@ -23,9 +23,8 @@ namespace Lemoine.Business.Reason
     , IWithRange
     , IPartitionedByMachine
   {
-    ILog log = LogManager.GetLogger(typeof (ReasonOnlySlot).FullName);
+    ILog log = LogManager.GetLogger (typeof (ReasonOnlySlot).FullName);
 
-    #region Members
     IMachine m_machine;
     IReason m_reason;
     string m_jsonData;
@@ -40,16 +39,14 @@ namespace Lemoine.Business.Reason
     DayRange m_dayRange;
     IList<IMachineModeSubSlot> m_machineModeSlots = new List<IMachineModeSubSlot> ();
     IList<IMachineObservationStateSubSlot> m_machineObservationStateSlots = new List<IMachineObservationStateSubSlot> ();
-    #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// The default constructor is forbidden
     /// </summary>
     protected ReasonOnlySlot ()
     {
     }
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -73,7 +70,7 @@ namespace Lemoine.Business.Reason
         throw new ArgumentNullException ();
       }
       m_machine = machine;
-      log = LogManager.GetLogger(string.Format ("{0}.{1}",
+      log = LogManager.GetLogger (string.Format ("{0}.{1}",
                                                 this.GetType ().FullName,
                                                 machine.Id));
       m_reason = reason;
@@ -119,7 +116,7 @@ namespace Lemoine.Business.Reason
           ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (range)))
     {
     }
-    
+
     /// <summary>
     /// Alternative constructor
     /// </summary>
@@ -143,9 +140,7 @@ namespace Lemoine.Business.Reason
         m_machineObservationStateSlots.Add (subSlot);
       }
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -195,14 +190,14 @@ namespace Lemoine.Business.Reason
     /// Default reason ?
     /// </summary>
     public virtual bool DefaultReason => m_defaultReason;
-    
+
     /// <summary>
     /// Date/time range of the slot
     /// </summary>
-    public virtual UtcDateTimeRange DateTimeRange {
+    public virtual UtcDateTimeRange DateTimeRange
+    {
       get { return m_dateTimeRange; }
-      protected set
-      {
+      protected set {
         m_dateTimeRange = value;
         m_dayRange = ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (m_dateTimeRange));
       }
@@ -227,7 +222,6 @@ namespace Lemoine.Business.Reason
     /// Sub-slots
     /// </summary>
     public virtual IList<IMachineObservationStateSubSlot> MachineObservationStateSlots => m_machineObservationStateSlots;
-    #endregion // Getters / Setters
 
     /// <summary>
     /// IMergeable implementation
@@ -243,17 +237,17 @@ namespace Lemoine.Business.Reason
         return false;
       }
 
-      return object.Equals(this.Machine, other.Machine)
-        && object.Equals(this.Reason, other.Reason)
+      return object.Equals (this.Machine, other.Machine)
+        && object.Equals (this.Reason, other.Reason)
         && ReasonData.AreJsonEqual (this.JsonData, other.JsonData)
         // TODO: comparing the display would be probably better if the two Json are not equal
-        && object.Equals(this.Running, other.Running)
+        && object.Equals (this.Running, other.Running)
         && (this.ReasonScore == other.ReasonScore)
-        && object.Equals(this.ReasonSource, other.ReasonSource)
+        && object.Equals (this.ReasonSource, other.ReasonSource)
         && (this.AutoReasonNumber == other.AutoReasonNumber)
-        && object.Equals(this.OverwriteRequired, other.OverwriteRequired)
-        && object.Equals(this.ReasonDetails, other.ReasonDetails)
-        && object.Equals(this.DefaultReason, other.DefaultReason);
+        && object.Equals (this.OverwriteRequired, other.OverwriteRequired)
+        && object.Equals (this.ReasonDetails, other.ReasonDetails)
+        && object.Equals (this.DefaultReason, other.DefaultReason);
     }
 
     #region IWithRange implementation
@@ -263,10 +257,10 @@ namespace Lemoine.Business.Reason
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public virtual int CompareTo(object obj)
+    public virtual int CompareTo (object obj)
     {
       if (obj is ReasonOnlySlot) {
-        IReasonOnlySlot other = (IReasonOnlySlot) obj;
+        IReasonOnlySlot other = (IReasonOnlySlot)obj;
         if (other.Machine.Equals (this.Machine)) {
           return this.DateTimeRange.CompareTo (other.DateTimeRange);
         }
@@ -276,18 +270,18 @@ namespace Lemoine.Business.Reason
           throw new ArgumentException ("Comparison of slots from different machines");
         }
       }
-      
+
       log.ErrorFormat ("CompareTo: object {0} of invalid type",
                        obj);
       throw new ArgumentException ("object is not the right slot");
     }
-    
+
     /// <summary>
     /// IComparable implementation
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    public virtual int CompareTo(IReasonOnlySlot other)
+    public virtual int CompareTo (IReasonOnlySlot other)
     {
       if (other.Machine.Equals (this.Machine)) {
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
@@ -297,7 +291,7 @@ namespace Lemoine.Business.Reason
                        this, other);
       throw new ArgumentException ("Comparison of ReasonOnlySlots from different machines");
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -305,31 +299,31 @@ namespace Lemoine.Business.Reason
     public virtual bool IsEmpty ()
     {
       Debug.Assert (null != this.Reason);
-      
+
       return false;
     }
     #endregion // IWithRange implementation
-    
+
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
     /// </summary>
     /// <param name="other">An object to compare with this object</param>
     /// <returns>true if the current object is equal to the other parameter; otherwise, false</returns>
-    public virtual bool Equals(IReasonOnlySlot other)
+    public virtual bool Equals (IReasonOnlySlot other)
     {
-      return this.Equals ((object) other);
+      return this.Equals ((object)other);
     }
-    
+
     /// <summary>
     ///   Determines whether the specified Object
     ///   is equal to the current Object
     /// </summary>
     /// <param name="obj">The object to compare with the current object</param>
     /// <returns>true if the specified Object is equal to the current Object; otherwise, false</returns>
-    public override bool Equals(object obj)
+    public override bool Equals (object obj)
     {
-      if (object.ReferenceEquals(this,obj)) {
+      if (object.ReferenceEquals (this, obj)) {
         return true;
       }
 
@@ -352,12 +346,12 @@ namespace Lemoine.Business.Reason
     ///   Serves as a hash function for a particular type
     /// </summary>
     /// <returns>A hash code for the current Object</returns>
-    public override int GetHashCode()
+    public override int GetHashCode ()
     {
       int hashCode = 0;
       unchecked {
-        hashCode += 1000000007 * Machine.GetHashCode();
-        hashCode += 1000000009 * DateTimeRange.GetHashCode();
+        hashCode += 1000000007 * Machine.GetHashCode ();
+        hashCode += 1000000009 * DateTimeRange.GetHashCode ();
       }
       return hashCode;
     }
@@ -366,9 +360,9 @@ namespace Lemoine.Business.Reason
     /// <see cref="Object.ToString" />
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
+    public override string ToString ()
     {
-      return string.Format("[ReasonOnlySlot Machine={0} Range={1}]",
+      return string.Format ("[ReasonOnlySlot Machine={0} Range={1}]",
                            this.Machine.Id, this.DateTimeRange);
     }
   }

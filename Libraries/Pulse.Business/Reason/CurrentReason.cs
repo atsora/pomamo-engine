@@ -80,15 +80,12 @@ namespace Lemoine.Business.Reason
     static readonly TimeSpan FACT_STEP = TimeSpan.FromHours (8);
     static readonly TimeSpan MAX_PERIOD_DURATION = TimeSpan.FromDays (1);
 
-    #region Members
     readonly IMonitoredMachine m_machine;
     readonly CurrentReasonPeriod m_period = CurrentReasonPeriod.None;
     readonly bool m_notRunningOnlyDuration = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CurrentReason).FullName);
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -112,7 +109,6 @@ namespace Lemoine.Business.Reason
       m_period = period;
       m_notRunningOnlyDuration = notRunningOnlyDuration;
     }
-    #endregion // Constructors
 
     #region IRequest implementation
     /// <summary>
@@ -138,7 +134,7 @@ namespace Lemoine.Business.Reason
           var machineStatus = GetFromMachineStatus (m_machine, m_period, m_notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
 
           // Last reason slots
-          if  (reason is null) {
+          if (reason is null) {
             GetFromLastReasonSlots (m_machine, m_period, m_notRunningOnlyDuration, ref reason, ref jsonData, ref machineMode, ref dateTime, ref reasonScore, ref reasonSource, ref autoReasonNumber, ref periodStart);
           }
 

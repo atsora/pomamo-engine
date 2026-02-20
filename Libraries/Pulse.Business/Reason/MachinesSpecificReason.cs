@@ -22,15 +22,12 @@ namespace Lemoine.Business.Reason
   public sealed class MachinesSpecificReason
     : IRequest<MachinesSpecificReasonResponse>
   {
-    #region Members
     readonly IReason m_reason;
     readonly bool m_sort = true;
     readonly IEnumerable<IMachine> m_subSetOfMachines = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachinesSpecificReason).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reason in parameter
     /// 
@@ -48,9 +45,7 @@ namespace Lemoine.Business.Reason
     {
       get { return m_sort; }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor with the sort option by default
     /// </summary>
@@ -88,12 +83,7 @@ namespace Lemoine.Business.Reason
       m_sort = sort;
       m_subSetOfMachines = subSetOfMachines;
     }
-    #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
-    #region IRequest implementation
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
@@ -202,6 +192,5 @@ namespace Lemoine.Business.Reason
     {
       return true;
     }
-    #endregion // IRequest implementation
   }
 }

@@ -312,7 +312,8 @@ namespace Pulse.Business.Reason
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
-    public static bool IsJsonNullOrEmpty (string json) {
+    public static bool IsJsonNullOrEmpty (string json)
+    {
       if (string.IsNullOrEmpty (json)) {
         return true;
       }
