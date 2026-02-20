@@ -186,6 +186,7 @@ namespace Lemoine.Plugin.Business.DefaultCache
           return new List<string> {
             @"Business\.Reason\.AppliedAutoReasonMachineAssociations",
             @"Business\.Reason\.AppliedManualReasonMachineAssociations",
+            @"Business\.Reason\.Current",
           };
         case "startcycle":
           return new List<string> {

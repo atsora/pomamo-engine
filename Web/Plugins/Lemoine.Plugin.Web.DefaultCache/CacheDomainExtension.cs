@@ -140,6 +140,8 @@ namespace Lemoine.Plugin.Web.DefaultCache
             "(MachineStateTemplate/)?ObservationStateSlots",
             "Reason/?ColorSlots",
             "(Reason/)?ReasonOnlySlots",
+            "(Reason/)?ManualOrOverwriteSlots",
+            "(Reason/)?OverwriteRequiredSlots",
             "CurrentMachineStateTemplateOperation",
             "Operation/OperationCurrentShiftTarget",
             "Operation/ReserveCapacityCurrentShift",
@@ -166,7 +168,9 @@ namespace Lemoine.Plugin.Web.DefaultCache
       case "reasonassociation":
         return new List<string> {
             "Reason/?ColorSlots",
-            "(Reason/)?ReasonOnlySlots"
+            "(Reason/)?ReasonOnlySlots",
+            "(Reason/)?ManualOrOverwriteSlots",
+            "(Reason/)?OverwriteRequiredSlots"
           };
       case "shiftassociation":
         return new List<string> {
