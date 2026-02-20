@@ -77,9 +77,7 @@ namespace Pulse.Web.Reason
         cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
       }
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetCacheTimeOut: " +
-                         "cacheTimeSpan is {0} for url={1}",
-                         cacheTimeSpan, url);
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
       }
       return cacheTimeSpan;
     }
@@ -320,8 +318,7 @@ namespace Pulse.Web.Reason
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (machine is null) {
-          log.ErrorFormat ("Post: unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"Post: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
