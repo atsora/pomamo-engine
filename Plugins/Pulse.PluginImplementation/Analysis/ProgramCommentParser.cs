@@ -27,6 +27,7 @@ namespace Pulse.PluginImplementation.Analysis
   /// <item>jobComponent</item>
   /// <item>projectName</item>
   /// <item>projectComponent</item>
+  /// <item>customerName</item>
   /// <item>componentName</item>
   /// <item>componentCode</item>
   /// <item>partName</item>
@@ -177,6 +178,26 @@ namespace Pulse.PluginImplementation.Analysis
           ModelDAOHelper.DAOFactory.ProjectDAO.MakePersistent (project);
         }
 
+        if (project.Customer is null) {
+          TryGetData (match, "customerName", out var customerName);
+          customerName = customerName?.Trim ();
+          if (!string.IsNullOrEmpty (customerName)) {
+            if (log.IsInfoEnabled) {
+              log.Info ($"GetProject: associate customerName={customerName} to job id={project.Id}");
+            }
+            var customer = ModelDAOHelper.DAOFactory.CustomerDAO.FindByName (customerName);
+            if (customer is null) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetProject: customerName={customerName} does not exist, create it");
+              }
+              customer = ModelDAOHelper.ModelFactory.CreateCustomerFromName (customerName);
+              ModelDAOHelper.DAOFactory.CustomerDAO.MakePersistent (customer);
+            }
+            project.Customer = customer;
+            ModelDAOHelper.DAOFactory.ProjectDAO.MakePersistent (project);
+          }
+        }
+
         return project;
       }
     }
@@ -216,6 +237,26 @@ namespace Pulse.PluginImplementation.Analysis
           job = ModelDAOHelper.ModelFactory.CreateJobFromName (workorderStatus, jobName);
           job.Code = jobCode;
           ModelDAOHelper.DAOFactory.JobDAO.MakePersistent (job);
+        }
+
+        if (job.Customer is null) {
+          TryGetData (match, "customerName", out var customerName);
+          customerName = customerName?.Trim ();
+          if (!string.IsNullOrEmpty (customerName)) {
+            if (log.IsInfoEnabled) { 
+              log.Info ($"GetJob: associate customerName={customerName} to job id={job.Id}");
+            }
+            var customer = ModelDAOHelper.DAOFactory.CustomerDAO.FindByName (customerName);
+            if (customer is null) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetJob: customerName={customerName} does not exist, create it");
+              }
+              customer = ModelDAOHelper.ModelFactory.CreateCustomerFromName (customerName);
+              ModelDAOHelper.DAOFactory.CustomerDAO.MakePersistent (customer);
+            }
+            job.Customer = customer;
+            ModelDAOHelper.DAOFactory.JobDAO.MakePersistent (job);
+          }
         }
 
         return job;

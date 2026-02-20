@@ -18,7 +18,7 @@ let (|Split|_|) (sep:string) (s:string) =
   let separators = sep.ToCharArray () in
   match s.Split (separators) with
   | [| |] -> None
-  | [| _ |] -> None
+  | [| _ |] -> Some (Seq.singleton s)
   | a -> Some (Array.toSeq a)
 
 (** Split a string using the characters that are found in sep, but only split once *)
@@ -38,7 +38,7 @@ let (|SplitS2|_|) (sep:string) (s:string) =
 let (|SplitS|_|) (sep:string) (s:string) =
   match s.Split ([| sep |], System.StringSplitOptions.None) with
   | [| |] -> None
-  | [| _ |] -> None
+  | [| _ |] -> Some (Seq.singleton s)
   | a -> Some (Array.toSeq a)
 
 let (|SingleChar|_|) (s:string) =
@@ -95,3 +95,7 @@ let (|Boolean|_|) (str:string) =
   match System.Boolean.TryParse str with
   | true,i -> Some i
   | _ -> None
+
+/// Get a match if key is found in the dictionary, then return the associated value
+let (|FindMapKey|) key d =
+  d |> Map.tryFind key
