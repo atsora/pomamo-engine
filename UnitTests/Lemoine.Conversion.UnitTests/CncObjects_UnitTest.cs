@@ -2,15 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using Lemoine.Cnc;
+using Lemoine.Core.Log;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using Lemoine.Core.Log;
-using Lemoine.Cnc;
-using NUnit.Framework;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace Lemoine.Conversion.UnitTests
 {

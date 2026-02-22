@@ -398,7 +398,9 @@
 
   <logger name="Lemoine.Cnc.Data">
     <level value="INFO" />
+    <!-- Windows only -->
     <appender-ref ref="dbgviewAp" />
+    <!-- End Windows only -->
   </logger>
 
   <!--logger name="Lemoine.Cnc.Data.XX">

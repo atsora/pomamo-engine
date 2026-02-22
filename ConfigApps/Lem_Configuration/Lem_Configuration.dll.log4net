@@ -133,7 +133,7 @@
 
   <root>
     <level value="DEBUG" />
-    <appender-ref ref="dbgviewAp" />
+    <!--appender-ref ref="dbgviewAp" /-->
     <appender-ref ref="critRollingAp" />
     <appender-ref ref="errorRollingAp" />
     <!--appender-ref ref="warnRollingAp" /-->    
