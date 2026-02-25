@@ -12,6 +12,10 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Npgsql" />
     <PackageReference Include="MigratorLAT" />

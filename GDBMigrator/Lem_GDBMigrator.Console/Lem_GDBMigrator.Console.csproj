@@ -9,6 +9,10 @@
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CommandLineParser" />
     <PackageReference Include="MigratorLAT" />

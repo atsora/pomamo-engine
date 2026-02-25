@@ -11,6 +11,10 @@
     <ApplicationIcon>resources\lem_settings.ico</ApplicationIcon>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)'=='VS'">
     <StartAction>Project</StartAction>
     <StartArguments>-lcr</StartArguments>

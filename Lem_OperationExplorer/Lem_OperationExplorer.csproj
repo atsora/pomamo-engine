@@ -12,6 +12,10 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
+
   <!-- Plugin dependencies -->
   <ItemGroup>
     <PackageReference Include="FSharp.Core" />

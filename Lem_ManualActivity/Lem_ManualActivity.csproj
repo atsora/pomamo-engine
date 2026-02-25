@@ -11,6 +11,10 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Controls\Lemoine.BaseControls\Lemoine.BaseControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
     <ProjectReference Include="..\Controls\Lemoine.DataControls\Lemoine.DataControls.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />

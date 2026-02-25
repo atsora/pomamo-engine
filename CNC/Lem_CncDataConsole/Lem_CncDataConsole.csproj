@@ -10,11 +10,10 @@
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="C:\Users\nrela\.nuget\packages\fsharp.core\6.0.1\contentFiles\any\netstandard2.0\FSharp.Core.xml" />
-    <None Remove="C:\Users\nrela\.nuget\packages\fsharp.core\6.0.1\contentFiles\any\netstandard2.1\FSharp.Core.xml" />
-  </ItemGroup>
-  
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
+
   <!-- Plugin and queue dependencies -->
   <ItemGroup>
     <PackageReference Include="FSharp.Core" />

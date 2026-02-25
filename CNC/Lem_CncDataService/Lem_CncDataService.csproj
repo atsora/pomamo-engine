@@ -10,9 +10,9 @@
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization><!-- Temporary work around -->
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="C:\Users\nrela\.nuget\packages\fsharp.core\6.0.1\contentFiles\any\netstandard2.1\FSharp.Core.xml" />
-  </ItemGroup>
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="NHibernate">

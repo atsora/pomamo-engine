@@ -11,6 +11,10 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
     
+  <PropertyGroup>
+    <RollForward>Minor</RollForward>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="NHibernate">
       <HintPath>..\..\..\pomamo-extern\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
