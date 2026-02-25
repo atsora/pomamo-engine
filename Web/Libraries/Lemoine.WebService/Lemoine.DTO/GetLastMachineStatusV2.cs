@@ -37,7 +37,7 @@ namespace Lemoine.DTO
     /// <summary>
     /// Return also the number of reasons to set
     /// </summary>
-    [DefaultValue (true)]
-    public bool RequiredNumber { get; set; } = true;
+    [DefaultValue (false)]
+    public bool RequiredNumber { get; set; } = false;
   }
 }

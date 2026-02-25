@@ -45,7 +45,7 @@ namespace Pulse.Web.CncAlarm
     /// 
     /// Default: false (return them)
     /// </summary>
-    [ApiMember(Name="SkipDetails", Description="Skip the details in the answer. Default: false", ParameterType="path", DataType="bool", IsRequired=false)]
+    [ApiMember(Name="SkipDetails", Description="Skip the details in the answer. Default: false", ParameterType="path", DataType="boolean", IsRequired=false)]
     public bool SkipDetails { get; set; }
   }
 }

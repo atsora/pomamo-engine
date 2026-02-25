@@ -47,7 +47,7 @@ namespace Pulse.Web.WebDataAccess
     /// <summary>
     /// WorkOrder details
     /// </summary>
-    [ApiMember(Name="ResetTask", Description="", ParameterType="path", DataType="bool", IsRequired=false)]
+    [ApiMember(Name="ResetTask", Description="", ParameterType="path", DataType="boolean", IsRequired=false)]
     public bool? ResetTask { get; set; }
     
     /// <summary>

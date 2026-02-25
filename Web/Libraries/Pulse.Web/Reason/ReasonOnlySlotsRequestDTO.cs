@@ -42,7 +42,7 @@ namespace Pulse.Web.Reason
     /// <summary>
     /// Option to retrieve in the same time if there is a possible reason selection for each ReasonOnlySlot 
     /// </summary>
-    [ApiMember(Name="SelectableOption", Description="Option to retrieve in the same time if there is a possible reason selection for each ReasonOnlySlot ", ParameterType="path", DataType="bool", IsRequired=false)]
+    [ApiMember(Name="SelectableOption", Description="Option to retrieve in the same time if there is a possible reason selection for each ReasonOnlySlot ", ParameterType="path", DataType="boolean", IsRequired=false)]
     public bool SelectableOption { get; set; }
     
     /// <summary>
@@ -80,7 +80,7 @@ namespace Pulse.Web.Reason
     /// <summary>
     /// Option to retrieve in the same time if there is a possible reason selection for each ReasonOnlySlot 
     /// </summary>
-    [ApiMember (Name = "SelectableOption", Description = "Option to retrieve in the same time if there is a possible reason selection for each ReasonOnlySlot ", ParameterType = "path", DataType = "bool", IsRequired = false)]
+    [ApiMember (Name = "SelectableOption", Description = "Option to retrieve in the same time if there is a possible reason selection for each ReasonOnlySlot ", ParameterType = "path", DataType = "boolean", IsRequired = false)]
     public bool SelectableOption { get; set; }
 
     /// <summary>

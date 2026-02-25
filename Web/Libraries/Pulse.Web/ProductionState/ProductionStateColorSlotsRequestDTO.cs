@@ -44,7 +44,7 @@ namespace Pulse.Web.ProductionState
     /// 
     /// Default: false (return them)
     /// </summary>
-    [ApiMember (Name = "SkipDetails", Description = "Skip the details in the answer when the data is not split by day. Default: false", ParameterType = "path", DataType = "bool", IsRequired = false)]
+    [ApiMember (Name = "SkipDetails", Description = "Skip the details in the answer when the data is not split by day. Default: false", ParameterType = "path", DataType = "boolean", IsRequired = false)]
     public bool SkipDetails { get; set; }
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace Pulse.Web.ProductionState
     /// 
     /// Default: false (return them)
     /// </summary>
-    [ApiMember (Name = "SkipDetailsByDay", Description = "Skip the details in the answer when the data is split by day. Default: false", ParameterType = "path", DataType = "bool", IsRequired = false)]
+    [ApiMember (Name = "SkipDetailsByDay", Description = "Skip the details in the answer when the data is split by day. Default: false", ParameterType = "path", DataType = "boolean", IsRequired = false)]
     public bool SkipDetailsByDay { get; set; }
 
     /// <summary>

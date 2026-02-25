@@ -59,7 +59,7 @@ namespace Pulse.Web.WebDataAccess
     /// <summary>
     /// Force
     /// </summary>
-    [ApiMember(Name="Force", Description="", ParameterType="path", DataType="bool", IsRequired=false)]
+    [ApiMember(Name="Force", Description="", ParameterType="path", DataType="boolean", IsRequired=false)]
     public bool? Force { get; set; }
     
     /// <summary>

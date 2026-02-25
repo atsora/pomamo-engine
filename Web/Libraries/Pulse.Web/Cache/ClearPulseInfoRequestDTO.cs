@@ -28,13 +28,13 @@ namespace Pulse.Web.Cache
     /// <summary>
     /// Broadcast to all the other web service
     /// </summary>
-    [ApiMember (Name = "Broadcast", Description = "Broadcast to all the other web services", ParameterType = "path", DataType = "bool", IsRequired = false)]
+    [ApiMember (Name = "Broadcast", Description = "Broadcast to all the other web services", ParameterType = "path", DataType = "boolean", IsRequired = false)]
     public bool Broadcast { get; set; } = true;
 
     /// <summary>
     /// Wait for completion before returning the response
     /// </summary>
-    [ApiMember (Name = "Wait", Description = "Wait for completion before returning the response", ParameterType = "path", DataType = "bool", IsRequired = false)]
+    [ApiMember (Name = "Wait", Description = "Wait for completion before returning the response", ParameterType = "path", DataType = "boolean", IsRequired = false)]
     public bool Wait { get; set; } = false;
   }
 }

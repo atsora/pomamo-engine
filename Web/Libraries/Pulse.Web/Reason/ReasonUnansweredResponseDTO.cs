@@ -24,6 +24,11 @@ namespace Pulse.Web.Reason
     /// Is there an unsanwered period in the specific range ? 
     /// </summary>
     public bool IsUnansweredPeriod { get; set; }
+
+    /// <summary>
+    /// If the Number 
+    /// </summary>
+    public int UnansweredPeriodsNumber { get; set; } = -1;
   }
 }
 

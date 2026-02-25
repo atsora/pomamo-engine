@@ -24,17 +24,17 @@ namespace Pulse.Web.Reason
   {
     static readonly string RECENT_TIMESPAN_KEY = "Web.ReasonUnanswered.Recent";
     static readonly TimeSpan RECENT_TIMESPAN_DEFAULT = TimeSpan.FromMinutes (1);
-    
+
     static readonly string STEP_KEY = "Web.ReasonUnanswered.Step";
     static readonly TimeSpan STEP_DEFAULT = TimeSpan.FromHours (4);
-    
-    static readonly ILog log = LogManager.GetLogger(typeof (ReasonUnansweredService).FullName);
+
+    static readonly ILog log = LogManager.GetLogger (typeof (ReasonUnansweredService).FullName);
 
     /// <summary>
     /// 
     /// </summary>
     public ReasonUnansweredService ()
-      : base(Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
+      : base (Lemoine.Core.Cache.CacheTimeOut.CurrentShort)
     {
     }
 
@@ -43,79 +43,88 @@ namespace Pulse.Web.Reason
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public override object GetWithoutCache(ReasonUnansweredRequestDTO request)
+    public override object GetWithoutCache (ReasonUnansweredRequestDTO request)
     {
       ReasonUnansweredResponseDTO response = new ReasonUnansweredResponseDTO ();
-      
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
-      {
+
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         int machineId = request.MachineId;
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
-          return new ErrorDTO ("No machine with the specified ID",
-                               ErrorStatus.WrongRequestParameter);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
+          return new ErrorDTO ("No machine with the specified ID", ErrorStatus.WrongRequestParameter);
         }
-        
+
         UtcDateTimeRange range;
         if (string.IsNullOrEmpty (request.Range)) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown range {0}",
-                           request.Range);
-          return new ErrorDTO ("No specified range",
-                               ErrorStatus.WrongRequestParameter);
+          log.Error ($"GetWithoutCache: unknown range {request.Range}");
+          return new ErrorDTO ("No specified range", ErrorStatus.WrongRequestParameter);
         }
         else {
           range = new UtcDateTimeRange (request.Range);
         }
         if (range.IsEmpty ()) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "empty range");
-          return new ErrorDTO ("Empty range",
-                               ErrorStatus.WrongRequestParameter);
+          log.Error ("GetWithoutCache: empty range");
+          return new ErrorDTO ("Empty range", ErrorStatus.WrongRequestParameter);
         }
 
-        using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonUnanswered"))
-        {
-          if (range.ContainsElement (DateTime.UtcNow)) {
-            var lastReasonSlot = ModelDAOHelper.DAOFactory.ReasonSlotDAO.GetLast (machine);
-            if ( (null != lastReasonSlot)
-                && lastReasonSlot.OverwriteRequired
-                && lastReasonSlot.DateTimeRange.Overlaps (range)
-                && !IsReasonSlotTooRecent (lastReasonSlot)) {
-              response.IsUnansweredPeriod = true;
-              return response;
-            }
-          }
-          
-          var step = Lemoine.Info.ConfigSet.LoadAndGet<TimeSpan> (STEP_KEY,
-                                                                  STEP_DEFAULT);
-          var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
-            .FindOverlapsRangeDescending (machine,
-                                          range,
-                                          step);
-          bool recent = true;
-          foreach (var reasonSlot in reasonSlots) {
-            if (reasonSlot.OverwriteRequired) {
-              if (recent) {
-                recent = IsReasonSlotTooRecent (reasonSlot);
+        if (request.Number) {
+          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonUnanswered.txnNumber")) {
+            var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
+              .FindOverlapsRange (machine, range)
+              .ToList ();
+            response.UnansweredPeriodsNumber = reasonSlots.Count (x => x.OverwriteRequired);
+            foreach (var reasonSlot in reasonSlots.Where (x => x.OverwriteRequired).Reverse ()) {
+              if (IsReasonSlotTooRecent (reasonSlot)) {
+                --response.UnansweredPeriodsNumber;
               }
-              if (!recent) {
+              else {
+                break;
+              }
+            }
+            response.IsUnansweredPeriod = response.UnansweredPeriodsNumber > 0;
+          }
+        }
+        else {
+          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonUnanswered.txn1")) {
+            if (range.ContainsElement (DateTime.UtcNow)) {
+              var lastReasonSlot = ModelDAOHelper.DAOFactory.ReasonSlotDAO.GetLast (machine);
+              if ((null != lastReasonSlot)
+                  && lastReasonSlot.OverwriteRequired
+                  && lastReasonSlot.DateTimeRange.Overlaps (range)
+                  && !IsReasonSlotTooRecent (lastReasonSlot)) {
                 response.IsUnansweredPeriod = true;
                 return response;
               }
             }
           }
-        } // transaction        
+
+          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonUnanswered.txn2")) {
+            var step = Lemoine.Info.ConfigSet.LoadAndGet<TimeSpan> (STEP_KEY,
+                                                                    STEP_DEFAULT);
+            var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
+              .FindOverlapsRangeDescending (machine, range, step);
+            bool recent = true;
+            foreach (var reasonSlot in reasonSlots) {
+              if (reasonSlot.OverwriteRequired) {
+                if (recent) {
+                  recent = IsReasonSlotTooRecent (reasonSlot);
+                }
+                if (!recent) {
+                  response.IsUnansweredPeriod = true;
+                  return response;
+                }
+              }
+            }
+          } // transaction
+        }
       } // session
 
       response.IsUnansweredPeriod = false;
       return response;
     }
-    
+
     bool IsReasonSlotTooRecent (IReasonSlot reasonSlot)
     {
       if (reasonSlot.DateTimeRange.Lower.HasValue) {
