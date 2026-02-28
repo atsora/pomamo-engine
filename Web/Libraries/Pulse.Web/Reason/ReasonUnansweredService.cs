@@ -84,6 +84,7 @@ namespace Pulse.Web.Reason
               }
             }
             response.IsUnansweredPeriod = response.UnansweredPeriodsNumber > 0;
+            return response;
           }
         }
         else {
