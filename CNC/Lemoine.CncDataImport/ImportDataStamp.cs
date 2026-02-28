@@ -19,6 +19,9 @@ namespace Lemoine.CncDataImport
   /// </summary>
   internal sealed class ImportDataStamp : IImportData
   {
+    static readonly string CREATE_STAMP_KEY = "CncData.ImportStamp.CreateStamp";
+    static readonly bool CREATE_STAMP_DEFAULT = false;
+
     readonly ILog log;
     readonly IMachineModule m_machineModule;
 
@@ -93,7 +96,33 @@ namespace Lemoine.CncDataImport
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction (
           "CncData.ImportStamp.CheckStamp", TransactionLevel.ReadCommitted)) {
           stamp = ModelDAOHelper.DAOFactory.StampDAO.FindById (stampId);
-          if (stamp is null) {
+        }
+        if (stamp is null) {
+          if (Lemoine.Info.ConfigSet.LoadAndGet (CREATE_STAMP_KEY, CREATE_STAMP_DEFAULT)) {
+            using (IDAOTransaction transaction = session.BeginTransaction (
+              "CncData.ImportStamp.CreateStamp", TransactionLevel.ReadCommitted)) {
+              var sqlRequest = $"""
+                INSERT INTO stamp (stampid)
+                VALUES ({stampId});
+                """;
+              ModelDAOHelper.DAOFactory.ExecuteNonQuery (sqlRequest);
+              var sequenceRequest = $"""
+                SELECT setval(
+                    'stamp_stampid_seq', 
+                    GREATEST(15, nextval('stamp_stampid_seq')-1)
+                );
+                """;
+              ModelDAOHelper.DAOFactory.ExecuteNonQuery (sequenceRequest);
+              stamp = ModelDAOHelper.DAOFactory.StampDAO.FindById (stampId);
+              if (stamp is null) {
+                log.Fatal ($"ImportStamp: stamp with Id={stampId} was not created => skip the record with machineModuleId={m_machineModule.Id} key={key} stampId={stampId} dateTime={dateTime}");
+                transaction.Rollback ();
+                return;
+              }
+              transaction.Commit ();
+            }
+          }
+          else {
             log.Error ($"ImportStamp: stamp with Id={stampId} does not exist => skip the record with machineModuleId={m_machineModule.Id} key={key} stampId={stampId} dateTime={dateTime}");
             // Read-only transaction: nothing to commit
             return;

@@ -62,7 +62,6 @@ namespace Lemoine.Plugin.GroupDepartment
       get; set;
     }
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -84,6 +83,5 @@ namespace Lemoine.Plugin.GroupDepartment
       errors = errorList;
       return true;
     }
-    #endregion // Constructors
   }
 }

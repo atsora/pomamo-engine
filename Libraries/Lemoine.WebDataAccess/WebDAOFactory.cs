@@ -132,6 +132,11 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
+    public void ExecuteNonQuery (string sql)
+    {
+      throw new NotImplementedException ();
+    }
+
     public IAcquisitionStateDAO AcquisitionStateDAO
     {
       get {

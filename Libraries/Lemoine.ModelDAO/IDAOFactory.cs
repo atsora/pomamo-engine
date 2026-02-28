@@ -55,6 +55,19 @@ namespace Lemoine.ModelDAO
     void Evict (object o);
 
     /// <summary>
+    /// Executes a SQL statement against the database without returning any result set.
+    /// 
+    /// To only use in very specific situations, such as tests or specific requests,
+    /// since it does not benefit from the usual data access layers and may bypass important checks or optimizations.
+    /// </summary>
+    /// <remarks>Ensure that the SQL command is properly formatted and does not contain any syntax errors.
+    /// This method does not return any data; use it for commands that modify data or perform actions without needing a
+    /// result set.</remarks>
+    /// <param name="request">The SQL command to execute. This command must be a valid SQL statement that does not return rows, such as an
+    /// INSERT, UPDATE, or DELETE statement.</param>
+    void ExecuteNonQuery (string request);
+
+    /// <summary>
     /// Get a IAcquisitionStateDAO
     /// </summary>
     IAcquisitionStateDAO AcquisitionStateDAO { get; }

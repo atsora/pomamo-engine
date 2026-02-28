@@ -21,10 +21,6 @@ namespace Lemoine.Plugin.GroupConcurrentGroups
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -53,10 +49,5 @@ namespace Lemoine.Plugin.GroupConcurrentGroups
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

@@ -18,12 +18,9 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger (typeof (DAOFactory).FullName);
 
-    #region Members
     readonly IPersistentClassModel m_persistentClassModel;
     volatile int m_postgreSQLVersionNumCache = 0; // 0: not set
-    #endregion // Members
 
-    #region Constructor
     /// <summary>
     /// Constructor
     /// </summary>
@@ -36,7 +33,6 @@ namespace Lemoine.GDBPersistentClasses
       Lemoine.Core.ExceptionManagement.ExceptionTest
         .AddTest (new Lemoine.GDBUtils.DatabaseException ());
     }
-    #endregion // Constructor
 
     /// <summary>
     /// <see cref="IDatabaseConnectionStatus"/>
@@ -151,6 +147,19 @@ namespace Lemoine.GDBPersistentClasses
     public void Evict (object o)
     {
       this.EvictData (o);
+    }
+
+    /// <summary>
+    /// <see cref="IDAOFactory"/>
+    /// </summary>
+    /// <param name="sql"></param>
+    public void ExecuteNonQuery (string sql)
+    {
+      var connection = NHibernateHelper.GetCurrentSession ().Connection;
+      using (var command = connection.CreateCommand ()) {
+        command.CommandText = sql;
+        command.ExecuteNonQuery ();
+      }
     }
 
     /// <summary>
