@@ -97,11 +97,11 @@ namespace Lemoine.CncDataImport
       Debug.Assert (firstData.Command.Equals (lastData.Command));
       Debug.Assert (firstData.Key.Equals (lastData.Key));
       Debug.Assert (firstData.DateTime <= lastData.DateTime);
-      ImportMachineMode (firstData.Key, (DateTime)firstData.Value, lastData.DateTime, cancellationToken);
+      ImportMachineModePeriod (firstData.Key, (DateTime)firstData.Value, lastData.DateTime, cancellationToken);
     }
     #endregion // IImportData implementation
 
-    void ImportMachineMode (string machineModeKey, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken = default)
+    void ImportMachineModePeriod (string machineModeKey, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken = default)
     {
       log.Debug ($"ImportMachineMode: /B period={startDateTime}-{endDateTime} machineMode={machineModeKey}");
 

@@ -25,7 +25,7 @@
       <!-- Sub queue for machine mode -->
       <queue>
         <configuration suffix=""
-                       commandfilter="MachineMode"
+                       commandfilter="MachineMode|MachineModePeriod"
                        regexfieldfilter=""
                        writepriority="0"
                        readpriority="0" />

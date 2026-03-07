@@ -32,7 +32,7 @@ in the install directory and rename the copy into CncQueues.overwrite.xml
       <!-- Sub queue for machine mode -->
       <queue>
         <configuration suffix=""
-                       commandfilter="MachineMode"
+                       commandfilter="MachineMode|MachineModePeriod"
                        regexfieldfilter=""
                        writepriority="0"
                        readpriority="0" />

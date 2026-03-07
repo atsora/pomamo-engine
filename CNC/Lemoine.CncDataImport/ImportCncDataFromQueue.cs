@@ -146,6 +146,7 @@ namespace Lemoine.CncDataImport
 
       // Data import
       m_importData[ExchangeDataCommand.MachineMode] = new ImportDataMachineMode (machineModule.MonitoredMachine);
+      m_importData[ExchangeDataCommand.MachineModePeriod] = new ImportDataMachineModePeriod (machineModule.MonitoredMachine);
       m_importData[ExchangeDataCommand.Stamp] = new ImportDataStamp (machineModule);
       m_importData[ExchangeDataCommand.SequenceMilestone] = new ImportDataSequenceMilestone (machineModule);
       m_importData[ExchangeDataCommand.Action] = new ImportDataAction (machineModule);
@@ -353,12 +354,7 @@ namespace Lemoine.CncDataImport
             && (queueDatas[0].DateTime <= DateTime.UtcNow)
             && (DateTime.UtcNow.Subtract (queueDatas[0].DateTime) < WhicheverNbOfDataProcessAfter)) {
           if (log.IsInfoEnabled) {
-            log.InfoFormat ("ImportAllInInitializedQueue: " +
-                            "because the minimum of data {0} is not reached ({1} datas) " +
-                            "and the oldest date {2} is not old enough (limit age is {3}) " +
-                            "=> do not process it right now",
-                            MinNbOfDataToProcess, queueDatas.Count,
-                            queueDatas[0].DateTime, WhicheverNbOfDataProcessAfter);
+            log.Info ($"ImportAllInInitializedQueue: because the minimum of data {MinNbOfDataToProcess} is not reached ({queueDatas.Count} datas) and the oldest date {queueDatas[0].DateTime} is not old enough (limit age is {WhicheverNbOfDataProcessAfter}) => do not process it right now");
           }
           if (m_cncDataQueue is IMultiCncDataQueue multiQueue) {
             Debug.Assert (null != multiQueue);
@@ -404,7 +400,7 @@ namespace Lemoine.CncDataImport
         }
         else {
           ExchangeData firstData = datas[0];
-          log.DebugFormat ("ImportDatas: command={0}", firstData.Command);
+          log.Debug ($"ImportDatas: command={firstData.Command}");
 
           // Import data
           TryImportDatas (datas, cancellationToken);
@@ -419,10 +415,7 @@ namespace Lemoine.CncDataImport
             for (int i = 0; i < datas.Count; ++i) {
               var dequeued = m_cncDataQueue.Dequeue ();
               if (!object.Equals (dequeued, datas[i])) {
-                log.FatalFormat ("ImportAllInQueueInitialized: " +
-                                 "the dequeued data {0} does not correspond to the previously peeked data {1} " +
-                                 "=> stop dequeuing the queue",
-                                 dequeued, datas[i]);
+                log.Fatal ($"ImportAllInQueueInitialized: the dequeued data {dequeued} does not correspond to the previously peeked data {datas[i]} => stop dequeuing the queue");
                 break;
               }
             }
@@ -452,7 +445,7 @@ namespace Lemoine.CncDataImport
       catch (Exception ex) {
         if (ExceptionTest.IsTemporaryWithDelay (ex)) {
           if (log.IsInfoEnabled) {
-            log.Info ($"TryImportMachineMode: temporary with delay exception", ex);
+            log.Info ($"TryImportDatas: temporary with delay exception", ex);
           }
           var waitTime = Lemoine.Info.ConfigSet
             .LoadAndGet (TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_KEY, TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_DEFAULT);
@@ -460,11 +453,11 @@ namespace Lemoine.CncDataImport
         }
         else if (ExceptionTest.IsTemporary (ex)) {
           if (log.IsInfoEnabled) {
-            log.Info ($"TryImportMachineMode: temporary exception", ex);
+            log.Info ($"TryImportDatas: temporary exception", ex);
           }
         }
         else {
-          log.Error ($"TryImportMachineMode: not a temporary exception, throw it", ex);
+          log.Error ($"TryImportDatas: not a temporary exception, throw it", ex);
           throw;
         }
         cancellationToken.ThrowIfCancellationRequested ();
@@ -473,13 +466,13 @@ namespace Lemoine.CncDataImport
           .LoadAndGet (MAX_TRY_ATTEMPT_KEY, MAX_TRY_ATTEMPT_DEFAULT);
         if (newAttempt <= maxAttempt) {
           if (log.IsInfoEnabled) {
-            log.Info ($"TryImportMachineMode: attempt={newAttempt} did not reach {maxAttempt} => try again");
+            log.Info ($"TryImportDatas: attempt={newAttempt} did not reach {maxAttempt} => try again");
             TryImportDatas (datas, cancellationToken, newAttempt);
           }
         }
         else {
           if (log.IsWarnEnabled) {
-            log.Warn ($"TryImportMachineMode: maxAttempt={maxAttempt} reached => give up");
+            log.Warn ($"TryImportDatas: maxAttempt={maxAttempt} reached => give up");
           }
           throw;
         }
