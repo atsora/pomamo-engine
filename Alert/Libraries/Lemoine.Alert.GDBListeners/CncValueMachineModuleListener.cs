@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -26,17 +27,14 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string FETCH_MAX_ITEMS_KEY = "alert.listener.cncvalue.fetch.max";
     static readonly int FETCH_MAX_ITEMS_DEFAULT = 100;
 
-    #region Members
     readonly IField m_field;
     readonly IMachineModule m_machineModule;
     IApplicationState m_cncValueMachineModuleListenerState = null;
     IList<ICncValue> m_fetched = new List<ICncValue> ();
     XmlSerializer m_xmlSerializer;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (CncValueMachineModuleListener).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -60,9 +58,7 @@ namespace Lemoine.Alert.GDBListeners
       }
       m_xmlSerializer = xmlSerializerBuilder.GetSerializer (type);
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -145,6 +141,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-    #endregion // Methods
   }
 }

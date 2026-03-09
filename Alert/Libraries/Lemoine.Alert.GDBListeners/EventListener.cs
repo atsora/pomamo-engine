@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -46,7 +47,6 @@ namespace Lemoine.Alert.GDBListeners
       m_xmlSerializer = xmlSerializerBuilder.GetSerializer (type);
     }
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -153,8 +153,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-    
-    
-    #endregion // Methods
   }
 }

@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,15 +23,12 @@ namespace Lemoine.Alert.GDBListeners
   [Serializable]
   public class CncValueListener : IListener
   {
-    #region Members
     IField m_field = null;
     readonly IList<CncValueMachineModuleListener> m_machineModuleListeners = new List<CncValueMachineModuleListener> ();
     int m_machineModuleListenerIndex = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncValueListener).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Field ID
     /// </summary>
@@ -61,18 +59,14 @@ namespace Lemoine.Alert.GDBListeners
         m_machineModuleListenerIndex = 0;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public CncValueListener ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -104,6 +98,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-    #endregion // Methods
   }
 }
