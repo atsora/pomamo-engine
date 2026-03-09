@@ -103,11 +103,11 @@ namespace Lemoine.CncDataImport
 
     void ImportMachineModePeriod (string machineModeKey, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken = default)
     {
-      log.Debug ($"ImportMachineMode: /B period={startDateTime}-{endDateTime} machineMode={machineModeKey}");
+      log.Debug ($"ImportMachineModePeriod: /B period={startDateTime}-{endDateTime} machineMode={machineModeKey}");
 
       try {
-        if (m_fact.End < m_fact.Begin) {
-          log.Error ($"ImportMachineMode: something strange happened, m_fact {m_fact} with end {m_fact.End} < begin {m_fact.Begin} => reset m_fact");
+        if ((null != m_fact) && (m_fact.End < m_fact.Begin)) {
+          log.Error ($"ImportMachineModePeriod: something strange happened, m_fact {m_fact} with end {m_fact.End} < begin {m_fact.Begin} => reset m_fact");
           m_fact = null;
         }
 
@@ -116,25 +116,25 @@ namespace Lemoine.CncDataImport
 
           // Get the last fact and make some checks
           if (m_fact is null) {
-            log.Info ("ImportMachineMode: initialize m_fact");
+            log.Info ("ImportMachineModePeriod: initialize m_fact");
             using (IDAOTransaction transaction = session.BeginReadOnlyTransaction (
-              "CncData.ImportMachineMode.GetLastFact", TransactionLevel.ReadCommitted)) {
+              "CncData.ImportMachineModePeriod.GetLastFact", TransactionLevel.ReadCommitted)) {
               m_fact = daoFactory.FactDAO.GetLast (m_monitoredMachine);
             }
 
             if (log.IsDebugEnabled) {
-              log.Debug ($"ImportMachineMode: initialize m_fact with {m_fact}");
+              log.Debug ($"ImportMachineModePeriod: initialize m_fact with {m_fact}");
             }
           }
           DateTime adjustedStart = startDateTime;
           if (m_fact != null) {
             if (startDateTime < m_fact.End) {
               if (endDateTime <= m_fact.End) {
-                log.Error ($"ImportMachineMode: recorded machine mode at {startDateTime}-{endDateTime} comes before last fact end {m_fact.End} => skip it (this should not happen)");
+                log.Error ($"ImportMachineModePeriod: recorded machine mode at {startDateTime}-{endDateTime} comes before last fact end {m_fact.End} => skip it (this should not happen)");
                 return;
               }
               else {
-                log.Warn ($"ImportMachineMode: adjust start to last fact end {m_fact.End}");
+                log.Warn ($"ImportMachineModePeriod: adjust start to last fact end {m_fact.End}");
                 adjustedStart = m_fact.End;
               }
             }
@@ -144,34 +144,33 @@ namespace Lemoine.CncDataImport
           // Get the corresponding machine mode
           IMachineMode machineMode = GetMachineMode (machineModeKey, session);
           if (machineMode is null) {
-            log.Error ($"ImportMachineMode: no machine mode found for key {machineModeKey} => skip it");
+            log.Error ($"ImportMachineModePeriod: no machine mode found for key {machineModeKey} => skip it");
             return;
           }
           cancellationToken.ThrowIfCancellationRequested ();
 
           // Insert the new machine mode
-          using (IDAOTransaction transaction = session.BeginTransaction (
-            "CncData.ImportMachineMode.Insert", TransactionLevel.ReadCommitted)) {
+          using (var transaction = session.BeginTransaction ("CncData.ImportMachineModePeriod.Insert", TransactionLevel.ReadCommitted)) {
             if (null != m_fact) {
               if (!m_fact.End.Equals (adjustedStart)) { // Gap
                 if (adjustedStart < m_fact.End) {
-                  log.Fatal ($"ImportMachineMode: this case should not happen adjustedStart={adjustedStart} < m_fact.End={m_fact.End}");
+                  log.Fatal ($"ImportMachineModePeriod: this case should not happen adjustedStart={adjustedStart} < m_fact.End={m_fact.End}");
                   throw new InvalidOperationException ();
                 }
                 else if (TimeSpan.FromSeconds (1) <= adjustedStart.Subtract (m_fact.End)) {
                   if (log.IsDebugEnabled) {
-                    log.Debug ($"ImportMachineMode: gap between {m_fact.End} and {adjustedStart} => create a gap");
+                    log.Debug ($"ImportMachineModePeriod: gap between {m_fact.End} and {adjustedStart} => create a gap");
                   }
                   if (!string.IsNullOrEmpty (m_defaultMachineModeKey)) {
                     var gapMachineMode = GetMachineMode (m_defaultMachineModeKey, session);
                     if (gapMachineMode is null) {
-                      log.Error ($"ImportMachineMode: no machine mode with key={m_defaultMachineModeKey}");
+                      log.Error ($"ImportMachineModePeriod: no machine mode with key={m_defaultMachineModeKey}");
                     }
                     else { // Valid gapMachineMode, create a fact in the gap
                       var gapFact = ModelDAOHelper.ModelFactory.CreateFact (
                         m_monitoredMachine, m_fact.End, adjustedStart, gapMachineMode);
                       if (log.IsDebugEnabled) {
-                        log.Debug ($"ImportMachineMode: create the gap fact {gapFact} {gapFact.Begin}-{gapFact.End}");
+                        log.Debug ($"ImportMachineModePeriod: create the gap fact {gapFact} {gapFact.Begin}-{gapFact.End}");
                       }
                       Debug.Assert (gapFact.Begin < gapFact.End);
                       daoFactory.FactDAO.MakePersistent (gapFact);
@@ -180,9 +179,9 @@ namespace Lemoine.CncDataImport
                 }
               }
               else if (machineMode.Id == m_fact.CncMachineMode.Id) { // And consecutive machine mode
-                log.Debug ("ImportMachineMode: same consecutive machine mode");
+                log.Debug ("ImportMachineModePeriod: same consecutive machine mode");
                 if (log.IsDebugEnabled) {
-                  log.Debug ($"ImportMachineMode: make the fact longer");
+                  log.Debug ($"ImportMachineModePeriod: make the fact longer");
                 }
                 if (0 != m_fact.Id) { // Re-associate the fact
                   daoFactory.FactDAO.UpgradeLock (m_fact);
@@ -191,7 +190,7 @@ namespace Lemoine.CncDataImport
                 if (!m_fact.Begin.Equals (m_fact.End) &&
                     m_fact.Length >= TimeSpan.FromSeconds (1)) { // Only if the length of the fact is long enough to be stored in the database
                   if (log.IsDebugEnabled) {
-                    log.Debug ($"ImportMachineMode: the fact {m_fact} {m_fact.Begin}-{m_fact.End} is long enough to be stored");
+                    log.Debug ($"ImportMachineModePeriod: the fact {m_fact} {m_fact.Begin}-{m_fact.End} is long enough to be stored");
                   }
                   Debug.Assert (m_fact.Begin < m_fact.End);
                   daoFactory.FactDAO.MakePersistent (m_fact);
@@ -209,7 +208,7 @@ namespace Lemoine.CncDataImport
             if (!m_fact.Begin.Equals (m_fact.End) &&
                 TimeSpan.FromSeconds (1) <= m_fact.Length) { // Only if the length of the fact is long enough to be stored in the database
               if (log.IsDebugEnabled) {
-                log.Debug ($"ImportMachineMode: the fact {m_fact} {m_fact.Begin}-{m_fact.End} is long enough to be stored");
+                log.Debug ($"ImportMachineModePeriod: the fact {m_fact} {m_fact.Begin}-{m_fact.End} is long enough to be stored");
               }
               Debug.Assert (m_fact.Begin < m_fact.End);
               daoFactory.FactDAO.MakePersistent (m_fact);
@@ -221,10 +220,10 @@ namespace Lemoine.CncDataImport
       }
       catch (Exception ex) {
         // Reload the last fact
-        log.Error ($"ImportMachineMode: exception => try to reload m_fact {m_fact}", ex);
+        log.Error ($"ImportMachineModePeriod: exception => try to reload m_fact {m_fact}", ex);
         Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
-          log.Fatal ($"ImportMachineMode: the session is still active before reloading m_fact");
+          log.Fatal ($"ImportMachineModePeriod: the session is still active before reloading m_fact");
         }
         ReloadFact ();
         throw;
@@ -241,16 +240,12 @@ namespace Lemoine.CncDataImport
     {
       try {
         if (int.TryParse (machineModeKey, out var machineModeId)) {
-          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction (
-            "CncData.ImportMachineModePeriod.MachineModeId", TransactionLevel.ReadCommitted)) {
-            return ModelDAOHelper.DAOFactory.MachineModeDAO.FindById (machineModeId);
-          }
+          var machineMode = ModelDAOHelper.DAOFactory.MachineModeDAO.FindById (machineModeId);
+          return machineMode;
         }
         else {
-          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction (
-            "CncData.ImportMachineModePeriod.MachineModeTranslationKeyOrName", TransactionLevel.ReadCommitted)) {
-            return ModelDAOHelper.DAOFactory.MachineModeDAO.FindByTranslationKeyOrName (machineModeKey);
-          }
+          var machineMode = ModelDAOHelper.DAOFactory.MachineModeDAO.FindByTranslationKeyOrName (machineModeKey);
+          return machineMode;
         }
       }
       catch (Exception ex) {
