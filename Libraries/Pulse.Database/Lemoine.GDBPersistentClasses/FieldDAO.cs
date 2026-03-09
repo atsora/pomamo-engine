@@ -192,7 +192,7 @@ namespace Lemoine.GDBPersistentClasses
       field.Type = FieldType.Double;
       field.CncDataAggregationType = CncDataAggregationType.Average;
       field.MinTime = TimeSpan.FromSeconds (10);
-      field.LimitDeviation = 5;
+      field.LimitDeviation = 2;
       field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (4); // 4: UnitPercent (%)
       InsertDefaultValue (field);
       // - SpindleSpeedOverride
@@ -201,7 +201,7 @@ namespace Lemoine.GDBPersistentClasses
       field.Type = FieldType.Double;
       field.CncDataAggregationType = CncDataAggregationType.Average;
       field.MinTime = TimeSpan.FromSeconds (10);
-      field.LimitDeviation = 5;
+      field.LimitDeviation = 2;
       field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (4); // 4: UnitPercent (%)
       InsertDefaultValue (field);
       // - RapidTraverseOverride
@@ -210,10 +210,10 @@ namespace Lemoine.GDBPersistentClasses
       field.Type = FieldType.Double;
       field.CncDataAggregationType = CncDataAggregationType.Average;
       field.MinTime = TimeSpan.FromSeconds (10);
-      field.LimitDeviation = 5;
+      field.LimitDeviation = 2;
       field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (4); // 4: UnitPercent (%)
       InsertDefaultValue (field);
-      
+
       // Cutting / Traverse
       // - Traverse
       field = new Field (106, "RapidTraverse");
@@ -415,6 +415,45 @@ namespace Lemoine.GDBPersistentClasses
       field.LimitDeviation = 10;
       field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (18); // 18: UnitFlowRate (L/s)
       InsertDefaultValue (field);
+
+      // 140-141 are free
+      // - EffectiveOverride (rapid or feedrate)
+      field = new Field (142, "EffectiveOverride");
+      field.TranslationKey = "FieldEffectiveOverride";
+      field.Type = FieldType.Double;
+      field.CncDataAggregationType = CncDataAggregationType.Average;
+      field.MinTime = TimeSpan.FromSeconds (10);
+      field.LimitDeviation = 2;
+      field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (4); // 4: UnitPercent (%)
+      InsertDefaultValue (field);
+      // - EffectiveFeedrateOverride
+      field = new Field (143, "EffectiveFeedrateOverride");
+      field.TranslationKey = "FieldEffectiveFeedrateOverride";
+      field.Type = FieldType.Double;
+      field.CncDataAggregationType = CncDataAggregationType.Average;
+      field.MinTime = TimeSpan.FromSeconds (10);
+      field.LimitDeviation = 2;
+      field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (4); // 4: UnitPercent (%)
+      InsertDefaultValue (field);
+      // - EffectiveSpindleSpeedOverride
+      field = new Field (144, "EffectiveSpindleSpeedOverride");
+      field.TranslationKey = "FieldEffectiveSpindleSpeedOverride";
+      field.Type = FieldType.Double;
+      field.CncDataAggregationType = CncDataAggregationType.Average;
+      field.MinTime = TimeSpan.FromSeconds (10);
+      field.LimitDeviation = 2;
+      field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (4); // 4: UnitPercent (%)
+      InsertDefaultValue (field);
+      // - EffectiveRapidTraverseOverride
+      field = new Field (145, "EffectiveRapidTraverseOverride");
+      field.TranslationKey = "FieldEffectiveRapidTraverseOverride";
+      field.Type = FieldType.Double;
+      field.CncDataAggregationType = CncDataAggregationType.Average;
+      field.MinTime = TimeSpan.FromSeconds (10);
+      field.LimitDeviation = 2;
+      field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (4); // 4: UnitPercent (%)
+      InsertDefaultValue (field);
+      // 146-149 are free
 
       // Fanuc
       // - FanucAutoManualMode

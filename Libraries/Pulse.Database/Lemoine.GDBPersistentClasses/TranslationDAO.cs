@@ -2941,6 +2941,69 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
       {
+        ITranslation translation = new Translation ("", "FieldEffectiveOverride");
+        translation.TranslationValue = "Effective override";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "FieldEffectiveOverride");
+        translation.TranslationValue = "Correction effective";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "FieldEffectiveOverride");
+        translation.TranslationValue = "Effektive Überschreibung";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "FieldEffectiveFeedrateOverride");
+        translation.TranslationValue = "Effective feed rate override";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "FieldEffectiveFeedrateOverride");
+        translation.TranslationValue = "Correction effective de vitesse d'avance";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "FieldEffectiveFeedrateOverride");
+        translation.TranslationValue = "Effektive Vorschubgeschwindigkeitsüberschreibung";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "FieldEffectiveSpindleSpeedOverride");
+        translation.TranslationValue = "Effective spindle speed override";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "FieldEffectiveSpindleSpeedOverride");
+        translation.TranslationValue = "Correction effective de vitesse de broche";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "FieldEffectiveSpindleSpeedOverride");
+        translation.TranslationValue = "Effektive Spindeldrehzahlüberschreibung";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "FieldEffectiveRapidTraverseOverride");
+        translation.TranslationValue = "Effective rapid traverse override";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "FieldEffectiveRapidTraverseOverride");
+        translation.TranslationValue = "Correction effective de déplacement rapide";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "FieldEffectiveRapidTraverseOverride");
+        translation.TranslationValue = "Effektive Schnellvorschubüberschreibung";
+        InsertDefaultValue (translation);
+      }
+      {
         ITranslation translation = new Translation ("", "FieldFanucAutoManualMode");
         translation.TranslationValue = "Auto/manual mode (Fanuc)";
         InsertDefaultValue (translation);

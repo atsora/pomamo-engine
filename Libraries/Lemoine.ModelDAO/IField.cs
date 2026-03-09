@@ -12,6 +12,31 @@ namespace Lemoine.Model
   public enum FieldId
   {
     /// <summary>
+    /// Feed rate field
+    /// </summary>
+    Feedrate = 100,
+    /// <summary>
+    /// Spindle speed field
+    /// </summary>
+    SpindleSpeed = 101,
+    /// <summary>
+    /// Spindle load field
+    /// </summary>
+    SpindleLoad = 102,
+    /// <summary>
+    /// Feed rate override field
+    /// </summary>
+    FeedrateOverride = 103,
+    /// <summary>
+    /// Spindle speed override field
+    /// </summary>
+    SpindleSpeedOverride = 104,
+    /// <summary>
+    /// Rapid traverse override field
+    /// </summary>
+    RapidTraverseOverride = 105,
+
+    /// <summary>
     /// Program name field
     /// </summary>
     ProgramName = 109,
@@ -35,6 +60,23 @@ namespace Lemoine.Model
     /// Sub-program file name
     /// </summary>
     SubProgramFileName = 134,
+
+    /// <summary>
+    /// Effective override (rapid or feed rate)
+    /// </summary>
+    EffectiveOverride = 142,
+    /// <summary>
+    /// Effective feed rate override
+    /// </summary>
+    EffectiveFeedrateOverride = 143,
+    /// <summary>
+    /// Effective spindle speed override
+    /// </summary>
+    EffectiveSpindleSpeedOverride = 144,
+    /// <summary>
+    /// Effective rapid traverse override
+    /// </summary>
+    EffectiveRapidTraverseOverride = 145,
   }
   
   /// <summary>

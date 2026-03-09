@@ -127,7 +127,7 @@ in the install directory and rename the copy into CncQueues.overwrite.xml
                        readpriority="1" />
       </queue>
 
-      <!-- Overrides (5x) -->
+      <!-- Overrides -->
       <queue>
         <configuration suffix="-CV-FeedrateOverride"
                        commandfilter="CncValue|StopCncValue"
@@ -147,6 +147,34 @@ in the install directory and rename the copy into CncQueues.overwrite.xml
                        commandfilter="CncValue|StopCncValue"
                        regexfieldfilter="^SpindleSpeedOverride$"
                        writepriority="52"
+                       readpriority="-1" />
+      </queue>
+      <queue>
+        <configuration suffix="-CV-EffectiveOverride"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^EffectiveOverride$"
+                       writepriority="53"
+                       readpriority="-1" />
+      </queue>
+      <queue>
+        <configuration suffix="-CV-EffectiveFeedrateOverride"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^EffectiveFeedrateOverride$"
+                       writepriority="54"
+                       readpriority="-1" />
+      </queue>
+      <queue>
+        <configuration suffix="-CV-EffectiveRapidTraverseOverride"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^EffectiveRapidTraverseOverride$"
+                       writepriority="55"
+                       readpriority="-1" />
+      </queue>
+      <queue>
+        <configuration suffix="-CV-EffectiveSpindleSpeedOverride"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^EffectiveSpindleSpeedOverride$"
+                       writepriority="56"
                        readpriority="-1" />
       </queue>
       
