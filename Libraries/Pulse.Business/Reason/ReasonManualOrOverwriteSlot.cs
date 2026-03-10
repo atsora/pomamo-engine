@@ -42,11 +42,11 @@ namespace Lemoine.Business.Reason
     /// </summary>
     /// <param name="machine">not null</param>
     protected internal ReasonManualOrOverwriteSlot (IMachine machine,
-                                                     IReason reason,
-                                                     string jsonData,
-                                                     bool overwriteRequired,
-                                                     UtcDateTimeRange range,
-                                                     DayRange dayRange)
+                                                    IReason reason,
+                                                    string jsonData,
+                                                    bool overwriteRequired,
+                                                    UtcDateTimeRange range,
+                                                    DayRange dayRange)
     {
       Debug.Assert (null != machine);
       if (machine is null) {
@@ -72,10 +72,10 @@ namespace Lemoine.Business.Reason
     /// <param name="overwriteRequired"></param>
     /// <param name="range"></param>
     protected internal ReasonManualOrOverwriteSlot (IMachine machine,
-                                                     IReason reason,
-                                                     string jsonData,
-                                                     bool overwriteRequired,
-                                                     UtcDateTimeRange range)
+                                                    IReason reason,
+                                                    string jsonData,
+                                                    bool overwriteRequired,
+                                                    UtcDateTimeRange range)
       : this (machine, reason, jsonData, overwriteRequired, range,
               ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (range)))
     {

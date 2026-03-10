@@ -32,6 +32,8 @@ namespace Pulse.Web.Reason
 
   /// <summary>
   /// Reason manual or overwrite slot DTO
+  /// 
+  /// Use BgColor to get the reason color that may be used to display the slot
   /// </summary>
   public class ReasonManualOrOverwriteSlotDTO : SlotDTO
   {

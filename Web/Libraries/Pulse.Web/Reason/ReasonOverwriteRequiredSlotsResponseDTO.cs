@@ -38,7 +38,9 @@ namespace Pulse.Web.Reason
     /// <summary>
     /// Reason color
     /// 
-    /// transparent may be returned
+    /// BgColor (from SlotDTO) takes the same value as Color
+    /// 
+    /// An empty string or null may be returned, which means no color was set
     /// </summary>
     public string Color { get; set; }
 

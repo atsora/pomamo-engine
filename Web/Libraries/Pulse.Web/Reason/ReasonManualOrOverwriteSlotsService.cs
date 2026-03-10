@@ -88,6 +88,10 @@ namespace Pulse.Web.Reason
             slotDto.Display = ReasonData.OverwriteDisplay (slotDto.Display, slot.JsonData, false);
           }
           slotDto.OverwriteRequired = slot.OverwriteRequired;
+          slotDto.BgColor = slot.Reason?.Color;
+          if (null != slotDto.BgColor) {
+            slotDto.FgColor = ColorGenerator.GetContrastColor (slotDto.BgColor);
+          }
           var currentMargin = ConfigSet.LoadAndGet<TimeSpan> (CURRENT_MARGIN_KEY,
                                                               CURRENT_MARGIN_DEFAULT);
           if (Bound.Compare<DateTime> (DateTime.UtcNow.Subtract (currentMargin),
@@ -115,6 +119,10 @@ namespace Pulse.Web.Reason
             slotDto.Display = ReasonData.OverwriteDisplay (slotDto.Display, slot.JsonData, false);
           }
           slotDto.OverwriteRequired = slot.OverwriteRequired;
+          slotDto.BgColor = slot.Reason?.Color;
+          if (null != slotDto.BgColor) {
+            slotDto.FgColor = ColorGenerator.GetContrastColor (slotDto.BgColor);
+          }
           var currentMargin = ConfigSet.LoadAndGet<TimeSpan> (CURRENT_MARGIN_KEY,
                                                               CURRENT_MARGIN_DEFAULT);
           if (Bound.Compare<DateTime> (DateTime.UtcNow.Subtract (currentMargin),
