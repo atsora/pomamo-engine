@@ -220,6 +220,7 @@ namespace LemoineServiceMonitoring
       }
       otherServices.Add ("Tomcat8");
       otherServices.Add ("Tomcat9");
+      otherServices.Add ("Tomcat11");
       otherServices.Add ("nscp"); // NSClient++ for Nagios
       otherServices.Add ("MTConnectAdapterService");
       otherServices.Add ("mosquitto");
