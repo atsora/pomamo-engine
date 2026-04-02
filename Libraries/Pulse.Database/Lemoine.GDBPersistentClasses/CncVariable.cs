@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncVariable).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Variable key
     /// </summary>
@@ -35,9 +34,7 @@ namespace Lemoine.GDBPersistentClasses
     /// Variable value
     /// </summary>
     public virtual object Value { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Protected constructor with no arguments
     /// </summary>
@@ -59,7 +56,6 @@ namespace Lemoine.GDBPersistentClasses
       m_key = key;
       this.Value = v;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Make the Cnc variable slot shorter

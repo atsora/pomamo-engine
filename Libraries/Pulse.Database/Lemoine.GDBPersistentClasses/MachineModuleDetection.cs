@@ -17,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineModuleDetection: IMachineModuleDetection
   {
-    #region Members
     int m_id = 0;
     IMachineModule m_machineModule;
     DateTime m_dateTime;
@@ -31,11 +30,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_customType = null;
     string m_customValue = null;
     TimeSpan? m_sequenceMilestone;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (MachineModuleDetection).FullName);
 
-    #region Constructors
     /// <summary>
     /// Default constructor is forbidden
     /// </summary>
@@ -54,9 +51,7 @@ namespace Lemoine.GDBPersistentClasses
       this.MachineModule = machineModule;
       this.DateTime = dateTime;
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// MachineModuleDetection Id
     /// </summary>
@@ -91,8 +86,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         switch (value.Kind) {
           case DateTimeKind.Unspecified:
-            log.WarnFormat ("DateTime.set: " +
-                            "unspecified DateTimeKind => suppose it is a universal time");
+            log.Warn ("DateTime.set: unspecified DateTimeKind => suppose it is a universal time");
             m_dateTime = new DateTime (value.Ticks, DateTimeKind.Utc);
             break;
           case DateTimeKind.Utc:
@@ -194,6 +188,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_sequenceMilestone; }
       set { m_sequenceMilestone = value; }
     }
-    #endregion // Getters / Setters
   }
 }
