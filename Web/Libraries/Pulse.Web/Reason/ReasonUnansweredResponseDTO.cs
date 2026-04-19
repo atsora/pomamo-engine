@@ -26,9 +26,19 @@ namespace Pulse.Web.Reason
     public bool IsUnansweredPeriod { get; set; }
 
     /// <summary>
-    /// If the Number 
+    /// If the Number parameter is set to true in the request,
+    /// this field contains the number of non-consecutive unanswered periods in the specific range.
+    /// Otherwise, it is set to -1. 
     /// </summary>
     public int UnansweredPeriodsNumber { get; set; } = -1;
+
+    /// <summary>
+    /// If the Number parameter is set to true in the request,
+    /// this field contains the number of unanswered periods (including it they are consecutive)
+    /// in the specific range.
+    /// Otherwise, it is set to null. 
+    /// </summary>
+    public int? NumberIncludingConsecutive { get; set; } = null;
   }
 }
 

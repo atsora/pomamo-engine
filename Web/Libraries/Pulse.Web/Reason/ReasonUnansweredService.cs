@@ -73,17 +73,31 @@ namespace Pulse.Web.Reason
           using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.ReasonUnanswered.txnNumber")) {
             var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
               .FindOverlapsRange (machine, range)
-              .ToList ();
-            response.UnansweredPeriodsNumber = reasonSlots.Count (x => x.OverwriteRequired);
-            foreach (var reasonSlot in reasonSlots.Where (x => x.OverwriteRequired).Reverse ()) {
-              if (IsReasonSlotTooRecent (reasonSlot)) {
-                --response.UnansweredPeriodsNumber;
+              .Where (x => x.OverwriteRequired)
+              .Reverse ();
+            var checkTooRecent = true;
+            DateTime? bound = null;
+            var unansweredPeriodsNumber = 0;
+            var numberIncludingConsecutive = 0;
+            foreach (var reasonSlot in reasonSlots) {
+              if (checkTooRecent) {
+                if (IsReasonSlotTooRecent (reasonSlot)) {
+                  continue;
+                }
+                else {
+                  checkTooRecent = false;
+                }
               }
-              else {
-                break;
+              ++numberIncludingConsecutive;
+              if (!bound.HasValue || !DateTime.Equals (bound.Value, reasonSlot.DateTimeRange.Upper.Value)) {
+                // Consecutive reason slot, do not increment the number of unanswered periods
+                ++unansweredPeriodsNumber;
               }
+              bound = reasonSlot.DateTimeRange.Lower.Value;
             }
-            response.IsUnansweredPeriod = response.UnansweredPeriodsNumber > 0;
+            response.UnansweredPeriodsNumber = unansweredPeriodsNumber;
+            response.NumberIncludingConsecutive = numberIncludingConsecutive;
+            response.IsUnansweredPeriod = 0 < response.UnansweredPeriodsNumber;
             return response;
           }
         }
