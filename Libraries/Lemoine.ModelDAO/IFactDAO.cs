@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Lemoine.Model;
 
 namespace Lemoine.ModelDAO
@@ -168,6 +169,7 @@ namespace Lemoine.ModelDAO
               yield return noDataFact;
             }
           }
+          lastFactEnd = fact.DateTimeRange.Upper.Value;
           yield return fact;
         }
         if ( (Bound.Compare<DateTime> (lastFactEnd, range.Upper) < 0)
@@ -191,6 +193,67 @@ namespace Lemoine.ModelDAO
             }
             else { // No gap at the end
               yield break;
+            }
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get a descending enumerator on facts with no gap between them.
+    /// 
+    /// In case of a gap, return a fictive fact with a machine mode NoData
+    /// </summary>
+    /// <param name="factDao"></param>
+    /// <param name="machine">not null</param>
+    /// <param name="range"></param>
+    /// <param name="facts"></param>
+    /// <returns></returns>
+    public static IEnumerable<IFact> GetNoGapDescending (this IFactDAO factDao, IMonitoredMachine machine, UtcDateTimeRange range, IEnumerable<IFact> facts)
+    {
+      Debug.Assert (null != machine);
+
+      IMachineMode noDataMachineMode = null;
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        var lastFactStart = range.Upper;
+        foreach (var fact in facts) {
+          if (Bound.Compare<DateTime> (fact.DateTimeRange.Upper, lastFactStart) < 0) {
+            if (!lastFactStart.HasValue) {
+              log.Warn ($"GetNoGapDescending: gap {lastFactStart}-{fact.DateTimeRange.Lower} with no lower bound, skip it");
+            }
+            else {
+              noDataMachineMode = GetNoDataMachineMode (noDataMachineMode);
+              var noDataFact = ModelDAOHelper.ModelFactory.CreateFact (machine, fact.DateTimeRange.Upper.Value, lastFactStart.Value, noDataMachineMode);
+              yield return noDataFact;
+            }
+          }
+          lastFactStart = fact.DateTimeRange.Lower.Value;
+          yield return fact;
+        }
+        if ((Bound.Compare<DateTime> (range.Lower, lastFactStart) < 0)
+          || (range.LowerInclusive && (Bound.Compare<DateTime> (range.Lower, lastFactStart) <= 0))) {
+          if (!range.Lower.HasValue) { // No fact after range
+            yield break;
+          }
+          else if (!lastFactStart.HasValue) {
+            log.Warn ($"GetNoGapDescending: final gap {range.Lower}-{lastFactStart} with no lower bound, skip it");
+          }
+          else {
+            var beforeFacts = factDao
+              .FindFirstOverlapsRange (machine, new UtcDateTimeRange (new LowerBound<DateTime> (null), lastFactStart), 1, true);
+            if (!beforeFacts.Any ()) { // No fact before range
+              yield break;
+            }
+            else {
+              var beforeFact = beforeFacts.Single ();
+              if (Bound.Compare<DateTime> (beforeFact.DateTimeRange.Upper, lastFactStart.Value) < 0) {
+                noDataMachineMode = GetNoDataMachineMode (noDataMachineMode);
+                var noDataFact = ModelDAOHelper.ModelFactory.CreateFact (machine, beforeFact.DateTimeRange.Upper.Value, lastFactStart.Value, noDataMachineMode);
+                yield return noDataFact;
+              }
+              else { // No gap at the end
+                yield break;
+              }
             }
           }
         }

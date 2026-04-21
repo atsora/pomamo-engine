@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -40,7 +41,7 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
       {
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }
@@ -99,7 +100,7 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
         .Intersects (new UtcDateTimeRange (dateTime)));
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Get: dateTime={0} limit={1} hint={2} => No data", dateTime, limit, hint);
+          log.Debug ($"Get: dateTime={dateTime} limit={limit} hint={hint} => No data");
         }
         return this.CreateNoData ();
       }
@@ -107,7 +108,7 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
       Debug.Assert (range.Lower.HasValue);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (var transaction = session.BeginReadOnlyTransaction ("DynamicTime.NextActiveMachineMode", TransactionLevel.ReadCommitted, transactionLevelOptional: true)) {
+        using (var transaction = session.BeginReadOnlyTransaction ("DynamicTime.NextSpecificMachineMode", TransactionLevel.ReadCommitted, transactionLevelOptional: true)) {
           var step = TimeSpan.FromHours (4);
           var facts = ModelDAOHelper.DAOFactory.FactDAO
             .FindOverlapsRangeAscending (this.Machine, range, step);
@@ -122,6 +123,13 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
             .Get (new Lemoine.Business.Machine.MonitoredMachineFromId (this.Machine.Id));
           var newHintLower = hint.Lower;
           foreach (var fact in ModelDAOHelper.DAOFactory.FactDAO.GetNoGap (monitoredMachine, range, facts)) {
+            if (m_configuration.MaxDuration.HasValue
+              && (dateTime.Add (m_configuration.MaxDuration.Value) < fact.Begin)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Get: max duration={m_configuration.MaxDuration} reached at {dateTime.Add (m_configuration.MaxDuration.Value)}");
+              }
+              return this.CreateNoData ();
+            }
             if (timeout < DateTime.UtcNow.Subtract (startDateTime)) {
               log.Error ($"GetValid: timeout, start={startDateTime} VS timeout={timeout}");
               return this.CreateTimeout ();

@@ -1,5 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2026 Atsora Solutions
+﻿// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,15 +20,15 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
   /// <summary>
   /// 
   /// </summary>
-  public class NextSpecificMachineMode_UnitTest
+  public class PreviousSpecificMachineMode_UnitTest
     : Lemoine.UnitTests.WithMinuteTimeStamp
   {
-    readonly ILog log = LogManager.GetLogger (typeof (NextSpecificMachineMode_UnitTest).FullName);
+    readonly ILog log = LogManager.GetLogger (typeof (PreviousSpecificMachineMode_UnitTest).FullName);
 
     /// <summary>
     /// Constructor
     /// </summary>
-    public NextSpecificMachineMode_UnitTest ()
+    public PreviousSpecificMachineMode_UnitTest ()
       : base (new DateTime (2016, 04, 01, 00, 00, 00, DateTimeKind.Utc))
     { }
 
@@ -69,14 +68,14 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.Package.PackageFile
             .InstallOrUpgradeJsonString ("""
 {
-  "Identifier": "NextSpecificMachineMode_UnitTest",
+  "Identifier": "PreviousSpecificMachineMode_UnitTest",
   "Name": "UnitTest",
   "Description": "",
   "Tags": [],
   "Version": 1,
   "Plugins": [
     {
-      "Name": "NextSpecificMachineMode",
+      "Name": "PreviousSpecificMachineMode",
       "Instances": [
         {
           "Name": "Test",
@@ -100,34 +99,23 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
             checker.CheckPending ();
 
+            AddFact (machine, R (-18, -17), machining);
+            AddFact (machine, R (-16, -15), inactive);
+            AddFact (machine, R (-15, -13), autoFeed);
+            AddFact (machine, R (-12, -11), machining);
+            AddFact (machine, R (-8, -7), error);
+            AddFact (machine, R (-6, -5), inactive);
+            AddFact (machine, R (-4, -3), autoFeed);
+            AddFact (machine, R (-2, -1), machining);
+            checker.CheckPending ();
+
             AddFact (machine, R (1, 2), machining);
-            checker.CheckAfter (T (2));
 
-            AddFact (machine, R (3, 4), autoFeed);
-            checker.CheckAfter (T (4));
-
-            AddFact (machine, R (5, 6), inactive);
-            checker.CheckAfter (T (6));
-
-            AddFact (machine, R (7, 8), error);
-            checker.CheckFinal (T (7));
+            checker.CheckFinal (T (-7));
           }
 
           { // Check cancel
-            var checker = new DynamicEndChecker ("A", machine, T (10));
-
-            checker.CheckPending ();
-
-            AddFact (machine, R (11, 12), machining);
-            checker.CheckAfter (T (12));
-
-            AddFact (machine, R (13, 14), autoFeed);
-            checker.CheckAfter (T (14));
-
-            AddFact (machine, R (15, 16), inactive);
-            checker.CheckAfter (T (16));
-
-            AddFact (machine, R (17, 18), machining);
+            var checker = new DynamicEndChecker ("A", machine, T (-10));
             checker.CheckNoData ();
           }
         }
@@ -175,14 +163,14 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.Package.PackageFile
               .InstallOrUpgradeJsonString ("""
 {
-  "Identifier": "NextSpecificMachineMode_UnitTest",
+  "Identifier": "PreviousSpecificMachineMode_UnitTest",
   "Name": "UnitTestMaxDuration",
   "Description": "",
   "Tags": [],
   "Version": 1,
   "Plugins": [
     {
-      "Name": "NextSpecificMachineMode",
+      "Name": "PreviousSpecificMachineMode",
       "Instances": [
         {
           "Name": "Test",
@@ -207,16 +195,18 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
             checker.CheckPending ();
 
+            AddFact (machine, R (-18, -17), machining);
+            AddFact (machine, R (-16, -15), inactive);
+            AddFact (machine, R (-15, -13), autoFeed);
+            AddFact (machine, R (-12, -11), machining);
+            AddFact (machine, R (-8, -7), error);
+            AddFact (machine, R (-6, -5), inactive);
+            AddFact (machine, R (-4, -3), autoFeed);
+            AddFact (machine, R (-2, -1), machining);
+            checker.CheckPending ();
+
             AddFact (machine, R (1, 2), machining);
-            checker.CheckAfter (T (2));
 
-            AddFact (machine, R (3, 4), autoFeed);
-            checker.CheckAfter (T (4));
-
-            AddFact (machine, R (5, 6), inactive);
-            checker.CheckAfter (T (6));
-
-            AddFact (machine, R (7, 8), error);
             checker.CheckNoData ();
           }
         }

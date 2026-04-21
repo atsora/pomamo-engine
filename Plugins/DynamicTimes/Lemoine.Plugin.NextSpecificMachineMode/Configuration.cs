@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -20,7 +21,6 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name prefix (mandatory)
     /// </summary>
@@ -47,9 +47,13 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
     {
       get; set;
     } = new List<int> ();
-    #endregion // Getters / Setters
 
-    #region Constructors
+    /// <summary>
+    /// Maximum duration between the original date/time and the dynamic end, else NoData is returned
+    /// </summary>
+    [PluginConf ("MaxDuration", "Max duration", Description = "Maximum duration between the source date/time and the dynamic end (else NoData is returned)", Multiple = false, Optional = true)]
+    public TimeSpan? MaxDuration { get; set; } = null;
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -109,7 +113,6 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
       errors = errors.Concat (errorList);
       return result;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="Lemoine.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>

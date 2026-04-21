@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -21,42 +22,21 @@ namespace Lemoine.Plugin.NextSpecificMachineMode
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "NextSpecificMachineMode"; } }
+    public override string Name => "NextSpecificMachineMode";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Return the end once a specific machine mode is detected";
-      }
-    }
+    public override string Description => "Return the end once a specific machine mode is detected";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Analysis | PluginFlag.AutoReason;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis | PluginFlag.AutoReason;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
+    public override int Version => 1;
   }
 }
