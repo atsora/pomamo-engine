@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -16,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventCncValueConfig: IEventCncValueConfig
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -26,11 +26,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_condition;
     TimeSpan m_minDuration = TimeSpan.FromTicks (0);
     IEventLevel m_level;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (EventCncValueConfig).FullName);
 
-    #region Constructors
     /// <summary>
     /// Default constructor is forbidden
     /// </summary>
@@ -53,9 +51,7 @@ namespace Lemoine.GDBPersistentClasses
       this.Message = message;
       this.Condition = condition;
     }
-    #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// EventCncValueConfig Id
     /// </summary>
@@ -188,6 +184,5 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
   }
 }

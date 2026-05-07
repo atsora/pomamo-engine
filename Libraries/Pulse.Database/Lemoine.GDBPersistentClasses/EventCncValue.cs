@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,7 +20,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventCncValue: EventUnion, IEventCncValue
   {
-    #region Members
     string m_message;
     IMachineModule m_machineModule;
     IField m_field;
@@ -28,11 +28,9 @@ namespace Lemoine.GDBPersistentClasses
     double? m_double = null;
     TimeSpan m_duration;
     IEventCncValueConfig m_config;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (EventCncValue).FullName);
 
-    #region Constructors
     /// <summary>
     /// Default constructor is forbidden
     /// </summary>
@@ -60,9 +58,7 @@ namespace Lemoine.GDBPersistentClasses
       this.Duration = duration;
       this.Config = config;
     }
-    #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Event message
     /// </summary>
@@ -210,9 +206,7 @@ namespace Lemoine.GDBPersistentClasses
           case FieldType.Double:
             return this.Double;
           default:
-            log.ErrorFormat ("Value.get: " +
-                             "unknown field type {0}",
-                             this.Field.Type);
+            log.Error ($"Value.get: unknown field type {this.Field.Type}");
             throw new Exception ("Unknown field type");
         }
       }
@@ -239,9 +233,7 @@ namespace Lemoine.GDBPersistentClasses
           }
         }
         catch (Exception ex) {
-          log.ErrorFormat ("Value.set: " +
-                           "error {0} value {1}",
-                           ex, value);
+          log.Error ($"Value.set: error for value {value}", ex);
           throw new InvalidCastException ("The value could not be converted to the right type", ex);
         }
       }
@@ -275,9 +267,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_config; }
       set { m_config = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
@@ -287,6 +277,5 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateHelper.Unproxy<IMachineModule> (ref m_machineModule);
       NHibernateHelper.Unproxy<IField> (ref m_field);
     }
-    #endregion // Methods
   }
 }
