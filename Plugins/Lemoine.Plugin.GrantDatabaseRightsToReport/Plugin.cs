@@ -19,42 +19,23 @@ namespace Lemoine.Plugin.GrantDatabaseRightsToReport
   /// </summary>
   public class Plugin : PluginNoConfig, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "GrantDatabaseRightsToReport"; } }
+    public override string Name => "GrantDatabaseRightsToReport";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get {
-        return "Grant the database rights (SELECT, EXECUTE, USAGE) to user reportV2";
-      }
-    }
+    public override string Description => "Grant the database rights (SELECT, EXECUTE, USAGE) to user reportV2";
 
-    public PluginFlag Flags
-    {
-      get {
-        return PluginFlag.Config;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Config;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
+    public override int Version => 1;
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
-
-    #region Methods
-
-    #endregion // Methods
-  }
+ }
 }
