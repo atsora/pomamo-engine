@@ -55,29 +55,29 @@ namespace Lemoine.GDBPersistentClasses
           }
           // There is no default reason with unlimited duration, add one in some conditions
           IMachineModeDefaultReason defaultReason;
-          if ((int)MachineModeId.Off == machineMode.Id) {
-            defaultReason =
-              ModelDAOHelper.ModelFactory.CreateMachineModeDefaultReason (machineMode,
-                                                                          machineObservationState);
-            defaultReason.Reason = reasonOff;
-            defaultReason.Score = DEFAULT_OFF_SCORE;
-            defaultReason.Auto = true;
-            if (null == reasonOff) {
-              log.WarnFormat ("InsertDefaultValues: " +
-                              "please add manually a default reason for machine mode Off {0} " +
-                              "because no reasonOff Id=6 exists",
-                              machineMode);
-            }
-            else {
-              log.InfoFormat ("InsertDefaultValues: " +
-                              "about to add a new MachineModeDefaultReason Off for " +
-                              "machineMode={0} machineObservationState={1}",
-                              machineMode, machineObservationState);
-              ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
-            }
-          }
-          
           if (machineMode.Parent is null) { // Top machine mode only here
+            if ((int)MachineModeId.Off == machineMode.Id) {
+              defaultReason =
+                ModelDAOHelper.ModelFactory.CreateMachineModeDefaultReason (machineMode,
+                                                                            machineObservationState);
+              defaultReason.Reason = reasonOff;
+              defaultReason.Score = DEFAULT_OFF_SCORE;
+              defaultReason.Auto = true;
+              if (null == reasonOff) {
+                log.WarnFormat ("InsertDefaultValues: " +
+                                "please add manually a default reason for machine mode Off {0} " +
+                                "because no reasonOff Id=6 exists",
+                                machineMode);
+              }
+              else {
+                log.InfoFormat ("InsertDefaultValues: " +
+                                "about to add a new MachineModeDefaultReason Off for " +
+                                "machineMode={0} machineObservationState={1}",
+                                machineMode, machineObservationState);
+                ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
+              }
+            }
+          
             if ((int)MachineModeId.Active == machineMode.Id) {
               defaultReason =
                 ModelDAOHelper.ModelFactory.CreateMachineModeDefaultReason (machineMode,
