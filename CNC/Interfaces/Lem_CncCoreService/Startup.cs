@@ -65,7 +65,7 @@ namespace Lem_CncCoreService
         .ConfigureFileRepoClientFactoryDefault ()
         .ConfigureDatabaseWithNoNHibernateExtension (Lemoine.Model.PluginFlag.Cnc, GetInterfaceProviders (), applicationName, killOrphanedConnectionsFirst: true);
       services.AddSingleton<ICncEngineConfig> (new CncEngineConfig (true, true) {
-        ConsoleProgramName = "",
+        ConsoleProgramName = "Lem_CncConsole",
       });
 
       if (string.IsNullOrEmpty (localCncConfiguration)) {

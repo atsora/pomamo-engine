@@ -16,12 +16,10 @@ namespace Lem_CncDataService
     static readonly string CNC_DATA_CONSOLE = "Lem_CncDataConsole";
     static readonly ILog log = LogManager.GetLogger(typeof (ImportProcessExecution).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated ImportCncDataFromQueue
     /// </summary>
     public Lemoine.CncDataImport.ImportCncDataFromQueue ImportCncDataFromQueue { get; set; }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// Constructor

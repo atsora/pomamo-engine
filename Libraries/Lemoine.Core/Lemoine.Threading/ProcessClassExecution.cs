@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,28 +20,20 @@ namespace Lemoine.Threading
   {
     static readonly TimeSpan DEFAULT_SLEEP_BEFORE_RESTART = TimeSpan.FromSeconds (2);
     
-    #region Members
-    string m_programName;
-    IProcessClass m_processClass;
-    TimeSpan m_sleepBeforeRestart = DEFAULT_SLEEP_BEFORE_RESTART;
-    #endregion // Members
+    readonly string m_programName;
+    readonly IProcessClass m_processClass;
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProcessClassExecution).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated program name, without .exe
     /// </summary>
-    public string ProgramName {
-      get { return m_programName; }
-    }
-    
+    public string ProgramName => m_programName;
+
     /// <summary>
     /// Associated Process class
     /// </summary>
-    public IProcessClass ProcessClass {
-      get { return m_processClass; }
-    }
+    public IProcessClass ProcessClass => m_processClass;
     
     /// <summary>
     /// Time period to sleep before restarting a new process
@@ -56,9 +49,7 @@ namespace Lemoine.Threading
         }
       }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -69,9 +60,7 @@ namespace Lemoine.Threading
       m_programName = programName;
       m_processClass = processClass;
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the associated process name
     /// 
@@ -439,6 +428,5 @@ namespace Lemoine.Threading
         return true;
       }
     }
-    #endregion // Methods
   }
 }
