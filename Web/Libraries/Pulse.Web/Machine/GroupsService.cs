@@ -42,7 +42,6 @@ namespace Pulse.Web.Machine
     /// </summary>
     public ClaimsPrincipal SpecificUser { get; set; }
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
@@ -50,9 +49,7 @@ namespace Pulse.Web.Machine
       : base (Lemoine.Core.Cache.CacheTimeOut.Config)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -197,6 +194,5 @@ namespace Pulse.Web.Machine
           categories.SelectMany (c => c.Groups));
       }
     }
-    #endregion // Methods
   }
 }
