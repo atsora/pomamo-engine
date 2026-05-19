@@ -10,6 +10,7 @@ using System.Threading;
 
 using Lemoine.Info;
 using Lemoine.Core.Log;
+using System.Linq;
 
 namespace Lemoine.Threading
 {
@@ -19,11 +20,11 @@ namespace Lemoine.Threading
   public abstract class ProcessClassExecution
   {
     static readonly TimeSpan DEFAULT_SLEEP_BEFORE_RESTART = TimeSpan.FromSeconds (2);
-    
+
     readonly string m_programName;
     readonly IProcessClass m_processClass;
 
-    static readonly ILog log = LogManager.GetLogger(typeof (ProcessClassExecution).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (ProcessClassExecution).FullName);
 
     /// <summary>
     /// Associated program name, without .exe
@@ -34,13 +35,13 @@ namespace Lemoine.Threading
     /// Associated Process class
     /// </summary>
     public IProcessClass ProcessClass => m_processClass;
-    
+
     /// <summary>
     /// Time period to sleep before restarting a new process
     /// </summary>
-    public TimeSpan SleepBeforeRestart {
-      get
-      {
+    public TimeSpan SleepBeforeRestart
+    {
+      get {
         if (ProcessClass.SleepBeforeRestart.HasValue) {
           return ProcessClass.SleepBeforeRestart.Value;
         }
@@ -71,7 +72,7 @@ namespace Lemoine.Threading
     {
       return m_programName + this.GetSuffix ();
     }
-    
+
     /// <summary>
     /// Get a suffix for the process and stamp names
     /// 
@@ -82,13 +83,13 @@ namespace Lemoine.Threading
     {
       return "-" + GetId ();
     }
-    
+
     /// <summary>
     /// Reference ID that may be used for the suffix
     /// </summary>
     /// <returns></returns>
     public abstract int GetId ();
-    
+
     /// <summary>
     /// Arguments that are specific to the generic ProcessClass:
     /// <item>Parent Process ID</item>
@@ -105,7 +106,7 @@ namespace Lemoine.Threading
       }
       return processClassArguments;
     }
-    
+
     /// <summary>
     /// Specific arguments
     /// 
@@ -113,17 +114,12 @@ namespace Lemoine.Threading
     /// </summary>
     /// <returns></returns>
     public abstract string GetSpecificArguments ();
-    
+
     /// <summary>
     /// Get the logger
     /// </summary>
     /// <returns></returns>
-    public virtual ILog GetLogger ()
-    {
-      return LogManager.GetLogger(string.Format ("{0}.{1}",
-                                                 typeof (ProcessClassExecution).FullName,
-                                                 GetId ()));
-    }
+    public virtual ILog GetLogger () => LogManager.GetLogger ($"{typeof (ProcessClassExecution).FullName}.{GetId ()}");
 
     /// <summary>
     /// Start the process related to the given ProcessClass
@@ -133,165 +129,106 @@ namespace Lemoine.Threading
     public void Start ()
     {
       // - Kill first any existing process
-      string processName = this.GetProcessName ();
-      Process[] processes = Process.GetProcessesByName (processName);
-      foreach (Process process in processes) {
+      var processName = this.GetProcessName ();
+      var processes = Process.GetProcessesByName (processName);
+      foreach (var process in processes) {
         if (!KillProcess (process.Id, log)) {
           log.Error ($"Start: previous process {processName} could not be stopped");
           return;
         }
         System.Threading.Thread.Sleep (this.SleepBeforeRestart);
       }
-      
+      var dotNetProcesses = Process.GetProcessesByName ("dotnet");
+      foreach (var process in dotNetProcesses.Where (x => x.StartInfo.Arguments.Contains (processName))) {
+        if (!KillProcess (process.Id, log)) {
+          log.Error ($"Start: previous process {processName} could not be stopped");
+          return;
+        }
+        System.Threading.Thread.Sleep (this.SleepBeforeRestart);
+      }
+
       // - Copy the executable
-      string programDirectory = Directory.GetParent (ProgramInfo.AbsolutePath).FullName;
+      var programDirectory = Directory.GetParent (ProgramInfo.AbsolutePath).FullName;
       Directory.SetCurrentDirectory (programDirectory);
-      string currentDirectory = Directory.GetCurrentDirectory ();
-      string srcConsoleProgramFileName  = string.Format ("{0}.exe",
-                                                         this.ProgramName);
-      string consoleProgramFileName = string.Format ("{0}.exe",
-                                                     GetProcessName ());
-      string srcLog4netConfig = string.Format ("{0}.exe.log4net",
-                                               this.ProgramName);
-      string log4netConfig = string.Format ("{0}.exe.log4net",
-                                            GetProcessName ());
-      string srcConfig = string.Format ("{0}.exe.config",
-                                        this.ProgramName);
-      string config = string.Format ("{0}.exe.config",
-                                     GetProcessName ());
-      string srcOptions = string.Format ("{0}.exe.options",
-                                         this.ProgramName);
-      string options = string.Format ("{0}.exe.options",
-                                      GetProcessName ());
-      try { // Program
-        log.DebugFormat ("Start: " +
-                         "copy {0} into {1}",
-                         srcConsoleProgramFileName,
-                         consoleProgramFileName);
-        File.Copy (srcConsoleProgramFileName,
-                   consoleProgramFileName,
-                   true);
-      }
-      catch (IOException ex) {
-        log.Error ($"Start: could not copy {srcConsoleProgramFileName} to {consoleProgramFileName} directory={currentDirectory} because the file is in use", ex);
-        throw ex;
-      }
-      catch (Exception ex) {
-        log.Fatal ($"Start: could not copy {srcConsoleProgramFileName} to {consoleProgramFileName} directory={currentDirectory}", ex);
-        throw ex;
-      }
-      
-      // - .exe.config
-      if (!File.Exists (srcConfig)) {
-        log.WarnFormat ("Start: " +
-                        "config file {0} does not exist",
-                        srcConfig);
-      }
-      else { // ProgramName.exe.config exists
-        try { // Program.config
-          if (!File.Exists (config)
-              || File.GetLastWriteTimeUtc (config) < File.GetLastWriteTimeUtc (srcConfig)) {
-            log.DebugFormat ("Start: " +
-                             "copy {0} into {1}",
-                             srcConfig,
-                             config);
-            File.Copy (srcConfig,
-                       config,
-                       true);
-          }
-        }
-        catch (IOException ex) {
-          log.Warn ($"Start: could not copy {srcConfig} to {config} directory={currentDirectory} because the file is in use", ex);
-        }
-        catch (Exception ex) {
-          log.Warn ($"Start: could not copy {srcConfig} to {config} directory={currentDirectory}", ex);
+      var currentDirectory = Directory.GetCurrentDirectory ();
+      var suffixes = new string[] { ".exe", ".exe.log4net", ".exe.config", ".exe.options",
+        ".dll", ".dll.config", ".dll.defaultoptions", ".dll.options", ".dll.log4net",
+        ".nh.cfg.xml", ".runtimconfig.json", ".deps.json" };
+
+      if (log.IsFatalEnabled) {
+        if (!File.Exists ($"{this.ProgramName}.exe") && !File.Exists ($"{this.ProgramName}.dll")) {
+          log.Fatal ($"Start: neither {this.ProgramName}.exe nor {this.ProgramName}.dll exist");
         }
       }
-      
-      // .exe.options
-      if (!File.Exists (srcOptions)) {
-        log.WarnFormat ("Start: " +
-                        "options file {0} does not exist",
-                        srcOptions);
-      }
-      else { // ProgramName.exe.options exists
-        try { // Program.options
-          if (!File.Exists (options)
-              || File.GetLastWriteTimeUtc (options) < File.GetLastWriteTimeUtc (srcOptions)) {
-            log.DebugFormat ("Start: " +
-                             "copy {0} into {1}",
-                             srcOptions,
-                             options);
-            File.Copy (srcOptions,
-                       options,
-                       true);
-          }
+
+      foreach (var suffix in suffixes) {
+        var src = $"{this.ProgramName}{suffix}";
+        var dest = $"{processName}{suffix}";
+        if (!File.Exists (src)) {
+          log.Info ($"Start: file {src} does not exist");
         }
-        catch (IOException ex) {
-          log.Warn ($"Start: could not copy {srcOptions} to {options} directory={currentDirectory} because the file is in use", ex);
-        }
-        catch (Exception ex) {
-          log.Warn ($"Start: could not copy {srcOptions} to {options} directory={currentDirectory}", ex);
-        }
-      }
-      
-      // .exe.log4net
-      if (!File.Exists (srcLog4netConfig)) {
-        log.WarnFormat ("Start: " +
-                        "log4net config file {0} does not exist",
-                        srcLog4netConfig);
-      }
-      else { // ProgramName.exe.log4net exists
-        try { // Program.log4net
-          if (!File.Exists (log4netConfig)
-              || File.GetLastWriteTimeUtc (log4netConfig) < File.GetLastWriteTimeUtc (srcLog4netConfig)) {
-            log.DebugFormat ("Start: " +
-                             "copy {0} into {1}",
-                             srcLog4netConfig,
-                             log4netConfig);
-            File.Delete (log4netConfig);
-            using (StreamReader read = File.OpenText (srcLog4netConfig))
-              using (StreamWriter write = File.CreateText (log4netConfig))
-            {
-              while (!read.EndOfStream) {
-                string line = read.ReadLine ();
-                var modifiedLine = line
-                  .Replace (ProgramName, GetProcessName ())
-                  .Replace ("%property{ApplicationName}", "%property{ApplicationName}" + this.GetSuffix ());
-                write.WriteLine (modifiedLine);
+        else { // src exists
+          try { // Program.config
+            if (!File.Exists (dest)
+                || File.GetLastWriteTimeUtc (dest) < File.GetLastWriteTimeUtc (src)) {
+              if (suffix.EndsWith ("log4net")) {
+                log.Debug ($"Start: copy/adapt {src} into {dest}");
+                File.Delete (dest);
+                using (StreamReader read = File.OpenText (src))
+                using (StreamWriter write = File.CreateText (dest)) {
+                  while (!read.EndOfStream) {
+                    string line = read.ReadLine ();
+                    var modifiedLine = line
+                      .Replace (ProgramName, GetProcessName ())
+                      .Replace ("%property{ApplicationName}", "%property{ApplicationName}" + this.GetSuffix ());
+                    write.WriteLine (modifiedLine);
+                  }
+                }
+              }
+              else {
+                log.Debug ($"Start: copy {src} into {dest}");
+                File.Copy (src,
+                           dest,
+                           true);
               }
             }
+            else if (log.IsDebugEnabled) {
+              log.Debug ($"Start: {src} and {dest} have already the same write time");
+            }
+          }
+          catch (IOException ex) {
+            log.Error ($"Start: could not copy {src} to {dest} directory={currentDirectory} because the file is in use", ex);
+          }
+          catch (Exception ex) {
+            log.Error ($"Start: could not copy {src} to {dest} directory={currentDirectory}", ex);
           }
         }
-        catch (IOException ex) {
-          log.Warn ($"Start: could not copy {srcLog4netConfig} to {log4netConfig} directory={currentDirectory} because the file is in use", ex);
-        }
-        catch (Exception ex) {
-          log.Warn ($"Start: could not copy {srcLog4netConfig} to {log4netConfig} directory={currentDirectory} ", ex);
-        }
       }
-      
+
       // - Remove all the stamp file if it exists
       var stampFilePath = m_processClass.GetStampFilePath ();
       if (File.Exists (stampFilePath)) {
         File.Delete (stampFilePath);
       }
-      
+
       // - Run a new process with the right parameters
-      ProcessStartInfo startInfo = new ProcessStartInfo ();
-      startInfo.FileName = consoleProgramFileName;
-      startInfo.Arguments = string.Format ("{0} {1}",
-                                           this.GetProcessClassArguments (),
-                                           this.GetSpecificArguments ());
+      var startInfo = new ProcessStartInfo ();
       startInfo.UseShellExecute = false;
       startInfo.RedirectStandardError = false;
       startInfo.RedirectStandardOutput = false;
-      log.InfoFormat ("Start: " +
-                      "run: {0} {1}",
-                      consoleProgramFileName, startInfo.Arguments);
+      if (File.Exists ($"{processName}.dll")) {
+        startInfo.FileName = "dotnet";
+        startInfo.Arguments = $"{processName}.dll {this.GetProcessClassArguments ()} {this.GetSpecificArguments ()}";
+        log.Info ($"Start: run: dotnet {processName}.dll {startInfo.Arguments}");
+      }
+      else {
+        startInfo.FileName = $"{processName}.exe";
+        startInfo.Arguments = $"{this.GetProcessClassArguments ()} {this.GetSpecificArguments ()}";
+        log.Info ($"Start: run: {processName}.exe {startInfo.Arguments}");
+      }
       Process.Start (startInfo);
     }
-    
+
     /// <summary>
     /// Stop the process
     /// </summary>
@@ -299,13 +236,11 @@ namespace Lemoine.Threading
     {
       Process[] processes = Process.GetProcessesByName (GetProcessName ());
       foreach (Process process in processes) {
-        log.DebugFormat ("Abort: " +
-                         "kill process with PID={0} and name={1}",
-                         process.Id, process.ProcessName);
+        log.Debug ($"Abort: kill process with PID={process.Id} and name={process.ProcessName}");
         KillProcess (process.Id, log);
       }
     }
-    
+
     /// <summary>
     /// Try to kill if needed a process
     /// </summary>
@@ -326,7 +261,7 @@ namespace Lemoine.Threading
         throw;
       }
       Debug.Assert (null != process);
-      
+
       // 1st attempt: try to stop first properly the process
       try {
         logger.Info ($"KillProcess: Stop the process {pid}");
@@ -339,15 +274,13 @@ namespace Lemoine.Threading
       catch (Exception ex) {
         logger.Error ("KillProcess: CloseMainWindow or Close returned exception", ex);
       }
-      
+
       // Check if process is still valid, else reset it
       try {
         bool test = process.HasExited;
       }
       catch (InvalidOperationException) {
-        logger.InfoFormat ("KillProcess: " +
-                           "reset process with pid={0}",
-                           pid);
+        logger.Info ($"KillProcess: reset process with pid={pid}");
         try {
           process = Process.GetProcessById (pid);
         }
@@ -364,7 +297,7 @@ namespace Lemoine.Threading
       catch (Exception ex) {
         logger.Error ("KillProcess: other exception while checking if process is still valid", ex);
       }
-      
+
       // Check if the process was stopped after maximum 5 seconds
       try {
         if (!process.WaitForExit (5000)) {
@@ -389,7 +322,7 @@ namespace Lemoine.Threading
         }
         return true;
       }
-      
+
       // If not, kill the process
       try {
         logger.Debug ("Kill the process");
