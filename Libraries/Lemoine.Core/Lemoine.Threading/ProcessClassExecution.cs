@@ -139,12 +139,26 @@ namespace Lemoine.Threading
         System.Threading.Thread.Sleep (this.SleepBeforeRestart);
       }
       var dotNetProcesses = Process.GetProcessesByName ("dotnet");
-      foreach (var process in dotNetProcesses.Where (x => x.StartInfo.Arguments.Contains (processName))) {
+      foreach (var process in dotNetProcesses) {
+        bool isMatch = false;
+        try {
+          var arguments = process.StartInfo.Arguments;
+          isMatch = !string.IsNullOrEmpty (arguments)
+            && (arguments.IndexOf (processName, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        catch (Exception ex) {
+          log.Debug ($"Start: unable to read dotnet process arguments for pid={process.Id}", ex);
+        }
+
+        if (!isMatch) {
+          continue;
+        }
+
         if (!KillProcess (process.Id, log)) {
           log.Error ($"Start: previous process {processName} could not be stopped");
           return;
         }
-        System.Threading.Thread.Sleep (this.SleepBeforeRestart);
+        Thread.Sleep (this.SleepBeforeRestart);
       }
 
       // - Copy the executable
@@ -153,7 +167,7 @@ namespace Lemoine.Threading
       var currentDirectory = Directory.GetCurrentDirectory ();
       var suffixes = new string[] { ".exe", ".exe.log4net", ".exe.config", ".exe.options",
         ".dll", ".dll.config", ".dll.defaultoptions", ".dll.options", ".dll.log4net",
-        ".nh.cfg.xml", ".runtimconfig.json", ".deps.json" };
+        ".nh.cfg.xml", ".runtimeconfig.json", ".deps.json" };
 
       if (log.IsFatalEnabled) {
         if (!File.Exists ($"{this.ProgramName}.exe") && !File.Exists ($"{this.ProgramName}.dll")) {
@@ -219,7 +233,7 @@ namespace Lemoine.Threading
       if (File.Exists ($"{processName}.dll")) {
         startInfo.FileName = "dotnet";
         startInfo.Arguments = $"{processName}.dll {this.GetProcessClassArguments ()} {this.GetSpecificArguments ()}";
-        log.Info ($"Start: run: dotnet {processName}.dll {startInfo.Arguments}");
+        log.Info ($"Start: run: dotnet {startInfo.Arguments}");
       }
       else {
         startInfo.FileName = $"{processName}.exe";
@@ -260,7 +274,10 @@ namespace Lemoine.Threading
         log.Error ($"KillProcess: unexpected exception while trying to retrieve process with pid={pid}", ex);
         throw;
       }
-      Debug.Assert (null != process);
+
+      if (process == null) {
+        return true;
+      }
 
       // 1st attempt: try to stop first properly the process
       try {
