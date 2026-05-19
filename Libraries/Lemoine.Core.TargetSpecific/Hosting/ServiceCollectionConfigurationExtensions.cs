@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Atsora Solutions
+﻿// Copyright (c) 2023-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -40,7 +40,7 @@ namespace Lemoine.Core.TargetSpecific.Hosting
       return services
         .AddSingleton<IAssemblyLoader, Lemoine.Core.Plugin.TargetSpecific.AssemblyLoader> ()
         .AddSingleton<IExtensionsLoader, ExtensionsLoaderDummy> ()
-        .AddSingleton<IFileRepoClientFactory, FileRepoClientFactoryDummy> ()
+        .AddSingleton<IFileRepoClientFactory, FileRepoClientFactoryFilePath> ()
         .AddSingleton<IApplicationInitializer, T> ();
     }
   }

@@ -39,8 +39,6 @@
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="MQTTnet" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="S7netplus" />
     <PackageReference Include="SSH.NET" />
     <PackageReference Include="System.IO.Ports" />

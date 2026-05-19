@@ -10,11 +10,8 @@
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
     <!-- Temporary work around -->
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' Or '$(Configuration)'=='VS'">
-    <StartAction>Project</StartAction>
-    <StartArguments>-i 3</StartArguments>
-    <StartProgram>$(OutDir)\Lem_CncConsole.exe</StartProgram>
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net48'">
+    <AppConfig></AppConfig>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,8 +47,6 @@
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="MQTTnet" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
     <PackageReference Include="S7netplus" />
     <PackageReference Include="SSH.NET" />
     <PackageReference Include="System.IO.Ports" />
@@ -122,7 +117,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net48'">
-    <None Include="app.config" CopyToOutputDirectory="Never" />
+    <None Remove="app.config" />
+    <Content Remove="app.config" />
     <None Include="..\Lem_CncCoreService\Lem_CncCoreService.nh.cfg.xml" Link="$(ProjectName).nh.cfg.xml" CopyToOutputDirectory="Always" Visible="false" />
     <None Include="..\Lem_CncCoreService\Lem_CncCoreService.dll.log4net" Link="$(ProjectName).dll.log4net" CopyToOutputDirectory="Always" Visible="false" />
     <None Include="$(ProjectName).exe.defaultoptions" Link="$(ProjectName).dll.defaultoptions" CopyToOutputDirectory="Always" />

@@ -1,5 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2024 Atsora Solutions
+﻿// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -14,27 +13,21 @@ using System.Linq;
 namespace Lemoine.FileRepository
 {
   /// <summary>
-  /// IFileRepoClient implementation from a local directory
+  /// IFileRepoClient implementation using file paths (absolute or relative to the file directory)
+  /// without a root path
+  /// 
+  /// nspace is completely omitted here
   /// </summary>
-  public class FileRepoClientDirectory : IFileRepoClient
+  public class FileRepoClientFilePath : IFileRepoClient
   {
-    readonly string m_rootPath = "";
-
-    static readonly ILog log = LogManager.GetLogger (typeof (FileRepoClientSharedDir).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (FileRepoClientFilePath).FullName);
 
     /// <summary>
     /// Root path of all files that are going to be retrieved
     /// </summary>
     /// <param name="rootPath">not empty or null</param>
-    public FileRepoClientDirectory (string rootPath)
+    public FileRepoClientFilePath ()
     {
-      Debug.Assert (!string.IsNullOrEmpty (rootPath));
-
-      if (string.IsNullOrEmpty (rootPath)) {
-        log.Error ($"FileRepoClientDirectory: empty root path {rootPath}");
-        throw new ArgumentNullException (nameof (rootPath), "the root path must be defined (not null or empty)");
-      }
-      m_rootPath = rootPath;
     }
 
     #region IFileRepoClient implementation
@@ -42,46 +35,29 @@ namespace Lemoine.FileRepository
     /// <see cref="Lemoine.FileRepository.IFileRepoClient" />
     /// </summary>
     /// <returns></returns>
-    public bool Test ()
-    {
-      try {
-        if (Directory.Exists (m_rootPath)) {
-          return true;
-        }
-        else {
-          log.Error ($"Test: Root directory {m_rootPath} cannot be found");
-          return false;
-        }
-      }
-      catch (Exception ex) {
-        log.Error ("Test: got exception", ex);
-        return false;
-      }
-    }
+    public bool Test () => true;
 
     /// <summary>
     /// List the files in a FileRepository directory
     /// </summary>
-    /// <param name="nspace">FileRepository namespace (root directory)</param>
-    /// <param name="path">Directory path in FileRepository</param>
+    /// <param name="nspace">omitted</param>
+    /// <param name="path">Directory path</param>
     /// <returns></returns>
     public ICollection<string> ListFilesInDirectory (string nspace, string path)
     {
-      var sourceDirectoryPath = GetOsPath (nspace, path);
-
       try {
-        if (!Directory.Exists (sourceDirectoryPath)) {
-          log.Error ($"ListFilesInDirectory: directory {sourceDirectoryPath} cannot be found");
+        if (!Directory.Exists (path)) {
+          log.Error ($"ListFilesInDirectory: directory {path} cannot be found");
           return new List<string> ();
         }
 
         return Directory
-          .GetFiles (sourceDirectoryPath)
+          .GetFiles (path)
           .Select (x => new FileInfo (x).Name)
           .ToList ();
       }
       catch (Exception ex) {
-        log.Error ("ListFilesInDirectory: got exception", ex);
+        log.Error ($"ListFilesInDirectory: got exception for path={path}", ex);
         throw;
       }
     }
@@ -89,26 +65,24 @@ namespace Lemoine.FileRepository
     /// <summary>
     /// List the directories in a FileRepository directory
     /// </summary>
-    /// <param name="nspace">FileRepository namespace (root directory)</param>
-    /// <param name="path">Directory path in FileRepository</param>
+    /// <param name="nspace">omitted</param>
+    /// <param name="path">Directory path</param>
     /// <returns></returns>
     public ICollection<string> ListDirectoriesInDirectory (string nspace, string path)
     {
-      string sourceDirectoryPath = GetOsPath (nspace, path);
-
       try {
-        if (!Directory.Exists (sourceDirectoryPath)) {
-          log.Error ($"ListDirectoriesInDirectory: directory {sourceDirectoryPath} cannot be found");
+        if (!Directory.Exists (path)) {
+          log.Error ($"ListDirectoriesInDirectory: directory {path} cannot be found");
           return new List<string> ();
         }
 
         return Directory
-          .GetDirectories (sourceDirectoryPath)
+          .GetDirectories (path)
           .Select (x => new DirectoryInfo (x).Name)
           .ToList ();
       }
       catch (Exception ex) {
-        log.Error ("ListDirectoriesInDirectory: got exception", ex);
+        log.Error ($"ListDirectoriesInDirectory: got exception for path={path}", ex);
         throw;
       }
     }
@@ -117,14 +91,14 @@ namespace Lemoine.FileRepository
     /// Copy the file found in the file repository on the name
     /// nspace/path to localPath
     /// </summary>
-    /// <param name="nspace">Root directory where the file is</param>
+    /// <param name="nspace">omitted</param>
     /// <param name="path">name of the file to be copied from the server</param>
     /// <param name="localPath">Complete path with name of the destination file</param>
     /// <exception cref="MissingFileException">the source file does not exist</exception>
     public void GetFile (string nspace, string path, string localPath)
     {
       try {
-        File.Copy (GetOsPath (nspace, path), localPath);
+        File.Copy (path, localPath);
       }
       catch (FileNotFoundException ex) {
         if (log.IsDebugEnabled) {
@@ -142,7 +116,7 @@ namespace Lemoine.FileRepository
     /// Get a file in FileRepository in format string.
     /// In case of error, an exception is thrown.
     /// </summary>
-    /// <param name="nspace"></param>
+    /// <param name="nspace">omitted</param>
     /// <param name="path"></param>
     /// <param name="optional"></param>
     /// <returns>File in string format</returns>
@@ -150,8 +124,7 @@ namespace Lemoine.FileRepository
     public string GetString (string nspace, string path, bool optional = false)
     {
       try {
-        var ospath = GetOsPath (nspace, path);
-        return File.ReadAllText (ospath);
+        return File.ReadAllText (path);
       }
       catch (FileNotFoundException ex) {
         if (optional) {
@@ -177,23 +150,23 @@ namespace Lemoine.FileRepository
     /// Get the binary content of a file.
     /// In case of error, an exception is thrown.
     /// </summary>
-    /// <param name="nspace"></param>
+    /// <param name="nspace">omitted</param>
     /// <param name="path"></param>
     /// <returns>File in string format</returns>
     /// <exception cref="MissingFileException">the source file does not exist</exception>
     public byte[] GetBinary (string nspace, string path)
     {
       try {
-        return File.ReadAllBytes (GetOsPath (nspace, path));
+        return File.ReadAllBytes (path);
       }
       catch (FileNotFoundException ex) {
         if (log.IsDebugEnabled) {
-          log.Debug ("GetBinary: FileNotFound exception", ex);
+          log.Debug ($"GetBinary: FileNotFound exception for path={path}", ex);
         }
         throw new MissingFileException (nspace, path, ex);
       }
       catch (Exception ex) {
-        log.Error ("GetBinary: got exception", ex);
+        log.Error ($"GetBinary: got exception for path={path}", ex);
         throw;
       }
     }
@@ -201,33 +174,26 @@ namespace Lemoine.FileRepository
     /// <summary>
     /// Return the date of the latest modification of a distant file
     /// </summary>
-    /// <param name="nspace"></param>
+    /// <param name="nspace">omitted</param>
     /// <param name="path"></param>
     /// <returns></returns>
     public DateTime GetLastModifiedDate (string nspace, string path)
     {
       try {
-        var fileInfo = new FileInfo (GetOsPath (nspace, path));
+        var fileInfo = new FileInfo (path);
         return fileInfo.LastWriteTimeUtc;
       }
       catch (FileNotFoundException ex) {
         if (log.IsDebugEnabled) {
-          log.Debug ("GetLastModifiedDate: FileNotFound exception", ex);
+          log.Debug ($"GetLastModifiedDate: FileNotFound exception for path={path}", ex);
         }
         throw new MissingFileException (nspace, path, ex);
       }
       catch (Exception ex) {
-        log.Error ("GetLastModifiedDate: got exception", ex);
+        log.Error ($"GetLastModifiedDate: got exception for path={path}", ex);
         throw;
       }
     }
     #endregion // IFileRepoClient implementation
-
-    #region Private methods
-    string GetOsPath (string nspace, string path)
-    {
-      return Path.Combine (m_rootPath, ConvertToOsPath (nspace), ConvertToOsPath (path));
-    }
-    #endregion // Private methods
   }
 }
