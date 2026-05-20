@@ -25,50 +25,114 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateDAO).FullName);
 
+    // Note: check the keys Database.Default.MachineObservationState.* 
+    // are also correctly set before activating some of the keys here,
+    // else the default values will not be inserted because of the consistency check
+
+    /// <summary>
+    /// Configuration key to insert default values that are more mold shops
+    /// or shops that were machines are running without any people:
+    /// Unattended, Attended, OnSite, OnCall
+    /// 
+    /// It must be on for unit tests databases
+    /// </summary>
+    static readonly string UNATTENDED_TO_ON_CALL_KEY = "Database.Default.MachineStateTemplate.UnattendedToOnCall";
+    static readonly bool UNATTENDED_TO_ON_CALL_DEFAULT = false;
+
+    /// <summary>
+    /// Configuration key to insert default values Production and NoProduction
+    /// that are applicable to most production shops
+    /// 
+    /// On by default
+    /// </summary>
+    static readonly string PRODUCTION_NO_PRODUCTION_KEY = "Database.Default.MachineStateTemplate.ProductionNoProduction";
+    static readonly bool PRODUCTION_NO_PRODUCTION_DEFAULT = true;
+
+    /// <summary>
+    /// Configuration key to insert default value Off
+    /// </summary>
+    static readonly string OFF_KEY = "Database.Default.MachineStateTemplate.Off";
+    static readonly bool OFF_DEFAULT = false;
+
+    /// <summary>
+    /// Configuration key to insert default value SetUp
+    /// </summary>
+    static readonly string SETUP_KEY = "Database.Default.MachineStateTemplate.SetUp";
+    static readonly bool SETUP_DEFAULT = false;
+
+    /// <summary>
+    /// Configuration key to insert default value QualityCheck
+    /// </summary>
+    static readonly string QUALITY_CHECK_KEY = "Database.Default.MachineStateTemplate.QualityCheck";
+    static readonly bool QUALITY_CHECK_DEFAULT = false;
+
+    /// <summary>
+    /// Configuration key to insert default value Maintenance
+    /// </summary>
+    static readonly string MAINTENANCE_KEY = "Database.Default.MachineStateTemplate.Maintenance";
+    static readonly bool MAINTENANCE_DEFAULT = false;
+
     #region DefaultValues
     /// <summary>
     /// Insert the default values
     /// </summary>
     internal void InsertDefaultValues ()
     {
-      // 2: Unattended
-      IMachineStateTemplate unattended = new MachineStateTemplate (2, "MachineStateTemplateUnattended", false);
-      InsertDefaultValue (unattended);
-      // 1: Attended
-      IMachineStateTemplate attended = new MachineStateTemplate (1, "MachineStateTemplateAttended", true);
-      attended.OnSite = true;
-      attended.SiteAttendanceChange = unattended;
-      InsertDefaultValue (attended);
-      // 3: On-site
-      IMachineStateTemplate onSite = new MachineStateTemplate (3, "MachineStateTemplateOnSite", true);
-      onSite.OnSite = true;
-      onSite.SiteAttendanceChange = unattended;
-      InsertDefaultValue (onSite);
-      // 4: On-call
-      IMachineStateTemplate onCall = new MachineStateTemplate (4, "MachineStateTemplateOnCall", true);
-      onCall.OnSite = false;
-      onCall.SiteAttendanceChange = onSite;
-      InsertDefaultValue (onCall);
-      // 5: Off
-      IMachineStateTemplate off = new MachineStateTemplate (5, "MachineStateTemplateOff", false);
-      InsertDefaultValue (off);
-      // 7: Setup
-      IMachineStateTemplate setUp = new MachineStateTemplate (7, "MachineStateTemplateSetUp", true);
-      setUp.OnSite = true;
-      setUp.SiteAttendanceChange = unattended;
-      InsertDefaultValue (setUp);
-      // 8: Quality check
-      IMachineStateTemplate qualityCheck = new MachineStateTemplate (8, "MachineStateTemplateQualityCheck", false);
-      InsertDefaultValue (qualityCheck);
-      // 9: Production
-      IMachineStateTemplate production = new MachineStateTemplate (9, "MachineStateTemplateProduction", true);
-      production.OnSite = true;
-      production.SiteAttendanceChange = unattended;
-      InsertDefaultValue (production);
-      // 10: Maintenance
-      IMachineStateTemplate maintenance = new MachineStateTemplate (10, "MachineStateTemplateMaintenance", false);
-      InsertDefaultValue (maintenance);
-      
+      if (Lemoine.Info.ConfigSet.LoadAndGet (UNATTENDED_TO_ON_CALL_KEY, UNATTENDED_TO_ON_CALL_DEFAULT)) {
+        // 2: Unattended
+        IMachineStateTemplate unattended = new MachineStateTemplate ((int)MachineObservationStateId.Unattended, "MachineStateTemplateUnattended", false);
+        InsertDefaultValue (unattended);
+        // 1: Attended
+        IMachineStateTemplate attended = new MachineStateTemplate ((int)MachineObservationStateId.Attended, "MachineStateTemplateAttended", true);
+        attended.OnSite = true;
+        attended.SiteAttendanceChange = unattended;
+        InsertDefaultValue (attended);
+        // 3: On-site
+        IMachineStateTemplate onSite = new MachineStateTemplate ((int)MachineObservationStateId.OnSite, "MachineStateTemplateOnSite", true);
+        onSite.OnSite = true;
+        onSite.SiteAttendanceChange = unattended;
+        InsertDefaultValue (onSite);
+        // 4: On-call
+        IMachineStateTemplate onCall = new MachineStateTemplate ((int)MachineObservationStateId.OnCall, "MachineStateTemplateOnCall", true);
+        onCall.OnSite = false;
+        onCall.SiteAttendanceChange = onSite;
+        InsertDefaultValue (onCall);
+      }
+
+      if (Lemoine.Info.ConfigSet.LoadAndGet (PRODUCTION_NO_PRODUCTION_KEY, PRODUCTION_NO_PRODUCTION_DEFAULT)) {
+        // 15: NoProduction
+        IMachineStateTemplate noProduction = new MachineStateTemplate ((int)MachineObservationStateId.NoProduction, "MachineStateTemplateNoProduction", true);
+        noProduction.OnSite = false;
+        InsertDefaultValue (noProduction);
+        // 9: Production
+        IMachineStateTemplate production = new MachineStateTemplate ((int)MachineObservationStateId.Production, "MachineStateTemplateProduction", true);
+        production.OnSite = true;
+        production.SiteAttendanceChange = noProduction;
+        InsertDefaultValue (production);
+      }
+
+      if (Lemoine.Info.ConfigSet.LoadAndGet (OFF_KEY, OFF_DEFAULT)) {
+        // 5: Off
+        IMachineStateTemplate off = new MachineStateTemplate ((int)MachineObservationStateId.Off, "MachineStateTemplateOff", false);
+        InsertDefaultValue (off);
+      }
+      if (Lemoine.Info.ConfigSet.LoadAndGet (SETUP_KEY, SETUP_DEFAULT)) {
+        // 7: Setup
+        IMachineStateTemplate setUp = new MachineStateTemplate ((int)MachineObservationStateId.SetUp, "MachineStateTemplateSetUp", true);
+        setUp.OnSite = true;
+        InsertDefaultValue (setUp);
+      }
+      if (Lemoine.Info.ConfigSet.LoadAndGet (QUALITY_CHECK_KEY, QUALITY_CHECK_DEFAULT)) {
+        // 8: Quality check
+        IMachineStateTemplate qualityCheck = new MachineStateTemplate ((int)MachineObservationStateId.QualityCheck, "MachineStateTemplateQualityCheck", false);
+        InsertDefaultValue (qualityCheck);
+      }
+      if (Lemoine.Info.ConfigSet.LoadAndGet (MAINTENANCE_KEY, MAINTENANCE_DEFAULT)) {
+        // 10: Maintenance
+        IMachineStateTemplate maintenance = new MachineStateTemplate ((int)MachineObservationStateId.Maintenance, "MachineStateTemplateMaintenance", false);
+        InsertDefaultValue (maintenance);
+      }
+
       ResetSequence (100);
     }
     
@@ -82,9 +146,7 @@ namespace Lemoine.GDBPersistentClasses
       
       try {
         if (null == FindById (machineStateTemplate.Id)) { // the config does not exist => create it
-          log.InfoFormat ("InsertDefaultValue: " +
-                          "add id={0} translationKey={1}",
-                          machineStateTemplate.Id, machineStateTemplate.TranslationKey);
+          log.Info ($"InsertDefaultValue: add id={machineStateTemplate.Id} translationKey={machineStateTemplate.TranslationKey}");
           // Use a raw SQL Command, else the Id is resetted
           string onSite = "NULL";
           if (machineStateTemplate.OnSite.HasValue) {
@@ -104,19 +166,16 @@ VALUES ({0}, '{1}', {2}, {3}, {4}, FALSE)",
                                                  onSite,
                                                  attendanceChange);
             command.ExecuteNonQuery();
-            command.CommandText = string.Format (@"INSERT INTO MachineStateTemplateItem (MachineStateTemplateid, machinestatetemplateitemorder, machineobservationstateid)
-VALUES ({0}, 0, {1})",
-                                                 machineStateTemplate.Id, machineStateTemplate.Id);
+            command.CommandText = $"""
+INSERT INTO MachineStateTemplateItem (MachineStateTemplateid, machinestatetemplateitemorder, machineobservationstateid)              
+VALUES ({machineStateTemplate.Id}, 0, {machineStateTemplate.Id})
+""";
             command.ExecuteNonQuery();
           }
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("InsertDefaultValue: " +
-                         "inserting new machine observation state {0} " +
-                         "failed with {1}",
-                         machineStateTemplate,
-                         ex);
+        log.Error ($"InsertDefaultValue: inserting new machine observation state {machineStateTemplate} failed", ex);
       }
     }
     
@@ -134,9 +193,7 @@ SELECT SETVAL('{0}_{1}_seq', CASE WHEN (SELECT maxid FROM maxid) < {2} THEN {2} 
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ResetSequence: " +
-                         "resetting the sequence failed with {0}",
-                         ex);
+        log.Error ($"ResetSequence: resetting the sequence failed", ex);
       }
     }
     #endregion // DefaultValues

@@ -1435,6 +1435,54 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
 
+      {
+        ITranslation translation = new Translation ("", "MachineModeProbingCycleInactive");
+        translation.TranslationValue = "Probing cycle inactive";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeProbingCycleInactive");
+        translation.TranslationValue = "Cycle de sondage inactif";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "MachineModeProbingCycleInactive");
+        translation.TranslationValue = "Sondierzyklus inaktiv";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "MachineModeProbingCycleUnknown");
+        translation.TranslationValue = "Probing cycle - unknown status";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeProbingCycleUnknown");
+        translation.TranslationValue = "Cycle de sondage - statut inconnu";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "MachineModeProbingCycleUnknown");
+        translation.TranslationValue = "Sondierzyklus - unbekannter Status";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "MachineModeProbingCycleAny");
+        translation.TranslationValue = "Probing cycle - any status";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeProbingCycleAny");
+        translation.TranslationValue = "Cycle de sondage - tout statut";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "MachineModeProbingCycleAny");
+        translation.TranslationValue = "Sondierzyklus - beliebiger Status";
+        InsertDefaultValue (translation);
+      }
+
       // Reason groups
       {
         ITranslation translation = new Translation ("", "ReasonGroupDefault");
@@ -1983,6 +2031,22 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
 
+      {
+        ITranslation translation = new Translation ("", "MachineObservationStateNoProduction");
+        translation.TranslationValue = "No Production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineObservationStateNoProduction");
+        translation.TranslationValue = "Pas de production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "MachineObservationStateNoProduction");
+        translation.TranslationValue = "Keine Produktion";
+        InsertDefaultValue (translation);
+      }
+
       // Machine state templates
       {
         ITranslation translation = new Translation ("", "MachineStateTemplateAttended");
@@ -2125,6 +2189,22 @@ namespace Lemoine.GDBPersistentClasses
       {
         ITranslation translation = new Translation ("de", "MachineStateTemplateMaintenance");
         translation.TranslationValue = "Wartung";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "MachineStateTemplateNoProduction");
+        translation.TranslationValue = "No Production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineStateTemplateNoProduction");
+        translation.TranslationValue = "Pas de production";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "MachineStateTemplateNoProduction");
+        translation.TranslationValue = "Keine Produktion";
         InsertDefaultValue (translation);
       }
 

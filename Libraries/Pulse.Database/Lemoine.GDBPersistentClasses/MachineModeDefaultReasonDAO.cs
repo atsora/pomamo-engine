@@ -77,7 +77,7 @@ namespace Lemoine.GDBPersistentClasses
                 ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
               }
             }
-          
+                     
             if ((int)MachineModeId.Active == machineMode.Id) {
               defaultReason =
                 ModelDAOHelper.ModelFactory.CreateMachineModeDefaultReason (machineMode,
@@ -86,16 +86,10 @@ namespace Lemoine.GDBPersistentClasses
               defaultReason.Score = DEFAULT_ACTIVE_SCORE;
               defaultReason.Auto = true;
               if (null == reasonMotion) {
-                log.WarnFormat ("InsertDefaultValues: " +
-                                "please add manually a default reason for machine mode Motion {0} " +
-                                "because no reasonMotion Id=2 exists",
-                                machineMode);
+                log.Warn ($"InsertDefaultValues: please add manually a default reason for machine mode Motion {machineMode} because no reasonMotion Id=2 exists");
               }
               else {
-                log.InfoFormat ("InsertDefaultValues: " +
-                                "about to add a new MachineModeDefaultReason Motion for " +
-                                "machineMode={0} machineObservationState={1}",
-                                machineMode, machineObservationState);
+                log.Info ("InsertDefaultValues: about to add a new MachineModeDefaultReason Motion for machineMode={machineMode} machineObservationState={machineObservationState}");
                 ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
               }
             }

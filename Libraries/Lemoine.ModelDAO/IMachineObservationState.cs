@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2025 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -67,6 +68,10 @@ namespace Lemoine.Model
     /// Night
     /// </summary>
     Night = 14,
+    /// <summary>
+    /// No planned production (machine is expected to be stopped, even if it is not the case)
+    /// </summary>
+    NoProduction = 15,
   }
 
   /// <summary>

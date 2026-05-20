@@ -313,6 +313,18 @@ namespace Lemoine.Model
     /// The machine is stopped because of a CNC alarm in AUTO mode
     /// </summary>
     AutoAlarmStop = 76,
+    /// <summary>
+    /// A probing cycle is detected and the machine is inactive
+    /// </summary>
+    ProbingCycleInactive = 77,
+    /// <summary>
+    /// A probing cycle is detected and the machine status is unknown
+    /// </summary>
+    ProbingCycleUnknown = 78,
+    /// <summary>
+    /// Optional parent of all the probing cycle machine modes
+    /// </summary>
+    ProbingCycleAny = 79,
   }
 
   /// <summary>
