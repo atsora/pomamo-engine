@@ -20,11 +20,8 @@ namespace Lemoine.Business.Config
   {
     readonly ILog log = LogManager.GetLogger (typeof (ConfigReaderFromExtensions).FullName);
 
-    #region Getters / Setters
     IEnumerable<IConfigExtension> m_extensions = null;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -34,7 +31,6 @@ namespace Lemoine.Business.Config
         Initialize ();
       }
     }
-    #endregion // Constructors
 
     /// <summary>
     /// Initialize the config reader

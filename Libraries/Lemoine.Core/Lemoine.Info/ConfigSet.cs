@@ -39,7 +39,6 @@ namespace Lemoine.Info
   /// </summary>
   public sealed class ConfigSet
   {
-    #region Members
     readonly IGenericConfigReader m_baseConfigReader; // Config reader that is used by default
     readonly CachedConfigReader m_cachedConfigReader; // Base cached config reader
     readonly CommandLineConfigReader m_commandLineConfigReader = new CommandLineConfigReader ();
@@ -51,11 +50,9 @@ namespace Lemoine.Info
     bool m_forceActive = false;
 
     IGenericConfigReader m_configReader; // Active config reader. It may be overriden
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ConfigSet).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return the associated config reader
     /// </summary>
@@ -63,9 +60,7 @@ namespace Lemoine.Info
     {
       get { return Instance.m_configReader; }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class !)
     /// </summary>
@@ -103,9 +98,7 @@ namespace Lemoine.Info
       // Active config reader
       m_configReader = m_baseConfigReader;
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add command line parameters
     /// </summary>
@@ -416,7 +409,6 @@ namespace Lemoine.Info
       }
       Instance.m_defaultValuesConfigReader.Add (key, defaultValue);
     }
-    #endregion // Methods
 
     #region Instance
     static ConfigSet Instance
