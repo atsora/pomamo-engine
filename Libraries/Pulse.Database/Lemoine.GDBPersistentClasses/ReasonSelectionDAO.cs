@@ -197,9 +197,9 @@ namespace Lemoine.GDBPersistentClasses
           return list;
         }
         else { // Else try with the parent
-          log.DebugFormat ("FindWith: " +
-                           "try with the parent {0}",
-                           attachedMachineMode.Parent.Id);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"FindWith: try with the parent {attachedMachineMode.Parent.Id}");
+          }
           return FindWith (attachedMachineMode.Parent,
                            machineObservationState);
         }
@@ -249,9 +249,9 @@ namespace Lemoine.GDBPersistentClasses
           return reasonSelections;
         }
         else { // Else try with the parent
-          log.DebugFormat ("FindWith: " +
-                           "try with the parent {0}",
-                           attachedMachineMode.Parent.Id);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"FindWith: try with the parent {attachedMachineMode.Parent.Id}");
+          }
           return FindWith (machine,
                            attachedMachineMode.Parent,
                            machineObservationState);

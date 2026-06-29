@@ -539,6 +539,7 @@ namespace Lemoine.GDBPersistentClasses
       autoAlarmStop.AutoSequence = false;
       autoAlarmStop.Color = "#FF0000"; // Red
       InsertDefaultValue (autoAlarmStop);
+      // Note: add here ProbingCycleInactive, ProbingCycleAny and ProbingCycleUnknown if required in the future
     }
     
     /// <summary>

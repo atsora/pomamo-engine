@@ -68,6 +68,10 @@ namespace Lemoine.Model
     /// Night
     /// </summary>
     Night = 14,
+    /// <summary>
+    /// No planned production (machine is expected to be stopped, even if it is not the case)
+    /// </summary>
+    NoProduction = 15,
   }
 
   /// <summary>
