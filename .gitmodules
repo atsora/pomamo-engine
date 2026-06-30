@@ -1,3 +1,4 @@
 [submodule "CNC/pomamo-cncmodules"]
 	path = CNC/pomamo-cncmodules
 	url = git@github.com:atsora/pomamo-cncmodules.git
+    branch = master
