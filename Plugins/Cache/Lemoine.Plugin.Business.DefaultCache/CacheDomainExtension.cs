@@ -310,17 +310,6 @@ namespace Lemoine.Plugin.Business.DefaultCache
         case "nonconformancereport":
         case "shiftassociation":
         case "serialnumberstamp":
-        case "taskassociation":
-        case "manufacturingorderassociation":
-          return new List<string> { };
-        case "machinemodeassociation":
-        case "machinestatetemplateassociation":
-        case "cyclecounter":
-        case "reasonassociation":
-        case "productioninformation":
-        case "nonconformancereport":
-        case "shiftassociation":
-        case "serialnumberstamp":
         case "manufacturingorderassociation":
           return new List<string> { };
         case "business.operation.cyclecounter":
