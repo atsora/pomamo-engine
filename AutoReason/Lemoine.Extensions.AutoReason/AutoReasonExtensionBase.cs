@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2025 Atsora Solutions
+// Copyright (C) 2025-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -212,8 +212,7 @@ namespace Lemoine.Extensions.AutoReason
       }
 
       if ( (0 == configuration.ReasonId) && string.IsNullOrEmpty (m_defaultReasonTranslationKey)) {
-        GetLogger ().ErrorFormat ("Initialize: no reason {0} or {1} was set => return false",
-          configuration.ReasonId, m_defaultReasonTranslationKey);
+        GetLogger ().Error ($"Initialize: no reason {configuration.ReasonId} or {m_defaultReasonTranslationKey} was set => return false");
         return false;
       }
 
@@ -237,14 +236,12 @@ namespace Lemoine.Extensions.AutoReason
             .FindById (reasonId);
         }
         if (null == m_reason) {
-          GetLogger ().ErrorFormat ("Initialize: " +
-                                    "reason {0} or {1} could not be loaded",
-                                    reasonId, m_defaultReasonTranslationKey);
+          GetLogger ().Error ($"Initialize: reason {reasonId} or {m_defaultReasonTranslationKey} could not be loaded");
           return false;
         }
         else {
           if (GetLogger ().IsDebugEnabled) {
-            GetLogger ().DebugFormat ("Initialize: successfully loaded reason {0}: id {1}", m_defaultReasonTranslationKey, reasonId);
+            GetLogger ().Debug ($"Initialize: successfully loaded reason {m_defaultReasonTranslationKey}: id {reasonId}");
           }
         }
 
@@ -258,8 +255,7 @@ namespace Lemoine.Extensions.AutoReason
             .LoadAndGet<TimeSpan> (FIRST_RUN_PERIOD_KEY, FIRST_RUN_PERIOD_DEFAULT);
           m_dateTime = DateTime.UtcNow.Subtract (firstRunPeriod);
           if (GetLogger ().IsInfoEnabled) {
-            GetLogger ().InfoFormat ("Initialize: first run, set first date/time to {0}, first run period={1}",
-              m_dateTime, firstRunPeriod);
+            GetLogger ().Info ($"Initialize: first run, set first date/time to {m_dateTime}, first run period={firstRunPeriod}");
           }
         }
 

@@ -733,9 +733,7 @@ namespace Lemoine.GDBPersistentClasses
       if (null != operationCycle) {
         if (!NHibernateUtil.IsInitialized (operationCycle.OperationSlot)) {
           if (log.IsDebugEnabled) {
-            log.Debug ("GetFirstStrictlyAfter: " +
-                       "operation slot was not loaded " +
-                       "=> load it manually");
+            log.Debug ("GetFirstStrictlyAfter: operation slot was not loaded => load it manually");
           }
           // If not initialized => not null
           // but do not check it with an assert because else it will be initialized
