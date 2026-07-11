@@ -19,7 +19,7 @@ namespace Lemoine.GDBPersistentClasses
   /// This new table extends the concept of machine
   /// to include also the outsource resources and the not monitored machines.
   /// </summary>
-  [Serializable, XmlInclude(typeof(MonitoredMachine))]
+  [Serializable, XmlInclude (typeof (MonitoredMachine))]
   public class Machine
     : DataWithDisplayFunction
     , IMachine, IVersionable, Lemoine.Collections.IDataWithId
@@ -40,7 +40,7 @@ namespace Lemoine.GDBPersistentClasses
     IMachineSubCategory m_subCategory;
     #endregion // Members
 
-    static readonly ILog log = LogManager.GetLogger(typeof (Machine).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (Machine).FullName);
 
     #region Getters / Setters
     /// <summary>
@@ -49,9 +49,9 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     public override string[] Identifiers
     {
-      get { return new string[] {"Id", "ExternalCode", "Code", "Name"}; }
+      get { return new string[] { "Id", "ExternalCode", "Code", "Name" }; }
     }
-    
+
     /// <summary>
     /// Machine ID
     /// 
@@ -64,25 +64,27 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.m_id; }
       internal protected set { m_id = value; }
     }
-    
+
     /// <summary>
     /// ID of the machine module for XML serialization
     /// </summary>
-    [XmlAttribute("Id")]
-    public virtual string XmlSerializationId {
+    [XmlAttribute ("Id")]
+    public virtual string XmlSerializationId
+    {
       get { return this.Id.ToString (); }
       set {
         int v;
         if (int.TryParse (value, out v)) {
           m_id = v;
-        } else {
+        }
+        else {
           log.ErrorFormat ("XmlSerializationId.set: " +
                            "{0} is not an integer",
                            value);
         }
       }
     }
-    
+
     /// <summary>
     /// Version
     /// </summary>
@@ -99,66 +101,72 @@ namespace Lemoine.GDBPersistentClasses
     /// In case it is a monitored machine,
     /// it is the same than the name of the corresponding Monitored Machine
     /// </summary>
-    [XmlAttribute("Name")]
+    [XmlAttribute ("Name")]
     public virtual string Name
     {
       get { return this.m_name; }
       set { this.m_name = value; }
     }
-    
+
     /// <summary>
     /// Code used in some companies to identify a machining resource
     /// </summary>
-    [XmlAttribute("Code")]
-    public virtual string Code {
+    [XmlAttribute ("Code")]
+    public virtual string Code
+    {
       get { return m_code; }
       set { m_code = value; }
     }
-    
+
     /// <summary>
     /// Machine external code
     /// 
     /// It may help synchronizing our data with an external database
     /// </summary>
-    [XmlAttribute("ExternalCode")]
-    public virtual string ExternalCode {
+    [XmlAttribute ("ExternalCode")]
+    public virtual string ExternalCode
+    {
       get { return m_externalCode; }
       set { m_externalCode = value; }
     }
-    
+
     /// <summary>
     /// Reference to the Machine Monitoring Type table
     /// </summary>
     [XmlIgnore]
-    public virtual IMachineMonitoringType MonitoringType {
+    public virtual IMachineMonitoringType MonitoringType
+    {
       get { return m_monitoringType; }
       set { m_monitoringType = value; }
     }
-    
+
     /// <summary>
     /// Reference to the Machine Monitoring Type table
     /// for Xml Serialization
     /// </summary>
-    [XmlElement("MonitoringType")]
-    public virtual MachineMonitoringType XmlSerializationMonitoringType {
+    [XmlElement ("MonitoringType")]
+    public virtual MachineMonitoringType XmlSerializationMonitoringType
+    {
       get { return this.MonitoringType as MachineMonitoringType; }
       set { this.MonitoringType = value; }
     }
-    
+
     /// <summary>
     /// Priority to use to display it in the reports or in the applications
     /// </summary>
     [XmlIgnore]
-    public virtual int? DisplayPriority {
+    public virtual int? DisplayPriority
+    {
       get { return m_displayPriority; }
       set { m_displayPriority = value; }
     }
-    
+
     /// <summary>
     /// Associated company
     /// </summary>
     [XmlIgnore]
-    public virtual ICompany Company {
+    public virtual ICompany Company
+    {
       get { return m_company; }
       set { m_company = value; }
     }
@@ -167,34 +175,53 @@ namespace Lemoine.GDBPersistentClasses
     /// Associated department
     /// </summary>
     [XmlIgnore]
-    public virtual IDepartment Department {
+    public virtual IDepartment Department
+    {
       get { return m_department; }
       set { m_department = value; }
     }
-    
+
     /// <summary>
     /// Associated cell
     /// </summary>
     [XmlIgnore]
-    public virtual ICell Cell {
+    public virtual ICell Cell
+    {
       get { return m_cell; }
-      set { m_cell = value; }
+      set {
+        if (object.Equals (m_cell, value)) {
+          // nothing to do
+          return;
+        }
+        // Remove the component from the previous project
+        if (m_cell != null) {
+          var cell = m_cell as Cell;
+          cell.RemoveMachineForInternalUse (this);
+        }
+        m_cell = value;
+        if (m_cell != null) {
+          // Add the component to the new cell
+          (m_cell as Cell).AddMachineForInternalUse (this);
+        }
+      }
     }
-    
+
     /// <summary>
     /// Associated category
     /// </summary>
     [XmlIgnore]
-    public virtual IMachineCategory Category {
+    public virtual IMachineCategory Category
+    {
       get { return m_category; }
       set { m_category = value; }
     }
-    
+
     /// <summary>
     /// Associated sub-category
     /// </summary>
     [XmlIgnore]
-    public virtual IMachineSubCategory SubCategory {
+    public virtual IMachineSubCategory SubCategory
+    {
       get { return m_subCategory; }
       set { m_subCategory = value; }
     }
@@ -203,12 +230,15 @@ namespace Lemoine.GDBPersistentClasses
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]
-    public virtual string SelectionText {
-      get { return string.Format ("{0}: {1}",
-                                  this.Id, this.Name); }
+    public virtual string SelectionText
+    {
+      get {
+        return string.Format ("{0}: {1}",
+                                  this.Id, this.Name);
+      }
     }
     #endregion // Getters / Setters
-    
+
     #region Methods
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
@@ -231,27 +261,27 @@ namespace Lemoine.GDBPersistentClasses
         return $"[Machine {this.Id}]";
       }
     }
-    
+
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
     /// </summary>
     /// <param name="other">An object to compare with this object</param>
     /// <returns>true if the current object is equal to the other parameter; otherwise, false</returns>
-    public virtual bool Equals(IMachine other)
+    public virtual bool Equals (IMachine other)
     {
-      return this.Equals ((object) other);
+      return this.Equals ((object)other);
     }
-    
+
     /// <summary>
     ///   Determines whether the specified Object
     ///   is equal to the current Object
     /// </summary>
     /// <param name="obj">The object to compare with the current object</param>
     /// <returns>true if the specified Object is equal to the current Object; otherwise, false</returns>
-    public override bool Equals(object obj)
+    public override bool Equals (object obj)
     {
-      if (object.ReferenceEquals(this, obj)) {
+      if (object.ReferenceEquals (this, obj)) {
         return true;
       }
 
@@ -275,12 +305,12 @@ namespace Lemoine.GDBPersistentClasses
     ///   Serves as a hash function for a particular type
     /// </summary>
     /// <returns>A hash code for the current Object</returns>
-    public override int GetHashCode()
+    public override int GetHashCode ()
     {
       if (0 != Id) {
         int hashCode = 0;
         unchecked {
-          hashCode += 1000000007 * Id.GetHashCode();
+          hashCode += 1000000007 * Id.GetHashCode ();
         }
         return hashCode;
       }
@@ -288,7 +318,7 @@ namespace Lemoine.GDBPersistentClasses
         return base.GetHashCode ();
       }
     }
-    
+
     /// <summary>
     /// Is the machine monitored ?
     /// </summary>
@@ -297,16 +327,16 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != this.MonitoringType);
       int monitoringTypeId = this.MonitoringType.Id;
-      return ((int) MachineMonitoringTypeId.Monitored == monitoringTypeId);
+      return ((int)MachineMonitoringTypeId.Monitored == monitoringTypeId);
     }
-    
+
     /// <summary>
     /// Is the machine obsolete?
     /// </summary>
     /// <returns></returns>
-    public virtual bool IsObsolete()
+    public virtual bool IsObsolete ()
     {
-      Debug.Assert(this.MonitoringType != null);
+      Debug.Assert (this.MonitoringType != null);
       return this.MonitoringType.Id == (int)MachineMonitoringTypeId.Obsolete;
     }
     #endregion // Methods
