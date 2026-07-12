@@ -28,18 +28,9 @@ namespace Lemoine.Plugin.SameMachineMode
       get; private set;
     }
 
-    public string Name
-    {
-      get
-      {
-        return "PreviousMachineMode";
-      }
-    }
+    public string Name => "PreviousMachineMode";
 
-    public bool IsApplicable ()
-    {
-      return true;
-    }
+    public bool IsApplicable () => true;
 
     public DynamicTimeApplicableStatus IsApplicableAt (DateTime dateTime)
     {
