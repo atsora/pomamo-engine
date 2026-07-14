@@ -116,7 +116,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (CycleDetectionStatusExtension));
           extensionsProvider.Add (typeof (DynamicEndExtensionApplicableOutOfCycle));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
           Assert.That (machine, Is.Not.Null);
@@ -127,7 +127,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
           DynamicEndExtensionApplicableOutOfCycle.SetFinal (T (15));
 
-          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "ApplicableOutOfCycle",
@@ -165,7 +165,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (CycleDetectionStatusExtension));
           extensionsProvider.Add (typeof (DynamicEndExtensionApplicableOutOfCycle));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
           Assert.That (machine, Is.Not.Null);
@@ -175,7 +175,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
           DynamicEndExtensionApplicableOutOfCycle.SetFinal (T (15));
 
-          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "ApplicableOutOfCycle",
@@ -213,7 +213,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (CycleDetectionStatusExtension));
           extensionsProvider.Add (typeof (DynamicEndExtensionApplicableOutOfCycle));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
           Assert.That (machine, Is.Not.Null);
@@ -224,7 +224,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
           DynamicEndExtensionApplicableOutOfCycle.SetFinal (T (7));
 
-          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "ApplicableOutOfCycle",
@@ -262,7 +262,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (CycleDetectionStatusExtension));
           extensionsProvider.Add (typeof (DynamicEndExtensionApplicableOutOfCycle));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
           Assert.That (machine, Is.Not.Null);
@@ -272,7 +272,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
           DynamicEndExtensionApplicableOutOfCycle.SetFinal (T (15));
 
-          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "ApplicableOutOfCycle",
@@ -310,7 +310,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (CycleDetectionStatusExtension));
           extensionsProvider.Add (typeof (DynamicEndExtensionApplicableOutOfCycle));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
           Assert.That (machine, Is.Not.Null);
@@ -320,7 +320,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
           DynamicEndExtensionApplicableOutOfCycle.SetFinal (T (15));
 
-          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "ApplicableOutOfCycle",
@@ -358,7 +358,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (CycleDetectionStatusExtension));
           extensionsProvider.Add (typeof (DynamicEndExtensionApplicableOutOfCycle));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
           Assert.That (machine, Is.Not.Null);
@@ -366,7 +366,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           CycleDetectionStatusExtension.SetCycleDetectionDateTime (T (100));
           DynamicEndExtensionApplicableOutOfCycle.SetNotApplicable ();
 
-          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.ApplicableOutOfCycleDynamicTime.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "ApplicableOutOfCycle",

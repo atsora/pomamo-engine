@@ -28,18 +28,9 @@ namespace Lemoine.Plugin.SameMachineMode
       get; private set;
     }
 
-    public string Name
-    {
-      get
-      {
-        return "NextActiveMachineMode";
-      }
-    }
+    public string Name => "NextActiveMachineMode";
 
-    public bool IsApplicable ()
-    {
-      return true;
-    }
+    public bool IsApplicable () => true;
 
     public DynamicTimeApplicableStatus IsApplicableAt (DateTime dateTime)
     {
@@ -74,7 +65,7 @@ namespace Lemoine.Plugin.SameMachineMode
         .Intersects (new UtcDateTimeRange (dateTime)));
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Get: dateTime={0} limit={1} hint={2} => No data", dateTime, limit, hint);
+          log.Debug ($"Get: dateTime={dateTime} limit={limit} hint={hint} => No data");
         }
         return this.CreateNoData ();
       }
@@ -119,7 +110,7 @@ namespace Lemoine.Plugin.SameMachineMode
               Debug.Assert (0 != machineModeId);
               if (lastFactEnd < fact.Begin) { // Gap
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: gap {0}-{1}", lastFactEnd, fact.Begin);
+                  log.Warn ($"Get: gap {lastFactEnd}-{fact.Begin}");
                 }
                 machineModeChange = true;
               }
@@ -205,7 +196,7 @@ namespace Lemoine.Plugin.SameMachineMode
     {
       if (IsFactAfter (dateTime)) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetInitialGap: initial gap in fact at {0} => NotApplicable", dateTime);
+          log.Warn ($"GetInitialGap: initial gap in fact at {dateTime} => NotApplicable");
         }
         return this.CreateNotApplicable ();
       }
