@@ -77,7 +77,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           var extensionsProvider = new AdditionalExtensionsOnlyProvider ();
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (MockOtherMachineSourceDynamicTime));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.DynamicTimeOtherMachine.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.DynamicTimeOtherMachine.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
           var otherMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
@@ -88,7 +88,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
           MockOtherMachineSourceDynamicTime.Mode = MockOtherMachineSourceDynamicTime.ResponseMode.FinalFromMachineId;
 
-          var extension = new Lemoine.Plugin.DynamicTimeOtherMachine.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.DynamicTimeOtherMachine.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "DynamicTimeOtherMachine",
@@ -123,7 +123,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           var extensionsProvider = new AdditionalExtensionsOnlyProvider ();
           Lemoine.Extensions.ExtensionManager.Initialize (extensionsProvider, force: true);
           extensionsProvider.Add (typeof (MockOtherMachineSourceDynamicTime));
-          extensionsProvider.Add (typeof (Lemoine.Plugin.DynamicTimeOtherMachine.ApplicableOutOfCycle));
+          extensionsProvider.Add (typeof (Lemoine.Plugin.DynamicTimeOtherMachine.DynamicTimeExtension));
 
           var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (1);
           var otherMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (2);
@@ -134,7 +134,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
 
           MockOtherMachineSourceDynamicTime.Mode = MockOtherMachineSourceDynamicTime.ResponseMode.NotApplicableOnOtherFinalOnOwn;
 
-          var extension = new Lemoine.Plugin.DynamicTimeOtherMachine.ApplicableOutOfCycle ();
+          var extension = new Lemoine.Plugin.DynamicTimeOtherMachine.DynamicTimeExtension ();
           extension.SetTestConfiguration ("""
             {
               "Name": "DynamicTimeOtherMachine",
