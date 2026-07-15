@@ -217,10 +217,14 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
               var goodLoadingTime = previousCycle.IsGoodLoadingTime (cycle.End.Value,
                 m_configuration.MaxLoadingDurationMultiplicator);
               switch (goodLoadingTime) {
+                case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                  if (log.IsWarnEnabled) {
+                    log.Warn ($"GetValid: goodLoadingTime is NOT_APPLICABLE for cycle {cycle.Id}, but consider it is ok");
+                  }
+                  goto case GoodCycleExtensionResponse.OK;
                 case GoodCycleExtensionResponse.OK:
                   break;
                 case GoodCycleExtensionResponse.KO:
-                case GoodCycleExtensionResponse.NOT_APPLICABLE:
                   nGoodCycles = 0;
                   end = null;
                   operationSlot = null;
@@ -246,6 +250,11 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             }
             var good = cycle.IsGood (m_configuration.MaxMachiningDurationMultiplicator);
             switch (good) {
+              case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                if (log.IsInfoEnabled) {
+                  log.Info ($"GetValid: IsGood is NOT_APPLICABLE for cycle {cycle.Id}, but consider it is OK");
+                }
+                goto case GoodCycleExtensionResponse.OK;
               case GoodCycleExtensionResponse.OK:
                 Debug.Assert (cycle.Begin.HasValue);
                 if (0 == nGoodCycles) {
@@ -254,7 +263,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
                 Debug.Assert (end.HasValue);
                 if (!hint.ContainsElement (end.Value)) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("GetValid: hint {0} does not contain {1}, give up", hint, end);
+                    log.Debug ($"GetValid: hint {hint} does not contain {end}, give up");
                   }
                   return this.CreateNoData ();
                 }
@@ -266,7 +275,6 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
                 }
                 break;
               case GoodCycleExtensionResponse.KO:
-              case GoodCycleExtensionResponse.NOT_APPLICABLE:
                 nGoodCycles = 0;
                 end = null;
                 operationSlot = null;
@@ -289,7 +297,9 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             previousCycle = cycle;
           } // Loop on cycles
 
-          log.DebugFormat ("GetValid: no enough good cycles before {0} => NoData", dateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetValid: no enough good cycles before {dateTime} => NoData");
+          }
           return this.CreateNoData ();
         }
       }

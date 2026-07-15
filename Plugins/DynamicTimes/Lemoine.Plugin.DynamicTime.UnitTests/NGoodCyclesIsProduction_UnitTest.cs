@@ -84,9 +84,9 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
         session.ForceUniqueSession ();
         using (IDAOTransaction transaction = session.BeginTransaction ()) {
           try {
-            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.LastProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
-            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
-            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionStart.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
+            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.LastProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
+            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
+            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionStart.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
 
             IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindById (2);
@@ -180,9 +180,9 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
         session.ForceUniqueSession ();
         using (var transaction = session.BeginTransaction ()) {
           try {
-            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.LastProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
-            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
-            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionStart.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
+            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.LastProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
+            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
+            Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionStart.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
 
             IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindById (2);
@@ -214,30 +214,30 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
             Lemoine.Extensions.ExtensionManager.Add (typeof (CycleDetectionStatusExtension));
 
             Lemoine.Extensions.Package.PackageFile
-              .InstallOrUpgradeJsonString (@"
-{
-  ""Identifier"": ""NGoodCyclesIsProduction_UnitTest"",
-  ""Name"": ""UnitTest"",
-  ""Description"": """",
-  ""Tags"": [],
-  ""Version"": 1,
-  ""Plugins"": [
-    {
-      ""Name"": ""NGoodCyclesIsProduction"",
-      ""Instances"": [
-        {
-          ""Name"": ""Test"",
-          ""Parameters"": {
-  ""NumberOfGoodCycles"": 2,
-  ""MaxMachiningDurationMultiplicator"": 1.0,
-  ""MaxLoadingDurationMultiplicator"": 1.0
-          }
-        }
-      ]
-    }
-  ]
-}
-", true, true);
+              .InstallOrUpgradeJsonString ("""
+                {
+                  "Identifier": "NGoodCyclesIsProduction_UnitTest",
+                  "Name": "UnitTest",
+                  "Description": "",
+                  "Tags": [],
+                  "Version": 1,
+                  "Plugins": [
+                    {
+                      "Name": "NGoodCyclesIsProduction",
+                      "Instances": [
+                        {
+                          "Name": "Test",
+                          "Parameters": {
+                            "NumberOfGoodCycles": 2,
+                            "MaxMachiningDurationMultiplicator": 1.0,
+                            "MaxLoadingDurationMultiplicator": 1.0
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                """, true, true);
             Lemoine.Extensions.ExtensionManager.Activate (false);
             Lemoine.Extensions.ExtensionManager.Load ();
 
@@ -263,7 +263,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
             CreateCycle (machine, operationSlot, R (50, 70));
             CheckFinal ("LastProductionEnd", machine, T (80), T (31));
             CheckFinal ("NextProductionStart", machine, T (0), T (10));
-            CheckAfter ("NextProductionStart", machine, T (21), T (70));
+            CheckAfter ("NextProductionStart", machine, T (21), T (50));
             CheckFinal ("NextProductionEnd", machine, T (0), T (31));
             CheckFinal ("NextProductionEnd", machine, T (21), T (31));
 
@@ -297,9 +297,10 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       using (IDAOTransaction transaction = session.BeginTransaction ()) {
         try {
-          Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.LastProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
-          Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
-          Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionStart.ApplicableTimeSpan", TimeSpan.FromDays (10 * 365));
+          Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.LastProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
+          Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionEnd.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
+          Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.NextProductionStart.ApplicableTimeSpan", TimeSpan.FromDays (20 * 365));
+          Lemoine.Info.ConfigSet.ForceValue ("NGoodCyclesIsProduction.LastProductionEnd.Timeout", TimeSpan.FromMinutes (30));
 
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (2);
@@ -340,30 +341,30 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           Lemoine.Extensions.ExtensionManager.Add (typeof (CycleDetectionStatusExtension));
 
           Lemoine.Extensions.Package.PackageFile
-            .InstallOrUpgradeJsonString (@"
-{
-  ""Identifier"": ""NGoodCyclesIsProduction_UnitTest"",
-  ""Name"": ""UnitTest"",
-  ""Description"": """",
-  ""Tags"": [],
-  ""Version"": 1,
-  ""Plugins"": [
-    {
-      ""Name"": ""NGoodCyclesIsProduction"",
-      ""Instances"": [
-        {
-          ""Name"": ""Test"",
-          ""Parameters"": {
-  ""NumberOfGoodCycles"": 2,
-  ""MaxMachiningDurationMultiplicator"": 1.0,
-  ""MaxLoadingDurationMultiplicator"": 1.0
-          }
-        }
-      ]
-    }
-  ]
-}
-", true, true);
+            .InstallOrUpgradeJsonString ("""
+              {
+                "Identifier": "NGoodCyclesIsProduction_UnitTest",
+                "Name": "UnitTest",
+                "Description": "",
+                "Tags": [],
+                "Version": 1,
+                "Plugins": [
+                  {
+                    "Name": "NGoodCyclesIsProduction",
+                    "Instances": [
+                      {
+                        "Name": "Test",
+                        "Parameters": {
+                          "NumberOfGoodCycles": 2,
+                          "MaxMachiningDurationMultiplicator": 1.0,
+                          "MaxLoadingDurationMultiplicator": 1.0
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+              """, true, true);
           Lemoine.Extensions.ExtensionManager.Activate (false);
           Lemoine.Extensions.ExtensionManager.Load ();
 
@@ -427,6 +428,9 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
         var response = Lemoine.Business.DynamicTimes.DynamicTime
           .GetDynamicTime (name, machine, dateTime);
         Assert.Multiple (() => {
+          Assert.That (response.NotApplicable, Is.False, $"CheckAfter {name}: response is NotApplicable");
+          Assert.That (response.NoData, Is.False, $"CheckAfter {name}: response is NoData");
+          Assert.That (response.Hint.IsEmpty (), Is.False, $"CheckAfter {name}: hint is empty");
           Assert.That (response.Hint.Lower.HasValue, Is.True);
           Assert.That (response.Hint.Lower.Value, Is.EqualTo (after));
           Assert.That (response.Final.HasValue, Is.False);

@@ -151,7 +151,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
           IOperationSlot operationSlot = null;
           foreach (var cycle in cycles) {
             if (timeout < DateTime.UtcNow.Subtract (startDateTime)) {
-              log.Error ($"GetValid: timeout, start={startDateTime} VS timeout={timeout}");
+              log.Error ($"Get: timeout, start={startDateTime} VS timeout={timeout}");
               return this.CreateTimeout ();
             }
 
@@ -161,15 +161,15 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
               if (operationDetectionDateTime.HasValue
                 && (operationChangeDateTime <= operationDetectionDateTime.Value)) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: operation change at {0} => reset everything", operationChangeDateTime);
+                  log.Debug ($"Get: operation change at {operationChangeDateTime} => reset everything");
                 }
                 nbGoodCycles = 0;
-                afterResponse = cycle.DateTime;
+                afterResponse = cycle.Begin ?? cycle.DateTime;
                 firstGoodCycleStart = null;
               }
               else {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: operation detection date/time {0} is before operation change {1}", operationDetectionDateTime, operationChangeDateTime);
+                  log.Debug ($"Get: operation detection date/time {operationDetectionDateTime} is before operation change {operationChangeDateTime}");
                 }
                 var newHint = hint;
                 if (afterResponse.HasValue) {
@@ -195,10 +195,14 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             if (lastCycleEnd.HasValue && cycle.Begin.HasValue) { // Check loading time
               var goodLoadingTime = IsGoodLoadingTime (cycle, lastCycleEnd.Value);
               switch (goodLoadingTime) {
+                case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                  if (log.IsInfoEnabled) {
+                    log.Info ($"Get: loading time is NOT_APPLICABLE for cycle {cycle.Id}, but consider it is OK");
+                  }
+                  goto case GoodCycleExtensionResponse.OK;
                 case GoodCycleExtensionResponse.OK:
                   break;
                 case GoodCycleExtensionResponse.KO:
-                case GoodCycleExtensionResponse.NOT_APPLICABLE:
                   nbGoodCycles = 0;
                   afterResponse = cycle.Begin.Value;
                   firstGoodCycleStart = null;
@@ -231,6 +235,11 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             // Check cycle
             var goodCycle = IsGoodCycle (cycle);
             switch (goodCycle) {
+              case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                if (log.IsWarnEnabled) {
+                  log.Warn ($"Get: GoodCycle is NOT_APPLICABLE for cycle {cycle.Id}, consider it is OK");
+                }
+                goto case GoodCycleExtensionResponse.OK;
               case GoodCycleExtensionResponse.OK:
                 ++nbGoodCycles;
                 if (!firstGoodCycleStart.HasValue) {
@@ -243,10 +252,9 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
                 lastCycleEnd = cycle.End;
                 break;
               case GoodCycleExtensionResponse.KO:
-              case GoodCycleExtensionResponse.NOT_APPLICABLE:
                 nbGoodCycles = 0;
                 if (cycle.Full) { // If partial, it may be ok in the future
-                  afterResponse = cycle.DateTime;
+                  afterResponse = cycle.Begin ?? cycle.DateTime;
                 }
                 firstGoodCycleStart = null;
                 break;
@@ -274,7 +282,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             if (cycleDetectionDateTime.HasValue) {
               if (Bound.Compare<DateTime> (correctedLimit.Upper, cycleDetectionDateTime.Value) < 0) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: no cycle in {0}-{1}", dateTime, correctedLimit.Upper);
+                  log.Debug ($"Get: no cycle in {dateTime}-{correctedLimit.Upper}");
                 }
                 return this.CreateNoData ();
               }
