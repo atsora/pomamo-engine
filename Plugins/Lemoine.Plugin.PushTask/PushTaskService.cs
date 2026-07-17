@@ -45,7 +45,7 @@ namespace Lemoine.Plugin.PushTask
           }
 
           revision = ModelDAOHelper.ModelFactory.CreateRevision ();
-          revision.Application = "Lem_AspService";
+          revision.Application = "AspService";
           revision.IPAddress = GetRequestRemoteIp ();
           ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistent (revision);
 

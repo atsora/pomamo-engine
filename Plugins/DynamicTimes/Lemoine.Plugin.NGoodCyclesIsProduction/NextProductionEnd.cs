@@ -255,10 +255,14 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             if (afterCycle.Begin.HasValue) {
               var goodLoadingTime = IsGoodLoadingTime (afterCycle, lastDateTime);
               switch (goodLoadingTime) {
+                case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                  if (log.IsInfoEnabled) {
+                    log.Info ($"GetValid: IsGoodLoadingTime not applicable for cycle {afterCycle.Id}");
+                  }
+                  goto case GoodCycleExtensionResponse.OK;
                 case GoodCycleExtensionResponse.OK:
                   break;
                 case GoodCycleExtensionResponse.KO:
-                case GoodCycleExtensionResponse.NOT_APPLICABLE:
                   return Stop (dateTime, operation, initialOperationSlot, nbGoodCyclesAfter, lastDateTime, firstCycle);
                 case GoodCycleExtensionResponse.POSTPONE:
                   var newHint = new UtcDateTimeRange (hint
@@ -273,13 +277,17 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             }
             var goodCycle = IsGoodCycle (afterCycle);
             switch (goodCycle) {
+              case GoodCycleExtensionResponse.NOT_APPLICABLE:
+                if (log.IsWarnEnabled) {
+                  log.Warn ($"GetValid: IsGood not applicable for cycle {afterCycle.Id}");
+                }
+                goto case GoodCycleExtensionResponse.OK;
               case GoodCycleExtensionResponse.OK:
                 Debug.Assert (afterCycle.End.HasValue);
                 ++nbGoodCyclesAfter;
                 lastDateTime = afterCycle.End.Value;
                 break;
               case GoodCycleExtensionResponse.KO:
-              case GoodCycleExtensionResponse.NOT_APPLICABLE:
                 return Stop (dateTime, operation, initialOperationSlot, nbGoodCyclesAfter, lastDateTime, firstCycle);
               case GoodCycleExtensionResponse.POSTPONE:
                 // TODO:
@@ -295,12 +303,12 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
             }
           }
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetValid: {0} good cycles detected until {1} in range {2}", nbGoodCyclesAfter, lastDateTime, range);
+            log.Debug ($"GetValid: {nbGoodCyclesAfter} good cycles detected until {lastDateTime} in range {range}");
           }
 
           if (Bound.Compare<DateTime> (correctedLimit.Upper, detectionDateTime) < 0) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetValid: there won't be any cycle before limit {0}", correctedLimit.Upper);
+              log.Debug ($"GetValid: there won't be any cycle before limit {correctedLimit.Upper}");
             }
             return this.CreateNoData ();
           }
@@ -466,10 +474,14 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
         if (cycle.End.HasValue && previousCycle.Begin.HasValue) { // First
           var goodLoadingTime = IsGoodLoadingTime (previousCycle, cycle.End.Value);
           switch (goodLoadingTime) {
+            case GoodCycleExtensionResponse.NOT_APPLICABLE:
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Stop: IsGoodLoadingTime not applicable for cycle {previousCycle.Id}");
+              }
+              goto case GoodCycleExtensionResponse.OK;
             case GoodCycleExtensionResponse.OK:
               break;
             case GoodCycleExtensionResponse.KO:
-            case GoodCycleExtensionResponse.NOT_APPLICABLE:
               if (log.IsDebugEnabled) {
                 log.Debug ($"Stop: bad loading time for cycle {previousCycle.Id}");
               }
@@ -482,19 +494,23 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
 
         var goodCycle = IsGoodCycle (cycle);
         switch (goodCycle) {
+          case GoodCycleExtensionResponse.NOT_APPLICABLE:
+            if (log.IsWarnEnabled) {
+              log.Warn ($"Stop: IsGood not applicable for cycle {cycle.Id}");
+            }
+            goto case GoodCycleExtensionResponse.OK;
           case GoodCycleExtensionResponse.OK:
             ++nbGoodCycles;
             if (m_configuration.NumberOfGoodCycles <= nbGoodCycles) {
               Debug.Assert (m_configuration.NumberOfGoodCycles == nbGoodCycles);
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Stop: enough good cycles detected");
+                log.Debug ($"Stop: enough good cycles detected");
               }
               return this.CreateFinal (stopDateTime);
             }
             previousCycle = cycle;
             break;
           case GoodCycleExtensionResponse.KO:
-          case GoodCycleExtensionResponse.NOT_APPLICABLE:
             return NotEnoughGoodCycles (nbGoodCycles);
           case GoodCycleExtensionResponse.POSTPONE:
             var newHint = new UtcDateTimeRange (stopDateTime, stopDateTime, "[]");
