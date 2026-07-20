@@ -106,7 +106,7 @@ namespace Lemoine.Model
     string DescriptionOrTranslation { get; }
 
     /// <summary>
-    /// Color to use when the reason group is displayed in an application
+    /// Color to use
     /// </summary>
     string Color { get; set; }
 
