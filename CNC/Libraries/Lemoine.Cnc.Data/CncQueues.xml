@@ -291,6 +291,13 @@ in the install directory and rename the copy into CncQueues.overwrite.xml
                        writepriority="76"
                        readpriority="-1" />
       </queue>
+      <queue>
+        <configuration suffix="-CV-WarmUp"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^WarmUp$"
+                       writepriority="77"
+                       readpriority="-1" />
+      </queue>
 
       <!-- Tool / Pallet (8x) -->
       <queue>

@@ -325,6 +325,10 @@ namespace Lemoine.Model
     /// Optional parent of all the probing cycle machine modes
     /// </summary>
     ProbingCycleAny = 79,
+    /// <summary>
+    /// Warm-up mode
+    /// </summary>
+    WarmUp = 80,
   }
 
   /// <summary>

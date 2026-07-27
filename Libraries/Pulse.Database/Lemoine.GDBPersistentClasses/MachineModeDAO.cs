@@ -540,6 +540,13 @@ namespace Lemoine.GDBPersistentClasses
       autoAlarmStop.Color = "#FF0000"; // Red
       InsertDefaultValue (autoAlarmStop);
       // Note: add here ProbingCycleInactive, ProbingCycleAny and ProbingCycleUnknown if required in the future
+      // WarmUp
+      IMachineMode warmUp = new MachineMode ((int)MachineModeId.WarmUp, "MachineModeWarmUp",
+                                             true, MachineModeCategoryId.Active, autoActive);
+      warmUp.Auto = true;
+      warmUp.AutoSequence = true;
+      warmUp.Color = "#993399"; // Purple
+      InsertDefaultValue (warmUp);
     }
     
     /// <summary>
