@@ -98,7 +98,12 @@ namespace Lemoine.Model
     /// May be null if the limit is not configured.
     /// </summary>
     double? Limit { get; set; }
-    
+
+    /// <summary>
+    /// Delta at each cycle (for Grinding Wheel Wear for example)
+    /// </summary>
+    double? CycleDelta { get; set; }
+
     /// <summary>
     /// Unit of the values (type of life)
     /// </summary>

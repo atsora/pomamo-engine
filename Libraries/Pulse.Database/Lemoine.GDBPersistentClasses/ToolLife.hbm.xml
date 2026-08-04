@@ -30,6 +30,8 @@
               column="toollifewarning" />
     <property name="Limit"
               column="toollifelimit" />
+    <property name="CycleDelta"
+              column="toollifecycledelta" />
     <many-to-one name="Unit"
                  column="unitid"
                  class="Unit" />
