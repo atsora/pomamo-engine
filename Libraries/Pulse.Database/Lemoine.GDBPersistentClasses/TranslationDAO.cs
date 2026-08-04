@@ -3697,6 +3697,22 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       {
+        ITranslation translation = new Translation ("", "UnitToolNumberOfCycles");
+        translation.TranslationValue = "cycles";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "UnitToolNumberOfCycles");
+        translation.TranslationValue = "cycles";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "UnitToolNumberOfCycles");
+        translation.TranslationValue = "Zyklen";
+        InsertDefaultValue (translation);
+      }
+
+      {
         ITranslation translation = new Translation ("", "UnitToolNumberOfTimes");
         translation.TranslationValue = "times";
         InsertDefaultValue (translation);

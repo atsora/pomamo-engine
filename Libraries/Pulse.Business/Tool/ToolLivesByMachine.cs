@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -48,20 +49,15 @@ namespace Lemoine.Business.Tool
     static readonly string MIN_CYCLE_NUMBER_FOR_CYCLE_PROGRESS_KEY = "Tool.Expiration.MinCycleNumberForCycleProgress";
     static readonly int MIN_CYCLE_NUMBER_FOR_CYCLE_PROGRESS_DEFAULT = 1;
 
-    #region Members
     IProgressResponse m_progress = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ToolLivesByMachine).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
     public IMonitoredMachine Machine { get; internal set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -80,10 +76,6 @@ namespace Lemoine.Business.Tool
     {
       get; set;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -151,7 +143,7 @@ namespace Lemoine.Business.Tool
             toolLifes = toolLifes.Where (tl => operationTools.Contains (tl.Position.ToolNumber));
           }
           else {
-            log.InfoFormat ("Get: operationId {0} does not reference any tool", ((IDataWithId)response.Operation).Id);
+            log.Info ($"Get: operationId {((IDataWithId)response.Operation).Id} does not reference any tool");
           }
         }
 
@@ -169,7 +161,7 @@ namespace Lemoine.Business.Tool
 
         // - Estimate the remaining time before expiration
         if (response.Tools.Any (t => IsToolLifeByCycle (t.ToolLife) && !t.Expired)) {
-          SetRemainingTimeIfByCycle (response);
+          SetRemainingTimeIfByCycle (response); // Including parts and wear...
         }
         if ((null != response.Operation) && response.Tools.Any (t => IsToolLifeByDuration (t.ToolLife) && !t.Expired)) {
           SetRemainingTimeIfByDuration (response);
@@ -355,6 +347,9 @@ namespace Lemoine.Business.Tool
           && IsToolLifeByNumberOfTimes (toolResponse.ToolLife)) {
         SetRemainingCyclesToLimitIfByNumberOfTimes (toolResponse, response.Operation, remainingLifeToLimit);
       }
+      else if (IsToolLifeByWear (toolResponse.ToolLife)) {
+        SetRemainingCyclesToLimitIfByWear (toolResponse, remainingLifeToLimit);
+      }
       else {
         toolResponse.RemainingCyclesToLimit = (int)remainingLifeToLimit;
       }
@@ -363,8 +358,7 @@ namespace Lemoine.Business.Tool
     void SetRemainingCyclesToLimitIfByNumberOfParts (ToolLifeResponse toolResponse, double remainingLifeToLimit, int numberOfPiecesByCycle)
     {
       if (0 == numberOfPiecesByCycle) {
-        log.ErrorFormat ("SetRemainingCyclesToLimitIfByCycle: " +
-                         "the configured operation quantity is 0, please correct it");
+        log.Error ($"SetRemainingCyclesToLimitIfByCycle: the configured operation quantity is 0, please correct it");
         toolResponse.RemainingCyclesToLimit = (int)remainingLifeToLimit;
       }
       else {
@@ -379,13 +373,24 @@ namespace Lemoine.Business.Tool
         .Get (new Lemoine.Business.Tool.OperationToolSequences (operation, toolNumber));
       var times = sequences.Count ();
       if (0 == times) {
-        log.ErrorFormat ("SetRemainingCyclesToLimitIfByNumberOfTimes: " +
-                         "the number of sequences with tool# {0} is 0, please correct it", toolNumber);
+        log.Error ($"SetRemainingCyclesToLimitIfByNumberOfTimes: the number of sequences with tool# {toolNumber} is 0, please correct it");
         // This should not happen, because only the tools that are in one of the sequences are considered here
         toolResponse.RemainingCyclesToLimit = (int)remainingLifeToLimit;
       }
       else { // This is an approximation for the moment... we could be more precise, but not necessary right now
         toolResponse.RemainingCyclesToLimit = (int)remainingLifeToLimit / times;
+      }
+    }
+
+    void SetRemainingCyclesToLimitIfByWear (ToolLifeResponse toolResponse, double remainingLifeToLimit)
+    {
+      var cycleDelta = toolResponse.ToolLife.CycleDelta;
+      if (!cycleDelta.HasValue) {
+        log.Error ($"SetRemainingCyclesToLimitIfByWear: no cycle delta defined for tool life {toolResponse.ToolLife.Id} => consider delta is 1");
+        toolResponse.RemainingCyclesToLimit = (int)remainingLifeToLimit;
+      }
+      else {
+        toolResponse.RemainingCyclesToLimit = (int)(remainingLifeToLimit / cycleDelta.Value);
       }
     }
 
@@ -889,7 +894,7 @@ namespace Lemoine.Business.Tool
       }
 
       Debug.Assert (false);
-      log.FatalFormat ("GetRemainingTimeIfDuration: the function should have already returned");
+      log.Fatal ($"GetRemainingTimeIfDuration: the function should have already returned");
       throw new InvalidProgramException ("GetRemainingTimeIfDuration");
     }
 
@@ -898,7 +903,8 @@ namespace Lemoine.Business.Tool
       return (null != toolLife) && (null != toolLife.Unit)
         && (toolLife.Unit.Id.Equals ((int)UnitId.NumberOfCycles)
             || toolLife.Unit.Id.Equals ((int)UnitId.ToolNumberOfTimes)
-            || toolLife.Unit.Id.Equals ((int)UnitId.NumberOfParts));
+            || toolLife.Unit.Id.Equals ((int)UnitId.NumberOfParts)
+            || toolLife.Unit.Id.Equals ((int)UnitId.ToolWear)); // Using CycleDelta, which is the wear per cycle
     }
 
     bool IsToolLifeByNumberOfParts (IToolLife toolLife)
@@ -923,6 +929,12 @@ namespace Lemoine.Business.Tool
         && (toolLife.Unit.Id.Equals ((int)UnitId.DurationHours)
             || toolLife.Unit.Id.Equals ((int)UnitId.DurationMinutes)
             || toolLife.Unit.Id.Equals ((int)UnitId.DurationSeconds));
+    }
+
+    bool IsToolLifeByWear (IToolLife toolLife)
+    {
+      return (null != toolLife) && (null != toolLife.Unit)
+        && (toolLife.Unit.Id.Equals ((int)UnitId.ToolWear));
     }
 
     /// <summary>
