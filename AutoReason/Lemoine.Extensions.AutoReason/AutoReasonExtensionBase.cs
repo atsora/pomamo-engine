@@ -100,7 +100,6 @@ namespace Lemoine.Extensions.AutoReason
     /// </summary>
     public DateTime DateTime => m_dateTime;
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -119,7 +118,6 @@ namespace Lemoine.Extensions.AutoReason
     {
       m_pluginKey = pluginKey;
     }
-    #endregion // Constructors
 
     #region Lemoine.Threading.IChecked implementation
     /// <summary>
