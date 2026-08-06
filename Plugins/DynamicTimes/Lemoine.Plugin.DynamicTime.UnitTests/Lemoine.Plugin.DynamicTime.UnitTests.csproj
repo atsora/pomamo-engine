@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\DynamicTime\Lemoine.Plugin.DynamicTimeBusy\Lemoine.Plugin.DynamicTimeBusy.csproj" />
     <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\DynamicTime\Lemoine.Plugin.DynamicTimeLimitedBy\Lemoine.Plugin.DynamicTimeLimitedBy.csproj" />
     <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\DynamicTime\Lemoine.Plugin.DynamicTimeOtherMachine\Lemoine.Plugin.DynamicTimeOtherMachine.csproj" />
+    <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\DynamicTime\Lemoine.Plugin.DynamicTimesOperation\Lemoine.Plugin.DynamicTimesOperation.csproj" AdditionalProperties="TargetFramework=net8.0" />
     <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\DynamicTime\Lemoine.Plugin.IfApplicableDynamicTime\Lemoine.Plugin.IfApplicableDynamicTime.csproj" />
     <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\DynamicTime\Lemoine.Plugin.PreviousSpecificMachineMode\Lemoine.Plugin.PreviousSpecificMachineMode.csproj" />
     <ProjectReference Include="..\..\..\..\atracking-netapps\Plugins\DynamicTime\Lemoine.Plugin.RelativeApplicableRangeDynamicTime\Lemoine.Plugin.RelativeApplicableRangeDynamicTime.csproj" />
