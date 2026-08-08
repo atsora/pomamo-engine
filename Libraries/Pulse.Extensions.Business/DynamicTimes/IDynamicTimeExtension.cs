@@ -20,7 +20,7 @@ namespace Lemoine.Extensions.Business.DynamicTimes
     /// <summary>
     /// Returns a date/time hint range where the final result will be
     /// </summary>
-    UtcDateTimeRange Hint { get; }
+    UtcDateTimeRange Hint { get; set; }
 
     /// <summary>
     /// No dynamic time could be found in the limit (interrupted)
@@ -65,12 +65,17 @@ namespace Lemoine.Extensions.Business.DynamicTimes
   /// </summary>
   public class DynamicTimeResponse : IDynamicTimeResponse
   {
+    UtcDateTimeRange m_hint = new UtcDateTimeRange (new LowerBound<DateTime> (null), new UpperBound<DateTime> (null));
+
     /// <summary>
     /// <see cref="IDynamicTimeResponse"/>
     /// </summary>
     public UtcDateTimeRange Hint
     {
-      get; private set;
+      get => m_hint;
+      set {
+        m_hint = new UtcDateTimeRange (m_hint.Intersects (value));
+      }
     }
 
     /// <summary>

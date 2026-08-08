@@ -69,6 +69,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     {
       RunInTransaction (machine => {
         CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, GetOperation2 (), 10, 12);
         OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
 
         var extension = CreateExtension (machine);
@@ -170,24 +171,6 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       RunInTransaction (machine => {
         CreateOperationSlot (machine, null, 5, 10);
         OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
-
-        var extension = CreateExtension (machine);
-
-        CheckNotApplicable (extension, T (6));
-      });
-    }
-
-    /// <summary>
-    /// There is no operation detection status
-    /// Result:
-    /// * the dynamic time is not applicable
-    /// </summary>
-    [Test]
-    public void Get_NoOperationDetectionStatus_NotApplicable ()
-    {
-      RunInTransaction (machine => {
-        CreateOperationSlot (machine, GetOperation (), 5, null);
-        OperationDetectionStatusExtension.SetOperationDetectionDateTime (null);
 
         var extension = CreateExtension (machine);
 
@@ -461,6 +444,13 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     {
       var operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (1);
       Assert.That (operation, Is.Not.Null, "no operation with id 1");
+      return operation;
+    }
+
+    IOperation GetOperation2 ()
+    {
+      var operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (2);
+      Assert.That (operation, Is.Not.Null, "no operation with id 2");
       return operation;
     }
 

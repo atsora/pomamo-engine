@@ -37,16 +37,14 @@ namespace Lemoine.Model
     public bool HasValue {
       get { return m_boundValue.HasValue; }
     }
-    
+
     /// <summary>
     /// Return the date/time if it is not null
     /// 
     /// Else an exception is raised
     /// </summary>
     [XmlIgnore]
-    public T Value {
-      get { return m_boundValue.Value; }
-    }
+    public T Value => m_boundValue.Value;
     
     /// <summary>
     /// Bound type: always Upper
