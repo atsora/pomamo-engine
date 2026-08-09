@@ -179,6 +179,219 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     }
 
     /// <summary>
+    /// Two consecutive operation slots share the same operation and another operation follows
+    /// Result:
+    /// * the end of the last operation slot of the same operation is returned as a final date/time,
+    ///   whichever operation slot the requested date/time belongs to
+    /// </summary>
+    [Test]
+    public void Get_ConsecutiveOperationSlotsSameOperation_FinalAtLastEnd ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, GetOperation (), 10, 15);
+        CreateOperationSlot (machine, GetOperation2 (), 15, 20);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckFinal (extension, T (5), T (15));
+        CheckFinal (extension, T (6), T (15));
+        CheckFinal (extension, T (12), T (15));
+      });
+    }
+
+    /// <summary>
+    /// More than two consecutive operation slots share the same operation
+    /// Result:
+    /// * they are all merged and the end of the last one is returned as a final date/time
+    /// </summary>
+    [Test]
+    public void Get_ManyConsecutiveOperationSlotsSameOperation_FinalAtLastEnd ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, GetOperation (), 10, 15);
+        CreateOperationSlot (machine, GetOperation (), 15, 20);
+        CreateOperationSlot (machine, GetOperation (), 20, 25);
+        CreateOperationSlot (machine, GetOperation2 (), 25, 30);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckFinal (extension, T (6), T (25));
+        CheckFinal (extension, T (22), T (25));
+      });
+    }
+
+    /// <summary>
+    /// Two operation slots share the same operation but they are separated by a gap
+    /// (no operation slot at all in between)
+    /// Result:
+    /// * the operation is not extended after the gap, the end of the first operation slot
+    ///   is returned as a final date/time
+    /// </summary>
+    [Test]
+    public void Get_GapBetweenOperationSlotsSameOperation_FinalBeforeGap ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, GetOperation (), 12, 15);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckFinal (extension, T (6), T (10));
+      });
+    }
+
+    /// <summary>
+    /// Two operation slots share the same operation but an operation slot without any operation
+    /// is in between
+    /// Result:
+    /// * the operation is not extended after the operation slot without operation,
+    ///   the end of the first operation slot is returned as a final date/time
+    /// </summary>
+    [Test]
+    public void Get_OperationSlotWithoutOperationBetweenSameOperation_FinalBeforeIt ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, null, 10, 12);
+        CreateOperationSlot (machine, GetOperation (), 12, 15);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckFinal (extension, T (6), T (10));
+      });
+    }
+
+    /// <summary>
+    /// The same operation is detected again, but only after another operation
+    /// Result:
+    /// * the first operation change is returned as a final date/time
+    /// </summary>
+    [Test]
+    public void Get_SameOperationAfterAnotherOperation_FinalAtFirstOperationChange ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, GetOperation2 (), 10, 15);
+        CreateOperationSlot (machine, GetOperation (), 15, 20);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckFinal (extension, T (6), T (10));
+      });
+    }
+
+    /// <summary>
+    /// Consecutive operation slots share the same operation, the last one being still on-going
+    /// Result:
+    /// * the response is pending, the operation may still be extended,
+    ///   with a hint starting at the operation detection date/time
+    /// </summary>
+    [Test]
+    public void Get_ConsecutiveOperationSlotsSameOperationLastOngoing_PendingWithHintAtOperationDetection ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, GetOperation (), 10, null);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckPendingWithHint (extension, T (6), T (100));
+      });
+    }
+
+    /// <summary>
+    /// Consecutive operation slots share the same operation and the last one is completed,
+    /// but nothing was detected after it
+    /// Result:
+    /// * the response is pending since the last operation slot may still be extended later,
+    ///   with a hint starting at the end of the last operation slot
+    /// </summary>
+    [Test]
+    public void Get_ConsecutiveOperationSlotsSameOperationNothingAfter_PendingWithHintAtLastEnd ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, GetOperation (), 10, 15);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckPendingWithHint (extension, T (6), T (15));
+      });
+    }
+
+    /// <summary>
+    /// An operation slot is followed by an operation slot without any operation, and nothing
+    /// was detected after it
+    /// Result:
+    /// * the response is pending since the operation slot without operation may still be
+    ///   completed later with the same operation,
+    ///   with a hint starting at the end of the operation slot
+    /// </summary>
+    [Test]
+    public void Get_OperationSlotWithoutOperationAtTheEnd_PendingWithHintAtEnd ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 5, 10);
+        CreateOperationSlot (machine, null, 10, 12);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckPendingWithHint (extension, T (6), T (10));
+      });
+    }
+
+    /// <summary>
+    /// The first operation slot of the machine starts after the requested date/time,
+    /// which was already detected
+    /// Result:
+    /// * the dynamic time is not applicable
+    /// </summary>
+    [Test]
+    public void Get_OperationSlotsAfterRequestedDateTime_NotApplicable ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, GetOperation (), 10, 15);
+        CreateOperationSlot (machine, GetOperation2 (), 15, 20);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckNotApplicable (extension, T (6));
+      });
+    }
+
+    /// <summary>
+    /// The requested date/time is in an operation slot without any operation, that is followed
+    /// by operation slots with an operation
+    /// Result:
+    /// * the dynamic time is not applicable, the following operation slots are not considered
+    /// </summary>
+    [Test]
+    public void Get_OperationSlotWithoutOperationFollowedByOperations_NotApplicable ()
+    {
+      RunInTransaction (machine => {
+        CreateOperationSlot (machine, null, 5, 10);
+        CreateOperationSlot (machine, GetOperation (), 10, 15);
+        CreateOperationSlot (machine, GetOperation2 (), 15, 20);
+        OperationDetectionStatusExtension.SetOperationDetectionDateTime (T (100));
+
+        var extension = CreateExtension (machine);
+
+        CheckNotApplicable (extension, T (6));
+      });
+    }
+
+    /// <summary>
     /// A completed operation slot is applicable at its own date/times
     /// </summary>
     [Test]
@@ -484,6 +697,17 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       Assert.Multiple (() => {
         Assert.That (response.NotApplicable, Is.True, "the response should be not applicable");
         Assert.That (response.Final.HasValue, Is.False, "unexpected final date/time");
+      });
+    }
+
+    void CheckPendingWithHint (IDynamicTimeExtension extension, DateTime at, DateTime expectedHintLower)
+    {
+      var response = Get (extension, at);
+      Assert.Multiple (() => {
+        Assert.That (response.IsPending (), Is.True, "the response should be pending");
+        Assert.That (response.NotApplicable, Is.False, "unexpected not applicable");
+        Assert.That (response.Hint.Lower.HasValue, Is.True, "no hint lower bound");
+        Assert.That (response.Hint.Lower.Value, Is.EqualTo (expectedHintLower), "wrong hint lower bound");
       });
     }
 
