@@ -32,8 +32,12 @@ namespace Pulse.PluginImplementation.Analysis
   /// <item>componentCode</item>
   /// <item>partName</item>
   /// <item>partCode</item>
+  /// <item>partOpOrder</item>
+  /// <item>partOpCode</item>
   /// <item>opName</item>
   /// <item>opCode</item>
+  /// <item>partOp1Order / partOp2Order</item>
+  /// <item>partOp1Code / partOp2Code</item>
   /// <item>op1Name / op2Name</item>
   /// <item>op1Code / op2Code</item>
   /// <item>qty</item>
@@ -521,6 +525,17 @@ namespace Pulse.PluginImplementation.Analysis
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (iwp1);
             var l1 = component.AddIntermediateWorkPiece (iwp1);
+            if (TryGetData ("partOp1Order", out var partOp1Order)) {
+              if (int.TryParse (partOp1Order, out var partOp1OrderInt)) {
+                l1.Order = partOp1OrderInt;
+              }
+              else {
+                log.Error ($"GetOperation: invalid partOp1Order={partOp1Order}");
+              }
+            }
+            if (TryGetData ("partOp1Code", out var partOp1Code)) {
+              l1.Code = partOp1Code;
+            }
             ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l1);
             var iwp2 = ModelDAOHelper.ModelFactory.CreateIntermediateWorkPiece (operation);
             iwp2.Name = op2Name;
@@ -530,6 +545,17 @@ namespace Pulse.PluginImplementation.Analysis
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (iwp2);
             var l2 = component.AddIntermediateWorkPiece (iwp2);
+            if (TryGetData ("partOp2Order", out var partOp2Order)) {
+              if (int.TryParse (partOp2Order, out var partOp2OrderInt)) {
+                l2.Order = partOp2OrderInt;
+              }
+              else {
+                log.Error ($"GetOperation: invalid partOp2Order={partOp2Order}");
+              }
+            }
+            if (TryGetData ("partOp2Code", out var partOp2Code)) {
+              l2.Code = partOp2Code;
+            }
             ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l2);
             ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistent (component);
           }
@@ -542,6 +568,17 @@ namespace Pulse.PluginImplementation.Analysis
             }
             ModelDAOHelper.DAOFactory.IntermediateWorkPieceDAO.MakePersistent (intermediateWorkPiece);
             var l = component.AddIntermediateWorkPiece (intermediateWorkPiece);
+            if (TryGetData ("partOpOrder", out var partOpOrder)) {
+              if (int.TryParse (partOpOrder, out var partOpOrderInt)) {
+                l.Order = partOpOrderInt;
+              }
+              else {
+                log.Error ($"GetOperation: invalid partOpOrder={partOpOrder}");
+              }
+            }
+            if (TryGetData ("partOpCode", out var partOpCode)) {
+              l.Code = partOpCode;
+            }
             ModelDAOHelper.DAOFactory.ComponentIntermediateWorkPieceDAO.MakePersistent (l);
             ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistent (component);
           }
