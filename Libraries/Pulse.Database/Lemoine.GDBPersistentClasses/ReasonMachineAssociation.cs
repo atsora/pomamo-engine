@@ -694,16 +694,14 @@ namespace Lemoine.GDBPersistentClasses
           }
           else if (dynamicEndResponse.NotApplicable) {
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("MakeAnalysis: NotApplicable for dynamic end {0} range {1} hint {2} => completed",
-                dynamicEnd, this.Range, hint);
+              GetLogger ().Debug ($"MakeAnalysis: NotApplicable for dynamic end {dynamicEnd} range {this.Range} hint {hint} => completed");
             }
             CancelAndMarkDynamicTimeNotApplicable ();
             return;
           }
           else if (dynamicEndResponse.NoData) {
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("MakeAnalysis: no data for dynamic end {0} range {1} hint {2} => completed",
-                dynamicEnd, this.Range, hint);
+              GetLogger ().Debug ($"MakeAnalysis: no data for dynamic end {dynamicEnd} range {this.Range} hint {hint} => completed");
             }
             CancelAndMarkDynamicTimeNotApplicable ();
             return;
@@ -1470,7 +1468,7 @@ namespace Lemoine.GDBPersistentClasses
           .GetDynamicTime (dynamicEnd, this.Machine, this.DynamicTimeRange, new UtcDateTimeRange ("(,)"), limit);
       }
       catch (NoDynamicTime) {
-        GetLogger ().ErrorFormat ("MakeAnalysisDynamicEndAggressive: No dynamic end {0}", dynamicEnd);
+        GetLogger ().Error ($"MakeAnalysisDynamicEndAggressive: No dynamic end {dynamicEnd}");
         SetModificationInError ("Dynamic end " + dynamicEnd + " unknown");
         CheckNoReasonProposal ();
         return;
@@ -1486,16 +1484,14 @@ namespace Lemoine.GDBPersistentClasses
       }
       else if (dynamicEndResponse.NotApplicable) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("MakeAnalysisDynamicEndAggressive: notApplicable is returned for {0} at {1} => cancel and mark as completed",
-            dynamicEnd, this.DynamicTimeRange);
+          GetLogger ().Debug ($"MakeAnalysisDynamicEndAggressive: notApplicable is returned for {dynamicEnd} at {this.DynamicTimeRange} => cancel and mark as completed");
         }
         CancelAndMarkDynamicTimeNotApplicable ();
         return;
       }
       else if (dynamicEndResponse.NoData) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("MakeAnalysisDynamicEndAggressive: no data is returned for {0} at {1} => cancel and mark as completed",
-            dynamicEnd, this.DynamicTimeRange);
+          GetLogger ().Debug ($"MakeAnalysisDynamicEndAggressive: no data is returned for {dynamicEnd} at {this.DynamicTimeRange} => cancel and mark as completed");
         }
         CancelAndMarkDynamicTimeNotApplicable ();
         return;
@@ -1662,7 +1658,7 @@ namespace Lemoine.GDBPersistentClasses
     void CancelAndMarkDynamicTimeNotApplicable (UtcDateTimeRange range)
     {
       if (GetLogger ().IsDebugEnabled) {
-        GetLogger ().DebugFormat ("CancelAndMarkDynamicTimeNotApplicable: range={0}", range);
+        GetLogger ().Debug ($"CancelAndMarkDynamicTimeNotApplicable: range={range}");
       }
 
       CancelData ();
@@ -1672,7 +1668,7 @@ namespace Lemoine.GDBPersistentClasses
     void CancelReasonSlots (UtcDateTimeRange range)
     {
       if (GetLogger ().IsDebugEnabled) {
-        GetLogger ().DebugFormat ("CancelReasonSlots: range={0}", range);
+        GetLogger ().Debug ($"CancelReasonSlots: range={range}");
       }
       // TODO: the rules may change in the future. For example, check first how many reason slots have a reason that match
 
@@ -1683,11 +1679,11 @@ namespace Lemoine.GDBPersistentClasses
       foreach (var reasonSlot in reasonSlots) {
         SetActive ();
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("CancelReasonSlots: process reason slot with range {0}", reasonSlot.DateTimeRange);
+          GetLogger ().Debug ($"CancelReasonSlots: process reason slot with range {reasonSlot.DateTimeRange}");
         }
         if (null == this.Reason) {
           if (GetLogger ().IsErrorEnabled) {
-            GetLogger ().ErrorFormat ("CancelReasonSlots: the associated reason is null, which is not expected");
+            GetLogger ().Error ($"CancelReasonSlots: the associated reason is null, which is not expected");
           }
           // - Set the flags as unsafe... just in case
           if (this.Kind.HasFlag (ReasonMachineAssociationKind.Manual)) {
@@ -1700,7 +1696,7 @@ namespace Lemoine.GDBPersistentClasses
           if (!this.Kind.HasFlag (ReasonMachineAssociationKind.Manual)
             && !this.Kind.HasFlag (ReasonMachineAssociationKind.Auto)) {
             if (GetLogger ().IsErrorEnabled) {
-              GetLogger ().ErrorFormat ("CancelReasonSlots: nor Manual or Auto is set while reason is null, consider both");
+              GetLogger ().Error ($"CancelReasonSlots: nor Manual or Auto is set while reason is null, consider both");
             }
             reasonSlot.SetUnsafeManualFlag ();
             reasonSlot.SetUnsafeAutoReasonNumber ();
@@ -1721,7 +1717,7 @@ namespace Lemoine.GDBPersistentClasses
             if (!this.Kind.HasFlag (ReasonMachineAssociationKind.Manual)
               && !this.Kind.HasFlag (ReasonMachineAssociationKind.Auto)) {
               if (GetLogger ().IsErrorEnabled) {
-                GetLogger ().ErrorFormat ("CancelReasonSlots: nor Manual or Auto is set with different reasons");
+                GetLogger ().Error ($"CancelReasonSlots: nor Manual or Auto is set with different reasons");
               }
               if (reasonSlot.ReasonSource.HasFlag (ReasonSource.Manual)) {
                 reasonSlot.SetUnsafeManualFlag ();
@@ -1741,8 +1737,7 @@ namespace Lemoine.GDBPersistentClasses
               if (reasonSlot.ReasonSource.IsAuto ()) {
                 if (reasonSlot.ReasonSource.IsDefault ()) {
                   if (GetLogger ().IsWarnEnabled) {
-                    GetLogger ().WarnFormat ("CancelReasonSlots: cancel reason {0} in range {1} which corresponds to a default auto reason",
-                      this.Reason.Id, range);
+                    GetLogger ().Warn ($"CancelReasonSlots: cancel reason {this.Reason.Id} in range {range} which corresponds to a default auto reason");
                   }
                   reasonSlot.SetUnsafeAutoReasonNumber ();
                 }
@@ -1762,8 +1757,7 @@ namespace Lemoine.GDBPersistentClasses
             if (!this.Kind.HasFlag (ReasonMachineAssociationKind.Manual)
               && !this.Kind.HasFlag (ReasonMachineAssociationKind.Auto)) {
               if (GetLogger ().IsErrorEnabled) {
-                GetLogger ().ErrorFormat ("CancelReasonSlots: nor Manual or Auto is set with the same reason {0}",
-                  this.Reason.Id);
+                GetLogger ().Error ($"CancelReasonSlots: nor Manual or Auto is set with the same reason {this.Reason.Id}");
               }
               if (reasonSlot.ReasonSource.HasFlag (ReasonSource.Manual)) {
                 reasonSlot.SetUnsafeManualFlag ();
@@ -1771,8 +1765,7 @@ namespace Lemoine.GDBPersistentClasses
               if (reasonSlot.ReasonSource.IsAuto ()) {
                 if (reasonSlot.ReasonSource.IsDefault ()) {
                   if (GetLogger ().IsWarnEnabled) {
-                    GetLogger ().WarnFormat ("CancelReasonSlots: cancel reason {0} in range {1} which corresponds to a default auto reason",
-                      this.Reason.Id, range);
+                    GetLogger ().Warn ($"CancelReasonSlots: cancel reason {this.Reason.Id} in range {range} which corresponds to a default auto reason");
                   }
                   reasonSlot.SetUnsafeAutoReasonNumber ();
                 }
@@ -1849,7 +1842,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (string.IsNullOrEmpty (this.Dynamic));
       if (!string.IsNullOrEmpty (this.Dynamic)) {
-        log.FatalFormat ("Apply: association {0} was a dynamic value {1}, which is unexpected", this, this.Dynamic);
+        log.Fatal ($"Apply: association {this} was a dynamic value {this.Dynamic}, which is unexpected");
       }
       this.Analyze ();
     }
@@ -1910,7 +1903,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      GetLogger ().Debug ("ComputeNewSpan: no better end with the observation state slots, use the base method instead");
+      GetLogger ().Debug ("ComputeNewStepSpan: no better end with the observation state slots, use the base method instead");
       return base.ComputeNewStepSpan (range);
     }
 

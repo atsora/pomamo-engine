@@ -797,7 +797,7 @@ namespace Lemoine.GDBPersistentClasses
           .GetDynamicTime (dynamicEnd, this.Machine, this.DynamicTimeRange, new UtcDateTimeRange ("(,)"), limit);
       }
       catch (NoDynamicTime) {
-        log.ErrorFormat ("MakeAnalysisDynamicEndAggressive: No dynamic end {0}", dynamicEnd);
+        log.Error ($"MakeAnalysisDynamicEndAggressive: No dynamic end {dynamicEnd}");
         SetModificationInError ("Dynamic end " + dynamicEnd + " unknown");
         return;
       }
@@ -806,21 +806,21 @@ namespace Lemoine.GDBPersistentClasses
       
       if (dynamicEndResponse.Timeout) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("MakeAnalysisDynamicEndAggressive: Timeout is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.Warn ($"MakeAnalysisDynamicEndAggressive: Timeout is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
         MarkDynamicTimeNotApplicable ();
         return;
       }
       else if (dynamicEndResponse.NotApplicable) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEndAggressive: NotApplicable is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.Debug ($"MakeAnalysisDynamicEndAggressive: NotApplicable is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
         MarkDynamicTimeNotApplicable ();
         return;
       }
       else if (dynamicEndResponse.NoData) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEndAggressive: NoData is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.Debug ($"MakeAnalysisDynamicEndAggressive: NoData is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
         MarkDynamicTimeNotApplicable ();
         return;
@@ -843,7 +843,7 @@ namespace Lemoine.GDBPersistentClasses
           if (range.IsEmpty ()) {
             Debug.Assert (!string.IsNullOrEmpty (this.Dynamic) && this.Dynamic.EndsWith ("+"));
             if (string.IsNullOrEmpty (this.Dynamic) || !this.Dynamic.EndsWith ("+")) {
-              log.FatalFormat ("MakeAnalysisDynamicEndAggressive: unexpected value range={0} dynamic={1}", this.Range, this.Dynamic);
+              log.Fatal ($"MakeAnalysisDynamicEndAggressive: unexpected value range={this.Range} dynamic={this.Dynamic}");
               MarkAsCompleted ("");
               return;
             }
