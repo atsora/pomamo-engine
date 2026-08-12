@@ -27,10 +27,6 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
     string m_redirectName;
     IEnumerable<IDynamicTimeExtension> m_redirectExtensions = null;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -139,7 +135,6 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
       }
       return Lemoine.Business.DynamicTimes.DynamicTime.IsApplicableAt (redirectExtensions, this.Machine, dateTime);
     }
-    #endregion // Constructors
 
   }
 }

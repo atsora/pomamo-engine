@@ -24,14 +24,11 @@ namespace Pulse.Web.Tool
   {
     static readonly ILog log = LogManager.GetLogger (typeof (ToolLivesByMachineService).FullName);
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public ToolLivesByMachineService () : base (Lemoine.Core.Cache.CacheTimeOut.CurrentLong) { }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -54,7 +51,7 @@ namespace Pulse.Web.Tool
         monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindByIdWithMachineModules (request.MachineId);
         if (null == monitoredMachine) {
-          log.ErrorFormat ("GetWithoutCache: machine not monitored with ID {0}", request.MachineId);
+          log.Error ($"GetWithoutCache: machine not monitored with ID {request.MachineId}");
           return new ErrorDTO ("Machine with the specified ID is not monitored", ErrorStatus.WrongRequestParameter);
         }
 
@@ -62,7 +59,7 @@ namespace Pulse.Web.Tool
         if (request.MaxExpirationTime.HasValue) {
           toolLivesByMachine.MaxExpirationTime = TimeSpan.FromSeconds (request.MaxExpirationTime.Value);
         }
-        ToolLivesByMachineResponse toolLives = Lemoine.Business.ServiceProvider
+        var toolLives = Lemoine.Business.ServiceProvider
           .Get (toolLivesByMachine);
         response.DateTime = ConvertDTO.DateTimeUtcToIsoStringMs (toolLives.DateTime);
         if (null != toolLives.Operation) {
@@ -92,6 +89,5 @@ namespace Pulse.Web.Tool
 
       return response;
     }
-    #endregion // Methods
   }
 }

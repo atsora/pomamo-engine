@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name prefix (mandatory)
     /// </summary>
@@ -35,9 +34,7 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -68,7 +65,6 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
       errors = errors.Concat (errorList);
       return result;
     }
-    #endregion // Constructors
 
     /// <summary>
     /// <see cref="Lemoine.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>

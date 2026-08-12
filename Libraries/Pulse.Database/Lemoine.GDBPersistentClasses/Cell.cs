@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
     , ICell, IVersionable
     , IComparable, IDisplayPriorityCodeNameComparerItem
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -31,11 +30,9 @@ namespace Lemoine.GDBPersistentClasses
     int? m_displayPriority = null;
 
     ICollection<IMachine> m_machines = new InitialNullIdSet<IMachine, int> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Cell).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -109,14 +106,7 @@ namespace Lemoine.GDBPersistentClasses
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]
-    public virtual string SelectionText
-    {
-      get
-      {
-        return string.Format ("{0}: {1}",
-                              this.Id, this.Name);
-      }
-    }
+    public virtual string SelectionText => $"{this.Id}.{this.Name}";
 
     /// <summary>
     /// <see cref="ICell"/>
@@ -131,14 +121,29 @@ namespace Lemoine.GDBPersistentClasses
     /// Set of machines that are part of this cell
     /// </summary>
     [XmlIgnore]
-    public virtual ICollection<IMachine> Machines
+    public virtual ICollection<IMachine> Machines => m_machines;
+
+    /// <summary>
+    /// Add a machine in the member directly
+    /// 
+    /// To be used by the Machine class only
+    /// </summary>
+    /// <param name="machine"></param>
+    protected internal virtual void AddMachineForInternalUse (IMachine machine)
     {
-      get
-      {
-        return m_machines;
-      }
+      AddToProxyCollection<IMachine> (m_machines, machine);
     }
-    #endregion // Getters / Setters
+
+    /// <summary>
+    /// Remove a machine in the member directly
+    /// 
+    /// To be used by the Machine class only
+    /// </summary>
+    /// <param name="machine"></param>
+    protected internal virtual void RemoveMachineForInternalUse (IMachine machine)
+    {
+      RemoveFromProxyCollection<IMachine> (m_machines, machine);
+    }
 
     /// <summary>
     ///   Indicates whether the current object

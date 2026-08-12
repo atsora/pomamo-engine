@@ -1483,6 +1483,22 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
 
+      {
+        ITranslation translation = new Translation ("", "MachineModeWarmUp");
+        translation.TranslationValue = "Warm up";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeWarmUp");
+        translation.TranslationValue = "Chauffe";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "MachineModeWarmUp");
+        translation.TranslationValue = "Aufwärmen";
+        InsertDefaultValue (translation);
+      }
+
       // Reason groups
       {
         ITranslation translation = new Translation ("", "ReasonGroupDefault");
@@ -3258,6 +3274,22 @@ namespace Lemoine.GDBPersistentClasses
         translation.TranslationValue = "NC-Statuscode (Selca)";
         InsertDefaultValue (translation);
       }
+      {
+        ITranslation translation = new Translation ("", "FieldWarmUp");
+        translation.TranslationValue = "Warm up";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "FieldWarmUp");
+        translation.TranslationValue = "Chauffe";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "FieldWarmUp");
+        translation.TranslationValue = "Aufwärmen";
+        InsertDefaultValue (translation);
+      }
+
 
       // Production state
       {
@@ -3661,6 +3693,22 @@ namespace Lemoine.GDBPersistentClasses
       {
         ITranslation translation = new Translation ("de", "UnitUnknown");
         translation.TranslationValue = "";
+        InsertDefaultValue (translation);
+      }
+
+      {
+        ITranslation translation = new Translation ("", "UnitToolNumberOfCycles");
+        translation.TranslationValue = "cycles";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "UnitToolNumberOfCycles");
+        translation.TranslationValue = "cycles";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "UnitToolNumberOfCycles");
+        translation.TranslationValue = "Zyklen";
         InsertDefaultValue (translation);
       }
 

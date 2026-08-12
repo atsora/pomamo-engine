@@ -27,12 +27,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
 
     public IMachine Machine { get; private set; }
 
-    public string Name
-    {
-      get {
-        return "CycleEnd";
-      }
-    }
+    public string Name => "CycleEnd";
 
     public bool IsApplicable ()
     {
@@ -131,8 +126,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
               }
               else { // Possible later merge or estimated cycle end update
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: operation detection date/time {0} before next cycle date/time {1} => with hint {2}",
-                    operationDetectionDateTime, cycleAfter.DateTime, hint);
+                  log.Debug ($"Get: operation detection date/time {operationDetectionDateTime} before next cycle date/time {cycleAfter.DateTime} => with hint {hint}");
                 }
                 return this.CreateWithHint (hint);
               }
@@ -148,15 +142,13 @@ namespace Lemoine.Plugin.DynamicTimesCycle
             var cycleDetectionDateTime = GetCycleDetectionDateTime ();
             if (cycleDetectionDateTime.HasValue && dateTime <= cycleDetectionDateTime.Value) {
               if (log.IsErrorEnabled) {
-                log.ErrorFormat ("Get: there is no cycle at {0}, detection date/time is {1} => not applicable",
-                  dateTime, cycleDetectionDateTime);
+                log.Error ($"Get: there is no cycle at {dateTime}, detection date/time is {cycleDetectionDateTime} => not applicable");
               }
               return this.CreateNotApplicable ();
             }
             else { // cycle detection date/time in the past
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: detection date/time in the past {0} before {1}",
-                  cycleDetectionDateTime, dateTime);
+                log.Debug ($"Get: detection date/time in the past {cycleDetectionDateTime} before {dateTime}");
               }
               return this.CreatePending ();
             }

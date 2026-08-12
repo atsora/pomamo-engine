@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lemoine.Core.SharedData;
 
 namespace Lemoine.Cnc
@@ -49,13 +50,30 @@ namespace Lemoine.Cnc
     public double LifeValue { get; set; }
 
     /// <summary>
+    /// Delta at each cycle (for Grinding Wheel Wear for example)
+    /// </summary>
+    public double? CycleDelta
+    {
+      get => m_cycleDelta;
+      set { 
+        if (value.HasValue && value.Value == 0) {
+          m_cycleDelta = null;
+        }
+        else {
+          m_cycleDelta = value;
+        }
+      }
+    }
+    double? m_cycleDelta = null;
+
+    /// <summary>
     /// Life limit
     /// Defining the maximum to be reached before expiration,
     /// or the initial value of LifeValue that will be decreased
     /// </summary>
     public double? LifeLimit
     {
-      get { return m_lifeLimit; }
+      get => m_lifeLimit;
       set {
         if (value.HasValue && value.Value == 0) {
           m_lifeLimit = null;
@@ -73,7 +91,7 @@ namespace Lemoine.Cnc
     /// </summary>
     public double? LifeWarningOffset
     {
-      get { return m_lifeWarningOffset; }
+      get => m_lifeWarningOffset;
       set {
         if (value.HasValue && value.Value == 0) {
           m_lifeWarningOffset = null;
@@ -90,11 +108,7 @@ namespace Lemoine.Cnc
     /// (properties are not in the result)
     /// </summary>
     /// <returns></returns>
-    public override string ToString ()
-    {
-      return string.Format ("Type:{0}, Direction:{1}, Value:{2}, Limit:{3}, WarningOffset:{4}",
-        (int)LifeType, (int)LifeDirection, LifeValue, LifeLimit ?? -1, LifeWarningOffset ?? -1);
-    }
+    public override string ToString () => $"Type:{(int)LifeType}, Direction:{(int)LifeDirection}, Value:{LifeValue}, Limit:{LifeLimit ?? -1}, WarningOffset:{LifeWarningOffset ?? -1}";
 
     void ParseString (string objectStr)
     {
@@ -159,9 +173,40 @@ namespace Lemoine.Cnc
     }
 
     /// <summary>
+    /// Fluent API for single-life setup
+    /// </summary>
+    public ToolLifeDataItem WithSingleLife (
+        ToolUnit type,
+        ToolLifeDirection direction,
+        double value,
+        double? limit = null)
+    {
+      var life = AddNewLifeDescription ();
+      life.LifeType = type;
+      life.LifeDirection = direction;
+      life.LifeValue = value;
+      life.LifeLimit = limit;
+      return this;
+    }
+
+    /// <summary>
+    /// Convenience property for single-life scenarios.
+    /// Gets the first life description, creating one if none exists.
+    /// </summary>
+    public ToolLifeDescription SingleLife
+    {
+      get {
+        if (m_lifeDescriptions.Count == 0) {
+          AddLifeDescription ();
+        }
+        return m_lifeDescriptions[0];
+      }
+    }
+
+    /// <summary>
     /// Number of life descriptions described
     /// </summary>
-    public int LifeDescriptionNumber { get { return m_lifeDescriptions.Count; } }
+    public int LifeDescriptionNumber => m_lifeDescriptions.Count;
 
     /// <summary>
     /// Get all the tool life descriptions
@@ -171,7 +216,7 @@ namespace Lemoine.Cnc
     /// <summary>
     /// Override of the [] operator (acts as a getter)
     /// </summary>
-    public ToolLifeDescription this[int index] { get { return m_lifeDescriptions[index]; } }
+    public ToolLifeDescription this[int index] => m_lifeDescriptions[index];
 
     /// <summary>
     /// Magazine number
@@ -190,7 +235,7 @@ namespace Lemoine.Cnc
     /// </summary>
     public string ToolNumber
     {
-      get { return m_toolNumber; }
+      get => m_toolNumber;
       set {
         m_toolNumber = value;
         if (string.IsNullOrEmpty (ToolId)) {
@@ -212,10 +257,7 @@ namespace Lemoine.Cnc
     /// <summary>
     /// Properties associated to the pot
     /// </summary>
-    public IDictionary<string, object> Properties
-    {
-      get { return m_properties; }
-    }
+    public IDictionary<string, object> Properties => m_properties;
 
     /// <summary>
     /// Add a new life description
@@ -273,6 +315,24 @@ namespace Lemoine.Cnc
     }
 
     /// <summary>
+    /// Get or create a life description matching type and direction
+    /// </summary>
+    public ToolLifeDescription GetOrCreateLifeDescription (
+        ToolUnit lifeType,
+        ToolLifeDirection direction)
+    {
+      var existing = m_lifeDescriptions.FirstOrDefault (
+        ld => ld.LifeType == lifeType && ld.LifeDirection == direction);
+
+      if (existing == null) {
+        existing = AddNewLifeDescription ();
+        existing.LifeType = lifeType;
+        existing.LifeDirection = direction;
+      }
+      return existing;
+    }
+
+    /// <summary>
     /// Override of the ToString() method
     /// (properties are not in the result)
     /// </summary>
@@ -293,8 +353,7 @@ namespace Lemoine.Cnc
         str += item.ToString ();
       }
 
-      return string.Format ("ToolId={0}; ToolNumber={1}; Pot={2}; Magazine={3}; ToolState={4}; LifeDescription={5}",
-        ToolId, ToolNumber, PotNumber ?? -1, MagazineNumber ?? -1, (int)ToolState, str);
+      return $"ToolId={ToolId}; ToolNumber={ToolNumber}; Pot={PotNumber ?? -1}; Magazine={MagazineNumber ?? -1}; ToolState={(int)ToolState}; LifeDescription={str}";
     }
 
     void ParseString (string stringObject)
@@ -351,10 +410,7 @@ namespace Lemoine.Cnc
     /// </summary>
     /// <param name="property">can be null</param>
     /// <returns></returns>
-    public object GetProperty (string property)
-    {
-      return m_properties.ContainsKey (property) ? m_properties[property] : null;
-    }
+    public object GetProperty (string property) => m_properties.ContainsKey (property) ? m_properties[property] : null;
 
     /// <summary>
     /// Set a property
@@ -387,11 +443,8 @@ namespace Lemoine.Cnc
   /// </summary>
   public class ToolLifeData
   {
-    #region Members
     readonly IList<ToolLifeDataItem> m_items = new List<ToolLifeDataItem> ();
-    #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -405,13 +458,11 @@ namespace Lemoine.Cnc
     {
       ParseString (strObject);
     }
-    #endregion Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Number of tools described
     /// </summary>
-    public int ToolNumber { get { return m_items.Count; } }
+    public int ToolNumber => m_items.Count;
 
     /// <summary>
     /// Tool life items
@@ -421,10 +472,8 @@ namespace Lemoine.Cnc
     /// <summary>
     /// Override of the [] operator (acts as a getter)
     /// </summary>
-    public ToolLifeDataItem this[int index] { get { return m_items[index]; } }
-    #endregion // Getters / Setters
+    public ToolLifeDataItem this[int index] => m_items[index];
 
-    #region Methods
     /// <summary>
     /// Add a new tool
     /// </summary>
@@ -556,6 +605,5 @@ namespace Lemoine.Cnc
 
       return tld;
     }
-    #endregion // Methods
   }
 }

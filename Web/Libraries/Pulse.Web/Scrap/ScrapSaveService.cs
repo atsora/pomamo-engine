@@ -80,7 +80,7 @@ namespace Pulse.Web.Scrap
 
           // Auto-revision by default
           revision = ModelDAOHelper.ModelFactory.CreateRevision ();
-          revision.Application = "Lem_AspService";
+          revision.Application = "AspService";
           revision.IPAddress = GetRequestRemoteIp ();
           var userId = this.GetAuthenticatedUserId ();
           if (userId.HasValue) {

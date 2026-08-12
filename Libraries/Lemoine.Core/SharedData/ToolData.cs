@@ -9,6 +9,9 @@ namespace Lemoine.Core.SharedData
   /// <summary>
   /// Different ways to describe the life of a tool
   /// Used also for the compensation numbers
+  /// 
+  /// TODO: To rename ToolLifeUnit at the next major version
+  /// TODO: Separate the unit from the kind of counting (part / time / distance / wear)
   /// </summary>
   public enum ToolUnit
   {
@@ -34,9 +37,9 @@ namespace Lemoine.Core.SharedData
     /// It is possible to count several times per program
     /// </summary>
     NumberOfTimes = 3,
-    
+
     /// <summary>
-    /// Tool life is described in terms of wear
+    /// Tool life is described in terms of wear, including for Grinding Wheel Thikness
     /// </summary>
     Wear = 4,
     
@@ -53,7 +56,7 @@ namespace Lemoine.Core.SharedData
     /// <summary>
     /// Number of cycles a tool is used
     /// </summary>
-    NumberOfCycles = 7
+    NumberOfCycles = 7,
   }
 
   /// <summary>

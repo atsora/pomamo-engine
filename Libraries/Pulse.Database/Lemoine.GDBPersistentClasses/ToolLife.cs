@@ -17,16 +17,13 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class ToolLife: IToolLife
   {
-    #region Members
     int m_id = 0; // Needed by NHibernate
     int m_version = 0; // Needed by NHibernate
     IMachineModule m_machineModule;
     IToolPosition m_position;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof(ToolLife).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// ID
     /// </summary>
@@ -143,15 +140,19 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     [XmlAttribute("Limit")]
     public virtual double? Limit { get; set; }
-    
+
+    /// <summary>
+    /// Delta at each cycle (for Grinding Wheel Wear for example)
+    /// </summary>
+    [XmlAttribute("CycleDelta")]
+    public virtual double? CycleDelta { get; set; }
+
     /// <summary>
     /// Unit of the values (type of life)
     /// </summary>
     [XmlAttribute("Unit")]
     public virtual IUnit Unit { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor only accessible for NHibernate
     /// </summary>
@@ -171,9 +172,7 @@ namespace Lemoine.GDBPersistentClasses
       Unit = unit;
       Direction = direction;
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Determines whether the specified Object is equal to the current Object
     /// </summary>
@@ -232,6 +231,5 @@ namespace Lemoine.GDBPersistentClasses
         return $"[ToolLife {this.Id}]";
       }
     }
-    #endregion // Methods
   }
 }

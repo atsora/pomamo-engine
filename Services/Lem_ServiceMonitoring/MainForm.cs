@@ -190,8 +190,7 @@ namespace LemoineServiceMonitoring
 
       // 1.c) web
       var webServices = new List<string> {
-        "Lem_AspService", // Obsolete Asp Service
-        "AtrackingAspService" // Asp Service
+        "Lem_AspService"
       };
 
       // 1.d) Stamping

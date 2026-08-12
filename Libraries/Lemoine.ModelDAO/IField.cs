@@ -40,10 +40,12 @@ namespace Lemoine.Model
     /// Program name field
     /// </summary>
     ProgramName = 109,
+
     /// <summary>
     /// Dry run field
     /// </summary>
     DryRun = 118,
+
     /// <summary>
     /// Stack light field
     /// </summary>
@@ -56,10 +58,17 @@ namespace Lemoine.Model
     /// Program file name
     /// </summary>
     ProgramFileName = 133,
+
     /// <summary>
     /// Sub-program file name
     /// </summary>
     SubProgramFileName = 134,
+
+    /// <summary>
+    /// Warm up field
+    /// </summary>
+    WarmUp = 135,
+
 
     /// <summary>
     /// Effective override (rapid or feed rate)

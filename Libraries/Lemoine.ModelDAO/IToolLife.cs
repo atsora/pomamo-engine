@@ -21,76 +21,79 @@ namespace Lemoine.Model
     /// </summary>
     /// <param name="lifeType"></param>
     /// <returns></returns>
-    public static string Name(this ToolUnit lifeType)
+    public static string Name (this ToolUnit lifeType)
     {
       string txt = "";
-      
+
       switch (lifeType) {
         case ToolUnit.Unknown:
-          txt = I18N.PulseCatalog.GetString("UnitUnknown");
+          txt = I18N.PulseCatalog.GetString ("UnitUnknown");
           break;
         case ToolUnit.TimeSeconds:
-          txt = I18N.PulseCatalog.GetString("UnitSeconds");
+          txt = I18N.PulseCatalog.GetString ("UnitDurationSeconds");
           break;
         case ToolUnit.Parts:
-          txt = I18N.PulseCatalog.GetString("UnitParts");
+          txt = I18N.PulseCatalog.GetString ("UnitNumberOfParts");
           break;
         case ToolUnit.NumberOfTimes:
-          txt = I18N.PulseCatalog.GetString("UnitTimes");
+          txt = I18N.PulseCatalog.GetString ("UnitToolNumberOfTimes");
+          break;
+        case ToolUnit.NumberOfCycles:
+          txt = I18N.PulseCatalog.GetString ("UnitToolNumberOfCycles");
           break;
         case ToolUnit.Wear:
-          txt = I18N.PulseCatalog.GetString("UnitWear");
+          txt = I18N.PulseCatalog.GetString ("UnitWear");
           break;
         case ToolUnit.DistanceMillimeters:
-          txt = I18N.PulseCatalog.GetString("UnitMillimeters");
+          txt = I18N.PulseCatalog.GetString ("UnitDistanceMillimeter");
           break;
         case ToolUnit.DistanceInch:
-          txt = I18N.PulseCatalog.GetString("UnitInches");
+          txt = I18N.PulseCatalog.GetString ("UnitDistanceInch");
           break;
       }
-      
+
       return txt;
     }
   }
-  
+
   /// <summary>
   /// Description of IToolLife.
   /// </summary>
-  public interface IToolLife: IDataWithVersion, IDataWithId, IPartitionedByMachineModule
+  public interface IToolLife : IDataWithVersion, IDataWithId, IPartitionedByMachineModule
   {
     /// <summary>
     /// Machine
     /// </summary>
     IMonitoredMachine MonitoredMachine { get; }
-    
+
     /// <summary>
     /// Position
     /// 
     /// not null
     /// </summary>
     IToolPosition Position { get; }
-    
+
     /// <summary>
     /// Different way to count the life of a tool
     /// If down, the initial state is Limit, the final state is 0
     /// If up, the initial state is 0, the final state is Limit
     /// </summary>
     ToolLifeDirection Direction { get; }
-    
+
     /// <summary>
     /// Current value of the tool life
     /// Normally increasing if UP
     /// Normally decreasing if DOWN
     /// </summary>
     double Value { get; set; }
-    
+
     /// <summary>
     /// Absolute value defining the warning
     /// 
     /// May be null if the warning is not configured
     /// </summary>
     double? Warning { get; set; }
-    
+
     /// <summary>
     /// Total value of the life
     /// Can be the initial value that is decreased if the direction is down
@@ -98,13 +101,18 @@ namespace Lemoine.Model
     /// May be null if the limit is not configured.
     /// </summary>
     double? Limit { get; set; }
-    
+
+    /// <summary>
+    /// Delta at each cycle (for Grinding Wheel Wear for example)
+    /// </summary>
+    double? CycleDelta { get; set; }
+
     /// <summary>
     /// Unit of the values (type of life)
     /// </summary>
     IUnit Unit { get; set; }
   }
-  
+
   /// <summary>
   /// Extension methods to IToolLife
   /// </summary>
@@ -125,7 +133,7 @@ namespace Lemoine.Model
             || (toolLife.Direction == Lemoine.Core.SharedData.ToolLifeDirection.Down
                 && toolLife.Value <= 0));
     }
-    
+
     /// <summary>
     /// Test if the warning value was reached
     /// </summary>
@@ -134,12 +142,12 @@ namespace Lemoine.Model
     {
       return toolLife.Warning.HasValue
         && toolLife.Warning.Value > 0
-        && ( (toolLife.Direction == Lemoine.Core.SharedData.ToolLifeDirection.Up
+        && ((toolLife.Direction == Lemoine.Core.SharedData.ToolLifeDirection.Up
               && toolLife.Value >= toolLife.Warning.Value)
             || (toolLife.Direction == Lemoine.Core.SharedData.ToolLifeDirection.Down
                 && toolLife.Value <= toolLife.Warning.Value));
     }
-    
+
     /// <summary>
     /// Remaining life to reach the limit
     /// </summary>
@@ -184,8 +192,49 @@ namespace Lemoine.Model
         case (int)UnitId.DurationSeconds:
           return TimeSpan.FromSeconds (remainingLifeToLimit.Value);
         default:
-          log.ErrorFormat ("GetRemainingLifeDurationToLimit: invalid unit {0}", toolLife.Unit.Id);
+          log.Error ($"GetRemainingLifeDurationToLimit: invalid unit {toolLife.Unit.Id}");
           throw new InvalidOperationException ("Invalid tool life unit");
+      }
+    }
+
+    /// <summary>
+    /// Remaining life in cycles to reach the limit in case the unit is Wear.
+    /// 
+    /// If the unit is not a wear, raise an exception
+    /// </summary>
+    /// <param name="toolLife"></param>
+    /// <returns>The returned time may be negative</returns>
+    public static double? GetRemainingCyclesToLimit (this IToolLife toolLife)
+    {
+      double? remainingLifeToLimit = toolLife.GetRemainingLifeToLimit ();
+      if (!remainingLifeToLimit.HasValue) {
+        return null;
+      }
+      if (toolLife.Unit.Id == (int)UnitId.ToolWear) {
+        if (toolLife.CycleDelta.HasValue) {
+          var remainingCyclesToLimit = remainingLifeToLimit.Value / toolLife.CycleDelta.Value;
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetRemainingCyclesToLimit: remaining cycles to limit is {remainingCyclesToLimit} from remaining life to limit {remainingLifeToLimit.Value} and cycle delta {toolLife.CycleDelta.Value}");
+          }
+          return remainingCyclesToLimit;
+        }
+        else {
+          log.Warn ($"GetRemainingCyclesToLimit: no cycle delta defined for tool life {toolLife.Id} => consider delta is 1");
+          return remainingLifeToLimit.Value;
+        }
+      }
+      else if (toolLife.Unit.Id == (int)UnitId.NumberOfCycles) {
+        return remainingLifeToLimit.Value;
+      }
+      else if (toolLife.Unit.Id == (int)UnitId.NumberOfParts) {
+        throw new NotImplementedException ();
+      }
+      else if (toolLife.Unit.Id == (int)UnitId.ToolNumberOfTimes) { 
+        throw new NotImplementedException ();
+      }
+      else {
+        log.Error ($"GetRemainingCyclesToLimit: invalid unit {toolLife.Unit.Id}");
+        throw new InvalidOperationException ("Invalid tool life unit");
       }
     }
 
@@ -217,11 +266,11 @@ namespace Lemoine.Model
       }
     }
   }
-  
+
   /// <summary>
   /// Tool id comparer
   /// </summary>
-  public class ToolLifeToolIdComparer: IEqualityComparer<IToolLife>
+  public class ToolLifeToolIdComparer : IEqualityComparer<IToolLife>
   {
     #region IEqualityComparer implementation
     /// <summary>
@@ -230,23 +279,23 @@ namespace Lemoine.Model
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public bool Equals(IToolLife x, IToolLife y)
+    public bool Equals (IToolLife x, IToolLife y)
     {
       if (object.Equals (x, y)) {
         return true;
       }
-      if ( (null == x) || (null == y)) {
+      if ((null == x) || (null == y)) {
         return false;
       }
       return object.Equals (x.Position.ToolId, y.Position.ToolId);
     }
-    
+
     /// <summary>
     /// IEqualityComparer implementation
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public int GetHashCode(IToolLife obj)
+    public int GetHashCode (IToolLife obj)
     {
       if (null == obj) {
         return 0;

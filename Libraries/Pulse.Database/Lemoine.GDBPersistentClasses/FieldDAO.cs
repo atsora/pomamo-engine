@@ -416,6 +416,13 @@ namespace Lemoine.GDBPersistentClasses
       field.Unit = ModelDAOHelper.DAOFactory.UnitDAO.FindById (18); // 18: UnitFlowRate (L/s)
       InsertDefaultValue (field);
 
+      // - WarmUp
+      field = new Field ((int)FieldId.WarmUp, "WarmUp"); // 135
+      field.TranslationKey = "FieldWarmUp";
+      field.Type = FieldType.Boolean;
+      field.CncDataAggregationType = CncDataAggregationType.NewValue;
+      InsertDefaultValue (field);
+
       // 140-141 are free
       // - EffectiveOverride (rapid or feedrate)
       field = new Field (142, "EffectiveOverride");

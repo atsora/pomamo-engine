@@ -16,7 +16,7 @@ using Lemoine.Extensions.Interfaces;
 namespace Lemoine.Plugin.ApplicableAtMachineStateShift
 {
   /// <summary>
-  /// Description of Plugin.
+  /// Make a dynamic time applicable only in the same machine state shift
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {

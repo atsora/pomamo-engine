@@ -112,7 +112,7 @@ namespace Lemoine.Plugin.SameMachineMode
             if (0 == machineModeId) {
               if (!fact.DateTimeRange.ContainsElement (dateTime)) {
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: no fact at {0} (initial gap) => NotApplicable", dateTime);
+                  log.Warn ($"Get: no fact at {dateTime} (initial gap) => NotApplicable");
                 }
                 return this.CreateNotApplicable ();
               }
@@ -122,7 +122,7 @@ namespace Lemoine.Plugin.SameMachineMode
               Debug.Assert (0 != machineModeId);
               if (lastFactEnd < fact.Begin) { // Gap
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: gap {0}-{1} => approximative final", lastFactEnd, fact.Begin);
+                  log.Warn ($"Get: gap {lastFactEnd}-{fact.Begin} => approximative final");
                 }
                 return this.CreateFinal (lastFactEnd);
               }
@@ -132,7 +132,7 @@ namespace Lemoine.Plugin.SameMachineMode
                 }
                 if (fact.CncMachineMode.Id != machineModeId) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("Get: machine mode change at {0}", fact.Begin);
+                    log.Debug ($"Get: machine mode change at {fact.Begin}");
                   }
                   return this.CreateFinal (lastFactEnd);
                 }

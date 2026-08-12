@@ -23,7 +23,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Project: DataWithDisplayFunction, IProject, IMergeable<IProject>, IEquatable<IProject>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -36,11 +35,9 @@ namespace Lemoine.GDBPersistentClasses
     DateTime? m_archiveDateTime;
     ICollection <IWorkOrder> m_workOrders = new InitialNullIdSet<IWorkOrder, int>();
     ICollection <IComponent> m_components = new InitialNullIdSet<IComponent, int> ();
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (Project).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -182,18 +179,12 @@ namespace Lemoine.GDBPersistentClasses
         return m_workOrders;
       }
     }
-    
+
     /// <summary>
     /// Components that are associated to the project
     /// </summary>
-    [XmlIgnore, MergeChildren("Project")]
-    public virtual ICollection <IComponent> Components {
-      get
-      {
-        return m_components;
-      }
-    }
-    #endregion
+    [XmlIgnore, MergeChildren ("Project")]
+    public virtual ICollection<IComponent> Components => m_components;
     
     #region Add methods
     /// <summary>
@@ -377,7 +368,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // IMergeable implementation
     
-    #region Methods
     /// <summary>
     /// Add a component in the member directly
     /// 
@@ -399,7 +389,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       RemoveFromProxyCollection<IComponent> (m_components, component);
     }
-    #endregion // Methods
     
     /// <summary>
     ///   Indicates whether the current object

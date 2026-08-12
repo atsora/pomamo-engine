@@ -72,27 +72,23 @@ namespace Lemoine.Business.DynamicTimes
       else if (response.NoData) {
         if (response.Final.HasValue) {
           if (logger.IsInfoEnabled) {
-            logger.InfoFormat ("({0}): No data with final={4}, dateTime={1} hint={2} limit={3}",
-              parameter, dateTime, hint, limit, response.Final);
+            logger.Info ($"({parameter}): No data with final={response.Final}, dateTime={dateTime} hint={hint} limit={limit}");
           }
         }
         else {
           if (logger.IsInfoEnabled) {
-            logger.InfoFormat ("({0}): No data, dateTime={1} hint={2} limit={3}",
-              parameter, dateTime, hint, limit);
+            logger.Info ($"({parameter}): No data, dateTime={dateTime} hint={hint} limit={limit}");
           }
         }
       }
       else if (response.Final.HasValue) {
         if (logger.IsInfoEnabled) {
-          logger.InfoFormat ("({0}): final={4}, dateTime={1} hint={2} limit={3}",
-            parameter, dateTime, hint, limit, response.Final);
+          logger.Info ($"({parameter}): final={response.Final}, dateTime={dateTime} hint={hint} limit={limit}");
         }
       }
       else {
         if (logger.IsDebugEnabled) {
-          logger.DebugFormat ("({0}): pending, new hint={4}, dateTime={1} hint={2} limit={3}",
-            parameter, dateTime, hint, limit, response.Hint);
+          logger.Debug ($"({parameter}): pending, new hint={response.Hint}, dateTime={dateTime} hint={hint} limit={limit}");
         }
       }
     }
@@ -116,6 +112,18 @@ namespace Lemoine.Business.DynamicTimes
         return extension.CreateNotApplicable ();
       }
 
+      if (limit.IsEmpty ()) {
+        log.Fatal ($"GetDynamicTime: limit is empty, this is usually unexpected");
+      }
+      if (hint.IsEmpty ()) {
+        log.Error ($"GetDynamicTime: hint is empty, this is usually unexpected");
+      }
+      
+      if (!hint.Overlaps (limit)) {
+        log.Warn ($"GetDynamicTime: hint {hint} does not overlap limit {limit} => return directly NoData");
+        return DynamicTimeResponse.CreateNoData (extension);
+      }
+
       try { // Time
         var request = new DynamicTimeRequest (extension, dateTime, hint, limit);
         var cacheData = ServiceProvider.GetCacheData<IDynamicTimeResponse> (request);
@@ -128,6 +136,9 @@ namespace Lemoine.Business.DynamicTimes
             log.Info ($"GetDynamicTime: final {response.Final} not in limit {limit} => NoData");
           }
           response.NoData = true;
+        }
+        if (!hint.Equals (response.Hint)) {
+          response.Hint = new UtcDateTimeRange (response.Hint.Intersects (hint));
         }
         if (!response.Final.HasValue && !response.NoData && !response.Hint.Overlaps (limit)) {
           if (log.IsInfoEnabled) {

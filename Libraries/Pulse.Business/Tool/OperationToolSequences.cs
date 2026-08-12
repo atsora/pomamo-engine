@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -23,12 +24,8 @@ namespace Lemoine.Business.Tool
   public sealed class OperationToolSequences
     : IRequest<IEnumerable<ISequence>>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (OperationToolSequences).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Operation in the request
     /// 
@@ -42,9 +39,7 @@ namespace Lemoine.Business.Tool
     /// not empty and not null
     /// </summary>
     string ToolNumber { get; set; }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -58,10 +53,6 @@ namespace Lemoine.Business.Tool
       this.Operation = operation;
       this.ToolNumber = toolNumber;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -93,7 +84,7 @@ namespace Lemoine.Business.Tool
         }
         catch (Exception ex) {
           if (Lemoine.Core.ExceptionManagement.ExceptionTest.IsStale (ex)) {
-            log.WarnFormat ("Get: operation {0} is stale, try to reload it", ((IDataWithId)operation).Id);
+            log.Warn ($"Get: operation {((IDataWithId)operation).Id} is stale, try to reload it", ex);
             using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
               using (var transaction = session.BeginReadOnlyTransaction ("Business.OperationToolSequences.Sequences.Stale")) {
                 operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (((IDataWithId)operation).Id);

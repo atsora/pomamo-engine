@@ -24,16 +24,13 @@ namespace Pulse.Web.WebDataAccess
   {
     static readonly ILog log = LogManager.GetLogger(typeof (WorkOrderMachineAssociationSaveService).FullName);
 
-    #region Constructors
     /// <summary>
     /// 
     /// </summary>
     public WorkOrderMachineAssociationSaveService ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -86,7 +83,7 @@ namespace Pulse.Web.WebDataAccess
           if (request.RevisionId.HasValue) {
             if (-1 == request.RevisionId.Value) { // auto-revision
               IRevision revision = ModelDAOHelper.ModelFactory.CreateRevision ();
-              revision.Application = "Lem_AspService";
+              revision.Application = "AspService";
               revision.IPAddress = GetRequestRemoteIp ();
               ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistent (revision);
               workOrderMachineAssociation.Revision = revision;
@@ -115,6 +112,5 @@ namespace Pulse.Web.WebDataAccess
       Debug.Assert (null != workOrderMachineAssociation);
       return new SaveModificationResponseDTO (workOrderMachineAssociation);
     }
-    #endregion // Methods
   }
 }
