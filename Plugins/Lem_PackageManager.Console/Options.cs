@@ -31,7 +31,7 @@ namespace Lem_PackageManager.Console
     [Option ('d', "deactivate", HelpText = "De-activate a package. Specify the package identifier")]
     public string DeactivatePackage { get; set; } = "";
 
-    [Option ('c', "check", HelpText = "Install/Check the configurations of the active packages")]
+    [Option ('c', "check", HelpText = "Install/Update/Check the configurations of the active packages")]
     public bool Check { get; set; } = false;
 
     [Option ('f', "overwrite-parameters", HelpText = "Overwrite the parameters. Default is false")]
