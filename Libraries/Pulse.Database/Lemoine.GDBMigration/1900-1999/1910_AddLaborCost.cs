@@ -25,7 +25,7 @@ namespace Lemoine.GDBMigration
                           new Column ("machineobservationstateissetup", System.Data.DbType.Boolean, ColumnProperty.NotNull, "FALSE"));
       
       Database.AddColumn (TableName.MACHINE_OBSERVATION_STATE,
-                          new Column ("laborcost", System.Data.DbType.Double, ColumnProperty.Null));
+                          new Column ($"{TableName.MACHINE_OBSERVATION_STATE}laborcost", System.Data.DbType.Double, ColumnProperty.Null));
     }
     
     /// <summary>

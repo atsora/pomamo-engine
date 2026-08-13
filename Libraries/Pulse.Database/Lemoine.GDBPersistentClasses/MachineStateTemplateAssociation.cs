@@ -391,16 +391,23 @@ namespace Lemoine.GDBPersistentClasses
 
     void SetModificationInError (string message)
     {
-      log.ErrorFormat ($"SetModificationInError: {message} => finish in error");
+      log.Error ($"SetModificationInError: {message} => finish in error");
       AddAnalysisLog (LogLevel.ERROR, message);
       MarkAsError ();
     }
 
     /// <summary>
-    /// Mark the modification as not applicable
+    /// Mark the modification as not applicable because a dynamic time could not be resolved
+    ///
+    /// Note: on the contrary to <see cref="ReasonMachineAssociation"/>, a machine state template that was
+    /// already applied is never reverted here. This is on purpose: there is no trace of the machine state
+    /// template that was effective before, so it could not be restored. This is why the consequence is
+    /// always recorded in the analysis logs.
     /// </summary>
-    void MarkDynamicTimeNotApplicable ()
+    /// <param name="message">reason why the dynamic time is not applicable and its consequence, recorded in the analysis logs</param>
+    void MarkDynamicTimeNotApplicable (string message)
     {
+      AddAnalysisLog (LogLevel.WARN, message);
       base.MarkAsNotApplicable ();
     }
 
@@ -518,23 +525,23 @@ namespace Lemoine.GDBPersistentClasses
           Debug.Assert (null != dynamicEndResponse);
           if (dynamicEndResponse.Timeout) {
             if (log.IsWarnEnabled) {
-              log.WarnFormat ("MakeAnalysis: Timeout for dynamic end {0} range {1} hint {2} => completed", dynamicEnd, this.Range, hint);
+              log.Warn ($"MakeAnalysis: Timeout for dynamic end {dynamicEnd} range {this.Range} hint {hint} => not applicable");
             }
-            MarkDynamicTimeNotApplicable ();
+            MarkDynamicTimeNotApplicable ($"Timeout for the dynamic end {dynamicEnd} on {this.Range} => the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted");
             return;
           }
           else if (dynamicEndResponse.NotApplicable) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("MakeAnalysis: NotApplicable for dynamic end {0} range {1} hint {2} => completed", dynamicEnd, this.Range, hint);
+              log.Debug ($"MakeAnalysis: NotApplicable for dynamic end {dynamicEnd} range {this.Range} hint {hint} => not applicable");
             }
-            MarkDynamicTimeNotApplicable ();
+            MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicEnd} is not applicable on {this.Range} => the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted");
             return;
           }
           else if (dynamicEndResponse.NoData) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("MakeAnalysis: no data for dynamic end {0} range {1} hint {2} => completed", dynamicEnd, this.Range, hint);
+              log.Debug ($"MakeAnalysis: no data for dynamic end {dynamicEnd} range {this.Range} hint {hint} => not applicable");
             }
-            MarkDynamicTimeNotApplicable ();
+            MarkDynamicTimeNotApplicable ($"No data for the dynamic end {dynamicEnd} on {this.Range} => the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted");
             return;
           }
           else if (dynamicEndResponse.Final.HasValue) {
@@ -659,18 +666,20 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (null != dynamicStartResponse);
         if (dynamicStartResponse.Timeout) {
           if (log.IsWarnEnabled) {
-            log.WarnFormat ($"MakeAnalysisDynamicStart: Timeout for dynamic start {dynamicStart} at {this.Range.Lower} => mark as not applicable");
+            log.Warn ($"MakeAnalysisDynamicStart: Timeout for dynamic start {dynamicStart} at {this.Range.Lower} => mark as pending, try again later");
           }
-          MarkAsPending (null); // Not sure what's the best option, try again later, 
+          MarkAsPending (null); // Not sure what's the best option, try again later,
           return;
         }
         else if (dynamicStartResponse.NotApplicable) {
-          GetLogger ().Info ($"MakeAnalysisDynamicStart: not applicable for dynamic start {dynamicStart}");
-          MarkDynamicTimeNotApplicable ();
+          if (log.IsWarnEnabled) {
+            GetLogger ().Warn ($"MakeAnalysisDynamicStart: not applicable for dynamic start {dynamicStart} => {this.MachineStateTemplate} is not applied");
+          }
+          MarkDynamicTimeNotApplicable ($"The dynamic start {dynamicStart} is not applicable => the machine state template {this.MachineStateTemplate} is not applied on {this.Range}, so the machine state template that is effective at {this.Range.Lower} remains effective afterwards");
         }
         else if (dynamicStartResponse.NoData) {
-          GetLogger ().Error ($"MakeAnalysisDynamicStart: no data for dynamic start {dynamicStart}");
-          MarkDynamicTimeNotApplicable ();
+          GetLogger ().Error ($"MakeAnalysisDynamicStart: no data for dynamic start {dynamicStart} => {this.MachineStateTemplate} is not applied");
+          MarkDynamicTimeNotApplicable ($"No data for the dynamic start {dynamicStart} => the machine state template {this.MachineStateTemplate} is not applied on {this.Range}, so the machine state template that is effective at {this.Range.Lower} remains effective afterwards");
         }
         else if (dynamicStartResponse.Final.HasValue) {
           var start = dynamicStartResponse.Final.Value;
@@ -747,16 +756,16 @@ namespace Lemoine.GDBPersistentClasses
 
       if (dynamicEndResponse.Timeout) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("MakeAnalysisDynamicEndProgressive: Timeout is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.Warn ($"MakeAnalysisDynamicEndProgressive: Timeout is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
-        MarkDynamicTimeNotApplicable ();
+        MarkDynamicTimeNotApplicable ($"Timeout for the dynamic end {dynamicEnd} at {this.DynamicTimeRange} => the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted");
         return;
       }
       else if (dynamicEndResponse.NotApplicable) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEndProgressive: NotApplicable is returned for {0} at {1} => mark as not applicable", dynamicEnd, this.DynamicTimeRange);
+          log.Debug ($"MakeAnalysisDynamicEndProgressive: NotApplicable is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
-        MarkDynamicTimeNotApplicable ();
+        MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicEnd} is not applicable at {this.DynamicTimeRange} => the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted");
         return;
       }
       else if (dynamicEndResponse.NoData) {
@@ -808,21 +817,21 @@ namespace Lemoine.GDBPersistentClasses
         if (log.IsWarnEnabled) {
           log.Warn ($"MakeAnalysisDynamicEndAggressive: Timeout is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
-        MarkDynamicTimeNotApplicable ();
+        MarkDynamicTimeNotApplicable ($"Timeout for the dynamic end {dynamicEnd} at {this.DynamicTimeRange} => the machine state template {this.MachineStateTemplate} is not applied on {this.Range}");
         return;
       }
       else if (dynamicEndResponse.NotApplicable) {
         if (log.IsDebugEnabled) {
           log.Debug ($"MakeAnalysisDynamicEndAggressive: NotApplicable is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
-        MarkDynamicTimeNotApplicable ();
+        MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicEnd} is not applicable at {this.DynamicTimeRange} => the machine state template {this.MachineStateTemplate} is not applied on {this.Range}");
         return;
       }
       else if (dynamicEndResponse.NoData) {
         if (log.IsDebugEnabled) {
           log.Debug ($"MakeAnalysisDynamicEndAggressive: NoData is returned for {dynamicEnd} at {this.DynamicTimeRange} => mark as not applicable");
         }
-        MarkDynamicTimeNotApplicable ();
+        MarkDynamicTimeNotApplicable ($"No data for the dynamic end {dynamicEnd} at {this.DynamicTimeRange} => the machine state template {this.MachineStateTemplate} is not applied on {this.Range}");
         return;
       }
       else if (dynamicEndResponse.Final.HasValue) {
@@ -832,7 +841,7 @@ namespace Lemoine.GDBPersistentClasses
       else {
         if (!this.Range.Overlaps (dynamicEndResponse.Hint)
           && this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)) {
-          MarkDynamicTimeNotApplicable ();
+          MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicEnd} is out of {this.Range} while the option DynamicEndBeforeRealEnd is set => the machine state template {this.MachineStateTemplate} is not applied on {this.Range}");
           return;
         }
         
@@ -914,7 +923,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if ((Bound.Compare<DateTime> (this.End, dynamicApplicableEnd) < 0)
         && this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)) {
-        MarkDynamicTimeNotApplicable ();
+        MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicApplicableEnd} is after the end {this.End} while the option DynamicEndBeforeRealEnd is set => the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted");
         return;
       }
 
@@ -974,7 +983,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (string.IsNullOrEmpty (this.Dynamic));
       if (!string.IsNullOrEmpty (this.Dynamic)) {
-        log.FatalFormat ($"Apply: association {this} had a dynamic value {this.Dynamic}, which is unexpected");
+        log.Fatal ($"Apply: association {this} had a dynamic value {this.Dynamic}, which is unexpected");
       }
 
       if (IsStopProcess ()) { // Stop must be processed first

@@ -46,11 +46,16 @@
     <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Business\Pulse.Extensions.Business.csproj" />
     <ProjectReference Include="..\..\Libraries\Pulse.Extensions.Database\Pulse.Extensions.Database.csproj" />
     <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.CycleCountSummary\Lemoine.Plugin.CycleCountSummary.csproj" />
+    <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.CycleDurationSummary\Lemoine.Plugin.CycleDurationSummary.csproj" />
     <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.DefaultAccumulators\Lemoine.Plugin.DefaultAccumulators.csproj" />
+    <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.HourlyOperationSummary\Lemoine.Plugin.HourlyOperationSummary.csproj" />
     <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.IntermediateWorkPieceSummary\Lemoine.Plugin.IntermediateWorkPieceSummary.csproj" />
     <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.OperationSlotCycles\Lemoine.Plugin.OperationSlotCycles.csproj" />
     <ProjectReference Include="..\..\Plugins\Analysis\ProductionState\Lemoine.Plugin.RunningMachineModeIsProduction\Lemoine.Plugin.RunningMachineModeIsProduction.csproj" />
+    <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.AcquisitionDelayEvent\Lemoine.Plugin.AcquisitionDelayEvent.csproj" />
+    <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.AcquisitionErrorEvent\Lemoine.Plugin.AcquisitionErrorEvent.csproj" />
     <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.CyclesWithRealEndFull\Lemoine.Plugin.CyclesWithRealEndFull.csproj" />
+    <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.MachineStateTemplateChangeEvent\Lemoine.Plugin.MachineStateTemplateChangeEvent.csproj" />
     <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.ReasonDefaultManagement\Lemoine.Plugin.ReasonDefaultManagement.csproj" />
     <ProjectReference Include="..\Lemoine.UnitTests\Lemoine.UnitTests.csproj" />
   </ItemGroup>

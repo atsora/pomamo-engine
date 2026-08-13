@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Lemoine.GDBMigration\1900-1999\1918_FixMachineObservationStateLaborCost.cs.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="NHibernate">
       <HintPath>..\..\..\pomamo-extern\NHibernateAndCo\NHibernate\Required_Bins\NHibernate.dll</HintPath>
     </Reference>

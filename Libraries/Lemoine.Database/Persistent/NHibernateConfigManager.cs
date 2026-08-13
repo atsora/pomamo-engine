@@ -249,8 +249,7 @@ namespace Lemoine.Database.Persistent
         }
       }
       catch (Exception ex) {
-        log.Error ("AddExtensions: " +
-                   "error when loading all the extensions",
+        log.Error ("AddExtensions: error when loading all the extensions",
                    ex);
       }
     }

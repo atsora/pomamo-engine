@@ -15,22 +15,14 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
   /// </summary>
   public class NHibernateExtension : Lemoine.Extensions.Database.INHibernateExtension
   {
-#region Members
-#endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (NHibernateExtension).FullName);
 
-#region Getters / Setters
-#endregion // Getters / Setters
-
-#region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
     public NHibernateExtension ()
     {
     }
-#endregion // Constructors
 
 #region INHibernateExtension implementation
 
