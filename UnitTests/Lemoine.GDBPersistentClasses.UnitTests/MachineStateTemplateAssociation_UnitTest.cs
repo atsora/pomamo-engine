@@ -4,11 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lemoine.Database.Persistent;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.UnitTests;
 using Lemoine.Core.Log;
+using Lemoine.Extensions.Business.DynamicTimes;
 using NHibernate;
 using NHibernate.Criterion;
 using NUnit.Framework;
@@ -697,6 +699,394 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       }
     }    
     
+    /// <summary>
+    /// Dynamic time extension used by the tests of the dynamic end
+    ///
+    /// The successive responses are set by <see cref="SetResponses"/>. Once all of them have been
+    /// returned, the last one is repeated, so that the tests do not depend on the exact number of calls.
+    /// </summary>
+    public class TestDynamicTime : IDynamicTimeExtension
+    {
+      static readonly IList<Func<TestDynamicTime, IDynamicTimeResponse>> DEFAULT_RESPONSES =
+        new List<Func<TestDynamicTime, IDynamicTimeResponse>> { x => x.CreatePending () };
+
+      static IList<Func<TestDynamicTime, IDynamicTimeResponse>> s_responses = DEFAULT_RESPONSES;
+      static int s_step = 0;
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public IMachine Machine { get; set; }
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public string Name => "Test";
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public bool UniqueInstance => true;
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public bool Initialize (IMachine machine, string parameter)
+      {
+        this.Machine = machine;
+        return true;
+      }
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public bool IsApplicable () => true;
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public DynamicTimeApplicableStatus IsApplicableAt (DateTime at) => DynamicTimeApplicableStatus.Always;
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public IDynamicTimeResponse Get (DateTime dateTime, UtcDateTimeRange hint, UtcDateTimeRange limit)
+      {
+        var index = Math.Min (s_step++, s_responses.Count - 1);
+        return s_responses[index] (this);
+      }
+
+      /// <summary>
+      /// <see cref="IDynamicTimeExtension"/>
+      /// </summary>
+      public TimeSpan GetCacheTimeout (IDynamicTimeResponse data) => TimeSpan.FromTicks (0);
+
+      /// <summary>
+      /// Set the successive responses to return, the last one being repeated
+      /// </summary>
+      /// <param name="responses">not empty</param>
+      public static void SetResponses (params Func<TestDynamicTime, IDynamicTimeResponse>[] responses)
+      {
+        s_responses = responses.ToList ();
+        s_step = 0;
+      }
+
+      /// <summary>
+      /// Reset the responses, to call in a finally block
+      /// </summary>
+      public static void Reset ()
+      {
+        s_responses = DEFAULT_RESPONSES;
+        s_step = 0;
+      }
+    }
+
+    /// <summary>
+    /// Set an initial machine observation state from T(1), so that the machine has a known
+    /// machine observation state before the tested machine state template associations are applied
+    /// </summary>
+    void InitializeObservationStateSlots (IMonitoredMachine machine, IMachineObservationState machineObservationState, IUser user)
+    {
+      var association = ModelDAOHelper.ModelFactory
+        .CreateMachineObservationStateAssociation (machine, machineObservationState, new UtcDateTimeRange (T (1)));
+      association.User = user;
+      ModelDAOHelper.DAOFactory.MachineObservationStateAssociationDAO.MakePersistent (association);
+      AnalysisUnitTests.RunMakeAnalysis<MachineObservationStateAssociation> (NHibernateHelper.GetCurrentSession ());
+    }
+
+    /// <summary>
+    /// Get the machine state template of the observation state slot at a specific UTC date/time
+    ///
+    /// Note: the slots are searched one by one on purpose, so that the tests do not depend on the
+    /// total number of slots
+    /// </summary>
+    /// <returns>the machine state template, or null if there is none at this date/time</returns>
+    static IMachineStateTemplate GetMachineStateTemplateAt (ISession session, IMachine machine, DateTime at)
+    {
+      var slot = session.CreateCriteria<ObservationStateSlot> ()
+        .Add (Restrictions.Eq ("Machine", machine))
+        .List<ObservationStateSlot> ()
+        .FirstOrDefault (s => s.DateTimeRange.ContainsElement (at));
+      return slot?.MachineStateTemplate;
+    }
+
+    /// <summary>
+    /// Run the analysis of the first pending modification several times
+    ///
+    /// This is required instead of RunMakeAnalysis when a modification remains pending,
+    /// for example a dynamic end tracker whose dynamic start is not known yet:
+    /// RunMakeAnalysis would loop for ever on it
+    /// </summary>
+    static void RunFirstSeveralTimes (int number)
+    {
+      for (int i = 0; i < number; ++i) {
+        AnalysisUnitTests.RunFirst ();
+      }
+    }
+
+    /// <summary>
+    /// Test the analysis when the dynamic end is immediately known:
+    /// the machine state template must be applied up to the dynamic end only
+    /// </summary>
+    [Test]
+    public void TestDynamicEndFinal ()
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineStateTemplate attended = daoFactory.MachineStateTemplateDAO
+            .FindById ((int)StateTemplate.Attended);
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          InitializeObservationStateSlots (machine1, attendedMOS, user1);
+
+          // The dynamic end is known at once: T(5)
+          var dynamicEnd = T (5);
+          TestDynamicTime.SetResponses (x => x.CreateFinal (dynamicEnd));
+
+          // New association [T(4), T(6)) with the dynamic end Test
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, attended, R (4, 6));
+            association.User = user1;
+            association.DateTime = T (4);
+            association.Dynamic = ",Test";
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+
+          AnalysisUnitTests.RunMakeAnalysis<MachineStateTemplateAssociation> (session);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.EqualTo (attended),
+              "the machine state template is applied at T(4)");
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (5)), Is.Not.EqualTo (attended),
+              "the machine state template is not applied at T(5), after the dynamic end");
+          });
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
+    /// <summary>
+    /// Test the analysis with the aggressive strategy (the default one) when the dynamic end
+    /// is not known yet: the machine state template must be applied at once on the whole range,
+    /// and a dynamic end tracker with the next machine state template must be created
+    /// </summary>
+    [Test]
+    public void TestDynamicEndAggressive ()
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineStateTemplate unattended = daoFactory.MachineStateTemplateDAO
+            .FindById ((int)StateTemplate.Unattended);
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          // A machine state template with a next machine state template, used by the dynamic end tracker
+          IMachineStateTemplate mst = ModelDAOHelper.ModelFactory.CreateMachineStateTemplate ("TestDynamicEnd");
+          mst.AddItem (attendedMOS);
+          mst.NextMachineStateTemplate = unattended;
+          daoFactory.MachineStateTemplateDAO.MakePersistent (mst);
+
+          InitializeObservationStateSlots (machine1, attendedMOS, user1);
+
+          // The dynamic end is never known: only a hint is returned
+          var hint = R (4);
+          TestDynamicTime.SetResponses (x => x.CreateWithHint (hint));
+
+          // New association [T(4), oo) with the dynamic end Test
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, mst, R (4));
+            association.User = user1;
+            association.DateTime = T (4);
+            association.Dynamic = ",Test";
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+
+          // Note: RunMakeAnalysis can't be used here, the dynamic end tracker remains pending
+          RunFirstSeveralTimes (10);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.EqualTo (mst),
+              "the machine state template is applied aggressively at T(4)");
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (10)), Is.EqualTo (mst),
+              "the machine state template is applied aggressively after the possible dynamic end");
+          });
+
+          // A dynamic end tracker with the next machine state template was created
+          var associations = session.CreateCriteria<MachineStateTemplateAssociation> ()
+            .List<MachineStateTemplateAssociation> ();
+          Assert.That (associations.Any (a => object.Equals (a.MachineStateTemplate, unattended)), Is.True,
+            "a dynamic end tracker with the next machine state template was created");
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
+    /// <summary>
+    /// Test the analysis when the dynamic end is not applicable: the machine state template
+    /// must not be applied and the reason must be recorded in the analysis logs
+    /// </summary>
+    [Test]
+    public void TestDynamicEndNotApplicable ()
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineStateTemplate attended = daoFactory.MachineStateTemplateDAO
+            .FindById ((int)StateTemplate.Attended);
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          InitializeObservationStateSlots (machine1, attendedMOS, user1);
+
+          TestDynamicTime.SetResponses (x => x.CreateNotApplicable ());
+
+          // New association [T(4), T(6)) with the dynamic end Test
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, attended, R (4, 6));
+            association.User = user1;
+            association.DateTime = T (4);
+            association.Dynamic = ",Test";
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+
+          AnalysisUnitTests.RunMakeAnalysis<MachineStateTemplateAssociation> (session);
+          DAOFactory.EmptyAccumulators ();
+
+          var associations = session.CreateCriteria<MachineStateTemplateAssociation> ()
+            .List<MachineStateTemplateAssociation> ();
+          Assert.Multiple (() => {
+            Assert.That (associations.All (a => a.AnalysisStatus.Equals (AnalysisStatus.NotApplicable)), Is.True,
+              "the association is not applicable");
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.Not.EqualTo (attended),
+              "the machine state template is not applied");
+          });
+
+          // The reason why the machine state template was not applied must be traceable
+          var logs = ModelDAOHelper.DAOFactory.MachineModificationLogDAO.FindAll ();
+          Assert.That (logs.Any (l => l.Level.Equals (LogLevel.WARN)), Is.True,
+            "a warning analysis log records why the dynamic end is not applicable");
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
+    /// <summary>
+    /// Test the analysis when the dynamic start of the dynamic end tracker is not applicable
+    /// after the machine state template was applied aggressively
+    ///
+    /// The machine state template must remain applied, it is never reverted, but the reason
+    /// must be recorded in the analysis logs
+    /// </summary>
+    [Test]
+    public void TestDynamicEndTrackerNotApplicable ()
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineStateTemplate unattended = daoFactory.MachineStateTemplateDAO
+            .FindById ((int)StateTemplate.Unattended);
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          IMachineStateTemplate mst = ModelDAOHelper.ModelFactory.CreateMachineStateTemplate ("TestDynamicEnd");
+          mst.AddItem (attendedMOS);
+          mst.NextMachineStateTemplate = unattended;
+          daoFactory.MachineStateTemplateDAO.MakePersistent (mst);
+
+          InitializeObservationStateSlots (machine1, attendedMOS, user1);
+
+          // First step: the dynamic end is not known yet, the machine state template is applied aggressively
+          var hint = R (4);
+          TestDynamicTime.SetResponses (x => x.CreateWithHint (hint));
+
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, mst, R (4));
+            association.User = user1;
+            association.DateTime = T (4);
+            association.Dynamic = ",Test";
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+
+          RunFirstSeveralTimes (10);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.EqualTo (mst),
+            "the machine state template was applied aggressively");
+
+          // Second step: the dynamic start of the tracker becomes not applicable
+          TestDynamicTime.SetResponses (x => x.CreateNotApplicable ());
+          RunFirstSeveralTimes (10);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.EqualTo (mst),
+              "the machine state template applied aggressively is kept, it is not reverted");
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (10)), Is.EqualTo (mst),
+              "the machine state template remains effective after the expected dynamic end");
+          });
+
+          // The consequence must be traceable, since the data is not reverted
+          var logs = ModelDAOHelper.DAOFactory.MachineModificationLogDAO.FindAll ();
+          Assert.That (logs.Any (l => l.Level.Equals (LogLevel.WARN)), Is.True,
+            "a warning analysis log records that the machine state template remains effective");
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
     [OneTimeSetUp]
     public void Init()
     {
