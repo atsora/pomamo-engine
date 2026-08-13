@@ -663,7 +663,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 <MachineObservationStateAssociation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DateTime="{((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime}" Priority="100" Begin="0001-01-01 00:00:00">
   <Machine Id="0" Name="MACHINE" />
   <Option xsi:nil="true" />
-  <MachineObservationState UserRequired="false" ShiftRequired="false" IsProduction="false" />
+  <MachineObservationState UserRequired="false" ShiftRequired="false" IsProduction="false" IsSetup="false" />
   <User Name="USER" />
 </MachineObservationStateAssociation>
 """.ReplaceLineEndings ()));
@@ -672,7 +672,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 <MachineObservationStateAssociation xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" DateTime=""{0}"" Priority=""100"" Begin=""0001-01-01 00:00:00"">
   <Option xsi:nil=""true"" />
   <Machine Id=""0"" Name=""MACHINE"" />
-  <MachineObservationState UserRequired=""false"" ShiftRequired=""false"" IsProduction=""false"" />
+  <MachineObservationState UserRequired=""false"" ShiftRequired=""false"" IsProduction=""false"" IsSetup=""false"" />
   <User Name=""USER"" />
 </MachineObservationStateAssociation>", ((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime);
 
@@ -697,7 +697,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 <MachineObservationStateAssociation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DateTime="{((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime}" Priority="100" Begin="{machineObservationStateAssociation.Begin.Value.ToString ("yyyy-MM-dd HH:mm:ss")}" End="{machineObservationStateAssociation.End.Value.ToString ("yyyy-MM-dd HH:mm:ss")}">
   <Machine Id="0" Name="MACHINE" />
   <Option xsi:nil="true" />
-  <MachineObservationState UserRequired="false" ShiftRequired="false" OnSite="true" IsProduction="false" />
+  <MachineObservationState UserRequired="false" ShiftRequired="false" OnSite="true" IsProduction="false" IsSetup="false" />
   <User Name="USER" />
 </MachineObservationStateAssociation>
 """.ReplaceLineEndings ()));
@@ -706,7 +706,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 <MachineObservationStateAssociation xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" DateTime=""{0}"" Priority=""100"" Begin=""{1}"" End=""{2}"">
   <Option xsi:nil=""true"" />
   <Machine Id=""0"" Name=""MACHINE"" />
-  <MachineObservationState UserRequired=""false"" ShiftRequired=""false"" OnSite=""true"" IsProduction=""false"" />
+  <MachineObservationState UserRequired=""false"" ShiftRequired=""false"" OnSite=""true"" IsProduction=""false"" IsSetup=""false"" />
   <User Name=""USER"" />
 </MachineObservationStateAssociation>", ((MachineObservationStateAssociation)machineObservationStateAssociation).SqlDateTime,
                                         machineObservationStateAssociation.Begin.Value.ToString ("yyyy-MM-dd HH:mm:ss"),
@@ -963,7 +963,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
               var s = stringWriter.ToString ();
 #if NET6_0_OR_GREATER
               Assert.That (s.ReplaceLineEndings (), Is.EqualTo ("""
-<?xml version="1.0" encoding="utf-16"?><Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="EventLongPeriod" DateTime="2012-12-12 00:00:00" LocalDateTimeString="12/12/2012 01:00:00" LocalDateTimeG="12/12/2012 01:00:00" TriggerDuration="00:20:00"><Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" /><MonitoredMachine Id="1" Name="MACHINE_A17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine><MachineMode TranslationKey="MachineModeInactive" Display="Inactive" Running="false" AutoSequence="false" /><MachineObservationState TranslationKey="MachineObservationStateAttended" Display="Machine ON with operator (attended)" UserRequired="true" ShiftRequired="false" OnSite="true" IsProduction="true" /></Event>
+<?xml version="1.0" encoding="utf-16"?><Event xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="EventLongPeriod" DateTime="2012-12-12 00:00:00" LocalDateTimeString="12/12/2012 01:00:00" LocalDateTimeG="12/12/2012 01:00:00" TriggerDuration="00:20:00"><Level Name="" TranslationKey="EventLevelAlert" Display="Alert" Priority="100" /><MonitoredMachine Id="1" Name="MACHINE_A17"><MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" /></MonitoredMachine><MachineMode TranslationKey="MachineModeInactive" Display="Inactive" Running="false" AutoSequence="false" /><MachineObservationState TranslationKey="MachineObservationStateAttended" Display="Machine ON with operator (attended)" UserRequired="true" ShiftRequired="false" OnSite="true" IsProduction="true" IsSetup="false" /></Event>
 """.ReplaceLineEndings ()));
 #else // NET48
           Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -973,7 +973,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     <MonitoringType TranslationKey=""MonitoringTypeMonitored"" Display=""Monitored"" Id=""2"" />
   </MonitoredMachine>
   <MachineMode TranslationKey=""MachineModeInactive"" Display=""Inactive"" Running=""false"" AutoSequence=""false"" />
-  <MachineObservationState TranslationKey=""MachineObservationStateAttended"" Display=""Machine ON with operator (attended)"" UserRequired=""true"" ShiftRequired=""false"" OnSite=""true"" IsProduction=""true"" />
+  <MachineObservationState TranslationKey=""MachineObservationStateAttended"" Display=""Machine ON with operator (attended)"" UserRequired=""true"" ShiftRequired=""false"" OnSite=""true"" IsProduction=""true"" IsSetup=""false"" />
 </Event>".Length,
                            s.Length);
 #endif
@@ -996,7 +996,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     <MonitoringType TranslationKey="MonitoringTypeMonitored" Display="Monitored" Id="2" />
   </MonitoredMachine>
   <MachineMode TranslationKey="MachineModeInactive" Display="Inactive" Running="false" AutoSequence="false" />
-  <MachineObservationState TranslationKey="MachineObservationStateAttended" Display="Machine ON with operator (attended)" UserRequired="true" ShiftRequired="false" OnSite="true" IsProduction="true" />
+  <MachineObservationState TranslationKey="MachineObservationStateAttended" Display="Machine ON with operator (attended)" UserRequired="true" ShiftRequired="false" OnSite="true" IsProduction="true" IsSetup="false" />
 </EventLongPeriod>
 """.ReplaceLineEndings ()));
 #else // NET48
@@ -1007,7 +1007,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     <MonitoringType TranslationKey=""MonitoringTypeMonitored"" Display=""Monitored"" Id=""2"" />
   </MonitoredMachine>
   <MachineMode TranslationKey=""MachineModeInactive"" Display=""Inactive"" Running=""false"" AutoSequence=""false"" />
-  <MachineObservationState TranslationKey=""MachineObservationStateAttended"" Display=""Machine ON with operator (attended)"" UserRequired=""true"" ShiftRequired=""false"" OnSite=""true"" IsProduction=""true"" />
+  <MachineObservationState TranslationKey=""MachineObservationStateAttended"" Display=""Machine ON with operator (attended)"" UserRequired=""true"" ShiftRequired=""false"" OnSite=""true"" IsProduction=""true"" IsSetup=""false"" />
 </EventLongPeriod>".Length, s.Length);
 #endif
             }
