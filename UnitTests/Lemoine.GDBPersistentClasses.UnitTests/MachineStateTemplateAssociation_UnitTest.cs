@@ -1087,6 +1087,135 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       }
     }
 
+    /// <summary>
+    /// Test the analysis when a next machine state template is set in the association:
+    /// the dynamic end tracker must use it and not the next machine state template
+    /// of the machine state template
+    /// </summary>
+    [Test]
+    public void TestAssociationNextMachineStateTemplate ()
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineStateTemplate attended = daoFactory.MachineStateTemplateDAO
+            .FindById ((int)StateTemplate.Attended);
+          IMachineStateTemplate unattended = daoFactory.MachineStateTemplateDAO
+            .FindById ((int)StateTemplate.Unattended);
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          // The machine state template references unattended as next machine state template
+          IMachineStateTemplate mst = ModelDAOHelper.ModelFactory.CreateMachineStateTemplate ("TestDynamicEnd");
+          mst.AddItem (attendedMOS);
+          mst.NextMachineStateTemplate = unattended;
+          daoFactory.MachineStateTemplateDAO.MakePersistent (mst);
+
+          InitializeObservationStateSlots (machine1, attendedMOS, user1);
+
+          // The dynamic end is never known: only a hint is returned, so that a dynamic end tracker is created
+          var hint = R (4);
+          TestDynamicTime.SetResponses (x => x.CreateWithHint (hint));
+
+          // New association [T(4), oo) with the dynamic end Test,
+          // that references attended as next machine state template
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, mst, R (4));
+            association.NextMachineStateTemplate = attended;
+            association.User = user1;
+            association.DateTime = T (4);
+            association.Dynamic = ",Test";
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+
+          // Note: RunMakeAnalysis can't be used here, the dynamic end tracker remains pending
+          RunFirstSeveralTimes (10);
+          DAOFactory.EmptyAccumulators ();
+
+          var associations = session.CreateCriteria<MachineStateTemplateAssociation> ()
+            .List<MachineStateTemplateAssociation> ();
+          Assert.Multiple (() => {
+            Assert.That (associations.Any (a => object.Equals (a.MachineStateTemplate, attended)), Is.True,
+              "the dynamic end tracker uses the next machine state template of the association");
+            Assert.That (associations.Any (a => object.Equals (a.MachineStateTemplate, unattended)), Is.False,
+              "the next machine state template of the machine state template is not used");
+          });
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
+    /// <summary>
+    /// Test the analysis when no dynamic end is set in the association while there is no upper
+    /// bound in its range: the dynamic end of the machine state template must be considered
+    /// </summary>
+    [Test]
+    public void TestMachineStateTemplateDynamicEnd ()
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          // A machine state template with a dynamic end
+          IMachineStateTemplate mst = ModelDAOHelper.ModelFactory.CreateMachineStateTemplate ("TestDynamicEnd");
+          mst.AddItem (attendedMOS);
+          mst.DynamicEnd = "Test";
+          daoFactory.MachineStateTemplateDAO.MakePersistent (mst);
+
+          InitializeObservationStateSlots (machine1, attendedMOS, user1);
+
+          // The dynamic end is known at once: T(5)
+          var dynamicEnd = T (5);
+          TestDynamicTime.SetResponses (x => x.CreateFinal (dynamicEnd));
+
+          // New association [T(4), oo) with no dynamic end
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, mst, R (4));
+            association.User = user1;
+            association.DateTime = T (4);
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+
+          AnalysisUnitTests.RunMakeAnalysis<MachineStateTemplateAssociation> (session);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.EqualTo (mst),
+              "the machine state template is applied at T(4)");
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (6)), Is.Not.EqualTo (mst),
+              "the machine state template is not applied at T(6), after the dynamic end of the machine state template");
+          });
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
     [OneTimeSetUp]
     public void Init()
     {
