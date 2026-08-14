@@ -260,10 +260,10 @@ namespace Lem_ApplyMachineModifications
             }
             else if (descriptionItems[0].Equals ("Task")) {
               IManufacturingOrder manufacturingOrder = null;
-              int taskId;
-              if (int.TryParse (descriptionItems[2], out taskId)) {
+              int manufacturingOrderId;
+              if (int.TryParse (descriptionItems[2], out manufacturingOrderId)) {
                 manufacturingOrder = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
-                  .FindById (taskId);
+                  .FindById (manufacturingOrderId);
               }
               if (null == manufacturingOrder) {
                 log.ErrorFormat ("Main: " +

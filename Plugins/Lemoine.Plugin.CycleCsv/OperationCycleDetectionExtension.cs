@@ -166,7 +166,7 @@ namespace Lemoine.Plugin.CycleCsv
           var task = m_operationCycle.OperationSlot.ManufacturingOrder;
           AddValue (m_configuration.TaskExternalCodeHeader,
             task.ExternalCode);
-          AddValue (m_configuration.TaskIdHeader,
+          AddValue (m_configuration.ManufacturingOrderIdHeader,
             ((Lemoine.Collections.IDataWithId<int>)task).Id.ToString ());
         }
       }

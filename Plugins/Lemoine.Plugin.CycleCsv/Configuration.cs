@@ -130,11 +130,11 @@ namespace Lemoine.Plugin.CycleCsv
     public string NotRunningDurationHeader { get; set; }
 
     /// <summary>
-    /// Header of the task id
+    /// Header of the manufacturing order id
     /// 
     /// If empty, dismiss it
     /// </summary>
-    public string TaskIdHeader { get; set; }
+    public string ManufacturingOrderIdHeader { get; set; }
 
     /// <summary>
     /// Header of the task external code

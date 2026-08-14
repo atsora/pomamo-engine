@@ -21,39 +21,24 @@ namespace Lemoine.Plugin.MaintenanceAction
   /// </summary>
   public class Plugin : PluginNoConfig, IPluginDll, IFlaggedPlugin
   {
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "Maintenance actions"; } }
+    public override string Name => "Maintenance actions";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "This plugin adds the 'maintenance actions' feature, to allow the maintenance guy to better manage the maintenance of the machines";
-      }
-    }
+    public override string Description => "This plugin adds the 'maintenance actions' feature, to allow the maintenance guy to better manage the maintenance of the machines";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Config | PluginFlag.Web | PluginFlag.NHibernateExtension;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Config | PluginFlag.Web | PluginFlag.NHibernateExtension;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 2; } }
+    public override int Version => 2;
 
     TransformationProviderExt Database
     {
@@ -66,11 +51,8 @@ namespace Lemoine.Plugin.MaintenanceAction
       }
     }
 
-    #endregion // Getters / Setters
-
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -245,6 +227,5 @@ SET DEFAULT now() AT TIME ZONE 'UTC';");
       Database.RemoveTable (TableName.MAINTENANCE_ACTION_STATUS);
     }
     #endregion // Migration
-    #endregion // Methods
   }
 }

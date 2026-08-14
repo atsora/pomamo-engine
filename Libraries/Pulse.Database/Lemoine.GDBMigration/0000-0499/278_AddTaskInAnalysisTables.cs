@@ -94,12 +94,12 @@ namespace Lemoine.GDBMigration
 
     void WorkOrderSlotUp ()
     {
-      var taskIdColumn =
+      var manufacturingOrderIdColumn =
         Lemoine.Info.ConfigSet.LoadAndGet (USE_DEPRECATED_TASK_KEY, USE_DEPRECATED_TASK_DEFAULT)
         ? ColumnName.TASK_ID
         : ColumnName.MANUFACTURING_ORDER_ID;
       Database.AddColumn (TableName.WORK_ORDER_SLOT,
-                          new Column (taskIdColumn, DbType.Int32, ColumnProperty.Null));
+                          new Column (manufacturingOrderIdColumn, DbType.Int32, ColumnProperty.Null));
       // Note: this is not possible to add a foreign key to a view
       // So next constraint can't be written
       /*
