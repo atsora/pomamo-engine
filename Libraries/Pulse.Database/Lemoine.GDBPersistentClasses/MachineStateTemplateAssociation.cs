@@ -52,6 +52,7 @@ namespace Lemoine.GDBPersistentClasses
     static readonly int DYNAMIC_END_TRACKER_PRIORITY_DEFAULT = 10;
 
     IMachineStateTemplate m_MachineStateTemplate;
+    IMachineStateTemplate m_nextMachineStateTemplate;
     IUser m_user;
     IShift m_shift;
     bool m_force = false;
@@ -198,6 +199,34 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Machine state template to apply once the dynamic end of this association is reached
+    ///
+    /// Nullable. If set, it has the priority on the NextMachineStateTemplate property
+    /// of <see cref="MachineStateTemplate"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual IMachineStateTemplate NextMachineStateTemplate
+    {
+      get { return m_nextMachineStateTemplate; }
+      set { m_nextMachineStateTemplate = value; }
+    }
+
+    /// <summary>
+    /// Reference to the next Machine State Template for Xml Serialization
+    /// </summary>
+    [XmlElement ("NextMachineStateTemplate")]
+    public virtual MachineStateTemplate XmlSerializationNextMachineStateTemplate
+    {
+      get { return this.NextMachineStateTemplate as MachineStateTemplate; }
+      set { this.NextMachineStateTemplate = value; }
+    }
+
+    /// <summary>
+    /// used to serialize NextMachineStateTemplate only when not null
+    /// </summary>
+    public virtual bool XmlSerializationNextMachineStateTemplateSpecified => null != this.NextMachineStateTemplate;
+
+    /// <summary>
     /// Reference to the User, according the Machine Observation State
     /// </summary>
     [XmlIgnore]
@@ -259,6 +288,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IMachineStateTemplateAssociation Clone (UtcDateTimeRange range)
     {
       var clone = new MachineStateTemplateAssociation (this.Machine, this.MachineStateTemplate, range);
+      clone.NextMachineStateTemplate = this.NextMachineStateTemplate;
       clone.Option = this.Option;
       clone.Dynamic = this.Dynamic;
       clone.Priority = this.StatusPriority;
@@ -436,6 +466,19 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
 
+      // If no dynamic end is set in the association while there is no upper bound in the range,
+      // consider the dynamic end of the machine state template.
+      // Note: the dynamic end of the association has the priority.
+      // This is processed before any sub-modification is created, so that they all inherit it
+      if ((null == this.Parent) && !this.End.HasValue
+        && string.IsNullOrEmpty (this.DynamicEnd)
+        && !string.IsNullOrEmpty (this.MachineStateTemplate.DynamicEnd)) {
+        this.Dynamic = $"{this.DynamicStart},{this.MachineStateTemplate.DynamicEnd}";
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: no dynamic end in the association => consider {this.Dynamic} from the machine state template {this.MachineStateTemplate.Id}");
+        }
+      }
+
       if ((AnalysisStatus.New == this.AnalysisStatus) && (null == this.Parent)
         && (null != this.MachineStateTemplate) && (LinkDirection.None != this.MachineStateTemplate.LinkOperationDirection)) {
         // Create the associated link operation modification if applicable (not on a sub-modification)
@@ -464,6 +507,7 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (this.Range.ContainsRange (range));
         IMachineStateTemplateAssociation association = ModelDAOHelper.ModelFactory
           .CreateMachineStateTemplateAssociation (this.Machine, this.MachineStateTemplate, range);
+        association.NextMachineStateTemplate = this.NextMachineStateTemplate;
         association.DateTime = this.DateTime;
         association.Shift = this.Shift;
         association.User = this.User;
@@ -574,6 +618,7 @@ namespace Lemoine.GDBPersistentClasses
                                                                                              this.MachineStateTemplate,
                                                                                              restrictedRange,
                                                                                              this);
+          association.NextMachineStateTemplate = this.NextMachineStateTemplate;
           association.Option = this.Option;
           association.DateTime = this.DateTime;
           association.User = this.User;
@@ -612,6 +657,7 @@ namespace Lemoine.GDBPersistentClasses
             Debug.Assert (this.Range.ContainsRange (range));
             IMachineStateTemplateAssociation association = ModelDAOHelper.ModelFactory
               .CreateMachineStateTemplateAssociation (this.Machine, this.MachineStateTemplate, range);
+            association.NextMachineStateTemplate = this.NextMachineStateTemplate;
             association.DateTime = this.DateTime;
             association.Shift = this.Shift;
             association.User = this.User;
@@ -633,6 +679,7 @@ namespace Lemoine.GDBPersistentClasses
           Debug.Assert (this.Range.ContainsRange (range));
           IMachineStateTemplateAssociation association = ModelDAOHelper.ModelFactory
             .CreateMachineStateTemplateAssociation (this.Machine, this.MachineStateTemplate, range);
+          association.NextMachineStateTemplate = this.NextMachineStateTemplate;
           association.DateTime = this.DateTime;
           association.Shift = this.Shift;
           association.User = this.User;
@@ -907,9 +954,15 @@ namespace Lemoine.GDBPersistentClasses
 
     static void MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (string dynamicEnd, UtcDateTimeRange hint, IMachineModification parent, IMachineStateTemplateAssociation association, bool removeDynamicPlus)
     {
-      var nextMachineStateTemplate = association.MachineStateTemplate.NextMachineStateTemplate ?? association.Machine.DefaultMachineStateTemplate;
+      // The next machine state template of the association has the priority
+      // on the one of the machine state template
+      var nextMachineStateTemplate = association.NextMachineStateTemplate
+        ?? association.MachineStateTemplate.NextMachineStateTemplate
+        ?? association.Machine.DefaultMachineStateTemplate;
       association.Dynamic = $"{dynamicEnd},";
       association.MachineStateTemplate = nextMachineStateTemplate;
+      // The next machine state template was consumed here, do not apply it once again later
+      association.NextMachineStateTemplate = null;
       association.Priority = Lemoine.Info.ConfigSet
         .LoadAndGet (DYNAMIC_END_TRACKER_PRIORITY_KEY, DYNAMIC_END_TRACKER_PRIORITY_DEFAULT);
       // Remove the option TrackSlotChanges
@@ -993,6 +1046,7 @@ namespace Lemoine.GDBPersistentClasses
                                                                this.MachineStateTemplate,
                                                                range,
                                                                this.MainModification);
+        association.NextMachineStateTemplate = this.NextMachineStateTemplate;
         association.DateTime = this.DateTime;
         association.Shift = this.Shift;
         association.User = this.User;
@@ -1023,6 +1077,7 @@ namespace Lemoine.GDBPersistentClasses
                                                                    this.MachineStateTemplate,
                                                                    range,
                                                                    this.MainModification);
+            association.NextMachineStateTemplate = this.NextMachineStateTemplate;
             association.DateTime = this.DateTime;
             association.Shift = this.Shift;
             association.User = this.User;
@@ -1043,6 +1098,7 @@ namespace Lemoine.GDBPersistentClasses
                                                                  this.MachineStateTemplate,
                                                                  range,
                                                                  this.MainModification);
+          association.NextMachineStateTemplate = this.NextMachineStateTemplate;
           association.DateTime = this.DateTime;
           association.Shift = this.Shift;
           association.User = this.User;
@@ -1157,6 +1213,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       base.Unproxy ();
       NHibernateHelper.Unproxy<IMachineStateTemplate> (ref m_MachineStateTemplate);
+      NHibernateHelper.Unproxy<IMachineStateTemplate> (ref m_nextMachineStateTemplate);
       NHibernateHelper.Unproxy<IUser> (ref m_user);
       NHibernateHelper.Unproxy<IShift> (ref m_shift);
     }

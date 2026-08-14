@@ -271,6 +271,9 @@ namespace Lemoine.WebDataAccess
     public Lemoine.Model.IMachineStateTemplate MachineStateTemplate {
       get; set;
     }
+    public Lemoine.Model.IMachineStateTemplate NextMachineStateTemplate {
+      get; set;
+    }
     public Lemoine.Model.AssociationOption? Option {
       get {
         throw new NotImplementedException();

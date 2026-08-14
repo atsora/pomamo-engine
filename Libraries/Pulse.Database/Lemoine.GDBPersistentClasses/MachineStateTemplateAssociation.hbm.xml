@@ -19,6 +19,11 @@
                    cascade="none"
                    not-null="true"
                    not-found="exception" />
+      <many-to-one name="NextMachineStateTemplate"
+                   column="nextmachinestatetemplateid"
+                   class="MachineStateTemplate"
+                   cascade="none"
+                   not-found="exception" />
       <many-to-one name="User"
                    column="userid"
                    class="User"

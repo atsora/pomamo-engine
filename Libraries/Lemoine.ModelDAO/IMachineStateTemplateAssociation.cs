@@ -27,7 +27,15 @@ namespace Lemoine.Model
     /// Not null
     /// </summary>
     IMachineStateTemplate MachineStateTemplate { get; set; }
-    
+
+    /// <summary>
+    /// Machine state template to apply once the dynamic end of this association is reached
+    ///
+    /// Nullable. If set, it has the priority on <see cref="IMachineStateTemplate.NextMachineStateTemplate"/>
+    /// of <see cref="MachineStateTemplate"/>
+    /// </summary>
+    IMachineStateTemplate NextMachineStateTemplate { get; set; }
+
     /// <summary>
     /// Optional reference to the User
     /// </summary>
@@ -57,6 +65,9 @@ namespace Lemoine.Model
     /// else it is by default the lower bound of the date/time range
     /// 
     /// If Dynamic starts with "?", then switch to aggressive mode
+    ///
+    /// If no dynamic end is set here while the range has no upper bound,
+    /// <see cref="IMachineStateTemplate.DynamicEnd"/> of <see cref="MachineStateTemplate"/> is considered instead
     /// </summary>
     string Dynamic { get; set; }
 

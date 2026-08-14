@@ -147,10 +147,10 @@ RETURNING modificationid;
 
             var insertIntoMachineStateTemplateAssociationQuery = $"""
 INSERT INTO pgfkpart.machinestatetemplateassociation_p{association.Machine.Id} (modificationid, machineid, machinestatetemplateid,
-  userid, shiftid,
+  nextmachinestatetemplateid, userid, shiftid,
   machinestatetemplateassociationbegin, machinestatetemplateassociationend,
   machinestatetemplateassociationforce, machinestatetemplateassociationoption, machinestatetemplateassociationdynamic)
-VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Force, :Option, :Dynamic);
+VALUES (:Id, :Machine, :MachineStateTemplate, :NextMachineStateTemplate, :User, :Shift, :Begin, :End, :Force, :Option, :Dynamic);
 """;
             int? option = association.Option.HasValue
               ? (int?)association.Option.Value
@@ -160,6 +160,7 @@ VALUES (:Id, :Machine, :MachineStateTemplate, :User, :Shift, :Begin, :End, :Forc
               .SetInt64 ("Id", modificationId)
               .SetEntity ("Machine", association.Machine)
               .SetParameter ("MachineStateTemplate", association.MachineStateTemplate, NHibernateUtil.Entity (typeof (MachineStateTemplate)))
+              .SetParameter ("NextMachineStateTemplate", association.NextMachineStateTemplate, NHibernateUtil.Entity (typeof (MachineStateTemplate)))
               .SetParameter ("User", association.User, NHibernateUtil.Entity (typeof (User)))
               .SetParameter ("Shift", association.Shift, NHibernateUtil.Entity (typeof (Shift)))
               .SetParameter ("Begin", association.Begin, (NHibernate.Type.IType)new Lemoine.NHibernateTypes.UtcLowerBoundDateTimeSecondsType ())
