@@ -882,7 +882,10 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
       else if (dynamicEndResponse.Final.HasValue) {
-        ApplyDynamicEnd (dynamicEndResponse.Final.Value);
+        // The dynamic end is known at once: no dynamic end tracker is created here,
+        // so the next machine state template must be applied directly, so that the result
+        // does not depend on the moment the dynamic end is known
+        ApplyDynamicEnd (dynamicEndResponse.Final.Value, applyNextMachineStateTemplate: true);
         return;
       }
       else {
@@ -922,6 +925,11 @@ namespace Lemoine.GDBPersistentClasses
                 log.Debug ("MakeAnalysisDynamicEndAggressive: hint does not overlap range => no DynamicEndTracker");
               }
             }
+            else if (GetNextMachineStateTemplate (this) is null) {
+              if (log.IsWarnEnabled) {
+                log.Warn ($"MakeAnalysisDynamicEndAggressive: no next machine state template for {this.MachineStateTemplate} => no DynamicEndTracker");
+              }
+            }
             else {
               var trackerRange = this.Dynamic.EndsWith ("+")
                 ? new UtcDateTimeRange (range.Upper.Value)
@@ -952,13 +960,22 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
+    /// <summary>
+    /// Get the machine state template to apply once the dynamic end is reached
+    ///
+    /// The next machine state template of the association has the priority on the one
+    /// of the machine state template, then on the default machine state template of the machine
+    /// </summary>
+    /// <param name="association">not null</param>
+    /// <returns>nullable</returns>
+    static IMachineStateTemplate GetNextMachineStateTemplate (IMachineStateTemplateAssociation association) =>
+      association.NextMachineStateTemplate
+      ?? association.MachineStateTemplate?.NextMachineStateTemplate
+      ?? association.Machine?.DefaultMachineStateTemplate;
+
     static void MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (string dynamicEnd, UtcDateTimeRange hint, IMachineModification parent, IMachineStateTemplateAssociation association, bool removeDynamicPlus)
     {
-      // The next machine state template of the association has the priority
-      // on the one of the machine state template
-      var nextMachineStateTemplate = association.NextMachineStateTemplate
-        ?? association.MachineStateTemplate.NextMachineStateTemplate
-        ?? association.Machine.DefaultMachineStateTemplate;
+      var nextMachineStateTemplate = GetNextMachineStateTemplate (association);
       association.Dynamic = $"{dynamicEnd},";
       association.MachineStateTemplate = nextMachineStateTemplate;
       // The next machine state template was consumed here, do not apply it once again later
@@ -972,7 +989,13 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
-    void ApplyDynamicEnd (DateTime dynamicApplicableEnd)
+    /// <summary>
+    /// Apply the machine state template up to the dynamic end
+    /// </summary>
+    /// <param name="dynamicApplicableEnd">effective dynamic end</param>
+    /// <param name="applyNextMachineStateTemplate">also apply the next machine state template from the dynamic end.
+    /// To set only when no dynamic end tracker takes care of it</param>
+    void ApplyDynamicEnd (DateTime dynamicApplicableEnd, bool applyNextMachineStateTemplate = false)
     {
       if ((Bound.Compare<DateTime> (this.End, dynamicApplicableEnd) < 0)
         && this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)) {
@@ -1000,12 +1023,54 @@ namespace Lemoine.GDBPersistentClasses
         ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
           .InsertSub (this, restrictedRange, ApplyDynamicEndSubChange, null);
       }
+      if (applyNextMachineStateTemplate) {
+        ApplyNextMachineStateTemplate (dynamicApplicableEnd);
+      }
       MarkAsCompleted ("");
     }
 
     void ApplyDynamicEndSubChange (IMachineStateTemplateAssociation association)
     {
       association.Dynamic = null;
+    }
+
+    /// <summary>
+    /// Insert a sub-modification to apply the next machine state template from the dynamic end
+    ///
+    /// This is what the dynamic end tracker does when the dynamic end is known only later:
+    /// the result of the analysis does not depend then on the moment the dynamic end is known
+    /// </summary>
+    /// <param name="dynamicApplicableEnd">effective dynamic end</param>
+    void ApplyNextMachineStateTemplate (DateTime dynamicApplicableEnd)
+    {
+      var nextMachineStateTemplate = GetNextMachineStateTemplate (this);
+      if (nextMachineStateTemplate is null) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ApplyNextMachineStateTemplate: no next machine state template for {this.MachineStateTemplate} => nothing to apply from {dynamicApplicableEnd}");
+        }
+        return;
+      }
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ApplyNextMachineStateTemplate: apply {nextMachineStateTemplate} from {dynamicApplicableEnd}");
+      }
+      ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+        .InsertSub (this, new UtcDateTimeRange (dynamicApplicableEnd),
+                    association => ApplyNextMachineStateTemplateSubChange (nextMachineStateTemplate, association), null);
+    }
+
+    static void ApplyNextMachineStateTemplateSubChange (IMachineStateTemplate nextMachineStateTemplate, IMachineStateTemplateAssociation association)
+    {
+      association.MachineStateTemplate = nextMachineStateTemplate;
+      // The next machine state template was consumed here, do not apply it once again later
+      association.NextMachineStateTemplate = null;
+      // The dynamic end was already processed
+      association.Dynamic = null;
+      // Remove the option TrackSlotChanges
+      if (association.Option.HasValue && association.Option.Value.HasFlag (AssociationOption.TrackSlotChanges)) {
+        association.Option = association.Option.Value
+          .Remove (AssociationOption.TrackSlotChanges);
+      }
     }
 
     /// <summary>
