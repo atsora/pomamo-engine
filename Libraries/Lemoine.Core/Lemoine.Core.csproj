@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net40;net48</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\PulseKeyFileV2.snk</AssemblyOriginatorKeyFile>
     <AssemblyVersion>9.4.1.0</AssemblyVersion>
     <Platforms>AnyCPU;x86</Platforms>
@@ -11,9 +11,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="log4net" />
     <PackageReference Include="Newtonsoft.Json" />
     <!--PackageReference Include="SharedMemory" /--><!-- does not have a strong name -->
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+    <PackageReference Include="log4net" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+    <!-- log4net 3.x only ships net462 and netstandard2.0 assemblies, neither of which net40 can consume.
+         net40 is only built for the Okuma CNC gateway (Windows NT), which keeps the last 2.x release. -->
+    <PackageReference Include="log4net" VersionOverride="2.0.17" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">

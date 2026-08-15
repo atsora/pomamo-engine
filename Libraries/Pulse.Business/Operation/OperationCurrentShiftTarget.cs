@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using static log4net.Appender.RollingFileAppender;
 
 namespace Lemoine.Business.Operation
 {
