@@ -30,12 +30,9 @@ namespace Lemoine.GDBMigration
     static readonly string NPGSQL_COMMAND_TIMEOUT_KEY_KEY = "Database.Npgsql.CommandTimeout.Key";
     static readonly string NPGSQL_COMMAND_TIMEOUT_KEY_DEFAULT = "Command Timeout";
 
-    #region Members
     Migrator.Framework.Migration m_migration = null;
     ITransformationProvider m_database;
-    #endregion // Members
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -81,9 +78,7 @@ namespace Lemoine.GDBMigration
       : this (Lemoine.Info.GDBConnectionParameters.GDBConnectionString)
     {
     }
-    #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the main Migrator.ITransformationProvider
     /// </summary>
@@ -98,7 +93,6 @@ namespace Lemoine.GDBMigration
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Methods from Migrator.Framework.ITransformationProvider
     /// <summary>
