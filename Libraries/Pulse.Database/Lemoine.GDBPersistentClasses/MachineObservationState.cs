@@ -37,6 +37,7 @@ namespace Lemoine.GDBPersistentClasses
     bool m_isSetup = false;
     double? m_laborCost = null;
     IProductionState m_productionState = null;
+    CapacityLevel? m_capacityLevel = null;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineObservationState).FullName);
@@ -204,6 +205,30 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_productionState; }
       set { m_productionState = value; }
     }
+
+    /// <summary>
+    /// Capacity level associated with this machine observation state (nullable)
+    /// </summary>
+    [XmlIgnore]
+    public virtual CapacityLevel? CapacityLevel {
+      get { return m_capacityLevel; }
+      set { m_capacityLevel = value; }
+    }
+
+    /// <summary>
+    /// use for Xml serialization of CapacityLevel
+    /// </summary>
+    [XmlAttribute ("CapacityLevel")]
+    public virtual CapacityLevel XmlSerializationCapacityLevel
+    {
+      get { return m_capacityLevel.Value; }
+      set { m_capacityLevel = value; }
+    }
+
+    /// <summary>
+    /// used to serialize CapacityLevel only when not null
+    /// </summary>
+    public virtual bool XmlSerializationCapacityLevelSpecified => m_capacityLevel.HasValue;
 
     /// <summary>
     /// Text to use in a selection dialog

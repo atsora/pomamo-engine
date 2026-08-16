@@ -42,6 +42,13 @@ namespace Pulse.Web.CommonResponseDTO
     /// Background color
     /// </summary>
     public string BgColor { get; set; }
+
+    /// <summary>
+    /// Capacity level
+    ///
+    /// null if no capacity level is associated to the machine observation state
+    /// </summary>
+    public CapacityLevelDTO CapacityLevel { get; set; }
   }
   
   /// <summary>
@@ -64,6 +71,10 @@ namespace Pulse.Web.CommonResponseDTO
       machineObservationStateDTO.Display = machineObservationState.Display;
       machineObservationStateDTO.BgColor = ColorGenerator.GetColor ("MachineObservationState", machineObservationStateDTO.Id);
       machineObservationStateDTO.FgColor = ColorGenerator.GetContrastColor (machineObservationStateDTO.BgColor);
+      if (machineObservationState.CapacityLevel.HasValue) {
+        machineObservationStateDTO.CapacityLevel = new CapacityLevelDTOAssembler ()
+          .Assemble (machineObservationState.CapacityLevel.Value);
+      }
       return machineObservationStateDTO;
     }
     

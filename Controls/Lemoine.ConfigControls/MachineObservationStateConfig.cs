@@ -62,6 +62,7 @@ namespace Lemoine.ConfigControls
       isSetupColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateIsSetup");
       laborCostColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateLaborCost");
       productionStateColumn.HeaderText = PulseCatalog.GetString ("ProductionState");
+      capacityLevelColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateCapacityLevel");
       
       m_machineObservationStates.SortColumns = false;
       

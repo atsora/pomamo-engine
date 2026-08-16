@@ -31,6 +31,8 @@
               not-null="true" />
     <property name="LaborCost"
               column="machineobservationstatelaborcost" />
+    <property name="CapacityLevel"
+              column="machineobservationstatecapacitylevel" />
     <many-to-one name="ProductionState"
                  column="productionstateid"
                  class="ProductionState"

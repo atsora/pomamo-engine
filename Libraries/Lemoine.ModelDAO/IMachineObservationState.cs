@@ -75,6 +75,25 @@ namespace Lemoine.Model
   }
 
   /// <summary>
+  /// Capacity level associated to a machine observation state
+  /// </summary>
+  public enum CapacityLevel
+  {
+    /// <summary>
+    /// The machine is not available at all
+    /// </summary>
+    Closed = 0,
+    /// <summary>
+    /// The machine is available, without any expected production
+    /// </summary>
+    Open = 1,
+    /// <summary>
+    /// The machine is available and a production is expected
+    /// </summary>
+    ExpectedProduction = 2,
+  }
+
+  /// <summary>
   /// Model of table MachineObservationState
   /// 
   /// This table lists the different machine observation states:
@@ -162,5 +181,12 @@ namespace Lemoine.Model
     /// Associated production state (nullable)
     /// </summary>
     IProductionState ProductionState { get; set; }
+
+    /// <summary>
+    /// Capacity level associated with this machine observation state
+    ///
+    /// Nullable
+    /// </summary>
+    CapacityLevel? CapacityLevel { get; set; }
   }
 }
