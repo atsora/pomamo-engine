@@ -58,6 +58,7 @@ namespace Lemoine.ConfigControls
       colorColumn.HeaderText = PulseCatalog.GetString ("Color");
       displayPriorityColumn.HeaderText = PulseCatalog.GetString ("DisplayPriority");
       defaultRateColumn.HeaderText = PulseCatalog.GetString ("ProductionStateDefaultRate", "Default rate");
+      productionClassColumn.HeaderText = PulseCatalog.GetString ("ProductionStateProductionClass", "Production class");
 
       m_productionStates.SortColumns = false;
 

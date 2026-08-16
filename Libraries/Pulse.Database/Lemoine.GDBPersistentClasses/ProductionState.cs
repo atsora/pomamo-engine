@@ -34,6 +34,7 @@ namespace Lemoine.GDBPersistentClasses
     string m_color;
     int? m_displayPriority;
     double? m_defaultRate;
+    ProductionClass? m_productionClass;
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProductionState).FullName);
 
@@ -221,6 +222,34 @@ namespace Lemoine.GDBPersistentClasses
     public virtual bool ShouldSerializeXmlSerializationDefaultRate ()
     {
       return m_defaultRate.HasValue;
+    }
+
+    /// <summary>
+    /// Class of production associated with this production state (nullable)
+    /// </summary>
+    [XmlIgnore]
+    public virtual ProductionClass? ProductionClass
+    {
+      get { return m_productionClass; }
+      set { m_productionClass = value; }
+    }
+
+    /// <summary>
+    /// Production class for XML serialization
+    /// </summary>
+    [XmlAttribute ("ProductionClass")]
+    public virtual ProductionClass XmlSerializationProductionClass
+    {
+      get { return m_productionClass.Value; }
+      set { m_productionClass = value; }
+    }
+
+    /// <summary>
+    /// Determine whether the ProductionClass property should be serialized
+    /// </summary>
+    public virtual bool ShouldSerializeXmlSerializationProductionClass ()
+    {
+      return m_productionClass.HasValue;
     }
 
     /// <summary>

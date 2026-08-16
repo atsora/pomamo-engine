@@ -29,6 +29,10 @@ namespace Pulse.Web.CommonResponseDTO
       this.LongDisplay = productionState.LongDisplay;
       this.Description = productionState.Description;
       this.Color = productionState.Color;
+      if (productionState.ProductionClass.HasValue) {
+        this.ProductionClass = new ProductionClassDTOAssembler ()
+          .Assemble (productionState.ProductionClass.Value);
+      }
     }
 
     /// <summary>
@@ -55,5 +59,12 @@ namespace Pulse.Web.CommonResponseDTO
     /// Color
     /// </summary>
     public string Color { get; set; }
+
+    /// <summary>
+    /// Class of production
+    ///
+    /// null if no production class is associated to the production state
+    /// </summary>
+    public ProductionClassDTO ProductionClass { get; set; }
   }
 }

@@ -29,5 +29,6 @@
               not-null="true" />
     <property name="DisplayPriority" column="productionstatedisplaypriority" />
     <property name="DefaultRate" column="productionstatedefaultrate" />
+    <property name="ProductionClass" column="productionstateproductionclass" />
   </class>
 </hibernate-mapping>

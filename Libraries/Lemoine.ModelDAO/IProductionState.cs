@@ -48,6 +48,33 @@ namespace Lemoine.Model
   }
 
   /// <summary>
+  /// Class of production a production state belongs to
+  /// </summary>
+  public enum ProductionClass
+  {
+    /// <summary>
+    /// Productive time
+    /// </summary>
+    Productive = 1,
+    /// <summary>
+    /// Loss of performance
+    /// </summary>
+    PerformanceLoss = 2,
+    /// <summary>
+    /// Loss of availability
+    /// </summary>
+    AvailabilityLoss = 3,
+    /// <summary>
+    /// Neutral: neither productive nor a loss
+    /// </summary>
+    Neutral = 4,
+    /// <summary>
+    /// Unknown
+    /// </summary>
+    Unknown = 5,
+  }
+
+  /// <summary>
   /// Model of table ProductionState
   /// </summary>
   public interface IProductionState
@@ -119,5 +146,12 @@ namespace Lemoine.Model
     /// Default rate associated with this production state
     /// </summary>
     double? DefaultRate { get; set; }
+
+    /// <summary>
+    /// Class of production associated with this production state
+    ///
+    /// Nullable
+    /// </summary>
+    ProductionClass? ProductionClass { get; set; }
   }
 }
