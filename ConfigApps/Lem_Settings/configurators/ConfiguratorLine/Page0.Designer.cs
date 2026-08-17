@@ -32,7 +32,6 @@ namespace ConfiguratorLine
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Page0));
       this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
       this.listLines = new Lemoine.BaseControls.List.ListTextValue();
       this.buttonDelete = new System.Windows.Forms.Button();
@@ -72,11 +71,8 @@ namespace ConfiguratorLine
       this.listLines.Name = "listLines";
       this.baseLayout.SetRowSpan(this.listLines, 4);
       this.listLines.SelectedIndex = -1;
-      this.listLines.SelectedIndexes = ((System.Collections.Generic.IList<int>)(resources.GetObject("listLines.SelectedIndexes")));
       this.listLines.SelectedText = "";
-      this.listLines.SelectedTexts = ((System.Collections.Generic.IList<string>)(resources.GetObject("listLines.SelectedTexts")));
       this.listLines.SelectedValue = null;
-      this.listLines.SelectedValues = ((System.Collections.Generic.IList<object>)(resources.GetObject("listLines.SelectedValues")));
       this.listLines.Size = new System.Drawing.Size(240, 250);
       this.listLines.Sorted = true;
       this.listLines.TabIndex = 0;

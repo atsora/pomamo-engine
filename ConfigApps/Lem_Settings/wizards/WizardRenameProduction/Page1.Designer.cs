@@ -32,7 +32,6 @@ namespace WizardRenameProduction
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Page1));
       this.listLines = new Lemoine.BaseControls.List.ListTextValue();
       this.SuspendLayout();
       // 
@@ -44,11 +43,8 @@ namespace WizardRenameProduction
       this.listLines.MultipleSelection = false;
       this.listLines.Name = "listLines";
       this.listLines.SelectedIndex = -1;
-      this.listLines.SelectedIndexes = ((System.Collections.Generic.IList<int>)(resources.GetObject("listLines.SelectedIndexes")));
       this.listLines.SelectedText = "";
-      this.listLines.SelectedTexts = ((System.Collections.Generic.IList<string>)(resources.GetObject("listLines.SelectedTexts")));
       this.listLines.SelectedValue = null;
-      this.listLines.SelectedValues = ((System.Collections.Generic.IList<object>)(resources.GetObject("listLines.SelectedValues")));
       this.listLines.Size = new System.Drawing.Size(370, 290);
       this.listLines.Sorted = true;
       this.listLines.TabIndex = 0;

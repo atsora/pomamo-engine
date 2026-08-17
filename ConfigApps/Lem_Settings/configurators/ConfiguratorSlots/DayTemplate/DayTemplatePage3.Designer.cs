@@ -32,7 +32,6 @@ namespace ConfiguratorSlots.DayTemplate
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DayTemplatePage3));
       this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
       this.label3 = new System.Windows.Forms.Label();
       this.listDayTemplate = new Lemoine.BaseControls.List.ListTextValue();
@@ -77,11 +76,8 @@ namespace ConfiguratorSlots.DayTemplate
       this.listDayTemplate.Name = "listDayTemplate";
       this.baseLayout.SetRowSpan(this.listDayTemplate, 2);
       this.listDayTemplate.SelectedIndex = -1;
-      this.listDayTemplate.SelectedIndexes = ((System.Collections.Generic.IList<int>)(resources.GetObject("listDayTemplate.SelectedIndexes")));
       this.listDayTemplate.SelectedText = "";
-      this.listDayTemplate.SelectedTexts = ((System.Collections.Generic.IList<string>)(resources.GetObject("listDayTemplate.SelectedTexts")));
       this.listDayTemplate.SelectedValue = null;
-      this.listDayTemplate.SelectedValues = ((System.Collections.Generic.IList<object>)(resources.GetObject("listDayTemplate.SelectedValues")));
       this.listDayTemplate.Size = new System.Drawing.Size(229, 147);
       this.listDayTemplate.Sorted = true;
       this.listDayTemplate.TabIndex = 4;
