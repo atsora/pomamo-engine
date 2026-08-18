@@ -211,6 +211,7 @@ SELECT SETVAL('{0}_{1}_seq', CASE WHEN (SELECT maxid FROM maxid) < {2} THEN {2} 
         .Fetch (SelectMode.Fetch, "Items")
         .Fetch (SelectMode.Fetch, "Items.Shift")
         .Fetch (SelectMode.Fetch, "Items.MachineObservationState")
+        .Fetch (SelectMode.Fetch, "Items.SubMachineStateTemplate")
         .Fetch (SelectMode.Fetch, "Stops")
         .SetResultTransformer(new DistinctRootEntityResultTransformer()) // Remove duplicate root entity
         .AddOrder(Order.Asc("Id"))

@@ -37,6 +37,11 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IMachineStateTemplate>> m_observers = new HashSet<IConfigControlObserver<IMachineStateTemplate>> ();
 
+    /// <summary>
+    /// Sub machine state template of the cell that is being edited, to restore it in case of a cycle
+    /// </summary>
+    IMachineStateTemplate m_editedSubMachineStateTemplate = null;
+
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateConfig).FullName);
 
     IMachineStateTemplate SelectedMachineStateTemplate {
@@ -90,8 +95,10 @@ namespace Lemoine.ConfigControls
       machineStateTemplateStopDataGridView.AutoGenerateColumns = false;
       
       {
+        // Note: TimeSpanDialog is a IValueDialog<TimeSpan?>, but with Nullable set to false
+        // it never returns a null value, which the not nullable LocalTime requires
         TimeSpanDialog dialog = new TimeSpanDialog();
-        dialog.Nullable = true;
+        dialog.Nullable = false;
         DataGridViewCell cell = new DataGridViewSelectionableCell<TimeSpan?>(dialog);
         machineStateTemplateStopLocalTimeColumn.CellTemplate = cell;
       }
@@ -103,15 +110,21 @@ namespace Lemoine.ConfigControls
       
       // MachineStateTemplateItem
       machineStateTemplateItemAddButton.Text = PulseCatalog.GetString ("MachineStateTemplateItemAddButton");
+      machineStateTemplateItemAddSubButton.Text = PulseCatalog.GetString ("MachineStateTemplateItemAddSubButton");
       machineStateTemplateItemGroupBox.Text = PulseCatalog.GetString("MachineStateTemplateItem");
       machineStateTemplateItemDayColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemDayColumn");
       machineStateTemplateItemTimePeriodOfDayColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemTimePeriodOfDayColumn");
       machineStateTemplateItemWeekDaysColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemWeekDaysColumn");
       machineStateTemplateItemShiftColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemShiftColumn");
       machineStateTemplateItemMachineObservationStateColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemMachineObservationStateColumn");
+      machineStateTemplateItemSubMachineStateTemplateColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemSubMachineStateTemplateColumn");
+      machineStateTemplateItemWeekYearColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemWeekYearColumn");
+      machineStateTemplateItemWeekNumberColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemWeekNumberColumn");
+      machineStateTemplateItemWeekFrequencyColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemWeekFrequencyColumn");
+      machineStateTemplateItemYearlyRepeatColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemYearlyRepeatColumn");
       machineStateTemplateItemOrderColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateItemOrderColumn");
       machineStateTemplateItemIdColumn.HeaderText = PulseCatalog.GetString ("Id");
-      
+
       machineStateTemplateItemDataGridView.AutoGenerateColumns = false;
 
       {
@@ -139,13 +152,36 @@ namespace Lemoine.ConfigControls
         machineStateTemplateItemShiftColumn.CellTemplate = cell;
       }
       {
+        // An empty cell must be stored as null in the nullable properties, not as DBNull
+        var nullableColumns = new DataGridViewColumn[] {
+          machineStateTemplateItemWeekYearColumn,
+          machineStateTemplateItemWeekNumberColumn,
+          machineStateTemplateItemWeekFrequencyColumn
+        };
+        foreach (var column in nullableColumns) {
+          column.DefaultCellStyle.NullValue = null;
+          column.DefaultCellStyle.DataSourceNullValue = null;
+        }
+      }
+      {
         MachineObservationStateDialog dialog = new MachineObservationStateDialog ();
         dialog.Nullable = false;
         dialog.DisplayedProperty = "Display";
         DataGridViewCell cell = new DataGridViewSelectionableCell<IMachineObservationState> (dialog);
         machineStateTemplateItemMachineObservationStateColumn.CellTemplate = cell;
       }
-      
+      {
+        // Note: not nullable, so that an item always keeps a reference to either
+        // a machine observation state or a machine state template.
+        // To change the kind of an item, remove it and add a new one
+        MachineStateTemplateDialog dialog = new MachineStateTemplateDialog ();
+        dialog.Nullable = false;
+        dialog.MultiSelect = false;
+        dialog.DisplayedProperty = "Display";
+        DataGridViewCell cell = new DataGridViewSelectionableCell<IMachineStateTemplate> (dialog);
+        machineStateTemplateItemSubMachineStateTemplateColumn.CellTemplate = cell;
+      }
+
       //MachineStateTemplate
       categoryColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateCategory");
       machineStateTemplateSiteAttendanceChangeColumn.HeaderText = PulseCatalog.GetString ("MachineStateTemplateSiteAttendanceChangeColumn");
@@ -425,32 +461,127 @@ namespace Lemoine.ConfigControls
     void MachineStateTemplateItemDataGridViewCellValueChanged(object sender, DataGridViewCellEventArgs e)
     {
       if (0 <= e.RowIndex) {
+        if (machineStateTemplateItemDataGridView.Columns[e.ColumnIndex].Name
+            == machineStateTemplateItemSubMachineStateTemplateColumn.Name) {
+          CheckSubMachineStateTemplateCell (machineStateTemplateItemDataGridView.Rows[e.RowIndex]);
+        }
         AddMachineStateTemplateToUpdate();
       }
     }
-    
+
+    /// <summary>
+    /// Keep the sub machine state template that is being edited, so that it can be restored
+    /// when the new value would create a cycle
+    /// </summary>
+    void MachineStateTemplateItemDataGridViewCellBeginEdit (object sender, DataGridViewCellCancelEventArgs e)
+    {
+      m_editedSubMachineStateTemplate = null;
+      if ((0 <= e.RowIndex)
+          && (machineStateTemplateItemDataGridView.Columns[e.ColumnIndex].Name
+              == machineStateTemplateItemSubMachineStateTemplateColumn.Name)) {
+        var item = machineStateTemplateItemDataGridView.Rows[e.RowIndex].DataBoundItem as IMachineStateTemplateItem;
+        m_editedSubMachineStateTemplate = item?.SubMachineStateTemplate;
+      }
+    }
+
+    /// <summary>
+    /// A property of an item may reject the entered value (an invalid week number for example):
+    /// display the reason to the user instead of the default technical dialog
+    /// </summary>
+    void MachineStateTemplateItemDataGridViewDataError (object sender, DataGridViewDataErrorEventArgs e)
+    {
+      log.Error ($"MachineStateTemplateItemDataGridViewDataError: invalid value in column {e.ColumnIndex} of row {e.RowIndex}", e.Exception);
+      e.Cancel = true;
+      e.ThrowException = false;
+      MessageBoxShow (PulseCatalog.GetString ("MachineStateTemplateItemInvalidValue"));
+    }
+
+    /// <summary>
+    /// Restore the previous sub machine state template of a row when the new one would create a cycle
+    /// </summary>
+    /// <param name="row"></param>
+    void CheckSubMachineStateTemplateCell (DataGridViewRow row)
+    {
+      var item = row.DataBoundItem as IMachineStateTemplateItem;
+      if ((null == item) || (null == item.SubMachineStateTemplate) || (null == SelectedMachineStateTemplate)) {
+        return;
+      }
+
+      if (IsCycle (SelectedMachineStateTemplate, item.SubMachineStateTemplate)) {
+        log.Error ($"CheckSubMachineStateTemplateCell: {item.SubMachineStateTemplate} would create a cycle in {SelectedMachineStateTemplate} => restore the previous value");
+        item.SubMachineStateTemplate = m_editedSubMachineStateTemplate;
+        machineStateTemplateItemDataGridView.InvalidateRow (row.Index);
+        MessageBoxShow (PulseCatalog.GetString ("MachineStateTemplateItemCycle"));
+      }
+    }
+
+    /// <summary>
+    /// Would applying recursively <paramref name="candidate"/> in <paramref name="machineStateTemplate"/>
+    /// create a cycle ?
+    ///
+    /// Note: the loaded machine state templates are used to walk through the graph,
+    /// because their items were fetched eagerly, unlike the ones of a template that comes from a dialog
+    /// </summary>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <param name="candidate">not null</param>
+    /// <returns></returns>
+    bool IsCycle (IMachineStateTemplate machineStateTemplate, IMachineStateTemplate candidate)
+    {
+      var machineStateTemplatesById = new Dictionary<int, IMachineStateTemplate> ();
+      foreach (var loaded in m_machineStateTemplates) {
+        machineStateTemplatesById[loaded.Id] = loaded;
+      }
+
+      var visited = new HashSet<int> ();
+      var pending = new Queue<int> ();
+      pending.Enqueue (candidate.Id);
+      while (0 < pending.Count) {
+        var currentId = pending.Dequeue ();
+        if (currentId == machineStateTemplate.Id) {
+          return true;
+        }
+        if (!visited.Add (currentId)) {
+          continue;
+        }
+        if (machineStateTemplatesById.TryGetValue (currentId, out var current)) {
+          foreach (var item in current.Items) {
+            if (null != item.SubMachineStateTemplate) {
+              pending.Enqueue (item.SubMachineStateTemplate.Id);
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    void MessageBoxShow (string message)
+    {
+      MessageBox.Show (message, PulseCatalog.GetString ("MachineStateTemplate"),
+                       MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+
     void MachineStateTemplateItemAddButtonClick(object sender, EventArgs e)
     {
       MachineObservationStateDialog machineObersvationStateDialog = new MachineObservationStateDialog ();
       machineObersvationStateDialog.Nullable = false;
       machineObersvationStateDialog.DisplayedProperty = "Display";
-      
+
       if(machineObersvationStateDialog.ShowDialog() == DialogResult.OK){
         if(SelectedMachineStateTemplate != null){
           OrderDialog orderDialog = new OrderDialog();
           orderDialog.Nullable = false;
           orderDialog.MinimumIndex = 0;
           orderDialog.MaximumIndex = SelectedMachineStateTemplate.Items.Count;
-          
+
           IMachineStateTemplateItem machineStateTemplateItem = null;
-          
+
           if(orderDialog.ShowDialog() == DialogResult.OK && orderDialog.UserSpecifiedIndex){
             machineStateTemplateItem = SelectedMachineStateTemplate.InsertItem(orderDialog.SelectedValue,machineObersvationStateDialog.SelectedValue);
           }
           else {
             machineStateTemplateItem = SelectedMachineStateTemplate.AddItem(machineObersvationStateDialog.SelectedValue);
           }
-          
+
           if(SelectedMachineStateTemplate.ShiftRequired){
             ShiftDialog shiftDialog = new ShiftDialog ();
             shiftDialog.Nullable = false;
@@ -459,13 +590,58 @@ namespace Lemoine.ConfigControls
               machineStateTemplateItem.Shift = shiftDialog.SelectedValue;
             }
           }
-          
+
           machineStateTemplateItem.WeekDays = WeekDay.AllDays;
-          
+
           AddMachineStateTemplateToUpdate();
           MachineStateTemplateItemLoad(); //TODO find better way or lighter
         }
       }
+    }
+
+    /// <summary>
+    /// Add an item that applies recursively another machine state template
+    /// </summary>
+    void MachineStateTemplateItemAddSubButtonClick (object sender, EventArgs e)
+    {
+      if (null == SelectedMachineStateTemplate) {
+        return;
+      }
+
+      var machineStateTemplateDialog = new MachineStateTemplateDialog ();
+      machineStateTemplateDialog.Nullable = false;
+      machineStateTemplateDialog.MultiSelect = false;
+      machineStateTemplateDialog.DisplayedProperty = "Display";
+
+      if (machineStateTemplateDialog.ShowDialog () != DialogResult.OK) {
+        return;
+      }
+      var subMachineStateTemplate = machineStateTemplateDialog.SelectedValue;
+      if (null == subMachineStateTemplate) {
+        return;
+      }
+      if (IsCycle (SelectedMachineStateTemplate, subMachineStateTemplate)) {
+        log.Error ($"MachineStateTemplateItemAddSubButtonClick: {subMachineStateTemplate} would create a cycle in {SelectedMachineStateTemplate}");
+        MessageBoxShow (PulseCatalog.GetString ("MachineStateTemplateItemCycle"));
+        return;
+      }
+
+      var orderDialog = new OrderDialog ();
+      orderDialog.Nullable = false;
+      orderDialog.MinimumIndex = 0;
+      orderDialog.MaximumIndex = SelectedMachineStateTemplate.Items.Count;
+
+      IMachineStateTemplateItem machineStateTemplateItem;
+      if ((orderDialog.ShowDialog () == DialogResult.OK) && orderDialog.UserSpecifiedIndex) {
+        machineStateTemplateItem = SelectedMachineStateTemplate.InsertItem (orderDialog.SelectedValue, subMachineStateTemplate);
+      }
+      else {
+        machineStateTemplateItem = SelectedMachineStateTemplate.AddItem (subMachineStateTemplate);
+      }
+      machineStateTemplateItem.WeekDays = WeekDay.AllDays;
+
+      AddMachineStateTemplateToUpdate ();
+      MachineStateTemplateItemLoad ();
     }
     #endregion
     

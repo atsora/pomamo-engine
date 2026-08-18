@@ -1,10 +1,12 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
@@ -23,7 +25,14 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly string MACHINE_STATE_TEMPLATE_PROCESS_MAX_RANGE_KEY = "MachineStateTemplate.Process.MaxRange";
     static readonly TimeSpan MACHINE_STATE_TEMPLATE_PROCESS_MAX_RANGE_DEFAULT = TimeSpan.FromDays (1);
-    
+
+    /// <summary>
+    /// Maximum number of nested machine state templates that may be applied recursively
+    /// </summary>
+    static readonly string MACHINE_STATE_TEMPLATE_MAX_RECURSION_DEPTH_KEY = "MachineStateTemplate.Process.MaxRecursionDepth";
+    static readonly int MACHINE_STATE_TEMPLATE_MAX_RECURSION_DEPTH_DEFAULT = 10;
+
+
     IMachineObservationState m_machineObservationState;
     IMachineStateTemplate m_machineStateTemplate;
     IUser m_user;
@@ -289,10 +298,9 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Slot implementation
     
-    #region MachineStateTemplate
     /// <summary>
     /// Process the template when MachineObservationState is null
-    /// 
+    ///
     /// applicableRange must overlaps the date/time range of the slot
     /// </summary>
     /// <param name="cancellationToken"></param>
@@ -313,18 +321,16 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null == this.MachineObservationState);
       Debug.Assert (null != this.MachineStateTemplate);
       Debug.Assert (this.DateTimeRange.Overlaps (applicableRange));
-      
+
       if (!this.DateTimeRange.Overlaps (applicableRange)) {
-        log.FatalFormat ("ProcessTemplate: " +
-                         "DateTimeRange {0} does not overlap applicableRange {1} " +
-                         "=> fallback, return true");
+        log.Fatal ($"ProcessTemplate: DateTimeRange {this.DateTimeRange} does not overlap applicableRange {applicableRange} => fallback, return true");
         return true;
       }
 
       UtcDateTimeRange correctedRange = new UtcDateTimeRange (applicableRange.Intersects (this.DateTimeRange));
       Debug.Assert (!correctedRange.IsEmpty ()); // Because of the pre-condition above: this.DateTimeRange.Overlaps (applicableRange)
       Debug.Assert (correctedRange.Upper.HasValue); // because applicableRange.Upper.HasValue
-      
+
       bool result = ProcessTemplate (this.Machine,
                                      this.MachineStateTemplate,
                                      this.User,
@@ -339,8 +345,8 @@ namespace Lemoine.GDBPersistentClasses
                                        + "?Broadcast=true");
       return result;
     }
-    
-    
+
+
     /// <summary>
     /// Process the template when MachineObservationState is null
     /// </summary>
@@ -370,9 +376,13 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != machineStateTemplate);
       Debug.Assert (!applicableRange.IsEmpty ()); // Because of the pre-condition
       Debug.Assert (applicableRange.Upper.HasValue); // because applicableRange.Upper.HasValue
-      
+
       Bound<DateTime> utcBeginDateTime = applicableRange.Lower;
-      
+
+      // The machine state templates that are being applied, from the root one to the current one.
+      // It is used to detect the cycles when an item applies recursively another machine state template
+      var ancestorTemplateIds = new List<int> { machineStateTemplate.Id };
+
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       {
         using (IDAOTransaction transaction = session.BeginTransaction ("ObservationStateSlot.ProcessTemplateLongPeriod"))
@@ -381,9 +391,9 @@ namespace Lemoine.GDBPersistentClasses
           IMachineStateTemplateItem itemWithLongPeriod =
             IsItemForLongPeriod (machineStateTemplate, applicableRange.Lower, out limitSpecifiedDateTime, log);
           if (null != itemWithLongPeriod) {
-            log.DebugFormat ("ProcessTemplate: " +
-                             "process item for long period {0}",
-                             itemWithLongPeriod);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ProcessTemplate: process item for long period {itemWithLongPeriod}");
+            }
             checkedThread?.SetActive ();
             UpperBound<DateTime> endDateTime = UpperBound.GetMinimum<DateTime> (applicableRange.Upper, limitSpecifiedDateTime);
             IShift shift = itemWithLongPeriod.Shift ?? currentShift;
@@ -404,8 +414,7 @@ namespace Lemoine.GDBPersistentClasses
                   UtcDateTimeRange limitedRange =
                     new UtcDateTimeRange (range.Intersects (new UtcDateTimeRange (limitMin, limitMax)));
                   if (limitedRange.IsEmpty ()) {
-                    log.ErrorFormat ("ProcessTemplate: " +
-                                     "empty limitedRange");
+                    log.Error ("ProcessTemplate: empty limitedRange");
                   }
                   Debug.Assert (!limitedRange.IsEmpty ());
                   ApplyMachineObservationState (machine,
@@ -417,11 +426,7 @@ namespace Lemoine.GDBPersistentClasses
                                                 mainModification, partOfDetectionAnalysis, log, checkedThread);
                   limitMax = limitMin;
                   if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
-                    log.WarnFormat ("ProcessTemplate: " +
-                                    "maxAnalysisDateTime {0} is reached, return false " +
-                                    "but the analysis is completed in range {1}-{2} " +
-                                    "=> return false",
-                                    maxAnalysisDateTime, limitMin, utcBeginDateTime);
+                    log.Warn ($"ProcessTemplate: maxAnalysisDateTime {maxAnalysisDateTime} is reached, return false but the analysis is completed in range {limitMin}-{utcBeginDateTime} => return false");
                     transaction.Commit ();
                     return false;
                   }
@@ -451,14 +456,10 @@ namespace Lemoine.GDBPersistentClasses
         } // The process is completed now until beginDateTime
         checkedThread?.SetActive ();
         if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
-          log.WarnFormat ("ProcessTemplate: " +
-                          "maxAnalysisDateTime {0} is reached, return false " +
-                          "but the analysis is completed until {1} " +
-                          "=> return false",
-                          maxAnalysisDateTime, utcBeginDateTime);
+          log.Warn ($"ProcessTemplate: maxAnalysisDateTime {maxAnalysisDateTime} is reached, return false but the analysis is completed until {utcBeginDateTime} => return false");
           return false;
         }
-        
+
         if (new UtcDateTimeRange (new LowerBound<DateTime> (null), applicableRange.Upper)
             .ContainsElement (utcBeginDateTime)) { // There is still something to process
           Debug.Assert (utcBeginDateTime.HasValue);
@@ -467,15 +468,12 @@ namespace Lemoine.GDBPersistentClasses
           { // Process the item one after each other
             // until 'maxEndDateTime' only
             foreach (IMachineStateTemplateItem item in machineStateTemplate.Items) {
-              ProcessTemplateItem (machine, machineStateTemplate, user, currentShift, item,
+              ProcessTemplateItem (machine, machineStateTemplate, ancestorTemplateIds, user, currentShift, item,
                                    utcBeginDateTime.Value, applicableRange.Upper.Value,
                                    mainModification, partOfDetectionAnalysis, checkedThread, log);
               checkedThread?.SetActive ();
               if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
-                log.WarnFormat ("ProcessTemplate: " +
-                                "maxAnalysisDateTime {0} is reached, return false, " +
-                                "the analysis is completed for some items",
-                                maxAnalysisDateTime);
+                log.Warn ($"ProcessTemplate: maxAnalysisDateTime {maxAnalysisDateTime} is reached, return false, the analysis is completed for some items");
                 transaction.Commit ();
                 return false;
               }
@@ -484,10 +482,10 @@ namespace Lemoine.GDBPersistentClasses
           } // transaction
         }
       }
-      
+
       return true;
     }
-    
+
     /// <summary>
     /// Add a machine observation state / shift during a specified period
     /// </summary>
@@ -514,17 +512,14 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != machine);
       if (range.IsEmpty ()) {
-        log.FatalFormat ("ApplyMachineObservationState: " +
-                         "empty range. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Fatal ($"ApplyMachineObservationState: empty range. StackTrace: {System.Environment.StackTrace}");
       }
       Debug.Assert (!range.IsEmpty ());
-      
-      log.DebugFormat ("ApplyMachineObservationState: " +
-                       "apply {0} / {1} in range {2}",
-                       machineObservationState, shift, range);
-      
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ApplyMachineObservationState: apply {machineObservationState} / {shift} in range {range}");
+      }
+
       MachineObservationStateAssociation association =
         new MachineObservationStateAssociation (machine, range, mainModification, partOfDetectionAnalysis);
       association.MachineObservationState = machineObservationState;
@@ -534,12 +529,13 @@ namespace Lemoine.GDBPersistentClasses
       association.Caller = checkedThread;
       association.Apply ();
     }
-    
+
     /// <summary>
     /// Process a machine state template item until a specified date/time
     /// </summary>
     /// <param name="machine">not null</param>
-    /// <param name="machineStateTemplate"></param>
+    /// <param name="machineStateTemplate">machine state template that is associated to the machine (the root one in case of recursion)</param>
+    /// <param name="ancestorTemplateIds">ids of the machine state templates that are being applied, from the root one to the one that owns the item</param>
     /// <param name="user"></param>
     /// <param name="currentShift"></param>
     /// <param name="item"></param>
@@ -551,6 +547,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="log"></param>
     static void ProcessTemplateItem (IMachine machine,
                                      IMachineStateTemplate machineStateTemplate,
+                                     IEnumerable<int> ancestorTemplateIds,
                                      IUser user,
                                      IShift currentShift,
                                      IMachineStateTemplateItem item,
@@ -562,118 +559,243 @@ namespace Lemoine.GDBPersistentClasses
                                      ILog log)
     {
       Debug.Assert (begin < end);
-      
-      log.DebugFormat ("ProcessTemplateItem: " +
-                       "process item {0} between {1} and {2}",
-                       item, begin, end);
-      
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ProcessTemplateItem: process item {item} between {begin} and {end}");
+      }
+
       IShift shift = item.Shift ?? currentShift;
-      if (item.Day.HasValue) {
+
+      if (item.Day.HasValue && !item.YearlyRepeat) { // A unique specific day
         // Do not take into account here item.WeekDays because item.Day is specified,
         // and normally WeekDays should be AllDays here
         Debug.Assert (item.WeekDays.HasFlag (WeekDay.AllDays));
         Debug.Assert (DateTimeKind.Local == item.Day.Value.Kind);
-        ApplyForDate (machine,
-                      machineStateTemplate,
-                      item.MachineObservationState,
-                      user,
-                      shift,
-                      item.Day.Value,
-                      item.TimePeriod,
-                      begin, end,
-                      mainModification, partOfDetectionAnalysis, log, checkedThread);
+        if (item.IsWeekApplicable (item.Day.Value)) {
+          ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, item,
+                            user, shift, item.Day.Value, begin, end,
+                            mainModification, partOfDetectionAnalysis, checkedThread, log);
+        }
       }
-      else if ((false == item.TimePeriod.IsFullDay ())
-               || (false == item.WeekDays.HasFlag (WeekDay.AllDays))) {
+      else if (item.Day.HasValue) { // item.YearlyRepeat: the same day every year, mainly for the public holidays
+        Debug.Assert (DateTimeKind.Local == item.Day.Value.Kind);
+        var firstYear = begin.ToLocalTime ().Year;
+        var lastYear = end.ToLocalTime ().Year;
+        for (var year = firstYear; year <= lastYear; ++year) { // Loop on years
+          var day = item.GetYearlyDay (year);
+          if (day.HasValue && item.IsWeekApplicable (day.Value)) {
+            ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, item,
+                              user, shift, day.Value, begin, end,
+                              mainModification, partOfDetectionAnalysis, checkedThread, log);
+          }
+          checkedThread?.SetActive ();
+        }
+      }
+      else if (item.HasDayRestriction () || !item.TimePeriod.IsFullDay ()) {
         // Process it one day after the other one
         DateTime currentDay = begin.ToLocalTime ().Date;
         DateTime lastDay = end.ToLocalTime ().Date;
         while (currentDay <= lastDay) { // Loop on days
-          if (item.WeekDays.HasFlagDayOfWeek (currentDay.DayOfWeek)) { // Day of week is ok
-            ApplyForDate (machine,
-                          machineStateTemplate,
-                          item.MachineObservationState,
-                          user,
-                          shift,
-                          currentDay,
-                          item.TimePeriod,
-                          begin, end,
-                          mainModification, partOfDetectionAnalysis, log, checkedThread);
+          if (item.IsDayApplicable (currentDay)) { // Day of week and week number are ok
+            ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, item,
+                              user, shift, currentDay, begin, end,
+                              mainModification, partOfDetectionAnalysis, checkedThread, log);
           }
           currentDay = currentDay.AddDays (1);
           checkedThread?.SetActive ();
         }
       }
       else { // long period
-        ApplyMachineObservationState (machine,
-                                      machineStateTemplate,
-                                      item.MachineObservationState,
-                                      user,
-                                      shift,
-                                      new UtcDateTimeRange (begin, end),
-                                      mainModification, partOfDetectionAnalysis, log, checkedThread);
+        ApplyItem (machine, machineStateTemplate, ancestorTemplateIds, item,
+                   user, shift, new UtcDateTimeRange (begin, end),
+                   mainModification, partOfDetectionAnalysis, checkedThread, log);
       }
     }
-    
-    static void ApplyForDate (IMachine machine,
-                              IMachineStateTemplate machineStateTemplate,
-                              IMachineObservationState machineObservationState,
-                              IUser user,
-                              IShift shift,
-                              DateTime date,
-                              TimePeriodOfDay timePeriod,
-                              DateTime minBeginDateTime,
-                              DateTime maxEndDateTime,
-                              IModification mainModification,
-                              bool partOfDetectionAnalysis,
-                              ILog log,
-                              Lemoine.Threading.IChecked checkedThread)
+
+    /// <summary>
+    /// Apply a machine state template item on a specific day, considering its time period of day
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="machineStateTemplate"></param>
+    /// <param name="ancestorTemplateIds"></param>
+    /// <param name="item"></param>
+    /// <param name="user"></param>
+    /// <param name="shift"></param>
+    /// <param name="date">local day</param>
+    /// <param name="minBeginDateTime"></param>
+    /// <param name="maxEndDateTime"></param>
+    /// <param name="mainModification"></param>
+    /// <param name="partOfDetectionAnalysis"></param>
+    /// <param name="checkedThread"></param>
+    /// <param name="log"></param>
+    static void ApplyItemForDate (IMachine machine,
+                                  IMachineStateTemplate machineStateTemplate,
+                                  IEnumerable<int> ancestorTemplateIds,
+                                  IMachineStateTemplateItem item,
+                                  IUser user,
+                                  IShift shift,
+                                  DateTime date,
+                                  DateTime minBeginDateTime,
+                                  DateTime maxEndDateTime,
+                                  IModification mainModification,
+                                  bool partOfDetectionAnalysis,
+                                  Lemoine.Threading.IChecked checkedThread,
+                                  ILog log)
     {
       Debug.Assert (DateTimeKind.Local == date.Kind);
       Debug.Assert (date.Equals (date.Date));
       Debug.Assert (DateTimeKind.Unspecified != minBeginDateTime.Kind);
       Debug.Assert (DateTimeKind.Unspecified != maxEndDateTime.Kind);
-      
+
       LocalDateTimeRange range = new LocalDateTimeRange (minBeginDateTime, maxEndDateTime);
       Debug.Assert (!range.IsEmpty ());
-      
+
       { // - Consider day
         LocalDateTimeRange dateRange = new LocalDateTimeRange (date, date.AddDays (1));
         range = new LocalDateTimeRange (range.Intersects (dateRange));
         if (range.IsEmpty ()) {
-          log.DebugFormat ("ApplyForDay: " +
-                           "nothing to do because the day {0} is not in range {1}-{2}",
-                           date, minBeginDateTime, maxEndDateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ApplyItemForDate: nothing to do because the day {date} is not in range {minBeginDateTime}-{maxEndDateTime}");
+          }
           return;
         }
         Debug.Assert (!range.IsEmpty ());
       }
-      
+
       Debug.Assert (range.Lower.HasValue); // Because of the intersection with the day
       Debug.Assert (range.Upper.HasValue); // Because of the intersection with the day
       Debug.Assert (range.Duration.HasValue); // Because of the two asserts above
       Debug.Assert (range.Duration.Value <= TimeSpan.FromHours (25)); // A day is maximum 25 hours because of DST
-      
-      if (false == timePeriod.IsFullDay ()) { // - Consider timePeriod
-        range = range.Intersects (date, timePeriod);
+
+      if (false == item.TimePeriod.IsFullDay ()) { // - Consider timePeriod
+        range = range.Intersects (date, item.TimePeriod);
         if (range.IsEmpty ()) {
-          log.DebugFormat ("ApplyForDay: " +
-                           "nothing to do because the time period {0} is not between {1} and {2}",
-                           timePeriod, minBeginDateTime, maxEndDateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ApplyItemForDate: nothing to do because the time period {item.TimePeriod} is not between {minBeginDateTime} and {maxEndDateTime}");
+          }
           return;
         }
         Debug.Assert (!range.IsEmpty ());
       }
-      
-      ApplyMachineObservationState (machine,
-                                    machineStateTemplate,
-                                    machineObservationState,
-                                    user,
-                                    shift,
-                                    range.ToUniversalTime (),
+
+      ApplyItem (machine, machineStateTemplate, ancestorTemplateIds, item,
+                 user, shift, range.ToUniversalTime (),
+                 mainModification, partOfDetectionAnalysis, checkedThread, log);
+    }
+
+    /// <summary>
+    /// Apply a machine state template item on a specified range:
+    /// either apply its machine observation state,
+    /// or apply recursively the machine state template it references
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="machineStateTemplate"></param>
+    /// <param name="ancestorTemplateIds"></param>
+    /// <param name="item"></param>
+    /// <param name="user"></param>
+    /// <param name="shift"></param>
+    /// <param name="range">not empty range in UTC</param>
+    /// <param name="mainModification"></param>
+    /// <param name="partOfDetectionAnalysis"></param>
+    /// <param name="checkedThread"></param>
+    /// <param name="log"></param>
+    static void ApplyItem (IMachine machine,
+                           IMachineStateTemplate machineStateTemplate,
+                           IEnumerable<int> ancestorTemplateIds,
+                           IMachineStateTemplateItem item,
+                           IUser user,
+                           IShift shift,
+                           UtcDateTimeRange range,
+                           IModification mainModification,
+                           bool partOfDetectionAnalysis,
+                           Lemoine.Threading.IChecked checkedThread,
+                           ILog log)
+    {
+      Debug.Assert (!range.IsEmpty ());
+
+      if (null != item.SubMachineStateTemplate) { // Recursive application of another machine state template
+        ProcessSubMachineStateTemplate (machine, machineStateTemplate, ancestorTemplateIds,
+                                        item.SubMachineStateTemplate, user, shift, range,
+                                        mainModification, partOfDetectionAnalysis, checkedThread, log);
+        return;
+      }
+
+      if (null == item.MachineObservationState) {
+        log.Error ($"ApplyItem: item {item} references neither a machine observation state nor a machine state template => skip it");
+        return;
+      }
+
+      ApplyMachineObservationState (machine, machineStateTemplate, item.MachineObservationState,
+                                    user, shift, range,
                                     mainModification, partOfDetectionAnalysis, log, checkedThread);
     }
-    
+
+    /// <summary>
+    /// Apply recursively the items of a sub machine state template on the specified range
+    ///
+    /// Note: the resulting observation state slots keep a reference to the root machine state template,
+    /// the one that is associated to the machine
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="machineStateTemplate">root machine state template</param>
+    /// <param name="ancestorTemplateIds">not null</param>
+    /// <param name="subMachineStateTemplate">not null</param>
+    /// <param name="user"></param>
+    /// <param name="currentShift"></param>
+    /// <param name="range">not empty and bounded range in UTC</param>
+    /// <param name="mainModification"></param>
+    /// <param name="partOfDetectionAnalysis"></param>
+    /// <param name="checkedThread"></param>
+    /// <param name="log"></param>
+    static void ProcessSubMachineStateTemplate (IMachine machine,
+                                                IMachineStateTemplate machineStateTemplate,
+                                                IEnumerable<int> ancestorTemplateIds,
+                                                IMachineStateTemplate subMachineStateTemplate,
+                                                IUser user,
+                                                IShift currentShift,
+                                                UtcDateTimeRange range,
+                                                IModification mainModification,
+                                                bool partOfDetectionAnalysis,
+                                                Lemoine.Threading.IChecked checkedThread,
+                                                ILog log)
+    {
+      Debug.Assert (null != subMachineStateTemplate);
+      Debug.Assert (!range.IsEmpty ());
+      Debug.Assert (range.Lower.HasValue);
+      Debug.Assert (range.Upper.HasValue);
+
+      if (ancestorTemplateIds.Contains (subMachineStateTemplate.Id)) {
+        log.Error ($"ProcessSubMachineStateTemplate: {subMachineStateTemplate.ToStringIfInitialized ()} is already being applied, there is a cycle in the machine state templates => skip it");
+        return;
+      }
+
+      var maxRecursionDepth = Lemoine.Info.ConfigSet
+        .LoadAndGet<int> (MACHINE_STATE_TEMPLATE_MAX_RECURSION_DEPTH_KEY, MACHINE_STATE_TEMPLATE_MAX_RECURSION_DEPTH_DEFAULT);
+      if (maxRecursionDepth <= ancestorTemplateIds.Count ()) {
+        log.Error ($"ProcessSubMachineStateTemplate: the maximum recursion depth {maxRecursionDepth} is reached with {subMachineStateTemplate.ToStringIfInitialized ()} => skip it");
+        return;
+      }
+
+      if (!range.Lower.HasValue || !range.Upper.HasValue) {
+        log.Error ($"ProcessSubMachineStateTemplate: unbounded range {range} => skip it");
+        return;
+      }
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ProcessSubMachineStateTemplate: apply {subMachineStateTemplate.ToStringIfInitialized ()} in range {range}");
+      }
+
+      var subAncestorTemplateIds = ancestorTemplateIds
+        .Concat (new int[] { subMachineStateTemplate.Id })
+        .ToList ();
+      foreach (var subItem in subMachineStateTemplate.Items) {
+        ProcessTemplateItem (machine, machineStateTemplate, subAncestorTemplateIds, user, currentShift, subItem,
+                             range.Lower.Value, range.Upper.Value,
+                             mainModification, partOfDetectionAnalysis, checkedThread, log);
+        checkedThread?.SetActive ();
+      }
+    }
+
     /// <summary>
     /// Is there an item that is applicable a long period of time
     /// (more that one week)
@@ -691,16 +813,32 @@ namespace Lemoine.GDBPersistentClasses
     {
       IMachineStateTemplateItem itemWithLongPeriod = null;
       limitSpecifiedDateTime = new UpperBound<DateTime> (null); // No limit local date/time
-      
+
       // - If there is stop, the period can't be longer than one week, return false
       if (0 < machineStateTemplate.Stops.Count) {
-        log.DebugFormat ("IsItemForLongPeriod: " +
-                         "return false because there is a stop");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsItemForLongPeriod: return null because there is a stop");
+        }
         return null;
       }
-      
+
       foreach (IMachineStateTemplateItem item in machineStateTemplate.Items) {
-        if (item.Day.HasValue) {
+        if (null != item.SubMachineStateTemplate) {
+          // - The items of the referenced machine state template must be applied one after the other,
+          // this optimization can't be used
+          if (log.IsDebugEnabled) {
+            log.Debug ("IsItemForLongPeriod: return null because an item applies recursively another machine state template");
+          }
+          return null;
+        }
+        else if (item.WeekNumber.HasValue || item.YearlyRepeat) {
+          // - The applicable periods are not contiguous, this optimization can't be used
+          if (log.IsDebugEnabled) {
+            log.Debug ("IsItemForLongPeriod: return null because an item is restricted to some weeks or is repeated every year");
+          }
+          return null;
+        }
+        else if (item.Day.HasValue) {
           Debug.Assert (DateTimeKind.Utc != item.Day.Value.Kind);
           DateTime dayBegin = new DateTime (item.Day.Value.Ticks, DateTimeKind.Local);
           // Note: The cut-off is not taken into account for the moment here
@@ -709,45 +847,42 @@ namespace Lemoine.GDBPersistentClasses
             limitSpecifiedDateTime = dayBegin;
           }
           Debug.Assert (limitSpecifiedDateTime.HasValue);
-          log.DebugFormat ("IsItemForLongPeriod: " +
-                           "day begin {0} identified, " +
-                           "adjust limitLocalDateTime to {1} " +
-                           "and continue",
-                           dayBegin, limitSpecifiedDateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsItemForLongPeriod: day begin {dayBegin} identified, adjust limitLocalDateTime to {limitSpecifiedDateTime} and continue");
+          }
           continue;
         }
         else if (false == item.TimePeriod.IsFullDay ()) {
           // - If there is a defined time period (and the time period is not 0:00-0:00),
           // without a day,
           // the period can't be longer than one day, return false
-          log.DebugFormat ("IsItemForLongPeriod: " +
-                           "return false because there is a time period");
+          if (log.IsDebugEnabled) {
+            log.Debug ("IsItemForLongPeriod: return null because there is a time period");
+          }
           return null;
         }
         else if (!item.WeekDays.HasFlag (WeekDay.AllDays)) { // - Not the whole week,
           // return false
-          log.DebugFormat ("IsItemForLongPeriod: " +
-                           "not the whole week is considered here, return false");
+          if (log.IsDebugEnabled) {
+            log.Debug ("IsItemForLongPeriod: not the whole week is considered here, return null");
+          }
           return null;
         }
         else { // This is an item that is applicable for all times and days
           if (null != itemWithLongPeriod) {
-            log.WarnFormat ("IsItemForLongPeriod: " +
-                            "applicable item {0} will be overriden by {1}",
-                            itemWithLongPeriod, item);
+            log.Warn ($"IsItemForLongPeriod: applicable item {itemWithLongPeriod} will be overriden by {item}");
           }
           itemWithLongPeriod = item;
         }
       }
-      
-      log.DebugFormat ("IsItemForLongPeriod: " +
-                       "return {0} with limitLocalDateTime {1}",
-                       itemWithLongPeriod,
-                       limitSpecifiedDateTime);
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"IsItemForLongPeriod: return {itemWithLongPeriod} with limitLocalDateTime {limitSpecifiedDateTime}");
+      }
       Debug.Assert (!limitSpecifiedDateTime.HasValue || (DateTimeKind.Unspecified != limitSpecifiedDateTime.Value.Kind));
       return itemWithLongPeriod;
     }
-    #endregion // MachineStateTemplate
+
 
     /// <summary>
     ///   Indicates whether the current object

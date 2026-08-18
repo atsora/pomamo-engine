@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2025 Atsora Solutions
+// Copyright (C) 2025-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -108,7 +108,22 @@ namespace Lemoine.Model
     /// <param name="machineObservationState">Can be null because the it is not known yet when a new line is added in the configuration DataGridView</param>
     /// <returns></returns>
     IMachineStateTemplateItem InsertItem (int position, IMachineObservationState machineObservationState);
-    
+
+    /// <summary>
+    /// Append an item that applies recursively another machine state template
+    /// </summary>
+    /// <param name="subMachineStateTemplate">not null and different from this machine state template</param>
+    /// <returns></returns>
+    IMachineStateTemplateItem AddItem (IMachineStateTemplate subMachineStateTemplate);
+
+    /// <summary>
+    /// Insert at the specified position an item that applies recursively another machine state template
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="subMachineStateTemplate">not null and different from this machine state template</param>
+    /// <returns></returns>
+    IMachineStateTemplateItem InsertItem (int position, IMachineStateTemplate subMachineStateTemplate);
+
     /// <summary>
     /// Add a stop condition
     /// </summary>

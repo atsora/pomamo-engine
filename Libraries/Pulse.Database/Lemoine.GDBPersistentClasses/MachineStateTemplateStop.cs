@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -22,7 +23,7 @@ namespace Lemoine.GDBPersistentClasses
     int m_id = 0;
     int m_version = 0;
     WeekDay m_weekDays = (WeekDay) Int32.MaxValue;
-    TimeSpan? m_localTime = null;
+    TimeSpan m_localTime = TimeSpan.Zero;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateStop).FullName);
@@ -57,33 +58,27 @@ namespace Lemoine.GDBPersistentClasses
     
     /// <summary>
     /// Applicable time period of day
-    /// 
+    ///
     /// Fraction of the day that has elapsed since local midnight
+    ///
+    /// Default is 0:00:00, meaning the stop happens at local midnight
     /// </summary>
     [XmlIgnore]
-    public virtual TimeSpan? LocalTime {
+    public virtual TimeSpan LocalTime {
       get { return m_localTime; }
       set { m_localTime = value; }
     }
-    
+
     /// <summary>
     /// Applicable time period of day for XML serialization
     /// </summary>
     [XmlAttribute("LocalTime")]
     public virtual string XmlLocalTime {
-      get
-      {
-        if (!this.LocalTime.HasValue) {
-          return "";
-        }
-        else {
-          return this.LocalTime.Value.ToString ();
-        }
-      }
+      get { return this.LocalTime.ToString (); }
       set
       {
         if (string.IsNullOrEmpty (value)) {
-          this.LocalTime = null;
+          this.LocalTime = TimeSpan.Zero;
         }
         else {
           this.LocalTime = TimeSpan.Parse (value);

@@ -46,7 +46,13 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateItemWeekDaysColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.machineStateTemplateItemTimePeriodOfDayColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.machineStateTemplateItemDayColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.machineStateTemplateItemWeekYearColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.machineStateTemplateItemWeekNumberColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.machineStateTemplateItemWeekFrequencyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.machineStateTemplateItemYearlyRepeatColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.machineStateTemplateItemSubMachineStateTemplateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.machineStateTemplateItemAddButton = new System.Windows.Forms.Button();
+      this.machineStateTemplateItemAddSubButton = new System.Windows.Forms.Button();
       this.splitContainer4 = new System.Windows.Forms.SplitContainer();
       this.machineStateTemplateStopGroupBox = new System.Windows.Forms.GroupBox();
       this.machineStateTemplateStopDataGridView = new System.Windows.Forms.DataGridView();
@@ -165,6 +171,8 @@ namespace Lemoine.ConfigControls
       // 
       // splitContainer3.Panel2
       // 
+      // Note: with DockStyle.Left, the control that is added last is the left most one
+      this.splitContainer3.Panel2.Controls.Add(this.machineStateTemplateItemAddSubButton);
       this.splitContainer3.Panel2.Controls.Add(this.machineStateTemplateItemAddButton);
       this.splitContainer3.Size = new System.Drawing.Size(359, 205);
       this.splitContainer3.SplitterDistance = 176;
@@ -191,10 +199,15 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateItemIdColumn,
       this.machineStateTemplateItemOrderColumn,
       this.machineStateTemplateItemMachineObservationStateColumn,
+      this.machineStateTemplateItemSubMachineStateTemplateColumn,
       this.machineStateTemplateItemShiftColumn,
       this.machineStateTemplateItemWeekDaysColumn,
       this.machineStateTemplateItemTimePeriodOfDayColumn,
-      this.machineStateTemplateItemDayColumn});
+      this.machineStateTemplateItemDayColumn,
+      this.machineStateTemplateItemWeekYearColumn,
+      this.machineStateTemplateItemWeekNumberColumn,
+      this.machineStateTemplateItemWeekFrequencyColumn,
+      this.machineStateTemplateItemYearlyRepeatColumn});
       this.machineStateTemplateItemDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.machineStateTemplateItemDataGridView.Location = new System.Drawing.Point(3, 16);
       this.machineStateTemplateItemDataGridView.Name = "machineStateTemplateItemDataGridView";
@@ -203,6 +216,8 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateItemDataGridView.Size = new System.Drawing.Size(353, 157);
       this.machineStateTemplateItemDataGridView.TabIndex = 0;
       this.machineStateTemplateItemDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.MachineStateTemplateItemDataGridViewCellValueChanged);
+      this.machineStateTemplateItemDataGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.MachineStateTemplateItemDataGridViewDataError);
+      this.machineStateTemplateItemDataGridView.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.MachineStateTemplateItemDataGridViewCellBeginEdit);
       this.machineStateTemplateItemDataGridView.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.MachineStateTemplateItemDataGridViewUserDeletingRow);
       // 
       // machineStateTemplateItemIdColumn
@@ -254,9 +269,44 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateItemDayColumn.HeaderText = "DayColumn";
       this.machineStateTemplateItemDayColumn.Name = "machineStateTemplateItemDayColumn";
       this.machineStateTemplateItemDayColumn.Width = 86;
-      // 
+      //
+      // machineStateTemplateItemSubMachineStateTemplateColumn
+      //
+      this.machineStateTemplateItemSubMachineStateTemplateColumn.DataPropertyName = "SubMachineStateTemplate";
+      this.machineStateTemplateItemSubMachineStateTemplateColumn.HeaderText = "SubMachineStateTemplateColumn";
+      this.machineStateTemplateItemSubMachineStateTemplateColumn.Name = "machineStateTemplateItemSubMachineStateTemplateColumn";
+      this.machineStateTemplateItemSubMachineStateTemplateColumn.Width = 190;
+      //
+      // machineStateTemplateItemWeekYearColumn
+      //
+      this.machineStateTemplateItemWeekYearColumn.DataPropertyName = "WeekYear";
+      this.machineStateTemplateItemWeekYearColumn.HeaderText = "WeekYearColumn";
+      this.machineStateTemplateItemWeekYearColumn.Name = "machineStateTemplateItemWeekYearColumn";
+      this.machineStateTemplateItemWeekYearColumn.Width = 70;
+      //
+      // machineStateTemplateItemWeekNumberColumn
+      //
+      this.machineStateTemplateItemWeekNumberColumn.DataPropertyName = "WeekNumber";
+      this.machineStateTemplateItemWeekNumberColumn.HeaderText = "WeekNumberColumn";
+      this.machineStateTemplateItemWeekNumberColumn.Name = "machineStateTemplateItemWeekNumberColumn";
+      this.machineStateTemplateItemWeekNumberColumn.Width = 70;
+      //
+      // machineStateTemplateItemWeekFrequencyColumn
+      //
+      this.machineStateTemplateItemWeekFrequencyColumn.DataPropertyName = "WeekFrequency";
+      this.machineStateTemplateItemWeekFrequencyColumn.HeaderText = "WeekFrequencyColumn";
+      this.machineStateTemplateItemWeekFrequencyColumn.Name = "machineStateTemplateItemWeekFrequencyColumn";
+      this.machineStateTemplateItemWeekFrequencyColumn.Width = 70;
+      //
+      // machineStateTemplateItemYearlyRepeatColumn
+      //
+      this.machineStateTemplateItemYearlyRepeatColumn.DataPropertyName = "YearlyRepeat";
+      this.machineStateTemplateItemYearlyRepeatColumn.HeaderText = "YearlyRepeatColumn";
+      this.machineStateTemplateItemYearlyRepeatColumn.Name = "machineStateTemplateItemYearlyRepeatColumn";
+      this.machineStateTemplateItemYearlyRepeatColumn.Width = 70;
+      //
       // machineStateTemplateItemAddButton
-      // 
+      //
       this.machineStateTemplateItemAddButton.Dock = System.Windows.Forms.DockStyle.Left;
       this.machineStateTemplateItemAddButton.Location = new System.Drawing.Point(0, 0);
       this.machineStateTemplateItemAddButton.Name = "machineStateTemplateItemAddButton";
@@ -265,7 +315,18 @@ namespace Lemoine.ConfigControls
       this.machineStateTemplateItemAddButton.Text = "button1";
       this.machineStateTemplateItemAddButton.UseVisualStyleBackColor = true;
       this.machineStateTemplateItemAddButton.Click += new System.EventHandler(this.MachineStateTemplateItemAddButtonClick);
-      // 
+      //
+      // machineStateTemplateItemAddSubButton
+      //
+      this.machineStateTemplateItemAddSubButton.Dock = System.Windows.Forms.DockStyle.Left;
+      this.machineStateTemplateItemAddSubButton.Location = new System.Drawing.Point(75, 0);
+      this.machineStateTemplateItemAddSubButton.Name = "machineStateTemplateItemAddSubButton";
+      this.machineStateTemplateItemAddSubButton.Size = new System.Drawing.Size(150, 25);
+      this.machineStateTemplateItemAddSubButton.TabIndex = 1;
+      this.machineStateTemplateItemAddSubButton.Text = "button2";
+      this.machineStateTemplateItemAddSubButton.UseVisualStyleBackColor = true;
+      this.machineStateTemplateItemAddSubButton.Click += new System.EventHandler(this.MachineStateTemplateItemAddSubButtonClick);
+      //
       // splitContainer4
       // 
       this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -474,6 +535,12 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.Button machineStateTemplateStopAddButton;
     private System.Windows.Forms.SplitContainer splitContainer4;
     private System.Windows.Forms.Button machineStateTemplateItemAddButton;
+    private System.Windows.Forms.Button machineStateTemplateItemAddSubButton;
+    private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateItemSubMachineStateTemplateColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateItemWeekYearColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateItemWeekNumberColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateItemWeekFrequencyColumn;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn machineStateTemplateItemYearlyRepeatColumn;
     private System.Windows.Forms.SplitContainer splitContainer3;
     private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateNameColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn machineStateTemplateTranslationkeyColum;

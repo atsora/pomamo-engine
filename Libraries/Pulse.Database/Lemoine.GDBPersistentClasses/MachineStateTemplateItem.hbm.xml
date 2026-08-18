@@ -15,7 +15,11 @@
                  column="machineobservationstateid"
                  class="MachineObservationState"
                  cascade="none"
-                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="SubMachineStateTemplate"
+                 column="machinestatetemplateitemsubid"
+                 class="MachineStateTemplate"
+                 cascade="none"
                  not-found="exception" />
     <many-to-one name="Shift"
                  column="shiftid"
@@ -32,5 +36,14 @@
     <property name="Day"
               column="machinestatetemplateitemday"
               type="Lemoine.NHibernateTypes.LocalDayType, Lemoine.Database" />
+    <property name="WeekYear"
+              column="machinestatetemplateitemweekyear" />
+    <property name="WeekNumber"
+              column="machinestatetemplateitemweeknumber" />
+    <property name="WeekFrequency"
+              column="machinestatetemplateitemweekfrequency" />
+    <property name="YearlyRepeat"
+              column="machinestatetemplateitemyearlyrepeat"
+              not-null="true" />
   </class>
 </hibernate-mapping>

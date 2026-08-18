@@ -1235,11 +1235,7 @@ namespace Lemoine.GDBPersistentClasses
 
           if (stop.WeekDays.HasFlagDayOfWeek (currentDay.DayOfWeek)) { // Day of week is ok
             // Compute the potential stop date/time
-            DateTime stopDateTime = currentDay;
-            if (stop.LocalTime.HasValue) {
-              stopDateTime = stopDateTime.Add (stop.LocalTime.Value);
-            }
-            stopDateTime = stopDateTime.ToUniversalTime ();
+            DateTime stopDateTime = currentDay.Add (stop.LocalTime).ToUniversalTime ();
             if (Bound.Compare<DateTime> (this.Begin, stopDateTime) < 0) { // The potential stop is after this.Begin
               // => stop here
               if (log.IsDebugEnabled) {

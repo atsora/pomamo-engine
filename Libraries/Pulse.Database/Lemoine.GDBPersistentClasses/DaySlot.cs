@@ -133,45 +133,11 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       var day = m_day.Value;
-      var firstDayOfWeek = Lemoine.Info.ConfigSet.LoadAndGet<DayOfWeek> (ConfigKeys.GetCalendarConfigKey (CalendarConfigKey.FirstDayOfWeek), DayOfWeek.Monday);
-      var calendarWeekRuleString = Lemoine.Info.ConfigSet.LoadAndGet<string> (ConfigKeys.GetCalendarConfigKey (CalendarConfigKey.CalendarWeekRule), "Iso");
-      var currentCulture = System.Globalization.CultureInfo.CurrentCulture;
-      var calendar = currentCulture.Calendar;
-      System.Globalization.CalendarWeekRule calendarWeekRule;
-      if (!Enum.TryParse<System.Globalization.CalendarWeekRule> (calendarWeekRuleString, out calendarWeekRule)) {
-        if (calendarWeekRuleString.Equals ("Iso", StringComparison.InvariantCultureIgnoreCase)) {
-          calendarWeekRule = System.Globalization.CalendarWeekRule.FirstFourDayWeek;
-        }
-        else {
-          log.ErrorFormat ("ComputeWeekNumber: invalid week rule {0} => use default instead", calendarWeekRuleString);
-          calendarWeekRule = System.Globalization.CalendarWeekRule.FirstFourDayWeek;
-        }
-        // With .NET Core 3, use the ISOWeek API
-        // Else, cheat (see https://blogs.msdn.microsoft.com/shawnste/2006/01/24/iso-8601-week-of-year-format-in-microsoft-net/):
-        // If its Monday, Tuesday or Wednesday, then it'll
-        // be the same week# as whatever Thursday, Friday or Saturday are,
-        // and we always get those right
-        var d = day;
-        if ((DayOfWeek.Monday <= d.DayOfWeek) && (d.DayOfWeek <= DayOfWeek.Wednesday)) {
-          d = d.AddDays (3);
-        }
-        m_weekNumber = calendar.GetWeekOfYear (d, calendarWeekRule, firstDayOfWeek);
-      }
-      else {
-        m_weekNumber = calendar.GetWeekOfYear (day, calendarWeekRule, firstDayOfWeek);
-      }
-      if ((1 == day.Month) && (52 <= m_weekNumber)) {
-        m_weekYear = day.Year - 1;
-      }
-      else if ((12 == day.Month) && (1 == m_weekNumber)) {
-        m_weekYear = day.Year + 1;
-      }
-      else {
-        m_weekYear = day.Year;
-      }
+      WeekNumberHelper.GetWeek (day, out var weekYear, out var weekNumber);
+      m_weekYear = weekYear;
+      m_weekNumber = weekNumber;
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("ComputeWeekNumber: for {0}, week#={1} year={2}",
-          day, m_weekNumber, m_weekYear);
+        log.Debug ($"ComputeWeekNumber: for {day}, week#={m_weekNumber} year={m_weekYear}");
       }
     }
 

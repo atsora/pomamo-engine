@@ -24,6 +24,14 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException ();
     }
+    public Lemoine.Model.IMachineStateTemplateItem AddItem (Lemoine.Model.IMachineStateTemplate subMachineStateTemplate)
+    {
+      throw new NotImplementedException ();
+    }
+    public Lemoine.Model.IMachineStateTemplateItem InsertItem (int position, Lemoine.Model.IMachineStateTemplate subMachineStateTemplate)
+    {
+      throw new NotImplementedException ();
+    }
     public Lemoine.Model.IMachineStateTemplateStop AddStop ()
     {
       throw new NotImplementedException ();

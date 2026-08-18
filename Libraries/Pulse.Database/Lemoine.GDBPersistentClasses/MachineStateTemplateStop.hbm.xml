@@ -17,6 +17,7 @@
               not-null="true" />
     <property name="LocalTime"
               column="machinestatetemplatestoplocaltime"
-              type="Lemoine.NHibernateTypes.TimeWithoutTZType, Lemoine.Database" />
+              type="Lemoine.NHibernateTypes.TimeWithoutTZType, Lemoine.Database"
+              not-null="true" />
   </class>
 </hibernate-mapping>

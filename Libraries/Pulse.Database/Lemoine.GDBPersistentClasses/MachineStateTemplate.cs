@@ -287,6 +287,49 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Append an item that applies recursively another machine state template
+    /// </summary>
+    /// <param name="subMachineStateTemplate">not null and different from this machine state template</param>
+    /// <returns></returns>
+    public virtual IMachineStateTemplateItem AddItem (IMachineStateTemplate subMachineStateTemplate)
+    {
+      CheckSubMachineStateTemplate (subMachineStateTemplate);
+      IMachineStateTemplateItem newTemplateItem = new MachineStateTemplateItem (subMachineStateTemplate);
+      m_items.Add (newTemplateItem);
+      return newTemplateItem;
+    }
+
+    /// <summary>
+    /// Insert at the specified position an item that applies recursively another machine state template
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="subMachineStateTemplate">not null and different from this machine state template</param>
+    /// <returns></returns>
+    public virtual IMachineStateTemplateItem InsertItem (int position, IMachineStateTemplate subMachineStateTemplate)
+    {
+      CheckSubMachineStateTemplate (subMachineStateTemplate);
+      IMachineStateTemplateItem newTemplateItem = new MachineStateTemplateItem (subMachineStateTemplate);
+      m_items.Insert (position, newTemplateItem);
+      return newTemplateItem;
+    }
+
+    /// <summary>
+    /// Check a machine state template may be applied recursively by one of the items
+    /// </summary>
+    /// <param name="subMachineStateTemplate"></param>
+    void CheckSubMachineStateTemplate (IMachineStateTemplate subMachineStateTemplate)
+    {
+      if (subMachineStateTemplate is null) {
+        log.Fatal ("CheckSubMachineStateTemplate: null sub machine state template");
+        throw new ArgumentNullException (nameof (subMachineStateTemplate));
+      }
+      if (this.Equals (subMachineStateTemplate)) {
+        log.Fatal ($"CheckSubMachineStateTemplate: {subMachineStateTemplate} references itself");
+        throw new ArgumentException ("A machine state template can't reference itself", nameof (subMachineStateTemplate));
+      }
+    }
+
+    /// <summary>
     /// Add a stop condition
     /// </summary>
     /// <returns></returns>

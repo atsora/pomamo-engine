@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,9 +25,11 @@ namespace Lemoine.Model
     
     /// <summary>
     /// Applicable time period of day
-    /// 
+    ///
     /// Fraction of the day that has elapsed since local midnight
+    ///
+    /// Default is 0:00:00, meaning the stop happens at local midnight
     /// </summary>
-    TimeSpan? LocalTime { get; set; }
+    TimeSpan LocalTime { get; set; }
   }
 }
