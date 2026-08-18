@@ -28,7 +28,8 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="System.Text.Json" />
+    <!-- System.Text.Json: provided by the Microsoft.AspNetCore.App shared framework (Web SDK),
+         and still brought transitively by the netstandard2.0 libraries that genuinely need it -->
     <!--indirect dependency for Lemoine.Cnc.Serial -->
     <!--PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" /-->
   </ItemGroup>
