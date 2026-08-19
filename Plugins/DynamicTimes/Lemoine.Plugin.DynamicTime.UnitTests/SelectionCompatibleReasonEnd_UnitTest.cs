@@ -296,6 +296,97 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
     }
 
     /// <summary>
+    /// Test the alternative implementation SelectionCompatibleReasonSlotEnd,
+    /// that is based on the reason slots
+    /// </summary>
+    [Test]
+    public void TestSelectionCompatibleReasonSlotEnd ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          InitializeExtensions ();
+
+          // Reference data
+          IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindById (2);
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (machine);
+          IMachineMode inactive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.Inactive);
+          IMachineMode inactiveOn = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.InactiveOn);
+          IMachineMode autoInactive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.AutoInactive);
+          IMachineMode autoFeed = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.AutoFeed);
+          IMachineObservationState attended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+          IMachineObservationState unattended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Unattended);
+          Assert.That (unattended, Is.Not.Null);
+
+          var reason = CreateReason ("SelectionCompatibleReasonSlotEndTest");
+          AddReasonSelection (inactive, attended, reason);
+          // Note: no reason selection for the unattended machine observation state
+
+          // The machine observation state changes in T(2)
+          AddReasonSlot (machine, R (0, 1), autoInactive, attended);
+          AddReasonSlot (machine, R (1, 2), inactiveOn, attended);
+          AddReasonSlot (machine, R (2, 3), inactiveOn, unattended);
+          AddReasonSlot (machine, R (3, 4), inactive, unattended);
+          AddReasonSlot (machine, R (4, 5), autoFeed, unattended);
+          AddManualReason (machine, R (0), reason);
+
+          InstallPlugin ("""
+{
+  "Identifier": "SelectionCompatibleReasonEnd_UnitTest",
+  "Name": "UnitTestReasonSlot",
+  "Description": "",
+  "Tags": [],
+  "Version": 1,
+  "Plugins": [
+    {
+      "Name": "DynamicTimesManualReason",
+      "Instances": [
+        {
+          "Name": "Stop",
+          "Parameters": {
+  "NamePrefix": "Stop"
+          }
+        },
+        {
+          "Name": "Recursive",
+          "Parameters": {
+  "NamePrefix": "Recursive",
+  "ObservationStateChangeDynamicTime": "RecursiveSelectionCompatibleReasonSlotEnd"
+          }
+        }
+      ]
+    }
+  ]
+}
+""");
+
+          { // No dynamic time in configuration: stop at the observation state change
+            var checker = new DynamicEndChecker ("StopSelectionCompatibleReasonSlotEnd", machine, T (0));
+            checker.CheckFinal (T (2));
+          }
+
+          { // Same behaviour with the new machine observation state:
+            // there is no reason selection for unattended, so the first machine mode after T(2) stops the reason
+            var checker = new DynamicEndChecker ("RecursiveSelectionCompatibleReasonSlotEnd", machine, T (0));
+            checker.CheckFinal (T (3));
+          }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
     /// No reason is applied yet at the specified date/time:
     /// the computation is postponed, without skipping any period after it
     /// </summary>
@@ -440,6 +531,16 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
       var reasonProposal = ModelDAOHelper.ModelFactory
         .CreateReasonProposal (association, range);
       ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakePersistent (reasonProposal);
+      ModelDAOHelper.DAOFactory.Flush ();
+    }
+
+    void AddReasonSlot (IMonitoredMachine machine, UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState)
+    {
+      var reasonSlot = ModelDAOHelper.ModelFactory.CreateReasonSlot (machine, range);
+      reasonSlot.MachineMode = machineMode;
+      reasonSlot.MachineObservationState = machineObservationState;
+      reasonSlot.SwitchToProcessing ();
+      ModelDAOHelper.DAOFactory.ReasonSlotDAO.MakePersistent (reasonSlot);
       ModelDAOHelper.DAOFactory.Flush ();
     }
 
