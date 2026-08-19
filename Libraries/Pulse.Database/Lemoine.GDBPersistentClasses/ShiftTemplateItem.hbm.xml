@@ -15,7 +15,11 @@
                  column="shiftid"
                  class="Shift"
                  cascade="none"
-                 not-null="true"
+                 not-found="exception" />
+    <many-to-one name="SubShiftTemplate"
+                 column="shifttemplateitemsubid"
+                 class="ShiftTemplate"
+                 cascade="none"
                  not-found="exception" />
     <property name="WeekDays"
               column="Shifttemplateitemweekdays"
@@ -27,5 +31,11 @@
     <property name="Day"
               column="Shifttemplateitemday"
               type="Lemoine.NHibernateTypes.LocalDayType, Lemoine.Database" />
+    <property name="WeekYear"
+              column="shifttemplateitemweekyear" />
+    <property name="WeekNumber"
+              column="shifttemplateitemweeknumber" />
+    <property name="WeekFrequency"
+              column="shifttemplateitemweekfrequency" />
   </class>
 </hibernate-mapping>

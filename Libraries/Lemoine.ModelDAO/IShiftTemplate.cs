@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -43,7 +44,15 @@ namespace Lemoine.Model
     /// <param name="shift">Can be null because the it is not known yet when a new line is added in the configuration DataGridView</param>
     /// <returns></returns>
     IShiftTemplateItem AddItem (IShift shift);
-    
+
+    /// <summary>
+    /// Append an item that applies recursively another shift template
+    /// </summary>
+    /// <param name="subShiftTemplate">not null and different from this shift template</param>
+    /// <returns></returns>
+    IShiftTemplateItem AddItem (IShiftTemplate subShiftTemplate);
+
+
     /// <summary>
     /// Add a break
     /// </summary>

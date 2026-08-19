@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -19,54 +20,43 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ShiftTemplateItem: IShiftTemplateItem, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IShift m_shift;
+    IShiftTemplate m_subShiftTemplate;
     WeekDay m_weekDays = (WeekDay) Int32.MaxValue;
     TimePeriodOfDay m_timePeriod;
     DateTime? m_day = null;
-    #endregion // Members
+    int? m_weekYear = null;
+    int? m_weekNumber = null;
+    int? m_weekFrequency = null;
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftTemplateItem).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// ShiftTemplateItem Id
     /// </summary>
     [XmlAttribute("Id")]
-    public virtual int Id
-    {
-      get { return this.m_id; }
-    }
-    
+    public virtual int Id => this.m_id;
+
     /// <summary>
     /// ShiftTemplateItem Version
     /// </summary>
     [XmlIgnore]
-    public virtual int Version
-    {
-      get { return this.m_version; }
-    }
+    public virtual int Version => this.m_version;
 
     /// <summary>
-    /// Reference to a shift (not null)
+    /// Reference to a shift
+    ///
+    /// It may only be null when <see cref="SubShiftTemplate"/> is set
     /// </summary>
     [XmlIgnore]
     public virtual IShift Shift
     {
       get { return m_shift; }
-      set {
-        Debug.Assert (null != value);
-        if (null == value) {
-          log.ErrorFormat ("Shift.set: " +
-                           "null value");
-          throw new ArgumentNullException ("ShiftTemplateItem.Shift");
-        }
-        m_shift = value;
-      }
+      set { m_shift = value; }
     }
-    
+
     /// <summary>
     /// Reference to a Shift
     /// for Xml Serialization
@@ -76,6 +66,41 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Shift as Shift; }
       set { this.Shift = value; }
     }
+
+    /// <summary>
+    /// used to serialize Shift only when not null
+    /// </summary>
+    public virtual bool XmlSerializationShiftSpecified => null != this.Shift;
+
+    /// <summary>
+    /// Reference to a shift template that is applied recursively
+    ///
+    /// nullable
+    ///
+    /// <see cref="IShiftTemplateItem"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual IShiftTemplate SubShiftTemplate
+    {
+      get { return m_subShiftTemplate; }
+      set { m_subShiftTemplate = value; }
+    }
+
+    /// <summary>
+    /// Reference to the recursively applied shift template
+    /// for Xml Serialization
+    /// </summary>
+    [XmlElement ("SubShiftTemplate")]
+    public virtual ShiftTemplate XmlSerializationSubShiftTemplate
+    {
+      get { return this.SubShiftTemplate as ShiftTemplate; }
+      set { this.SubShiftTemplate = value; }
+    }
+
+    /// <summary>
+    /// used to serialize SubShiftTemplate only when not null
+    /// </summary>
+    public virtual bool XmlSerializationSubShiftTemplateSpecified => null != this.SubShiftTemplate;
 
     /// <summary>
     /// Applicable week days
@@ -155,33 +180,152 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
-    
-    #region Constructors
+
+    /// <summary>
+    /// Year of the applicable specific week
+    ///
+    /// <see cref="IWeekRestrictedItem"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual int? WeekYear
+    {
+      get { return m_weekYear; }
+      set { m_weekYear = value; }
+    }
+
+    /// <summary>
+    /// Year of the applicable specific week, for Xml serialization
+    /// </summary>
+    [XmlAttribute ("WeekYear")]
+    public virtual int XmlWeekYear
+    {
+      get { return m_weekYear.Value; }
+      set { m_weekYear = value; }
+    }
+
+    /// <summary>
+    /// used to serialize WeekYear only when not null
+    /// </summary>
+    public virtual bool XmlWeekYearSpecified => m_weekYear.HasValue;
+
+    /// <summary>
+    /// Number of the applicable specific week
+    ///
+    /// <see cref="IWeekRestrictedItem"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual int? WeekNumber
+    {
+      get { return m_weekNumber; }
+      set
+      {
+        if (value.HasValue && ((value.Value < 1) || (53 < value.Value))) {
+          log.Fatal ($"WeekNumber.set: invalid week number {value.Value}");
+          throw new ArgumentOutOfRangeException (nameof (value), "Week number must be between 1 and 53");
+        }
+        m_weekNumber = value;
+      }
+    }
+
+    /// <summary>
+    /// Number of the applicable specific week, for Xml serialization
+    /// </summary>
+    [XmlAttribute ("WeekNumber")]
+    public virtual int XmlWeekNumber
+    {
+      get { return m_weekNumber.Value; }
+      set { this.WeekNumber = value; }
+    }
+
+    /// <summary>
+    /// used to serialize WeekNumber only when not null
+    /// </summary>
+    public virtual bool XmlWeekNumberSpecified => m_weekNumber.HasValue;
+
+    /// <summary>
+    /// Repeat the item every x weeks from the reference week
+    ///
+    /// <see cref="IWeekRestrictedItem"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual int? WeekFrequency
+    {
+      get { return m_weekFrequency; }
+      set
+      {
+        if (value.HasValue && (value.Value < 1)) {
+          log.Fatal ($"WeekFrequency.set: invalid week frequency {value.Value}");
+          throw new ArgumentOutOfRangeException (nameof (value), "Week frequency must be strictly positive");
+        }
+        m_weekFrequency = value;
+      }
+    }
+
+    /// <summary>
+    /// Repeat the item every x weeks from the reference week, for Xml serialization
+    /// </summary>
+    [XmlAttribute ("WeekFrequency")]
+    public virtual int XmlWeekFrequency
+    {
+      get { return m_weekFrequency.Value; }
+      set { this.WeekFrequency = value; }
+    }
+
+    /// <summary>
+    /// used to serialize WeekFrequency only when not null
+    /// </summary>
+    public virtual bool XmlWeekFrequencySpecified => m_weekFrequency.HasValue;
+
     /// <summary>
     /// Default constructor for NHibernate
     /// </summary>
     protected ShiftTemplateItem ()
     { }
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="shift"></param>
+    /// <param name="shift">Can be null. This is required when a new line is added in the configuration DataGridView</param>
     internal protected ShiftTemplateItem (IShift shift)
     {
-      if(shift != null) { // For the configuration only. This is required when a new line is added in the DataGridView
-        this.Shift = shift;
-      }
+      m_shift = shift;
     }
-    #endregion // Constructors
-    
+
+    /// <summary>
+    /// Constructor for an item that applies recursively another shift template
+    /// </summary>
+    /// <param name="subShiftTemplate">not null</param>
+    internal protected ShiftTemplateItem (IShiftTemplate subShiftTemplate)
+    {
+      Debug.Assert (null != subShiftTemplate);
+      if (subShiftTemplate is null) {
+        log.Fatal ("ShiftTemplateItem: null sub shift template");
+        throw new ArgumentNullException (nameof (subShiftTemplate));
+      }
+      m_subShiftTemplate = subShiftTemplate;
+    }
+
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
     public virtual void Unproxy ()
     {
       NHibernateHelper.Unproxy<IShift> (ref m_shift);
+      NHibernateHelper.Unproxy<IShiftTemplate> (ref m_subShiftTemplate);
+    }
+
+    /// <summary>
+    /// <see cref="Object.ToString()" />
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString ()
+    {
+      if (Lemoine.ModelDAO.ModelDAOHelper.DAOFactory.IsInitialized (this)) {
+        return $"[ShiftTemplateItem {this.Id} Shift={this.Shift?.ToStringIfInitialized ()} SubShiftTemplate={this.SubShiftTemplate?.ToStringIfInitialized ()}]";
+      }
+      else {
+        return $"[ShiftTemplateItem {this.Id}]";
+      }
     }
   }
 }

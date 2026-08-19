@@ -53,7 +53,12 @@ namespace Lemoine.ConfigControls
       this.shiftTemplateItemWeekDaysColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.shiftTemplateItemTimePeriodOfDayColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.shiftTemplateItemDayColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.shiftTemplateItemSubShiftTemplateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.shiftTemplateItemWeekYearColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.shiftTemplateItemWeekNumberColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.shiftTemplateItemWeekFrequencyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.shiftTemplateItemAddButton = new System.Windows.Forms.Button();
+      this.shiftTemplateItemAddSubButton = new System.Windows.Forms.Button();
       this.baseLayout.SuspendLayout();
       this.shiftTemplateBreakGroupBox.SuspendLayout();
       this.tableLayoutPanel1.SuspendLayout();
@@ -223,11 +228,13 @@ namespace Lemoine.ConfigControls
       // 
       // tableLayoutPanel2
       // 
-      this.tableLayoutPanel2.ColumnCount = 2;
+      this.tableLayoutPanel2.ColumnCount = 3;
       this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 111F));
+      this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
       this.tableLayoutPanel2.Controls.Add(this.shiftTemplateItemDataGridView, 0, 0);
       this.tableLayoutPanel2.Controls.Add(this.shiftTemplateItemAddButton, 1, 1);
+      this.tableLayoutPanel2.Controls.Add(this.shiftTemplateItemAddSubButton, 2, 1);
       this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 16);
       this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -247,10 +254,14 @@ namespace Lemoine.ConfigControls
                   this.shiftTemplateItemIdColumn,
                   this.shiftTemplateItemOrderColumn,
                   this.shiftTemplateItemShiftColumn,
+                  this.shiftTemplateItemSubShiftTemplateColumn,
                   this.shiftTemplateItemWeekDaysColumn,
                   this.shiftTemplateItemTimePeriodOfDayColumn,
-                  this.shiftTemplateItemDayColumn});
-      this.tableLayoutPanel2.SetColumnSpan(this.shiftTemplateItemDataGridView, 2);
+                  this.shiftTemplateItemDayColumn,
+                  this.shiftTemplateItemWeekYearColumn,
+                  this.shiftTemplateItemWeekNumberColumn,
+                  this.shiftTemplateItemWeekFrequencyColumn});
+      this.tableLayoutPanel2.SetColumnSpan(this.shiftTemplateItemDataGridView, 3);
       this.shiftTemplateItemDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.shiftTemplateItemDataGridView.Location = new System.Drawing.Point(3, 3);
       this.shiftTemplateItemDataGridView.Name = "shiftTemplateItemDataGridView";
@@ -258,7 +269,9 @@ namespace Lemoine.ConfigControls
       this.shiftTemplateItemDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
       this.shiftTemplateItemDataGridView.Size = new System.Drawing.Size(316, 166);
       this.shiftTemplateItemDataGridView.TabIndex = 3;
+      this.shiftTemplateItemDataGridView.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.ShiftTemplateItemDataGridViewCellBeginEdit);
       this.shiftTemplateItemDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ShiftTemplateItemDataGridViewCellValueChanged);
+      this.shiftTemplateItemDataGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.ShiftTemplateItemDataGridViewDataError);
       this.shiftTemplateItemDataGridView.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.ShiftTemplateItemDataGridViewUserDeletingRow);
       // 
       // shiftTemplateItemIdColumn
@@ -305,9 +318,37 @@ namespace Lemoine.ConfigControls
       this.shiftTemplateItemDayColumn.HeaderText = "DayColumn";
       this.shiftTemplateItemDayColumn.Name = "shiftTemplateItemDayColumn";
       this.shiftTemplateItemDayColumn.Width = 86;
-      // 
+      //
+      // shiftTemplateItemSubShiftTemplateColumn
+      //
+      this.shiftTemplateItemSubShiftTemplateColumn.DataPropertyName = "SubShiftTemplate";
+      this.shiftTemplateItemSubShiftTemplateColumn.HeaderText = "SubShiftTemplateColumn";
+      this.shiftTemplateItemSubShiftTemplateColumn.Name = "shiftTemplateItemSubShiftTemplateColumn";
+      this.shiftTemplateItemSubShiftTemplateColumn.Width = 140;
+      //
+      // shiftTemplateItemWeekYearColumn
+      //
+      this.shiftTemplateItemWeekYearColumn.DataPropertyName = "WeekYear";
+      this.shiftTemplateItemWeekYearColumn.HeaderText = "WeekYearColumn";
+      this.shiftTemplateItemWeekYearColumn.Name = "shiftTemplateItemWeekYearColumn";
+      this.shiftTemplateItemWeekYearColumn.Width = 90;
+      //
+      // shiftTemplateItemWeekNumberColumn
+      //
+      this.shiftTemplateItemWeekNumberColumn.DataPropertyName = "WeekNumber";
+      this.shiftTemplateItemWeekNumberColumn.HeaderText = "WeekNumberColumn";
+      this.shiftTemplateItemWeekNumberColumn.Name = "shiftTemplateItemWeekNumberColumn";
+      this.shiftTemplateItemWeekNumberColumn.Width = 110;
+      //
+      // shiftTemplateItemWeekFrequencyColumn
+      //
+      this.shiftTemplateItemWeekFrequencyColumn.DataPropertyName = "WeekFrequency";
+      this.shiftTemplateItemWeekFrequencyColumn.HeaderText = "WeekFrequencyColumn";
+      this.shiftTemplateItemWeekFrequencyColumn.Name = "shiftTemplateItemWeekFrequencyColumn";
+      this.shiftTemplateItemWeekFrequencyColumn.Width = 120;
+      //
       // shiftTemplateItemAddButton
-      // 
+      //
       this.shiftTemplateItemAddButton.Dock = System.Windows.Forms.DockStyle.Fill;
       this.shiftTemplateItemAddButton.Location = new System.Drawing.Point(214, 172);
       this.shiftTemplateItemAddButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
@@ -317,9 +358,21 @@ namespace Lemoine.ConfigControls
       this.shiftTemplateItemAddButton.Text = "Add an item";
       this.shiftTemplateItemAddButton.UseVisualStyleBackColor = true;
       this.shiftTemplateItemAddButton.Click += new System.EventHandler(this.ShiftTemplateItemAddButtonClick);
-      // 
+      //
+      // shiftTemplateItemAddSubButton
+      //
+      this.shiftTemplateItemAddSubButton.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.shiftTemplateItemAddSubButton.Location = new System.Drawing.Point(322, 172);
+      this.shiftTemplateItemAddSubButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+      this.shiftTemplateItemAddSubButton.Name = "shiftTemplateItemAddSubButton";
+      this.shiftTemplateItemAddSubButton.Size = new System.Drawing.Size(144, 23);
+      this.shiftTemplateItemAddSubButton.TabIndex = 4;
+      this.shiftTemplateItemAddSubButton.Text = "Add a shift template";
+      this.shiftTemplateItemAddSubButton.UseVisualStyleBackColor = true;
+      this.shiftTemplateItemAddSubButton.Click += new System.EventHandler(this.ShiftTemplateItemAddSubButtonClick);
+      //
       // ShiftTemplateConfig
-      // 
+      //
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.baseLayout);
@@ -356,8 +409,13 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateItemShiftColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateItemOrderColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateItemIdColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateItemSubShiftTemplateColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateItemWeekYearColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateItemWeekNumberColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateItemWeekFrequencyColumn;
     private System.Windows.Forms.DataGridView shiftTemplateItemDataGridView;
     private System.Windows.Forms.Button shiftTemplateItemAddButton;
+    private System.Windows.Forms.Button shiftTemplateItemAddSubButton;
     private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateNameColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn shiftTemplateIdColumn;
     private Lemoine.BaseControls.SortableDataGridView shiftTemplateDataGridView;

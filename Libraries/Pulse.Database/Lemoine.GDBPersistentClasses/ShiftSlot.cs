@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -864,20 +865,23 @@ namespace Lemoine.GDBPersistentClasses
                           mainModification, partOfDetectionAnalysis, checkedThread);
             }
             else { // null != this.ShiftTemplate
+              // Flatten the items, an item that references another shift template being replaced
+              // by the paths that lead to the items of the referenced template,
+              // and group them by restriction criteria
+              var layers = ShiftTemplateItemLayers.GetLayers (this.ShiftTemplate);
+
               // Check there is not only a 24h time period
               IShiftTemplateItem fullDayItem = null;
               bool onlyFullDayItem = true;
-              foreach (IShiftTemplateItem item in this.ShiftTemplate.Items) {
-                if (item.Day.HasValue || !item.TimePeriod.IsFullDay ()) {
+              foreach (var itemPath in layers.SelectMany (l => l.Paths)) {
+                if ((1 < itemPath.Count) || ShiftTemplateItemLayers.IsDateRestricted (itemPath[0])) {
                   onlyFullDayItem = false;
                 }
                 else {
                   if (null != fullDayItem) {
-                    GetLogger ().WarnFormat ("ProcessTemplate: " +
-                                             "in template {0} several full day items",
-                                             this.ShiftTemplate);
+                    GetLogger ().Warn ($"ProcessTemplate: in template {this.ShiftTemplate} several full day items");
                   }
-                  fullDayItem = item;
+                  fullDayItem = itemPath[0];
                 }
               }
 
@@ -889,39 +893,34 @@ namespace Lemoine.GDBPersistentClasses
               checkedThread?.SetActive ();
 
               if (!onlyFullDayItem) {
+                GetWeek (daySlot, out var weekYear, out var weekNumber);
+
                 // Process then the item one after each other
                 // until 'end' only
                 LocalDateTimeRange localRange = adjustedRange.ToLocalTime ();
                 for (DateTime date = localRange.Lower.Value.Date;
                      date <= localRange.Upper.Value.Date;
                      date = date.AddDays (1).Date) {
-                  // Loop on items with a specific date
-                  bool specificDate = false;
-                  foreach (IShiftTemplateItem item in this.ShiftTemplate.Items) { // Loop on specific date items
-                    if (item.Day.HasValue && item.Day.Value.Equals (date)) {
-                      specificDate = true;
-                      // Do not take into account here item.WeekDays because item.Day is specified,
-                      // and normally WeekDays should be AllDays here
-                      Debug.Assert (item.WeekDays.HasFlag (WeekDay.AllDays));
-                      ApplyShift (daySlot.Day.Value,
-                                  date, item.TimePeriod, item.Shift,
-                                  localRange,
-                                  mainModification, partOfDetectionAnalysis, checkedThread);
+                  // Loop on the layers, from the least specific one to the most specific one:
+                  // a layer that is applied later overrides the previous ones
+                  foreach (var layer in layers) {
+                    // A layer that is restricted to a specific week or to a specific day
+                    // redefines the whole impacted week or day: reset it first, so that
+                    // the rules of the less specific layers do not apply any more on it
+                    if ((0 < layer.Priority)
+                        && layer.Paths.Any (p => ShiftTemplateItemLayers.IsResetApplicable (p, date, weekYear, weekNumber))) {
+                      ResetDate (daySlot.Day.Value, date, localRange,
+                                 mainModification, partOfDetectionAnalysis, checkedThread);
                       checkedThread?.SetActive ();
                     }
-                  } // End loop on specific date items
-
-                  // Loop on items with no specific date
-                  if (!specificDate) { // No specific date item match, check the day of week
-                    foreach (IShiftTemplateItem item in this.ShiftTemplate.Items) { // Loop on items not considering the specific dates
-                      if (!item.Day.HasValue && item.WeekDays.HasFlagDayOfWeek (date.DayOfWeek)) { // Day of week is ok
-                        ApplyShift (daySlot.Day.Value,
-                                    date, item.TimePeriod, item.Shift,
-                                    localRange,
+                    foreach (var itemPath in layer.Paths) {
+                      if (itemPath.All (i => i.IsDayApplicable (date, weekYear, weekNumber))) {
+                        ApplyShift (daySlot.Day.Value, date, itemPath, localRange,
                                     mainModification, partOfDetectionAnalysis, checkedThread);
-                      } // If day of week ok
-                    } // End loop on items not considering the specific dates
-                  } // If no specific date item match
+                        checkedThread?.SetActive ();
+                      }
+                    } // End loop on item paths
+                  } // End loop on layers
                 } // End loop on dates
               } // If !onlyFullDayItem
             } // If null != this.ShiftTemplate
@@ -932,6 +931,97 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       return true;
+    }
+
+    /// <summary>
+    /// Get the week year and week number that are associated to a day slot
+    /// </summary>
+    /// <param name="daySlot">not null, with a day</param>
+    /// <param name="weekYear"></param>
+    /// <param name="weekNumber"></param>
+    void GetWeek (IDaySlot daySlot, out int weekYear, out int weekNumber)
+    {
+      Debug.Assert (daySlot.Day.HasValue);
+
+      if (daySlot.WeekYear.HasValue && daySlot.WeekNumber.HasValue) {
+        weekYear = daySlot.WeekYear.Value;
+        weekNumber = daySlot.WeekNumber.Value;
+        return;
+      }
+
+      // The week of the day slot was not computed yet, fallback on the day
+      GetLogger ().Warn ($"GetWeek: no week number in {daySlot} => compute it from the day");
+      WeekNumberHelper.GetWeek (daySlot.Day.Value, out weekYear, out weekNumber);
+    }
+
+    /// <summary>
+    /// Reset the shift of a specific date, before a more specific layer of items is applied
+    /// </summary>
+    /// <param name="day"></param>
+    /// <param name="date">local date</param>
+    /// <param name="localGlobalRange"></param>
+    /// <param name="mainModification"></param>
+    /// <param name="partOfDetectionAnalysis"></param>
+    /// <param name="checkedThread"></param>
+    void ResetDate (DateTime day,
+                    DateTime date,
+                    LocalDateTimeRange localGlobalRange,
+                    IModification mainModification, bool partOfDetectionAnalysis,
+                    Lemoine.Threading.IChecked checkedThread)
+    {
+      var localRange = new LocalDateTimeRange (localGlobalRange
+        .Intersects (new LocalDateTimeRange (date, date.AddDays (1))));
+      if (localRange.IsEmpty ()) {
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"ResetDate: nothing to reset on {date} in {localGlobalRange}");
+        }
+        return;
+      }
+
+      ApplyShift (day, (IShift)null, localRange.ToUniversalTime (),
+                  mainModification, partOfDetectionAnalysis, checkedThread);
+    }
+
+    /// <summary>
+    /// Apply the shift of an item path on a specific date, the time period of day
+    /// of each item of the path restricting the applied range
+    /// </summary>
+    /// <param name="day"></param>
+    /// <param name="date">local date</param>
+    /// <param name="itemPath">not empty, the last item references a shift</param>
+    /// <param name="localGlobalRange"></param>
+    /// <param name="mainModification"></param>
+    /// <param name="partOfDetectionAnalysis"></param>
+    /// <param name="checkedThread"></param>
+    void ApplyShift (DateTime day,
+                     DateTime date,
+                     IList<IShiftTemplateItem> itemPath,
+                     LocalDateTimeRange localGlobalRange,
+                     IModification mainModification, bool partOfDetectionAnalysis,
+                     Lemoine.Threading.IChecked checkedThread)
+    {
+      Debug.Assert (0 < itemPath.Count);
+
+      var localRange = localGlobalRange;
+      foreach (var item in itemPath) {
+        localRange = localRange.Intersects (date, item.TimePeriod);
+        if (localRange.IsEmpty ()) {
+          if (GetLogger ().IsDebugEnabled) {
+            GetLogger ().Debug ($"ApplyShift: nothing to do because the time period {item.TimePeriod} is empty on {date}");
+          }
+          return;
+        }
+      }
+
+      var leafItem = itemPath[itemPath.Count - 1];
+      Debug.Assert (null != leafItem.Shift);
+
+      { // Apply the change
+        ShiftChange shiftChange =
+          new ShiftChange (day, leafItem.Shift, localRange.ToUniversalTime (), mainModification);
+        shiftChange.Caller = checkedThread;
+        shiftChange.Apply ();
+      }
     }
 
     void ApplyShift (DateTime day,

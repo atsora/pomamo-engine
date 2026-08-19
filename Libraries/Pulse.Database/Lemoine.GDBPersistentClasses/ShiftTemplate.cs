@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -128,6 +129,27 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Getters / Setters
         
+    /// <summary>
+    /// Append an item with the specified shift
+    /// </summary>
+    /// <param name="shift"></param>
+    /// <returns></returns>
+    public virtual IShiftTemplateItem AddItem (IShiftTemplate subShiftTemplate)
+    {
+      if (subShiftTemplate is null) {
+        log.Fatal ("AddItem: null sub shift template");
+        throw new ArgumentNullException (nameof (subShiftTemplate));
+      }
+      if (this.Equals (subShiftTemplate)) {
+        log.Fatal ($"AddItem: {subShiftTemplate} references itself");
+        throw new ArgumentException ("A shift template can't reference itself", nameof (subShiftTemplate));
+      }
+
+      IShiftTemplateItem newTemplateItem = new ShiftTemplateItem (subShiftTemplate);
+      m_items.Add (newTemplateItem);
+      return newTemplateItem;
+    }
+
     /// <summary>
     /// Append an item with the specified shift
     /// </summary>

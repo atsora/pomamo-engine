@@ -217,6 +217,117 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       }
     }
     
+    /// <summary>
+    /// Test ProcessTemplate with a shift template that references two other shift templates,
+    /// the second one being restricted to a specific week
+    ///
+    /// From that week, the whole week is reset before the second template is applied:
+    /// only the shifts of the second template remain
+    /// </summary>
+    [Test]
+    public void TestProcessTemplateSubTemplateOnAWeek ()
+    {
+      CheckProcessTemplateSubTemplate (0);
+    }
+
+    /// <summary>
+    /// Same as <see cref="TestProcessTemplateSubTemplateOnAWeek"/>, but the second template
+    /// is restricted to the next week: it does not apply yet and the shifts of the first
+    /// template are kept
+    /// </summary>
+    [Test]
+    public void TestProcessTemplateSubTemplateOnAnotherWeek ()
+    {
+      CheckProcessTemplateSubTemplate (1);
+    }
+
+    /// <summary>
+    /// A global shift template references:
+    /// <item>a template A that defines a morning shift 08:00-13:00, without any restriction</item>
+    /// <item>a template B that defines an afternoon shift 13:00-21:00, from a specific week</item>
+    /// </summary>
+    /// <param name="weekOffset">0: template B applies on the processed day, 1: only the week after</param>
+    void CheckProcessTemplateSubTemplate (int weekOffset)
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        // Reference data
+        IShift morningShift = ModelDAOHelper.DAOFactory.ShiftDAO
+          .FindById (1);
+        IShift afternoonShift = ModelDAOHelper.DAOFactory.ShiftDAO
+          .FindById (2);
+
+        // Template A: morning 08:00-13:00
+        IShiftTemplate templateA = ModelDAOHelper.ModelFactory.CreateShiftTemplate ("A");
+        IShiftTemplateItem itemA = templateA.AddItem (morningShift);
+        itemA.TimePeriod = new TimePeriodOfDay ("08:00-13:00");
+        ModelDAOHelper.DAOFactory.ShiftTemplateDAO.MakePersistent (templateA);
+
+        // Template B: afternoon 13:00-21:00
+        IShiftTemplate templateB = ModelDAOHelper.ModelFactory.CreateShiftTemplate ("B");
+        IShiftTemplateItem itemB = templateB.AddItem (afternoonShift);
+        itemB.TimePeriod = new TimePeriodOfDay ("13:00-21:00");
+        ModelDAOHelper.DAOFactory.ShiftTemplateDAO.MakePersistent (templateB);
+
+        // Global template: A always, B from the specified week
+        WeekNumberHelper.GetWeek (T (1).ToLocalTime ().Date, out var weekYear, out var weekNumber);
+        IShiftTemplate template = ModelDAOHelper.ModelFactory.CreateShiftTemplate ("global");
+        template.AddItem (templateA);
+        IShiftTemplateItem subItemB = template.AddItem (templateB);
+        subItemB.WeekYear = weekYear;
+        subItemB.WeekNumber = weekNumber + weekOffset;
+        subItemB.WeekFrequency = 1;
+        ModelDAOHelper.DAOFactory.ShiftTemplateDAO.MakePersistent (template);
+
+        { // Add the change
+          IShiftTemplateAssociation change = ModelDAOHelper.ModelFactory
+            .CreateShiftTemplateAssociation (template, T (1));
+          ModelDAOHelper.DAOFactory.ShiftTemplateAssociationDAO
+            .MakePersistent (change);
+        }
+
+        { // Run MakeAnalysis
+          AnalysisUnitTests.RunMakeAnalysis<ShiftTemplateAssociation> ();
+        }
+        DAOFactory.EmptyAccumulators ();
+
+        { // Process the templates
+          IList<IShiftSlot> slots = ModelDAOHelper.DAOFactory.ShiftSlotDAO
+            .GetNotProcessTemplate (R (1), 1).ToList ();
+          Assert.That (slots, Has.Count.EqualTo (1));
+          ((ShiftSlot)slots[0]).ProcessTemplate (System.Threading.CancellationToken.None, R (1, 2), null, true, null, null);
+        }
+
+        { // Check: one single shift on the processed day
+          IList<IShiftSlot> slots = ModelDAOHelper.DAOFactory.ShiftSlotDAO
+            .FindOverlapsRange (R (1, 2));
+          IList<IShiftSlot> withShift = slots
+            .Where (s => null != s.Shift)
+            .ToList ();
+          Assert.That (withShift, Has.Count.EqualTo (1));
+          if (0 == weekOffset) {
+            Assert.Multiple (() => {
+              Assert.That (withShift[0].Shift, Is.EqualTo (afternoonShift),
+                           "The morning shift of the template A has been reset by the template B");
+              Assert.That (withShift[0].BeginDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (13))));
+              Assert.That (withShift[0].EndDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (21))));
+            });
+          }
+          else {
+            Assert.Multiple (() => {
+              Assert.That (withShift[0].Shift, Is.EqualTo (morningShift),
+                           "The template B does not apply on this week");
+              Assert.That (withShift[0].BeginDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (8))));
+              Assert.That (withShift[0].EndDateTime.Value, Is.EqualTo (D (1, TimeSpan.FromHours (13))));
+            });
+          }
+        }
+
+        transaction.Rollback ();
+      }
+    }
+
     DateTime T (int days)
     {
       return new DateTime (2014, 09, 30, 00, 00, 00, DateTimeKind.Utc).AddDays (days);

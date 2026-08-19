@@ -35,6 +35,7 @@ namespace Lemoine.GDBPersistentClasses
         .CreateCriteria<ShiftTemplate>()
         .Fetch (SelectMode.Fetch, "Items")
         .Fetch (SelectMode.Fetch, "Items.Shift")
+        .Fetch (SelectMode.Fetch, "Items.SubShiftTemplate")
         .Fetch (SelectMode.Fetch, "Breaks")
         .SetResultTransformer(new DistinctRootEntityResultTransformer()) // Remove duplicate root entity
         .AddOrder(Order.Asc("Id"))

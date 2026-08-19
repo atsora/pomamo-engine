@@ -13,7 +13,7 @@ namespace Lemoine.Model
   /// Model of table MachineStateTemplateItem
   /// that associates a machine observation state to an applicable period
   /// </summary>
-  public interface IMachineStateTemplateItem: IDataWithVersion, ISerializableModel
+  public interface IMachineStateTemplateItem: IDataWithVersion, ISerializableModel, IWeekRestrictedItem
   {
     /// <summary>
     /// ID
@@ -64,33 +64,6 @@ namespace Lemoine.Model
     DateTime? Day { get; set; }
 
     /// <summary>
-    /// Year of the applicable specific week (nullable)
-    ///
-    /// It is only considered when <see cref="WeekNumber"/> is set.
-    /// When it is not set, the week number applies to any year
-    /// </summary>
-    int? WeekYear { get; set; }
-
-    /// <summary>
-    /// Number of the applicable specific week, between 1 and 53 (nullable)
-    ///
-    /// The week number is computed with the Global.Calendar.CalendarWeekRule
-    /// and Global.Calendar.FirstDayOfWeek configurations (ISO 8601 by default)
-    /// </summary>
-    int? WeekNumber { get; set; }
-
-    /// <summary>
-    /// Repeat the item every <see cref="WeekFrequency"/> weeks, starting from the week
-    /// that is defined by <see cref="WeekYear"/> and <see cref="WeekNumber"/> (nullable)
-    ///
-    /// 1 means every week, 2 every two weeks, ...
-    ///
-    /// It is only considered when both <see cref="WeekYear"/> and <see cref="WeekNumber"/> are set.
-    /// When it is not set, only the specified week is considered
-    /// </summary>
-    int? WeekFrequency { get; set; }
-
-    /// <summary>
     /// Repeat the item every year
     ///
     /// When <see cref="Day"/> is set, the item applies every year on the same month and day.
@@ -131,6 +104,9 @@ namespace Lemoine.Model
 
     /// <summary>
     /// Is the week of the specified day compatible with the week criteria of the item ?
+    ///
+    /// Unlike <see cref="IWeekRestrictedItemExtensions.IsWeekApplicable(IWeekRestrictedItem, DateTime, bool)"/>,
+    /// <see cref="IMachineStateTemplateItem.YearlyRepeat"/> is taken into account
     /// </summary>
     /// <param name="item">not null</param>
     /// <param name="localDay">local day</param>
@@ -142,28 +118,7 @@ namespace Lemoine.Model
         throw new ArgumentNullException (nameof (item));
       }
 
-      if (!item.WeekNumber.HasValue) { // No week criteria
-        return true;
-      }
-
-      if (item.YearlyRepeat || !item.WeekYear.HasValue) {
-        // The same week number is considered every year
-        return WeekNumberHelper.GetWeekNumber (localDay) == item.WeekNumber.Value;
-      }
-
-      var weekDifference = WeekNumberHelper
-        .GetWeekDifference (item.WeekYear.Value, item.WeekNumber.Value, localDay);
-      if (weekDifference < 0) { // Before the reference week
-        return false;
-      }
-      if (!item.WeekFrequency.HasValue) { // Only the reference week
-        return 0 == weekDifference;
-      }
-      if (item.WeekFrequency.Value <= 0) {
-        log.Error ($"IsWeekApplicable: invalid week frequency {item.WeekFrequency.Value} in item {item.Id} => consider the reference week only");
-        return 0 == weekDifference;
-      }
-      return 0 == (weekDifference % item.WeekFrequency.Value);
+      return ((IWeekRestrictedItem)item).IsWeekApplicable (localDay, item.YearlyRepeat);
     }
 
     /// <summary>

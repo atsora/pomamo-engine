@@ -34,6 +34,8 @@ namespace Lemoine.ConfigControls
     IDictionary<int,IList<IShiftTemplateItem>> m_itemDeleteList = new Dictionary<int,IList<IShiftTemplateItem>>();
     
     ISet<IConfigControlObserver<IShiftTemplate>> m_observers = new HashSet<IConfigControlObserver<IShiftTemplate>> ();
+
+    IShiftTemplate m_editedSubShiftTemplate = null;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftTemplateConfig).FullName);
@@ -111,13 +113,20 @@ namespace Lemoine.ConfigControls
       }
       
       // ShiftTemplateItem
+      groupBox1.Text = PulseCatalog.GetString ("ShiftTemplateItem");
+      shiftTemplateItemAddButton.Text = PulseCatalog.GetString ("ShiftTemplateItemAddButton");
+      shiftTemplateItemAddSubButton.Text = PulseCatalog.GetString ("ShiftTemplateItemAddSubButton");
       shiftTemplateItemDayColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemDayColumn");
       shiftTemplateItemTimePeriodOfDayColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemTimePeriodOfDayColumn");
       shiftTemplateItemWeekDaysColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemWeekDaysColumn");
       shiftTemplateItemShiftColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemShiftColumn");
+      shiftTemplateItemSubShiftTemplateColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemSubShiftTemplateColumn");
+      shiftTemplateItemWeekYearColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemWeekYearColumn");
+      shiftTemplateItemWeekNumberColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemWeekNumberColumn");
+      shiftTemplateItemWeekFrequencyColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemWeekFrequencyColumn");
       shiftTemplateItemOrderColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateItemOrderColumn");
       shiftTemplateItemIdColumn.HeaderText = PulseCatalog.GetString ("Id");
-      
+
       shiftTemplateItemDataGridView.AutoGenerateColumns = false;
 
       {
@@ -138,13 +147,39 @@ namespace Lemoine.ConfigControls
         shiftTemplateItemWeekDaysColumn.CellTemplate = cell;
       }
       {
+        // Note: not nullable, so that an item always keeps a reference to either
+        // a shift or a shift template.
+        // To change the kind of an item, remove it and add a new one
         ShiftDialog dialog = new ShiftDialog ();
-        dialog.Nullable = true;
+        dialog.Nullable = false;
         dialog.DisplayedProperty = "Display";
         DataGridViewCell cell = new DataGridViewSelectionableCell<IShift>(dialog);
         shiftTemplateItemShiftColumn.CellTemplate = cell;
       }
-      
+      {
+        // Note: not nullable, so that an item always keeps a reference to either
+        // a shift or a shift template.
+        // To change the kind of an item, remove it and add a new one
+        ShiftTemplateDialog dialog = new ShiftTemplateDialog ();
+        dialog.Nullable = false;
+        dialog.MultiSelect = false;
+        dialog.DisplayedProperty = "Display";
+        DataGridViewCell cell = new DataGridViewSelectionableCell<IShiftTemplate> (dialog);
+        shiftTemplateItemSubShiftTemplateColumn.CellTemplate = cell;
+      }
+      {
+        // An empty cell must be stored as null in the nullable properties, not as DBNull
+        var nullableColumns = new DataGridViewColumn[] {
+          shiftTemplateItemWeekYearColumn,
+          shiftTemplateItemWeekNumberColumn,
+          shiftTemplateItemWeekFrequencyColumn
+        };
+        foreach (var column in nullableColumns) {
+          column.DefaultCellStyle.NullValue = null;
+          column.DefaultCellStyle.DataSourceNullValue = null;
+        }
+      }
+
       // ShiftTemplate
       shiftTemplateNameColumn.HeaderText = PulseCatalog.GetString ("ShiftTemplateNameColumn");
       shiftTemplateIdColumn.HeaderText = PulseCatalog.GetString ("Id");
@@ -310,10 +345,105 @@ namespace Lemoine.ConfigControls
     void ShiftTemplateItemDataGridViewCellValueChanged(object sender, DataGridViewCellEventArgs e)
     {
       if (0 <= e.RowIndex) {
+        if (shiftTemplateItemDataGridView.Columns[e.ColumnIndex].Name
+            == shiftTemplateItemSubShiftTemplateColumn.Name) {
+          CheckSubShiftTemplateCell (shiftTemplateItemDataGridView.Rows[e.RowIndex]);
+        }
         AddShiftTemplateToUpdate();
       }
     }
-    
+
+    /// <summary>
+    /// Keep the sub shift template that is being edited, so that it can be restored
+    /// when the new value would create a cycle
+    /// </summary>
+    void ShiftTemplateItemDataGridViewCellBeginEdit (object sender, DataGridViewCellCancelEventArgs e)
+    {
+      m_editedSubShiftTemplate = null;
+      if ((0 <= e.RowIndex)
+          && (shiftTemplateItemDataGridView.Columns[e.ColumnIndex].Name
+              == shiftTemplateItemSubShiftTemplateColumn.Name)) {
+        var item = shiftTemplateItemDataGridView.Rows[e.RowIndex].DataBoundItem as IShiftTemplateItem;
+        m_editedSubShiftTemplate = item?.SubShiftTemplate;
+      }
+    }
+
+    /// <summary>
+    /// A property of an item may reject the entered value (an invalid week number for example):
+    /// display the reason to the user instead of the default technical dialog
+    /// </summary>
+    void ShiftTemplateItemDataGridViewDataError (object sender, DataGridViewDataErrorEventArgs e)
+    {
+      log.Error ($"ShiftTemplateItemDataGridViewDataError: invalid value in column {e.ColumnIndex} of row {e.RowIndex}", e.Exception);
+      e.Cancel = true;
+      e.ThrowException = false;
+      MessageBoxShow (PulseCatalog.GetString ("ShiftTemplateItemInvalidValue"));
+    }
+
+    /// <summary>
+    /// Restore the previous sub shift template of a row when the new one would create a cycle
+    /// </summary>
+    /// <param name="row"></param>
+    void CheckSubShiftTemplateCell (DataGridViewRow row)
+    {
+      var item = row.DataBoundItem as IShiftTemplateItem;
+      if ((null == item) || (null == item.SubShiftTemplate) || (null == SelectedShiftTemplate)) {
+        return;
+      }
+
+      if (IsCycle (SelectedShiftTemplate, item.SubShiftTemplate)) {
+        log.Error ($"CheckSubShiftTemplateCell: {item.SubShiftTemplate} would create a cycle in {SelectedShiftTemplate} => restore the previous value");
+        item.SubShiftTemplate = m_editedSubShiftTemplate;
+        shiftTemplateItemDataGridView.InvalidateRow (row.Index);
+        MessageBoxShow (PulseCatalog.GetString ("ShiftTemplateItemCycle"));
+      }
+    }
+
+    /// <summary>
+    /// Would applying recursively <paramref name="candidate"/> in <paramref name="shiftTemplate"/>
+    /// create a cycle ?
+    ///
+    /// Note: the loaded shift templates are used to walk through the graph,
+    /// because their items were fetched eagerly, unlike the ones of a template that comes from a dialog
+    /// </summary>
+    /// <param name="shiftTemplate">not null</param>
+    /// <param name="candidate">not null</param>
+    /// <returns></returns>
+    bool IsCycle (IShiftTemplate shiftTemplate, IShiftTemplate candidate)
+    {
+      var shiftTemplatesById = new Dictionary<int, IShiftTemplate> ();
+      foreach (var loaded in m_shiftTemplates) {
+        shiftTemplatesById[loaded.Id] = loaded;
+      }
+
+      var visited = new HashSet<int> ();
+      var pending = new Queue<int> ();
+      pending.Enqueue (candidate.Id);
+      while (0 < pending.Count) {
+        var currentId = pending.Dequeue ();
+        if (currentId == shiftTemplate.Id) {
+          return true;
+        }
+        if (!visited.Add (currentId)) {
+          continue;
+        }
+        if (shiftTemplatesById.TryGetValue (currentId, out var current)) {
+          foreach (var item in current.Items) {
+            if (null != item.SubShiftTemplate) {
+              pending.Enqueue (item.SubShiftTemplate.Id);
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    void MessageBoxShow (string message)
+    {
+      MessageBox.Show (message, PulseCatalog.GetString ("ShiftTemplate"),
+                       MessageBoxButtons.OK, MessageBoxIcon.Warning);
+    }
+
     void ShiftTemplateItemAddButtonClick(object sender, EventArgs e)
     {
       if (SelectedShiftTemplate != null) {
@@ -327,6 +457,40 @@ namespace Lemoine.ConfigControls
           ShiftTemplateItemLoad(); //TODO find better way or lighter
         }
       }
+    }
+
+    /// <summary>
+    /// Add an item that applies recursively another shift template
+    /// </summary>
+    void ShiftTemplateItemAddSubButtonClick (object sender, EventArgs e)
+    {
+      if (null == SelectedShiftTemplate) {
+        return;
+      }
+
+      var shiftTemplateDialog = new ShiftTemplateDialog ();
+      shiftTemplateDialog.Nullable = false;
+      shiftTemplateDialog.MultiSelect = false;
+      shiftTemplateDialog.DisplayedProperty = "Display";
+
+      if (shiftTemplateDialog.ShowDialog () != DialogResult.OK) {
+        return;
+      }
+      var subShiftTemplate = shiftTemplateDialog.SelectedValue;
+      if (null == subShiftTemplate) {
+        return;
+      }
+      if (IsCycle (SelectedShiftTemplate, subShiftTemplate)) {
+        log.Error ($"ShiftTemplateItemAddSubButtonClick: {subShiftTemplate} would create a cycle in {SelectedShiftTemplate}");
+        MessageBoxShow (PulseCatalog.GetString ("ShiftTemplateItemCycle"));
+        return;
+      }
+
+      var shiftTemplateItem = SelectedShiftTemplate.AddItem (subShiftTemplate);
+      shiftTemplateItem.WeekDays = WeekDay.AllDays;
+
+      AddShiftTemplateToUpdate ();
+      ShiftTemplateItemLoad ();
     }
     #endregion
 

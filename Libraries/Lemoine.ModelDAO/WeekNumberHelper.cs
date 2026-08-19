@@ -129,5 +129,27 @@ namespace Lemoine.Model
       var days = (int)Math.Round ((weekStart.Date - referenceWeekStart.Date).TotalDays);
       return days / 7;
     }
+
+    /// <summary>
+    /// Get the number of weeks between a reference week and another week
+    ///
+    /// The result is negative if the week is before the reference week
+    /// </summary>
+    /// <param name="referenceWeekYear"></param>
+    /// <param name="referenceWeekNumber">between 1 and 53</param>
+    /// <param name="weekYear"></param>
+    /// <param name="weekNumber">between 1 and 53</param>
+    /// <returns></returns>
+    public static int GetWeekDifference (int referenceWeekYear, int referenceWeekNumber, int weekYear, int weekNumber)
+    {
+      if ((referenceWeekYear == weekYear) && (referenceWeekNumber == weekNumber)) {
+        return 0;
+      }
+
+      var referenceWeekStart = GetWeekStart (referenceWeekYear, referenceWeekNumber);
+      var weekStart = GetWeekStart (weekYear, weekNumber);
+      var days = (int)Math.Round ((weekStart.Date - referenceWeekStart.Date).TotalDays);
+      return days / 7;
+    }
   }
 }
