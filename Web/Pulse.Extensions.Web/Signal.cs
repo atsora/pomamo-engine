@@ -30,7 +30,7 @@ namespace Pulse.Extensions.Web
     /// </summary>
     /// <param name="message">not null</param>
     /// <param name="color">not null</param>
-    Signal (string message, string color)
+    public Signal (string message, string color)
     {
       Debug.Assert (null != message);
       Debug.Assert (null != color);
