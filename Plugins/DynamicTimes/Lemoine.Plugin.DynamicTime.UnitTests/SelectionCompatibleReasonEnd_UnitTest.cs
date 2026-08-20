@@ -211,12 +211,15 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
             .FindById ((int)MachineModeId.AutoFeed);
           IMachineObservationState attended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
             .FindById ((int)MachineObservationStateId.Attended);
+          IMachineObservationState unattended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Unattended);
 
           var reason = CreateReason ("SelectionCompatibleObservationStateChange");
           AddReasonSelection (inactive, attended, reason);
-          // Two consecutive observation state slots: the observation state changes in T(2)
+          AddReasonSelection (inactive, unattended, reason);
+          // The machine observation state changes in T(2)
           SetMachineObservationState (machine, R (-10, 2), attended);
-          SetMachineObservationState (machine, R (2, 100), attended);
+          SetMachineObservationState (machine, R (2, 100), unattended);
           AddManualReason (machine, R (0), reason);
 
           InstallPlugin ("""
@@ -286,6 +289,82 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
             var checker = new DynamicEndChecker ("RecursiveSelectionCompatibleReasonEnd", machine, T (0));
             checker.CheckFinal (T (4));
           }
+        }
+        finally {
+          Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// A new observation state slot with the same machine observation state
+    /// (a shift change for example) does not stop the reason
+    /// </summary>
+    [Test]
+    public void TestShiftChange ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          InitializeExtensions ();
+
+          // Reference data
+          IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+            .FindById (2);
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (machine);
+          IMachineMode inactive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.Inactive);
+          IMachineMode inactiveOn = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.InactiveOn);
+          IMachineMode autoInactive = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.AutoInactive);
+          IMachineMode autoFeed = ModelDAOHelper.DAOFactory.MachineModeDAO
+            .FindById ((int)MachineModeId.AutoFeed);
+          IMachineObservationState attended = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          var reason = CreateReason ("SelectionCompatibleShiftChange");
+          AddReasonSelection (inactive, attended, reason);
+          // Two consecutive observation state slots with the same machine observation state
+          SetMachineObservationState (machine, R (-10, 2), attended);
+          SetMachineObservationState (machine, R (2, 100), attended);
+          AddManualReason (machine, R (0), reason);
+
+          InstallPlugin ("""
+{
+  "Identifier": "SelectionCompatibleReasonEnd_UnitTest",
+  "Name": "UnitTestShiftChange",
+  "Description": "",
+  "Tags": [],
+  "Version": 1,
+  "Plugins": [
+    {
+      "Name": "DynamicTimesManualReason",
+      "Instances": [
+        {
+          "Name": "Test",
+          "Parameters": {
+  "NamePrefix": "Test"
+          }
+        }
+      ]
+    }
+  ]
+}
+""");
+
+          AddFact (machine, R (0, 1), autoInactive);
+          AddFact (machine, R (1, 2), inactiveOn);
+          AddFact (machine, R (2, 3), inactiveOn);
+          AddFact (machine, R (3, 4), inactive);
+          AddFact (machine, R (4, 5), autoFeed);
+
+          // The observation state slot change in T(2) is not a machine observation state change:
+          // the reason is stopped by the first not compatible machine mode only
+          var checker = new DynamicEndChecker ("TestSelectionCompatibleReasonEnd", machine, T (0));
+          checker.CheckFinal (T (4));
         }
         finally {
           Lemoine.Extensions.ExtensionManager.ClearDeactivate ();
