@@ -263,7 +263,7 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
             CreateCycle (machine, operationSlot, R (50, 70));
             CheckFinal ("LastProductionEnd", machine, T (80), T (31));
             CheckFinal ("NextProductionStart", machine, T (0), T (10));
-            CheckAfter ("NextProductionStart", machine, T (21), T (50));
+            CheckAfter ("NextProductionStart", machine, T (21), T (70));
             CheckFinal ("NextProductionEnd", machine, T (0), T (31));
             CheckFinal ("NextProductionEnd", machine, T (21), T (31));
 

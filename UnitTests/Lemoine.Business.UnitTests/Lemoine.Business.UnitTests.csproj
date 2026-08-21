@@ -25,7 +25,6 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\atracking-netapps\Plugins\Reason\Lemoine.Plugin.TestReasonData\Lemoine.Plugin.TestReasonData.fsproj" />
     <ProjectReference Include="..\..\CNC\Lemoine.Extensions.Cnc\Lemoine.Extensions.Cnc.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" />

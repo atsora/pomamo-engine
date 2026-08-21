@@ -254,7 +254,8 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
               case GoodCycleExtensionResponse.KO:
                 nbGoodCycles = 0;
                 if (cycle.Full) { // If partial, it may be ok in the future
-                  afterResponse = cycle.Begin ?? cycle.DateTime;
+                  // The next good cycle can't start before the end of this bad cycle
+                  afterResponse = cycle.End ?? cycle.DateTime;
                 }
                 firstGoodCycleStart = null;
                 break;
