@@ -23,9 +23,11 @@ namespace Lemoine.Plugins.UnitTests
     : Lemoine.UnitTests.WithMinuteTimeStamp
   {
     static readonly int MACHINE_ID = 2;
+    static readonly int OTHER_MACHINE_ID = 1;
     static readonly int OPERATION_ID = 1; // MachiningDuration: 3600s=60min, no loading duration
     static readonly int SETUP_MACHINE_STATE_TEMPLATE_ID = 7;
     static readonly int PRODUCTION_MACHINE_STATE_TEMPLATE_ID = 9;
+    static readonly int UNKNOWN_MACHINE_FILTER_ID = 999999;
 
     readonly ILog log = LogManager.GetLogger(typeof (ProductionSwitcher_UnitTest).FullName);
 
@@ -412,6 +414,394 @@ namespace Lemoine.Plugins.UnitTests
           transaction.Rollback ();
         }
       }
+    }
+
+    /// <summary>
+    /// With the default configuration, one good cycle is enough:
+    /// this is the historical behaviour
+    /// </summary>
+    [Test]
+    public void TestOneGoodCycleByDefault ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+          var production = GetMachineStateTemplate (PRODUCTION_MACHINE_STATE_TEMPLATE_ID);
+
+          var extension = CreateExtension (machine, GetConfiguration ());
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70)); // 60 min <= 72
+
+          var associations = GetAssociations ();
+          Assert.That (associations, Has.Count.EqualTo (1));
+          Assert.Multiple (() => {
+            Assert.That (associations[0].MachineStateTemplate, Is.EqualTo (production));
+            Assert.That (associations[0].Begin.Value, Is.EqualTo (T (10)));
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// When 2 good cycles are required, the switch only happens on the second one,
+    /// and it starts at the begin of the first cycle of the serie
+    /// </summary>
+    [Test]
+    public void TestTwoGoodCyclesRequired ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+          var production = GetMachineStateTemplate (PRODUCTION_MACHINE_STATE_TEMPLATE_ID);
+
+          var extension = CreateExtension (machine, GetConfiguration (numberOfGoodCycles: 2));
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70)); // good
+          Assert.That (GetAssociations (), Is.Empty, "one good cycle is not enough");
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 80, 140)); // good
+
+          var associations = GetAssociations ();
+          Assert.That (associations, Has.Count.EqualTo (1));
+          Assert.Multiple (() => {
+            Assert.That (associations[0].MachineStateTemplate, Is.EqualTo (production));
+            Assert.That (associations[0].Begin.Value, Is.EqualTo (T (10)),
+              "the switch starts at the begin of the first good cycle of the serie");
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// A bad cycle breaks the serie of consecutive good cycles
+    /// </summary>
+    [Test]
+    public void TestBadCycleBreaksTheSerie ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+
+          var extension = CreateExtension (machine, GetConfiguration (numberOfGoodCycles: 2));
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70)); // good
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 80, 180)); // 100 min > 72: bad
+          Assert.That (GetAssociations (), Is.Empty, "the serie is broken by the bad cycle");
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 190, 250)); // good
+          Assert.That (GetAssociations (), Is.Empty, "only one good cycle since the bad one");
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 260, 320)); // good
+
+          var associations = GetAssociations ();
+          Assert.That (associations, Has.Count.EqualTo (1));
+          Assert.That (associations[0].Begin.Value, Is.EqualTo (T (190)),
+            "the serie restarts after the bad cycle");
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// A configuration that does not set the number of good cycles keeps the historical
+    /// behaviour (1), and a number below 1 is rejected
+    /// </summary>
+    [Test]
+    public void TestNumberOfGoodCyclesConfiguration ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var loader = new Lemoine.Extensions.Configuration.ConfigurationLoader<Configuration> ();
+
+          { // An existing configuration, saved before the parameter was added
+            var configuration = loader.LoadConfiguration ($$"""
+{
+  "SetupMachineStateTemplateIds": [ {{SETUP_MACHINE_STATE_TEMPLATE_ID}} ],
+  "ProductionMachineStateTemplateId": {{PRODUCTION_MACHINE_STATE_TEMPLATE_ID}},
+  "CycleDurationPercentageTrigger": 120,
+  "BetweenCyclesDurationPercentageTrigger": 0
+}
+""");
+            Assert.That (configuration.NumberOfGoodCycles, Is.EqualTo (1));
+            Assert.That (configuration.IsValid (out var errors), Is.True);
+          }
+
+          { // An explicit number of good cycles
+            var configuration = loader.LoadConfiguration ($$"""
+{
+  "SetupMachineStateTemplateIds": [ {{SETUP_MACHINE_STATE_TEMPLATE_ID}} ],
+  "ProductionMachineStateTemplateId": {{PRODUCTION_MACHINE_STATE_TEMPLATE_ID}},
+  "CycleDurationPercentageTrigger": 120,
+  "BetweenCyclesDurationPercentageTrigger": 0,
+  "NumberOfGoodCycles": 3
+}
+""");
+            Assert.That (configuration.NumberOfGoodCycles, Is.EqualTo (3));
+            Assert.That (configuration.IsValid (out var errors), Is.True);
+          }
+
+          { // An invalid number of good cycles
+            var configuration = new Configuration {
+              ProductionMachineStateTemplateId = PRODUCTION_MACHINE_STATE_TEMPLATE_ID,
+              NumberOfGoodCycles = 0
+            };
+            var valid = configuration.IsValid (out var errors);
+            Assert.Multiple (() => {
+              Assert.That (valid, Is.False);
+              Assert.That (errors, Has.Exactly (1).Items);
+            });
+          }
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// The switch happens when the machine matches the configured machine filter
+    /// </summary>
+    [Test]
+    public void TestMachineFilterMatch ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+          var machineFilter = CreateMachineFilter (machine);
+
+          var extension = CreateExtension (machine,
+            GetConfiguration (machineFilterId: machineFilter.Id));
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70));
+
+          Assert.That (GetAssociations (), Has.Count.EqualTo (1));
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Nothing happens when the machine does not match the configured machine filter
+    /// </summary>
+    [Test]
+    public void TestMachineFilterNoMatch ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var otherMachine = ModelDAOHelper.DAOFactory.MachineDAO.FindById (OTHER_MACHINE_ID);
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+          var machineFilter = CreateMachineFilter (otherMachine);
+
+          var extension = CreateExtension (machine,
+            GetConfiguration (machineFilterId: machineFilter.Id));
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70));
+
+          Assert.That (GetAssociations (), Is.Empty);
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Nothing happens when the configured machine filter does not exist
+    /// </summary>
+    [Test]
+    public void TestUnknownMachineFilter ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+
+          var extension = CreateExtension (machine,
+            GetConfiguration (machineFilterId: UNKNOWN_MACHINE_FILTER_ID));
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70));
+
+          Assert.That (GetAssociations (), Is.Empty);
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// The pallet changing duration of the machine is used as the standard between
+    /// cycles duration, and it has the priority on the loading/unloading durations
+    /// </summary>
+    [Test]
+    public void TestPalletChangingDurationAsBetweenDuration ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          machine.PalletChangingDuration = TimeSpan.FromMinutes (10);
+          ModelDAOHelper.DAOFactory.MonitoredMachineDAO.MakePersistent (machine);
+
+          var operation = GetOperation ();
+          // Much longer than the pallet changing duration, to check it is not used
+          operation.LoadingDuration = TimeSpan.FromMinutes (100);
+          ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation);
+
+          var operationSlot = InitializeSlots (machine, operation,
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+
+          // 110 % of 10 min => a gap of up to 11 min is good
+          var extension = CreateExtension (machine,
+            GetConfiguration (betweenCyclesDurationPercentageTrigger: 110));
+
+          var cycle1 = AddFullCycle (machine, operationSlot, 10, 70);
+          extension.StopCycle (cycle1); // the between duration must be considered => nothing yet
+          Assert.That (GetAssociations (), Is.Empty);
+
+          var cycle2 = AddFullCycle (machine, operationSlot, 85, 145); // gap of 15 min: too long
+          extension.CreateBetweenCycle (ModelDAOHelper.ModelFactory
+            .CreateBetweenCycles (cycle1, cycle2));
+          Assert.That (GetAssociations (), Is.Empty, "a 15 min gap exceeds 11 min");
+
+          var cycle3 = AddFullCycle (machine, operationSlot, 156, 216); // gap of 11 min: good
+          extension.CreateBetweenCycle (ModelDAOHelper.ModelFactory
+            .CreateBetweenCycles (cycle2, cycle3));
+
+          var associations = GetAssociations ();
+          Assert.That (associations, Has.Count.EqualTo (1), "an 11 min gap is within 11 min");
+          Assert.That (associations[0].Begin.Value, Is.EqualTo (T (85)));
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Once the switch to production is done, it is not done a second time
+    /// until the observation state slots are flagged as modified
+    /// </summary>
+    [Test]
+    public void TestNoSwitchTwiceUntilSlotChange ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+
+          var extension = CreateExtension (machine, GetConfiguration ());
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70));
+          Assert.That (GetAssociations (), Has.Count.EqualTo (1));
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 80, 140));
+          Assert.That (GetAssociations (), Has.Count.EqualTo (1),
+            "the pending change inhibits any new switch");
+
+          // Flag the observation state slots as modified
+          var slotExtension = new SlotExtension ();
+          slotExtension.AddSlot (ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
+            .FindAll (machine).Last ());
+
+          extension.StopCycle (AddFullCycle (machine, operationSlot, 150, 210));
+          var associations = GetAssociations ();
+          Assert.That (associations, Has.Count.EqualTo (2));
+          Assert.That (associations[1].Begin.Value, Is.EqualTo (T (150)));
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Build a Json configuration
+    /// </summary>
+    string GetConfiguration (int numberOfGoodCycles = 1,
+                             int betweenCyclesDurationPercentageTrigger = 0,
+                             int? machineFilterId = null)
+    {
+      var machineFilterProperty = machineFilterId.HasValue
+        ? $@", ""MachineFilterId"": {machineFilterId.Value}"
+        : "";
+      return $@"{{
+  ""SetupMachineStateTemplateIds"": [ {SETUP_MACHINE_STATE_TEMPLATE_ID} ],
+  ""ProductionMachineStateTemplateId"": {PRODUCTION_MACHINE_STATE_TEMPLATE_ID},
+  ""CycleDurationPercentageTrigger"": 120,
+  ""BetweenCyclesDurationPercentageTrigger"": {betweenCyclesDurationPercentageTrigger},
+  ""NumberOfGoodCycles"": {numberOfGoodCycles}{machineFilterProperty}
+}}";
+    }
+
+    OperationCycleDetectionExtension CreateExtension (IMonitoredMachine machine, string configuration)
+    {
+      var extension = new OperationCycleDetectionExtension ();
+      extension.SetTestConfiguration (configuration);
+      extension.Initialize (machine);
+      extension.DetectionProcessStart ();
+      return extension;
+    }
+
+    /// <summary>
+    /// Create a full operation cycle, from T(begin) to T(end)
+    /// </summary>
+    IOperationCycle AddFullCycle (IMonitoredMachine machine, IOperationSlot operationSlot,
+                                  double begin, double end)
+    {
+      var operationCycle = ModelDAOHelper.ModelFactory.CreateOperationCycle (machine);
+      operationCycle.OperationSlot = operationSlot;
+      operationCycle.Begin = T (begin);
+      ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistent (operationCycle);
+      operationCycle.SetRealEnd (T (end));
+      return operationCycle;
+    }
+
+    IMachineFilter CreateMachineFilter (IMachine machine)
+    {
+      var machineFilter = ModelDAOHelper.ModelFactory
+        .CreateMachineFilter ("ProductionSwitcherTest", MachineFilterInitialSet.None);
+      machineFilter.Items.Add (ModelDAOHelper.ModelFactory
+        .CreateMachineFilterItem (machine, MachineFilterRule.Add));
+      ModelDAOHelper.DAOFactory.MachineFilterDAO.MakePersistent (machineFilter);
+      ModelDAOHelper.DAOFactory.Flush ();
+      return machineFilter;
+    }
+
+    IList<IMachineStateTemplateAssociation> GetAssociations ()
+    {
+      ModelDAOHelper.DAOFactory.Flush ();
+      return ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+        .FindAll ()
+        .OrderBy (a => a.Begin)
+        .ToList ();
     }
 
     IMonitoredMachine GetMachine ()

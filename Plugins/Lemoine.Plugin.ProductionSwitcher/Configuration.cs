@@ -5,6 +5,7 @@
 using System;
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using Lemoine.Extensions;
 using Lemoine.Model;
 using Lemoine.Core.Log;
@@ -62,6 +63,21 @@ namespace Lemoine.Plugin.ProductionSwitcher
     {
       get; set;
     }
+
+    /// <summary>
+    /// Minimum number of consecutive good cycles to trigger a switch to production
+    ///
+    /// 1 (default): any good cycle triggers the switch at once
+    ///
+    /// The switch is applied from the begin of the first good cycle of the serie,
+    /// like the NextProductionStart dynamic time of the NGoodCyclesIsProduction plugin
+    /// </summary>
+    [PluginConf ("Int", "Number of good cycles", Description = "minimum number of consecutive good cycles to trigger a switch to production. Default: 1", Parameters = "20")]
+    [DefaultValue (1)]
+    public int NumberOfGoodCycles
+    {
+      get; set;
+    } = 1;
     #endregion // Getters / Setters
 
     #region Constructors
@@ -70,6 +86,7 @@ namespace Lemoine.Plugin.ProductionSwitcher
     /// </summary>
     public Configuration ()
     {
+      this.NumberOfGoodCycles = 1;
     }
     #endregion // Constructors
 
@@ -83,32 +100,39 @@ namespace Lemoine.Plugin.ProductionSwitcher
       var result = base.IsValid (out baseErrors);
 
       var errorList = new List<string> ();
+
+      if (this.NumberOfGoodCycles < 1) {
+        log.Error ($"IsValid: invalid number of good cycles {this.NumberOfGoodCycles} (< 1)");
+        errorList.Add ("Invalid number of good cycles (< 1)");
+      }
+
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("ProductionSwitcher.ConfigurationErrors")) {
           if (null == ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
               .FindById (this.ProductionMachineStateTemplateId)) {
-            log.ErrorFormat ("IsValid: " +
-                             "Production MachineStateTemplateId {0} does not exist",
-                             this.ProductionMachineStateTemplateId);
-            errorList.Add ("MachineStateTemplate with ID " + this.ProductionMachineStateTemplateId + " does not exist");
+            log.Error ($"IsValid: Production MachineStateTemplateId {this.ProductionMachineStateTemplateId} does not exist");
+            errorList.Add ($"MachineStateTemplate with ID {this.ProductionMachineStateTemplateId} does not exist");
           }
 
           foreach (var setupMachineStateTempateId in this.SetupMachineStateTemplateIds) {
             if (null == ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
                 .FindById (setupMachineStateTempateId)) {
-              log.ErrorFormat ("IsValid: " +
-                               "Set-up MachineStateTemplateId {0} does not exist",
-                               this.SetupMachineStateTemplateIds);
-              errorList.Add ("MachineStateTemplate with ID " + setupMachineStateTempateId + " does not exist");
+              log.Error ($"IsValid: Set-up MachineStateTemplateId {setupMachineStateTempateId} does not exist");
+              errorList.Add ($"MachineStateTemplate with ID {setupMachineStateTempateId} does not exist");
             }
           }
         }
       }
 
-      errors = baseErrors.Concat (errorList);
-      return result && (!errors.Any ());
+      var allErrors = baseErrors.Concat (errorList).ToList ();
+      errors = allErrors;
+      return result && !allErrors.Any ();
     }
 
+    /// <summary>
+    /// <see cref="Pulse.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>
+    /// </summary>
+    /// <returns></returns>
     protected override bool IsMachineFilterRequired ()
     {
       return false;

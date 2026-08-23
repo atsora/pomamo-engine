@@ -29,7 +29,13 @@ namespace Lemoine.Plugin.ProductionSwitcher
     IEnumerable<IMachineStateTemplate> m_setupMachineStateTemplates = null;
     double m_cycleDurationMargin = 1.0;
     double m_betweenCyclesDurationMargin = 1.0;
-    
+    int m_numberOfGoodCycles = 1;
+
+    // Serie of consecutive good cycles that is currently being detected
+    int m_goodCycleCount = 0;
+    DateTime? m_firstGoodCycleBegin = null;
+    IOperationCycle m_lastRegisteredCycle = null;
+
     bool m_pendingChanges = false;
     object m_observationStateSlotLock = new object ();
     volatile bool m_observationStateSlotLoaded = false; // was observationstateslot loaded for the current detection process ?
@@ -98,6 +104,9 @@ namespace Lemoine.Plugin.ProductionSwitcher
       // There might have been a rollback:
       // some cache value are not valid any more
       m_pendingChanges = false;
+      // The cycles may be processed again => restart the serie of good cycles from scratch
+      ResetGoodCycles ();
+      m_lastRegisteredCycle = null;
     }
 
     public void StartCycle(IOperationCycle operationCycle)
@@ -160,10 +169,12 @@ namespace Lemoine.Plugin.ProductionSwitcher
       }
 
       if (IsGoodCycle (operationCycle)) {
-        // There is no need to check the between cycles duration,
-        // switch to the new machine state template from operationCycle.Begin
+        // There is no need to check the between cycles duration
         Debug.Assert (operationCycle.Begin.HasValue); // Guaranteed by IsGoodCycle
-        SwitchToProduction (operationCycle.Begin.Value);
+        RegisterGoodCycle (operationCycle, operationCycle.Begin.Value);
+      }
+      else {
+        RegisterBadCycle (operationCycle);
       }
     }
     
@@ -187,6 +198,7 @@ namespace Lemoine.Plugin.ProductionSwitcher
         if (log.IsDebugEnabled) {
           log.Debug ($"CreateBetweenCycle: cycle {previousCycle} is not a good cycle");
         }
+        RegisterBadCycle (previousCycle);
         return;
       }
       // Because previousCycle is a good cycle:
@@ -197,29 +209,109 @@ namespace Lemoine.Plugin.ProductionSwitcher
 
       if (m_betweenCyclesDurationMargin <= 0.0) {
         if (log.IsDebugEnabled) {
-          log.Debug ($"CreateBetweenCycle: no margin for between cycles, and the cycle {previousCycle} is a good one => switch to production from {previousCycleBegin}");
+          log.Debug ($"CreateBetweenCycle: no margin for between cycles, and the cycle {previousCycle} is a good one");
         }
-        SwitchToProduction (previousCycleBegin);
+        RegisterGoodCycle (previousCycle, previousCycleBegin);
         return;
       }
 
       TimeSpan standardBetweenDuration = GetStandardBetweenDuration (previousCycle.OperationSlot.Operation);
       if (standardBetweenDuration.TotalSeconds <= 0.0) {
         if (log.IsDebugEnabled) {
-          log.Debug ($"CreateBetweenCycle: no standard between duration and the cycle {previousCycle} is a good one => switch to production from {previousCycleBegin}");
+          log.Debug ($"CreateBetweenCycle: no standard between duration and the cycle {previousCycle} is a good one");
         }
-        SwitchToProduction (previousCycleBegin);
+        RegisterGoodCycle (previousCycle, previousCycleBegin);
         return;
       }
 
       TimeSpan betweenDuration = betweenCycles.End.Subtract (betweenCycles.Begin);
       if (betweenDuration.TotalSeconds <= standardBetweenDuration.TotalSeconds * m_betweenCyclesDurationMargin) {
         if (log.IsDebugEnabled) {
-          log.Debug ($"CreateBetweenCycle: {previousCycle} is a good cycle and the between cycle duration is good => switch to production from {previousCycleBegin}");
+          log.Debug ($"CreateBetweenCycle: {previousCycle} is a good cycle and the between cycle duration is good");
         }
-        SwitchToProduction (previousCycleBegin);
+        RegisterGoodCycle (previousCycle, previousCycleBegin);
+      }
+      else {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateBetweenCycle: the between cycle duration {betweenDuration} is too long => the serie of good cycles is broken");
+        }
+        RegisterBadCycle (previousCycle);
+      }
+    }
+
+    /// <summary>
+    /// Register a cycle that was detected as a good production cycle.
+    ///
+    /// Once the configured number of consecutive good cycles is reached,
+    /// switch to production from the begin of the first cycle of the serie.
+    /// </summary>
+    /// <param name="cycle">not null</param>
+    /// <param name="begin">begin of the cycle</param>
+    void RegisterGoodCycle (IOperationCycle cycle, DateTime begin)
+    {
+      if (IsAlreadyRegistered (cycle)) {
+        // StopCycle and CreateBetweenCycle may both report the same cycle:
+        // it must be counted only once
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RegisterGoodCycle: cycle {cycle} was already registered => do nothing");
+        }
         return;
       }
+      m_lastRegisteredCycle = cycle;
+
+      if (0 == m_goodCycleCount) {
+        m_firstGoodCycleBegin = begin;
+      }
+      ++m_goodCycleCount;
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"RegisterGoodCycle: {m_goodCycleCount} good cycle(s) among the {m_numberOfGoodCycles} required ones, from {m_firstGoodCycleBegin}");
+      }
+
+      if (m_numberOfGoodCycles <= m_goodCycleCount) {
+        Debug.Assert (m_firstGoodCycleBegin.HasValue);
+        SwitchToProduction (m_firstGoodCycleBegin.Value);
+        ResetGoodCycles ();
+      }
+    }
+
+    /// <summary>
+    /// Register a cycle that was not detected as a good production cycle:
+    /// the serie of consecutive good cycles is broken
+    /// </summary>
+    /// <param name="cycle">not null</param>
+    void RegisterBadCycle (IOperationCycle cycle)
+    {
+      if (IsAlreadyRegistered (cycle)) {
+        return;
+      }
+      m_lastRegisteredCycle = cycle;
+
+      if (0 < m_goodCycleCount) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RegisterBadCycle: cycle {cycle} is not a good one => reset the serie of {m_goodCycleCount} good cycle(s)");
+        }
+        m_goodCycleCount = 0;
+        m_firstGoodCycleBegin = null;
+      }
+    }
+
+    bool IsAlreadyRegistered (IOperationCycle cycle)
+    {
+      return (null != m_lastRegisteredCycle)
+        && object.Equals (m_lastRegisteredCycle, cycle);
+    }
+
+    /// <summary>
+    /// Reset the serie of consecutive good cycles.
+    ///
+    /// Note: m_lastRegisteredCycle is kept, so that a cycle that was already
+    /// taken into account is not counted a second time
+    /// </summary>
+    void ResetGoodCycles ()
+    {
+      m_goodCycleCount = 0;
+      m_firstGoodCycleBegin = null;
     }
     #endregion
     
@@ -306,6 +398,7 @@ namespace Lemoine.Plugin.ProductionSwitcher
 
       m_cycleDurationMargin = configuration.CycleDurationPercentageTrigger / 100.0;
       m_betweenCyclesDurationMargin = configuration.BetweenCyclesDurationPercentageTrigger / 100.0;
+      m_numberOfGoodCycles = configuration.NumberOfGoodCycles;
 
       m_active = true;
     }
