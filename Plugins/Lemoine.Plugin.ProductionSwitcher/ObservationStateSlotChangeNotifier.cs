@@ -1,78 +1,111 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using Lemoine.Model;
 using Lemoine.Core.Log;
 
 namespace Lemoine.Plugin.ProductionSwitcher
 {
   /// <summary>
-  /// Description of ObservationStateSlotChangeNotifier.
+  /// Notify the registered listeners of any observation state slot change.
+  ///
+  /// The listeners are referenced weakly: a new OperationCycleDetectionExtension is built
+  /// and registered here each time the activity analysis of a machine is created again
+  /// (plugin reload, restart of the analysis threads, ...). A strong reference would keep
+  /// all those obsolete instances alive for the whole lifetime of the process.
+  /// A listener is therefore kept only as long as the analysis that owns it.
   /// </summary>
   internal sealed class ObservationStateSlotChangeNotifier
   {
-    #region Members
-    IList<IObservationStateSlotChangeListener> m_listeners = new List<IObservationStateSlotChangeListener> ();
-    #endregion // Members
+    readonly List<WeakReference<IObservationStateSlotChangeListener>> m_listeners
+      = new List<WeakReference<IObservationStateSlotChangeListener>> ();
 
-    static readonly ILog log = LogManager.GetLogger(typeof (ObservationStateSlotChangeNotifier).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (ObservationStateSlotChangeNotifier).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Private constructor (singleton class !)
     /// </summary>
-    private ObservationStateSlotChangeNotifier()
+    private ObservationStateSlotChangeNotifier ()
     {
     }
-    #endregion // Constructors
 
-    #region Methods
+    /// <summary>
+    /// Number of registered listeners, including the ones that were garbage collected
+    /// but not purged yet. For the unit tests and the diagnostics.
+    /// </summary>
+    internal static int ListenerCount
+    {
+      get {
+        lock (Instance.m_listeners) {
+          return Instance.m_listeners.Count;
+        }
+      }
+    }
+
     /// <summary>
     /// Add a listener
     ///
-    /// Warning: there is no way to remove a listener, and this list is static.
-    /// Every OperationCycleDetectionExtension instance registers itself here in Initialize,
-    /// and a new instance is built each time the activity analysis of a machine is re-created
-    /// (plugin reload, service restart of the analysis threads, ...).
-    /// The list then grows and the obsolete instances are kept alive by it.
+    /// The listener is not kept alive by this notifier: it is the responsibility
+    /// of the caller to keep a reference on it as long as it must be notified
     /// </summary>
-    /// <param name="listener"></param>
+    /// <param name="listener">not null</param>
     public static void AddListener (IObservationStateSlotChangeListener listener)
     {
-      lock (Instance.m_listeners)
-      {
-        Instance.m_listeners.Add (listener);
+      Debug.Assert (null != listener);
+
+      lock (Instance.m_listeners) {
+        Instance.PurgeCollectedListeners ();
+        Instance.m_listeners.Add (new WeakReference<IObservationStateSlotChangeListener> (listener));
       }
     }
-    
+
     /// <summary>
     /// Notify changes
     /// </summary>
     /// <param name="newSlot">new slot</param>
     public static void NotifyChanges (IObservationStateSlot newSlot)
     {
-      lock (Instance.m_listeners)
-      {
-        foreach (var listener in Instance.m_listeners) {
-          listener.NotifyObservationStateSlotChange (newSlot);
+      lock (Instance.m_listeners) {
+        // Iterate backwards so that the collected listeners can be removed on the fly
+        for (int i = Instance.m_listeners.Count - 1; 0 <= i; --i) {
+          IObservationStateSlotChangeListener listener;
+          if (Instance.m_listeners[i].TryGetTarget (out listener)) {
+            listener.NotifyObservationStateSlotChange (newSlot);
+          }
+          else { // The listener was garbage collected
+            Instance.m_listeners.RemoveAt (i);
+          }
         }
       }
     }
-    #endregion // Methods
-    
+
+    /// <summary>
+    /// Remove the listeners that were garbage collected.
+    ///
+    /// The caller must own the lock on m_listeners
+    /// </summary>
+    void PurgeCollectedListeners ()
+    {
+      for (int i = m_listeners.Count - 1; 0 <= i; --i) {
+        IObservationStateSlotChangeListener listener;
+        if (!m_listeners[i].TryGetTarget (out listener)) {
+          m_listeners.RemoveAt (i);
+        }
+      }
+    }
+
     #region Instance
     static ObservationStateSlotChangeNotifier Instance
     {
       get { return Nested.instance; }
     }
-    
+
     class Nested
     {
       // Explicit static constructor to tell C# compiler

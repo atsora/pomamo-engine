@@ -74,7 +74,8 @@ namespace Lemoine.Plugin.ProductionSwitcher
       Debug.Assert (null != machine);
       m_machine = machine;
       log = LogManager.GetLogger ($"{typeof (OperationCycleDetectionExtension).FullName}.{machine.Id}");
-      // Note: the listener is never removed, see the comment in ObservationStateSlotChangeNotifier
+      // Note: the notifier only keeps a weak reference on this instance,
+      //       it is kept registered as long as the activity analysis references it
       ObservationStateSlotChangeNotifier.AddListener (this);
 
       return true;

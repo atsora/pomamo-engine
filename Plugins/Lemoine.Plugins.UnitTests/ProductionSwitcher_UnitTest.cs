@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using Lemoine.Database.Persistent;
 using Lemoine.Model;
@@ -740,6 +741,82 @@ namespace Lemoine.Plugins.UnitTests
           transaction.Rollback ();
         }
       }
+    }
+
+    /// <summary>
+    /// The notifier must not keep the extensions of the obsolete activity analyses alive:
+    /// a new instance registers itself on every analysis creation
+    /// </summary>
+    [Test]
+    public void TestListenersAreNotLeaked ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operationSlot = InitializeSlots (machine, GetOperation (),
+            GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID));
+          var slot = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO.FindAll (machine).Last ();
+
+          RegisterTransientExtensions (machine, 50);
+          // Note: the count is taken after the registration and not before, because
+          //       AddListener also purges, so listeners left by the previous tests
+          //       may have been removed in the meantime
+          var afterRegistration = ObservationStateSlotChangeNotifier.ListenerCount;
+          Assert.That (afterRegistration, Is.GreaterThanOrEqualTo (50),
+            "the extensions did register themselves");
+
+          CollectGarbage ();
+          // The purge is done while notifying
+          ObservationStateSlotChangeNotifier.NotifyChanges (slot);
+
+          Assert.That (ObservationStateSlotChangeNotifier.ListenerCount,
+            Is.LessThanOrEqualTo (afterRegistration - 50),
+            "the extensions that are not referenced any more must have been purged");
+
+          // A listener that is still referenced keeps being notified
+          var liveExtension = CreateExtension (machine, GetConfiguration ());
+          CollectGarbage ();
+          KeepAlive (liveExtension);
+          Assert.That (ObservationStateSlotChangeNotifier.ListenerCount,
+            Is.GreaterThan (0), "a referenced listener must not be purged");
+
+          liveExtension.StopCycle (AddFullCycle (machine, operationSlot, 10, 70));
+          Assert.That (GetAssociations (), Has.Count.EqualTo (1),
+            "the live extension is still functional");
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Register extensions and drop every reference on them.
+    ///
+    /// This must be a separate method, else the local variables may be kept alive
+    /// until the end of the calling method in a debug build
+    /// </summary>
+    [MethodImpl (MethodImplOptions.NoInlining)]
+    void RegisterTransientExtensions (IMonitoredMachine machine, int count)
+    {
+      for (int i = 0; i < count; ++i) {
+        var extension = new OperationCycleDetectionExtension ();
+        extension.Initialize (machine);
+      }
+    }
+
+    [MethodImpl (MethodImplOptions.NoInlining)]
+    void KeepAlive (object o)
+    {
+      GC.KeepAlive (o);
+    }
+
+    static void CollectGarbage ()
+    {
+      GC.Collect ();
+      GC.WaitForPendingFinalizers ();
+      GC.Collect ();
     }
 
     /// <summary>
