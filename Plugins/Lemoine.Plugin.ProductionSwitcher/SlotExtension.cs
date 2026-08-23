@@ -15,13 +15,9 @@ namespace Lemoine.Plugin.ProductionSwitcher
   public class SlotExtension
     : Pulse.Extensions.Database.ISlotExtension
   {
-    #region Members
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (SlotExtension).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

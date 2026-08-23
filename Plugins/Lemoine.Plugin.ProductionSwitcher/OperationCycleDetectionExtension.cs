@@ -36,20 +36,7 @@ namespace Lemoine.Plugin.ProductionSwitcher
     IObservationStateSlot m_observationStateSlot = null;
     #endregion // Members
 
-    ILog log = LogManager.GetLogger(typeof (OperationCycleDetectionExtension).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public OperationCycleDetectionExtension ()
-      : base (new ConfigurationLoader ())
-    {
-    }
-    #endregion // Constructors
+    ILog log = LogManager.GetLogger (typeof (OperationCycleDetectionExtension).FullName);
 
     #region IObservationStateSlotChangeListener implementation
     public void NotifyObservationStateSlotChange(IObservationStateSlot slot)
@@ -80,9 +67,8 @@ namespace Lemoine.Plugin.ProductionSwitcher
     {
       Debug.Assert (null != machine);
       m_machine = machine;
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                 typeof (OperationCycleDetectionExtension).FullName,
-                                                 machine.Id));
+      log = LogManager.GetLogger ($"{typeof (OperationCycleDetectionExtension).FullName}.{machine.Id}");
+      // Note: the listener is never removed, see the comment in ObservationStateSlotChangeNotifier
       ObservationStateSlotChangeNotifier.AddListener (this);
 
       return true;
@@ -124,52 +110,59 @@ namespace Lemoine.Plugin.ProductionSwitcher
     {
       Debug.Assert (null != m_machine);
       
-      if (!operationCycle.Full) {
-        log.DebugFormat ("StopCycle: " +
-                         "operationCycle is not full, skip it");
-        return;
-      }
-      
-      InitializeConfiguration ();
-      
       Debug.Assert (null != operationCycle);
-      Debug.Assert (operationCycle.End.HasValue);
       Debug.Assert (null != operationCycle.Machine);
       Debug.Assert (object.Equals (m_machine, operationCycle.Machine));
-      
+
+      if (!operationCycle.Full) {
+        if (log.IsDebugEnabled) {
+          log.Debug ("StopCycle: operationCycle is not full, skip it");
+        }
+        return;
+      }
+
+      if (!operationCycle.End.HasValue) {
+        log.Error ($"StopCycle: operation cycle {operationCycle} is full but has no end => return");
+        return;
+      }
+
+      InitializeConfiguration ();
+
       DateTime dateTime = operationCycle.End.Value;
       if (!IsActive (dateTime)) {
-        log.DebugFormat ("StopCycle: " +
-                         "production detection is not active at {0} => return",
-                         dateTime);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"StopCycle: production detection is not active at {dateTime} => return");
+        }
         return;
       }
-      
+
       if (null == operationCycle.OperationSlot) {
-        log.WarnFormat ("StopCycle: " +
-                        "operation cycle {0} is not associated to any operation slot",
-                        operationCycle);
+        if (log.IsWarnEnabled) {
+          log.Warn ($"StopCycle: operation cycle {operationCycle} is not associated to any operation slot");
+        }
         return;
       }
-      
+
       if (null == operationCycle.OperationSlot.Operation) {
-        log.WarnFormat ("StopCycle: " +
-                        "operation cycle {0} is not associated to any operation",
-                        operationCycle);
+        if (log.IsWarnEnabled) {
+          log.Warn ($"StopCycle: operation cycle {operationCycle} is not associated to any operation");
+        }
         return;
       }
       IOperation operation = operationCycle.OperationSlot.Operation;
-      
+
       if ((0.0 < m_betweenCyclesDurationMargin)
           && (0.0 < GetStandardBetweenDuration (operation).TotalSeconds)) {
-        log.DebugFormat ("StopCycle: " +
-                         "the between duration must be considered, return");
+        if (log.IsDebugEnabled) {
+          log.Debug ("StopCycle: the between duration must be considered, return");
+        }
         return;
       }
-      
+
       if (IsGoodCycle (operationCycle)) {
         // There is no need to check the between cycles duration,
         // switch to the new machine state template from operationCycle.Begin
+        Debug.Assert (operationCycle.Begin.HasValue); // Guaranteed by IsGoodCycle
         SwitchToProduction (operationCycle.Begin.Value);
       }
     }
@@ -177,57 +170,54 @@ namespace Lemoine.Plugin.ProductionSwitcher
     public void CreateBetweenCycle(IBetweenCycles betweenCycles)
     {
       Debug.Assert (null != m_machine);
-      
+      Debug.Assert (null != betweenCycles);
+
       InitializeConfiguration ();
-      
+
       if (!IsActive (betweenCycles.End)) {
-        log.DebugFormat ("CreateBetweenCycle: " +
-                         "production detection is not active at {0} => return",
-                         betweenCycles.End);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateBetweenCycle: production detection is not active at {betweenCycles.End} => return");
+        }
         return;
       }
-      
+
       // Check the previous cycle
-      if (!IsGoodCycle (betweenCycles.PreviousCycle)) {
-        log.DebugFormat ("CreateBetweenCycle: " +
-                         "cycle {0} is not a good cycle",
-                         betweenCycles.PreviousCycle);
+      var previousCycle = betweenCycles.PreviousCycle;
+      if (!IsGoodCycle (previousCycle)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateBetweenCycle: cycle {previousCycle} is not a good cycle");
+        }
         return;
       }
       // Because previousCycle is a good cycle:
-      Debug.Assert (betweenCycles.PreviousCycle.Begin.HasValue);
-      Debug.Assert (null != betweenCycles.PreviousCycle.OperationSlot);
-      Debug.Assert (null != betweenCycles.PreviousCycle.OperationSlot.Operation);
-      
+      Debug.Assert (previousCycle.Begin.HasValue);
+      Debug.Assert (null != previousCycle.OperationSlot);
+      Debug.Assert (null != previousCycle.OperationSlot.Operation);
+      var previousCycleBegin = previousCycle.Begin.Value;
+
       if (m_betweenCyclesDurationMargin <= 0.0) {
-        log.DebugFormat ("CreateBetweenCycle: " +
-                         "no margin for between cycles, and the cycle {0} is a good one " +
-                         "=> switch to production from {1}",
-                         betweenCycles.PreviousCycle,
-                         betweenCycles.PreviousCycle.Begin.Value);
-        SwitchToProduction (betweenCycles.PreviousCycle.Begin.Value);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateBetweenCycle: no margin for between cycles, and the cycle {previousCycle} is a good one => switch to production from {previousCycleBegin}");
+        }
+        SwitchToProduction (previousCycleBegin);
         return;
       }
-      
-      TimeSpan standardBetweenDuration = GetStandardBetweenDuration (betweenCycles.PreviousCycle.OperationSlot.Operation);
+
+      TimeSpan standardBetweenDuration = GetStandardBetweenDuration (previousCycle.OperationSlot.Operation);
       if (standardBetweenDuration.TotalSeconds <= 0.0) {
-        log.DebugFormat ("CreateBetweenCycle: " +
-                         "no standard between duration and the cycle {0} is a good one " +
-                         "=> switch to production from {1}",
-                         betweenCycles.PreviousCycle,
-                         betweenCycles.PreviousCycle.Begin.Value);
-        SwitchToProduction (betweenCycles.PreviousCycle.Begin.Value);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateBetweenCycle: no standard between duration and the cycle {previousCycle} is a good one => switch to production from {previousCycleBegin}");
+        }
+        SwitchToProduction (previousCycleBegin);
         return;
       }
-      
+
       TimeSpan betweenDuration = betweenCycles.End.Subtract (betweenCycles.Begin);
       if (betweenDuration.TotalSeconds <= standardBetweenDuration.TotalSeconds * m_betweenCyclesDurationMargin) {
-        log.DebugFormat ("CreateBetweenCycle: " +
-                         "{0} is a good cycle and the between cycle duration is good " +
-                         "=> switch to production from {1}",
-                         betweenCycles.PreviousCycle,
-                         betweenCycles.PreviousCycle.Begin.Value);
-        SwitchToProduction (betweenCycles.PreviousCycle.Begin.Value);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateBetweenCycle: {previousCycle} is a good cycle and the between cycle duration is good => switch to production from {previousCycleBegin}");
+        }
+        SwitchToProduction (previousCycleBegin);
         return;
       }
     }
@@ -241,68 +231,58 @@ namespace Lemoine.Plugin.ProductionSwitcher
         return;
       }
       
+      // Note: whatever happens below, the initialization is not attempted a second time
+      m_initializedConfiguration = true;
+      m_active = false;
+      m_productionMachineStateTemplate = null;
+      m_setupMachineStateTemplates = null;
+
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.ErrorFormat ("InitializeConfiguration: " +
-                         "the configuration is not valid, skip this instance");
-        m_productionMachineStateTemplate = null;
-        m_setupMachineStateTemplates = null;
-        m_initializedConfiguration = true;
+        log.Error ("InitializeConfiguration: the configuration is not valid, skip this instance");
         return;
       }
-      
-      IMachineFilter machineFilter = null;
+
       if (0 < configuration.MachineFilterId) { // Machine filter
-        // Initialize m_productionMachineStateTemplateId
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
         {
           using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("ProductionSwitcher.InitializeConfiguration.MachineFilter"))
           {
             int machineFilterId = configuration.MachineFilterId;
-            if (0 != machineFilterId) {
-              machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
-                .FindById (machineFilterId);
-              if (null == machineFilter) {
-                log.ErrorFormat ("Initialize: " +
-                                 "machine filter id {0} does not exist",
-                                 machineFilterId);
-                m_active = false;
-                m_productionMachineStateTemplate = null;
-                m_setupMachineStateTemplates = null;
-                m_initializedConfiguration = true;
-                return;
+            var machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
+              .FindById (machineFilterId);
+            if (null == machineFilter) {
+              log.Error ($"InitializeConfiguration: machine filter id {machineFilterId} does not exist => skip this instance");
+              return;
+            }
+            // Note: machineFilter.IsMatch requires it is done in the same session
+            if (!machineFilter.IsMatch (m_machine)) {
+              if (log.IsDebugEnabled) {
+                log.Debug ($"InitializeConfiguration: machine {m_machine.Id} does not match the machine filter {machineFilterId} => skip this instance");
               }
+              return;
             }
           }
         }
       }
-      if ( (null != machineFilter) && !machineFilter.IsMatch (m_machine)) {
-        m_active = false;
-      }
-      else {
-        m_active = true;
-      }
-      
+
       { // Get m_productionMachineStateTemplate
-        if (0 < configuration.ProductionMachineStateTemplateId) { // Valid integer
-          // Initialize m_productionMachineStateTemplateId
-          using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+        using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+        {
+          using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("ProductionSwitcher.InitializeConfiguration.1"))
           {
-            using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("ProductionSwitcher.InitializeConfiguration.1"))
-            {
-              m_productionMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
-                .FindById (configuration.ProductionMachineStateTemplateId);
-            }
-          }
-          
-          if (null == m_productionMachineStateTemplate) {
-            log.ErrorFormat ("Initialize: " +
-                             "no machine state template found for ID={0}",
-                             configuration.ProductionMachineStateTemplateId);
+            m_productionMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
+              .FindById (configuration.ProductionMachineStateTemplateId);
           }
         }
+
+        if (null == m_productionMachineStateTemplate) {
+          // Else SwitchToProduction would try to apply a null machine state template
+          log.Error ($"InitializeConfiguration: no machine state template found for id {configuration.ProductionMachineStateTemplateId} => skip this instance");
+          return;
+        }
       }
-      
+
       { // Get m_setupMachineStateTemplates
         var setupMachineStateTemplates = new List<IMachineStateTemplate> ();
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
@@ -316,9 +296,7 @@ namespace Lemoine.Plugin.ProductionSwitcher
                 setupMachineStateTemplates.Add (setupMachineStateTemplate);
               }
               else {
-                log.ErrorFormat ("Initialize: " +
-                                 "no machine state template found for ID={0}",
-                                 setupMachineStateTemplateId);
+                log.Error ($"InitializeConfiguration: no machine state template found for id {setupMachineStateTemplateId}");
               }
             }
           }
@@ -326,15 +304,10 @@ namespace Lemoine.Plugin.ProductionSwitcher
         m_setupMachineStateTemplates = setupMachineStateTemplates;
       }
 
-      { // m_cycleDurationMargin
-        m_cycleDurationMargin = configuration.CycleDurationPercentageTrigger / 100.0;
-      }
+      m_cycleDurationMargin = configuration.CycleDurationPercentageTrigger / 100.0;
+      m_betweenCyclesDurationMargin = configuration.BetweenCyclesDurationPercentageTrigger / 100.0;
 
-      { // m_betweenCyclesDurationMargin
-        m_betweenCyclesDurationMargin = configuration.BetweenCyclesDurationPercentageTrigger / 100.0;
-      }
-
-      m_initializedConfiguration = true;
+      m_active = true;
     }
     
     void InitializeCurrentObservationStateSlot (IMachine machine, DateTime dateTime)
@@ -385,107 +358,127 @@ namespace Lemoine.Plugin.ProductionSwitcher
       lock (m_observationStateSlotLock)
       {
         InitializeCurrentObservationStateSlot (m_machine, dateTime);
-        Debug.Assert (null != m_observationStateSlot);
-        
+
+        if (null == m_observationStateSlot) {
+          log.Error ($"IsActive: no observation state slot at {dateTime} => return false");
+          return false;
+        }
+
         if (m_pendingChanges) {
-          log.DebugFormat ("IsActive: " +
-                           "there is a pending change, inhibit any process for the moment");
+          if (log.IsDebugEnabled) {
+            log.Debug ("IsActive: there is a pending change, inhibit any process for the moment");
+          }
           return false;
         }
 
         if (object.Equals (m_observationStateSlot.MachineStateTemplate, m_productionMachineStateTemplate)) {
           // Already the production !
           // Nothing to do
-          log.DebugFormat ("IsActive: " +
-                           "already the production machine state template {0} " +
-                           "=> nothing to do, return",
-                           m_productionMachineStateTemplate);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsActive: already the production machine state template {m_productionMachineStateTemplate} => nothing to do, return");
+          }
           return false;
         }
-        
-        if ( (null != m_setupMachineStateTemplates)
+
+        // Note: an empty list of set-up machine state templates means they all apply
+        if ((null != m_setupMachineStateTemplates)
+            && m_setupMachineStateTemplates.Any ()
             && !m_setupMachineStateTemplates.Contains (m_observationStateSlot.MachineStateTemplate)) {
-          log.DebugFormat ("IsActive: " +
-                           "the current machine state template {0} is not a listed setup state template" +
-                           "=> nothing to do, return",
-                           m_observationStateSlot.MachineStateTemplate);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsActive: the current machine state template {m_observationStateSlot.MachineStateTemplate} is not a listed setup state template => nothing to do, return");
+          }
           return false;
         }
       } // lock
-      
+
       return true;
     }
 
     /// <summary>
     /// Check if a specified cycle is a good cycle
+    ///
+    /// Note: a good cycle always has a begin and an end, because the caller switches
+    /// to the production machine state template from the begin of the cycle
     /// </summary>
-    /// <param name="operationCycle"></param>
+    /// <param name="operationCycle">not null</param>
     /// <returns></returns>
     bool IsGoodCycle (IOperationCycle operationCycle)
     {
+      Debug.Assert (null != operationCycle);
+
       IOperation operation = null;
       if (null != operationCycle.OperationSlot) {
         operation = operationCycle.OperationSlot.Operation;
       }
-      
+
       if (null == operation) {
-        log.InfoFormat ("IsGoodCycle: " +
-                        "no operation is associated to {0} " +
-                        "=> return false",
-                        operationCycle);
-        return false;
-      }
-      else if (m_cycleDurationMargin <= 0.0) {
-        log.InfoFormat ("IsGoodCycle: " +
-                        "no cycle duration margin was defined " +
-                        "=> the cycle is ok if it is full");
-        return operationCycle.Full;
-      }
-      else if (!operation.MachiningDuration.HasValue) {
-        log.InfoFormat ("IsGoodCycle: " +
-                        "operation {0} has no machining duration " +
-                        "=> the cycle is ok if it is full",
-                        operation);
-        return operationCycle.Full;
-      }
-      else if (!operationCycle.Begin.HasValue) {
-        log.InfoFormat ("IsGoodCycle: " +
-                        "operation cycle {0} has no begin",
-                        operationCycle);
-        return false;
-      }
-      else if (!operationCycle.Full) {
-        log.InfoFormat ("IsGoodCycle: " +
-                        "operation cycle {0} is not a full cycle",
-                        operationCycle);
-        return false;
-      }
-      else { // true == operationCycle.Full
-        TimeSpan duration = operationCycle.End.Value.Subtract (operationCycle.Begin.Value);
-        if (duration.TotalSeconds <= operation.MachiningDuration.Value.TotalSeconds * m_cycleDurationMargin) {
-          // This is a good cycle
-          log.DebugFormat ("IsGoodCycle: " +
-                           "cycle {0} is a good one",
-                           operationCycle);
-          return true;
+        if (log.IsInfoEnabled) {
+          log.Info ($"IsGoodCycle: no operation is associated to {operationCycle} => return false");
         }
-        else {
-          log.DebugFormat ("IsGoodCycle: " +
-                           "cycle {0} is a bad one",
-                           operationCycle);
-          return false;
+        return false;
+      }
+
+      if (!operationCycle.Full) {
+        if (log.IsInfoEnabled) {
+          log.Info ($"IsGoodCycle: operation cycle {operationCycle} is not a full cycle => return false");
         }
+        return false;
+      }
+
+      // Note: a cycle may be flagged as full while it has no begin or no end,
+      //       and the begin is required by the caller
+      if (!operationCycle.Begin.HasValue) {
+        if (log.IsInfoEnabled) {
+          log.Info ($"IsGoodCycle: operation cycle {operationCycle} has no begin => return false");
+        }
+        return false;
+      }
+
+      if (!operationCycle.End.HasValue) {
+        if (log.IsInfoEnabled) {
+          log.Info ($"IsGoodCycle: operation cycle {operationCycle} has no end => return false");
+        }
+        return false;
+      }
+
+      if (m_cycleDurationMargin <= 0.0) {
+        if (log.IsInfoEnabled) {
+          log.Info ("IsGoodCycle: no cycle duration margin was defined => the full cycle is ok");
+        }
+        return true;
+      }
+
+      if (!operation.MachiningDuration.HasValue) {
+        if (log.IsInfoEnabled) {
+          log.Info ($"IsGoodCycle: operation {operation} has no machining duration => the full cycle is ok");
+        }
+        return true;
+      }
+
+      TimeSpan duration = operationCycle.End.Value.Subtract (operationCycle.Begin.Value);
+      if (duration.TotalSeconds <= operation.MachiningDuration.Value.TotalSeconds * m_cycleDurationMargin) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsGoodCycle: cycle {operationCycle} is a good one");
+        }
+        return true;
+      }
+      else {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsGoodCycle: cycle {operationCycle} is a bad one");
+        }
+        return false;
       }
     }
 
     void SwitchToProduction (DateTime from)
     {
       Debug.Assert (null != m_machine);
-      
-      log.DebugFormat ("SwitchToProduction: " +
-                       "from {0}",
-                       from);
-      
+      Debug.Assert (null != m_productionMachineStateTemplate);
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"SwitchToProduction: from {from}");
+      }
+
       UtcDateTimeRange range = new UtcDateTimeRange (from);
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
       {
@@ -507,12 +500,12 @@ namespace Lemoine.Plugin.ProductionSwitcher
     TimeSpan GetStandardBetweenDuration (IOperation operation)
     {
       if (m_machine.PalletChangingDuration.HasValue) {
-        log.DebugFormat ("GetStandardBetweenDuration: " +
-                         "from pallet changing duration: {0}",
-                         m_machine.PalletChangingDuration.Value);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetStandardBetweenDuration: from pallet changing duration: {m_machine.PalletChangingDuration.Value}");
+        }
         return m_machine.PalletChangingDuration.Value;
       }
-      
+
       TimeSpan duration = TimeSpan.FromSeconds (0);
       if (operation.LoadingDuration.HasValue) {
         duration = duration.Add (operation.LoadingDuration.Value);
@@ -520,9 +513,9 @@ namespace Lemoine.Plugin.ProductionSwitcher
       if (operation.UnloadingDuration.HasValue) {
         duration = duration.Add (operation.UnloadingDuration.Value);
       }
-      log.DebugFormat ("GetStandardBetweenDuration: " +
-                       "duration is {0}",
-                       duration);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetStandardBetweenDuration: duration is {duration}");
+      }
       return duration;
     }
   }

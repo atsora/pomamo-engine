@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2025 Atsora Solutions
+// Copyright (C) 2025-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -15,7 +15,7 @@ using System.Linq;
 namespace Lemoine.Plugin.SetupSwitcher
 {
   /// <summary>
-  /// Description of Configuration.
+  /// Configuration of the SetupSwitcher plugin
   /// </summary>
   public class Configuration
     : Pulse.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter
@@ -51,29 +51,28 @@ namespace Lemoine.Plugin.SetupSwitcher
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("SetupSwitcher.ConfigurationErrors")) {
           if (0 == this.SetupMachineStateTemplateId) {
-            log.ErrorFormat ("GetConfigurationErrors: " +
-                             "SetupMachineStateTemplateId was not set",
-                             this.SetupMachineStateTemplateId);
+            log.Error ("IsValid: SetupMachineStateTemplateId was not set");
             errorList.Add ("Set-up machine state template not set");
           }
           else {
             if (null == ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
               .FindById (this.SetupMachineStateTemplateId)) {
-              log.ErrorFormat ("GetConfigurationErrors: " +
-                               "SetupMachineStateTemplateId {0} does not exist",
-                               this.SetupMachineStateTemplateId);
-              errorList.Add ("Set-up machine state template with ID "
-                          + this.SetupMachineStateTemplateId
-                          + " does not exist");
+              log.Error ($"IsValid: SetupMachineStateTemplateId {this.SetupMachineStateTemplateId} does not exist");
+              errorList.Add ($"Set-up machine state template with ID {this.SetupMachineStateTemplateId} does not exist");
             }
           }
         }
       }
 
-      errors = baseErrors.Concat (errorList);
-      return result && (!errors.Any ());
+      var allErrors = baseErrors.Concat (errorList).ToList ();
+      errors = allErrors;
+      return result && !allErrors.Any ();
     }
 
+    /// <summary>
+    /// <see cref="Pulse.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter"/>
+    /// </summary>
+    /// <returns></returns>
     protected override bool IsMachineFilterRequired ()
     {
       return false;

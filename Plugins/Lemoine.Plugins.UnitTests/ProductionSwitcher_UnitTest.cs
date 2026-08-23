@@ -22,8 +22,13 @@ namespace Lemoine.Plugins.UnitTests
   public class ProductionSwitcher_UnitTest
     : Lemoine.UnitTests.WithMinuteTimeStamp
   {
+    static readonly int MACHINE_ID = 2;
+    static readonly int OPERATION_ID = 1; // MachiningDuration: 3600s=60min, no loading duration
+    static readonly int SETUP_MACHINE_STATE_TEMPLATE_ID = 7;
+    static readonly int PRODUCTION_MACHINE_STATE_TEMPLATE_ID = 9;
+
     readonly ILog log = LogManager.GetLogger(typeof (ProductionSwitcher_UnitTest).FullName);
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -69,26 +74,14 @@ namespace Lemoine.Plugins.UnitTests
         
         {
           OperationCycleDetectionExtension extension = new OperationCycleDetectionExtension ();
-          extension.SetTestConfiguration (@"<?xml version=""1.0"" encoding=""UTF-8""?>
-<properties>
-  <property>
-    <key>SetupMachineStateTemplateId</key>
-    <value>7</value>
-  </property>
-  <property>
-    <key>ProductionMachineStateTemplateId</key>
-    <value>9</value>
-  </property>
-  <property>
-    <key>CycleDurationPercentageTrigger</key>
-    <value>120</value>
-  </property>
-  <property>
-    <key>BetweenCyclesDurationPercentageTrigger</key>
-    <value>0</value>
-  </property>
-</properties>
-");
+          extension.SetTestConfiguration ("""
+{
+  "SetupMachineStateTemplateIds": [ 7 ],
+  "ProductionMachineStateTemplateId": 9,
+  "CycleDurationPercentageTrigger": 120,
+  "BetweenCyclesDurationPercentageTrigger": 0
+}
+""");
           extension.Initialize (machine);
           extension.DetectionProcessStart ();
           IOperationCycle operationCycle1 = ModelDAOHelper.ModelFactory
@@ -226,26 +219,14 @@ namespace Lemoine.Plugins.UnitTests
         
         {
           OperationCycleDetectionExtension extension = new OperationCycleDetectionExtension ();
-          extension.SetTestConfiguration (@"<?xml version=""1.0"" encoding=""UTF-8""?>
-<properties>
-  <property>
-    <key>SetupMachineStateTemplateId</key>
-    <value>7</value>
-  </property>
-  <property>
-    <key>ProductionMachineStateTemplateId</key>
-    <value>9</value>
-  </property>
-  <property>
-    <key>CycleDurationPercentageTrigger</key>
-    <value>120</value>
-  </property>
-  <property>
-    <key>BetweenCyclesDurationPercentageTrigger</key>
-    <value>110</value>
-  </property>
-</properties>
-");
+          extension.SetTestConfiguration ("""
+{
+  "SetupMachineStateTemplateIds": [ 7 ],
+  "ProductionMachineStateTemplateId": 9,
+  "CycleDurationPercentageTrigger": 120,
+  "BetweenCyclesDurationPercentageTrigger": 110
+}
+""");
           extension.Initialize (machine);
           extension.DetectionProcessStart ();
           IOperationCycle operationCycle1 = ModelDAOHelper.ModelFactory
@@ -324,9 +305,160 @@ namespace Lemoine.Plugins.UnitTests
             });
           }
         }
-        
+
         transaction.Rollback ();
       }
+    }
+
+    /// <summary>
+    /// When no set-up machine state template is configured, all of them apply
+    /// (as documented in the configuration description)
+    /// </summary>
+    [Test]
+    public void TestEmptySetupMachineStateTemplatesMeansAll ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operation = GetOperation (); // MachiningDuration: 60 min
+          var production = GetMachineStateTemplate (PRODUCTION_MACHINE_STATE_TEMPLATE_ID);
+          var setup = GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID);
+
+          var operationSlot = InitializeSlots (machine, operation, setup);
+
+          var extension = new OperationCycleDetectionExtension ();
+          extension.SetTestConfiguration ($$"""
+{
+  "SetupMachineStateTemplateIds": [],
+  "ProductionMachineStateTemplateId": {{PRODUCTION_MACHINE_STATE_TEMPLATE_ID}},
+  "CycleDurationPercentageTrigger": 120,
+  "BetweenCyclesDurationPercentageTrigger": 0
+}
+""");
+          extension.Initialize (machine);
+          extension.DetectionProcessStart ();
+
+          var operationCycle = ModelDAOHelper.ModelFactory.CreateOperationCycle (machine);
+          operationCycle.OperationSlot = operationSlot;
+          operationCycle.Begin = T (10);
+          ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistent (operationCycle);
+          extension.StartCycle (operationCycle);
+          operationCycle.SetRealEnd (T (70)); // 60 min <= 60 * 1.2 => good cycle
+          extension.StopCycle (operationCycle);
+
+          var associations = ModelDAOHelper.DAOFactory
+            .MachineStateTemplateAssociationDAO.FindAll ();
+          Assert.That (associations, Has.Count.EqualTo (1),
+            "an empty set-up list must mean that every machine state template applies");
+          Assert.Multiple (() => {
+            Assert.That (associations[0].MachineStateTemplate, Is.EqualTo (production));
+            Assert.That (associations[0].Begin.Value, Is.EqualTo (T (10)));
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// A full cycle without any begin must not make the detection fail,
+    /// even when the operation has no machining duration
+    /// </summary>
+    [Test]
+    public void TestFullCycleWithoutBegin ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var machine = GetMachine ();
+          var operation = GetOperation ();
+          operation.MachiningDuration = null; // => IsGoodCycle only relies on Full
+          ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation);
+          var setup = GetMachineStateTemplate (SETUP_MACHINE_STATE_TEMPLATE_ID);
+
+          var operationSlot = InitializeSlots (machine, operation, setup);
+
+          var extension = new OperationCycleDetectionExtension ();
+          extension.SetTestConfiguration ($$"""
+{
+  "SetupMachineStateTemplateIds": [ {{SETUP_MACHINE_STATE_TEMPLATE_ID}} ],
+  "ProductionMachineStateTemplateId": {{PRODUCTION_MACHINE_STATE_TEMPLATE_ID}},
+  "CycleDurationPercentageTrigger": 120,
+  "BetweenCyclesDurationPercentageTrigger": 0
+}
+""");
+          extension.Initialize (machine);
+          extension.DetectionProcessStart ();
+
+          var operationCycle = ModelDAOHelper.ModelFactory.CreateOperationCycle (machine);
+          operationCycle.OperationSlot = operationSlot;
+          // No begin on purpose
+          operationCycle.SetRealEnd (T (70)); // sets Full, although Begin is null
+          ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistent (operationCycle);
+          Assert.Multiple (() => {
+            Assert.That (operationCycle.Full, Is.True);
+            Assert.That (operationCycle.Begin.HasValue, Is.False);
+          });
+
+          Assert.DoesNotThrow (() => extension.StopCycle (operationCycle));
+
+          // Without a begin, no start date/time can be used for the switch
+          Assert.That (ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.FindAll (),
+            Is.Empty);
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    IMonitoredMachine GetMachine ()
+    {
+      var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (MACHINE_ID);
+      Assert.That (machine, Is.Not.Null);
+      return machine;
+    }
+
+    IOperation GetOperation ()
+    {
+      var operation = ModelDAOHelper.DAOFactory.OperationDAO.FindById (OPERATION_ID);
+      Assert.That (operation, Is.Not.Null);
+      return operation;
+    }
+
+    IMachineStateTemplate GetMachineStateTemplate (int machineStateTemplateId)
+    {
+      var machineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
+        .FindById (machineStateTemplateId);
+      Assert.That (machineStateTemplate, Is.Not.Null);
+      return machineStateTemplate;
+    }
+
+    /// <summary>
+    /// Apply an operation and a machine state template from T(0),
+    /// then return the associated operation slot
+    /// </summary>
+    IOperationSlot InitializeSlots (IMonitoredMachine machine, IOperation operation,
+                                    IMachineStateTemplate machineStateTemplate)
+    {
+      {
+        var association = ModelDAOHelper.ModelFactory
+          .CreateOperationMachineAssociation (machine, R (0, null));
+        association.Operation = operation;
+        association.Apply ();
+      }
+      {
+        var association = ModelDAOHelper.ModelFactory
+          .CreateMachineStateTemplateAssociation (machine, machineStateTemplate, T (0));
+        association.Apply ();
+      }
+      ModelDAOHelper.DAOFactory.Flush ();
+
+      return ModelDAOHelper.DAOFactory.OperationSlotDAO
+        .FindOverlapsRange (machine, R (0, null))
+        .First ();
     }
   }
 }

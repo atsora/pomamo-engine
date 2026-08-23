@@ -27,15 +27,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     TransformationProviderExt m_database = null;
     #endregion // Members
 
-    #region Constructors
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public Plugin () : base (new ConfigurationLoader ())
-    {
-    }
-    #endregion // Constructors
-
     #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user

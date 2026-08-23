@@ -23,13 +23,6 @@ namespace Lemoine.Plugin.SetupSwitcher
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
     /// <summary>
-    /// Constructor
-    /// </summary>
-    public Plugin () : base (new ConfigurationLoader ())
-    {
-    }
-
-    /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
     public override string Name => "Setup switcher";
@@ -39,14 +32,14 @@ namespace Lemoine.Plugin.SetupSwitcher
     /// </summary>
     public override string Description => "Trigger a switch to a new machine state template when a new operation is detected";
 
+    /// <summary>
+    /// <see cref="IFlaggedPlugin"/>
+    /// </summary>
     public PluginFlag Flags => PluginFlag.Analysis;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
     public override int Version => 3;
-    
-    #region Methods
-    #endregion // Methods
   }
 }

@@ -28,14 +28,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
 
     static readonly ILog log = LogManager.GetLogger(typeof (SlotExtension).FullName);
 
-    /// <summary>
-    /// Description of the constructor
-    /// </summary>
-    public SlotExtension ()
-      : base (new ConfigurationLoader ())
-    {
-    }
-
     #region ISlotExtension implementation
     public void InsertNewSlotsBegin(IPeriodAssociation association, UtcDateTimeRange range, System.Collections.Generic.IEnumerable<ISlot> existingSlots, System.Collections.Generic.IEnumerable<ISlot> newSlots)
     {

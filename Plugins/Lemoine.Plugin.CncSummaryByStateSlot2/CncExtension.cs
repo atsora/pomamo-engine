@@ -27,14 +27,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     IMachineModule m_machineModule;
     readonly IDictionary<int, CncByMachineModuleField> m_fieldImplementation
       = new Dictionary<int, CncByMachineModuleField> ();
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public CncExtension ()
-      : base (new ConfigurationLoader ())
-    {
-    }
     
     #region ICncExtension implementation
     /// <summary>

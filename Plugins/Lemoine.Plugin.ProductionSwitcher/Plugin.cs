@@ -19,17 +19,6 @@ namespace Lemoine.Plugin.ProductionSwitcher
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Constructors
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public Plugin () : base (new ConfigurationLoader ())
-    {
-    }
-    #endregion // Constructors
 
     #region Getters / Setters
     /// <summary>
@@ -67,7 +56,5 @@ namespace Lemoine.Plugin.ProductionSwitcher
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Methods
-    #endregion // Methods
   }
 }

@@ -36,6 +36,12 @@ namespace Lemoine.Plugin.ProductionSwitcher
     #region Methods
     /// <summary>
     /// Add a listener
+    ///
+    /// Warning: there is no way to remove a listener, and this list is static.
+    /// Every OperationCycleDetectionExtension instance registers itself here in Initialize,
+    /// and a new instance is built each time the activity analysis of a machine is re-created
+    /// (plugin reload, service restart of the analysis threads, ...).
+    /// The list then grows and the obsolete instances are kept alive by it.
     /// </summary>
     /// <param name="listener"></param>
     public static void AddListener (IObservationStateSlotChangeListener listener)
