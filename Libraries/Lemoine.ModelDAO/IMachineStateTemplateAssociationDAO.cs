@@ -19,6 +19,19 @@ namespace Lemoine.ModelDAO
     long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate, AssociationOption option);
 
     /// <summary>
+    /// Insert a new row in database with a new machine state template association
+    /// that was created automatically, with some optional dynamic times
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="range"></param>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <param name="nextMachineStateTemplate">machine state template to apply once the dynamic end is reached. Nullable</param>
+    /// <param name="dynamic">dynamic times (start/end) description: start,end</param>
+    /// <param name="option"></param>
+    /// <returns></returns>
+    long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate, IMachineStateTemplate nextMachineStateTemplate, string dynamic, AssociationOption? option);
+
+    /// <summary>
     /// Get all MachineStateTemplateAssociation for a specific machine within a period
     /// Valid segments have:
     /// - their beginning strictly inferior to the end of the period, AND

@@ -67,6 +67,27 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IMachineStateTemplateAssociationDAO"/>
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="range"></param>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <param name="nextMachineStateTemplate">nullable</param>
+    /// <param name="dynamic"></param>
+    /// <param name="option"></param>
+    /// <returns></returns>
+    public long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate, IMachineStateTemplate nextMachineStateTemplate, string dynamic, AssociationOption? option)
+    {
+      var association = ModelDAO.ModelDAOHelper.ModelFactory.CreateMachineStateTemplateAssociation (machine, machineStateTemplate, range);
+      association.NextMachineStateTemplate = nextMachineStateTemplate;
+      association.Dynamic = dynamic;
+      association.Option = option;
+      association.Priority = Lemoine.Info.ConfigSet
+        .LoadAndGet (PRIORITY_KEY, PRIORITY_DEFAULT);
+      return InsertModification (association, false, false);
+    }
+
+    /// <summary>
     /// Insert a row in database that corresponds to a sub-modification
     /// </summary>
     /// <param name="association"></param>

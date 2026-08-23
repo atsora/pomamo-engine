@@ -32,6 +32,15 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
+    /// <summary>
+    /// Insert a new row in database with a new machine state template association
+    /// that was created automatically, with some optional dynamic times
+    /// </summary>
+    public long Insert (IMachine machine, UtcDateTimeRange range, IMachineStateTemplate machineStateTemplate, IMachineStateTemplate nextMachineStateTemplate, string dynamic, AssociationOption? option)
+    {
+      throw new NotImplementedException ();
+    }
+
     #region IGenericByMachineDAO implementation
     public Lemoine.Model.IMachineStateTemplateAssociation FindById(long id, IMachine machine)
     {

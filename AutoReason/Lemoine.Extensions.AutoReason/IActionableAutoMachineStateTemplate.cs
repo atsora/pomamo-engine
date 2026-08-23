@@ -1,7 +1,4 @@
-// Copyright (C) 2009-2023 Lemoine Automation Technologies
 // Copyright (C) 2026 Atsora Solutions
-//
-// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
@@ -9,13 +6,13 @@ using System.Collections.Generic;
 namespace Lemoine.Extensions.AutoReason
 {
   /// <summary>
-  /// Auto-reason extension that collects some delayed actions before applying them
+  /// Auto machine state template extension that collects some delayed actions before applying them
   /// 
   /// See <see cref="ActionableAutoExtensions"/> for the methods that process the delayed actions
   /// </summary>
-  public interface IActionableAutoReason
+  public interface IActionableAutoMachineStateTemplate
     : IActionableAutoExtension
-    , IAutoReasonExtension
+    , IAutoMachineStateTemplateExtension
   {
   }
 }

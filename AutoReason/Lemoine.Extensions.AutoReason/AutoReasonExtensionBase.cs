@@ -216,8 +216,7 @@ namespace Lemoine.Extensions.AutoReason
 
       if (!configuration.CheckMachineFilter (this.Machine)) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("Initialize: machine {0} does not match machine filter {1} => return false",
-            this.Machine.Id, configuration.MachineFilterId);
+          GetLogger ().Debug ($"Initialize: machine {this.Machine.Id} does not match machine filter {configuration.MachineFilterId} => return false");
         }
         return false;
       }
@@ -499,8 +498,9 @@ namespace Lemoine.Extensions.AutoReason
             var firstRunPeriod = Lemoine.Info.ConfigSet
               .LoadAndGet<TimeSpan> (FIRST_RUN_PERIOD_KEY, FIRST_RUN_PERIOD_DEFAULT);
             dateTime = DateTime.UtcNow.Subtract (firstRunPeriod);
-            GetLogger ().InfoFormat ("GetDateTime: first run, set first date/time to {0} for machine module {2}, first run period={1}",
-              m_dateTime, firstRunPeriod, machineModule.Id);
+            if (GetLogger ().IsInfoEnabled) {
+              GetLogger ().Info ($"GetDateTime: first run, set first date/time to {dateTime} for machine module {machineModule.Id}, first run period={firstRunPeriod}");
+            }
           }
         } // session
         m_dateTimeByMachineModule[machineModule.Id] = dateTime;
@@ -515,45 +515,13 @@ namespace Lemoine.Extensions.AutoReason
     protected IService GetService ()
     {
       if (null == m_service) {
-        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          using (var transaction = session.BeginTransaction ("AutoReason.GetService")) {
-            var computer = ModelDAOHelper.DAOFactory.ComputerDAO
-              .GetOrCreateLocal ();
-            if (null == computer) {
-              GetLogger ().ErrorFormat ("GetService: no local computer known or detected");
-              Debug.Assert (null != computer, "Computer is null");
-              transaction.Commit ();
-              throw new InvalidProgramException ("computer null");
-            }
-            var program = Lemoine.Info.ProgramInfo.Name;
-            if (null == program) {
-              GetLogger ().ErrorFormat ("GetService: unknown program");
-              Debug.Assert (null != program, "Program is null");
-              transaction.Commit ();
-              throw new InvalidProgramException ("program null");
-            }
-            var services = ModelDAOHelper.DAOFactory.ServiceDAO
-              .FindAll ()
-              .Where (s => s.Lemoine && (computer.Id == s.Computer.Id) && program.Equals (s.Program));
-            if (services.Any ()) {
-              if (1 < services.Count ()) {
-                GetLogger ().ErrorFormat ("GetService: more than one service matches");
-              }
-              m_service = services.First ();
-            }
-            else {
-              m_service = ModelDAOHelper.ModelFactory.CreateService (computer, "Lemoine AutoReason", program, true);
-              ModelDAOHelper.DAOFactory.ServiceDAO.MakePersistent (m_service);
-            }
-            transaction.Commit ();
-          }
-        }
+        m_service = ServiceRequests.GetService (GetLogger ());
       }
       return m_service;
     }
 
     /// <summary>
-    /// 
+    /// Initialize a revision if some reason actions are pending and if the revisions are enabled
     /// </summary>
     protected virtual void InitializeRevisionIfRequired ()
     {
@@ -565,7 +533,7 @@ namespace Lemoine.Extensions.AutoReason
 
     void InitializeRevision ()
     {
-      Debug.Assert (null == m_reason);
+      Debug.Assert (null == m_revision);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ("AutoReason.InitializeRevision", TransactionLevel.ReadCommitted)) {
@@ -593,14 +561,7 @@ namespace Lemoine.Extensions.AutoReason
     /// <returns></returns>
     IRevision CreateRevision ()
     {
-      var revision = ModelDAOHelper.ModelFactory
-        .CreateRevision ();
-      revision.Updater = GetService ();
-      revision.IPAddress = Lemoine.Info.ComputerInfo.GetIPAddresses ()
-        .First ();
-      revision.Application = Lemoine.Info.ProgramInfo.Name;
-      ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistent (revision);
-      return revision;
+      return ServiceRequests.CreateRevision (GetService ());
     }
 
     /// <summary>
