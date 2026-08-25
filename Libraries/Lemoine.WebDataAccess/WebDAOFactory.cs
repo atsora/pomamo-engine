@@ -356,6 +356,12 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+    public IDocDAO DocDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
     public IEmailConfigDAO EmailConfigDAO
     {
       get {

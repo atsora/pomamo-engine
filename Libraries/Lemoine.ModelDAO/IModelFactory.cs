@@ -436,6 +436,13 @@ namespace Lemoine.Model
     IDisplay CreateDisplay (string table);
 
     /// <summary>
+    /// Create a new <see cref="IDoc"/>
+    /// </summary>
+    /// <param name="path">not null and not empty</param>
+    /// <returns></returns>
+    IDoc CreateDoc (string path);
+
+    /// <summary>
     /// Create an EmailConfig object
     /// </summary>
     /// <returns></returns>

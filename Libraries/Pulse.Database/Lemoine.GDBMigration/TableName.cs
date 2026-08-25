@@ -889,5 +889,9 @@ namespace Lemoine.GDBMigration
     /// scrapreasonreport table
     /// </summary>
     public static readonly string SCRAP_REASON_REPORT = "scrapreasonreport";
+    /// <summary>
+    /// doc table
+    /// </summary>
+    public static readonly string DOC = "doc";
   }
 }

@@ -240,6 +240,11 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException();
     }
 
+    public IDoc CreateDoc (string path)
+    {
+      throw new NotImplementedException ();
+    }
+
     public IEmailConfig CreateEmailConfig()
     {
       throw new NotImplementedException();

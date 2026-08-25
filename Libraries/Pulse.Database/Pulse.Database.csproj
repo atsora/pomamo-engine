@@ -823,6 +823,10 @@
       <DependentUpon>Customer.cs</DependentUpon>
       <LogicalName>Customer.hbm.xml</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\Doc.hbm.xml">
+      <DependentUpon>Doc.cs</DependentUpon>
+      <LogicalName>Doc.hbm.xml</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

@@ -809,6 +809,16 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
     /// </summary>
+    /// <param name="path">not null and not empty</param>
+    /// <returns></returns>
+    public IDoc CreateDoc (string path)
+    {
+      return new Doc (path);
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
+    /// </summary>
     /// <returns></returns>
     public IEmailConfig CreateEmailConfig ()
     {

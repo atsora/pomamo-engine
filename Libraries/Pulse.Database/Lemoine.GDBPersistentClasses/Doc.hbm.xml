@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="Doc" table="doc">
+    <id name="Id" column="docid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">doc_docid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="docversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Path" column="docpath" not-null="true" />
+  </class>
+</hibernate-mapping>

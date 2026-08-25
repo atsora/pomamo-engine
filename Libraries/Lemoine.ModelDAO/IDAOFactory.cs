@@ -263,6 +263,11 @@ namespace Lemoine.ModelDAO
     IDisplayDAO DisplayDAO { get; }
 
     /// <summary>
+    /// Get a IDocDAO
+    /// </summary>
+    IDocDAO DocDAO { get; }
+
+    /// <summary>
     /// Get a IEmailConfigDAO
     /// </summary>
     IEmailConfigDAO EmailConfigDAO { get; }

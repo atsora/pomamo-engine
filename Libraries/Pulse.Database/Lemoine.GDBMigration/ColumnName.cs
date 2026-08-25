@@ -581,5 +581,10 @@ namespace Lemoine.GDBMigration
     /// Id of the manuforder table
     /// </summary>
     public static readonly string MANUFACTURING_ORDER_ID = $"{TableName.MANUFACTURING_ORDER}id";
+
+    /// <summary>
+    /// Id of the doc table
+    /// </summary>
+    public static readonly string DOC_ID = $"{TableName.DOC}id";
   }
 }
