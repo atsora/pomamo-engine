@@ -11,11 +11,11 @@ namespace Lemoine.Extensions.AutoReason
   /// <summary>
   /// Abstract class for an auto machine state template configuration
   /// </summary>
-  public abstract class AutoMachineStateTemplateConfiguration
+  public abstract class AutoStateTemplateConfiguration
     : Pulse.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter
     , Pulse.Extensions.Configuration.IConfigurationWithMachineFilter
   {
-    static readonly ILog log = LogManager.GetLogger (typeof (AutoMachineStateTemplateConfiguration).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (AutoStateTemplateConfiguration).FullName);
 
     /// <summary>
     /// Machine state template that is applied automatically
@@ -34,7 +34,7 @@ namespace Lemoine.Extensions.AutoReason
     /// <summary>
     /// Constructor
     /// </summary>
-    protected AutoMachineStateTemplateConfiguration ()
+    protected AutoStateTemplateConfiguration ()
     {
     }
 
@@ -56,7 +56,7 @@ namespace Lemoine.Extensions.AutoReason
       var errorList = new List<string> ();
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (var transaction = session.BeginReadOnlyTransaction ("Plugin.AutoMachineStateTemplate.IsValidConfiguration")) {
+        using (var transaction = session.BeginReadOnlyTransaction ("Plugin.AutoStateTemplate.IsValidConfiguration")) {
           if (this.MachineStateTemplateId <= 0) {
             var message = $"invalid machine state template id {this.MachineStateTemplateId}: not strictly positive";
             log.Error ($"IsValid: {message}");

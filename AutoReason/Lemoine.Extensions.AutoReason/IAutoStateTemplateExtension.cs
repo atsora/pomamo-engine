@@ -11,7 +11,7 @@ namespace Lemoine.Extensions.AutoReason
   /// 
   /// It is run by the auto-reason service, just like <see cref="IAutoReasonExtension"/>
   /// </summary>
-  public interface IAutoMachineStateTemplateExtension
+  public interface IAutoStateTemplateExtension
     : Lemoine.Extensions.IExtension
   {
     /// <summary>

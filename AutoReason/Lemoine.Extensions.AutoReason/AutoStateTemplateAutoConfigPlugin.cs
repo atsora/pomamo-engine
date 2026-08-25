@@ -12,11 +12,11 @@ namespace Lemoine.Extensions.AutoReason
   /// <summary>
   /// Base class for a plugin that creates automatically some machine state templates
   /// </summary>
-  public abstract class AutoMachineStateTemplateAutoConfigPlugin<TConfiguration>
+  public abstract class AutoStateTemplateAutoConfigPlugin<TConfiguration>
     : PluginWithAutoConfig<TConfiguration>, IPluginDll, IFlaggedPlugin
-    where TConfiguration : AutoMachineStateTemplateConfiguration, new ()
+    where TConfiguration : AutoStateTemplateConfiguration, new ()
   {
-    static readonly ILog log = LogManager.GetLogger (typeof (AutoMachineStateTemplateAutoConfigPlugin<TConfiguration>).FullName);
+    static readonly ILog log = LogManager.GetLogger (typeof (AutoStateTemplateAutoConfigPlugin<TConfiguration>).FullName);
 
     /// <summary>
     /// Applicable flags
@@ -38,7 +38,7 @@ namespace Lemoine.Extensions.AutoReason
     /// <summary>
     /// Default constructor
     /// </summary>
-    protected AutoMachineStateTemplateAutoConfigPlugin ()
+    protected AutoStateTemplateAutoConfigPlugin ()
     {
     }
 

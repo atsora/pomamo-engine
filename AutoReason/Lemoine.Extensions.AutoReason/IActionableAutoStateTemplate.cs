@@ -10,9 +10,9 @@ namespace Lemoine.Extensions.AutoReason
   /// 
   /// See <see cref="ActionableAutoExtensions"/> for the methods that process the delayed actions
   /// </summary>
-  public interface IActionableAutoMachineStateTemplate
+  public interface IActionableAutoStateTemplate
     : IActionableAutoExtension
-    , IAutoMachineStateTemplateExtension
+    , IAutoStateTemplateExtension
   {
   }
 }

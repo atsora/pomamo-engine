@@ -9,7 +9,7 @@ namespace Lemoine.Extensions.AutoReason.ActionableAutoReasonExtension
   /// Auto machine state template extension that is able to apply a machine state template
   /// </summary>
   public interface IApplyMachineStateTemplateAutoExtension
-    : IAutoMachineStateTemplateExtension
+    : IAutoStateTemplateExtension
   {
     /// <summary>
     /// Apply the specified machine state template to the specified range with the dynamic times

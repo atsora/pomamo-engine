@@ -18,18 +18,18 @@ namespace Lemoine.Extensions.AutoReason
   /// a date/time state is stored in autoreasonstate, the detection is done in <see cref="Check"/>
   /// and the modifications are applied afterwards with some delayed actions
   /// </summary>
-  public abstract class AutoMachineStateTemplateExtensionBase<TConfiguration>
+  public abstract class AutoStateTemplateExtensionBase<TConfiguration>
     : Lemoine.Extensions.MultipleInstanceConfigurableExtension<TConfiguration>
-    , IAutoMachineStateTemplateExtension
-    , IActionableAutoMachineStateTemplate
+    , IAutoStateTemplateExtension
+    , IActionableAutoStateTemplate
     , IDateTimeStateAutoExtension
     , IApplyMachineStateTemplateAutoExtension
-    where TConfiguration : AutoMachineStateTemplateConfiguration, new ()
+    where TConfiguration : AutoStateTemplateConfiguration, new ()
   {
-    static readonly string FIRST_RUN_PERIOD_KEY = "AutoMachineStateTemplate.FirstRunPeriod";
+    static readonly string FIRST_RUN_PERIOD_KEY = "AutoStateTemplate.FirstRunPeriod";
     static readonly TimeSpan FIRST_RUN_PERIOD_DEFAULT = TimeSpan.FromDays (3);
 
-    static readonly string USE_REVISION_KEY = "AutoMachineStateTemplate.Revision";
+    static readonly string USE_REVISION_KEY = "AutoStateTemplate.Revision";
     static readonly bool USE_REVISION_DEFAULT = false;
 
     static readonly string DATETIME_KEY = "DateTime";
@@ -63,17 +63,17 @@ namespace Lemoine.Extensions.AutoReason
     public virtual string PluginKey => m_pluginKey;
 
     /// <summary>
-    /// <see cref="IAutoMachineStateTemplateExtension"/>
+    /// <see cref="IAutoStateTemplateExtension"/>
     /// </summary>
     public IMonitoredMachine Machine => m_machine;
 
     /// <summary>
-    /// <see cref="IAutoMachineStateTemplateExtension"/>
+    /// <see cref="IAutoStateTemplateExtension"/>
     /// </summary>
     public IMachineStateTemplate MachineStateTemplate => m_machineStateTemplate;
 
     /// <summary>
-    /// <see cref="IAutoMachineStateTemplateExtension"/>
+    /// <see cref="IAutoStateTemplateExtension"/>
     /// </summary>
     public IMachineStateTemplate NextMachineStateTemplate => m_nextMachineStateTemplate;
 
@@ -86,7 +86,7 @@ namespace Lemoine.Extensions.AutoReason
     /// Constructor
     /// </summary>
     /// <param name="pluginKey">prefix of the keys in autoreasonstate</param>
-    protected AutoMachineStateTemplateExtensionBase (string pluginKey)
+    protected AutoStateTemplateExtensionBase (string pluginKey)
     {
       m_pluginKey = pluginKey;
     }
@@ -131,7 +131,7 @@ namespace Lemoine.Extensions.AutoReason
     }
 
     /// <summary>
-    /// <see cref="IAutoMachineStateTemplateExtension"/>
+    /// <see cref="IAutoStateTemplateExtension"/>
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="caller"></param>
@@ -208,7 +208,7 @@ namespace Lemoine.Extensions.AutoReason
     protected virtual bool InitializeAdditionalConfigurations (TConfiguration configuration) => true;
 
     /// <summary>
-    /// <see cref="IAutoMachineStateTemplateExtension"/>
+    /// <see cref="IAutoStateTemplateExtension"/>
     /// </summary>
     public virtual void RunOnce ()
     {
@@ -346,7 +346,7 @@ namespace Lemoine.Extensions.AutoReason
       Debug.Assert (null == m_revision);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (var transaction = session.BeginTransaction ("AutoMachineStateTemplate.InitializeRevision", TransactionLevel.ReadCommitted)) {
+        using (var transaction = session.BeginTransaction ("AutoStateTemplate.InitializeRevision", TransactionLevel.ReadCommitted)) {
           m_revision = ServiceRequests.CreateRevision (GetService ());
           transaction.Commit ();
         }

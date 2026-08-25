@@ -16,7 +16,7 @@ namespace Lemoine.Extensions.AutoReason
   /// before applying them
   /// 
   /// <see cref="IActionableAutoReason"/> for the auto-reasons
-  /// <see cref="IActionableAutoMachineStateTemplate"/> for the auto machine state templates
+  /// <see cref="IActionableAutoStateTemplate"/> for the auto machine state templates
   /// </summary>
   public interface IActionableAutoExtension
     : Lemoine.Extensions.IExtension
