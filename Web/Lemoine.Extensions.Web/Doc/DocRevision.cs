@@ -7,21 +7,21 @@ using System;
 namespace Lemoine.Extensions.Web.Doc
 {
   /// <summary>
-  /// One available version of a document
+  /// One available revision of a document
   /// 
-  /// In the git implementation, a version is associated to a commit
+  /// In the git implementation, a revision is associated to a commit
   /// </summary>
-  public struct DocVersion
+  public struct DocRevision
   {
     /// <summary>
-    /// Version number
+    /// Revision number
     /// 
-    /// The greater the number, the more recent the version
+    /// The greater the number, the more recent the revision
     /// </summary>
-    public int Version { get; set; }
+    public int Revision { get; set; }
 
     /// <summary>
-    /// Description of this version: what was changed in it
+    /// Description of this revision: what was changed in it
     /// 
     /// In the git implementation, the commit message
     /// 
@@ -30,7 +30,7 @@ namespace Lemoine.Extensions.Web.Doc
     public string Description { get; set; }
 
     /// <summary>
-    /// Author of this version
+    /// Author of this revision
     /// 
     /// In the git implementation, the commit author
     /// 
@@ -39,7 +39,7 @@ namespace Lemoine.Extensions.Web.Doc
     public string Author { get; set; }
 
     /// <summary>
-    /// UTC date/time when this version was created
+    /// UTC date/time when this revision was created
     /// 
     /// In the git implementation, the commit date/time
     /// </summary>

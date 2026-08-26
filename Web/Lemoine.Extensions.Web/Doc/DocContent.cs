@@ -8,17 +8,17 @@ using System.IO;
 namespace Lemoine.Extensions.Web.Doc
 {
   /// <summary>
-  /// Content of a document for a specific version,
+  /// Content of a document for a specific revision,
   /// with the data the web application requires to return it to the client
   /// </summary>
   public struct DocContent
   {
     /// <summary>
-    /// Effective version that is returned
+    /// Effective revision that is returned
     /// 
-    /// This is the resolved version when the latest version was requested
+    /// This is the resolved revision when the latest revision was requested
     /// </summary>
-    public int Version { get; set; }
+    public int Revision { get; set; }
 
     /// <summary>
     /// File name to suggest to the client for the download

@@ -14,7 +14,7 @@ namespace Lemoine.Extensions.Web.Doc
   /// Extension to store and retrieve the documents that are referenced in the doc table
   /// 
   /// A document is only identified by its path: this extension does not depend on the database.
-  /// The first implementation is based on git, where a version is associated to a commit.
+  /// The first implementation is based on git, where a revision is associated to a commit.
   /// 
   /// An extension is initialized for a specific path with <see cref="Initialize (string)"/>.
   /// The other methods apply to this path.
@@ -37,37 +37,37 @@ namespace Lemoine.Extensions.Web.Doc
     double Score { get; }
 
     /// <summary>
-    /// List the available versions of the document, from the most recent to the oldest one
+    /// List the available revisions of the document, from the most recent to the oldest one
     /// 
     /// An empty list is returned if the document does not exist yet
     /// </summary>
     /// <returns>not null</returns>
-    Task<IEnumerable<DocVersion>> GetVersionsAsync ();
+    Task<IEnumerable<DocRevision>> GetRevisionsAsync ();
 
     /// <summary>
-    /// Get the most recent version number of the document
+    /// Get the most recent revision number of the document
     /// 
     /// null is returned if the document does not exist yet
     /// </summary>
     /// <returns>nullable</returns>
-    Task<int?> GetLastVersionAsync ();
+    Task<int?> GetLastRevisionAsync ();
 
     /// <summary>
     /// Make the document available, so that the web application may return it to the client
     /// </summary>
-    /// <param name="version">version to get. If null, the most recent version is returned</param>
+    /// <param name="revision">revision to get. If null, the most recent revision is returned</param>
     /// <returns></returns>
-    /// <exception cref="DocNotFoundException">the document or the requested version does not exist</exception>
-    Task<DocContent> GetAsync (int? version = null);
+    /// <exception cref="DocNotFoundException">the document or the requested revision does not exist</exception>
+    Task<DocContent> GetAsync (int? revision = null);
 
     /// <summary>
-    /// Upload a new version of the document
+    /// Upload a new revision of the document
     /// 
     /// If the document does not exist yet, it is created
     /// </summary>
     /// <param name="content">not null. It is only read, it is not disposed</param>
-    /// <param name="description">description of the new version. In the git implementation, the commit message</param>
-    /// <returns>the new version number</returns>
+    /// <param name="description">description of the new revision. In the git implementation, the commit message</param>
+    /// <returns>the new revision number</returns>
     Task<int> UploadAsync (Stream content, string description = "");
   }
 }
