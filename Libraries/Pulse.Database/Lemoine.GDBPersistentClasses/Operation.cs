@@ -196,6 +196,12 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IOperation"/>
+    /// </summary>
+    [XmlAttribute ("MachiningDurationSource")]
+    public virtual DurationSource MachiningDurationSource { get; set; } = DurationSource.Manual;
+
+    /// <summary>
     /// Estimated machining duration as string
     /// </summary>
     [XmlAttribute ("MachiningDuration")]
@@ -335,6 +341,12 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_loadingDuration; }
       set { m_loadingDuration = value; }
     }
+
+    /// <summary>
+    /// <see cref="IOperation"/>
+    /// </summary>
+    [XmlAttribute ("LoadingDurationSource")]
+    public virtual DurationSource LoadingDurationSource { get; set; } = DurationSource.Manual;
 
     /// <summary>
     /// Estimated loading duration as string

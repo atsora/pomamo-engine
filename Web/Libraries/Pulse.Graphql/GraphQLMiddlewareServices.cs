@@ -89,6 +89,7 @@ namespace Pulse.Graphql
         .AddSingleton<ComponentTypeGraphType> ()
         .AddSingleton<CustomerGraphType> ()
         .AddSingleton<DisplayableInterface> ()
+        .AddSingleton<DurationSourceGraphType> ()
         .AddSingleton<IntermediateWorkPieceGraphType> ()
         .AddSingleton<JobGraphType> ()
         .AddSingleton<MachineFilterGraphType> ()

@@ -147,6 +147,37 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       }
     }
     
+    /// <summary>
+    /// Test the duration sources are stored in database and read back
+    /// </summary>
+    [Test]
+    public void TestDurationSources ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        IOperation operation = daoFactory.OperationDAO.FindById (1);
+        Assert.Multiple (() => {
+          Assert.That (operation.MachiningDurationSource, Is.EqualTo (DurationSource.Manual), "not manual by default");
+          Assert.That (operation.LoadingDurationSource, Is.EqualTo (DurationSource.Manual), "not manual by default");
+        });
+
+        operation.MachiningDurationSource = DurationSource.Auto;
+        operation.LoadingDurationSource = DurationSource.Extern;
+        daoFactory.OperationDAO.MakePersistent (operation);
+        daoFactory.Flush ();
+        NHibernateHelper.GetCurrentSession ().Evict (operation);
+
+        IOperation reloaded = daoFactory.OperationDAO.FindById (1);
+        Assert.Multiple (() => {
+          Assert.That (reloaded.MachiningDurationSource, Is.EqualTo (DurationSource.Auto));
+          Assert.That (reloaded.LoadingDurationSource, Is.EqualTo (DurationSource.Extern));
+        });
+
+        transaction.Rollback ();
+      }
+    }
+
     [OneTimeSetUp]
     public void Init()
     {

@@ -33,6 +33,9 @@
     <property name="MachiningDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               column="operationmachiningduration" />
+    <property name="MachiningDurationSource"
+              column="operationmachiningdurationsource"
+              not-null="true" />
     <property name="SetUpDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               column="operationsetupduration" />
@@ -42,6 +45,9 @@
     <property name="LoadingDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               column="operationloadingduration" />
+    <property name="LoadingDurationSource"
+              column="operationloadingdurationsource"
+              not-null="true" />
     <property name="UnloadingDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               column="operationunloadingduration" />

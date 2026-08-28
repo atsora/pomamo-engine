@@ -33,6 +33,7 @@ namespace Pulse.Graphql.Type
       Field<ListGraphType<NonNullGraphType<MachineGraphType>>, IEnumerable<IMachine>> ("machines")
         .Resolve (ctx => null);
       Field<NonNullGraphType<UtcDateTimeRangeGraphType>, UtcDateTimeRange> ("applicableRange");
+      Field<NonNullGraphType<DurationSourceGraphType>, DurationSource> ("source");
       Field<FloatGraphType, double?> ("machining")
         .Resolve (ctx => ctx.Source.Machining?.TotalSeconds);
       Field<FloatGraphType, double?> ("loading")

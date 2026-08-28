@@ -8,6 +8,25 @@ using System.Collections.Generic;
 namespace Lemoine.Model
 {
   /// <summary>
+  /// Source of a duration
+  /// </summary>
+  public enum DurationSource
+  {
+    /// <summary>
+    /// The duration was set manually
+    /// </summary>
+    Manual = 0,
+    /// <summary>
+    /// The duration was determined automatically
+    /// </summary>
+    Auto = 1,
+    /// <summary>
+    /// The duration comes from an external system
+    /// </summary>
+    Extern = 2,
+  }
+
+  /// <summary>
   /// 
   /// </summary>
   public interface IOperationDuration : IVersionable, IDataWithIdentifiers, IEquatable<IOperationDuration>, ISerializableModel, Lemoine.Collections.IDataWithId
@@ -37,6 +56,11 @@ namespace Lemoine.Model
     /// Applicable range
     /// </summary>
     UtcDateTimeRange ApplicableRange { get; set; }
+
+    /// <summary>
+    /// Source of the duration
+    /// </summary>
+    DurationSource Source { get; set; }
 
     /// <summary>
     /// Machining duration

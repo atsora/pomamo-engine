@@ -70,6 +70,12 @@ namespace Lemoine.GDBPersistentClasses
     public virtual UtcDateTimeRange ApplicableRange { get; set; } = new UtcDateTimeRange (new LowerBound<DateTime> (null), new UpperBound<DateTime> (null));
 
     /// <summary>
+    /// <see cref="ISequenceDuration"/>
+    /// </summary>
+    [XmlAttribute ("Source")]
+    public virtual DurationSource Source { get; set; } = DurationSource.Manual;
+
+    /// <summary>
     /// Estimated duration
     /// </summary>
     [XmlIgnore]

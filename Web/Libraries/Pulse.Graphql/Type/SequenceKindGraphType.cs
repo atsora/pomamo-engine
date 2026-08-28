@@ -1,15 +1,10 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
 using GraphQL.Types;
-using GraphQLParser.AST;
 using Lemoine.Core.Log;
 using Lemoine.Model;
 
@@ -17,8 +12,10 @@ namespace Pulse.Graphql.Type
 {
   /// <summary>
   /// Graphql type for <see cref="SequenceKind">
+  /// 
+  /// The values are explicitly added so that they keep the same case as in the C# enum
   /// </summary>
-  public class SequenceKindGraphType : ScalarGraphType
+  public class SequenceKindGraphType : EnumerationGraphType
   {
     readonly ILog log = LogManager.GetLogger (typeof (SequenceKindGraphType).FullName);
 
@@ -28,70 +25,11 @@ namespace Pulse.Graphql.Type
     public SequenceKindGraphType ()
     {
       Name = "SequenceKind";
+      Add ("Machining", SequenceKind.Machining, "Machining");
+      Add ("Stop", SequenceKind.Stop, "Stop (M0, ...)");
+      Add ("OptionalStop", SequenceKind.OptionalStop, "Optional stop (M1, /M0)");
+      Add ("NonMachining", SequenceKind.NonMachining, "Non-machining sequence");
+      Add ("AutoPalletChange", SequenceKind.AutoPalletChange, "Pallet change: automatic if the pallet is ready, else the machine stops. Usually triggered by M60");
     }
-
-    /// <summary>
-    /// <see cref="ScalarGraphType"/>
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public override object? ParseLiteral (GraphQLValue value) =>
-      value switch {
-        GraphQLNullValue => null,
-        GraphQLStringValue stringValue => ParseValue ((string)stringValue.Value),
-        GraphQLIntValue => ParseValue((int?)(new IntGraphType().ParseLiteral (value))),
-        _ => ThrowLiteralConversionError (value)
-      };
-
-    /// <summary>
-    /// <see cref="ScalarGraphType"/>
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public override object? ParseValue (object? value) =>
-      value switch {
-        null => null,
-        string s => string.IsNullOrEmpty (s) ? null: Enum.Parse<SequenceKind> (s, true),
-        int x => (SequenceKind)x,
-        _ => ThrowValueConversionError (value)
-      };
-
-    /// <summary>
-    /// <see cref="ScalarGraphType"/>
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public override object? Serialize (object? value) =>
-      value switch {
-        null => null,
-        SequenceKind x => x.ToString (),
-        _ => ThrowSerializationError (value)
-      };
-
-    /// <summary>
-    /// <see cref="ScalarGraphType"/>
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public override bool CanParseLiteral (GraphQLValue value) =>
-      value switch {
-        GraphQLNullValue => true,
-        GraphQLStringValue => true,
-        GraphQLIntValue => true,
-        _ => false
-      };
-
-    /// <summary>
-    /// <see cref="ScalarGraphType"/>
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public override bool CanParseValue (object? value) =>
-      value switch {
-        null => true,
-        string => true,
-        int => true,
-        _ => false
-      };
   }
 }

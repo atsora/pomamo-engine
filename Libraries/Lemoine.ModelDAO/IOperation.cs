@@ -80,6 +80,11 @@ namespace Lemoine.Model
     TimeSpan? MachiningDuration { get; set; }
 
     /// <summary>
+    /// Source of the machining duration
+    /// </summary>
+    DurationSource MachiningDurationSource { get; set; }
+
+    /// <summary>
     /// Estimated setup duration
     /// </summary>
     TimeSpan? SetUpDuration { get; set; }
@@ -93,6 +98,11 @@ namespace Lemoine.Model
     /// Estimated loading duration
     /// </summary>
     TimeSpan? LoadingDuration { get; set; }
+
+    /// <summary>
+    /// Source of the loading duration
+    /// </summary>
+    DurationSource LoadingDurationSource { get; set; }
 
     /// <summary>
     /// Estimated unloading duration

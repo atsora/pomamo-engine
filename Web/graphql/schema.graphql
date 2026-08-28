@@ -57,6 +57,13 @@ scalar UtcDateTimeRange
 scalar CncConfigUnit # metric / inches / other
 scalar CncConfigParamType # ip / url / path / host / string / int / integer / double / list / bool / boolean / file
 
+"Source of the duration"
+enum DurationSource {
+  Manual
+  Auto
+  Extern
+}
+
 interface IDisplayable {
   display: String!
 }
@@ -486,7 +493,14 @@ type OperationModel {
 
 # TODO: IntermediateWorkPiece / OperationModel with quantities
 
-scalar SequenceKind
+"Kind of a sequence"
+enum SequenceKind {
+  Machining
+  Stop
+  OptionalStop
+  NonMachining
+  AutoPalletChange
+}
 
 type Sequence {
   id: ID!
@@ -519,6 +533,7 @@ type OperationDuration {
   machineFilter: MachineFilter
   machines: [Machine!] # if not null, restrict to these machines
   applicableRange: UtcDateTimeRange! # applicable only in this range
+  source: DurationSource!
   machining: Float
   loading: Float
   unloading: Float
@@ -532,6 +547,7 @@ type SequenceDuration {
   machineFilter: MachineFilter
   machines: [Machine!] # if not null, restrict to these machines
   applicableRange: UtcDateTimeRange! # applicable only in this range
+  source: DurationSource!
   estimatedDuration: Float!
 }
 

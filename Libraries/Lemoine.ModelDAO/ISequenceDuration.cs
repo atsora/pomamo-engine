@@ -28,6 +28,11 @@ namespace Lemoine.Model
     UtcDateTimeRange ApplicableRange { get; set; }
 
     /// <summary>
+    /// Source of the duration
+    /// </summary>
+    DurationSource Source { get; set; }
+
+    /// <summary>
     /// Estimated duration
     /// </summary>
     TimeSpan EstimatedDuration { get; }
