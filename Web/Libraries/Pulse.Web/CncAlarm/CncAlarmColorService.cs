@@ -33,6 +33,10 @@ namespace Pulse.Web.CncAlarm
     // 640 corresponds for a full day to 2,5 minutes (on a 1200px width screen, about 2px, on a FullHD screen, about 3 px)
     // 960 corresponds for a full day to 1,5 minutes (on a 1200px width screen, about 1px, on a FullHD screen, about 2 px)
 
+    static readonly string MAX_RANGE_DURATION_KEY = "Web.CncAlarmColor.MaxRangeDuration";
+    static readonly TimeSpan MAX_RANGE_DURATION_DEFAULT = TimeSpan.FromDays (1);
+    // This request is expensive: return nothing for a range that is longer than this duration
+
     static readonly ILog log = LogManager.GetLogger(typeof (CncAlarmColorService).FullName);
 
     #region Constructors
@@ -112,7 +116,19 @@ namespace Pulse.Web.CncAlarm
         Debug.Assert (null != machine);
         
         UtcDateTimeRange range = ParseRange (request.Range);
-        
+
+        var maxRangeDuration = Lemoine.Info.ConfigSet
+          .LoadAndGet<TimeSpan> (MAX_RANGE_DURATION_KEY, MAX_RANGE_DURATION_DEFAULT);
+        if (!range.Duration.HasValue || (maxRangeDuration < range.Duration.Value)) {
+          if (log.IsInfoEnabled) {
+            log.Info ($"GetWithoutCache: the duration of range {range} is longer than {maxRangeDuration} => return an empty response");
+          }
+          return new CncAlarmColorResponseDTO {
+            Range = range.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound)),
+            Blocks = new List<CncAlarmColorBlockDTO> ()
+          };
+        }
+
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.CncAlarmColor"))
         {
           if (range.Duration.Value <= TimeSpan.FromDays (7)) {
