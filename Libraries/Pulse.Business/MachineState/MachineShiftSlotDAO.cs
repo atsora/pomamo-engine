@@ -81,19 +81,24 @@ namespace Lemoine.Business.MachineState
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="dateTime">in UTC</param>
-    /// <returns></returns>
+    /// <returns>null if the machine has no observation state slot at that date/time</returns>
     public IMachineShiftSlot FindAt (IMachine machine, DateTime dateTime)
     {
       Debug.Assert (null != machine);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Business.MachineState.MachineShiftSlotDAO.FindAt")) {
-          IMachineShiftSlot slot = new MachineShiftSlot (ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
-            .FindAt (machine, dateTime));
-          if (null != slot) {
-            slot = ExtendLeft (slot);
-            slot = ExtendRight (slot);
+          var observationStateSlot = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
+            .FindAt (machine, dateTime);
+          if (observationStateSlot is null) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"FindAt: no observation state slot at {dateTime} for machine {machine.Id} => return null");
+            }
+            return null;
           }
+          IMachineShiftSlot slot = new MachineShiftSlot (observationStateSlot);
+          slot = ExtendLeft (slot);
+          slot = ExtendRight (slot);
           return slot;
         }
       }
@@ -104,20 +109,24 @@ namespace Lemoine.Business.MachineState
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="dateTime">in UTC</param>
-    /// <returns></returns>
+    /// <returns>null if the machine has no observation state slot at that date/time</returns>
     public async System.Threading.Tasks.Task<IMachineShiftSlot> FindAtAsync (IMachine machine, DateTime dateTime)
     {
       Debug.Assert (null != machine);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Business.MachineState.MachineShiftSlotDAO.FindAt")) {
-          IMachineShiftSlot slot = new MachineShiftSlot (await
-            ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
-            .FindAtAsync (machine, dateTime));
-          if (null != slot) {
-            slot = await ExtendLeftAsync (slot);
-            slot = await ExtendRightAsync (slot);
+          var observationStateSlot = await ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
+            .FindAtAsync (machine, dateTime);
+          if (observationStateSlot is null) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"FindAtAsync: no observation state slot at {dateTime} for machine {machine.Id} => return null");
+            }
+            return null;
           }
+          IMachineShiftSlot slot = new MachineShiftSlot (observationStateSlot);
+          slot = await ExtendLeftAsync (slot);
+          slot = await ExtendRightAsync (slot);
           return slot;
         }
       }
@@ -128,18 +137,23 @@ namespace Lemoine.Business.MachineState
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="dateTime">in UTC</param>
-    /// <returns></returns>
+    /// <returns>null if the machine has no observation state slot at that date/time</returns>
     public IMachineShiftSlot FindAtExtendRightOnly (IMachine machine, DateTime dateTime)
     {
       Debug.Assert (null != machine);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Business.MachineState.MachineShiftSlotDAO.FindAt")) {
-          IMachineShiftSlot slot = new MachineShiftSlot (ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
-            .FindAt (machine, dateTime));
-          if (null != slot) {
-            slot = ExtendRight (slot);
+          var observationStateSlot = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
+            .FindAt (machine, dateTime);
+          if (observationStateSlot is null) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"FindAtExtendRightOnly: no observation state slot at {dateTime} for machine {machine.Id} => return null");
+            }
+            return null;
           }
+          IMachineShiftSlot slot = new MachineShiftSlot (observationStateSlot);
+          slot = ExtendRight (slot);
           return slot;
         }
       }
@@ -150,19 +164,23 @@ namespace Lemoine.Business.MachineState
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="dateTime">in UTC</param>
-    /// <returns></returns>
+    /// <returns>null if the machine has no observation state slot at that date/time</returns>
     public async System.Threading.Tasks.Task<IMachineShiftSlot> FindAtExtendRightOnlyAsync (IMachine machine, DateTime dateTime)
     {
       Debug.Assert (null != machine);
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Business.MachineState.MachineShiftSlotDAO.FindAt")) {
-          IMachineShiftSlot slot = new MachineShiftSlot (await
-            ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
-            .FindAtAsync (machine, dateTime));
-          if (null != slot) {
-            slot = await ExtendRightAsync (slot);
+          var observationStateSlot = await ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
+            .FindAtAsync (machine, dateTime);
+          if (observationStateSlot is null) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"FindAtExtendRightOnlyAsync: no observation state slot at {dateTime} for machine {machine.Id} => return null");
+            }
+            return null;
           }
+          IMachineShiftSlot slot = new MachineShiftSlot (observationStateSlot);
+          slot = await ExtendRightAsync (slot);
           return slot;
         }
       }

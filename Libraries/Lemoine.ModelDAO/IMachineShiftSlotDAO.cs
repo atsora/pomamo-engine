@@ -18,7 +18,7 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="dateTime">in UTC</param>
-    /// <returns></returns>
+    /// <returns>null if the machine has no observation state slot at that date/time</returns>
     IMachineShiftSlot FindAt (IMachine machine, DateTime dateTime);
 
     /// <summary>
@@ -26,7 +26,7 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="dateTime">in UTC</param>
-    /// <returns></returns>
+    /// <returns>null if the machine has no observation state slot at that date/time</returns>
     System.Threading.Tasks.Task<IMachineShiftSlot> FindAtAsync (IMachine machine, DateTime dateTime);
   }
 }

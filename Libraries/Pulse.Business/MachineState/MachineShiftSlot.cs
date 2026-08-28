@@ -14,7 +14,7 @@ using Lemoine.Business.Common;
 namespace Lemoine.Business.MachineState
 {
   /// <summary>
-  /// Machine mode slot
+  /// Machine shift slot
   /// </summary>
   [Serializable]
   public class MachineShiftSlot : IMachineShiftSlot
