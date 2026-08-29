@@ -10,13 +10,15 @@ using Lemoine.ModelDAO;
 using Lemoine.Business;
 using Lemoine.Model;
 using Lemoine.Core.Log;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lemoine.Business.MachineMode
 {
   /// <summary>
   /// Request class to get the running time in a specified range for a given machine
+  ///
+  /// It is the duration of <see cref="MachiningDuration"/>, without the date/time it was
+  /// counted up to
   /// </summary>
   public sealed class RunningDuration
     : IRequest<TimeSpan>
@@ -71,121 +73,20 @@ namespace Lemoine.Business.MachineMode
     /// <returns>Running duration (TimeSpan)</returns>
     public TimeSpan Get ()
     {
-      if (this.Range.IsEmpty ()) {
-        log.WarnFormat ("Get: specified range is empty => return 0s");
-        return TimeSpan.FromSeconds (0);
-      }
-
-      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (IDAOTransaction transaction = session.BeginTransaction ("Business.MachineMode.RunningDuration")) { // Read-write because of day processing
-          UpperBound<DateTime> upperFullDay;
-          { // upperDay
-            var upperBound = Bound.GetMinimum<DateTime> (DateTime.UtcNow, this.Range.Upper).Value;
-            var upperDaySlot = ModelDAOHelper.DAOFactory.DaySlotDAO.FindProcessedAt (upperBound);
-            if (null == upperDaySlot) {
-              log.ErrorFormat ("Get: no processed day at {0} => fallback, return an approximative value", upperBound);
-              Debug.Assert (false);
-              upperFullDay = upperBound.Date;
-            }
-            else if (!upperDaySlot.Day.HasValue) {
-              log.ErrorFormat ("Get: day slot has no associated day => fallback, return an approximative value");
-              Debug.Assert (false);
-              upperFullDay = upperBound.Date;
-            }
-            else { // null != daySlot && daySlot.Day.HasValue
-              if (!Bound<DateTime>.Equals (upperBound, upperDaySlot.DateTimeRange.Lower)) {
-                Debug.Assert (upperDaySlot.DateTimeRange.Lower.HasValue);
-                Debug.Assert (upperDaySlot.DateTimeRange.Lower.Value < upperBound);
-
-                var result = TimeSpan.FromSeconds (0);
-
-                if (Bound.Compare<DateTime> (this.Range.Lower, upperDaySlot.DateTimeRange.Lower) < 0) { // Past
-                  var pastRange = new UtcDateTimeRange (this.Range.Lower, upperDaySlot.DateTimeRange.Lower.Value);
-                  Debug.Assert (!pastRange.IsEmpty ());
-                  var pastDuration = ServiceProvider.Get<TimeSpan> (new RunningDuration (this.Machine, pastRange));
-                  result = result.Add (pastDuration);
-                }
-
-                // Current
-                var currentRange = new UtcDateTimeRange (upperDaySlot.DateTimeRange.Intersects (this.Range));
-                var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
-                  .FindAllInUtcRangeWithMachineMode (this.Machine, currentRange);
-                var runningSeconds = reasonSlots
-                  .Where (s => s.Running)
-                  .Where (s => s.Duration.HasValue)
-                  .Sum (s => s.Duration.Value.TotalSeconds);
-                result = result.Add (TimeSpan.FromSeconds (runningSeconds));
-
-                transaction.Commit ();
-                return result;
-              }
-              else {
-                upperFullDay = upperDaySlot.Day.Value.AddDays (-1);
-              }
-            }
-          }
-
-          LowerBound<DateTime> lowerFullDay;
-          TimeSpan runningDuration = TimeSpan.FromSeconds (0);
-
-          if (this.Range.Lower.HasValue) {
-            var lowerDaySlot = ModelDAOHelper.DAOFactory.DaySlotDAO.FindProcessedAt (this.Range.Lower.Value);
-            if (null == lowerDaySlot) {
-              log.ErrorFormat ("Get: no processed day at {0} => fallback, return an approximative value", this.Range.Lower.Value);
-              Debug.Assert (false);
-              lowerFullDay = this.Range.Lower.Value.Date;
-            }
-            else if (!lowerDaySlot.Day.HasValue) {
-              log.ErrorFormat ("Get: day slot has no associated day => fallback, return an approximative value");
-              Debug.Assert (false);
-              lowerFullDay = this.Range.Lower.Value.Date;
-            }
-            else { // null != daySlot && daySlot.Day.HasValue
-              if (!Bound<DateTime>.Equals (this.Range.Lower, lowerDaySlot.DateTimeRange.Lower)) {
-                // Compute the period [this.Range.Lower,daySlot.DateTimeRange.Upper)
-                Debug.Assert (lowerDaySlot.DateTimeRange.Upper.HasValue);
-                Debug.Assert (this.Range.Lower.Value < lowerDaySlot.DateTimeRange.Upper.Value);
-                var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
-                  .FindAllInUtcRangeWithMachineMode (Machine, new UtcDateTimeRange (this.Range.Lower.Value, lowerDaySlot.DateTimeRange.Upper.Value));
-                var runningSeconds = reasonSlots
-                  .Where (s => s.Running)
-                  .Where (slot => slot.Duration.HasValue)
-                  .Sum (slot => slot.Duration.Value.TotalSeconds);
-                runningDuration = runningDuration.Add (TimeSpan.FromSeconds (runningSeconds));
-                lowerFullDay = lowerDaySlot.Day.Value.AddDays (1);
-              }
-              else {
-                lowerFullDay = lowerDaySlot.Day.Value;
-              }
-            }
-          }
-          else {
-            lowerFullDay = new LowerBound<DateTime> (null);
-          }
-
-          if (lowerFullDay < upperFullDay) {
-            var dayRange = new DayRange (lowerFullDay, upperFullDay);
-            var summarys = ModelDAOHelper.DAOFactory.MachineActivitySummaryDAO
-              .FindInDayRangeWithMachineMode (this.Machine, dayRange);
-            var runningSeconds = summarys
-              .Where (s => s.MachineMode.Running.HasValue && s.MachineMode.Running.Value)
-              .Sum (s => s.Time.TotalSeconds);
-            runningDuration = runningDuration.Add (TimeSpan.FromSeconds (runningSeconds));
-          }
-
-          transaction.Commit ();
-          return runningDuration;
-        }
-      }
+      return ServiceProvider
+        .Get (new MachiningDuration (this.Machine, this.Range))
+        .Duration;
     }
 
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Running duration (TimeSpan)</returns>
     public async Task<TimeSpan> GetAsync ()
     {
-      return await Task.FromResult (Get ());
+      var response = await ServiceProvider
+        .GetAsync (new MachiningDuration (this.Machine, this.Range));
+      return response.Duration;
     }
 
     /// <summary>
