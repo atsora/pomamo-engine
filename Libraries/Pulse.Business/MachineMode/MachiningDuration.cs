@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lemoine.Core.Cache;
@@ -117,10 +118,10 @@ namespace Lemoine.Business.MachineMode
             var past = (pastRange is null)
               ? null
               : await ServiceProvider.GetAsync (new MachiningDuration (this.Machine, pastRange));
-            result = ComputeInsideDay (upperDaySlot, past);
+            result = await ComputeInsideDayAsync (upperDaySlot, past);
           }
           else {
-            result = ComputeFullDays (upperBound, GetUpperFullDay (upperBound, upperDaySlot));
+            result = await ComputeFullDaysAsync (upperBound, GetUpperFullDay (upperBound, upperDaySlot));
           }
           transaction.Commit ();
           return result;
@@ -189,6 +190,25 @@ namespace Lemoine.Business.MachineMode
     }
 
     /// <summary>
+    /// Count the machining duration when the upper bound is inside a day, asynchronously
+    /// </summary>
+    /// <param name="upperDaySlot">not null, with a day</param>
+    /// <param name="past">machining duration of the days before, null if there is none</param>
+    /// <returns>not null</returns>
+    async Task<MachiningDurationResponse> ComputeInsideDayAsync (IDaySlot upperDaySlot, MachiningDurationResponse past)
+    {
+      var currentRange = new UtcDateTimeRange (upperDaySlot.DateTimeRange.Intersects (this.Range));
+      var current = await SumRunningReasonSlotsAsync (currentRange);
+      var duration = (past is null)
+        ? current.Duration
+        : past.Duration.Add (current.Duration);
+      // When the data already stopped before the day of the upper bound, that is where it
+      // stops: the reason slots of the day carry nothing after it
+      var countedUntil = past?.MaxDateTime ?? current.CountedUntil;
+      return BuildResponse (duration, countedUntil);
+    }
+
+    /// <summary>
     /// Count the machining duration from the full days, plus the part of the first day the
     /// requested range starts inside
     /// </summary>
@@ -244,6 +264,61 @@ namespace Lemoine.Business.MachineMode
     }
 
     /// <summary>
+    /// Count the machining duration from the full days, plus the part of the first day the
+    /// requested range starts inside, asynchronously
+    /// </summary>
+    /// <param name="upperBound"></param>
+    /// <param name="upperFullDay"></param>
+    /// <returns>not null</returns>
+    async Task<MachiningDurationResponse> ComputeFullDaysAsync (DateTime upperBound, UpperBound<DateTime> upperFullDay)
+    {
+      LowerBound<DateTime> lowerFullDay;
+      var duration = TimeSpan.FromSeconds (0);
+
+      if (this.Range.Lower.HasValue) {
+        var lowerDaySlot = await ModelDAOHelper.DAOFactory.DaySlotDAO
+          .FindProcessedAtAsync (this.Range.Lower.Value);
+        if (lowerDaySlot is null) {
+          log.Error ($"ComputeFullDaysAsync: no processed day at {this.Range.Lower.Value} => fallback, return an approximative value");
+          Debug.Assert (false);
+          lowerFullDay = this.Range.Lower.Value.Date;
+        }
+        else if (!lowerDaySlot.Day.HasValue) {
+          log.Error ($"ComputeFullDaysAsync: day slot has no associated day => fallback, return an approximative value");
+          Debug.Assert (false);
+          lowerFullDay = this.Range.Lower.Value.Date;
+        }
+        else if (!Bound<DateTime>.Equals (this.Range.Lower, lowerDaySlot.DateTimeRange.Lower)) {
+          // Count the period [this.Range.Lower, lowerDaySlot.DateTimeRange.Upper)
+          Debug.Assert (lowerDaySlot.DateTimeRange.Upper.HasValue);
+          Debug.Assert (this.Range.Lower.Value < lowerDaySlot.DateTimeRange.Upper.Value);
+          var firstDayRange = new UtcDateTimeRange (this.Range.Lower.Value, lowerDaySlot.DateTimeRange.Upper.Value);
+          duration = duration.Add ((await SumRunningReasonSlotsAsync (firstDayRange)).Duration);
+          lowerFullDay = lowerDaySlot.Day.Value.AddDays (1);
+        }
+        else {
+          lowerFullDay = lowerDaySlot.Day.Value;
+        }
+      }
+      else {
+        lowerFullDay = new LowerBound<DateTime> (null);
+      }
+
+      if (lowerFullDay < upperFullDay) {
+        var dayRange = new DayRange (lowerFullDay, upperFullDay);
+        var summaries = await ModelDAOHelper.DAOFactory.MachineActivitySummaryDAO
+          .FindInDayRangeWithMachineModeAsync (this.Machine, dayRange);
+        var runningSeconds = summaries
+          .Where (s => s.MachineMode.Running.HasValue && s.MachineMode.Running.Value)
+          .Sum (s => s.Time.TotalSeconds);
+        duration = duration.Add (TimeSpan.FromSeconds (runningSeconds));
+      }
+
+      // The upper bound falls on a day boundary: the days that are counted are complete
+      return BuildResponse (duration, upperBound);
+    }
+
+    /// <summary>
     /// Get the last full day to count from the summaries
     /// </summary>
     /// <param name="upperBound"></param>
@@ -267,6 +342,18 @@ namespace Lemoine.Business.MachineMode
     {
       var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
         .FindAllInUtcRangeWithMachineMode (this.Machine, range);
+      return SumRunningReasonSlots (reasonSlots, range);
+    }
+
+    /// <summary>
+    /// Sum the duration of the running reason slots that were read, and get the date/time
+    /// they go up to
+    /// </summary>
+    /// <param name="reasonSlots">not null</param>
+    /// <param name="range">not empty</param>
+    /// <returns>the machining duration, and the date/time the reason slots stop at</returns>
+    static (TimeSpan Duration, DateTime CountedUntil) SumRunningReasonSlots (IEnumerable<IReasonSlot> reasonSlots, UtcDateTimeRange range)
+    {
       var runningSeconds = reasonSlots
         .Where (s => s.Running)
         .Where (s => s.Duration.HasValue)
@@ -287,6 +374,19 @@ namespace Lemoine.Business.MachineMode
         }
       }
       return (TimeSpan.FromSeconds (runningSeconds), countedUntil);
+    }
+
+    /// <summary>
+    /// Sum the duration of the running reason slots of a range, and get the date/time the
+    /// reason slots go up to, asynchronously
+    /// </summary>
+    /// <param name="range">not empty</param>
+    /// <returns>the machining duration, and the date/time the reason slots stop at</returns>
+    async Task<(TimeSpan Duration, DateTime CountedUntil)> SumRunningReasonSlotsAsync (UtcDateTimeRange range)
+    {
+      var reasonSlots = await ModelDAOHelper.DAOFactory.ReasonSlotDAO
+        .FindAllInUtcRangeWithMachineModeAsync (this.Machine, range);
+      return SumRunningReasonSlots (reasonSlots, range);
     }
 
     /// <summary>

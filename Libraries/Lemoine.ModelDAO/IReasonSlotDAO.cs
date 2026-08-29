@@ -47,6 +47,16 @@ namespace Lemoine.ModelDAO
 
     /// <summary>
     /// Find all the reason slots in a specified UTC date/time range
+    /// with an early fetch of the machine mode, asynchronously
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IList<IReasonSlot>> FindAllInUtcRangeWithMachineModeAsync (IMachine machine,
+                                                                                           UtcDateTimeRange range);
+
+    /// <summary>
+    /// Find all the reason slots in a specified UTC date/time range
     /// with an early fetch of the machine mode
     /// </summary>
     /// <param name="machine"></param>

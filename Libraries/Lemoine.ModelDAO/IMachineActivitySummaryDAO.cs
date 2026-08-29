@@ -76,5 +76,15 @@ namespace Lemoine.ModelDAO
     /// <returns></returns>
     IList<IMachineActivitySummary> FindInDayRangeWithMachineMode (IMachine machine,
                                                                   DayRange range);
+
+    /// <summary>
+    /// Find the machine activity summaries in a day range
+    /// with an early fetch of the machine mode, asynchronously
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IList<IMachineActivitySummary>> FindInDayRangeWithMachineModeAsync (IMachine machine,
+                                                                                                    DayRange range);
   }
 }

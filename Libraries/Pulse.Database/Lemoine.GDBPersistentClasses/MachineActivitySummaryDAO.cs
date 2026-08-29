@@ -226,6 +226,25 @@ namespace Lemoine.GDBPersistentClasses
         .AddOrder (Order.Asc ("Day"))
         .List<IMachineActivitySummary> ();
     }
+
+    /// <summary>
+    /// Find the machine activity summaries in a day range
+    /// with an early fetch of the machine mode, asynchronously
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IMachineActivitySummary>> FindInDayRangeWithMachineModeAsync (IMachine machine,
+                                                                                                                 DayRange range)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<MachineActivitySummary> ()
+        .Fetch (SelectMode.Fetch, "MachineMode")
+        .Add (Restrictions.Eq ("Machine", machine))
+        .Add (InDayRange (range))
+        .AddOrder (Order.Asc ("Day"))
+        .ListAsync<IMachineActivitySummary> ();
+    }
     
     /// <summary>
     /// Range criterion

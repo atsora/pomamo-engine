@@ -288,6 +288,33 @@ namespace Lemoine.GDBPersistentClasses
 
     /// <summary>
     /// Find all the reason slots in a specified UTC date/time range
+    /// with an early fetch of the machine mode, asynchronously
+    /// </summary>
+    /// <param name="machine"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IReasonSlot>> FindAllInUtcRangeWithMachineModeAsync (IMachine machine,
+                                                                                                        UtcDateTimeRange range)
+    {
+      Debug.Assert (null != machine);
+
+      Debug.Assert (!range.IsEmpty ());
+      if (range.IsEmpty ()) {
+        log.Error ($"FindAllInUtcRangeWithMachineModeAsync: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
+        return new List<IReasonSlot> ();
+      }
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<ReasonSlot> ()
+        .Fetch (SelectMode.Fetch, "MachineMode")
+        .Add (Restrictions.Eq ("Machine.Id", machine.Id))
+        .Add (OverlapRange (range))
+        .AddOrder (Order.Asc ("DateTimeRange"))
+        .ListAsync<IReasonSlot> ();
+    }
+
+    /// <summary>
+    /// Find all the reason slots in a specified UTC date/time range
     /// with an early fetch of the machine mode
     /// </summary>
     /// <param name="machine"></param>
