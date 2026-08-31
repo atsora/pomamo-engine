@@ -28,11 +28,36 @@ namespace Pulse.Extensions.Web.Graphql
     IGraphqlSchemaBuilder AddQueryType (Type type);
 
     /// <summary>
+    /// Declare an empty query type, whose fields all come from the type extensions
+    ///
+    /// It is the way a schema that spans several domains is built: one type extension per
+    /// domain rather than one class that knows them all
+    /// </summary>
+    /// <returns>this, so that the calls may be chained</returns>
+    IGraphqlSchemaBuilder AddQueryType ();
+
+    /// <summary>
     /// Set the type that exposes the mutations of the schema
     /// </summary>
     /// <param name="type">not null</param>
     /// <returns>this, so that the calls may be chained</returns>
     IGraphqlSchemaBuilder AddMutationType (Type type);
+
+    /// <summary>
+    /// Declare an empty mutation type, whose fields all come from the type extensions
+    ///
+    /// <see cref="AddQueryType()"/>
+    /// </summary>
+    /// <returns>this, so that the calls may be chained</returns>
+    IGraphqlSchemaBuilder AddMutationType ();
+
+    /// <summary>
+    /// Add the fields of a type extension to the type it extends, typically the query or
+    /// the mutation type
+    /// </summary>
+    /// <param name="type">not null</param>
+    /// <returns>this, so that the calls may be chained</returns>
+    IGraphqlSchemaBuilder AddTypeExtension (Type type);
 
     /// <summary>
     /// Add a type to the schema: an object type, an interface, a union, an enum or a scalar

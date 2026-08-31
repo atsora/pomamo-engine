@@ -33,6 +33,12 @@ namespace Pulse.Extensions.Web.Graphql
       => builder.AddType (typeof (T));
 
     /// <summary>
+    /// <see cref="IGraphqlSchemaBuilder.AddTypeExtension(Type)"/>
+    /// </summary>
+    public static IGraphqlSchemaBuilder AddTypeExtension<T> (this IGraphqlSchemaBuilder builder)
+      => builder.AddTypeExtension (typeof (T));
+
+    /// <summary>
     /// <see cref="IGraphqlSchemaBuilder.BindRuntimeType(Type, Type)"/>
     /// </summary>
     public static IGraphqlSchemaBuilder BindRuntimeType<TRuntimeType, TSchemaType> (this IGraphqlSchemaBuilder builder)
