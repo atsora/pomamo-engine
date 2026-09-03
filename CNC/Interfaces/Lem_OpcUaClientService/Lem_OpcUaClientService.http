@@ -1,0 +1,46 @@
+@Lem_OpcUaClientService_HostAddress = http://127.0.0.1:4841
+@acquisition = machine1
+
+### Status of the service and identifiers of the configured acquisitions
+GET {{Lem_OpcUaClientService_HostAddress}}/ping
+
+### Configure a machine and read its data, which is what CncCoreXmlPost does.
+### The attributes of moduleref are the connection properties: ServerUrl is required, an unknown
+### key answers 400. The ref attribute is accepted but selects nothing, this service always uses
+### the OPC UA client module. Posting a different configuration initializes the connection again.
+POST {{Lem_OpcUaClientService_HostAddress}}/xml?acquisition={{acquisition}}&format=json
+Content-Type: text/xml
+
+<root>
+  <moduleref ref="opcua" ServerUrl="opc.tcp://192.168.0.10:4840" UseSecurity="false" SecurityMode="None" DefaultNamespace="SinumerikVarProvider" TimeoutSeconds="10">
+    <property name="Password">a password with special characters</property>
+    <get method="GetDouble" param="/Channel/State/actFeedRateIpo[1]">RawFeedrate</get>
+    <get method="GetString" param="/Channel/ProgramInfo/progName[1]">ProgramName</get>
+    <get property="ConnectionError">AcquisitionError</get>
+  </moduleref>
+</root>
+
+### Read again the data of the last posted configuration, which is what CncCoreData does
+GET {{Lem_OpcUaClientService_HostAddress}}/data?acquisition={{acquisition}}&format=json
+
+### Read one value, which is what CncCoreGetSet does
+GET {{Lem_OpcUaClientService_HostAddress}}/get?acquisition={{acquisition}}&method=GetDouble&param=/Channel/State/actFeedRateIpo[1]&format=json
+
+### Read one value without any cache and without registering the parameter
+GET {{Lem_OpcUaClientService_HostAddress}}/get?acquisition={{acquisition}}&method=DirectRead&param=/Channel/State/actFeedRateIpo[1]&format=json
+
+### Read a property of the module
+GET {{Lem_OpcUaClientService_HostAddress}}/get?acquisition={{acquisition}}&property=ConnectionError&format=json
+
+### Write one value, which is what CncCoreGetSet does
+GET {{Lem_OpcUaClientService_HostAddress}}/set?acquisition={{acquisition}}&method=Write&param=/Channel/State/feedRateOvr&double=100.0&format=json
+
+### An unknown connection property answers 400, with the accepted ones in the message
+POST {{Lem_OpcUaClientService_HostAddress}}/xml?acquisition={{acquisition}}&format=json
+Content-Type: text/xml
+
+<root>
+  <moduleref ref="opcua" ServeurUrl="opc.tcp://192.168.0.10:4840">
+    <get method="GetDouble" param="/Channel/State/actFeedRateIpo[1]">RawFeedrate</get>
+  </moduleref>
+</root>

@@ -1,12 +1,10 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lem_OpcUaClientService", "Lem_OpcUaClientService.csproj", "{A50EC643-10E6-46DD-9066-DB21BFCE8632}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Cnc.OpcUaClient", "..\..\pomamo-cncmodules\Lemoine.Cnc.OpcUaClient\Lemoine.Cnc.OpcUaClient.csproj", "{FBB2B459-E1A1-4460-86BA-2D3C95991F07}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lemoine.Cnc.CncAlarm", "..\..\Libraries\Lemoine.Cnc.CncAlarm\Lemoine.Cnc.CncAlarm.csproj", "{DD65D545-B7A4-400D-97A3-E88A30226961}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomamo.CncModule", "..\..\Libraries\Pomamo.CncModule\Pomamo.CncModule.csproj", "{3317F419-EBF1-4069-B2CA-2750426D0FBB}"
 EndProject
@@ -59,24 +57,6 @@ Global
 		{FBB2B459-E1A1-4460-86BA-2D3C95991F07}.VS|x64.Build.0 = VS|x64
 		{FBB2B459-E1A1-4460-86BA-2D3C95991F07}.VS|x86.ActiveCfg = VS|x86
 		{FBB2B459-E1A1-4460-86BA-2D3C95991F07}.VS|x86.Build.0 = VS|x86
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Debug|x64.ActiveCfg = Debug|x64
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Debug|x64.Build.0 = Debug|x64
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Debug|x86.ActiveCfg = Debug|x86
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Debug|x86.Build.0 = Debug|x86
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Release|x64.ActiveCfg = Release|x64
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Release|x64.Build.0 = Release|x64
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Release|x86.ActiveCfg = Release|x86
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.Release|x86.Build.0 = Release|x86
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.VS|Any CPU.ActiveCfg = VS|Any CPU
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.VS|Any CPU.Build.0 = VS|Any CPU
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.VS|x64.ActiveCfg = VS|x64
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.VS|x64.Build.0 = VS|x64
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.VS|x86.ActiveCfg = VS|x86
-		{DD65D545-B7A4-400D-97A3-E88A30226961}.VS|x86.Build.0 = VS|x86
 		{3317F419-EBF1-4069-B2CA-2750426D0FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3317F419-EBF1-4069-B2CA-2750426D0FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3317F419-EBF1-4069-B2CA-2750426D0FBB}.Debug|x64.ActiveCfg = Debug|x64
