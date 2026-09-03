@@ -18,7 +18,6 @@ using Lemoine.WebMiddleware.Response;
 using Lemoine.WebMiddleware.Routing;
 using Lemoine.Extensions.Web.Attributes;
 using Lemoine.Extensions.Web.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Lemoine.Extensions.Web.Responses;
