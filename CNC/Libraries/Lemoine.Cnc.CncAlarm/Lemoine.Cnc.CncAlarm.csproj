@@ -8,6 +8,10 @@
     <AssemblyVersion>5.11.0.0</AssemblyVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pomamo.CncModule\Pomamo.CncModule.csproj" />
+  </ItemGroup>
+
 </Project>
 
 

@@ -1692,9 +1692,9 @@ namespace Lemoine.CncEngine
         return dictionary.ToDictionaryString (withType);
       }
 #if NETSTANDARD || NET48 || NETCOREAPP
-      else if (item.Value is IList<CncAlarm>) {
-        IList<CncAlarm> list = (IList<CncAlarm>)ConvertData (item.Value, typeof (IList<CncAlarm>));
-        return list.ToListString ();
+      // IEnumerable is covariant, so this covers both IList<CncAlarm> and IList<ICncAlarm>
+      else if (item.Value is IEnumerable<Pomamo.CncModule.ICncAlarm> cncAlarms) {
+        return cncAlarms.ToListString ();
       }
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 

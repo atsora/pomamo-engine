@@ -14,6 +14,7 @@ using Lemoine.Core.Log;
 using Lemoine.CncDataImport.Cache;
 using System.Threading;
 using Lemoine.Cnc;
+using ModuleCncAlarm = Pomamo.CncModule.ICncAlarm;
 
 namespace Lemoine.CncDataImport
 {
@@ -192,7 +193,7 @@ namespace Lemoine.CncDataImport
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
-    List<CncAlarm> GetAlarmList (object v)
+    List<ModuleCncAlarm> GetAlarmList (object v)
     {
       if (v is null) {
         log.Error ("ImportDataCncAlarm.GetAlarmList: v is null");
@@ -200,12 +201,12 @@ namespace Lemoine.CncDataImport
       }
 
       var collection = v as System.Collections.ICollection;
-      var list = new List<CncAlarm> ();
+      var list = new List<ModuleCncAlarm> ();
 
       // Already a collection?
       if (collection is null) {
         // Is it a cnc alarm?
-        var alarm = v as CncAlarm;
+        var alarm = v as ModuleCncAlarm;
         if (alarm is null) {
           log.Error ("ImportDataCncAlarm.GetAlarmList: v was not a collection and not a cncalarm");
         }
@@ -216,7 +217,7 @@ namespace Lemoine.CncDataImport
       else {
         if (collection.Count > 0) {
           foreach (object obj in collection) {
-            if (obj is CncAlarm alarm) {
+            if (obj is ModuleCncAlarm alarm) {
               list.Add (alarm);
             }
             else {
@@ -229,10 +230,10 @@ namespace Lemoine.CncDataImport
       return (list.Count > 0) ? list : null;
     }
 
-    void ImportAlarms (IList<CncAlarm> cncAlarms, DateTime startDatetime, DateTime endDatetime)
+    void ImportAlarms (IList<ModuleCncAlarm> cncAlarms, DateTime startDatetime, DateTime endDatetime)
     {
       // Prepare the cache and the alarms to store
-      var keyAlarms = new Dictionary<AlarmKey, CncAlarm> ();
+      var keyAlarms = new Dictionary<AlarmKey, ModuleCncAlarm> ();
       foreach (var cncAlarm in cncAlarms) {
         var alarmKey = new AlarmKey (cncAlarm);
 
@@ -290,7 +291,7 @@ namespace Lemoine.CncDataImport
       }
     }
 
-    void ProcessCncAlarm (AlarmKey alarmKey, CncAlarm cncAlarm, DateTime startDatetime, DateTime endDatetime)
+    void ProcessCncAlarm (AlarmKey alarmKey, ModuleCncAlarm cncAlarm, DateTime startDatetime, DateTime endDatetime)
     {
       Debug.Assert (cncAlarm != null);
 

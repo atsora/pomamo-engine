@@ -1,0 +1,15 @@
+{
+  "OpcUaClientService": {
+    "//": "The service has no authentication: keep it on the loopback interface, the acquisition runs on the same machine",
+    "Url": "http://127.0.0.1:4841",
+    "CacheDurationMs": 500,
+    "RegistrationDelayMs": 2000
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  }
+}
