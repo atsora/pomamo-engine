@@ -92,8 +92,7 @@ namespace Lemoine.Plugin.GoodCycleWithoutStopSequences
                 .FindByIdWithMachineModules (m_machine.Id);
               if (null == monitoredMachine) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("IsGood: machine {0} is not monitored => return true",
-                    m_machine.Id);
+                  log.Debug ($"IsGood: machine {m_machine.Id} is not monitored => return true");
                 }
                 return GoodCycleExtensionResponse.OK;
               }
@@ -116,7 +115,7 @@ namespace Lemoine.Plugin.GoodCycleWithoutStopSequences
                   .Subtract (stopSequencesDuration);
                 if (maxMachiningDuration < durationWithoutStopSequences) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("IsGood: duration without stop sequences {0} is greater than {1} for machine module id {2} => return false", durationWithoutStopSequences, maxMachiningDuration, machineModule.Id);
+                    log.Debug ($"IsGood: duration without stop sequences {durationWithoutStopSequences} is greater than {maxMachiningDuration} for machine module id {machineModule.Id} => return false");
                   }
                   return GoodCycleExtensionResponse.KO;
                 }

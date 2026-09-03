@@ -471,6 +471,11 @@ namespace Lemoine.CncEngine
       }
       var module = LoadModule (typeName);
 
+#if !NET40
+      // A module that logs with Microsoft.Extensions.Logging gets here where to send its logs
+      CncModuleLogging.SetLoggerFactory (module);
+#endif // !NET40
+
       // Check if a license is required
       if (!IsLicenseOk (module)) {
         log.Warn ($"LoadModule: the license is not ok for {module}, skip it");

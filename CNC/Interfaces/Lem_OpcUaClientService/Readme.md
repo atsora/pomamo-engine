@@ -158,9 +158,9 @@ Lemoine.Cnc.OpcUaClientLogging.LoggerFactory = app.Services.GetRequiredService<I
 ```
 
 A cnc module is created by its host without dependency injection, so its logger factory can not be
-injected: it is set once on that static hook. A host that does not set it gets no log from the
-module, which is what happens today when an acquisition loads it directly, with a `-D`
-configuration.
+injected: it is set once on that static hook. An acquisition that loads the module directly, with a
+`-D` configuration, gets its logs too: `Lemoine.Cnc.CncModuleLogging`, in the acquisition engine,
+sets the same hook with a factory that forwards to log4net, keeping the category names.
 
 ## Installation
 
