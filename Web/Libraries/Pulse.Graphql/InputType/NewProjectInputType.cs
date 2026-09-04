@@ -81,6 +81,7 @@ namespace Pulse.Graphql.InputType
               log.Error ($"CreateProject: the customer with id {this.CustomerId} does not exist");
               throw new InvalidOperationException ("invalid customer id");
             }
+            project.Customer = customer;
           }
           project = ModelDAOHelper.DAOFactory.ProjectDAO.MakePersistent (project);
           transaction.Commit ();

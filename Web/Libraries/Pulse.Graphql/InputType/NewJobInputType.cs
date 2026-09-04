@@ -103,6 +103,7 @@ namespace Pulse.Graphql.InputType
               log.Error ($"CreateJob: the customer with id {this.CustomerId} does not exist");
               throw new InvalidOperationException ("invalid customer id");
             }
+            job.Customer = customer;
           }
           job.DeliveryDate = this.DeliveryDate;
           job = ModelDAOHelper.DAOFactory.JobDAO.MakePersistent (job);

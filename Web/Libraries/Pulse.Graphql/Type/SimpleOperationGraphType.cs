@@ -45,10 +45,18 @@ namespace Pulse.Graphql.Type
       Field<double> ("weight", nullable: true);
       Field<NonNullGraphType<UtcDateTimeGraphType>, DateTime> ("creationDateTime");
       Field<UtcDateTimeGraphType, DateTime?> ("archiveDateTime");
-      Field<NonNullGraphType<OperationRevisionGraphType>, IOperationRevision> ("activeRevision");
-      Field<NonNullGraphType<ListGraphType<NonNullGraphType<OperationRevisionGraphType>>>, IEnumerable<IOperationRevision>> ("revisions"); // TODO: Get revisions, from a list of operations with the same name
-      Field<NonNullGraphType<OperationModelGraphType>, IOperationModel> ("defaultActiveModel");
-      Field<NonNullGraphType<ListGraphType<NonNullGraphType<IntermediateWorkPieceGraphType>>>, ICollection<IIntermediateWorkPiece>> ("intermediateWorkPieces");
+      // ISimpleOperation carries none of the four fields below: they all belong to the
+      // operation it wraps, the way durations does further down. Without an explicit
+      // resolver they are looked up by name on ISimpleOperation, resolve to null, and a
+      // non-null field turns that into an error
+      Field<NonNullGraphType<OperationRevisionGraphType>, IOperationRevision> ("activeRevision")
+        .Resolve (ctx => ctx.Source.Operation.ActiveRevision);
+      Field<NonNullGraphType<ListGraphType<NonNullGraphType<OperationRevisionGraphType>>>, IEnumerable<IOperationRevision>> ("revisions") // TODO: Get revisions, from a list of operations with the same name
+        .Resolve (ctx => ctx.Source.Operation.Revisions);
+      Field<NonNullGraphType<OperationModelGraphType>, IOperationModel> ("defaultActiveModel")
+        .Resolve (ctx => ctx.Source.Operation.DefaultActiveModel);
+      Field<NonNullGraphType<ListGraphType<NonNullGraphType<IntermediateWorkPieceGraphType>>>, IEnumerable<IIntermediateWorkPiece>> ("intermediateWorkPieces")
+        .Resolve (ctx => new[] { ctx.Source.IntermediateWorkPiece });
       Field<double?> ("defaultActiveMachiningDuration", nullable: true)
         .Resolve (ctx => ctx.Source.MachiningDuration?.TotalSeconds);
       Field<double?> ("defaultActiveLoadingDuration", nullable: true)

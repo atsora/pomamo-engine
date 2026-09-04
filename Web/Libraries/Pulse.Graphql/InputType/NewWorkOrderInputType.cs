@@ -108,6 +108,7 @@ namespace Pulse.Graphql.InputType
               log.Error ($"CreateWorkOrder: the customer with id {this.CustomerId} does not exist");
               throw new InvalidOperationException ("invalid customer id");
             }
+            workOrder.Customer = customer;
           }
           workOrder.DeliveryDate = this.DeliveryDate;
           IProject? project = null;

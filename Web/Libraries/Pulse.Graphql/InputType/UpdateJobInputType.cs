@@ -179,6 +179,9 @@ namespace Pulse.Graphql.InputType
           if (this.ExternalCodeSet) {
             job.ExternalCode = this.ExternalCode;
           }
+          if (this.DocumentLinkSet) {
+            job.DocumentLink = this.DocumentLink;
+          }
           if (this.CustomerIdSet) {
             if (this.CustomerId is null) {
               job.Customer = null;

@@ -72,10 +72,10 @@ namespace Pulse.Graphql
       Field<NonNullGraphType<OperationGraphType>> ("operation")
         .Argument<NonNullGraphType<IdGraphType>> ("id")
         .Resolve (ctx => GetOperation (ctx.GetArgument<int> ("id")));
-      Field<NonNullGraphType<OperationGraphType>> ("operationRevision")
+      Field<NonNullGraphType<OperationRevisionGraphType>> ("operationRevision")
         .Argument<NonNullGraphType<IdGraphType>> ("id")
         .Resolve (ctx => GetOperationRevision (ctx.GetArgument<int> ("id")));
-      Field<NonNullGraphType<OperationGraphType>> ("operationModel")
+      Field<NonNullGraphType<OperationModelGraphType>> ("operationModel")
         .Argument<NonNullGraphType<IdGraphType>> ("id")
         .Resolve (ctx => GetOperationModel (ctx.GetArgument<int> ("id")));
       Field<NonNullGraphType<ListGraphType<NonNullGraphType<SequenceGraphType>>>> ("sequences")

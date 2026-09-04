@@ -70,6 +70,14 @@ namespace Pulse.Graphql
           using (var transaction = session.BeginTransaction ("RemoveCncAcquisition")) {
             var cncAcquisition = ModelDAOHelper.DAOFactory.CncAcquisitionDAO
               .FindById (id);
+            if (cncAcquisition is null) {
+              // Without this the delete throws and the catch below returns false anyway,
+              // with a stack trace that hides the real failures. error is set like the catch
+              // does, so that nothing is notified when nothing was removed
+              log.Error ($"RemoveCncAcquisition: no cnc acquisition with id {id}");
+              error = true;
+              return false;
+            }
             ModelDAOHelper.DAOFactory.CncAcquisitionDAO.MakeTransient (cncAcquisition);
             transaction.Commit ();
           }
