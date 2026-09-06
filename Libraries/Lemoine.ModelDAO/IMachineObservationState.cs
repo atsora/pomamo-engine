@@ -168,9 +168,24 @@ namespace Lemoine.Model
     bool IsProduction { get; set; }
 
     /// <summary>
+    /// Does it correspond to an operating time ?
+    ///
+    /// null in case it is not known
+    /// </summary>
+    bool? IsOperatingTime { get; set; }
+
+    /// <summary>
     /// Does it correspond to a setup time ?
     /// </summary>
     bool IsSetup { get; set; }
+
+    /// <summary>
+    /// Optional color
+    ///
+    /// null or empty when no color is associated to this machine observation state:
+    /// the web services generate one on the fly then
+    /// </summary>
+    string Color { get; set; }
 
     /// <summary>
     /// Labor cost associated with this machine observation state

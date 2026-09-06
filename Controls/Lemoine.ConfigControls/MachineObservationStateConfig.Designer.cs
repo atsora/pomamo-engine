@@ -48,6 +48,8 @@ namespace Lemoine.ConfigControls
       this.laborCostColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.productionStateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.capacityLevelColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.isOperatingTimeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.colorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
       this.SuspendLayout();
       // 
@@ -71,7 +73,9 @@ namespace Lemoine.ConfigControls
                   this.isSetupColumn,
                   this.laborCostColumn,
                   this.productionStateColumn,
-                  this.capacityLevelColumn});
+                  this.capacityLevelColumn,
+                  this.isOperatingTimeColumn,
+                  this.colorColumn});
       this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView.Location = new System.Drawing.Point(0, 0);
       this.dataGridView.Name = "dataGridView";
@@ -198,6 +202,20 @@ namespace Lemoine.ConfigControls
       this.capacityLevelColumn.Name = "capacityLevelColumn";
       this.capacityLevelColumn.Width = 105;
       //
+      // isOperatingTimeColumn
+      //
+      this.isOperatingTimeColumn.DataPropertyName = "IsOperatingTime";
+      this.isOperatingTimeColumn.HeaderText = "IsOperatingTime";
+      this.isOperatingTimeColumn.Name = "isOperatingTimeColumn";
+      this.isOperatingTimeColumn.Width = 105;
+      //
+      // colorColumn
+      //
+      this.colorColumn.DataPropertyName = "Color";
+      this.colorColumn.HeaderText = "Color";
+      this.colorColumn.Name = "colorColumn";
+      this.colorColumn.Width = 82;
+      //
       // MachineObservationStateConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -215,6 +233,8 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn laborCostColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn productionStateColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn capacityLevelColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn isOperatingTimeColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn colorColumn;
     private System.Windows.Forms.DataGridViewCheckBoxColumn shiftRequiredColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn nameOrTranslationColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn versionColumn;

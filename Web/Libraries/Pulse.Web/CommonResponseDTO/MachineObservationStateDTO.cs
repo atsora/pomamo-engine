@@ -69,7 +69,15 @@ namespace Pulse.Web.CommonResponseDTO
       MachineObservationStateDTO machineObservationStateDTO = new MachineObservationStateDTO();
       machineObservationStateDTO.Id = ((Lemoine.Collections.IDataWithId<int>)machineObservationState).Id;
       machineObservationStateDTO.Display = machineObservationState.Display;
-      machineObservationStateDTO.BgColor = ColorGenerator.GetColor ("MachineObservationState", machineObservationStateDTO.Id);
+      // The color of the machine observation state when one is set in database, else one
+      // that is generated on the fly, like for a machine state template
+      var color = machineObservationState.Color;
+      if (!string.IsNullOrEmpty (color)) {
+        machineObservationStateDTO.BgColor = color;
+      }
+      else {
+        machineObservationStateDTO.BgColor = ColorGenerator.GetColor ("MachineObservationState", machineObservationStateDTO.Id);
+      }
       machineObservationStateDTO.FgColor = ColorGenerator.GetContrastColor (machineObservationStateDTO.BgColor);
       if (machineObservationState.CapacityLevel.HasValue) {
         machineObservationStateDTO.CapacityLevel = new CapacityLevelDTOAssembler ()

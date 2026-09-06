@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 
 using Iesi.Collections.Generic;
@@ -63,7 +64,9 @@ namespace Lemoine.ConfigControls
       laborCostColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateLaborCost");
       productionStateColumn.HeaderText = PulseCatalog.GetString ("ProductionState");
       capacityLevelColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateCapacityLevel");
-      
+      isOperatingTimeColumn.HeaderText = PulseCatalog.GetString ("MachineObservationStateIsOperatingTime");
+      colorColumn.HeaderText = PulseCatalog.GetString ("Color", "Color");
+
       m_machineObservationStates.SortColumns = false;
       
       {
@@ -141,6 +144,29 @@ namespace Lemoine.ConfigControls
           row.Cells [e.ColumnIndex].Value = dialog.SelectedValue;
         }
       }
+      else if (colorColumn.Name.Equals (dataGridView.Columns [e.ColumnIndex].Name)) {
+        PickColor (dataGridView.Rows [e.RowIndex].Cells [e.ColumnIndex]);
+      }
+    }
+
+    /// <summary>
+    /// Ask for a color and write it in the specified cell, in the #RRGGBB form the model stores
+    /// </summary>
+    /// <param name="cell">not null</param>
+    void PickColor (DataGridViewCell cell)
+    {
+      var cellValue = (string)cell.Value;
+      var colorDialog = new ColorDialog ();
+      if (!string.IsNullOrEmpty (cellValue)) {
+        colorDialog.Color = ColorTranslator.FromHtml (cellValue);
+      }
+      if (DialogResult.OK != colorDialog.ShowDialog ()) {
+        return;
+      }
+      var selectedColor = colorDialog.Color;
+      cell.Style.BackColor = selectedColor;
+      cell.Value = $"#{selectedColor.R:X2}{selectedColor.G:X2}{selectedColor.B:X2}";
+      dataGridView.RefreshEdit ();
     }
     
     void MachineObservationStateConfigValidated(object sender, EventArgs e)

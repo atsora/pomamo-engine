@@ -113,7 +113,15 @@ namespace Pulse.Web.MachineStateTemplate
           if (null != slot.MachineStateTemplate) {
             slotDto.Id = slot.MachineStateTemplate.Id;
             slotDto.Display = slot.MachineStateTemplate.Display;
-            slotDto.BgColor = ColorGenerator.GetColor ("MachineStateTemplate", slot.MachineStateTemplate.Id);
+            // The color of the machine state template when one is set in database, else one
+            // that is generated on the fly, like in MachineStateTemplateDTOAssembler
+            var color = slot.MachineStateTemplate.Color;
+            if (!string.IsNullOrEmpty (color)) {
+              slotDto.BgColor = color;
+            }
+            else {
+              slotDto.BgColor = ColorGenerator.GetColor ("MachineStateTemplate", slot.MachineStateTemplate.Id);
+            }
             slotDto.FgColor = ColorGenerator.GetContrastColor (slotDto.BgColor);
             if (slot.MachineStateTemplate.Category.HasValue) {
               slotDto.Category = (int)slot.MachineStateTemplate.Category.Value;
