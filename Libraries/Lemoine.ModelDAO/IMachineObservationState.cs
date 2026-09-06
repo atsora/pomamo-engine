@@ -168,13 +168,6 @@ namespace Lemoine.Model
     bool IsProduction { get; set; }
 
     /// <summary>
-    /// Does it correspond to an operating time ?
-    ///
-    /// null in case it is not known
-    /// </summary>
-    bool? IsOperatingTime { get; set; }
-
-    /// <summary>
     /// Does it correspond to a setup time ?
     /// </summary>
     bool IsSetup { get; set; }
@@ -199,6 +192,11 @@ namespace Lemoine.Model
 
     /// <summary>
     /// Capacity level associated with this machine observation state
+    ///
+    /// It is also what tells whether the machine observation state corresponds to an
+    /// operating time: <see cref="Lemoine.Model.CapacityLevel.Open"/> and
+    /// <see cref="Lemoine.Model.CapacityLevel.ExpectedProduction"/> do,
+    /// <see cref="Lemoine.Model.CapacityLevel.Closed"/> does not
     ///
     /// Nullable
     /// </summary>

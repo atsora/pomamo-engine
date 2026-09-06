@@ -22,11 +22,14 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     static readonly ILog log = LogManager.GetLogger (typeof (MachineObservationState_UnitTest).FullName);
 
     /// <summary>
-    /// The color and the operating time, which the 1927 and 1928 migrations added, are
-    /// written and read back
+    /// The color, which the 1927 migration added, and the capacity level, which the 1920
+    /// one did, are written and read back
+    ///
+    /// The capacity level is what tells whether the machine observation state corresponds
+    /// to an operating time: there is no column of its own for that
     /// </summary>
     [Test]
-    public void TestColorAndIsOperatingTime ()
+    public void TestColorAndCapacityLevel ()
     {
       var daoFactory = ModelDAOHelper.DAOFactory;
       using (var daoSession = daoFactory.OpenSession ())
@@ -34,13 +37,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         var attended = daoFactory.MachineObservationStateDAO
           .FindById ((int)MachineObservationStateId.Attended);
         Assert.Multiple (() => {
-          // No color and no operating time is set on the default rows
+          // No color and no capacity level is set on the default rows
           Assert.That (attended.Color, Is.Null);
-          Assert.That (attended.IsOperatingTime, Is.Null);
+          Assert.That (attended.CapacityLevel, Is.Null);
         });
 
         attended.Color = "#FF8000";
-        attended.IsOperatingTime = true;
+        attended.CapacityLevel = CapacityLevel.ExpectedProduction;
         daoFactory.MachineObservationStateDAO.MakePersistent (attended);
         daoFactory.FlushData ();
 
@@ -48,7 +51,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .FindById ((int)MachineObservationStateId.Attended);
         Assert.Multiple (() => {
           Assert.That (read.Color, Is.EqualTo ("#FF8000"));
-          Assert.That (read.IsOperatingTime, Is.True);
+          Assert.That (read.CapacityLevel, Is.EqualTo (CapacityLevel.ExpectedProduction));
         });
 
         transaction.Rollback ();

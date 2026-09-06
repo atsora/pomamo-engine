@@ -34,7 +34,6 @@ namespace Lemoine.GDBPersistentClasses
     IMachineObservationState m_siteAttendanceChange;
     LinkDirection m_linkOperationDirection = LinkDirection.None;
     bool m_isProduction = false;
-    bool? m_isOperatingTime = null;
     bool m_isSetup = false;
     double? m_laborCost = null;
     IProductionState m_productionState = null;
@@ -164,32 +163,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_isProduction; }
       set { m_isProduction = value; }
     }
-
-    /// <summary>
-    /// Does it correspond to an operating time ?
-    ///
-    /// null in case it is not known
-    /// </summary>
-    [XmlIgnore]
-    public virtual bool? IsOperatingTime {
-      get { return m_isOperatingTime; }
-      set { m_isOperatingTime = value; }
-    }
-
-    /// <summary>
-    /// use for Xml serialization of IsOperatingTime
-    /// </summary>
-    [XmlAttribute ("IsOperatingTime")]
-    public virtual bool XmlSerializationIsOperatingTime
-    {
-      get { return m_isOperatingTime.Value; }
-      set { m_isOperatingTime = value; }
-    }
-
-    /// <summary>
-    /// used to serialize IsOperatingTime only when not null
-    /// </summary>
-    public virtual bool XmlSerializationIsOperatingTimeSpecified => m_isOperatingTime.HasValue;
 
     /// <summary>
     /// Does it correspond to a setup time ?

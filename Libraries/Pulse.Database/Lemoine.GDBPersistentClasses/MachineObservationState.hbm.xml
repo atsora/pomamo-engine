@@ -26,8 +26,6 @@
     <property name="IsProduction"
               column="machineobservationstateisproduction"
               not-null="true" />
-    <property name="IsOperatingTime"
-              column="machineobservationstateisoperatingtime" />
     <property name="IsSetup"
               column="machineobservationstateissetup"
               not-null="true" />
