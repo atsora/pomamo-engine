@@ -892,43 +892,69 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       return true;
     }
 
+    /// <summary>
+    /// Get the reason slot that follows <paramref name="range"/>
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="range">not empty, with an upper bound</param>
+    /// <returns>the reason slot after range, or null if there is none or if it can't be used</returns>
     IReasonSlot FindAfter (IMachine machine, UtcDateTimeRange range)
     {
-      // The range may be with upper bound inclusive (unique date/time)
-      var dateTimeAfter = range.UpperInclusive ? range.Upper.Value.AddSeconds (1) : range.Upper.Value;
-      return FindAfterAt (machine, range, dateTimeAfter);
+      if (range.UpperInclusive) {
+        // Degenerate range with an inclusive upper bound (unique date/time):
+        // no reason slot begins at range.Upper => search the reason slot at range.Upper + 1s instead
+        return FindAfterAt (machine, range, range.Upper.Value.AddSeconds (1));
+      }
+
+      // Search the next reason slot from its begin date/time and not from a date/time it contains:
+      // the lower bound of a reason slot is never updated while its upper bound is, when the analysis
+      // service extends it. Else, if the reason slot of range is extended in the database once it has
+      // been loaded in the NHibernate session, the search at range.Upper returns this very same reason
+      // slot, with the obsolete date/time range that is kept in the session cache (see ExtendToLeft
+      // that uses the symmetric FindWithEnd method)
+      var reasonSlotAfter = ModelDAOHelper.DAOFactory.ReasonSlotDAO
+        .FindWithBegin (machine, range.Upper.Value);
+      return CheckAfter (reasonSlotAfter, range);
     }
 
-    IReasonSlot FindAfterAt (IMachine machine, UtcDateTimeRange range, DateTime at, int attempt = 1)
+    IReasonSlot FindAfterAt (IMachine machine, UtcDateTimeRange range, DateTime at)
     {
       var reasonSlotAfter = ModelDAOHelper.DAOFactory.ReasonSlotDAO
         .FindAt (machine, at);
-      if (reasonSlotAfter is not null) {
-        if (!reasonSlotAfter.DateTimeRange.Lower.HasValue) {
-          log.Fatal ($"FindAfterAt: no lower value in reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange}");
-          throw new InvalidOperationException ("Invalid reason slot, with no lower date/time");
-        }
-        else if (reasonSlotAfter.DateTimeRange.IsEmpty ()) {
-          log.Fatal ($"FindAfterAt: reason slot after id={reasonSlotAfter.Id} with an empty range={reasonSlotAfter.DateTimeRange}");
-          throw new InvalidOperationException ("Invalid reason slot, with an empty range");
-        }
-        if (!reasonSlotAfter.DateTimeRange.IsStrictlyRightOf (range)) {
-          log.Fatal ($"FindAfterAt: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not strictly after reason slot range={range}, after={at}");
-          if (reasonSlotAfter.DateTimeRange.Equals (range) && (1 == attempt)) {
-            log.Fatal ($"FindAfterAt: this should not happen, range are identical range={range} at={at}, try again one second later");
-            // Work around in case this happens: try with after + 1 second
-            return FindAfterAt (machine, range, at.AddSeconds (1), attempt + 1);
-          }
-          // Bug: the log above is from time to time raised, and the reason why has not beed found yet
-          throw new Exception ("Invalid reason slot after");
-        }
-        if (!reasonSlotAfter.DateTimeRange.Lower.Value.Equals (range.Upper.Value)) {
-          log.Fatal ($"FindAfterAt: reason slot after id={reasonSlotAfter.Id} is not adjacent to range={reasonSlotAfter.DateTimeRange}, but try to continue");
-        }
-        // else Valid next reasonSlotAfter
-        if (log.IsDebugEnabled) {
-          log.Debug ($"FindAfterAt: check if {range} can be extended to {reasonSlotAfter.DateTimeRange.Upper}");
-        }
+      return CheckAfter (reasonSlotAfter, range);
+    }
+
+    /// <summary>
+    /// Check the reason slot that was found after <paramref name="range"/> can be used to extend it
+    /// </summary>
+    /// <param name="reasonSlotAfter">nullable</param>
+    /// <param name="range">not empty, with an upper bound</param>
+    /// <returns>the reason slot after, or null if it can't be used</returns>
+    IReasonSlot CheckAfter (IReasonSlot reasonSlotAfter, UtcDateTimeRange range)
+    {
+      if (reasonSlotAfter is null) {
+        return null;
+      }
+      if (reasonSlotAfter.DateTimeRange.IsEmpty ()) {
+        log.Error ($"CheckAfter: reason slot after id={reasonSlotAfter.Id} with an empty range => skip it");
+        return null;
+      }
+      if (!reasonSlotAfter.DateTimeRange.Lower.HasValue) {
+        log.Error ($"CheckAfter: no lower value in reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} => skip it");
+        return null;
+      }
+      if (!reasonSlotAfter.DateTimeRange.IsStrictlyRightOf (range)) {
+        // This may happen when the reason slot of range was extended in the database once it had been
+        // loaded in the NHibernate session: do not extend the range in that case, the next request
+        // will take the new date/time range into account
+        log.Warn ($"CheckAfter: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not strictly after range={range} => do not extend the range");
+        return null;
+      }
+      if (!reasonSlotAfter.DateTimeRange.Lower.Value.Equals (range.Upper.Value)) {
+        log.Warn ($"CheckAfter: reason slot after id={reasonSlotAfter.Id} range={reasonSlotAfter.DateTimeRange} is not adjacent to range={range}, but try to continue");
+      }
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CheckAfter: check if {range} can be extended to {reasonSlotAfter.DateTimeRange.Upper}");
       }
       return reasonSlotAfter;
     }

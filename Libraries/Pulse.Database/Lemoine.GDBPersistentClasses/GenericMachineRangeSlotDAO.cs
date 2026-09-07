@@ -227,7 +227,10 @@ namespace Lemoine.GDBPersistentClasses
           .Add (new SimpleTypedExpression ("DateTimeRange", new Lemoine.NHibernateTypes.UTCDateTimeFullType (), utc, "@>"))
           .UniqueResult<I> ();
         if (result is not null && !result.DateTimeRange.ContainsElement (at)) {
-          log.Fatal ($"FindAt: returned element with range{result.DateTimeRange} does not contain {at}");
+          // The database row does contain at since this is the criterion of the request above, but the slot
+          // was already loaded in the NHibernate session and its date/time range was updated in the database
+          // since: the session cache keeps the date/time range that was read first
+          log.Error ($"FindAt: returned element with the obsolete range {result.DateTimeRange} that does not contain {at}, probably because it was updated in the database after it was loaded in the session");
         }
         return result;
       }
