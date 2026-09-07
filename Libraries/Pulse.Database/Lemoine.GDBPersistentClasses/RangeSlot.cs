@@ -168,10 +168,12 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="newRange">not empty</param>
     public override void UpdateDateTimeRange (UtcDateTimeRange newRange)
     {
-      Debug.Assert (!newRange.IsEmpty ()); // For the moment, this case is not coded
+      // For the moment, an empty range is not coded and the database refuses it
+      // (xxx_posduration check constraints) => raise the exception here rather than at flush time,
+      // else the initial cause is impossible to track and a dirty entity is left in the session
       if (newRange.IsEmpty ()) {
-        log.FatalFormat ("UpdateDateTimeRange: newRange is empty. StackTrace:{0}",
-          System.Environment.StackTrace);
+        log.Fatal ($"UpdateDateTimeRange: new range is empty for id={this.Id} range={this.DateTimeRange}. StackTrace: {System.Environment.StackTrace}");
+        throw new InvalidOperationException ($"Empty new range for the slot id={this.Id}");
       }
       
       if (object.Equals (newRange, m_dateTimeRange)) {

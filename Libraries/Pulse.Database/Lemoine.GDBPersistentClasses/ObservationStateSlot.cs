@@ -513,13 +513,13 @@ namespace Lemoine.GDBPersistentClasses
                                               Lemoine.Threading.IChecked checkedThread)
     {
       Debug.Assert (null != machine);
-      if (range.IsEmpty ()) {
-        log.FatalFormat ("ApplyMachineObservationState: " +
-                         "empty range. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+      // Note: a range with no duration would drive to a reason slot the database refuses
+      // (reasonslot_reasonslotdatetimerange_posduration check constraint), and there is nothing to apply
+      // on such a range anyway => stop here rather than in the middle of the reason slot update
+      if (range.IsEmpty () || (0 == range.Duration?.Ticks)) {
+        log.Fatal ($"ApplyMachineObservationState: range {range} is empty or with a null duration => do nothing. StackTrace: {System.Environment.StackTrace}");
+        return;
       }
-      Debug.Assert (!range.IsEmpty ());
       
       log.DebugFormat ("ApplyMachineObservationState: " +
                        "apply {0} / {1} in range {2}",
