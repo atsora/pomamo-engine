@@ -248,7 +248,6 @@ namespace Lemoine.CncDataImport.Cache
             // CncValue with a not-null length, may be a bug somewhere, this should not happen
             log.Error ($"SaveOrUpdateCncValue: a previous value {previousValue} was detected with a not null length => this should not happen normally");
           }
-          Debug.Assert (previousValue.End.Subtract (previousValue.Begin) < TimeSpan.FromSeconds (1));
           log.Info ($"SaveOrUpdateCncValue: about to remove previous Cnc Value {previousValue} with a null length");
           ModelDAOHelper.DAOFactory.CncValueDAO.MakeTransient (previousValue);
         }

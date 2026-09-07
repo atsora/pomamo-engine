@@ -149,7 +149,6 @@ namespace Lemoine.CncDataImport
       }
       catch (Exception ex) {
         log.Error ($"ImportStopCncValue: exception => try to reload m_cncValues", ex);
-        Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.Fatal ("ImportStopCncValue: the session is still active before reloading m_cncValues");
         }

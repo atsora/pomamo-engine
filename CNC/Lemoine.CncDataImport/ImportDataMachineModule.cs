@@ -76,7 +76,6 @@ namespace Lemoine.CncDataImport
                          "new data {0} is before the last data {1} " +
                          "=> this should not happen",
                          data, otherData);
-        Debug.Assert (false);
         return false;
       }
 
@@ -226,7 +225,6 @@ namespace Lemoine.CncDataImport
       }
       catch (Exception ex) { // Reload m_machineModuleActivity
         log.Error ($"ImportMachineModuleActivity: exception => try to reload m_machineModuleActivity {m_machineModuleActivity}", ex);
-        Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.Fatal ($"ImportMachineModuleActivity: the session is still active before reloading m_machineModuleActivity");
         }

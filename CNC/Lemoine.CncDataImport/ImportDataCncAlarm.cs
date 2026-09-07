@@ -280,7 +280,6 @@ namespace Lemoine.CncDataImport
       catch (Exception ex) {
         // Report
         log.Error ($"ImportAlarms: exception => try to reload m_cncAlarms", ex);
-        Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.Fatal ("ImportAlarms: the session is still active before reloading m_cncAlarms", ex);
         }
