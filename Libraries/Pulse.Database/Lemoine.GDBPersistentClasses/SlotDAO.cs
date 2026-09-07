@@ -275,7 +275,7 @@ namespace Lemoine.GDBPersistentClasses
                 using (var modificationTracker = new SlotModificationTracker<TSlot> (impactedSlot)) {
                   var oldSlot = modificationTracker.OldSlot;
                   oldSlot.Caller = this;
-                  impactedSlot.UpdateDateTimeRange (new UtcDateTimeRange (range.Upper.Value, impactedSlot.EndDateTime));
+                  UpdateImpactedSlotRange (impactedSlot, new UtcDateTimeRange (range.Upper.Value, impactedSlot.EndDateTime), association);
                   ModifySlot (oldSlot, impactedSlot, association);
                 }
               }
@@ -339,7 +339,7 @@ namespace Lemoine.GDBPersistentClasses
                   using (var modificationTracker = new SlotModificationTracker<TSlot> (impactedSlot)) {
                     var oldSlot = modificationTracker.OldSlot;
                     oldSlot.Caller = this;
-                    impactedSlot.UpdateDateTimeRange (new UtcDateTimeRange (impactedSlot.BeginDateTime, range.Lower.Value));
+                    UpdateImpactedSlotRange (impactedSlot, new UtcDateTimeRange (impactedSlot.BeginDateTime, range.Lower.Value), association);
                     Debug.Assert (!Bound.Equals<DateTime> (impactedSlot.BeginDateTime,
                                                            impactedSlot.EndDateTime));
                     ModifySlot (oldSlot, impactedSlot, association);
@@ -413,7 +413,7 @@ namespace Lemoine.GDBPersistentClasses
                       log.DebugFormat ("InsertNewSlots: impactedSlotNewRange is {0} because of extendedSlot", impactedSlotNewRange);
                     }
                   }
-                  impactedSlot.UpdateDateTimeRange (impactedSlotNewRange);
+                  UpdateImpactedSlotRange (impactedSlot, impactedSlotNewRange, association);
                   ModifySlot (oldSlot, impactedSlot, association);
                 }
                 // Right slot
@@ -479,6 +479,30 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
+    /// <summary>
+    /// Update the date/time range of an impacted slot, checking first the new range is valid
+    /// 
+    /// The database refuses an empty range or a range with a null duration
+    /// (see the xxx_posduration check constraints). Without this check, the invalid range would only be
+    /// detected much later, when the session is flushed, which makes the initial cause impossible to track
+    /// and leaves a dirty entity in the session
+    /// </summary>
+    /// <param name="impactedSlot">not null</param>
+    /// <param name="newRange"></param>
+    /// <param name="association"></param>
+    /// <exception cref="InvalidOperationException">the new range is empty or its duration is null</exception>
+    void UpdateImpactedSlotRange (TSlot impactedSlot, UtcDateTimeRange newRange, IPeriodAssociationInsert association)
+    {
+      Debug.Assert (null != impactedSlot);
+
+      if (newRange.IsEmpty () || (0 == newRange.Duration?.Ticks)) {
+        log.Fatal ($"UpdateImpactedSlotRange: new range {newRange} is empty or with a null duration for slot id={impactedSlot.Id} range={impactedSlot.DateTimeRange} and association {association}. StackTrace: {System.Environment.StackTrace}");
+        throw new InvalidOperationException ($"Invalid new range {newRange} for the slot id={impactedSlot.Id}");
+      }
+
+      impactedSlot.UpdateDateTimeRange (newRange);
+    }
+
     void ModifySlot (TSlot old, TSlot modified, IPeriodAssociation association)
     {
       modified.Consolidate (old, association);
@@ -514,8 +538,10 @@ namespace Lemoine.GDBPersistentClasses
         log.Fatal ($"Insert: slot has already a positive id={slot.Id} which is unexpected");
       }
 
-      if (slot.DateTimeRange.IsEmpty ()) {
-        log.Fatal ($"Insert: empty date/time range in slot => do nothing {System.Environment.StackTrace}");
+      // Note: a range with no duration is not empty ([t,t] is a point, see Range.IsPoint ()) but the database
+      // refuses it as well (xxx_posduration check constraints), and such a slot carries no information
+      if (slot.DateTimeRange.IsEmpty () || (0 == slot.DateTimeRange.Duration?.Ticks)) {
+        log.Fatal ($"Insert: date/time range {slot.DateTimeRange} of the slot is empty or with a null duration => do nothing {System.Environment.StackTrace}");
         return;
       }
 

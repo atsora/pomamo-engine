@@ -114,6 +114,11 @@ namespace Lemoine.Analysis
 
     readonly IActivityAnalysis m_activityAnalysis = null;
 
+    // A new ModificationAnalysis is created for each attempt on a modification, so the number of attempts
+    // that ended with an integrity constraint violation is tracked here, to be carried over
+    long m_constraintIntegrityViolationModificationId = 0;
+    int m_constraintIntegrityViolationAttempt = 0;
+
     // Properties for optimization
     bool m_cleanRequired = true; // From a previous partial execution
     long? m_maxModificationIdAllCompleted;
@@ -817,8 +822,20 @@ namespace Lemoine.Analysis
     /// <returns>If true, completed, else retry it</returns>
     protected virtual bool MakeAnalysis (CancellationToken cancellationToken, I modification)
     {
+      var modificationId = ((IDataWithId<long>)modification).Id;
       var modificationAnalysis = new ModificationAnalysis (modification, m_activityAnalysis);
-      return MakeAnalysis (cancellationToken, modification, modificationAnalysis);
+      if (modificationId == m_constraintIntegrityViolationModificationId) {
+        // Restore the number of attempts that were already made on this modification,
+        // so that a permanent integrity constraint violation does not block the queue for ever
+        modificationAnalysis.ConstraintIntegrityViolationAttempt = m_constraintIntegrityViolationAttempt;
+      }
+      try {
+        return MakeAnalysis (cancellationToken, modification, modificationAnalysis);
+      }
+      finally {
+        m_constraintIntegrityViolationModificationId = modificationId;
+        m_constraintIntegrityViolationAttempt = modificationAnalysis.ConstraintIntegrityViolationAttempt;
+      }
     }
 
     /// <summary>

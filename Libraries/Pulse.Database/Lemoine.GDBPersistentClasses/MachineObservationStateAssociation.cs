@@ -747,12 +747,16 @@ namespace Lemoine.GDBPersistentClasses
             // Test if two consecutive reason slots may be merged
             IReasonSlot currentReasonSlot = reasonSlot;
             if (null != previousReasonSlot) {
-              Debug.Assert (previousReasonSlot.EndDateTime.HasValue);
-              Debug.Assert (Bound.Equals<DateTime> (previousReasonSlot.EndDateTime, reasonSlot.BeginDateTime));
-              if (previousReasonSlot.ReferenceDataEquals (reasonSlot)) {
-                log.DebugFormat ("UpdateReasonSlots: " +
-                                 "merge {0} and {1}",
-                                 previousReasonSlot, reasonSlot);
+              // Note: Merge extends previousReasonSlot up to the end of reasonSlot, which is only valid
+              // if they are really consecutive. Else the resulting range could have no duration at all
+              if (!previousReasonSlot.EndDateTime.HasValue
+                  || !Bound.Equals<DateTime> (previousReasonSlot.EndDateTime, reasonSlot.BeginDateTime)) {
+                log.Fatal ($"UpdateReasonSlots: reason slots {previousReasonSlot} and {reasonSlot} are not consecutive => do not merge them");
+              }
+              else if (previousReasonSlot.ReferenceDataEquals (reasonSlot)) {
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"UpdateReasonSlots: merge {previousReasonSlot} and {reasonSlot}");
+                }
                 currentReasonSlot = Merge (previousReasonSlot, reasonSlot);
               }
             }

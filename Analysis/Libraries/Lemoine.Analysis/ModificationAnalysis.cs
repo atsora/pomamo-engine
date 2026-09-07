@@ -40,6 +40,9 @@ namespace Lemoine.Analysis
     static readonly string TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_KEY = "Analysis.Modification.TemporaryWithDelayException.Sleep";
     static readonly TimeSpan TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (2);
 
+    static readonly string MAX_CONSTRAINT_INTEGRITY_VIOLATION_ATTEMPT_KEY = "Analysis.Modification.MaxConstraintIntegrityViolationAttempt";
+    static readonly int MAX_CONSTRAINT_INTEGRITY_VIOLATION_ATTEMPT_DEFAULT = 5;
+
     #region Members
     volatile bool m_timeoutInterruption = false;
     readonly IModification m_modification;
@@ -49,6 +52,7 @@ namespace Lemoine.Analysis
     volatile AnalysisStatus m_analysisStatus = AnalysisStatus.New;
     volatile int m_statusPriority = -1; // Not set: -1
     int m_requestPauseAttempt = 0;
+    int m_constraintIntegrityViolationAttempt = 0;
     TransactionLevel m_restrictedTransactionLevel = TransactionLevel.Serializable;
     volatile int m_analysisConnectionId = -1;
     readonly IMachine m_machine;
@@ -93,6 +97,20 @@ namespace Lemoine.Analysis
     public bool Retry
     {
       get { return m_retry; }
+    }
+
+    /// <summary>
+    /// Number of attempts that already ended with an integrity constraint violation on the reasonslot table
+    /// 
+    /// A new ModificationAnalysis is created for each attempt on a top modification, so the caller is
+    /// responsible for carrying this number over from one attempt to the next one on the same modification.
+    /// Once the maximum number of attempts is reached, the modification is flagged instead of being
+    /// retried for ever, else it would block the whole modification queue
+    /// </summary>
+    public int ConstraintIntegrityViolationAttempt
+    {
+      get { return m_constraintIntegrityViolationAttempt; }
+      set { m_constraintIntegrityViolationAttempt = value; }
     }
 
     /// <summary>
@@ -718,17 +736,25 @@ namespace Lemoine.Analysis
       // Consider integrity constraint violations on reasonslot as being temporary for:
       // 23514 check_violation (_posduration)
       // 23P01 exclusion_violation (_nooverlap)
-      if ((databaseExceptionDetails.Code.Equals ("23514") || databaseExceptionDetails.Equals ("23P01"))
+      if ((databaseExceptionDetails.Code.Equals ("23514") || databaseExceptionDetails.Code.Equals ("23P01"))
         && databaseExceptionDetails.BaseMessage.Contains ("reasonslot")) {
-        log.Error ($"HandleIntegrityConstraintViolation: Analysis of {m_modification} failed with a constraint integrity violation, try to retry because on reasonslot table", ex);
-        m_retry = true;
-        Debug.Assert (!ModelDAOHelper.DAOFactory.IsTransactionActive ());
-        if (ModelDAOHelper.DAOFactory.IsTransactionActive ()) {
-          log.Fatal ("HandleIntegrityConstraintViolation: after an integrity constraint violation, the transaction is still active");
-          SetExitRequested ();
-          throw new Lemoine.Threading.AbortException ("Transaction active with inner IntegrityConstraintViolation raised in MakeAnalysis.", ex);
+        var maxAttempt = Lemoine.Info.ConfigSet
+          .LoadAndGet (MAX_CONSTRAINT_INTEGRITY_VIOLATION_ATTEMPT_KEY, MAX_CONSTRAINT_INTEGRITY_VIOLATION_ATTEMPT_DEFAULT);
+        ++m_constraintIntegrityViolationAttempt;
+        if (m_constraintIntegrityViolationAttempt <= maxAttempt) {
+          log.Error ($"HandleIntegrityConstraintViolation: Analysis of {m_modification} failed with a constraint integrity violation, try to retry (attempt {m_constraintIntegrityViolationAttempt}/{maxAttempt}) because on reasonslot table", ex);
+          m_retry = true;
+          Debug.Assert (!ModelDAOHelper.DAOFactory.IsTransactionActive ());
+          if (ModelDAOHelper.DAOFactory.IsTransactionActive ()) {
+            log.Fatal ("HandleIntegrityConstraintViolation: after an integrity constraint violation, the transaction is still active");
+            SetExitRequested ();
+            throw new Lemoine.Threading.AbortException ("Transaction active with inner IntegrityConstraintViolation raised in MakeAnalysis.", ex);
+          }
+          return;
         }
-        return;
+        // Else the violation is not temporary: give up, else the modification would be retried for ever
+        // and it would block all the modifications that follow it in the queue
+        log.Error ($"HandleIntegrityConstraintViolation: Analysis of {m_modification} still fails with a constraint integrity violation on the reasonslot table after {maxAttempt} attempts => do not retry it any more", ex);
       }
 
       log.Error ($"HandleIntegrityConstraintViolation: integrity constraint violation => try to set the modification status to ConstraintIntegrityViolation, details={databaseExceptionDetails}");
