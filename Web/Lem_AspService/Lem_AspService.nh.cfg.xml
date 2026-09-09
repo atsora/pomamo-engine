@@ -91,7 +91,7 @@
       usage="read-only" />
     <class-cache
       class="Lemoine.GDBPersistentClasses.ManufacturingOrder, Pulse.Database"
-      usage="read-only" />
+      usage="read-write" />
     <class-cache
       class="Lemoine.GDBPersistentClasses.NonConformanceReason, Pulse.Database"
       usage="read-only" />
