@@ -83,6 +83,9 @@
     <class-cache
       class="Lemoine.GDBPersistentClasses.MachineSubCategory, Pulse.Database"
       usage="read-only" />
+    <class-cache
+      class="Lemoine.GDBPersistentClasses.ManufacturingOrder, Pulse.Database"
+      usage="read-only" />
     <!-- Do not add MonitoredMachine: You may only specify a cache for root <class> mappings, see #171833086 -->
     <class-cache
       class="Lemoine.GDBPersistentClasses.NonConformanceReason, Pulse.Database"
@@ -126,9 +129,6 @@
     <!-- Service is a child of Updater -->
     <class-cache
       class="Lemoine.GDBPersistentClasses.Shift, Pulse.Database"
-      usage="read-only" />
-    <class-cache
-      class="Lemoine.GDBPersistentClasses.Task, Pulse.Database"
       usage="read-only" />
     <class-cache
       class="Lemoine.GDBPersistentClasses.Tool, Pulse.Database"
