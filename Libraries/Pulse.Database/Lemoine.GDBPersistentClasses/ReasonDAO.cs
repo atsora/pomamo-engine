@@ -141,7 +141,22 @@ VALUES ({0}, '{1}', {2})",
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .List<IReason> ();
     }
-    
+
+    /// <summary>
+    /// FindAll implementation
+    /// with an eager fetch of the corresponding ReasonGroup
+    /// </summary>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IReason>> FindAllWithReasonGroupAsync ()
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<Reason> ()
+        .AddOrder (Order.Asc ("Id"))
+        .Fetch (SelectMode.Fetch, "ReasonGroup")
+        // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
+        .ListAsync<IReason> ();
+    }
+
     /// <summary>
     /// FindAll implementation
     /// with an eager fetch of the corresponding ReasonGroup

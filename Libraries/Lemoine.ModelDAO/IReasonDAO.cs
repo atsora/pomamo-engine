@@ -26,7 +26,14 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <returns></returns>
     IList<IReason> FindAllWithReasonGroup ();
-    
+
+    /// <summary>
+    /// FindAll implementation
+    /// with an eager fetch of the corresponding ReasonGroup
+    /// </summary>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IList<IReason>> FindAllWithReasonGroupAsync ();
+
     /// <summary>
     /// FindAll implementation
     /// with an eager fetch of the corresponding ReasonGroup

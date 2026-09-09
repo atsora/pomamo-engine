@@ -176,6 +176,20 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Get all the items with an early fetch of the reason and of the reason group
+    /// </summary>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IEnumerable<IMachineModeDefaultReason>> FindWithReasonGroupAsync ()
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<MachineModeDefaultReason> ()
+        .Fetch (SelectMode.Fetch, "Reason")
+        .Fetch (SelectMode.Fetch, "Reason.ReasonGroup")
+        // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
+        .ListAsync<IMachineModeDefaultReason> ();
+    }
+
+    /// <summary>
     /// Get all the items sorted for a given MachineMode and a given MachineObservationState
     /// 
     /// Note: there are some eager fetches and this is not registered to be cacheable

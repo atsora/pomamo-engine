@@ -275,5 +275,22 @@ namespace Lemoine.GDBPersistentClasses
         .Select (s => s.Reason)
         .Distinct ();
     }
+
+    /// <summary>
+    /// Find all the possible reasons that are set in ReasonSelection
+    /// </summary>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IEnumerable<IReason>> FindReasonsAsync ()
+    {
+      var reasonSelections = await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<ReasonSelection> ()
+        .Fetch (SelectMode.Fetch, "Reason")
+        .Fetch (SelectMode.Fetch, "Reason.ReasonGroup")
+        .ListAsync<IReasonSelection> ();
+      return reasonSelections
+        .Where (s => null != s.Reason)
+        .Select (s => s.Reason)
+        .Distinct ();
+    }
   }
 }

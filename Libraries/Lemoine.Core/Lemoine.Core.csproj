@@ -22,7 +22,7 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
     <!-- log4net 3.x only ships net462 and netstandard2.0 assemblies, neither of which net40 can consume.
          net40 is only built for the Okuma CNC gateway (Windows NT), which keeps the last 2.x release. -->
-    <PackageReference Include="log4net" VersionOverride="2.0.17" />
+    <PackageReference Include="log4net" VersionOverride="2.0.17" NoWarn="NU1902" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">

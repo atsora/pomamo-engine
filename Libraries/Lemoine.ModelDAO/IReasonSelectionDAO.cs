@@ -79,5 +79,11 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <returns></returns>
     IEnumerable<IReason> FindReasons ();
+
+    /// <summary>
+    /// Find all the possible reasons that are set in ReasonSelection
+    /// </summary>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IEnumerable<IReason>> FindReasonsAsync ();
   }
 }

@@ -27,6 +27,10 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException();
     }
+    public System.Threading.Tasks.Task<System.Collections.Generic.IList<Lemoine.Model.IReason>> FindAllWithReasonGroupAsync()
+    {
+      throw new NotImplementedException();
+    }
     public System.Collections.Generic.IList<Lemoine.Model.IReason> FindAllWithReasonGroup(Lemoine.Model.IReasonGroup reasonGroup)
     {
       throw new NotImplementedException();

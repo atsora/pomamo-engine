@@ -20,6 +20,12 @@ namespace Lemoine.ModelDAO
     IEnumerable<IMachineModeDefaultReason> FindWithReasonGroup ();
 
     /// <summary>
+    /// Get all the items with an early fetch of the reason and of the reason group
+    /// </summary>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IEnumerable<IMachineModeDefaultReason>> FindWithReasonGroupAsync ();
+
+    /// <summary>
     /// Find all the entities given a MachineMode and a MachineObservationState
     /// 
     /// with some children that are eager fetched
