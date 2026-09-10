@@ -71,6 +71,12 @@ namespace Lem_Settings
     public SelectionGuiCenter ()
     {
       InitializeComponent ();
+      EmbeddedImageLoader.FillImageList (
+        imageList,
+        typeof (SelectionGuiCenter),
+        new Size (32, 32),
+        "configurator", "internet", "launcher", "view", "wizard", "star");
+      buttonOk.Image = EmbeddedImageLoader.Load (typeof (SelectionGuiCenter), "ok");
     }
 
     #region Methods

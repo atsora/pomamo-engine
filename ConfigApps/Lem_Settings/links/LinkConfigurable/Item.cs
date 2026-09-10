@@ -54,7 +54,7 @@ namespace LinkConfigurable
     /// <summary>
     /// Image displayed as an icon
     /// </summary>
-    new public Image Image { // Override existing Image property
+    public override Image Image {
       get {
         Image image = null;
         try {

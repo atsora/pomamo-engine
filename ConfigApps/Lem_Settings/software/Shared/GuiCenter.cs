@@ -117,6 +117,12 @@ namespace Lem_Settings
       DisabledByRevisions = false;
       ProtectAgainstQuit = false;
       InitializeComponent ();
+      EmbeddedImageLoader.FillImageList (
+        imageList,
+        typeof (GuiCenter),
+        new System.Drawing.Size (16, 16),
+        "cancel", "go-next", "go-previous", "ok");
+      buttonHome.Image = EmbeddedImageLoader.Load (typeof (GuiCenter), "go-home");
       overlayDisable.Visible = false;
     }
     #endregion // Constructors

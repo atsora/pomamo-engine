@@ -78,10 +78,16 @@ namespace Lemoine.Settings
     /// <summary>
     /// Image displayed as an icon
     /// </summary>
-    public Image Image
+    public virtual Image Image
     {
       get {
         try {
+          var image = EmbeddedImageLoader.Load (GetType (), IconName);
+          if (image != null) {
+            return image;
+          }
+
+          // Compatibility fallback for plug-ins not migrated to embedded PNGs yet.
           var rm = new ResourceManager (GetType ().ToString (), GetType ().Assembly);
           return (Image)rm.GetObject (IconName) ?? new Bitmap (10, 10);
         }

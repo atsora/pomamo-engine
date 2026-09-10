@@ -26,6 +26,11 @@ namespace Lem_Settings
     public RevisionDetailsDialog(WatchedRevision revision)
     {
       InitializeComponent();
+      EmbeddedImageLoader.FillImageList (
+        imageList,
+        typeof (RevisionDetailsDialog),
+        new Size (32, 32),
+        "clock", "error", "validated");
       
       // Context
       this.Text = "Task details (revision #" + revision.RevisionId + " at " + DateTime.Now.ToLongTimeString() + ")";
