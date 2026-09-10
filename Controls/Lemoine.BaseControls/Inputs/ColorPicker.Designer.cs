@@ -60,7 +60,7 @@ namespace Lemoine.BaseControls.Inputs
       // 
       this.buttonChangeColor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
       this.buttonChangeColor.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonChangeColor.Image = new Bitmap ("changeColor.png");
+      this.buttonChangeColor.Image = BaseControlImages.Load ("changeColor");
       this.buttonChangeColor.Location = new System.Drawing.Point(85, 0);
       this.buttonChangeColor.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
       this.buttonChangeColor.MinimumSize = new System.Drawing.Size(18, 18);

@@ -54,28 +54,10 @@ Some images have a specific license:
   Part of Quartz icon pack (http://www.iconspedia.com/icon/delicious-12-42.html http://www.graphicrating.com/2009/06/19/quartz-icon-pack/)
   Author: Andy Gongea, http://www.graphicrating.com/
 
-- the application icon of the Lem_OperationExplorer application:
-  Creative Commons (Attribution 3.0 United States) 
-  (http://creativecommons.org/licenses/by/3.0/us/)
-  Link: http://www.iconfinder.com/icondetails/64498/16/node_tree_icon
-  Author: FatCow Web Hosting(http://www.fatcow.com/free-icons)
-
-- workorder.png, job.png, project.png, part.ong, opration.png, simpleoperation.png
-  Creative Commons (Attribution 3.0 Unported)
-  (http://creativecommons.org/licenses/by/3.0/)
-  Link: http://pc.de/ico/
-  Author: PC 100 Icon Pack
-
-- component.png
-  Creative Commons (Attribution 3.0 United States) 
-  (http://creativecommons.org/licenses/by/3.0/us/)
-  Link: http://www.iconfinder.com/icondetails/64634/16/components_server_icon
-  Author: FatCow Web Hosting(http://www.fatcow.com/free-icons) 
-
-- Mini icon set (intermediateworkpiece.png)
-  Free for commercial use 
-  Link: http://www.famfamfam.com/lab/icons/mini/
-  Author: Mark James, famfamfam.com
+- the Lem_OperationExplorer application icon and the UI icons in
+  Lemoine.JobControls and Lemoine.BaseControls:
+  Copyright (C) 2026 Atsora Solutions
+  Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
 
 - the MachineStatus icon of the Lem_Configuration application:
   You are free to use these icons on personal and/or commercial projects without any attribution or credit. You are not permitted to sell any of these icons individually or as an icon pack. However, you are permitted to sell a product which uses any of these icons as part of the product. Do not make the icon set available for download on any other icon/design site - always link to this DeviantArt page http://sekkyumu.deviantart.com/art/Developpers-Icons-63052312
@@ -93,7 +75,3 @@ Some images have a specific license:
 - Folder icon of AtrackingPackageInstaller
   License: Free for personal and commercial use with attribution
   Link: https://www.flaticon.com/free-icons/folder
-
-- Some arrow icons in several applications (Disclosure panel in Lem_OperationExplorer)
-  License: Free for personal and commercial use with attribution
-  Link: https://www.flaticon.com/packs/arrows-41

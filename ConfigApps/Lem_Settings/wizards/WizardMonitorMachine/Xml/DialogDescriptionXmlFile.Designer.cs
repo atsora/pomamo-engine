@@ -221,7 +221,7 @@ namespace WizardMonitorMachine
       this.ClientSize = new System.Drawing.Size(461, 341);
       this.Controls.Add(this.baseLayout);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-      this.Icon = new Icon ("descriptionDialog.ico");
+      this.Icon = Lemoine.BaseControls.BaseControlImages.LoadIcon ("descriptionDialog");
       this.Name = "DialogDescriptionXmlFile";
       this.Text = "Xml file description";
       this.baseLayout.ResumeLayout(false);

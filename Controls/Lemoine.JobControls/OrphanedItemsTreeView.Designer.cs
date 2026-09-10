@@ -33,7 +33,6 @@ namespace Lemoine.JobControls
     private void InitializeComponent()
     {
     	this.components = new System.ComponentModel.Container();
-    	System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrphanedItemsTreeView));
     	this.m_treeView = new System.Windows.Forms.TreeView();
     	this.imageList = new System.Windows.Forms.ImageList(this.components);
     	this.imageListDrag = new System.Windows.Forms.ImageList(this.components);
@@ -58,17 +57,10 @@ namespace Lemoine.JobControls
     	// 
     	// imageList
     	// 
-    	this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-    	this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-    	this.imageList.Images.SetKeyName(0, "workorder.png");
-    	this.imageList.Images.SetKeyName(1, "project.png");
-    	this.imageList.Images.SetKeyName(2, "component.png");
-    	this.imageList.Images.SetKeyName(3, "intermediateworkpiece.gif");
-    	this.imageList.Images.SetKeyName(4, "operation.png");
-    	this.imageList.Images.SetKeyName(5, "job.png");
-    	this.imageList.Images.SetKeyName(6, "part.png");
-    	this.imageList.Images.SetKeyName(7, "simpleoperation.png");
-    	this.imageList.Images.SetKeyName(8, "zoom.png");
+	this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+	this.imageList.ImageSize = new System.Drawing.Size(16, 16);
+	this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+	JobControlImages.FillTreeImageList(this.imageList, includeSearch: false);
     	// 
     	// imageListDrag
     	// 

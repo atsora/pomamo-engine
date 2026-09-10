@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="resources\*.png" LogicalName="$(AssemblyName).resources.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Lemoine.Business\Lemoine.Business.csproj" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\..\Libraries\Lemoine.Database\Lemoine.Database.csproj" />
@@ -29,5 +33,4 @@
   </ItemGroup>
   
 </Project>
-
 
