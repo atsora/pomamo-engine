@@ -29,14 +29,12 @@ namespace Lemoine.JobControls
     {
       imageList.Images.Clear ();
       foreach (var name in s_treeImageNames) {
-        using (var image = Load (name)) {
-          imageList.Images.Add ($"{name}.png", image);
-        }
+        // ImageList keeps the Image instances until its native handle is created.
+        // Do not dispose them here: ownership is transferred to the ImageList.
+        imageList.Images.Add ($"{name}.png", Load (name));
       }
       if (includeSearch) {
-        using (var image = Load ("zoom")) {
-          imageList.Images.Add ("zoom.png", image);
-        }
+        imageList.Images.Add ("zoom.png", Load ("zoom"));
       }
     }
 
