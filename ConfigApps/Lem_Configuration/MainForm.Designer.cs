@@ -798,7 +798,6 @@ namespace Lem_Configuration
       // machineStatusTabPage
       // 
       this.machineStatusTabPage.Controls.Add(this.machineStatusTabControl);
-      this.machineStatusTabPage.ImageKey = "MachineStatus_16x16.png";
       this.machineStatusTabPage.Location = new System.Drawing.Point(4, 29);
       this.machineStatusTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.machineStatusTabPage.Name = "machineStatusTabPage";
