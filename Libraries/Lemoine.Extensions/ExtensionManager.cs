@@ -22,12 +22,10 @@ namespace Lemoine.Extensions
   /// </summary>
   public class ExtensionManager
   {
-    #region Members
     readonly AdditionalExtensionsOnlyProvider m_additionalExtensionsOnlyProvider = new AdditionalExtensionsOnlyProvider ();
     IExtensionsProvider m_setExtensionsProvider = null;
     IExtensionsProvider m_extensionsProvider = null;
     bool m_additionalExtensionsActive = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ExtensionManager).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
@@ -38,7 +36,6 @@ namespace Lemoine.Extensions
     /// </summary>
     static readonly string EXTENSIONS_CACHE_KEY_REGEX = @"^Business\.Extension\.";
 
-    #region Getters / Setters
     /// <summary>
     /// Have the extensions been loaded ?
     /// </summary>
@@ -62,7 +59,6 @@ namespace Lemoine.Extensions
         return Instance.m_extensionsProvider;
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Private constructor (singleton class!)
@@ -71,7 +67,6 @@ namespace Lemoine.Extensions
     {
     }
 
-    #region Methods
     /// <summary>
     /// Initialize the extension manager
     /// </summary>
@@ -286,7 +281,6 @@ namespace Lemoine.Extensions
         log.Error ($"ClearExtensionsCache: RemoveByRegex failed for {EXTENSIONS_CACHE_KEY_REGEX}", ex);
       }
     }
-    #endregion // Methods
 
     #region Instance
     static ExtensionManager Instance { get { return Nested.instance; } }
