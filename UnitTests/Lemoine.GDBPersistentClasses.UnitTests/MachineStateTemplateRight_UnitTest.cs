@@ -61,7 +61,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           IList<IMachineStateTemplate> machineStateTemplates =
             ModelDAOHelper.DAOFactory.MachineStateTemplateRightDAO
             .GetGranted (operatorRole);
-          Assert.That (machineStateTemplates, Has.Count.EqualTo (9));
+          Assert.That (machineStateTemplates, Has.Count.EqualTo (10));
           Assert.That (machineStateTemplates.Contains (unattended), Is.False);
         }
         

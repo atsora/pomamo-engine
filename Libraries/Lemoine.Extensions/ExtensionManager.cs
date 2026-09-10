@@ -32,6 +32,12 @@ namespace Lemoine.Extensions
     static readonly ILog log = LogManager.GetLogger (typeof (ExtensionManager).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
+    /// <summary>
+    /// Cache keys of the extension lists memoised by Lemoine.Business.Extension:
+    /// Business.Extension.GlobalExtensions.* and Business.Extension.ParameterExtensions.*
+    /// </summary>
+    static readonly string EXTENSIONS_CACHE_KEY_REGEX = @"^Business\.Extension\.";
+
     #region Getters / Setters
     /// <summary>
     /// Have the extensions been loaded ?
@@ -81,6 +87,7 @@ namespace Lemoine.Extensions
         else {
           Instance.m_extensionsProvider = extensionsProvider;
         }
+        ClearExtensionsCache ();
       }
       else {
         if (log.IsDebugEnabled) {
@@ -95,6 +102,7 @@ namespace Lemoine.Extensions
             Instance.m_additionalExtensionsActive = false;
             Instance.m_setExtensionsProvider = extensionsProvider;
             Instance.m_extensionsProvider = extensionsProvider;
+            ClearExtensionsCache ();
           }
         }
       }
@@ -125,6 +133,7 @@ namespace Lemoine.Extensions
     public static void Activate (bool pluginUserDirectoryActive = true)
     {
       ExtensionsProvider.Activate (pluginUserDirectoryActive);
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -133,6 +142,7 @@ namespace Lemoine.Extensions
     public static void Deactivate ()
     {
       ExtensionsProvider.Deactivate ();
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -141,6 +151,7 @@ namespace Lemoine.Extensions
     public static void ClearDeactivate ()
     {
       ExtensionsProvider.ClearDeactivate ();
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -149,6 +160,7 @@ namespace Lemoine.Extensions
     public static void ClearAdditionalExtensions ()
     {
       Instance.m_additionalExtensionsOnlyProvider.Clear ();
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -162,6 +174,7 @@ namespace Lemoine.Extensions
         Instance.m_extensionsProvider = new MultiExtensionsProvider (Instance.m_setExtensionsProvider, Instance.m_additionalExtensionsOnlyProvider);
       }
       Instance.m_additionalExtensionsActive = true;
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -205,6 +218,7 @@ namespace Lemoine.Extensions
     public static void Reload (IPluginFilter pluginFilter)
     {
       ExtensionsProvider.Reload (pluginFilter);
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -214,6 +228,7 @@ namespace Lemoine.Extensions
     public static void Reload (Lemoine.Threading.IChecked checkedThread = null)
     {
       ExtensionsProvider.Reload (checkedThread);
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -226,6 +241,7 @@ namespace Lemoine.Extensions
     public static void Load (Lemoine.Threading.IChecked checkedThread = null)
     {
       ExtensionsProvider.Load (checkedThread);
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -239,6 +255,7 @@ namespace Lemoine.Extensions
     public static async Task LoadAsync (CancellationToken cancellationToken, Lemoine.Threading.IChecked checkedThread = null)
     {
       await ExtensionsProvider.LoadAsync (cancellationToken, checkedThread);
+      ClearExtensionsCache ();
     }
 
     /// <summary>
@@ -251,6 +268,23 @@ namespace Lemoine.Extensions
     static public IPluginDll GetPlugin (string identifyingName)
     {
       return ExtensionsProvider.GetPlugin (identifyingName);
+    }
+
+    /// <summary>
+    /// Remove from the local cache the extension lists memoised by the business layer, so that a
+    /// process that changes its own set of extensions (Lem_Settings after a Reload for example)
+    /// does not keep returning the previous ones.
+    ///
+    /// Do nothing if no cache client is set.
+    /// </summary>
+    static void ClearExtensionsCache ()
+    {
+      try {
+        Lemoine.Core.Cache.CacheManager.CacheClient?.RemoveByRegex (EXTENSIONS_CACHE_KEY_REGEX);
+      }
+      catch (Exception ex) {
+        log.Error ($"ClearExtensionsCache: RemoveByRegex failed for {EXTENSIONS_CACHE_KEY_REGEX}", ex);
+      }
     }
     #endregion // Methods
 

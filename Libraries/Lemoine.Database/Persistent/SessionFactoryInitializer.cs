@@ -51,14 +51,12 @@ namespace Lemoine.Database.Persistent
   {
     static readonly ILog log = LogManager.GetLogger (typeof (SessionFactoryInitializer).FullName);
 
-    #region Constructors
     /// <summary>
     /// Private constructor => singleton
     /// </summary>
     SessionFactoryInitializer ()
     {
     }
-    #endregion // Constructors
 
     static readonly string INSERT_DEFAULT_VALUES_KEY = "Database.InsertDefaultValues";
     static readonly bool INSERT_DEFAULT_VALUES_DEFAULT = true;
