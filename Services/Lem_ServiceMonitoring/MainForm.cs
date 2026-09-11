@@ -32,7 +32,6 @@ namespace LemoineServiceMonitoring
   {
     static readonly string ADDITIONAL_LCTR_KEY = "AdditionalServices.Lctr";
     static readonly string ADDITIONAL_LPOST_KEY = "AdditionalServices.Lpost";
-    static readonly string ADDITIONAL_CONNECTOR_KEY = "AdditionalServices.Connector";
     static readonly string ADDITIONAL_OTHERS_KEY = "AdditionalServices.Others";
     static readonly string ADDITIONAL_DEFAULT = ""; // List string, first character is the separator
 
@@ -217,9 +216,6 @@ namespace LemoineServiceMonitoring
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
       foreach (var serviceName in lpostServices) {
-        addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
-      }
-      foreach (var serviceName in connectorServices) {
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
       foreach (var serviceName in stampingServices) {
