@@ -34,6 +34,7 @@
                  cascade="none"
                  not-found="ignore" />
     <many-to-one name="Cell"
+                 access="nosetter.camelcase-m-underscore"
                  column="cellid"
                  class="Cell"
                  cascade="none"
