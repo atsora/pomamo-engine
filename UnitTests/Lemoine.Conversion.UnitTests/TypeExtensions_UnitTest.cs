@@ -37,9 +37,9 @@ namespace Lemoine.Conversion.UnitTests
         Assert.That (s, Is.EqualTo ("System.Int32"));
       }
       {
-        IList<Lemoine.Cnc.CncAlarm> alarms = new List<Lemoine.Cnc.CncAlarm> ();
+        IList<Pomamo.CncModule.CncAlarm> alarms = new List<Pomamo.CncModule.CncAlarm> ();
         var s = alarms.GetType ().GetLightQualifiedName ();
-        Assert.That (s, Is.EqualTo ("System.Collections.Generic.List`1[[Lemoine.Cnc.CncAlarm, Lemoine.Cnc.CncAlarm]]"));
+        Assert.That (s, Is.EqualTo ("System.Collections.Generic.List`1[[Pomamo.CncModule.CncAlarm, Pomamo.CncModule]]"));
         var t = Type.GetType (s);
         Assert.That (t.GetLightQualifiedName (), Is.EqualTo (s));
       }
