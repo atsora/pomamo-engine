@@ -1182,6 +1182,106 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       }
     }
     
+    /// <summary>
+    /// Test the machine status stays consistent with the last reason slot
+    /// when a new machine observation state association starts or ends exactly at the end of the last reason slot:
+    /// <item>if it starts there, no reason slot is updated, so the machine status must not be updated either</item>
+    /// <item>if it ends there, the last reason slot is updated, so the machine status must be updated too</item>
+    /// </summary>
+    [Test]
+    public void TestNewMachineObservationStateAtReasonSlotEnd ()
+    {
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        try {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          // Reference data
+          IShift shift3 = daoFactory.ShiftDAO.FindById (3);
+          MonitoredMachine machine = session.Get<MonitoredMachine> (3);
+          MachineObservationState attended =
+            session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
+          MachineObservationState unattended =
+            session.Get<MachineObservationState> ((int)MachineObservationStateId.Unattended);
+          Reason reasonUnattended = session.Get<Reason> (5);
+          MachineMode inactive = session.Get<MachineMode> (1);
+
+          // Existing reason slot T1 -> T2
+          {
+            ReasonSlot existingSlot =
+              new ReasonSlot (machine, new UtcDateTimeRange (T (1), T (2)));
+            existingSlot.MachineMode = inactive;
+            existingSlot.MachineObservationState = unattended;
+            existingSlot.SetDefaultReason (reasonUnattended, 10.0, false, true);
+            existingSlot.Consolidate (null, null);
+            session.Save (existingSlot);
+          }
+          // MachineStatus
+          {
+            MachineStatus machineStatus =
+              new MachineStatus (machine);
+            machineStatus.CncMachineMode = inactive;
+            machineStatus.MachineMode = inactive;
+            machineStatus.MachineObservationState = unattended;
+            machineStatus.ManualActivity = false;
+            machineStatus.Reason = reasonUnattended;
+            machineStatus.ReasonSlotEnd = T (2);
+            session.Save (machineStatus);
+          }
+
+          // New association T2 -> T3, that starts at the end of the last reason slot
+          {
+            IMachineObservationStateAssociation association = ModelDAOHelper.ModelFactory
+              .CreateMachineObservationStateAssociation (machine, attended, new UtcDateTimeRange (T (2), T (3)));
+            association.Shift = shift3;
+            association.Option = AssociationOption.NotByPeriod;
+            ((MachineObservationStateAssociation)association).Apply ();
+          }
+          {
+            IList<IReasonSlot> reasonSlots = daoFactory.ReasonSlotDAO
+              .FindOverlapsRange (machine, new UtcDateTimeRange (T (0)));
+            IMachineStatus machineStatus = daoFactory.MachineStatusDAO
+              .FindById (machine.Id);
+            Assert.That (reasonSlots, Has.Count.EqualTo (1), "Number of reason slots");
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[0].EndDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (reasonSlots[0].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (T (2)));
+              Assert.That (machineStatus.MachineObservationState, Is.EqualTo (unattended), "Machine observation state of the machine status");
+              Assert.That (machineStatus.Shift, Is.Null, "Shift of the machine status");
+            });
+          }
+
+          // New association T1.5 -> T2, that ends at the end of the last reason slot
+          {
+            IMachineObservationStateAssociation association = ModelDAOHelper.ModelFactory
+              .CreateMachineObservationStateAssociation (machine, attended, new UtcDateTimeRange (T (1.5), T (2)));
+            association.Shift = shift3;
+            association.Option = AssociationOption.NotByPeriod;
+            ((MachineObservationStateAssociation)association).Apply ();
+          }
+          {
+            IList<IReasonSlot> reasonSlots = daoFactory.ReasonSlotDAO
+              .FindOverlapsRange (machine, new UtcDateTimeRange (T (0)));
+            IMachineStatus machineStatus = daoFactory.MachineStatusDAO
+              .FindById (machine.Id);
+            Assert.That (reasonSlots, Has.Count.EqualTo (2), "Number of reason slots");
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[1].BeginDateTime.Value, Is.EqualTo (T (1.5)));
+              Assert.That (reasonSlots[1].EndDateTime.Value, Is.EqualTo (T (2)));
+              Assert.That (reasonSlots[1].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (machineStatus.ReasonSlotEnd, Is.EqualTo (T (2)));
+              Assert.That (machineStatus.MachineObservationState, Is.EqualTo (attended), "Machine observation state of the machine status");
+              Assert.That (machineStatus.Shift, Is.EqualTo (shift3), "Shift of the machine status");
+            });
+          }
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
     [OneTimeSetUp]
     public void Init()
     {
