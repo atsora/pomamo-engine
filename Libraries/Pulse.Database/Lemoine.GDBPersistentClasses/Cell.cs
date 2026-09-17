@@ -124,28 +124,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ICollection<IMachine> Machines => m_machines;
 
     /// <summary>
-    /// Add a machine in the member directly
-    /// 
-    /// To be used by the Machine class only
-    /// </summary>
-    /// <param name="machine"></param>
-    protected internal virtual void AddMachineForInternalUse (IMachine machine)
-    {
-      AddToProxyCollection<IMachine> (m_machines, machine);
-    }
-
-    /// <summary>
-    /// Remove a machine in the member directly
-    /// 
-    /// To be used by the Machine class only
-    /// </summary>
-    /// <param name="machine"></param>
-    protected internal virtual void RemoveMachineForInternalUse (IMachine machine)
-    {
-      RemoveFromProxyCollection<IMachine> (m_machines, machine);
-    }
-
-    /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
     /// </summary>

@@ -114,7 +114,9 @@ namespace Lemoine.Plugin.DynamicTime.UnitTests
           var operationCycle1 = StartCycle (machine, operationSlot, T (0));
           CheckAfter (extension, T (0));
           StopCycle (operationCycle1, T (90)); // Too Long
-          CheckAfter (extension, T (90));
+          // Note: the hint remains the begin of the bad cycle and does not jump to its end,
+          //       so that this cycle is still considered if it is corrected later
+          CheckAfter (extension, T (0));
 
           var operationCycle2 = StartCycle (machine, operationSlot, T (100));
           CheckAfter (extension, T (100));

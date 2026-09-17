@@ -188,22 +188,10 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ICell Cell
     {
       get { return m_cell; }
-      set {
-        if (object.Equals (m_cell, value)) {
-          // nothing to do
-          return;
-        }
-        // Remove the component from the previous project
-        if (m_cell != null) {
-          var cell = m_cell as Cell;
-          cell.RemoveMachineForInternalUse (this);
-        }
-        m_cell = value;
-        if (m_cell != null) {
-          // Add the component to the new cell
-          (m_cell as Cell).AddMachineForInternalUse (this);
-        }
-      }
+      // Note: do not maintain Cell.Machines here. Updating the collection of another entity
+      //       while NHibernate loads the machine raises an AssertionFailure, and m_cell may be a proxy.
+      //       Like for Company and Department, Cell.Machines is loaded from the database only
+      set { m_cell = value; }
     }
 
     /// <summary>
