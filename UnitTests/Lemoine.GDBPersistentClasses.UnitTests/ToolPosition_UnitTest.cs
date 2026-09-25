@@ -25,7 +25,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     public void Init ()
     {
       previousDSNName = System.Environment.GetEnvironmentVariable ("DefaultDSNName");
-      System.Environment.SetEnvironmentVariable ("DefaultDSNName", "LemoineUnitTests");
+      System.Environment.SetEnvironmentVariable ("DefaultDSNName", Lemoine.Info.Constants.DEFAULT_DSN_UNIT_TEST_NAME);
       ModelDAOHelper.ModelFactory = new GDBPersistentClassFactory ();
     }
 

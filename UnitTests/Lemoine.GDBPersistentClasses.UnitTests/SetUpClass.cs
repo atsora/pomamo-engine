@@ -47,7 +47,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       // Set the right DSNName
       m_previousDSNName = System.Environment.GetEnvironmentVariable ("DefaultDSNName");
       System.Environment.SetEnvironmentVariable ("DefaultDSNName",
-                                                 "LemoineUnitTests");
+                                                 Lemoine.Info.Constants.DEFAULT_DSN_UNIT_TEST_NAME);
 
       Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.IntermediateWorkPieceSummary.NHibernateExtension));
 

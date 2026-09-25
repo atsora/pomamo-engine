@@ -281,6 +281,21 @@ namespace Lemoine.Info
         }
       }
 
+      if (string.IsNullOrEmpty (suffix)
+        && string.Equals (dsnNameWithSuffix, Constants.DEFAULT_DSN_UNIT_TEST_NAME, StringComparison.InvariantCultureIgnoreCase)) {
+        // Never fall back to the default database in the unit tests
+        m_server = "localhost";
+        m_port = PORT_DEFAULT;
+        m_database = Constants.DEFAULT_DATABASE_UNIT_TEST_NAME;
+        m_username = USERNAME_DEFAULT;
+        m_password = PASSWORD_DEFAULT;
+        if (null != Updated) {
+          Updated (this, new System.EventArgs ());
+        }
+        log.Warn ($"LoadParametersWithSuffix: no config key {configKeyPrefix}.{dsnNameWithSuffix}, use the default unit test database {m_database} on localhost");
+        return true;
+      }
+
       if (log.IsWarnEnabled) {
         log.Warn ($"LoadParametersWithSuffix: no valid config key for DSN={m_dsnName} and suffix={suffix}");
       }
