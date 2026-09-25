@@ -23,6 +23,44 @@ namespace Lemoine.Business.CncAlarm
 
     readonly ILog log = LogManager.GetLogger (typeof (CncAlarmColorDAO).FullName);
 
+    readonly bool m_businessSeverity;
+
+    /// <summary>
+    /// Constructor: the severity is computed by the business request <see cref="CncAlarmSeverityFromAttributes"/>
+    /// </summary>
+    public CncAlarmColorDAO ()
+      : this (true)
+    {
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="businessSeverity">true: the severity is computed by the business request <see cref="CncAlarmSeverityFromAttributes"/>,
+    /// false: the severity is retrieved from the dynamic column cncalarmseverityid</param>
+    public CncAlarmColorDAO (bool businessSeverity)
+    {
+      m_businessSeverity = businessSeverity;
+    }
+
+    /// <summary>
+    /// Cnc alarm with its color and priority that are computed from the severity
+    /// </summary>
+    sealed class CncAlarmWithSeverity
+    {
+      public ICncAlarm CncAlarm { get; }
+      public string Color { get; }
+      public int Priority { get; }
+      public UtcDateTimeRange DateTimeRange => this.CncAlarm.DateTimeRange;
+
+      public CncAlarmWithSeverity (ICncAlarm cncAlarm, ICncAlarmSeverity severity)
+      {
+        this.CncAlarm = cncAlarm;
+        this.Color = severity?.Color;
+        this.Priority = severity?.Priority ?? 1000; // Same as CncAlarm.Priority
+      }
+    }
+
     #region ICncAlarmColorDAO implementation
     /// <summary>
     /// ICncAlarmColorDAO implementation
@@ -34,12 +72,24 @@ namespace Lemoine.Business.CncAlarm
     {
       Debug.Assert (null != machine);
 
-      // Note: CncAlarmDAO.FindOverlapsRangeWithSeverity is pretty inefficient.
-      // The left outer join with a virtual column does not work well
-      IEnumerable<ICncAlarm> cncAlarms = ModelDAOHelper.DAOFactory.CncAlarmDAO
-        .FindOverlapsRange (machine, range)
+      // Note: the dynamic column cncalarmseverityid is costly
+      // (and CncAlarmDAO.FindOverlapsRangeWithSeverity is pretty inefficient).
+      // By default, get the severity from the cached business request CncAlarmSeverityFromAttributes instead
+      IEnumerable<CncAlarmWithSeverity> cncAlarms;
+      if (m_businessSeverity) {
+        cncAlarms = machine.MachineModules
+          .SelectMany (m => ModelDAOHelper.DAOFactory.CncAlarmDAO.FindOverlapsRangeWithoutSeverity (m, range))
+          .Select (a => new CncAlarmWithSeverity (a, ServiceProvider.Get (new CncAlarmSeverityFromAttributes (a))));
+      }
+      else {
+        cncAlarms = ModelDAOHelper.DAOFactory.CncAlarmDAO
+          .FindOverlapsRange (machine, range)
+          .Select (a => new CncAlarmWithSeverity (a, a.Severity));
+      }
+      cncAlarms = cncAlarms
         .Where (a => !string.IsNullOrEmpty (a.Color))
-        .OrderBy (a => a.DateTimeRange.Lower.Value.Ticks);
+        .OrderBy (a => a.DateTimeRange.Lower.Value.Ticks)
+        .ToList ();
       return Merge (cncAlarms, range);
     }
 
@@ -147,7 +197,7 @@ namespace Lemoine.Business.CncAlarm
       return result;
     }
 
-    IList<ICncAlarmColor> Merge (IEnumerable<ICncAlarm> cncAlarms, UtcDateTimeRange range)
+    IList<ICncAlarmColor> Merge (IEnumerable<CncAlarmWithSeverity> cncAlarms, UtcDateTimeRange range)
     {
       IList<ICncAlarmColor> result = new List<ICncAlarmColor> ();
 
@@ -173,17 +223,43 @@ namespace Lemoine.Business.CncAlarm
       return result;
     }
 
-    void Group (IList<ICncAlarmColor> list, IEnumerable<ICncAlarm> cncAlarms, LowerBound<DateTime> lower)
+    /// <summary>
+    /// Split the cnc alarms into consecutive slots, keeping in each slot the alarm with the highest priority
+    ///
+    /// Iterative implementation: a recursive one may lead to a stack overflow
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="cncAlarms">with a lower bound</param>
+    /// <param name="lower"></param>
+    void Group (IList<ICncAlarmColor> list, IEnumerable<CncAlarmWithSeverity> cncAlarms, LowerBound<DateTime> lower)
     {
-      var containing = cncAlarms
-        .Where (a => a.DateTimeRange.ContainsElement (lower));
-      if (containing.Any ()) {
+      var remaining = cncAlarms.ToList ();
+      while (remaining.Any ()) {
+        var containing = remaining
+          .Where (a => a.DateTimeRange.ContainsElement (lower))
+          .ToList ();
+        if (!containing.Any ()) {
+          // Move to the beginning of the next alarm that starts strictly after lower
+          // Note: Bound.Compare does not consider the inclusivity of the bounds,
+          // so an alarm that ends at lower must not be considered here (else the process loops)
+          var next = remaining
+            .Where (a => Bound.Compare<DateTime> (lower, a.DateTimeRange.Lower) < 0)
+            .OrderBy (a => a.DateTimeRange.Lower.Value.Ticks)
+            .FirstOrDefault ();
+          if (null == next) {
+            return;
+          }
+          lower = next.DateTimeRange.Lower;
+          continue;
+        }
+
         var highestPriority = containing
           .OrderBy (a => a.Priority)
           .First ();
-        var nextHigherPriority = cncAlarms
+        var nextHigherPriority = remaining
           .Where (a => a.DateTimeRange.Overlaps (new UtcDateTimeRange (lower, highestPriority.DateTimeRange.Upper))
-                       && (a.Priority < highestPriority.Priority));
+                       && (a.Priority < highestPriority.Priority))
+          .ToList ();
         UpperBound<DateTime> upper;
         bool upperInclusive;
         if (nextHigherPriority.Any ()) {
@@ -195,23 +271,22 @@ namespace Lemoine.Business.CncAlarm
           upperInclusive = highestPriority.DateTimeRange.UpperInclusive;
         }
         UtcDateTimeRange range = new UtcDateTimeRange (lower, upper, true, upperInclusive);
-        list.Add (new CncAlarmColor (highestPriority, range));
-        if (upper.HasValue) {
-          DateTime newLower = upper.Value;
-          if (upperInclusive) {
-            newLower = newLower.AddSeconds (1);
-          }
-          Group (list, cncAlarms.Where (a => Bound.Compare<DateTime> (upper, a.DateTimeRange.Upper) <= 0), newLower);
-        }
-      }
-      else {
-        var first = cncAlarms.FirstOrDefault (a => Bound.Compare<DateTime> (lower, a.DateTimeRange.Upper) <= 0);
-        if (null == first) {
+        list.Add (new CncAlarmColor (highestPriority.CncAlarm.MachineModule.MonitoredMachine, highestPriority.Color, range, range.Duration));
+        if (!upper.HasValue) {
           return;
         }
-        else {
-          Group (list, cncAlarms, first.DateTimeRange.Lower);
+        DateTime newLower = upper.Value;
+        if (upperInclusive) {
+          newLower = newLower.AddSeconds (1);
         }
+        if (0 <= Bound.Compare<DateTime> (lower, (LowerBound<DateTime>)newLower)) {
+          log.Error ($"Group: new lower {newLower} is not after {lower} => stop to prevent an infinite loop");
+          return;
+        }
+        lower = newLower;
+        remaining = remaining
+          .Where (a => Bound.Compare<DateTime> (upper, a.DateTimeRange.Upper) <= 0)
+          .ToList ();
       }
     }
     #endregion // ICncAlarmColorDAO implementation

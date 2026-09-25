@@ -13,6 +13,7 @@ using Lemoine.Core.Log;
 using Pulse.Web.CommonResponseDTO;
 using Lemoine.Extensions.Web.Responses;
 using Lemoine.Web;
+using Lemoine.Business.CncAlarm;
 
 namespace Pulse.Web.CncAlarm
 {
@@ -99,17 +100,17 @@ namespace Pulse.Web.CncAlarm
         IEnumerable<IMachineModule> machineModules = machine.MachineModules
           .OrderBy (machineModule => IsMainMachineModule (machineModule, mainMachineModule) ? 0 : 1);
         
+        bool businessSeverity = CncAlarmSeverityOption.IsBusinessSeverity ();
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.CncAlarm.At"))
         {
           foreach (var machineModule in machineModules) {
-            var cncAlarms = ModelDAOHelper.DAOFactory.CncAlarmDAO.FindAtWithSeverity (machineModule, at);
+            var cncAlarms = GetCncAlarmsWithSeverity (machineModule, at, businessSeverity);
             if (cncAlarms.Any ()) {
               var byMachineModule =
                 new CncAlarmAtByMachineModuleDTO (machineModule,
                                                   IsMainMachineModule (machineModule, mainMachineModule));
               response.ByMachineModule.Add (byMachineModule);
-              foreach (var cncAlarm in cncAlarms.OrderBy (a => a.Priority)) {
-                var severity = cncAlarm.Severity;
+              foreach (var (cncAlarm, severity) in cncAlarms.OrderBy (a => a.Severity?.Priority ?? 1000)) { // 1000: same as CncAlarm.Priority
                 if (null == severity) {
                   log.WarnFormat ("GetWithoutCache: no severity defined for cnc alarm at {0} on machine module id {1}", at, machineModule.Id);
                   if (request.KeepFocusOnly) { // Skip it
@@ -133,7 +134,7 @@ namespace Pulse.Web.CncAlarm
                   new CncAlarmAtByMachineModuleDataDTO ();
                 data.Range = cncAlarm.DateTimeRange.ToString (dt => ConvertDTO.DateTimeUtcToIsoString (dt));
                 data.Display = cncAlarm.Display;
-                data.Color = cncAlarm.Color;
+                data.Color = severity?.Color;
                 data.CncInfo = cncAlarm.CncInfo;
                 data.CncSubInfo = cncAlarm.CncSubInfo;
                 data.Type = cncAlarm.Type;
@@ -155,7 +156,23 @@ namespace Pulse.Web.CncAlarm
       
       return response;
     }
-    
+
+    IList<(ICncAlarm CncAlarm, ICncAlarmSeverity Severity)> GetCncAlarmsWithSeverity (IMachineModule machineModule, DateTime at, bool businessSeverity)
+    {
+      if (businessSeverity) {
+        return ModelDAOHelper.DAOFactory.CncAlarmDAO
+          .FindAtWithoutSeverity (machineModule, at)
+          .Select (a => (a, Lemoine.Business.ServiceProvider.Get (new CncAlarmSeverityFromAttributes (a))))
+          .ToList ();
+      }
+      else {
+        return ModelDAOHelper.DAOFactory.CncAlarmDAO
+          .FindAtWithSeverity (machineModule, at)
+          .Select (a => (a, a.Severity))
+          .ToList ();
+      }
+    }
+
     bool IsMainMachineModule (IMachineModule machineModule, IMachineModule mainMachineModule)
     {
       Debug.Assert (null != machineModule);

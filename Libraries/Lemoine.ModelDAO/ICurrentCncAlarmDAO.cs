@@ -35,5 +35,17 @@ namespace Lemoine.ModelDAO
     /// <param name="machineModule">not null</param>
     /// <returns></returns>
     IList<ICurrentCncAlarm> FindByMachineModuleWithSeverity(IMachineModule machineModule);
+
+    /// <summary>
+    /// Find all the ICurrentCncAlarm for the specified machine module
+    /// without requesting the dynamic column cncalarmseverityid, which is costly
+    ///
+    /// The returned items are not attached to the session: their Severity and Color
+    /// properties are not set. Use Lemoine.Business.CncAlarm.CncAlarmSeverityFromAttributes
+    /// to get the severity.
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <returns></returns>
+    IList<ICurrentCncAlarm> FindByMachineModuleWithoutSeverity (IMachineModule machineModule);
   }
 }

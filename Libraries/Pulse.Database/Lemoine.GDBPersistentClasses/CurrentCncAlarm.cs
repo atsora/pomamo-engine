@@ -274,6 +274,32 @@ namespace Lemoine.GDBPersistentClasses
       m_machineModule = machineModule;
       m_dateTime = datetime;
     }
+
+    /// <summary>
+    /// Constructor of a detached current cnc alarm that is built from a projection,
+    /// without the severity (see <see cref="CurrentCncAlarmDAO.FindByMachineModuleWithoutSeverity"/>)
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="version"></param>
+    /// <param name="machineModule"></param>
+    /// <param name="datetime"></param>
+    /// <param name="cncInfo"></param>
+    /// <param name="cncSubInfo"></param>
+    /// <param name="type"></param>
+    /// <param name="number"></param>
+    /// <param name="message"></param>
+    /// <param name="properties"></param>
+    /// <param name="display"></param>
+    internal CurrentCncAlarm (int id, int version, IMachineModule machineModule, DateTime datetime, string cncInfo, string cncSubInfo,
+                              string type, string number, string message, IDictionary<string, object> properties, string display)
+      : this (machineModule, datetime, cncInfo, cncSubInfo, type, number)
+    {
+      m_id = id;
+      m_version = version;
+      m_message = message;
+      m_properties = properties ?? new Dictionary<string, object> ();
+      this.Display = display;
+    }
     #endregion // Constructors
     
     #region Methods

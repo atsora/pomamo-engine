@@ -155,7 +155,7 @@ namespace Pulse.Web.CncAlarm
       result.Range = range.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
       result.Blocks = new List<CncAlarmColorBlockDTO> ();
 
-      var slots = (new CncAlarmColorDAO ())
+      var slots = (new CncAlarmColorDAO (CncAlarmSeverityOption.IsBusinessSeverity ()))
         .FindOverlapsRange (machine, range)
         .Where (slot => !slot.DateTimeRange.IsEmpty ());
       
@@ -241,7 +241,7 @@ namespace Pulse.Web.CncAlarm
       response.Range = adjustedRange.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
       response.Blocks = new List<CncAlarmColorBlockDTO> ();
 
-      var slots = (new CncAlarmColorDAO ())
+      var slots = (new CncAlarmColorDAO (CncAlarmSeverityOption.IsBusinessSeverity ()))
         .FindOverlapsRange (machine, adjustedRange);
       
       IList<ICncAlarmColor> pending = new List<ICncAlarmColor> ();
