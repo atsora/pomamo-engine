@@ -39,6 +39,7 @@ namespace WizardCreateStampingConfig
       // 
       this.jsonTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
       this.jsonTextBox.Location = new System.Drawing.Point(0, 0);
+      this.jsonTextBox.MaxLength = 0;
       this.jsonTextBox.Multiline = true;
       this.jsonTextBox.Name = "jsonTextBox";
       this.jsonTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;

@@ -25,18 +25,12 @@ namespace Lemoine.Business.Operation
     static readonly string LONG_CYCLE_MIN_DURATION_KEY = "Business.Operation.Properties.LongCycleMinDuration";
     static readonly TimeSpan LONG_CYCLE_MIN_DURATION_DEFAULT = TimeSpan.FromMinutes (60);
 
-    #region Members
     readonly IMachine m_machine;
     IOperation m_operation;
     readonly ITask m_task;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationCycleProperties).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -61,10 +55,6 @@ namespace Lemoine.Business.Operation
       m_operation = operation;
       m_task = task;
     }
-    #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

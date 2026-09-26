@@ -44,7 +44,7 @@ namespace Lemoine.Business.Operation
     /// <summary>
     /// Machine
     /// </summary>
-    public IMachine Machine { get { return m_machine; } }
+    public IMachine Machine => m_machine;
 
     /// <summary>
     /// Constructor
@@ -318,9 +318,7 @@ namespace Lemoine.Business.Operation
         .Aggregate (0, (total, next) => total
                     + (next.TotalCycles - next.AdjustedCycles) * nbPiecesByCycle
                     + next.AdjustedQuantity);
-      log.DebugFormat ("GetNumberOfProducedParts: " +
-                       "part number from full registered cycles is {0}",
-                       partNumber);
+      log.Debug ($"GetNumberOfProducedParts: part number from full registered cycles is {partNumber}");
 
       if (longCycle && (0 < effectiveOperationSlots.Count)) {
         // - Add the current cycle progress
@@ -332,19 +330,14 @@ namespace Lemoine.Business.Operation
               .Get (new CycleProgress (monitoredMachine));
             IOperation operation = effectiveOperationSlots.Last ().Operation;
             if (!object.Equals (cycleProgress.Operation, operation)) {
-              log.ErrorFormat ("GetNumberOfProducedParts: " +
-                               "the operation in cycle progress does not match the operation the operation in effectiveOperationSlots " +
-                               "=> skip the current cycle");
+              log.Error ($"GetNumberOfProducedParts: the operation in cycle progress does not match the operation the operation in effectiveOperationSlots => skip the current cycle");
             }
             else if (cycleProgress.MachiningCompletion.HasValue) {
-              log.DebugFormat ("GetNumberOfProducedParts: " +
-                               "completion of cycle is {0}",
-                               cycleProgress.MachiningCompletion.Value);
+              log.Debug ($"GetNumberOfProducedParts: completion of cycle is {cycleProgress.MachiningCompletion.Value}");
               partNumber += cycleProgress.MachiningCompletion.Value * nbPiecesByCycle;
             }
             else {
-              log.DebugFormat ("GetNumberOfProducedParts: " +
-                               "no current cycle completion");
+              log.Debug ("GetNumberOfProducedParts: no current cycle completion");
             }
           }
         }
@@ -357,9 +350,7 @@ namespace Lemoine.Business.Operation
         }
       }
 
-      log.DebugFormat ("GetNumberOfProducedParts: " +
-                       "number of produced parts is {0}",
-                       partNumber);
+      log.Debug ($"GetNumberOfProducedParts: number of produced parts is {partNumber}");
 
       return partNumber;
     }
@@ -374,8 +365,7 @@ namespace Lemoine.Business.Operation
     {
       if (!dateTime.HasValue) {
         if (log.IsDebugEnabled) {
-          log.Debug ("GetPartsOfFirstCycleOutOfOperationSlot: " +
-                     "dateTime=-oo");
+          log.Debug ("GetPartsOfFirstCycleOutOfOperationSlot: dateTime=-oo");
         }
         return 0;
       }
@@ -391,8 +381,7 @@ namespace Lemoine.Business.Operation
         .Get (cycleProgressRequest);
       if (null == cycleProgress.OperationCycle) {
         if (log.IsDebugEnabled) {
-          log.Debug ("GetPartsOfFirstCycleOutOfOperationSlot: " +
-                     "no cycle");
+          log.Debug ("GetPartsOfFirstCycleOutOfOperationSlot: no cycle");
         }
         return 0;
       }
@@ -401,16 +390,13 @@ namespace Lemoine.Business.Operation
         Debug.Assert (null != operationCycle); // See above
         int cycleQuantity = operationCycle.Quantity ?? nbPiecesByCycle;
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetPartsOfFirstCycleOutOfOperationSlot: " +
-                           "cycleQuantity={0} machining completion={1}",
-                           cycleQuantity, cycleProgress.MachiningCompletion);
+          log.Debug ($"GetPartsOfFirstCycleOutOfOperationSlot: cycleQuantity={cycleQuantity} machining completion={cycleProgress.MachiningCompletion}");
         }
         return cycleProgress.MachiningCompletion.Value * cycleQuantity;
       }
       else {
         if (log.IsDebugEnabled) {
-          log.Debug ("GetPartsOfFirstCycleOutOfOperationSlot: " +
-                     "completion is unknown");
+          log.Debug ("GetPartsOfFirstCycleOutOfOperationSlot: completion is unknown");
         }
         return 0;
       }
