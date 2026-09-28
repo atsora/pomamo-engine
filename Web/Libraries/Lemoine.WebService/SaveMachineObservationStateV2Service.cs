@@ -79,7 +79,7 @@ namespace Lemoine.WebService
         ModelDAOHelper.DAOFactory.RevisionDAO.MakePersistent (revision);
 
         transaction.Commit ();
-        return ServiceHelper.ResponseOkDTO (revision.Id, "Save machine observation state successful");
+        return ServiceHelper.ResponseOkDTO (revision.Id, "Save planned state successful");
       }
     }
     #endregion // Methods

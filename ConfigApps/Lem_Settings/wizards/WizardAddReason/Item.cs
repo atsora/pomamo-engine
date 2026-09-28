@@ -38,8 +38,8 @@ namespace WizardAddReason
     public override string Description {
       get {
         return "Create a new reason and add it as a selectable reason to " +
-          "a set of machine modes (what is detected) and machine observation states " +
-          "(what is planned and expected).";
+          "a set of machine modes (what is detected) and planned states " +
+          "(what is expected).";
       }
     }
     

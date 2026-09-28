@@ -21,10 +21,10 @@ namespace Pulse.Web.MachineStateTemplate
   /// </summary>
   [Api("Request DTO for /ObservationStateSlots service")]
   [ApiResponse(HttpStatusCode.InternalServerError, "Oops, something broke")]
-  [Route("/ObservationStateSlots/", "GET", Summary = "Get the observation state slots in a specified range", Notes = "To use with ?MachineId=&Range=")]
-  [Route("/ObservationStateSlots/Get/{MachineId}/{Range}", "GET", Summary = "Get the observation state slots in a specified range", Notes = "")]
-  [Route("/MachineStateTemplate/ObservationStateSlots/", "GET", Summary = "Get the observation state slots in a specified range", Notes = "To use with ?MachineId=&Range=")]
-  [Route("/MachineStateTemplate/ObservationStateSlots/Get/{MachineId}/{Range}", "GET", Summary = "Get the observation state slots in a specified range", Notes = "")]
+  [Route("/ObservationStateSlots/", "GET", Summary = "Get the planned state slots in a specified range", Notes = "To use with ?MachineId=&Range=")]
+  [Route("/ObservationStateSlots/Get/{MachineId}/{Range}", "GET", Summary = "Get the planned state slots in a specified range", Notes = "")]
+  [Route("/MachineStateTemplate/ObservationStateSlots/", "GET", Summary = "Get the planned state slots in a specified range", Notes = "To use with ?MachineId=&Range=")]
+  [Route("/MachineStateTemplate/ObservationStateSlots/Get/{MachineId}/{Range}", "GET", Summary = "Get the planned state slots in a specified range", Notes = "")]
   public class ObservationStateSlotsRequestDTO: IReturn<ObservationStateSlotsResponseDTO>
   {
     /// <summary>

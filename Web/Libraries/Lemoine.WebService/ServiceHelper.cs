@@ -194,12 +194,12 @@ namespace Lemoine.WebService
     }
     
     /// <summary>
-    /// "No machine observation state" error DTO
+    /// "No planned state" error DTO
     /// </summary>
     /// <param name="machineObservationStateId"></param>
     /// <returns></returns>
     public static Lemoine.DTO.ErrorDTO NoMachineObservationStateWithIdErrorDTO(int machineObservationStateId) {
-      return new Lemoine.DTO.ErrorDTO(String.Format("No machine observation state with id {0}", machineObservationStateId),
+      return new Lemoine.DTO.ErrorDTO(String.Format("No planned state with id {0}", machineObservationStateId),
                                       ErrorStatus.PERMANENT);
     }
     

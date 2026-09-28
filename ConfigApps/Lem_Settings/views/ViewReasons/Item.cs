@@ -27,7 +27,7 @@ namespace ViewReasons
     /// </summary>
     public override string Description {
       get {
-        return "Overview of all default and selectable reasons, per machine mode and machine observation state.";
+        return "Overview of all default and selectable reasons, per machine mode and planned state.";
       }
     }
     

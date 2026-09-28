@@ -23,13 +23,13 @@ namespace WizardReasonSelection
     /// <summary>
     /// Title
     /// </summary>
-    public string Title { get { return "Machine observation states"; } }
+    public string Title { get { return "Planned states"; } }
     
     /// <summary>
     /// Some help regarding the page
     /// </summary>
-    public string Help { get { return "Select here the machine observation states that will be associated with new reasons.\n\n" +
-          "Note: a machine observation state is a state that is planned and expected."; } }
+    public string Help { get { return "Select here the planned states that will be associated with new reasons.\n\n" +
+          "Note: a planned state is the state that is expected for the machine."; } }
     
     /// <summary>
     /// List of classes which are allowed to be edited externally, may be null
@@ -101,7 +101,7 @@ namespace WizardReasonSelection
       IList<string> errors = new List<string>();
       
       if (data.Get<IList<IMachineObservationState>>(Item.MOSS).Count == 0) {
-        errors.Add("at least one machine observation state must be selected");
+        errors.Add("at least one planned state must be selected");
       }
 
       return errors;

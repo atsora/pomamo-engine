@@ -4084,17 +4084,17 @@ namespace Lemoine.GDBPersistentClasses
 
       {
         ITranslation translation = new Translation ("", "MachineObservationStateNull");
-        translation.TranslationValue = "No machine state";
+        translation.TranslationValue = "No planned state";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("fr", "MachineObservationStateNull");
-        translation.TranslationValue = "Aucun état planifié de machine";
+        translation.TranslationValue = "Aucun état planifié";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "MachineObservationStateNull");
-        translation.TranslationValue = "Kein Maschinenstatus";
+        translation.TranslationValue = "Kein geplanter Zustand";
         InsertDefaultValue (translation);
       }
 
@@ -4180,33 +4180,33 @@ namespace Lemoine.GDBPersistentClasses
 
       {
         ITranslation translation = new Translation ("", "ReasonGroupNull");
-        translation.TranslationValue = "No motion status group";
+        translation.TranslationValue = "No reason group";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonGroupNull");
-        translation.TranslationValue = "Aucun groupe d'arrêt machine";
+        translation.TranslationValue = "Aucun groupe de raisons";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "ReasonGroupNull");
-        translation.TranslationValue = "Keine Bewegungsstatusgruppe";
+        translation.TranslationValue = "Keine Grundgruppe";
         InsertDefaultValue (translation);
       }
 
       {
         ITranslation translation = new Translation ("", "ReasonReasonGroupNull");
-        translation.TranslationValue = "No motion status";
+        translation.TranslationValue = "No reason";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("fr", "ReasonReasonGroupNull");
-        translation.TranslationValue = "Aucun groupe d'arrêt machine";
+        translation.TranslationValue = "Aucune raison";
         InsertDefaultValue (translation);
       }
       {
         ITranslation translation = new Translation ("de", "ReasonReasonGroupNull");
-        translation.TranslationValue = "Kein Bewegungsstatus";
+        translation.TranslationValue = "Kein Grund";
         InsertDefaultValue (translation);
       }
 
