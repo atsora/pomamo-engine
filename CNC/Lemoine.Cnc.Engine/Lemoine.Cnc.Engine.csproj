@@ -21,6 +21,8 @@
     <ProjectReference Include="..\Lemoine.Cnc.ICncModule\Lemoine.Cnc.ICncModule.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
     <ProjectReference Include="..\Libraries\Lemoine.Cnc.CncAlarm\Lemoine.Cnc.CncAlarm.csproj" />
     <ProjectReference Include="..\Libraries\Lemoine.Cnc.DataRepository\Lemoine.Cnc.DataRepository.csproj" />
+    <!-- For CncModuleLogging: forwards the Microsoft.Extensions.Logging logs of a module to the acquisition -->
+    <ProjectReference Include="..\..\Libraries\Lemoine.Core.Extensions\Lemoine.Core.Extensions.csproj" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">

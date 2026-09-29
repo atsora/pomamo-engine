@@ -77,7 +77,7 @@ namespace Lemoine.DataReferenceControls
     	this.nullCheckBox.Name = "nullCheckBox";
     	this.nullCheckBox.Size = new System.Drawing.Size(336, 24);
     	this.nullCheckBox.TabIndex = 2;
-    	this.nullCheckBox.Text = "No machine observation state";
+    	this.nullCheckBox.Text = "No planned state";
     	this.nullCheckBox.UseVisualStyleBackColor = true;
     	this.nullCheckBox.CheckedChanged += new System.EventHandler(this.NullCheckBoxCheckedChanged);
     	// 

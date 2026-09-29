@@ -116,8 +116,15 @@ namespace Lemoine.BaseControls
     
     void DisclosurePanelLoad(object sender, EventArgs e)
     {
-      pictureBox.Image = new Bitmap ("right-arrow.png");
+      SetArrowImage ("right-arrow");
       State = false;
+    }
+
+    void SetArrowImage (string name)
+    {
+      var previousImage = pictureBox.Image;
+      pictureBox.Image = BaseControlImages.Load (name);
+      previousImage?.Dispose ();
     }
     
     /// <summary>
@@ -141,12 +148,12 @@ namespace Lemoine.BaseControls
     {
       if (State)
       {
-        pictureBox.Image = new Bitmap ("right-arrow.png");
+        SetArrowImage ("right-arrow");
         State = false;
       }
       else
       {
-        pictureBox.Image = new Bitmap ("down-arrow.png");
+        SetArrowImage ("down-arrow");
         State = true;
       }
     }

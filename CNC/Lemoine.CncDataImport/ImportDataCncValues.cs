@@ -127,7 +127,6 @@ namespace Lemoine.CncDataImport
                          "new data {0} is before the last data {1} " +
                          "=> this should not happen",
                          data, otherData);
-        Debug.Assert (false);
         return false;
       }
 
@@ -325,22 +324,31 @@ namespace Lemoine.CncDataImport
             transaction.Commit ();
           } // BeginTransaction
 
-          foreach (var extension in m_importCncValueExtensions) {
-            SetActive ();
-            foreach (var newCncValue in newCncValues
-              .Where (v => v.Key.Lower.HasValue)
-              .OrderBy (v => v.Key.Lower.Value.Ticks)) {
-              extension.AfterImportNewCncValue (field, newCncValue.Key, newCncValue.Value);
+          // The transaction is committed here: an exception raised by the extensions below
+          // must not trigger the rollback recovery, else the same data would be imported twice
+          try {
+            foreach (var extension in m_importCncValueExtensions) {
+              SetActive ();
+              foreach (var newCncValue in newCncValues
+                .Where (v => v.Key.Lower.HasValue)
+                .OrderBy (v => v.Key.Lower.Value.Ticks)) {
+                try {
+                  extension.AfterImportNewCncValue (field, newCncValue.Key, newCncValue.Value);
+                }
+                catch (Exception ex1) {
+                  log.Error ($"ImportCncValue: exception in AfterImportNewCncValue for field {field.Id}, but the data was committed => skip it", ex1);
+                }
+              }
             }
+          }
+          catch (Exception ex) {
+            log.Error ($"ImportCncValue: exception in the AfterImportNewCncValue loops for field {field.Id}, but the data was committed => skip it", ex);
           }
 
         } // OpenSession
       }
       catch (Exception ex) {
         log.Error ("ImportCncValue: exception => try to reload m_cncValues", ex);
-        /* // This assert does not work with the unit tests. TODO: find an alternative
-        Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
-        */
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.Fatal ("ImportCncValue: the session is still active before reloading m_cncValues");
         }

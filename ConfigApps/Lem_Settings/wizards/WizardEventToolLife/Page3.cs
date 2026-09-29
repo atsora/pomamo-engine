@@ -24,15 +24,15 @@ namespace WizardEventToolLife
     /// <summary>
     /// Title
     /// </summary>
-    public string Title { get { return "Machine observation states"; } }
+    public string Title { get { return "Planned states"; } }
     
     /// <summary>
     /// Some help regarding the page
     /// </summary>
-    public string Help { get { return "Select here one or several machine observation states associated " +
+    public string Help { get { return "Select here one or several planned states associated " +
           "with the tool life events you want to create.\n\n" +
           "It is possible to include all items with the \"All\" check-box.\n\n" +
-          "An observation state representing a machine in production is displayed in blue."; } }
+          "A planned state representing a machine in production is displayed in blue."; } }
     
     /// <summary>
     /// List of classes which are allowed to be edited externally, may be null
@@ -112,7 +112,7 @@ namespace WizardEventToolLife
       
       if (!data.Get<bool>(Item.ALL_MOSS) &&
           data.Get<IList<IMachineObservationState>>(Item.MOSS).Count == 0) {
-        errors.Add("at least one machine observation state must be selected");
+        errors.Add("at least one planned state must be selected");
       }
 
       return errors;

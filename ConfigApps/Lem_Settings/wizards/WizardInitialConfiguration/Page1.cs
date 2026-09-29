@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Resources;
 using System.Windows.Forms;
 using Lemoine.Settings;
 
@@ -43,9 +42,8 @@ namespace WizardInitialConfiguration
     /// </summary>
     public Page1()
     {
-      var rm = new ResourceManager("WizardInitialConfiguration.Item", GetType().Assembly);
-      m_infoImage = (Image)rm.GetObject("help");
-      m_warnImage = (Image)rm.GetObject("warning");
+      m_infoImage = EmbeddedImageLoader.Load (GetType (), "help");
+      m_warnImage = EmbeddedImageLoader.Load (GetType (), "warning");
       
       InitializeComponent();
       

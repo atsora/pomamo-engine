@@ -4,6 +4,7 @@
 
 using System;
 using System.Windows.Forms;
+using Lemoine.Settings;
 
 namespace Lem_Settings
 {
@@ -21,6 +22,7 @@ namespace Lem_Settings
     public ErrorDialog(string text, bool quitIfException)
     {
       InitializeComponent();
+      pictureBox.Image = EmbeddedImageLoader.Load (typeof (ErrorDialog), "face-surprise");
       richText.Text = text;
       if (!quitIfException) {
         buttonQuit.Text = "Ok";

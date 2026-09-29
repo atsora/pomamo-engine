@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Resources;
 using Lemoine.Settings;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
@@ -39,8 +38,6 @@ namespace WizardCreateProduction
     /// </summary>
     public Page2()
     {
-      ResourceManager rm = new ResourceManager("WizardCreateProduction.Item", GetType().Assembly);
-      
       InitializeComponent();
       scrollTable.CellChanged += OnCellChanged;
       

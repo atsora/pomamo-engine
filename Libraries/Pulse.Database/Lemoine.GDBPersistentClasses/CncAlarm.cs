@@ -235,6 +235,30 @@ namespace Lemoine.GDBPersistentClasses
       m_type = type;
       m_number = number;
     }
+
+    /// <summary>
+    /// Constructor of a detached cnc alarm that is built from a projection,
+    /// without the severity (see <see cref="CncAlarmDAO.FindOverlapsRangeWithoutSeverity"/>)
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="version"></param>
+    /// <param name="machineModule"></param>
+    /// <param name="range"></param>
+    /// <param name="cncInfo"></param>
+    /// <param name="cncSubInfo"></param>
+    /// <param name="type"></param>
+    /// <param name="number"></param>
+    /// <param name="message"></param>
+    /// <param name="properties"></param>
+    internal CncAlarm (int id, int version, IMachineModule machineModule, UtcDateTimeRange range, string cncInfo, string cncSubInfo,
+                       string type, string number, string message, IDictionary<string, object> properties)
+      : this (machineModule, range, cncInfo, cncSubInfo, type, number)
+    {
+      this.Id = id;
+      this.Version = version;
+      m_message = message;
+      m_properties = properties ?? new Dictionary<string, object> ();
+    }
     #endregion // Constructors
 
     /// <summary>

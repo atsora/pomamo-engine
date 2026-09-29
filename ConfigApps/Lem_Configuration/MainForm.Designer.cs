@@ -798,7 +798,6 @@ namespace Lem_Configuration
       // machineStatusTabPage
       // 
       this.machineStatusTabPage.Controls.Add(this.machineStatusTabControl);
-      this.machineStatusTabPage.ImageKey = "MachineStatus_16x16.png";
       this.machineStatusTabPage.Location = new System.Drawing.Point(4, 29);
       this.machineStatusTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.machineStatusTabPage.Name = "machineStatusTabPage";
@@ -859,7 +858,7 @@ namespace Lem_Configuration
       this.machineObservationStateTabPage.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.machineObservationStateTabPage.Size = new System.Drawing.Size(1011, 445);
       this.machineObservationStateTabPage.TabIndex = 0;
-      this.machineObservationStateTabPage.Text = "Machine Observation State";
+      this.machineObservationStateTabPage.Text = "Planned State";
       this.machineObservationStateTabPage.UseVisualStyleBackColor = true;
       // 
       // machineObservationStateConfig1

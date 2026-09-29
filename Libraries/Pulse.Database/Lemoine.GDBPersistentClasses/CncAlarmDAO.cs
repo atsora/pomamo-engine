@@ -92,8 +92,59 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="ICncAlarmDAO"/>
+    ///
+    /// A projection is used so that the dynamic column cncalarmseverityid is not requested
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public IList<ICncAlarm> FindAtWithoutSeverity (IMachineModule machineModule, DateTime dateTime)
+    {
+      Debug.Assert (null != machineModule);
+
+      var rows = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CncAlarm> ()
+        .Add (Restrictions.Eq ("MachineModule", machineModule))
+        .Add (new SimpleTypedExpression ("DateTimeRange", new Lemoine.NHibernateTypes.UTCDateTimeFullType (), dateTime, "@>"))
+        .SetProjection (GetWithoutSeverityProjection ()
+          .Add (Projections.Property ("Display")))
+        .AddOrder (Order.Asc ("DateTimeRange"))
+        .List<object[]> ();
+
+      return rows
+        .Select (r => {
+          var cncAlarm = CreateWithoutSeverity (machineModule, r);
+          cncAlarm.Display = (string)r[9];
+          return (ICncAlarm)cncAlarm;
+        })
+        .ToList ();
+    }
+
+    ProjectionList GetWithoutSeverityProjection ()
+    {
+      return Projections.ProjectionList ()
+        .Add (Projections.Id ())
+        .Add (Projections.Property ("Version"))
+        .Add (Projections.Property ("DateTimeRange"))
+        .Add (Projections.Property ("CncInfo"))
+        .Add (Projections.Property ("CncSubInfo"))
+        .Add (Projections.Property ("Type"))
+        .Add (Projections.Property ("Number"))
+        .Add (Projections.Property ("Message"))
+        .Add (Projections.Property ("Properties"));
+    }
+
+    CncAlarm CreateWithoutSeverity (IMachineModule machineModule, object[] r)
+    {
+      return new CncAlarm ((int)r[0], (int)r[1], machineModule, (UtcDateTimeRange)r[2],
+                           (string)r[3], (string)r[4], (string)r[5], (string)r[6],
+                           (string)r[7], (IDictionary<string, object>)r[8]);
+    }
+
+    /// <summary>
     /// Find all the slots that overlap the specified range
-    /// 
+    ///
     /// Order them by ascending range
     /// </summary>
     /// <param name="machineModule"></param>
@@ -129,8 +180,33 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="ICncAlarmDAO"/>
+    ///
+    /// A projection is used so that the dynamic column cncalarmseverityid is not requested
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public IList<ICncAlarm> FindOverlapsRangeWithoutSeverity (IMachineModule machineModule, UtcDateTimeRange range)
+    {
+      Debug.Assert (null != machineModule);
+
+      var rows = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CncAlarm> ()
+        .Add (Restrictions.Eq ("MachineModule", machineModule))
+        .Add (OverlapRange (range))
+        .SetProjection (GetWithoutSeverityProjection ())
+        .AddOrder (Order.Asc ("DateTimeRange"))
+        .List<object[]> ();
+
+      return rows
+        .Select (r => (ICncAlarm)CreateWithoutSeverity (machineModule, r))
+        .ToList ();
+    }
+
+    /// <summary>
     /// Find all the slots that overlap the specified range
-    /// 
+    ///
     /// Order them by ascending range
     /// </summary>
     /// <param name="machine"></param>

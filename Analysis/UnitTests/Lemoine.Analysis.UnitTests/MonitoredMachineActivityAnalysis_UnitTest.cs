@@ -1265,6 +1265,141 @@ namespace Lemoine.Analysis.UnitTests
     }
 
     /// <summary>
+    /// Test with a new machine observation state that starts exactly at the activity analysis date/time,
+    /// which is also the end of the last reason slot.
+    ///
+    /// This happens for example when the machine state template analysis processes the present part of a template
+    /// (that starts at the activity analysis date/time) before its past part.
+    ///
+    /// The last reason slot must not be extended over the period of the new machine observation state
+    /// with its previous machine observation state and its previous reason
+    /// </summary>
+    [Test]
+    public void TestNewMachineObservationStateAtActivityAnalysisDateTime ()
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+      Lemoine.Plugin.DefaultAccumulators.DefaultAccumulators.Install ();
+      Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.AnalysisStateMachineProductionShop.MonitoredMachineActivityAnalysisStateMachineExtension));
+      Lemoine.Extensions.ExtensionManager.Add (typeof (Lemoine.Plugin.AnalysisStateMachineProductionShop.MachineActivityAnalysisStateMachineExtension));
+
+      IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+      using (IDAOSession daoSession = daoFactory.OpenSession ())
+      using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+        ISession session = NHibernateHelper.GetCurrentSession ();
+        try {
+          // Reference data
+          IMonitoredMachine machine =
+            daoFactory.MonitoredMachineDAO.FindById (3);
+          Assert.That (machine, Is.Not.Null);
+          MachineMode noDataMode = session.Get<MachineMode> (8);
+          Assert.That (noDataMode, Is.Not.Null);
+          MachineObservationState attended =
+            session.Get<MachineObservationState> ((int)MachineObservationStateId.Attended);
+          MachineObservationState unattended =
+            session.Get<MachineObservationState> ((int)MachineObservationStateId.Unattended);
+          Reason reasonUnanswered = session.Get<Reason> (4);
+          Reason reasonUnattended = session.Get<Reason> (5);
+
+          Lemoine.Info.ConfigSet
+            .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+          var activityAnalysisDateTime = UtcDateTime.From (2008, 01, 01, 16, 00, 00);
+
+          // Existing reason slot, that ends at the activity analysis date/time
+          {
+            ReasonSlot existingReasonSlot =
+              new ReasonSlot (machine,
+                              new UtcDateTimeRange (UtcDateTime.From (2008, 01, 01, 12, 00, 00),
+                                                    activityAnalysisDateTime));
+            existingReasonSlot.MachineMode = noDataMode;
+            existingReasonSlot.MachineObservationState = unattended;
+            existingReasonSlot.Consolidate (null, null);
+            session.Save (existingReasonSlot);
+            AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (machine);
+            Assert.That (existingReasonSlot.Reason, Is.EqualTo (reasonUnattended));
+          }
+
+          // MachineModuleStatus
+          {
+            MonitoredMachineAnalysisStatus analysisStatus =
+              new MonitoredMachineAnalysisStatus (machine);
+            analysisStatus.ActivityAnalysisDateTime = activityAnalysisDateTime;
+            session.Save (analysisStatus);
+          }
+
+          // MachineStatus
+          {
+            MachineStatus machineStatus =
+              new MachineStatus (machine);
+            machineStatus.CncMachineMode = noDataMode;
+            machineStatus.MachineMode = noDataMode;
+            machineStatus.MachineObservationState = unattended;
+            machineStatus.ManualActivity = false;
+            machineStatus.Reason = reasonUnattended;
+            machineStatus.ReasonSource = ReasonSource.DefaultAuto | ReasonSource.DefaultIsAuto;
+            machineStatus.AutoReasonNumber = 1;
+            machineStatus.ReasonScore = 90;
+            machineStatus.ReasonSlotEnd = activityAnalysisDateTime;
+            session.Save (machineStatus);
+          }
+
+          // New machine observation state that starts at the activity analysis date/time
+          {
+            IMachineObservationStateAssociation association = ModelDAOHelper.ModelFactory
+              .CreateMachineObservationStateAssociation (machine, attended, activityAnalysisDateTime);
+            association.End = UtcDateTime.From (2008, 01, 01, 23, 00, 00);
+            ((MachineObservationStateAssociation)association).Apply ();
+          }
+
+          MonitoredMachineActivityAnalysis activityAnalysis =
+            new MonitoredMachineActivityAnalysis (machine);
+          activityAnalysis.MakeAnalysis (CancellationToken.None);
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (machine);
+          DAOFactory.EmptyAccumulators ();
+
+          // Check the reason slots
+          {
+            IList<ReasonSlot> reasonSlots =
+              session.CreateCriteria<ReasonSlot> ()
+              .Add (Restrictions.Eq ("Machine", machine))
+              .AddOrder (Order.Asc ("DateTimeRange"))
+              .List<ReasonSlot> ();
+            int i = 0;
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 12, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (activityAnalysisDateTime));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+            });
+            Assert.That (reasonSlots, Has.Count.GreaterThanOrEqualTo (3), "Number of reason slots");
+            ++i;
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (activityAnalysisDateTime));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 23, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (attended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnanswered));
+              Assert.That (reasonSlots[i].DefaultReason, Is.EqualTo (true));
+            });
+            ++i;
+            Assert.Multiple (() => {
+              Assert.That (reasonSlots[i].BeginDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 01, 23, 00, 00)));
+              Assert.That (reasonSlots[i].EndDateTime.Value, Is.EqualTo (UtcDateTime.From (2008, 01, 16, 10, 00, 00)));
+              Assert.That (reasonSlots[i].MachineObservationState, Is.EqualTo (unattended));
+              Assert.That (reasonSlots[i].MachineMode, Is.EqualTo (noDataMode));
+              Assert.That (reasonSlots[i].Reason, Is.EqualTo (reasonUnattended));
+            });
+          }
+        }
+        finally {
+          transaction.Rollback ();
+          Lemoine.Info.ConfigSet.ResetForceValues ();
+          Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        }
+      }
+    }
+
+    /// <summary>
     /// Test with a new machine observation state with a shift
     /// </summary>
     [Test]

@@ -27,7 +27,7 @@ namespace WizardReasonSelection
     /// Some help regarding the page
     /// </summary>
     public string Help { get { return "Select the different selectable reasons you want for the machine modes and " +
-          "machine observation states previously selected.\n\n" +
+          "planned states previously selected.\n\n" +
           "For each reason, you can force the user to add details. A machine filter can also be attached if " +
           "the reason is specific to some machines and is not applicable to others.\n\n" +
           "If a reason has to be overwritten for a machine, take care at least 2 selectable reasons are provided."; } }

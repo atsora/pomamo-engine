@@ -100,7 +100,7 @@ namespace Lemoine.BaseControls
       // buttonGo
       // 
       this.buttonGo.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonGo.Image = new Bitmap ("go.png");
+      this.buttonGo.Image = BaseControlImages.Load ("go");
       this.buttonGo.Location = new System.Drawing.Point(233, 252);
       this.buttonGo.Margin = new System.Windows.Forms.Padding(0);
       this.buttonGo.Name = "buttonGo";
@@ -192,7 +192,7 @@ namespace Lemoine.BaseControls
       // buttonCancel
       // 
       this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonCancel.Image = new Bitmap ("cancel.png");
+      this.buttonCancel.Image = BaseControlImages.Load ("cancel");
       this.buttonCancel.Location = new System.Drawing.Point(5, 252);
       this.buttonCancel.Margin = new System.Windows.Forms.Padding(0);
       this.buttonCancel.Name = "buttonCancel";

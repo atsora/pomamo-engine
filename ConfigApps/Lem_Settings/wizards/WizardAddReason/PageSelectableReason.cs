@@ -25,7 +25,7 @@ namespace WizardAddReason
     /// <summary>
     /// Some help regarding the page
     /// </summary>
-    public string Help { get { return "When applied to a set of machine modes and machine observation states, " +
+    public string Help { get { return "When applied to a set of machine modes and planned states, " +
           "the new reason may need additional details by the user. In that case, check the corresponding box.\n\n" +
           "The new reason may also appear only for a couple a machines. In that case, select the appropriate " +
           "machine filter."; } }

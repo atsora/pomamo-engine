@@ -1,0 +1,25 @@
+Lem_OpcUaClientService is distributed under the terms of the
+GNU General Public License version 2 (GPL-2.0).
+
+The full text of the license is available in the ../../pomamo-cncmodules/LICENSES
+folder of this repository, and at https://spdx.org/licenses/GPL-2.0.html
+
+Rationale
+---------
+
+This service is a thin REST front-end for Lemoine.Cnc.OpcUaClient, which is
+itself licensed under the GPL-2.0 only.
+
+The REST contract that is implemented here (the /get, /set and /data requests,
+and the shape of their responses) is an interoperability interface. It was
+determined from Lemoine.Cnc.CncCoreClient, which is licensed under the
+GPL-2.0-or-later, so that the standard CncCoreData and CncCoreGetSet
+acquisition modules can talk to this service without any change.
+
+Third party dependencies
+------------------------
+
+- OPC UA .NET Standard stack (OPCFoundation.NetStandard.Opc.Ua.*), pulled in by
+  Lemoine.Cnc.OpcUaClient. It is dual licensed, one of the two licenses being
+  the GPL-2.0.
+- Microsoft.AspNetCore / Microsoft.Extensions (MIT), part of the .NET platform.

@@ -78,7 +78,7 @@ namespace WizardMonitorMachine
       // 
       this.buttonUpload.Dock = System.Windows.Forms.DockStyle.Fill;
       this.buttonUpload.Enabled = false;
-      this.buttonUpload.Image = new Bitmap ("upload.png");
+      this.buttonUpload.Image = Lemoine.BaseControls.BaseControlImages.Load ("upload");
       this.buttonUpload.Location = new System.Drawing.Point(98, 0);
       this.buttonUpload.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
       this.buttonUpload.Name = "buttonUpload";
@@ -91,7 +91,7 @@ namespace WizardMonitorMachine
       // 
       this.buttonDelete.Dock = System.Windows.Forms.DockStyle.Fill;
       this.buttonDelete.Enabled = false;
-      this.buttonDelete.Image = new Bitmap ("delete.png");
+      this.buttonDelete.Image = Lemoine.BaseControls.BaseControlImages.Load ("delete");
       this.buttonDelete.Location = new System.Drawing.Point(126, 0);
       this.buttonDelete.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
       this.buttonDelete.Name = "buttonDelete";

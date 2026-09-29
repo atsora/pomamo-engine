@@ -556,6 +556,15 @@ namespace Lemoine.GDBPersistentClasses
           return false;
         }
         // null != reasonSlot
+        if ((reasonSlot.MachineObservationState.Id != this.MachineObservationState.Id)
+          || !NHibernateHelper.EqualsNullable (reasonSlot.Shift, this.Shift, (a, b) => a.Id == b.Id)) {
+          // The machine status is not consistent with the last reason slot.
+          // Extending the last reason slot would keep its machine observation state, its shift and its reason
+          // on a period with another machine observation state or shift
+          log.Error ($"TryFastProcess: the last reason slot {reasonSlot} with machine observation state {reasonSlot.MachineObservationState.Id} and shift {reasonSlot.Shift?.Id} does not match the new activity with machine observation state {this.MachineObservationState.Id} and shift {this.Shift?.Id} although the machine status did not change => no fast process");
+          effectiveEnd = this.Begin.Value;
+          return false;
+        }
         Debug.Assert (reasonSlot.Reason.Id == machineStatus.Reason.Id, "Incompatible reason between machine status and reason slot");
         Debug.Assert (Bound.Equals (reasonSlot.EndDateTime, machineStatus.ReasonSlotEnd), "Incompatible end between machine status and reason slot");
         Debug.Assert (reasonSlot.ReasonSource.IsSameMainSource (machineStatus.ReasonSource), "Incompatible reason source between machine status and reason slot", string.Format ("{0} VS {1}", reasonSlot.ReasonSource, machineStatus.ReasonSource)); // Not necessarily all the same Unsafe flags

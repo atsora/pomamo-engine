@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Platforms>x86;x64</Platforms>
+    <AssemblyOriginatorKeyFile>..\..\..\PulseKeyFile.snk</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Lemoine.Cnc.OpcUaClientService</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" />
+  </ItemGroup>
+
+  <!-- Only GPL-2.0 compatible projects here: do not add any Apache-2.0 reference -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\pomamo-cncmodules\Lemoine.Cnc.OpcUaClient\Lemoine.Cnc.OpcUaClient.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Lem_OpcUaClientService.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="LICENSE" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+
+</Project>

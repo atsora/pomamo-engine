@@ -119,7 +119,7 @@ namespace Lemoine.BaseControls
       // buttonNext
       // 
       this.buttonNext.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonNext.Image = new Bitmap ("next.png");
+      this.buttonNext.Image = BaseControlImages.Load ("next");
       this.buttonNext.Location = new System.Drawing.Point(377, 181);
       this.buttonNext.Margin = new System.Windows.Forms.Padding(1, 1, 1, 0);
       this.buttonNext.Name = "buttonNext";
@@ -131,7 +131,7 @@ namespace Lemoine.BaseControls
       // buttonPrevious
       // 
       this.buttonPrevious.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonPrevious.Image = new Bitmap ("previous.png");
+      this.buttonPrevious.Image = BaseControlImages.Load ("previous");
       this.buttonPrevious.Location = new System.Drawing.Point(350, 181);
       this.buttonPrevious.Margin = new System.Windows.Forms.Padding(1, 1, 0, 0);
       this.buttonPrevious.Name = "buttonPrevious";
@@ -154,7 +154,7 @@ namespace Lemoine.BaseControls
       // buttonZoomIn
       // 
       this.buttonZoomIn.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonZoomIn.Image = new Bitmap ("zoom-in.png");
+      this.buttonZoomIn.Image = BaseControlImages.Load ("zoom-in");
       this.buttonZoomIn.Location = new System.Drawing.Point(27, 181);
       this.buttonZoomIn.Margin = new System.Windows.Forms.Padding(0, 1, 1, 0);
       this.buttonZoomIn.Name = "buttonZoomIn";
@@ -166,7 +166,7 @@ namespace Lemoine.BaseControls
       // buttonZoomOut
       // 
       this.buttonZoomOut.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.buttonZoomOut.Image = new Bitmap ("zoom-out.png");
+      this.buttonZoomOut.Image = BaseControlImages.Load ("zoom-out");
       this.buttonZoomOut.Location = new System.Drawing.Point(1, 181);
       this.buttonZoomOut.Margin = new System.Windows.Forms.Padding(1, 1, 1, 0);
       this.buttonZoomOut.Name = "buttonZoomOut";

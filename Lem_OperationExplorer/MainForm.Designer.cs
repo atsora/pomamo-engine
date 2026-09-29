@@ -32,7 +32,6 @@ namespace Lem_OperationExplorer
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.operationTreeView = new Lemoine.JobControls.OperationTreeView();
       this.informationControl = new Lemoine.JobControls.InformationControl();
       this.SuspendLayout();
@@ -65,7 +64,7 @@ namespace Lem_OperationExplorer
       this.ClientSize = new System.Drawing.Size(836, 777);
       this.Controls.Add(this.informationControl);
       this.Controls.Add(this.operationTreeView);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.ExecutablePath);
       this.Name = "MainForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Lem_OperationExplorer";

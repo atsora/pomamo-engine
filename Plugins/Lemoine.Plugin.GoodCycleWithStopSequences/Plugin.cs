@@ -37,6 +37,6 @@ namespace Lemoine.Plugin.GoodCycleWithStopSequences
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
+    public override int Version => 1;
   }
 }

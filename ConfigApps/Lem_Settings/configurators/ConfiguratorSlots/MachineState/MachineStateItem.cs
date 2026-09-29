@@ -33,7 +33,7 @@ namespace ConfiguratorSlots.MachineState
     public override string Description {
       get {
         return "Change the state template of one or several machine(s) on a specified period.\n\n" +
-          "A machine state template is a series of machine observation states that can be applied " +
+          "A machine state template is a series of planned states that can be applied " +
           "in periods. Thanks to them it is possible to define when a machine is attended 8 hours " +
           "a day (normal work), and when the machine is not attended at all (annual vacation for " +
           "instance). This would require only two templates.\n\n" +

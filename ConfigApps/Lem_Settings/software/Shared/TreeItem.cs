@@ -45,6 +45,11 @@ namespace Lem_Settings
     public TreeItem()
     {
       InitializeComponent();
+      EmbeddedImageLoader.FillImageList (
+        imageList,
+        typeof (TreeItem),
+        new Size (32, 32),
+        "configurator", "internet", "launcher", "view", "wizard");
     }
     #endregion // Constructors
 

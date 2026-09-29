@@ -10,6 +10,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lemoine.GDBPersistentClasses
 {
@@ -90,6 +91,40 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       return alarms;
+    }
+
+    /// <summary>
+    /// <see cref="ICurrentCncAlarmDAO"/>
+    ///
+    /// A projection is used so that the dynamic column cncalarmseverityid is not requested
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <returns></returns>
+    public IList<ICurrentCncAlarm> FindByMachineModuleWithoutSeverity (IMachineModule machineModule)
+    {
+      Debug.Assert (null != machineModule);
+
+      var rows = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CurrentCncAlarm> ()
+        .Add (Restrictions.Eq ("MachineModule.Id", machineModule.Id))
+        .SetProjection (Projections.ProjectionList ()
+          .Add (Projections.Id ())
+          .Add (Projections.Property ("Version"))
+          .Add (Projections.Property ("DateTime"))
+          .Add (Projections.Property ("CncInfo"))
+          .Add (Projections.Property ("CncSubInfo"))
+          .Add (Projections.Property ("Type"))
+          .Add (Projections.Property ("Number"))
+          .Add (Projections.Property ("Message"))
+          .Add (Projections.Property ("Properties"))
+          .Add (Projections.Property ("Display")))
+        .List<object[]> ();
+
+      return rows
+        .Select (r => (ICurrentCncAlarm)new CurrentCncAlarm ((int)r[0], (int)r[1], machineModule, (DateTime)r[2],
+                                                             (string)r[3], (string)r[4], (string)r[5], (string)r[6],
+                                                             (string)r[7], (IDictionary<string, object>)r[8], (string)r[9]))
+        .ToList ();
     }
   }
 }

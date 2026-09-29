@@ -21,44 +21,23 @@ namespace Lemoine.Plugin.AutoMachineStateTemplateConfig
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
-    public override string Name { get { return "AutoMachineStateTemplateConfig"; } }
+    public override string Name => "AutoMachineStateTemplateConfig";
 
     /// <summary>
     /// Description of the plugin
     /// </summary>
-    public override string Description
-    {
-      get
-      {
-        return "Auto-machine state template from machine activity using the automachinestatetemplate table";
-      }
-    }
+    public override string Description => "Auto-machine state template from machine activity using the automachinestatetemplate table";
 
-    public PluginFlag Flags
-    {
-      get
-      {
-        return PluginFlag.Analysis;
-      }
-    }
+    public PluginFlag Flags => PluginFlag.Analysis;
 
     public override bool MultipleConfigurations => false;
 
     /// <summary>
     /// Version of the plugin
     /// </summary>
-    public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
+    public override int Version => 1;
   }
 }

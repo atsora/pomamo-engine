@@ -53,7 +53,6 @@ namespace Pulse.Web.Operation
     {
     }
 
-    #region Methods
     IEnumerable<IProgressExtension> GetExtensions (IMonitoredMachine machine)
     {
       Debug.Assert (null != machine);
@@ -408,6 +407,5 @@ namespace Pulse.Web.Operation
       }
       return UpdateIfResponseDateTimeBefore (parsedResponseDateTime.Add (delta), ref dateTime);
     }
-    #endregion // Methods
   }
 }

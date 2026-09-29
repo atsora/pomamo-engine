@@ -37,6 +37,20 @@ namespace Lemoine.ModelDAO
     /// <returns></returns>
     IList<ICncAlarm> FindAtWithSeverity (IMachineModule machineModule,
                                          DateTime dateTime);
+
+    /// <summary>
+    /// Find the active cnc alarms at the specified time for the specified machine module
+    /// without requesting the dynamic column cncalarmseverityid, which is costly
+    ///
+    /// The returned items are not attached to the session: their Severity and Color
+    /// properties are not set. Use Lemoine.Business.CncAlarm.CncAlarmSeverityFromAttributes
+    /// to get the severity.
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    IList<ICncAlarm> FindAtWithoutSeverity (IMachineModule machineModule,
+                                            DateTime dateTime);
     
     /// <summary>
     /// Find all the slots that overlap the specified range
@@ -57,7 +71,22 @@ namespace Lemoine.ModelDAO
     /// <param name="range"></param>
     /// <returns></returns>
     IList<ICncAlarm> FindOverlapsRangeWithSeverity (IMachineModule machineModule, UtcDateTimeRange range);
-    
+
+    /// <summary>
+    /// Find all the slots that overlap the specified range
+    /// without requesting the dynamic column cncalarmseverityid, which is costly
+    ///
+    /// The returned items are not attached to the session: their Severity, Color and Display
+    /// properties are not set. Use Lemoine.Business.CncAlarm.CncAlarmSeverityFromAttributes
+    /// to get the severity.
+    ///
+    /// Order them by ascending range
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    IList<ICncAlarm> FindOverlapsRangeWithoutSeverity (IMachineModule machineModule, UtcDateTimeRange range);
+
     /// <summary>
     /// Find all the slots that overlap the specified range
     /// 

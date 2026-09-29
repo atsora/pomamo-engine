@@ -74,6 +74,7 @@ namespace Lem_Settings
 
       // Initialization of the interface
       InitializeComponent ();
+      modificationToolStripMenuItem.Image = EmbeddedImageLoader.Load (typeof (MainForm), "clock_w");
       develToolStripMenuItem.Visible = false;
       m_left1.Dock = m_left23.Dock = DockStyle.Fill;
       m_right1.Dock = m_right23.Dock = DockStyle.Fill;

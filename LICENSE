@@ -39,100 +39,25 @@ Some images have a specific license:
   Author: Laura Reen (http://frau-zeit.deviantart.com/)
 
 - the stop, start, stop-restart and refresh icons of the Lem_ServiceMonitoring application,
-  the undo and filter icons of the Machine Scheduling application,
-  the search icon of the Lem_Translator applications:
+  the undo and filter icons of the Machine Scheduling application:
   Creative Commons Attribution-Share Alike 2.5 Generic
   (http://creativecommons.org/licenses/by-sa/2.5/)
   Authors: Ulisse Perusin, Steven Garrity, Lapo Calamandrei, Ryan Collier,Rodney Dawes, Andreas Nilsson, Tuomas Kuosmanen, Garrett LeSage, Jakub Steiner (http://tango.freedesktop.org/Tango_Icon_Library)
-
-- the application icon of the Lem_Translator application:
-  Creative Commons (Attribution 3.0 Unported)
-  (http://creativecommons.org/licenses/by/3.0/)
-  Author: Yankoa (http://yankoa.deviantart.com/)
-
-- the previous, next, import and export icons
-  of the Lem_Translator applications,
-  the save icon of the Machine Scheduling application:
-  Eclipse Public License 1.0
-  (http://www.eclipse.org/org/documents/epl-v10.html)
-  Author: Eclipse Project (http://www.eclipse.org)
-
-- the application icon of the Lem_LanguageSelector application,
-  the delete and zooms icons of the Machine Scheduling application:
-  Creative Commons Attribution-ShareAlike 2.5 License
-  (http://creativecommons.org/licenses/by-sa/2.5/)
-  Author: Titan Creations (http://titancreations.org/)
 
 - the application icon of the Lem_MTConnectSimpleViewer applications:
   Creative Commons Attribution 3.0 License
   (http://creativecommons.org/licenses/by/3.0/)
   Author: Mark James (http://www.famfamfam.com/lab/icons/silk/)
 
-- the application icon of the Lem_GDBMigrator application:
-  Eclipse Public License 1.0
-  (http://www.eclipse.org/org/documents/epl-v10.html)
-  Author: Eclipse Project (http://www.eclipse.org)
-
-- the application icon of the Lem_Configuration application:
-  Creative Commons Attribution 3.0 Unported
-  (http://creativecommons.org/licenses/by/3.0/)
-  Author: Icons8 (https://icons8.com/icon/20544/maintenance)
-
 - the general icon of Lem_Configuration application:
   Free to use for any personal or commercial projects
   Part of Quartz icon pack (http://www.iconspedia.com/icon/delicious-12-42.html http://www.graphicrating.com/2009/06/19/quartz-icon-pack/)
   Author: Andy Gongea, http://www.graphicrating.com/
 
-- the application icon of the Lem_OperationExplorer application:
-  Creative Commons (Attribution 3.0 United States) 
-  (http://creativecommons.org/licenses/by/3.0/us/)
-  Link: http://www.iconfinder.com/icondetails/64498/16/node_tree_icon
-  Author: FatCow Web Hosting(http://www.fatcow.com/free-icons)
-
-- workorder.png, job.png, project.png, part.ong, opration.png, simpleoperation.png
-  Creative Commons (Attribution 3.0 Unported)
-  (http://creativecommons.org/licenses/by/3.0/)
-  Link: http://pc.de/ico/
-  Author: PC 100 Icon Pack
-
-- component.png
-  Creative Commons (Attribution 3.0 United States) 
-  (http://creativecommons.org/licenses/by/3.0/us/)
-  Link: http://www.iconfinder.com/icondetails/64634/16/components_server_icon
-  Author: FatCow Web Hosting(http://www.fatcow.com/free-icons) 
-
-- Mini icon set (intermediateworkpiece.png)
-  Free for commercial use 
-  Link: http://www.famfamfam.com/lab/icons/mini/
-  Author: Mark James, famfamfam.com
-
-- the MachineStatus icon of the Lem_Configuration application:
-  You are free to use these icons on personal and/or commercial projects without any attribution or credit. You are not permitted to sell any of these icons individually or as an icon pack. However, you are permitted to sell a product which uses any of these icons as part of the product. Do not make the icon set available for download on any other icon/design site - always link to this DeviantArt page http://sekkyumu.deviantart.com/art/Developpers-Icons-63052312
-  Author: Sekkyumu (http://sekkyumu.deviantart.com/art/Developpers-Icons-63052312)
-
-- LemSettings, configurator for event long period
-  License: Creative Commons Attribution 3.0 Unported (http://creativecommons.org/licenses/by/3.0/)
-  Link: https://www.iconfinder.com/icons/73219/alarm_alarm_clock_base_beep_bell_buzzer_call_cue_design_dooffy_horn_jingle_signal_wake-up_call_wave_icon
-  Author: Aha-Soft Team
-
-- Help icon in LemSettings -> WizardInitialConfiguration
-  License: Creative Commons Attribution 2.5 Generic (http://creativecommons.org/licenses/by/2.5/)
-  Link: https://www.iconfinder.com/icons/10191/help_icon
-  Author: Ben Gillbanks
-
-- Link icon in LemSettings -> WizardInitialConfiguration
-  License:  Free for commercial use 
-  Link: https://www.iconfinder.com/icons/17275/browser_earth_global_globe_international_internet_planet_world_icon#size=128
-  Author: Media design
-
-- Launcher icon in LemSettings -> WizardInitialConfiguration
-  License: Free for commercial use
-  Link: https://www.iconfinder.com/icons/31279/launch_rocket_spaceship_icon#size=128
-  Author: Ypf
-
-- Icon of the wizard CreateStampingConfig in Lem_Settings
-  License: Free for commercial use
-  Link: www.wishforge.games
+- the Lem_OperationExplorer application icon and the UI icons in
+  Lemoine.JobControls and Lemoine.BaseControls:
+  Copyright (C) 2026 Atsora Solutions
+  Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
 
 - Application icon of Lem_DatabaseUpgrade
   License: Create Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) (https://creativecommons.org/licenses/by-sa/3.0/)
@@ -146,7 +71,3 @@ Some images have a specific license:
 - Folder icon of AtrackingPackageInstaller
   License: Free for personal and commercial use with attribution
   Link: https://www.flaticon.com/free-icons/folder
-
-- Some arrow icons in several applications (Disclosure panel in Lem_OperationExplorer)
-  License: Free for personal and commercial use with attribution
-  Link: https://www.flaticon.com/packs/arrows-41

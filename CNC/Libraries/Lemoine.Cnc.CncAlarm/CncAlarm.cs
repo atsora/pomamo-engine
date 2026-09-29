@@ -1,18 +1,29 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using Pomamo.CncModule;
 
 namespace Lemoine.Cnc
 {
   /// <summary>
-  /// Description of CncAlarm.
+  /// Cnc alarm a module reports.
+  ///
+  /// Deprecated: use <see cref="Pomamo.CncModule.CncAlarm"/> instead, which is the same
+  /// implementation in an assembly whose license, MIT, suits every cnc module, including the ones
+  /// that are not compatible with the Apache-2.0 license of this one. Both implement
+  /// <see cref="Pomamo.CncModule.ICncAlarm"/>, they compare equal to each other, and they share
+  /// their behaviour through Pomamo.CncModule.CncAlarmExtensions, so the two are interchangeable.
+  ///
+  /// This class is kept, and must not be removed, so that the alarms an older version enqueued,
+  /// which carry this type name, are still deserialized after an upgrade.
   /// </summary>
   [Serializable]
-  public class CncAlarm
+  [Obsolete ("Use Pomamo.CncModule.CncAlarm instead. This class is only kept to deserialize the alarms enqueued by an older version.")]
+  public class CncAlarm: Pomamo.CncModule.ICncAlarm
   {
     string m_message = "";
 
@@ -47,8 +58,8 @@ namespace Lemoine.Cnc
     {
       get { return m_message; }
       set {
-        // Remove special characters (0-31)
-        m_message = Regex.Replace (value, @"[\x00-\x1f]+", "");
+        // Remove the control characters, in the same way as the other implementations
+        m_message = CncAlarmExtensions.CleanMessage (value);
       }
     }
 
@@ -107,7 +118,7 @@ namespace Lemoine.Cnc
     /// <param name="objectStr"></param>
     public CncAlarm (string objectStr)
     {
-      ParseString (objectStr);
+      this.ParseDescription (objectStr);
     }
 
     /// <summary>
@@ -116,13 +127,8 @@ namespace Lemoine.Cnc
     /// <returns></returns>
     public CncAlarm Clone ()
     {
-      var other = new CncAlarm (this.CncInfo, this.Type, this.Number) {
-        Message = this.Message
-      };
-      foreach (var key in this.Properties.Keys) {
-        other.Properties[key] = this.Properties[key];
-      }
-
+      var other = new CncAlarm ();
+      this.CopyTo (other);
       return other;
     }
 
@@ -134,34 +140,9 @@ namespace Lemoine.Cnc
     /// <returns></returns>
     public override bool Equals (object obj)
     {
-      if (object.ReferenceEquals (this, obj)) {
-        return true;
-      }
-
-      if (!(obj is CncAlarm other)) {
-        return false;
-      }
-
-      if (Object.Equals (this.Type, other.Type) &&
-          Object.Equals (this.CncInfo, other.CncInfo) &&
-          Object.Equals (this.CncSubInfo, other.CncSubInfo) &&
-          Object.Equals (this.Number, other.Number) &&
-          Object.Equals (this.Message, other.Message) &&
-          this.Properties.Count == other.Properties.Count) {
-        // Check all properties
-        var keys = this.Properties.Keys;
-        foreach (var key in keys) {
-          if (!other.Properties.ContainsKey (key) ||
-              !string.Equals (this.Properties[key], other.Properties[key])) {
-            return false;
-          }
-        }
-      }
-      else {
-        return false;
-      }
-
-      return true;
+      // Compared through the interface, so that an alarm of this implementation and an alarm of
+      // another one are equal when they carry the same values, in both directions
+      return this.HasSameValues (obj as Pomamo.CncModule.ICncAlarm);
     }
 
     /// <summary>
@@ -180,32 +161,7 @@ namespace Lemoine.Cnc
     /// <returns>A hash code for the current Object</returns>
     public override int GetHashCode ()
     {
-      int hashCode = 0;
-
-      unchecked {
-        if (CncInfo != null) {
-          hashCode += 1000000007 * CncInfo.GetHashCode ();
-        }
-
-        if (Type != null) {
-          hashCode += 1000000009 * Type.GetHashCode ();
-        }
-
-        hashCode += 1000000021 * Number.GetHashCode ();
-        if (Message != null) {
-          hashCode += 1000000033 * Message.GetHashCode ();
-        }
-
-        if (Properties != null) {
-          hashCode += 1000000087 * Properties.GetHashCode ();
-        }
-
-        if (CncSubInfo != null) {
-          hashCode += 1000000093 * CncSubInfo.GetHashCode ();
-        }
-      }
-
-      return hashCode;
+      return this.GetValueHashCode ();
     }
 
     /// <summary>
@@ -214,34 +170,7 @@ namespace Lemoine.Cnc
     /// <returns></returns>
     public override string ToString ()
     {
-      return String.Format ("CncInfo={0}; Type={1}; Number={2}; Message={3}", CncInfo, Type, Number, Message);
-    }
-
-    void ParseString (string objectStr)
-    {
-      var mainSplit = objectStr.Split (';');
-      foreach (var elt in mainSplit) {
-        var split = elt.Trim ().Split ('=');
-        if (split.Length == 2) {
-          switch (split[0]) {
-          case "CncInfo":
-            CncInfo = split[1];
-            break;
-          case "Type":
-            Type = split[1];
-            break;
-          case "Number":
-            Number = split[1];
-            break;
-          case "Message":
-            Message = split[1];
-            break;
-          default:
-            // Ignore
-            break;
-          }
-        }
-      }
+      return this.ToDescription ();
     }
   }
 }

@@ -1,5 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2023 Atsora Solutions
+// Copyright (C) 2023-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -10,7 +10,34 @@ using System.Linq;
 namespace Lemoine.Cnc
 {
   /// <summary>
-  /// Description of AlarmKey.
+  /// Identity of a cnc alarm, as opposed to its content: two alarms that share the same key are
+  /// considered to be the same alarm, reported at two different moments.
+  ///
+  /// The message is deliberately not part of the key, so that an alarm whose wording changes
+  /// remains the same alarm. The properties are part of it, except the ones that change
+  /// constantly, see EXCLUDED_PROPERTIES.
+  ///
+  /// It is used:
+  /// <list type="bullet">
+  /// <item>
+  /// to keep the continuity of the alarms when they are imported. Lemoine.CncDataImport keys its
+  /// cache (Cache.CacheAlarm) with it, so that ImportDataCncAlarm extends the period of the alarm
+  /// that is already stored instead of creating a new one, unless the alarm was not reported for
+  /// longer than the maximum gap. This runs in Lem_CncDataService, through Lemoine.CncDataImport;
+  /// </item>
+  /// <item>
+  /// to maintain the table of the current alarms, in the Current modules, both the C# one
+  /// (Lemoine.Cnc.Current) and the F# one (Atsora.Cnc.Current): the alarms an acquisition reports
+  /// are compared with the rows that are stored, to know which ones to add, keep or remove.
+  /// </item>
+  /// </list>
+  ///
+  /// It is only a key of an in-memory dictionary: it is never serialized, neither in the data
+  /// queue nor in the database.
+  ///
+  /// It is built either from a <see cref="Pomamo.CncModule.ICncAlarm"/>, which is what a cnc
+  /// module reports, or from the fields of a stored alarm, whose properties are objects rather
+  /// than strings.
   /// </summary>
   public class AlarmKey : IEquatable<AlarmKey>
   {
@@ -68,8 +95,8 @@ namespace Lemoine.Cnc
     /// <summary>
     /// Constructor based on a cnc alarm
     /// </summary>
-    /// <param name="alarm"></param>
-    public AlarmKey (CncAlarm alarm)
+    /// <param name="alarm">not null</param>
+    public AlarmKey (Pomamo.CncModule.ICncAlarm alarm)
     {
       CncInfo = alarm.CncInfo;
       CncSubInfo = alarm.CncSubInfo;

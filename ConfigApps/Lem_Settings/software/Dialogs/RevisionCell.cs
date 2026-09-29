@@ -53,6 +53,11 @@ namespace Lem_Settings
     public RevisionCell(WatchedRevision revision)
     {
       InitializeComponent();
+      EmbeddedImageLoader.FillImageList (
+        imageList,
+        typeof (RevisionCell),
+        new System.Drawing.Size (32, 32),
+        "clock", "validated", "warning");
       
       m_watchedRevision = revision;
       RevisionId = revision.RevisionId;

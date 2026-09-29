@@ -32,7 +32,6 @@ namespace LemoineServiceMonitoring
   {
     static readonly string ADDITIONAL_LCTR_KEY = "AdditionalServices.Lctr";
     static readonly string ADDITIONAL_LPOST_KEY = "AdditionalServices.Lpost";
-    static readonly string ADDITIONAL_CONNECTOR_KEY = "AdditionalServices.Connector";
     static readonly string ADDITIONAL_OTHERS_KEY = "AdditionalServices.Others";
     static readonly string ADDITIONAL_DEFAULT = ""; // List string, first character is the separator
 
@@ -67,11 +66,7 @@ namespace LemoineServiceMonitoring
       "Lem_WatchDogService";
 
     const string WATCH_DOG_32_SERVICE_NAME =
-#if CONNECTOR
-      "AconnectorWatchDogService";
-#else // !CONNECTOR
       "Lem_WatchDog32Service";
-#endif // !CONNECTOR
 
     private static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
@@ -145,9 +140,8 @@ namespace LemoineServiceMonitoring
       var lpostServices = new List<string> {
         "Lem_CncService", // New Cnc Service
         "Lem_CncCoreService", // New Cnc Service
-        "AtrackingCncService", // Atracking Cnc Service
-        "AtrackingCncCoreService", // Atracking Cnc Core Service
         "Lem_CncDataService", // New Cnc Data Service
+        "Lem_OpcUaClientService", // OPC UA Client Service
         WATCH_DOG_32_SERVICE_NAME, // WatchDog32 Service
         "MTConnect Agent", // MTConnect agent on LPost
         "MTConnect Agent 1", // MTConnect agent on LPost
@@ -161,17 +155,6 @@ namespace LemoineServiceMonitoring
         "MTConnect Agent 9" // MTConnect agent on LPost
       };
       AddAdditionalServices (lpostServices, ADDITIONAL_LPOST_KEY);
-
-      // Connector services
-      var connectorServices = new List<string> {
-        "AconnectorCncService",
-        "AconnectorCncCoreService",
-        "AconnectorOpenCncService",
-        "AconnectorOpenCncCoreService",
-        "AconnectorAspService",
-        "AconnectorWatchDogService"
-      };
-      AddAdditionalServices (connectorServices, ADDITIONAL_CONNECTOR_KEY);
 
       // Alert
       var alertServices = new List<string> {
@@ -199,14 +182,7 @@ namespace LemoineServiceMonitoring
         "Lem_StampingService"
       };
 
-      // 1.e) Controls
-      var controlServices = new List<string> {
-        "Lem_Control", // Control des services
-        "Lem_SiemensToCorbaService", // SiemensToCorba Service
-        "Lem_FanucToCorbaService"
-      };
-
-      // 1.f) Extras
+      // 1.e) Extras
       var otherServices = new List<string> {
         "TAO_NT_Naming_Service", // TAO
         "omninames" // Omni name service
@@ -242,13 +218,7 @@ namespace LemoineServiceMonitoring
       foreach (var serviceName in lpostServices) {
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
-      foreach (var serviceName in connectorServices) {
-        addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
-      }
       foreach (var serviceName in stampingServices) {
-        addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
-      }
-      foreach (var serviceName in controlServices) {
         addServiceTasks.Add (AddServiceAsync (serviceName, groupIndex));
       }
       foreach (var serviceName in commonServices) {
@@ -416,9 +386,6 @@ namespace LemoineServiceMonitoring
           ListViewGroup controlGroup =
             new ListViewGroup ($"Control: {cncMachine.Name} ({cncMachine.Address})");
           listView.Groups.Insert (groupIndex, controlGroup);
-          foreach (var serviceName in controlServices) {
-            addServiceTasks.Add (AddServiceAsync (serviceName, cncMachine.Address, groupIndex));
-          }
           foreach (var serviceName in lpostServices) {
             addServiceTasks.Add (AddServiceAsync (serviceName, cncMachine.Address, groupIndex));
           }

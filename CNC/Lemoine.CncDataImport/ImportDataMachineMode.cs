@@ -70,7 +70,6 @@ namespace Lemoine.CncDataImport
       }
       if (data.DateTime < otherData.DateTime) {
         log.Fatal ($"IsMergeable: new data {data} is before the last data {otherData} => this should not happen");
-        Debug.Assert (false);
         return false;
       }
 
@@ -222,7 +221,6 @@ namespace Lemoine.CncDataImport
       catch (Exception ex) {
         // Reload the last fact
         log.Error ($"ImportMachineMode: exception => try to reload m_fact {m_fact}", ex);
-        Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.Fatal ($"ImportMachineMode: the session is still active before reloading m_fact");
         }

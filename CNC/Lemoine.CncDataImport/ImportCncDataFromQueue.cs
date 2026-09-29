@@ -467,8 +467,8 @@ namespace Lemoine.CncDataImport
         if (newAttempt <= maxAttempt) {
           if (log.IsInfoEnabled) {
             log.Info ($"TryImportDatas: attempt={newAttempt} did not reach {maxAttempt} => try again");
-            TryImportDatas (datas, cancellationToken, newAttempt);
           }
+          TryImportDatas (datas, cancellationToken, newAttempt);
         }
         else {
           if (log.IsWarnEnabled) {

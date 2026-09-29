@@ -41,6 +41,7 @@ namespace Lem_Settings
     public GuiLeft1()
     {
       InitializeComponent();
+      buttonClearSearch.Image = EmbeddedImageLoader.Load (typeof (GuiLeft1), "clear");
     }
     #endregion // Constructors
 

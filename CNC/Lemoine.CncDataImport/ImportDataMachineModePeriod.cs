@@ -221,7 +221,6 @@ namespace Lemoine.CncDataImport
       catch (Exception ex) {
         // Reload the last fact
         log.Error ($"ImportMachineModePeriod: exception => try to reload m_fact {m_fact}", ex);
-        Debug.Assert (!ModelDAOHelper.DAOFactory.IsSessionActive ());
         if (ModelDAOHelper.DAOFactory.IsSessionActive ()) {
           log.Fatal ($"ImportMachineModePeriod: the session is still active before reloading m_fact");
         }

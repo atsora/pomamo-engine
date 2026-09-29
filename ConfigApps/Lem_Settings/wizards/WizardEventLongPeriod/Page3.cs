@@ -20,12 +20,12 @@ namespace WizardEventLongPeriod
     /// <summary>
     /// Title
     /// </summary>
-    public string Title { get { return "Machine observation states"; } }
+    public string Title { get { return "Planned states"; } }
     
     /// <summary>
     /// Some help regarding the page
     /// </summary>
-    public string Help { get { return "Select here the machine observation states associated " +
+    public string Help { get { return "Select here the planned states associated " +
           "with the long period events you want to create.\n\n" +
           "It is possible to include all items with the \"All\" check-box."; } }
     
@@ -102,7 +102,7 @@ namespace WizardEventLongPeriod
       
       if (!data.Get<bool>(Item.ALL_MOSS) &&
           data.Get<IList<IMachineObservationState>>(Item.MOSS).Count == 0) {
-        errors.Add("at least one machine observation state must be selected");
+        errors.Add("at least one planned state must be selected");
       }
 
       return errors;

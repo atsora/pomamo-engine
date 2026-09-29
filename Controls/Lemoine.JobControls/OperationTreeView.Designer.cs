@@ -35,7 +35,6 @@ namespace Lemoine.JobControls
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OperationTreeView));
       this.contextMenuStripTreeView = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.contextMenuStripWorkOrder = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.contextMenuStripProject = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -250,7 +249,7 @@ namespace Lemoine.JobControls
       // 
       // searchBtn
       // 
-      this.searchBtn.ImageIndex = 8;
+      this.searchBtn.ImageIndex = 10;
       this.searchBtn.Location = new System.Drawing.Point(318, 8);
       this.searchBtn.Name = "searchBtn";
       this.searchBtn.Size = new System.Drawing.Size(25, 25);
@@ -301,18 +300,10 @@ namespace Lemoine.JobControls
       // 
       // imageList
       // 
-      this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+      this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+      this.imageList.ImageSize = new System.Drawing.Size(16, 16);
       this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList.Images.SetKeyName(0, "workorder.png");
-      this.imageList.Images.SetKeyName(1, "project.png");
-      this.imageList.Images.SetKeyName(2, "component.png");
-      this.imageList.Images.SetKeyName(3, "intermediateworkpiece.gif");
-      this.imageList.Images.SetKeyName(4, "operation.png");
-      this.imageList.Images.SetKeyName(5, "job.png");
-      this.imageList.Images.SetKeyName(6, "part.png");
-      this.imageList.Images.SetKeyName(7, "simpleoperation.png");
-      this.imageList.Images.SetKeyName(8, "zoom.png");
-      this.imageList.Images.SetKeyName(9, "sequence.png");
+      JobControlImages.FillTreeImageList(this.imageList, includeSearch: true);
       // 
       // imageListDrag
       // 

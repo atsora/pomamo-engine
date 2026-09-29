@@ -1338,7 +1338,7 @@ namespace Lemoine.WebService.UnitTests
 
           Assert.That (GetMachineObservationStateListV2Response, Is.Not.Null, "No machine observation state list");
           Assert.That (GetMachineObservationStateListV2Response.List, Is.Not.Null, "No machine observation state list's list");
-          // there is already a slot with no end in LemoineUnitTests (the last in response) that we don't care about
+          // there is already a slot with no end in the unit tests database (the last in response) that we don't care about
           Assert.That (GetMachineObservationStateListV2Response.List, Has.Count.EqualTo (3), "Not 3 machine observation states");
           MachineObservationStateSlotV2DTO mobs1 = GetMachineObservationStateListV2Response.List[0];
           MachineObservationStateSlotV2DTO mobs2 = GetMachineObservationStateListV2Response.List[1];
@@ -1408,7 +1408,7 @@ namespace Lemoine.WebService.UnitTests
 
           Assert.That (GetMachineObservationStateListV2Response, Is.Not.Null, "No machine observation state list");
           Assert.That (GetMachineObservationStateListV2Response.List, Is.Not.Null, "No machine observation state list's list");
-          // there is already a slot with no end in LemoineUnitTests (the last in response) that we don't care about
+          // there is already a slot with no end in the unit tests database (the last in response) that we don't care about
           Assert.That (GetMachineObservationStateListV2Response.List, Has.Count.EqualTo (2), "Not 2 machine observation states");
           MachineObservationStateSlotV2DTO mobs1 = GetMachineObservationStateListV2Response.List[0];
 
@@ -1434,7 +1434,7 @@ namespace Lemoine.WebService.UnitTests
 
           Assert.That (GetMachineObservationStateListV2Response, Is.Not.Null, "No machine observation state list (2)");
           Assert.That (GetMachineObservationStateListV2Response.List, Is.Not.Null, "No machine observation state list's list (2)");
-          // there is already a slot with no end in LemoineUnitTests (the last in response) that we don't care about
+          // there is already a slot with no end in the unit tests database (the last in response) that we don't care about
           Assert.That (GetMachineObservationStateListV2Response.List, Has.Count.EqualTo (2), "Not 2 machine observation states (2)");
           mobs1 = GetMachineObservationStateListV2Response.List[0];
 

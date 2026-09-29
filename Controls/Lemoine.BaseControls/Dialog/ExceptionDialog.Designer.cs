@@ -37,7 +37,6 @@ namespace Lemoine.BaseControls
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExceptionDialog));
       this.baseLayout = new System.Windows.Forms.TableLayoutPanel();
       this.pictureBox = new System.Windows.Forms.PictureBox();
       this.richText = new System.Windows.Forms.RichTextBox();
@@ -71,7 +70,7 @@ namespace Lemoine.BaseControls
       // pictureBox
       // 
       this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
+      this.pictureBox.Image = BaseControlImages.Load ("warning", new System.Drawing.Size(48, 48));
       this.pictureBox.Location = new System.Drawing.Point(3, 3);
       this.pictureBox.Name = "pictureBox";
       this.pictureBox.Size = new System.Drawing.Size(69, 69);

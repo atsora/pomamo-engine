@@ -62,7 +62,7 @@ namespace WizardMonitorMachine
       // 
       // pictureBox
       // 
-      pictureBox.BackgroundImage = new Bitmap ("fallback.png");
+      pictureBox.BackgroundImage = Lemoine.BaseControls.BaseControlImages.Load ("fallback");
       pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
       pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
       pictureBox.Location = new System.Drawing.Point (145, 0);

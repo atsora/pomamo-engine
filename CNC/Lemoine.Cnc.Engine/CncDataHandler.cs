@@ -471,6 +471,11 @@ namespace Lemoine.CncEngine
       }
       var module = LoadModule (typeName);
 
+#if !NET40
+      // A module that logs with Microsoft.Extensions.Logging gets here where to send its logs
+      CncModuleLogging.SetLoggerFactory (module);
+#endif // !NET40
+
       // Check if a license is required
       if (!IsLicenseOk (module)) {
         log.Warn ($"LoadModule: the license is not ok for {module}, skip it");
@@ -1692,9 +1697,9 @@ namespace Lemoine.CncEngine
         return dictionary.ToDictionaryString (withType);
       }
 #if NETSTANDARD || NET48 || NETCOREAPP
-      else if (item.Value is IList<CncAlarm>) {
-        IList<CncAlarm> list = (IList<CncAlarm>)ConvertData (item.Value, typeof (IList<CncAlarm>));
-        return list.ToListString ();
+      // IEnumerable is covariant, so this covers both IList<CncAlarm> and IList<ICncAlarm>
+      else if (item.Value is IEnumerable<Pomamo.CncModule.ICncAlarm> cncAlarms) {
+        return cncAlarms.ToListString ();
       }
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 

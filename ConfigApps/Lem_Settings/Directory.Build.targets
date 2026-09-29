@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- Fixed UI artwork is embedded so deployment does not depend on the process working directory. -->
+  <ItemGroup>
+    <!-- Item icons are loaded from the PNGs below; do not also ship stale bitmap copies from Item*.resx. -->
+    <EmbeddedResource Remove="**\Item*.resx" />
+    <EmbeddedResource Include="**\*.png"
+                      Exclude="bin\**;obj\**" />
+  </ItemGroup>
+</Project>

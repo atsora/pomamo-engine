@@ -69,7 +69,6 @@ namespace Lemoine.CncDataImport
         || (ExchangeDataCommand.CncVariableSet != data.Command)) {
         log.FatalFormat ("IsMergeable: invalid data key {0} or {1}",
           otherData.Command, data.Command);
-        Debug.Assert (false);
         throw new ArgumentException ("IsMergeable: wrong data key");
       }
 

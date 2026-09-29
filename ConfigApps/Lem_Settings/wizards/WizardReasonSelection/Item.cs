@@ -32,7 +32,7 @@ namespace WizardReasonSelection
     public override string Description {
       get {
         return "Configure the possible reasons for a set of " +
-          "machine modes (what is detected) and machine observation states (what is planned and expected).\n\n" +
+          "machine modes (what is detected) and planned states (what is expected).\n\n" +
           "The assignment logic is further defined:\n" +
           " - the definition of which reasons can be assigned by default, and in which context;\n" +
           " - the definition of the selectable reasons, if a default reason needs to be overwritten;\n" +

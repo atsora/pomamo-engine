@@ -17,16 +17,13 @@ namespace Lemoine.Plugin.AutoMachineStateTemplateConfig
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Priority of the plugin
     /// </summary>
     [PluginConf ("Double", "Priority", Description = "Plugin priority. Default: 1.0", Parameters = "100000:3", Multiple = false, Optional = false)]
     [DefaultValue (1.0)]
     public double Priority { get; set; } = 1.0;
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -42,15 +39,8 @@ namespace Lemoine.Plugin.AutoMachineStateTemplateConfig
     public bool IsValid (out IEnumerable<string> errors)
     {
       var errorList = new List<string> ();
-      // TODO: check the parameters here, for example:
-      /* 
-      if (string.IsNullOrEmpty (this.MyParameter)) {
-        errorList.Add ("ID Prefix is empty");
-      }
-      */
       errors = errorList;
       return true;
     }
-    #endregion // Constructors
   }
 }

@@ -584,10 +584,17 @@ namespace Lemoine.GDBPersistentClasses
                             message);
           }
           else { // null != machineStatus
-            if (this.Range.ContainsElement (machineStatus.ReasonSlotEnd)) { // Current
+            // Keep the machine status consistent with the last reason slot, that ends at ReasonSlotEnd:
+            // update it only if this association overlaps the last reason slot.
+            // If the association starts at ReasonSlotEnd, no reason slot was updated. Updating the machine status
+            // would hide the change of machine observation state to the activity analysis, that would then extend
+            // the last reason slot (fast process) with the previous machine observation state, without resetting its reason
+            if ((Bound.Compare<DateTime> (this.Begin, machineStatus.ReasonSlotEnd) < 0)
+                && (Bound.Compare<DateTime> (machineStatus.ReasonSlotEnd, this.End) <= 0)) { // Current
               // This impacts the current period => update machineStatus
-              log.DebugFormat ("MakeAnalysis: " +
-                               "current MachineObservationState association");
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Analyze: association in {this.Range} on the last reason slot that ends at {machineStatus.ReasonSlotEnd} => update the machine status");
+              }
               machineStatus.MachineObservationState = this.MachineObservationState;
               machineStatus.Shift = this.Shift;
             }
