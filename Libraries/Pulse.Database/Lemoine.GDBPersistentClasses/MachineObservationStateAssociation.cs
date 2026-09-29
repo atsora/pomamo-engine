@@ -42,6 +42,17 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     static readonly TimeSpan BY_PERIOD_MIN_DURATION_DEFAULT = TimeSpan.FromHours (4);
 
+    /// <summary>
+    /// Reset a manual reason that is not compatible any more with the new machine observation state: key
+    ///
+    /// The same key is used in the plugin ReasonDefaultManagement (ReasonModificationManual)
+    /// </summary>
+    static readonly string RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY = "Reason.Manual.ResetNotCompatible";
+    /// <summary>
+    /// Reset a manual reason that is not compatible any more with the new machine observation state: default value
+    /// </summary>
+    static readonly bool RESET_NOT_COMPATIBLE_MANUAL_REASON_DEFAULT = false;
+
     #region Members
     IMachineObservationState m_machineObservationState;
     IUser m_user;
@@ -347,12 +358,7 @@ namespace Lemoine.GDBPersistentClasses
           if (!object.Equals (newReasonSlot.MachineObservationState, this.MachineObservationState)) {
             // Consider the reasons only if there is a change of machine observation state
             newReasonSlot.MachineObservationState = this.MachineObservationState;
-            if (newReasonSlot.ReasonSource.Equals (ReasonSource.Manual)) {
-              // Check the old reason is compatible with the new
-              // MachineObservationState if the machine observation state changed,
-              // else raise a warning
-              CheckReasonCompatible (range, oldReasonSlot.MachineMode, this.MachineObservationState, oldReasonSlot.Reason, oldReasonSlot.ReasonScore, oldReasonSlot.ReasonSource);
-            }
+            CheckManualReason (range, oldReasonSlot, (ReasonSlot)newReasonSlot);
           }
         }
 
@@ -726,20 +732,9 @@ namespace Lemoine.GDBPersistentClasses
 
                 // In case there a machine observation state change (and not only a shift change)
                 if (!object.Equals (reasonSlot.MachineObservationState, this.MachineObservationState)) {
-
-                  if (reasonSlot.ReasonSource.Equals (ReasonSource.Manual)) {
-                    // Machine observation state change on a manual reason,
-                    // check it is still compatible
-                    CheckReasonCompatible (middlePeriod,
-                                           reasonSlot.MachineMode,
-                                           this.MachineObservationState,
-                                           reasonSlot.Reason,
-                                           reasonSlot.ReasonScore,
-                                           reasonSlot.ReasonSource);
-                  }
-
                   var oldReasonSlot = (IReasonSlot)reasonSlot.Clone ();
                   reasonSlot.MachineObservationState = this.MachineObservationState;
+                  CheckManualReason (middlePeriod, oldReasonSlot, (ReasonSlot)reasonSlot);
                   ((ReasonSlot)reasonSlot).Consolidate (oldReasonSlot, this);
                 } // Change of machine observation state
 
@@ -794,6 +789,46 @@ namespace Lemoine.GDBPersistentClasses
       return previous;
     }
 
+    /// <summary>
+    /// In case of a machine observation state change on a manual reason,
+    /// check it is still compatible, else raise a warning.
+    ///
+    /// If the option Reason.Manual.ResetNotCompatible is set,
+    /// switch the not compatible manual reason to processing,
+    /// so that the reason is re-computed later by the processing reason slots analysis
+    /// (where the not compatible manual reasons are skipped)
+    /// </summary>
+    /// <param name="range"></param>
+    /// <param name="oldReasonSlot">reason slot before the machine observation state change (not null)</param>
+    /// <param name="newReasonSlot">reason slot with the new machine observation state (not null)</param>
+    void CheckManualReason (UtcDateTimeRange range, IReasonSlot oldReasonSlot, ReasonSlot newReasonSlot)
+    {
+      if (!IsMainReasonManual (oldReasonSlot.ReasonSource)) {
+        return;
+      }
+
+      var isCompatible = CheckReasonCompatible (range, oldReasonSlot.MachineMode, this.MachineObservationState, oldReasonSlot.Reason, oldReasonSlot.ReasonScore, ReasonSource.Manual);
+      if (!isCompatible
+        && Lemoine.Info.ConfigSet.LoadAndGet (RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY, RESET_NOT_COMPATIBLE_MANUAL_REASON_DEFAULT)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CheckManualReason: reset the not compatible manual reason {oldReasonSlot.Reason?.Id} in {range}");
+        }
+        newReasonSlot.SwitchToProcessing ();
+      }
+    }
+
+    /// <summary>
+    /// Is the main reason a manual reason ? (whichever the unsafe flags are)
+    /// </summary>
+    /// <param name="reasonSource"></param>
+    /// <returns></returns>
+    static bool IsMainReasonManual (ReasonSource reasonSource)
+    {
+      return reasonSource.HasFlag (ReasonSource.Manual)
+        && !reasonSource.IsDefault ()
+        && !reasonSource.IsAuto ();
+    }
+
     bool IsReasonCompatible (UtcDateTimeRange range, IMachineMode machineMode, IMachineObservationState machineObservationState, IReason reason, double reasonScore, ReasonSource reasonSource)
     {
       return GetReasonExtensions ()
@@ -812,7 +847,8 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="reason">not null</param>
     /// <param name="reasonScore"></param>
     /// <param name="reasonSource"></param>
-    void CheckReasonCompatible (UtcDateTimeRange range,
+    /// <returns>the reason is compatible</returns>
+    bool CheckReasonCompatible (UtcDateTimeRange range,
                                 IMachineMode machineMode,
                                 IMachineObservationState machineObservationState,
                                 IReason reason,
@@ -831,7 +867,9 @@ namespace Lemoine.GDBPersistentClasses
         log.WarnFormat ("CheckReasonCompatible: {0}",
                         message);
         AddAnalysisLog (LogLevel.WARN, message);
+        return false;
       }
+      return true;
     }
 
     /// <summary>

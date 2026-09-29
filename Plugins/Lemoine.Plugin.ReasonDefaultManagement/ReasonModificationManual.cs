@@ -25,6 +25,17 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     : Lemoine.Extensions.NotConfigurableExtension
     , IReasonExtension
   {
+    /// <summary>
+    /// Reset a manual reason that is not compatible any more with the machine observation state: key
+    ///
+    /// The same key is used in MachineObservationStateAssociation
+    /// </summary>
+    static readonly string RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY = "Reason.Manual.ResetNotCompatible";
+    /// <summary>
+    /// Reset a manual reason that is not compatible any more with the machine observation state: default value
+    /// </summary>
+    static readonly bool RESET_NOT_COMPATIBLE_MANUAL_REASON_DEFAULT = false;
+
     ILog log = LogManager.GetLogger (typeof (ReasonModificationManual).FullName);
 
     IMachine m_machine;
@@ -360,6 +371,19 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
         return;
       }
 
+      if (Lemoine.Info.ConfigSet.LoadAndGet (RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY, RESET_NOT_COMPATIBLE_MANUAL_REASON_DEFAULT)) {
+        var slot = reasonSlot;
+        manualReasonProposals = manualReasonProposals
+          .Where (m => IsCompatible (slot, m))
+          .ToList ();
+        if (!manualReasonProposals.Any ()) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"TryResetReason: no compatible manual reason proposal during {reasonSlot.DateTimeRange} => return");
+          }
+          return;
+        }
+      }
+
       var range = reasonSlot.DateTimeRange;
       IReasonMachineAssociation manualReasonAssociation = null;
       foreach (var manualReasonProposal in manualReasonProposals) {
@@ -484,6 +508,16 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
       }
 
       return new List<IPossibleReason> ();
+    }
+
+    bool IsCompatible (IReasonSlot reasonSlot, IReasonProposal manualReasonProposal)
+    {
+      var isCompatible = GetReasonExtensions ()
+        .Any (ext => ext.IsCompatible (reasonSlot.DateTimeRange, reasonSlot.MachineMode, reasonSlot.MachineObservationState, manualReasonProposal.Reason, manualReasonProposal.ReasonScore, ReasonSource.Manual));
+      if (!isCompatible && log.IsInfoEnabled) {
+        log.Info ($"IsCompatible: manual reason {manualReasonProposal.Reason?.Id} of proposal {manualReasonProposal.Id} is not compatible with machine observation state {reasonSlot.MachineObservationState?.Id} and machine mode {reasonSlot.MachineMode?.Id} in {reasonSlot.DateTimeRange} => skip it");
+      }
+      return isCompatible;
     }
 
     bool IsMatch (IReasonProposal reasonProposal, IEnumerable<IReasonSelection> reasonSelections)
