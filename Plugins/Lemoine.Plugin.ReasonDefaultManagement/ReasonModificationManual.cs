@@ -30,7 +30,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     ///
     /// The same key is used in MachineObservationStateAssociation
     /// </summary>
-    static readonly string RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY = "Reason.Manual.ResetNotCompatible";
+    static readonly string RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY = ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.ResetNotCompatibleManualReason);
     /// <summary>
     /// Reset a manual reason that is not compatible any more with the machine observation state: default value
     /// </summary>

@@ -47,7 +47,7 @@ namespace Lemoine.GDBPersistentClasses
     ///
     /// The same key is used in the plugin ReasonDefaultManagement (ReasonModificationManual)
     /// </summary>
-    static readonly string RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY = "Reason.Manual.ResetNotCompatible";
+    static readonly string RESET_NOT_COMPATIBLE_MANUAL_REASON_KEY = ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.ResetNotCompatibleManualReason);
     /// <summary>
     /// Reset a manual reason that is not compatible any more with the new machine observation state: default value
     /// </summary>
@@ -793,7 +793,7 @@ namespace Lemoine.GDBPersistentClasses
     /// In case of a machine observation state change on a manual reason,
     /// check it is still compatible, else raise a warning.
     ///
-    /// If the option Reason.Manual.ResetNotCompatible is set,
+    /// If the option Analysis.ResetNotCompatibleManualReason is set,
     /// switch the not compatible manual reason to processing,
     /// so that the reason is re-computed later by the processing reason slots analysis
     /// (where the not compatible manual reasons are skipped)

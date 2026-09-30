@@ -225,7 +225,7 @@ namespace Lemoine.Extensions.Plugin
       Debug.Assert (null != assemblyLoader);
 
       string fullName = name;
-      if (!fullName.Contains ("Plugin")) {
+      if (!fullName.StartsWith ("Lemoine.Plugin.")) {
         fullName = "Lemoine.Plugin." + name;
       }
 

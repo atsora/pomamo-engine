@@ -241,6 +241,11 @@ namespace Lemoine.GDBPersistentClasses
                            68,
                            active: false);
       InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetAnalysisConfigKey (AnalysisConfigKey.ResetNotCompatibleManualReason),
+                           "Analysis config: reset a manual reason to the default reason when it is not compatible any more with the machine observation state and machine mode, for example after a change of machine observation state",
+                           false,
+                           active: false);
+      InsertDefaultValue (config);
 
       // - cnc
       config = new Config (ConfigKeys.GetCncConfigKey (CncConfigKey.CncDataUseProcess),

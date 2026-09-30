@@ -214,7 +214,7 @@ namespace Lemoine.Analysis.UnitTests
 
     /// <summary>
     /// Test TryResetReason with a manual reason that is not compatible with the machine observation state
-    /// of the reason slot, with and without the option Reason.Manual.ResetNotCompatible
+    /// of the reason slot, with and without the option Analysis.ResetNotCompatibleManualReason
     /// </summary>
     [Test]
     public void TestTryResetReasonNotCompatible ()
@@ -262,7 +262,7 @@ namespace Lemoine.Analysis.UnitTests
             ModelDAOHelper.DAOFactory.Flush ();
 
             // Option on: the not compatible manual reason is skipped
-            Lemoine.Info.ConfigSet.ForceValue ("Reason.Manual.ResetNotCompatible", true);
+            Lemoine.Info.ConfigSet.ForceValue ("Analysis.ResetNotCompatibleManualReason", true);
             reasonExtension.TryResetReason (ref reasonSlot);
             Assert.Multiple (() => {
               Assert.That (reasonSlot.Reason.Id, Is.EqualTo ((int)ReasonId.Processing));
@@ -290,7 +290,7 @@ namespace Lemoine.Analysis.UnitTests
     /// Test a change of machine observation state on a reason slot with a manual reason
     /// that is not compatible with the new machine observation state
     /// </summary>
-    /// <param name="resetNotCompatible">value of the option Reason.Manual.ResetNotCompatible</param>
+    /// <param name="resetNotCompatible">value of the option Analysis.ResetNotCompatibleManualReason</param>
     [TestCase (false)]
     [TestCase (true)]
     public void TestNewMachineObservationStateNotCompatible (bool resetNotCompatible)
@@ -298,7 +298,7 @@ namespace Lemoine.Analysis.UnitTests
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ()) {
           try {
-            Lemoine.Info.ConfigSet.ForceValue ("Reason.Manual.ResetNotCompatible", resetNotCompatible);
+            Lemoine.Info.ConfigSet.ForceValue ("Analysis.ResetNotCompatibleManualReason", resetNotCompatible);
             Lemoine.Info.ConfigSet
               .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
 
