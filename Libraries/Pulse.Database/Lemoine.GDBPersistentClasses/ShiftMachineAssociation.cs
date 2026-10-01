@@ -193,8 +193,9 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
       
-      if ((null != this.Shift)
-          && !this.Day.HasValue) { // Create one sub-modification by day, for each shift
+      // Note: also when the shift is null (for example a machine shift that becomes null in ShiftByMachineAccumulator),
+      //       else the day of the operation slots would be reset to null
+      if (!this.Day.HasValue) { // Create one sub-modification by day, for each shift
         Debug.Assert (this.Range.Upper.HasValue);
         
         // Limit the range to operationSlotSplit.End
@@ -232,7 +233,7 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
       
-      Debug.Assert (this.Day.HasValue || (null == this.Shift));
+      Debug.Assert (this.Day.HasValue);
       {
         // Get the adjusted step range
         UtcDateTimeRange range = GetNotAppliedRange ();
