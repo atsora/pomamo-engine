@@ -72,11 +72,23 @@ namespace Lem_AspService
         log.Error ($"InitializeAsync: LoadExtensionsAsync failed but continue", ex);
         extensionsLoadSuccess = false;
       }
+      // Initialize the config reader before it is added to ConfigSet,
+      // so that a config extension that requires a config value during its initialization
+      // does not call back this config reader
+      var configReaderFromExtensions = new Lemoine.Business.Config.ConfigReaderFromExtensions (false);
+      if (extensionsLoadSuccess) {
+        try {
+          configReaderFromExtensions.Initialize ();
+        }
+        catch (Exception ex) {
+          log.Error ($"InitializeAsync: Initialize of ConfigReaderFromExtensions failed", ex);
+        }
+      }
       try {
-        Lemoine.Info.ConfigSet.AddConfigReader (new Lemoine.Business.Config.ConfigReaderFromExtensions (extensionsLoadSuccess));
+        Lemoine.Info.ConfigSet.AddConfigReader (configReaderFromExtensions);
       }
       catch (Exception ex) {
-        log.Error ($"InitializeAsync: AddConfigReader ConfigReaderFromExtensions failed", ex);
+        log.Error ($"InitializeAsync: AddConfigReader configReaderFromExtensions failed", ex);
       }
     }
   }
