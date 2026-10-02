@@ -1,0 +1,37 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../../Libraries/Pulse.Business/Pulse.Business.csproj" />
+    <Project Path="../../../Libraries/Pulse.Extensions.Business/Pulse.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Pulse.Extensions.Database/Pulse.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Pulse.Extensions/Pulse.Extensions.csproj" />
+    <Project Path="../../Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+    <Project Path="../../Libraries/Lemoine.WebService/Lemoine.WebService.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj">
+      <Platform Solution="Debug|x86" Project="x86" />
+      <Platform Solution="Release|x86" Project="x86" />
+      <Build Solution="Release|x86" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.DTO.UnitTests.csproj">
+    <Platform Solution="Debug|x86" Project="x86" />
+    <Platform Solution="Release|x86" Project="x86" />
+    <Build Solution="Release|x86" Project="false" />
+  </Project>
+</Solution>

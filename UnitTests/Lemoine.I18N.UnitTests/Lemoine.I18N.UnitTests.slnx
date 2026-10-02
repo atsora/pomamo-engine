@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+  </Folder>
+  <Project Path="Lemoine.I18N.UnitTests.csproj" />
+</Solution>

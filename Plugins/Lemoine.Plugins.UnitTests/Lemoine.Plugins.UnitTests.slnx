@@ -1,0 +1,31 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../../Analysis/Libraries/Lemoine.Analysis/Lemoine.Analysis.csproj" />
+    <Project Path="../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj" />
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/">
+    <Project Path="../Lemoine.Plugin.IdleTimePerPeriod2/Lemoine.Plugin.IdleTimePerPeriod2.csproj" />
+    <Project Path="../Lemoine.Plugin.ProductionSwitcher/Lemoine.Plugin.ProductionSwitcher.csproj" />
+    <Project Path="../Lemoine.Plugin.ReasonDefaultManagement/Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <Project Path="../Lemoine.Plugin.SetupSwitcher/Lemoine.Plugin.SetupSwitcher.csproj" />
+    <Project Path="../Lemoine.Plugin.ShortPeriodRemoval/Lemoine.Plugin.ShortPeriodRemoval.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Plugins.UnitTests.csproj" />
+</Solution>

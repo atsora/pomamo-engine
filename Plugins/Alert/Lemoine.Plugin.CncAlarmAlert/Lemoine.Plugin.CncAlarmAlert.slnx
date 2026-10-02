@@ -1,0 +1,23 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="net40" />
+    <BuildType Name="Release" />
+    <BuildType Name="VisualStudio" />
+    <BuildType Name="VS" />
+  </Configurations>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Alert/Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Plugin.CncAlarmAlert.csproj">
+    <BuildType Solution="net40|*" Project="VisualStudio" />
+    <BuildType Solution="VS|*" Project="VisualStudio" />
+  </Project>
+</Solution>

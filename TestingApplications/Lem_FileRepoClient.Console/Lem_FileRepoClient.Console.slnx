@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.FileRepository.Corba/Lemoine.FileRepository.Corba.csproj" />
+  </Folder>
+  <Project Path="Lem_FileRepoClient.Console.csproj">
+    <Platform Project="x86" />
+  </Project>
+</Solution>

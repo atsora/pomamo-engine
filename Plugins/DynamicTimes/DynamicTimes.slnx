@@ -1,0 +1,70 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/DetectionStatus/">
+    <Project Path="../Lemoine.Plugin.DetectionStatusFromDatabase/Lemoine.Plugin.DetectionStatusFromDatabase.csproj" />
+  </Folder>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Alert/Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
+    <Project Path="../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../CNC/Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Business/Pulse.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Database/Pulse.Extensions.Database.csproj" />
+    <Project Path="../../Web/Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+    <Project Path="../../Web/Pulse.Extensions.Web/Pulse.Extensions.Web.csproj" />
+  </Folder>
+  <Folder Name="/GoodCycle/">
+    <Project Path="../Lemoine.Plugin.GoodCycleOnlyEnd/Lemoine.Plugin.GoodCycleOnlyEnd.csproj" />
+    <Project Path="../Lemoine.Plugin.GoodCycleWithoutStopSequences/Lemoine.Plugin.GoodCycleWithoutStopSequences.csproj" />
+    <Project Path="../Lemoine.Plugin.GoodCycleWithStopSequences/Lemoine.Plugin.GoodCycleWithStopSequences.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Abstractions/Lemoine.Abstractions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.Extensions/Lemoine.Core.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.FSharp/Lemoine.FSharp.fsproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Lemoine.ServiceCore/Lemoine.ServiceCore.csproj" />
+    <Project Path="../../Libraries/Pulse.Business/Pulse.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions/Pulse.Extensions.csproj" />
+    <Project Path="../../Libraries/Pulse.Hosting/Pulse.Hosting.csproj" />
+    <Project Path="../Pulse.PluginImplementation/Pulse.PluginImplementation.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj" />
+    <Project Path="Lemoine.Plugin.DynamicTime.UnitTests/Lemoine.Plugin.DynamicTime.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.Plugin.ActivityIsProduction/Lemoine.Plugin.ActivityIsProduction.csproj" />
+  <Project Path="Lemoine.Plugin.AfterDynamicTime/Lemoine.Plugin.AfterDynamicTime.csproj" />
+  <Project Path="Lemoine.Plugin.ApplicableAtMachineStateShift/Lemoine.Plugin.ApplicableAtMachineStateShift.csproj" />
+  <Project Path="Lemoine.Plugin.CncValueTime/Lemoine.Plugin.CncValueTime.csproj" />
+  <Project Path="Lemoine.Plugin.CycleIsProduction/Lemoine.Plugin.CycleIsProduction.csproj" />
+  <Project Path="Lemoine.Plugin.DynamicTimesCycle/Lemoine.Plugin.DynamicTimesCycle.csproj" />
+  <Project Path="Lemoine.Plugin.DynamicTimesSequence/Lemoine.Plugin.DynamicTimesSequence.csproj" />
+  <Project Path="Lemoine.Plugin.NextSpecificMachineMode/Lemoine.Plugin.NextSpecificMachineMode.csproj" />
+  <Project Path="Lemoine.Plugin.NGoodCyclesIsProduction/Lemoine.Plugin.NGoodCyclesIsProduction.csproj" />
+  <Project Path="Lemoine.Plugin.SameCncValue/Lemoine.Plugin.SameCncValue.csproj" />
+  <Project Path="Lemoine.Plugin.SameMachineMode/Lemoine.Plugin.SameMachineMode.csproj" />
+  <Project Path="Lemoine.Plugin.SwitchByDetectedCyclesProduction/Lemoine.Plugin.SwitchByDetectedCyclesProduction.csproj" />
+  <Project Path="Lem_TestDynamicTime.Console/Lem_TestDynamicTime.Console.csproj">
+    <Platform Project="x64" />
+    <Build Solution="Debug|x86" Project="false" />
+  </Project>
+</Solution>

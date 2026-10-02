@@ -1,0 +1,49 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Librairies/">
+    <Project Path="../../Libraries/Lemoine.Collections/Lemoine.Collections.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.FileRepository/Lemoine.FileRepository.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.GDBMigration/Lemoine.GDBMigration.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.GDBPersistentClasses/Lemoine.GDBPersistentClasses.csproj" />
+    <Project Path="../../Libraries/Lemoine.GDBUtils/Lemoine.GDBUtils.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.I18N/Lemoine.I18N.csproj" />
+    <Project Path="../../Libraries/Lemoine.Info/Lemoine.Info.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.NHibernateTypes/Lemoine.NHibernateTypes.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.Threading/Lemoine.Threading.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../Lemoine.BaseControls/Lemoine.BaseControls.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../Lemoine.DataReferenceControls/Lemoine.DataReferenceControls.csproj">
+      <Platform Project="x86" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.StatusControls.csproj">
+    <Platform Project="x86" />
+  </Project>
+</Solution>

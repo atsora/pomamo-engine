@@ -1,0 +1,40 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Extensions/">
+    <Project Path="../Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../Pulse.Extensions.Business/Pulse.Extensions.Business.csproj" />
+    <Project Path="../Pulse.Extensions.Database/Pulse.Extensions.Database.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../Pulse.Business/Pulse.Business.csproj" />
+    <Project Path="../Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../Pulse.Extensions/Pulse.Extensions.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../UnitTests/Lemoine.DataRepository.UnitTests/Lemoine.DataRepository.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="VS|Any CPU" Project="x64" />
+      <Build Solution="*|x86" Project="false" />
+      <Build Solution="Debug|Any CPU" Project="false" />
+      <Build Solution="Debug|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+      <Build Solution="Release|x64" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.DataRepository.csproj" />
+</Solution>

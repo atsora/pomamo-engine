@@ -1,0 +1,136 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Controls/">
+    <Project Path="../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj" />
+    <Project Path="../../Controls/Lemoine.ConfigControls/Lemoine.ConfigControls.csproj" />
+    <Project Path="../../Controls/Lemoine.DataControls/Lemoine.DataControls.csproj" />
+  </Folder>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Alert/Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
+    <Project Path="../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../CNC/Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Business/Pulse.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Database/Pulse.Extensions.Database.csproj" />
+    <Project Path="../../Web/Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+    <Project Path="../../Web/Pulse.Extensions.Web/Pulse.Extensions.Web.csproj" />
+  </Folder>
+  <Folder Name="/Items/" />
+  <Folder Name="/Items/Configurators/">
+    <Project Path="configurators/ConfiguratorAlarmFocus/ConfiguratorAlarmFocus.csproj" />
+    <Project Path="configurators/ConfiguratorAlarms/ConfiguratorAlarms.csproj" />
+    <Project Path="configurators/ConfiguratorEventLevels/ConfiguratorEventLevels.csproj" />
+    <Project Path="configurators/ConfiguratorGoals/ConfiguratorGoals.csproj" />
+    <Project Path="configurators/ConfiguratorJobComponentName/ConfiguratorJobComponentName.csproj" />
+    <Project Path="configurators/ConfiguratorLine/ConfiguratorLine.csproj" />
+    <Project Path="configurators/ConfiguratorMachineCategories/ConfiguratorMachineCategories.csproj" />
+    <Project Path="configurators/ConfiguratorPlugins/ConfiguratorPlugins.csproj" />
+    <Project Path="configurators/ConfiguratorRedirectEvent/ConfiguratorRedirectEvent.csproj" />
+    <Project Path="configurators/ConfiguratorSlots/ConfiguratorSlots.csproj" />
+    <Project Path="configurators/ConfiguratorTemplate/ConfiguratorTemplate.csproj">
+      <Build Solution="*|Any CPU" Project="false" />
+      <Build Solution="Debug|x86" Project="false" />
+      <Build Solution="Release|x86" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Items/Launchers/">
+    <Project Path="launchers/LauncherConfigurable/LauncherConfigurable.csproj" />
+    <Project Path="launchers/LauncherTemplate/LauncherTemplate.csproj">
+      <Build Solution="Debug|Any CPU" Project="false" />
+      <Build Solution="Debug|x86" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+      <Build Solution="Release|x86" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Items/Links/">
+    <Project Path="links/LinkConfigurable/LinkConfigurable.csproj" />
+    <Project Path="links/LinkTemplate/LinkTemplate.csproj">
+      <Build Solution="Debug|Any CPU" Project="false" />
+      <Build Solution="Debug|x86" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+      <Build Solution="Release|x86" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Items/Views/">
+    <Project Path="views/ViewLine/ViewLine.csproj" />
+    <Project Path="views/ViewLinePlanning/ViewLinePlanning.csproj" />
+    <Project Path="views/ViewReasons/ViewReasons.csproj" />
+    <Project Path="views/ViewTemplate/ViewTemplate.csproj">
+      <Build Solution="Debug|Any CPU" Project="false" />
+      <Build Solution="Debug|x86" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+      <Build Solution="Release|x86" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Items/Wizards/">
+    <Project Path="wizards/WizardAddReason/WizardAddReason.csproj" />
+    <Project Path="wizards/WizardChangeProductionQuantities/WizardChangeProductionQuantities.csproj" />
+    <Project Path="wizards/WizardCreateLine/WizardCreateLine.csproj" />
+    <Project Path="wizards/WizardCreateMachine/WizardCreateMachine.csproj" />
+    <Project Path="wizards/WizardCreateProduction/WizardCreateProduction.csproj" />
+    <Project Path="wizards/WizardCreateStampingConfig/WizardCreateStampingConfig.csproj" />
+    <Project Path="wizards/WizardDeleteProduction/WizardDeleteProduction.csproj" />
+    <Project Path="wizards/WizardEventLongPeriod/WizardEventLongPeriod.csproj" />
+    <Project Path="wizards/WizardEventToolLife/WizardEventToolLife.csproj" />
+    <Project Path="wizards/WizardInitialConfiguration/WizardInitialConfiguration.csproj" />
+    <Project Path="wizards/WizardMonitorMachine/WizardMonitorMachine.csproj" />
+    <Project Path="wizards/WizardReasonSelection/WizardReasonSelection.csproj" />
+    <Project Path="wizards/WizardRenameProduction/WizardRenameProduction.csproj" />
+    <Project Path="wizards/WizardReorderOperation/WizardReorderOperation.csproj" />
+    <Project Path="wizards/WizardTemplate/WizardTemplate.csproj">
+      <Build Solution="*|Any CPU" Project="false" />
+      <Build Solution="Debug|x86" Project="false" />
+      <Build Solution="Release|x86" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Abstractions/Lemoine.Abstractions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.Extensions/Lemoine.Core.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.DataRepository/Lemoine.DataRepository.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.FileRepository.Corba/Lemoine.FileRepository.Corba.csproj" />
+    <Project Path="../../Libraries/Lemoine.FSharp/Lemoine.FSharp.fsproj" />
+    <Project Path="../../Libraries/Lemoine.Hosting/Lemoine.Hosting.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Lemoine.ServiceCore/Lemoine.ServiceCore.csproj" />
+    <Project Path="../../Libraries/Lemoine.WebDataAccess/Lemoine.WebDataAccess.csproj" />
+    <Project Path="../../Libraries/Pulse.Business/Pulse.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions/Pulse.Extensions.csproj" />
+    <Project Path="../../Libraries/Pulse.Hosting/Pulse.Hosting.csproj" />
+    <Project Path="../../Plugins/Lemoine.Plugin.NoResetShortGapStoppedCncValue/Lemoine.Plugin.NoResetShortGapStoppedCncValue.csproj" />
+    <Project Path="../../Plugins/Pulse.PluginImplementation/Pulse.PluginImplementation.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/">
+    <Project Path="../../Plugins/Analysis/Accumulator/Lemoine.Plugin.DefaultAccumulators/Lemoine.Plugin.DefaultAccumulators.csproj" />
+    <Project Path="../../Web/Plugins/Installation/Lemoine.Plugin.WebAppConfig/Lemoine.Plugin.WebAppConfig.csproj" />
+  </Folder>
+  <Project Path="library/Lemoine.Settings.csproj" />
+  <Project Path="software/Lem_Settings.csproj">
+    <BuildDependency Project="configurators/ConfiguratorAlarms/ConfiguratorAlarms.csproj" />
+    <BuildDependency Project="configurators/ConfiguratorPlugins/ConfiguratorPlugins.csproj" />
+    <BuildDependency Project="wizards/WizardCreateMachine/WizardCreateMachine.csproj" />
+    <BuildDependency Project="wizards/WizardCreateStampingConfig/WizardCreateStampingConfig.csproj" />
+    <BuildDependency Project="wizards/WizardMonitorMachine/WizardMonitorMachine.csproj" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Platform Solution="Debug|Any CPU" Project="x86" />
+    <Platform Solution="Release|Any CPU" Project="x86" />
+    <Platform Solution="VS|Any CPU" Project="x64" />
+  </Project>
+</Solution>

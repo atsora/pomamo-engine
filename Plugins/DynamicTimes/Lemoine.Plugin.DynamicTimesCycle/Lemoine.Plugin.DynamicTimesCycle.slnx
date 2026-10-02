@@ -1,0 +1,23 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../Lemoine.Plugin.DynamicTime.UnitTests/Lemoine.Plugin.DynamicTime.UnitTests.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.Plugin.DynamicTimesCycle.csproj" />
+</Solution>

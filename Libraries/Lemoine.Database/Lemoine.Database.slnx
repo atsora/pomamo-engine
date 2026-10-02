@@ -1,0 +1,43 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/">
+    <Project Path="../../Analysis/Plugins/Accumulator/Lemoine.Plugin.CycleCountSummary/Lemoine.Plugin.CycleCountSummary.csproj" />
+    <Project Path="../../Analysis/Plugins/Accumulator/Lemoine.Plugin.DefaultAccumulators/Lemoine.Plugin.DefaultAccumulators.csproj" />
+    <Project Path="../../Analysis/Plugins/Accumulator/Lemoine.Plugin.IntermediateWorkPieceSummary/Lemoine.Plugin.IntermediateWorkPieceSummary.csproj" />
+    <Project Path="../../Analysis/Plugins/Accumulator/Lemoine.Plugin.OperationSlotCycles/Lemoine.Plugin.OperationSlotCycles.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../Analysis/Libraries/Lemoine.Analysis/Lemoine.Analysis.csproj" />
+    <Project Path="../../Plugins/Lemoine.Plugin.CyclesWithRealEndFull/Lemoine.Plugin.CyclesWithRealEndFull.csproj" />
+    <Project Path="../../Plugins/Lemoine.Plugin.ReasonDefaultManagement/Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <Project Path="../../UnitTests/Lemoine.GDBPersistentClasses.UnitTests/Lemoine.GDBPersistentClasses.UnitTests.csproj">
+      <Platform Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj">
+      <Platform Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.Database.csproj" />
+</Solution>
