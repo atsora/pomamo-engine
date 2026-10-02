@@ -1,0 +1,38 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Abstractions/Lemoine.Abstractions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+  </Folder>
+  <Project Path="../Lem_DatabaseUpgrade.Console/Lem_DatabaseUpgrade.Console.csproj">
+    <Platform Solution="*|Any CPU" Project="x86" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Build Solution="Release|Any CPU" Project="false" />
+  </Project>
+  <Project Path="Lem_DatabaseUpgrade.csproj">
+    <Platform Solution="*|Any CPU" Project="x86" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Build Solution="Debug|Any CPU" Project="false" />
+    <Build Solution="Release|Any CPU" Project="false" />
+  </Project>
+</Solution>

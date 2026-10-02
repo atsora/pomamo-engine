@@ -1,0 +1,36 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/AnalysisLibraries/">
+    <Project Path="../../Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../../Libraries/Lemoine.Analysis/Lemoine.Analysis.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/">
+    <Project Path="../../../Plugins/DynamicTimes/Lemoine.Plugin.SameMachineMode/Lemoine.Plugin.SameMachineMode.csproj" />
+    <Project Path="../../../Plugins/Lemoine.Plugin.CyclesWithRealEndFull/Lemoine.Plugin.CyclesWithRealEndFull.csproj" />
+    <Project Path="../../../Plugins/Lemoine.Plugin.ReasonDefaultManagement/Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <Project Path="../../Plugins/Accumulator/Lemoine.Plugin.CycleCountSummary/Lemoine.Plugin.CycleCountSummary.csproj" />
+    <Project Path="../../Plugins/Accumulator/Lemoine.Plugin.CycleDurationSummary/Lemoine.Plugin.CycleDurationSummary.csproj" />
+    <Project Path="../../Plugins/Accumulator/Lemoine.Plugin.DefaultAccumulators/Lemoine.Plugin.DefaultAccumulators.csproj" />
+    <Project Path="../../Plugins/Accumulator/Lemoine.Plugin.IntermediateWorkPieceSummary/Lemoine.Plugin.IntermediateWorkPieceSummary.csproj" />
+    <Project Path="../../Plugins/Accumulator/Lemoine.Plugin.OperationSlotCycles/Lemoine.Plugin.OperationSlotCycles.csproj" />
+    <Project Path="../../Plugins/StateMachine/Lemoine.Plugin.AnalysisStateMachineProductionShop/Lemoine.Plugin.AnalysisStateMachineProductionShop.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Analysis.UnitTests.csproj" />
+</Solution>

@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/CncLibraries/">
+    <Project Path="../InOutModules/Lemoine.Cnc.DataManipulation/Lemoine.Cnc.DataManipulation.csproj" />
+    <Project Path="../InOutModules/Lemoine.Cnc.IsoFileContent/Lemoine.Cnc.IsoFileContent.csproj" />
+    <Project Path="../InputModules/Lemoine.Cnc.Simulation/Lemoine.Cnc.Simulation.csproj" />
+    <Project Path="../Lemoine.Cnc.ICncModule/Lemoine.Cnc.ICncModule.csproj" />
+    <Project Path="../Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+    <Project Path="../Libraries/Lemoine.Cnc.CncAlarm/Lemoine.Cnc.CncAlarm.csproj" />
+    <Project Path="../Libraries/Lemoine.Cnc.DataRepository/Lemoine.Cnc.DataRepository.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.DataRepository/Lemoine.DataRepository.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+  </Folder>
+  <Project Path="../UnitTests/Lemoine.Cnc.Engine.UnitTests/Lemoine.Cnc.Engine.UnitTests.csproj">
+    <Platform Project="x86" />
+    <Build Project="false" />
+  </Project>
+  <Project Path="Lemoine.Cnc.Engine.csproj" />
+</Solution>

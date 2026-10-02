@@ -1,0 +1,111 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Controls/">
+    <Project Path="../../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../../Controls/Lemoine.DataControls/Lemoine.DataControls.csproj">
+      <Platform Project="x86" />
+      <Build Solution="*|Any CPU" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Extensions/" />
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.FileRepository.Corba/Lemoine.FileRepository.Corba.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/Plugins/" />
+  <Project Path="../../../Alert/Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
+  <Project Path="../../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+  <Project Path="../../../AutoReason/Plugins/Lemoine.Plugin.AutoReasonBetweenOperationsNoActivity/Lemoine.Plugin.AutoReasonBetweenOperationsNoActivity.csproj" />
+  <Project Path="../../../CNC/Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Controls/Lemoine.ConfigControls/Lemoine.ConfigControls.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../CustomerSpecific/LAT/Plugins/Lemoine.Plugin.Lat.DetectionCycle0/Lemoine.Plugin.Lat.DetectionCycle0.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.DataRepository/Lemoine.DataRepository.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Plugins/Lemoine.Plugin.AcquisitionErrorEvent/Lemoine.Plugin.AcquisitionErrorEvent.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Plugins/Lemoine.Plugin.CncAlarmAlert/Lemoine.Plugin.CncAlarmAlert.csproj" />
+  <Project Path="../../../Plugins/Lemoine.Plugin.CncSummaryByStateSlot2/Lemoine.Plugin.CncSummaryByStateSlot2.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Plugins/Lemoine.Plugin.CycleCsv/Lemoine.Plugin.CycleCsv.csproj" />
+  <Project Path="../../../Plugins/Lemoine.Plugin.IdleTimePerPeriod2/Lemoine.Plugin.IdleTimePerPeriod2.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Plugins/Lemoine.Plugin.MaintenanceAction/Lemoine.Plugin.MaintenanceAction.csproj" />
+  <Project Path="../../../Plugins/Lemoine.Plugin.NoResetShortGapStoppedCncValue/Lemoine.Plugin.NoResetShortGapStoppedCncValue.csproj" />
+  <Project Path="../../../Plugins/Lemoine.Plugin.ProductionSwitcher/Lemoine.Plugin.ProductionSwitcher.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Plugins/Lemoine.Plugin.PushTask/Lemoine.Plugin.PushTask.csproj" />
+  <Project Path="../../../Plugins/Lemoine.Plugin.SetupSwitcher/Lemoine.Plugin.SetupSwitcher.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Plugins/Lemoine.Plugin.ShortPeriodRemoval/Lemoine.Plugin.ShortPeriodRemoval.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Plugins/Lemoine.Plugin.StackLightAlert/Lemoine.Plugin.StackLightAlert.csproj" />
+  <Project Path="../../../Plugins/Lemoine.Plugins.UnitTests/Lemoine.Plugins.UnitTests.csproj" />
+  <Project Path="../../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Web/Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../library/Lemoine.Settings.csproj" />
+  <Project Path="../../software/Lem_Settings.csproj" />
+  <Project Path="ConfiguratorPlugins.csproj" />
+</Solution>

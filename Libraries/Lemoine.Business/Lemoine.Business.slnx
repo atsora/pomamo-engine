@@ -1,0 +1,30 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../Plugins/Group/Lemoine.Plugin.GroupCompany/Lemoine.Plugin.GroupCompany.csproj" />
+    <Project Path="../../Plugins/Group/Lemoine.Plugin.GroupDepartment/Lemoine.Plugin.GroupDepartment.csproj" />
+    <Project Path="../../UnitTests/Lemoine.Business.UnitTests/Lemoine.Business.UnitTests.csproj">
+      <Platform Project="x86" />
+      <Build Solution="*|Any CPU" Project="false" />
+      <Build Solution="*|x64" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj">
+      <Platform Project="x86" />
+      <Build Solution="*|Any CPU" Project="false" />
+      <Build Solution="*|x64" Project="false" />
+    </Project>
+    <Project Path="../Lemoine.Database/Lemoine.Database.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Business.csproj" />
+</Solution>

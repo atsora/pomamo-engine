@@ -1,0 +1,33 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="net40" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Controls/">
+    <Project Path="../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj">
+      <BuildType Solution="net40|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+  </Folder>
+  <Project Path="../Lem_TestReports.Console/Lem_TestReports.Console.csproj">
+    <BuildType Solution="net40|*" Project="Debug" />
+    <Platform Project="x86" />
+  </Project>
+  <Project Path="Lem_TestReports.csproj">
+    <BuildType Solution="net40|Any CPU" Project="Debug" />
+    <BuildType Solution="net40|x86" Project="VisualStudio" />
+    <BuildType Solution="VS|x86" Project="VisualStudio" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Platform Solution="Debug|Any CPU" Project="x86" />
+    <Platform Solution="net40|Any CPU" Project="x64" />
+    <Platform Solution="Release|Any CPU" Project="x86" />
+    <Platform Solution="VS|Any CPU" Project="x86" />
+  </Project>
+</Solution>

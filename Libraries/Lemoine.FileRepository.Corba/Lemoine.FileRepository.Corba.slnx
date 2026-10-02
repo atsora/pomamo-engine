@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <Project Path="../Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj" />
+    <Project Path="../Lemoine.Core/Lemoine.Core.csproj" />
+  </Folder>
+  <Project Path="Lemoine.FileRepository.Corba.csproj" />
+</Solution>

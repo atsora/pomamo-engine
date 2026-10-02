@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Controls/">
+    <Project Path="../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../CNC/Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Plugin.CncSummaryByStateSlot2.csproj" />
+</Solution>

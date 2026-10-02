@@ -1,0 +1,23 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Alert/">
+    <Project Path="../../Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
+    <Project Path="../../Libraries/Lemoine.Alert.GDBListeners/Lemoine.Alert.GDBListeners.csproj" />
+    <Project Path="../../Libraries/Lemoine.Alert.TestActions/Lemoine.Alert.TestActions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Alert.TestListeners/Lemoine.Alert.TestListeners.csproj" />
+    <Project Path="../../Libraries/Lemoine.Alert/Lemoine.Alert.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Alert.TestListeners.UnitTests.csproj" />
+</Solution>

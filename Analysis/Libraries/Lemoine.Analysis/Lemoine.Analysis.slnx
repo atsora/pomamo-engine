@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../../CNC/Libraries/Lemoine.Cnc.CncAlarm/Lemoine.Cnc.CncAlarm.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Analysis.csproj" />
+</Solution>

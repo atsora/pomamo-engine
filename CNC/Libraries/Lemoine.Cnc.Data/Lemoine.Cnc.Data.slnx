@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Cnc.Data.csproj">
+    <Build Project="false" />
+  </Project>
+</Solution>

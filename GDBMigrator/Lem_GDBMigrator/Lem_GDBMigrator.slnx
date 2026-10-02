@@ -1,0 +1,39 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+  </Folder>
+  <Project Path="../Lem_GDBMigrator.Console/Lem_GDBMigrator.Console.csproj">
+    <Platform Solution="*|x64" Project="x86" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Platform Solution="Debug|Any CPU" Project="x86" />
+    <Platform Solution="Release|Any CPU" Project="x86" />
+    <Platform Solution="VS|Any CPU" Project="x64" />
+  </Project>
+  <Project Path="Lem_GDBMigrator.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Platform Solution="Debug|Any CPU" Project="x86" />
+    <Platform Solution="Release|Any CPU" Project="x86" />
+    <Platform Solution="VS|Any CPU" Project="x64" />
+    <Build Solution="Release|Any CPU" Project="false" />
+  </Project>
+</Solution>

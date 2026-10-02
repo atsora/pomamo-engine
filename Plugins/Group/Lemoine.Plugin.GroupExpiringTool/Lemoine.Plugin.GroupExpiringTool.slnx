@@ -1,0 +1,30 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj">
+    <Platform Project="x86" />
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="Lemoine.Plugin.ExpiringTool.csproj" />
+</Solution>

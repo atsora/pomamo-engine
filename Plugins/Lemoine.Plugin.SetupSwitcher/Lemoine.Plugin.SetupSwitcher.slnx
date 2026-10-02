@@ -1,0 +1,22 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj">
+      <Platform Project="x86" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.Plugin.SetupSwitcher.csproj">
+    <Platform Project="x86" />
+  </Project>
+</Solution>

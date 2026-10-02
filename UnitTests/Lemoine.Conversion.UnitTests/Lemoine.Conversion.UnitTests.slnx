@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../CNC/Lemoine.Cnc.ICncModule/Lemoine.Cnc.ICncModule.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Conversion.UnitTests.csproj" />
+</Solution>

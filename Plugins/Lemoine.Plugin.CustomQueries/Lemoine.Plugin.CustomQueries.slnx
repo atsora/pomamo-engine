@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Controls/">
+    <Project Path="../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Collections/Lemoine.Collections.csproj" />
+    <Project Path="../../Libraries/Lemoine.GDBMigration/Lemoine.GDBMigration.csproj" />
+    <Project Path="../../Libraries/Lemoine.GDBUtils/Lemoine.GDBUtils.csproj" />
+    <Project Path="../../Libraries/Lemoine.I18N/Lemoine.I18N.csproj" />
+    <Project Path="../../Libraries/Lemoine.Info/Lemoine.Info.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernateTypes/Lemoine.NHibernateTypes.csproj" />
+    <Project Path="../../Libraries/Lemoine.Threading/Lemoine.Threading.csproj" />
+  </Folder>
+  <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+  <Project Path="Lemoine.Plugin.CustomQueries.csproj" />
+</Solution>

@@ -1,0 +1,66 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../CNC/Lemoine.Cnc.ICncModule/Lemoine.Cnc.ICncModule.csproj" />
+    <Project Path="../../CNC/Libraries/Pomamo.CncModule/Pomamo.CncModule.csproj" />
+    <Project Path="../Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../UnitTests/Lemoine.Collections.UnitTests/Lemoine.Collections.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Any CPU" Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.Conversion.UnitTests/Lemoine.Conversion.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Any CPU" Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.Core.Plugin.UnitTests/Lemoine.Core.Plugin.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Any CPU" Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Debug|Any CPU" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+      <Build Solution="VS|x86" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.Core.UnitTests/Lemoine.Core.UnitTests.csproj" />
+    <Project Path="../../UnitTests/Lemoine.I18N.UnitTests/Lemoine.I18N.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Any CPU" Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.Info.UnitTests/Lemoine.Info.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Any CPU" Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.Xml.UnitTests/Lemoine.Xml.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Any CPU" Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="../Lemoine.Core.Extensions/Lemoine.Core.Extensions.csproj" />
+  <Project Path="../Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+  <Project Path="Lemoine.Core.csproj" />
+</Solution>

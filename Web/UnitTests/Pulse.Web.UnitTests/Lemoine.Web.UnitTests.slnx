@@ -1,0 +1,29 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Extensions/">
+    <Project Path="../../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Lemoine.Web/Lemoine.Web.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/">
+    <Project Path="../../../Plugins/Lemoine.Plugin.ReasonDefaultManagement/Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <Project Path="../../Plugins/CycleProgress/Lemoine.Plugin.ComingEventCycleEnd/Lemoine.Plugin.ComingEventCycleEnd.csproj" />
+    <Project Path="../../Plugins/CycleProgress/Lemoine.Plugin.ComingEventStop/Lemoine.Plugin.ComingEventStop.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Web.UnitTests.csproj">
+    <Platform Project="x86" />
+    <Build Solution="Release|*" Project="false" />
+  </Project>
+</Solution>

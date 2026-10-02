@@ -1,0 +1,52 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Controls/">
+    <Project Path="../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj" />
+    <Project Path="../Controls/Lemoine.DataControls/Lemoine.DataControls.csproj" />
+  </Folder>
+  <Folder Name="/Extensions/">
+    <Project Path="../Alert/Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
+    <Project Path="../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../CNC/Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+    <Project Path="../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../Libraries/Pulse.Extensions.Business/Pulse.Extensions.Business.csproj" />
+    <Project Path="../Libraries/Pulse.Extensions.Database/Pulse.Extensions.Database.csproj" />
+    <Project Path="../Web/Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../Libraries/Lemoine.Abstractions/Lemoine.Abstractions.csproj" />
+    <Project Path="../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../Libraries/Lemoine.Core.Extensions/Lemoine.Core.Extensions.csproj" />
+    <Project Path="../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../Libraries/Lemoine.ServiceCore/Lemoine.ServiceCore.csproj" />
+    <Project Path="../Libraries/Lemoine.WebDataAccess/Lemoine.WebDataAccess.csproj" />
+    <Project Path="../Libraries/Pulse.Business/Pulse.Business.csproj" />
+    <Project Path="../Libraries/Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../Libraries/Pulse.Extensions/Pulse.Extensions.csproj" />
+    <Project Path="../Libraries/Pulse.Hosting/Pulse.Hosting.csproj" />
+  </Folder>
+  <Project Path="Lem_ApplyMachineModifications.csproj">
+    <BuildType Solution="VS|x64" Project="Release" />
+    <BuildType Solution="VS|x86" Project="Release" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Platform Solution="Debug|Any CPU" Project="x64" />
+    <Platform Solution="Release|Any CPU" Project="x86" />
+    <Platform Solution="VS|Any CPU" Project="x64" />
+    <Build Solution="Release|Any CPU" Project="false" />
+  </Project>
+</Solution>

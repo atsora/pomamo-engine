@@ -1,0 +1,34 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../../../Analysis/Libraries/Lemoine.Analysis/Lemoine.Analysis.csproj" />
+    <Project Path="../../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.DTO/Lemoine.DTO.csproj">
+      <BuildType Solution="VS|*" Project="Release" />
+      <Build Solution="*|Any CPU" Project="false" />
+      <Build Solution="VS|x86" Project="false" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.WebService/Lemoine.WebService.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../../UnitTests/Lemoine.UnitTests/Lemoine.UnitTests.csproj" />
+  </Folder>
+  <Project Path="Lemoine.WebService.UnitTests.csproj" />
+</Solution>

@@ -1,0 +1,30 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/CncLibraries/">
+    <Project Path="../../Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+    <Project Path="../Lemoine.Cnc.Data/Lemoine.Cnc.Data.csproj" />
+    <Project Path="../Lemoine.Cnc.SystemQueue/Lemoine.Cnc.SystemQueue.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../UnitTests/Lemoine.Cnc.Data.UnitTests/Lemoine.Cnc.Data.UnitTests.csproj">
+      <Platform Project="x86" />
+      <Build Solution="*|x64" Project="false" />
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="../../UnitTests/Lemoine.Cnc.SQLiteCncDataQueue.UnitTests/Lemoine.Cnc.SQLiteCncDataQueue.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Debug|Any CPU" Project="x86" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.Cnc.SQLiteQueue.csproj" />
+</Solution>

@@ -1,0 +1,28 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Plugins/Group/Lemoine.Plugin.GroupCompany/Lemoine.Plugin.GroupCompany.csproj" />
+    <Project Path="../../Plugins/Group/Lemoine.Plugin.GroupDepartment/Lemoine.Plugin.GroupDepartment.csproj" />
+    <Project Path="../../Web/Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+    <Project Path="../../Web/Pulse.Extensions.Web/Pulse.Extensions.Web.csproj" />
+  </Folder>
+  <Folder Name="/UnitTestsLibraries/">
+    <Project Path="../Lemoine.UnitTests/Lemoine.UnitTests.csproj" />
+  </Folder>
+  <Project Path="Lemoine.Business.UnitTests.csproj" />
+</Solution>

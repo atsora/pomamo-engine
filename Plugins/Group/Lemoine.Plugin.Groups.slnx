@@ -1,0 +1,62 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Business/Pulse.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Database/Pulse.Extensions.Database.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Abstractions/Lemoine.Abstractions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Pulse.Business/Pulse.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions/Pulse.Extensions.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="Lemoine.Plugin.Groups.UnitTests/Lemoine.Plugin.Groups.UnitTests.csproj">
+      <Platform Solution="*|x64" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="VS|Any CPU" Project="x64" />
+      <Build Solution="Debug|x64" Project="false" />
+      <Build Solution="Release|x64" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.Plugin.GroupCell/Lemoine.Plugin.GroupCell.csproj" />
+  <Project Path="Lemoine.Plugin.GroupCompany/Lemoine.Plugin.GroupCompany.csproj" />
+  <Project Path="Lemoine.Plugin.GroupConcurrent/Lemoine.Plugin.GroupConcurrent.csproj" />
+  <Project Path="Lemoine.Plugin.GroupConcurrentGroups/Lemoine.Plugin.GroupConcurrentGroups.csproj" />
+  <Project Path="Lemoine.Plugin.GroupDepartment/Lemoine.Plugin.GroupDepartment.csproj" />
+  <Project Path="Lemoine.Plugin.GroupEmergencyWithAlarmUntilProductionStart/Lemoine.Plugin.GroupEmergencyWithAlarmUntilProductionStart.csproj" />
+  <Project Path="Lemoine.Plugin.GroupExpiringTool/Lemoine.Plugin.GroupExpiringTool.csproj" />
+  <Project Path="Lemoine.Plugin.GroupFocusedAlarms/Lemoine.Plugin.GroupFocusedAlarms.csproj" />
+  <Project Path="Lemoine.Plugin.GroupJob/Lemoine.Plugin.GroupJob.csproj" />
+  <Project Path="Lemoine.Plugin.GroupLateProduction/Lemoine.Plugin.GroupLateProduction.csproj" />
+  <Project Path="Lemoine.Plugin.GroupMachineCategory/Lemoine.Plugin.GroupMachineCategory.csproj" />
+  <Project Path="Lemoine.Plugin.GroupMachineFilter/Lemoine.Plugin.GroupMachineFilter.csproj" />
+  <Project Path="Lemoine.Plugin.GroupMachineStateTemplate/Lemoine.Plugin.GroupMachineStateTemplate.csproj" />
+  <Project Path="Lemoine.Plugin.GroupMachineSubCategory/Lemoine.Plugin.GroupMachineSubCategory.csproj" />
+  <Project Path="Lemoine.Plugin.GroupMain/Lemoine.Plugin.GroupMain.csproj" />
+  <Project Path="Lemoine.Plugin.GroupOfGroups/Lemoine.Plugin.GroupOfGroups.csproj" />
+  <Project Path="Lemoine.Plugin.GroupRandom/Lemoine.Plugin.GroupRandom.csproj" />
+  <Project Path="Lemoine.Plugin.GroupReason/Lemoine.Plugin.GroupReason.csproj" />
+  <Project Path="Lemoine.Plugin.GroupSequential/Lemoine.Plugin.GroupSequential.csproj" />
+  <Project Path="Lemoine.Plugin.GroupSequentialGroups/Lemoine.Plugin.GroupSequentialGroups.csproj" />
+  <Project Path="Lemoine.Plugin.GroupSingleMachine/Lemoine.Plugin.GroupSingleMachine.csproj" />
+  <Project Path="Lemoine.Plugin.GroupStoppedMachines/Lemoine.Plugin.GroupStoppedMachines.csproj" />
+  <Project Path="Lemoine.Plugin.GroupZoomFromRegex/Lemoine.Plugin.GroupZoomFromRegex.csproj" />
+  <Project Path="Lemoine.Plugin.GroupZoomZoomable/Lemoine.Plugin.GroupZoomZoomable.csproj" />
+</Solution>

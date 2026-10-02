@@ -1,0 +1,25 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../CNC/Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj">
+      <Platform Project="x86" />
+    </Project>
+  </Folder>
+  <Project Path="Lemoine.Plugin.NoResetShortGapStoppedCncValue.csproj">
+    <Platform Project="x86" />
+  </Project>
+</Solution>

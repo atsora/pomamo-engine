@@ -1,0 +1,26 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../Libraries/Lemoine.Abstractions/Lemoine.Abstractions.csproj" />
+    <Project Path="../Libraries/Lemoine.Core.Extensions/Lemoine.Core.Extensions.csproj" />
+    <Project Path="../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../Libraries/Lemoine.DataRepository/Lemoine.DataRepository.csproj" />
+    <Project Path="../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+  </Folder>
+  <Project Path="Lem_LanguageSelector.csproj">
+    <Platform Solution="Debug|Any CPU" Project="x86" />
+    <Platform Solution="Release|x86" Project="x86" />
+    <Platform Solution="VS|Any CPU" Project="x86" />
+    <Platform Solution="VS|x64" Project="x64" />
+    <Platform Solution="VS|x86" Project="x86" />
+  </Project>
+</Solution>

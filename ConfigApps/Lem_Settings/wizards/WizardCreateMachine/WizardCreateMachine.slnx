@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/Controls/">
+    <Project Path="../../../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../../Controls/Lemoine.DataControls/Lemoine.DataControls.csproj">
+      <Platform Project="x86" />
+      <Build Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../Libraries/Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.DataRepository/Lemoine.DataRepository.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj">
+      <Platform Project="x86" />
+    </Project>
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+  </Folder>
+  <Project Path="../../../Libraries/Lemoine.FileRepository.Corba/Lemoine.FileRepository.Corba.csproj" />
+  <Project Path="../../library/Lemoine.Settings.csproj" />
+  <Project Path="../../software/Lem_Settings.csproj" />
+  <Project Path="WizardCreateMachine.csproj" />
+</Solution>

@@ -1,0 +1,30 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../../AutoReason/Plugins/Lemoine.Plugin.AutoReasonRedStackLight/Lemoine.Plugin.AutoReasonRedStackLight.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../../../Libraries/Pulse.Extensions/Pulse.Extensions.csproj" />
+    <Project Path="../../../Plugins/Lemoine.Plugin.ReasonDefaultManagement/Lemoine.Plugin.ReasonDefaultManagement.csproj" />
+    <Project Path="../../Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+    <Project Path="../../Libraries/Lemoine.Web/Lemoine.Web.csproj" />
+    <Project Path="../../Libraries/Pulse.Web/Pulse.Web.csproj" />
+    <Project Path="../../Plugins/Progress/Lemoine.Plugin.ComingEventCycleEnd/Lemoine.Plugin.ComingEventCycleEnd.csproj" />
+    <Project Path="../../Plugins/Progress/Lemoine.Plugin.ComingEventStop/Lemoine.Plugin.ComingEventStop.csproj" />
+    <Project Path="../../Pulse.Extensions.Web/Pulse.Extensions.Web.csproj" />
+  </Folder>
+  <Project Path="Pulse.Web.UnitTests.csproj" />
+</Solution>

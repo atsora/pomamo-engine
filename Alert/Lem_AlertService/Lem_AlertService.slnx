@@ -1,0 +1,114 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="VS" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/AlertLibraries/">
+    <Project Path="../Libraries/Lemoine.Alert.GDBListeners/Lemoine.Alert.GDBListeners.csproj" />
+    <Project Path="../Libraries/Lemoine.Alert.TestActions/Lemoine.Alert.TestActions.csproj" />
+    <Project Path="../Libraries/Lemoine.Alert.TestListeners/Lemoine.Alert.TestListeners.csproj" />
+    <Project Path="../Libraries/Lemoine.Alert/Lemoine.Alert.csproj" />
+  </Folder>
+  <Folder Name="/Configurations/">
+    <File Path="ActivityDelay.template.config" />
+    <File Path="ActivityDelayListener.config" />
+    <File Path="CriticalLogToSupport.template.config" />
+    <File Path="ErrorLog.template.config" />
+    <File Path="EventCncValue.template.config" />
+    <File Path="EventCncValueConfig.template.config" />
+    <File Path="EventListener.config" />
+    <File Path="LogListener.config" />
+    <File Path="LongPeriod.template.config" />
+    <File Path="LongPeriodConfig.template.config" />
+    <File Path="ModificationDelay.template.config" />
+    <File Path="ModificationDelayListener.config" />
+    <File Path="Test.config" />
+  </Folder>
+  <Folder Name="/Extensions/">
+    <Project Path="../../Analysis/Lemoine.Extensions.Analysis/Lemoine.Extensions.Analysis.csproj" />
+    <Project Path="../../AutoReason/Lemoine.Extensions.AutoReason/Lemoine.Extensions.AutoReason.csproj" />
+    <Project Path="../../CNC/Lemoine.Extensions.Cnc/Lemoine.Extensions.Cnc.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Business/Lemoine.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Business/Pulse.Extensions.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions.Database/Pulse.Extensions.Database.csproj" />
+    <Project Path="../../Web/Lemoine.Extensions.Web/Lemoine.Extensions.Web.csproj" />
+    <Project Path="../Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Lemoine.Abstractions/Lemoine.Abstractions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Business/Lemoine.Business.csproj" />
+    <Project Path="../../Libraries/Lemoine.CorbaHelper/Lemoine.CorbaHelper.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.Extensions/Lemoine.Core.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core.TargetSpecific/Lemoine.Core.TargetSpecific.csproj" />
+    <Project Path="../../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
+    <Project Path="../../Libraries/Lemoine.Database/Lemoine.Database.csproj" />
+    <Project Path="../../Libraries/Lemoine.DataRepository/Lemoine.DataRepository.csproj" />
+    <Project Path="../../Libraries/Lemoine.Extensions/Lemoine.Extensions.csproj" />
+    <Project Path="../../Libraries/Lemoine.FileRepository.Corba/Lemoine.FileRepository.Corba.csproj" />
+    <Project Path="../../Libraries/Lemoine.FSharp/Lemoine.FSharp.fsproj" />
+    <Project Path="../../Libraries/Lemoine.Hosting/Lemoine.Hosting.csproj">
+      <BuildType Solution="VS|x64" Project="Debug" />
+    </Project>
+    <Project Path="../../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
+    <Project Path="../../Libraries/Lemoine.NHibernate/Lemoine.NHibernate.csproj" />
+    <Project Path="../../Libraries/Lemoine.ServiceCore/Lemoine.ServiceCore.csproj" />
+    <Project Path="../../Libraries/Lemoine.WebDataAccess/Lemoine.WebDataAccess.csproj">
+      <BuildType Solution="VS|x64" Project="Debug" />
+    </Project>
+    <Project Path="../../Libraries/Pulse.Business/Pulse.Business.csproj" />
+    <Project Path="../../Libraries/Pulse.Database/Pulse.Database.csproj" />
+    <Project Path="../../Libraries/Pulse.Extensions/Pulse.Extensions.csproj" />
+    <Project Path="../../Libraries/Pulse.Hosting/Pulse.Hosting.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/">
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.CncAlarmAlert/Lemoine.Plugin.CncAlarmAlert.csproj" />
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.CncAlarmByMessageAlert/Lemoine.Plugin.CncAlarmByMessageAlert.csproj" />
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.CncAlarmSequenceAlert/Lemoine.Plugin.CncAlarmSequenceAlert.csproj" />
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.CncAlarmStackLightAlert/Lemoine.Plugin.CncAlarmStackLightAlert.csproj" />
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.StackLightAlert/Lemoine.Plugin.StackLightAlert.csproj" />
+    <Project Path="../../Plugins/Lemoine.Plugin.AcquisitionDelayEvent/Lemoine.Plugin.AcquisitionDelayEvent.csproj" />
+    <Project Path="../../Plugins/Lemoine.Plugin.AcquisitionErrorEvent/Lemoine.Plugin.AcquisitionErrorEvent.csproj" />
+    <Project Path="../../Plugins/Lemoine.Plugin.MachineStateTemplateChangeEvent/Lemoine.Plugin.MachineStateTemplateChangeEvent.csproj" />
+    <Project Path="../../Plugins/Pulse.PluginImplementation/Pulse.PluginImplementation.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/Configs/">
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.AlertConfigDirectory/Lemoine.Plugin.AlertConfigDirectory.csproj" />
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.AlertConfigFile/Lemoine.Plugin.AlertConfigFile.csproj" />
+    <Project Path="../../Plugins/Alert/Lemoine.Plugin.AlertConfigTemplate/Lemoine.Plugin.AlertConfigTemplate.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/Configs/Listeners/">
+    <Project Path="../../Plugins/Alert/Listeners/Lemoine.Plugin.EventListener/Lemoine.Plugin.EventListener.csproj" />
+  </Folder>
+  <Folder Name="/UnitTests/">
+    <Project Path="../../UnitTests/Lemoine.GDBPersistentClasses.UnitTests/Lemoine.GDBPersistentClasses.UnitTests.csproj" />
+    <Project Path="../../UnitTests/Lemoine.Xml.UnitTests/Lemoine.Xml.UnitTests.csproj">
+      <Platform Solution="Debug|*" Project="x86" />
+      <Platform Solution="Release|*" Project="x86" />
+      <Build Solution="Debug|*" Project="false" />
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="../UnitTests/Lemoine.Alert.TestListeners.UnitTests/Lemoine.Alert.TestListeners.UnitTests.csproj">
+      <Platform Solution="Debug|x64" Project="x86" />
+      <Platform Solution="Release|*" Project="x86" />
+      <Build Solution="Debug|*" Project="false" />
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="../UnitTests/Lemoine.Alert.UnitTests/Lemoine.Alert.UnitTests.csproj">
+      <Platform Solution="Debug|x64" Project="x86" />
+      <Platform Solution="Release|*" Project="x86" />
+      <Build Solution="Debug|*" Project="false" />
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="Lem_AlertService.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="Debug|Any CPU" Project="x64" />
+    <Platform Solution="Release|Any CPU" Project="x86" />
+    <Platform Solution="VS|Any CPU" Project="x64" />
+    <Build Solution="Release|Any CPU" Project="false" />
+  </Project>
+</Solution>
