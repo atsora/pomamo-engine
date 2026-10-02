@@ -405,6 +405,14 @@ namespace Lemoine.WebClient
       using (var response = await m_httpClient.SendAsync (request, token)) {
         token.ThrowIfCancellationRequested ();
         json = await response.Content.ReadAsStringAsync ();
+        // A failure that is not reported in JSON could not be deserialized anyway:
+        // report it with its status code and its text, instead of a misleading JSON error
+        var mediaType = response.Content.Headers.ContentType?.MediaType ?? "";
+        if (!response.IsSuccessStatusCode
+          && (mediaType.IndexOf ("json", StringComparison.InvariantCultureIgnoreCase) < 0)) {
+          log.Error ($"UniqueResultAsync: request {url} failed with status {(int)response.StatusCode} {response.StatusCode}, response is {json}");
+          throw new HttpRequestException ($"Request failed with status {(int)response.StatusCode} {response.StatusCode}: {json}");
+        }
       }
 
       if (json.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {

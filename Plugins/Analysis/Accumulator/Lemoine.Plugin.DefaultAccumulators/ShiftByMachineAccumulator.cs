@@ -159,10 +159,9 @@ namespace Lemoine.Plugin.DefaultAccumulators
         return;
       }
 
-      if (Bound.Compare<DateTime> (DateTime.UtcNow, globalRange.Lower) <= 0) { // In the future only
-        log.Debug ($"Store: global range {globalRange} in future only => nothing to do");
-        return;
-      }
+      // Note: a change in the future must be processed too, as long as it is before operationSlotSplit.End,
+      //       because OperationSlotSplitAnalysis does not process this period again
+      //       and the operation slots may already exist there
 
       IOperationSlotSplit operationSlotSplit = ModelDAOHelper.DAOFactory.OperationSlotSplitDAO
         .FindById (m_machine.Id);

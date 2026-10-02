@@ -310,6 +310,11 @@ namespace Lemoine.Model
     /// Purge delay of the completed auto modifications
     /// </summary>
     AutoModificationPurgeDelay,
+    /// <summary>
+    /// Reset a manual reason that is not compatible any more with the machine observation state
+    /// (and the machine mode) of the reason slot
+    /// </summary>
+    ResetNotCompatibleManualReason,
   }
   
   /// <summary>
