@@ -90,6 +90,20 @@ namespace Lemoine.CncEngine
 
     static readonly string CNC_MODULES_DISTANT_DIRECTORY = "CncModules";
 
+    static readonly string HIGH_FREQUENCY_ATTRIBUTE_VALUE = "high"; // Value of the frequency attribute of the module elements to run at high frequency
+    static readonly string HIGH_FREQUENCY_KEY = "Cnc.DataHandler.Frequency.high"; // Frequency in Hz of the modules with frequency="high"
+    static readonly double HIGH_FREQUENCY_DEFAULT = 10.0; // 10 Hz
+    static readonly TimeSpan HIGH_FREQUENCY_STOP_TIMEOUT = TimeSpan.FromSeconds (10);
+    static readonly string HIGH_FREQUENCY_DATA_LOG_PREFIX = "Lemoine.CncHighFrequency"; // Not a child of DATA_LOG not to flood it by default
+
+#if !NET40
+    [System.Runtime.InteropServices.DllImport ("winmm.dll")]
+    static extern uint timeBeginPeriod (uint uMilliseconds);
+
+    [System.Runtime.InteropServices.DllImport ("winmm.dll")]
+    static extern uint timeEndPeriod (uint uMilliseconds);
+#endif // !NET40
+
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
     readonly int m_cncAcquisitionId = 0;
@@ -109,10 +123,18 @@ namespace Lemoine.CncEngine
     readonly IDictionary<string, CncModuleExecutor> m_moduleReferences = new ConcurrentDictionary<string, CncModuleExecutor> ();
     bool m_disposed = false;
 
+    // High frequency
+    readonly IList<XmlElement> m_highFrequencyModuleElements = new List<XmlElement> ();
+    readonly ConcurrentDictionary<string, object> m_highFrequencyFinalData = new ConcurrentDictionary<string, object> ();
+    TimeSpan m_highFrequencyPeriod = TimeSpan.FromTicks ((long)(TimeSpan.TicksPerSecond / HIGH_FREQUENCY_DEFAULT));
+    Thread m_highFrequencyThread = null;
+    CancellationTokenSource m_highFrequencyCancellationTokenSource = null;
+
     DateTime m_lastGarbageCollection = DateTime.UtcNow;
 
     readonly ILog log = LogManager.GetLogger (typeof (CncDataHandler).FullName);
     ILog dataLog = LogManager.GetLogger (DATA_LOG);
+    ILog highFrequencyDataLog = LogManager.GetLogger ( $"{HIGH_FREQUENCY_DATA_LOG_PREFIX}.{typeof (CncDataHandler).Name}");
 
     /// <summary>
     /// Cnc Acquisition ID
@@ -153,6 +175,35 @@ namespace Lemoine.CncEngine
     /// but this should be pretty rare (there is no global lock)
     /// </summary>
     public IDictionary<string, object> FinalData => m_finalData;
+
+    /// <summary>
+    /// Are there some modules to run at high frequency (frequency="high")
+    /// </summary>
+    public bool HasHighFrequencyModules => 0 < m_highFrequencyModuleElements.Count;
+
+    /// <summary>
+    /// Period between two executions of the high frequency modules
+    ///
+    /// It is given by the configuration key Cnc.DataHandler.Frequency.high in Hz
+    /// </summary>
+    public TimeSpan HighFrequencyPeriod => m_highFrequencyPeriod;
+
+    /// <summary>
+    /// Last data of the high frequency modules
+    ///
+    /// Thread safe access (a concurrent dictionary is used)
+    /// </summary>
+    public IDictionary<string, object> HighFrequencyFinalData => m_highFrequencyFinalData;
+
+    /// <summary>
+    /// Event raised each time the high frequency modules have been processed,
+    /// with the UTC date/time of the acquisition and the acquired data.
+    ///
+    /// It is raised from the high frequency thread: the handlers must be quick
+    /// and must not keep a reference to a dictionary they modify
+    /// (a new dictionary is created for each acquisition)
+    /// </summary>
+    public event Action<DateTime, IDictionary<string, object>> HighFrequencyDataAcquired;
 
     /// <summary>
     /// Description of the constructor
@@ -209,6 +260,7 @@ namespace Lemoine.CncEngine
 
       log = LogManager.GetLogger ($"{typeof (CncDataHandler).FullName}.{m_cncAcquisitionId}");
       dataLog = LogManager.GetLogger ($"{DATA_LOG}.{m_cncAcquisitionId}");
+      highFrequencyDataLog = LogManager.GetLogger ($"{HIGH_FREQUENCY_DATA_LOG_PREFIX}.{m_cncAcquisitionId}");
       SetActive ();
 
       try {
@@ -364,13 +416,26 @@ namespace Lemoine.CncEngine
       foreach (XmlNode node in this.m_configuration.Document.GetElementsByTagName ("*")) {
         XmlElement element = node as XmlElement;
         Debug.Assert (null != element);
-        if (element.Name.Equals ("module")) {
+        if (element.Name.Equals ("module") && IsHighFrequency (element)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ("CncDataHandler: about to load one high frequency module");
+          }
+          SetActive ();
+          try {
+            LoadHighFrequencyModule (element);
+          }
+          catch (Exception ex) {
+            log.Error ("CncDataHandler: high frequency module could not be loaded", ex);
+            throw;
+          }
+        }
+        else if (element.Name.Equals ("module")) {
           if (log.IsDebugEnabled) {
             log.Debug ("CncDataHandler: about to load one module");
           }
           SetActive ();
           try {
-            LoadModule (element);
+            LoadModule (element, m_moduleElements);
           }
           catch (Exception ex) {
             log.Error ("CncDataHandler: module could not be loaded", ex);
@@ -383,7 +448,7 @@ namespace Lemoine.CncEngine
           }
           SetActive ();
           try {
-            LoadModuleRef (element);
+            LoadModuleRef (element, IsHighFrequency (element) ? m_highFrequencyModuleElements : m_moduleElements);
           }
           catch (Exception ex) {
             log.Error ("CncDataHandler: moduleref could not be loaded", ex);
@@ -392,8 +457,80 @@ namespace Lemoine.CncEngine
         }
       }
 
+      if (HasHighFrequencyModules) {
+        SetHighFrequencyPeriod ();
+      }
+
       CheckCncModuleLicense ();
       log.Debug ("CncDataHandler: constructor completed");
+    }
+
+    void SetHighFrequencyPeriod ()
+    {
+      var highFrequency = HIGH_FREQUENCY_DEFAULT;
+      try {
+        highFrequency = Lemoine.Info.ConfigSet.LoadAndGet<double> (HIGH_FREQUENCY_KEY, HIGH_FREQUENCY_DEFAULT);
+        if (highFrequency <= 0) {
+          log.Error ($"SetHighFrequencyPeriod: invalid high frequency {highFrequency} Hz => use the default {HIGH_FREQUENCY_DEFAULT} Hz");
+          highFrequency = HIGH_FREQUENCY_DEFAULT;
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"SetHighFrequencyPeriod: exception when trying to read {HIGH_FREQUENCY_KEY} => use the default {HIGH_FREQUENCY_DEFAULT} Hz", ex);
+      }
+      m_highFrequencyPeriod = TimeSpan.FromTicks ((long)(TimeSpan.TicksPerSecond / highFrequency));
+      if (log.IsInfoEnabled) {
+        log.Info ($"SetHighFrequencyPeriod: {m_highFrequencyModuleElements.Count} high frequency module(s) at {highFrequency} Hz, period={m_highFrequencyPeriod}");
+      }
+    }
+
+    /// <summary>
+    /// Has the module element the attribute frequency="high"
+    /// </summary>
+    /// <param name="moduleElement">not null</param>
+    /// <returns></returns>
+    bool IsHighFrequency (XmlElement moduleElement)
+    {
+      if (!moduleElement.HasAttribute ("frequency")) {
+        return false;
+      }
+      var frequency = moduleElement.GetAttribute ("frequency");
+      if (frequency.Equals (HIGH_FREQUENCY_ATTRIBUTE_VALUE, StringComparison.InvariantCultureIgnoreCase)) {
+        return true;
+      }
+      else if (!string.IsNullOrEmpty (frequency) && !frequency.Equals ("normal", StringComparison.InvariantCultureIgnoreCase)) {
+        log.Error ($"IsHighFrequency: unknown frequency {frequency} => consider a normal frequency");
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Load a module element with the attribute frequency="high"
+    ///
+    /// Two options:
+    /// <list type="bullet">
+    /// <item>with a type attribute, a new module instance is created,
+    /// for example a distinct connection when the CNC supports several connections.
+    /// An optional ref attribute, distinct from the other references, can be set to re-use it</item>
+    /// <item>without type attribute, it must reference with the ref attribute a module that was previously declared:
+    /// the same module instance is used at the normal and at the high frequency,
+    /// for example when the CNC accepts only one connection</item>
+    /// </list>
+    /// </summary>
+    /// <param name="moduleElement">not null</param>
+    void LoadHighFrequencyModule (XmlElement moduleElement)
+    {
+      Debug.Assert (null != moduleElement);
+
+      if (moduleElement.HasAttribute ("type")) {
+        LoadModule (moduleElement, m_highFrequencyModuleElements);
+      }
+      else if (moduleElement.HasAttribute ("ref")) {
+        LoadModuleRef (moduleElement, m_highFrequencyModuleElements);
+      }
+      else {
+        log.Error ($"LoadHighFrequencyModule: no type or ref attribute in high frequency module {moduleElement.OuterXml} => skip it");
+      }
     }
 
     void CheckCncModuleLicense ()
@@ -456,9 +593,15 @@ namespace Lemoine.CncEngine
       return typeLoader.Load<Pomamo.CncModule.ICncModule> (typeQualifiedName);
     }
 
-    void LoadModule (XmlElement moduleElement)
+    /// <summary>
+    /// Load a new module instance from a module element with a type attribute
+    /// </summary>
+    /// <param name="moduleElement">not null</param>
+    /// <param name="moduleElements">list of module elements to append the module element to</param>
+    void LoadModule (XmlElement moduleElement, IList<XmlElement> moduleElements)
     {
       Debug.Assert (null != moduleElement);
+      Debug.Assert (null != moduleElements);
 
       if (!IsModuleElementActive (moduleElement)) {
         log.Debug ("LoadModule: element is not active, skip it");
@@ -497,7 +640,8 @@ namespace Lemoine.CncEngine
               && !attribute.Name.Equals ("ifandnotunknown")
               && !attribute.Name.Equals ("ifnotempty")
               && !attribute.Name.Equals ("ifempty")
-              && !attribute.Name.Equals ("ref")) {
+              && !attribute.Name.Equals ("ref")
+              && !attribute.Name.Equals ("frequency")) {
             SetProperty (module, attribute.Name, attribute.Value);
           }
         }
@@ -506,10 +650,17 @@ namespace Lemoine.CncEngine
         if (module is Lemoine.Cnc.ICncModule lemoineModule) {
           lemoineModule.SetDataHandler (this);
         }
-        m_moduleElements.Add (moduleElement);
+        moduleElements.Add (moduleElement);
         if (moduleElement.HasAttribute ("ref")) {
           var refLabel = moduleElement.GetAttribute ("ref");
-          m_moduleReferences[refLabel] = cncModuleExecutor;
+          if (object.ReferenceEquals (moduleElements, m_highFrequencyModuleElements)
+            && m_moduleReferences.ContainsKey (refLabel)) {
+            // Keep the reference to the normal frequency module, used by the remote get/set services
+            log.Error ($"LoadModule: reference {refLabel} of a high frequency module with a type is already used => it is ignored, use a distinct ref");
+          }
+          else {
+            m_moduleReferences[refLabel] = cncModuleExecutor;
+          }
         }
       }
       catch (Exception ex) {
@@ -522,9 +673,15 @@ namespace Lemoine.CncEngine
       }
     }
 
-    void LoadModuleRef (XmlElement moduleElement)
+    /// <summary>
+    /// Load a module element that references a module that was previously declared
+    /// </summary>
+    /// <param name="moduleElement">not null</param>
+    /// <param name="moduleElements">list of module elements to append the module element to</param>
+    void LoadModuleRef (XmlElement moduleElement, IList<XmlElement> moduleElements)
     {
       Debug.Assert (null != moduleElement);
+      Debug.Assert (null != moduleElements);
 
       if (!IsModuleElementActive (moduleElement)) {
         log.Debug ("LoadModuleRef: element is not active, skip it");
@@ -548,7 +705,7 @@ namespace Lemoine.CncEngine
 
       try {
         m_moduleObjects[moduleElement] = cncModuleExecutor;
-        m_moduleElements.Add (moduleElement);
+        moduleElements.Add (moduleElement);
       }
       catch (Exception ex) {
         log.Error ($"LoadModuleRef: for module with ref {refAttribute}, exception", ex);
@@ -804,6 +961,8 @@ namespace Lemoine.CncEngine
       }
 
       try {
+        StartHighFrequencyThread (cancellationToken);
+
         int call = 0;
         while (!cancellationToken.IsCancellationRequested
           && (!calls.HasValue || (0 == calls.Value) || (call++ < calls.Value))) {
@@ -877,8 +1036,163 @@ namespace Lemoine.CncEngine
         }
       }
       finally {
+        StopHighFrequencyThread ();
         this.Dispose ();
       }
+    }
+
+    /// <summary>
+    /// Start the thread that processes the high frequency modules, if there are some
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    void StartHighFrequencyThread (CancellationToken cancellationToken)
+    {
+      if (!HasHighFrequencyModules) {
+        if (log.IsDebugEnabled) {
+          log.Debug ("StartHighFrequencyThread: no high frequency module");
+        }
+        return;
+      }
+      if (null != m_highFrequencyThread) {
+        log.Error ("StartHighFrequencyThread: the high frequency thread is already started");
+        return;
+      }
+
+      m_highFrequencyCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
+      var highFrequencyCancellationToken = m_highFrequencyCancellationTokenSource.Token;
+      m_highFrequencyThread = new Thread (() => RunHighFrequency (highFrequencyCancellationToken)) {
+        IsBackground = true,
+        Name = $"CncHighFrequency-{m_cncAcquisitionId}",
+        Priority = ThreadPriority.AboveNormal,
+      };
+      m_highFrequencyThread.Start ();
+      if (log.IsInfoEnabled) {
+        log.Info ($"StartHighFrequencyThread: started with period {m_highFrequencyPeriod}");
+      }
+    }
+
+    /// <summary>
+    /// Stop the high frequency thread (if started) and wait for it
+    /// </summary>
+    void StopHighFrequencyThread ()
+    {
+      var thread = m_highFrequencyThread;
+      if (null == thread) {
+        return;
+      }
+
+      m_highFrequencyCancellationTokenSource.Cancel ();
+      if (!thread.Join (HIGH_FREQUENCY_STOP_TIMEOUT)) {
+        log.Error ($"StopHighFrequencyThread: the high frequency thread did not stop after {HIGH_FREQUENCY_STOP_TIMEOUT}");
+      }
+      else if (log.IsDebugEnabled) {
+        log.Debug ("StopHighFrequencyThread: the high frequency thread is stopped");
+      }
+      m_highFrequencyThread = null;
+      m_highFrequencyCancellationTokenSource.Dispose ();
+      m_highFrequencyCancellationTokenSource = null;
+    }
+
+    /// <summary>
+    /// Run the high frequency modules every <see cref="HighFrequencyPeriod"/> until cancellation
+    ///
+    /// The schedule is based on a stopwatch so that there is no drift.
+    /// If an execution is too long (for example because the normal acquisition
+    /// is using the same module), the missed periods are skipped
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    void RunHighFrequency (CancellationToken cancellationToken)
+    {
+      var period = m_highFrequencyPeriod;
+      var timerResolutionSet = SetTimerResolution (period);
+      try {
+        var stopwatch = Stopwatch.StartNew ();
+        var next = TimeSpan.Zero;
+        long executions = 0;
+        long missedPeriods = 0;
+        while (!cancellationToken.IsCancellationRequested && !ExitRequested) {
+          try {
+            ProcessHighFrequencyTasks (cancellationToken);
+            ++executions;
+          }
+          catch (OperationCanceledException) {
+            if (cancellationToken.IsCancellationRequested) {
+              log.Debug ("RunHighFrequency: cancellation requested");
+              return;
+            }
+            log.Error ("RunHighFrequency: unexpected OperationCanceledException");
+          }
+          catch (ObjectDisposedException ex) {
+            log.Error ("RunHighFrequency: object disposed => return", ex);
+            return;
+          }
+          catch (Exception ex) {
+            log.Error ("RunHighFrequency: ProcessHighFrequencyTasks failed", ex);
+            if (CheckException (ex)) {
+              return;
+            }
+          }
+
+          next += period;
+          var now = stopwatch.Elapsed;
+          if (next < now) { // Late: skip the missed periods
+            var missed = (now - next).Ticks / period.Ticks + 1;
+            missedPeriods += missed;
+            next += TimeSpan.FromTicks (missed * period.Ticks);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"RunHighFrequency: {missed} period(s) missed, total={missedPeriods} for {executions} executions");
+            }
+          }
+          if (cancellationToken.WaitHandle.WaitOne (next - now)) {
+            log.Debug ("RunHighFrequency: cancellation requested during the wait");
+            return;
+          }
+        }
+      }
+      finally {
+        if (timerResolutionSet) {
+          ResetTimerResolution ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// On Windows, the default timer resolution (about 15.6ms) is too coarse
+    /// for periods of a few milliseconds: request a 1ms resolution
+    /// </summary>
+    /// <param name="period"></param>
+    /// <returns>the timer resolution was changed</returns>
+    bool SetTimerResolution (TimeSpan period)
+    {
+#if NET40
+      return false;
+#else // !NET40
+      if (TimeSpan.FromMilliseconds (100) < period) {
+        return false;
+      }
+      if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
+        return false;
+      }
+      try {
+        return 0 == timeBeginPeriod (1);
+      }
+      catch (Exception ex) {
+        log.Warn ("SetTimerResolution: timeBeginPeriod failed", ex);
+        return false;
+      }
+#endif // !NET40
+    }
+
+    void ResetTimerResolution ()
+    {
+#if !NET40
+      try {
+        timeEndPeriod (1);
+      }
+      catch (Exception ex) {
+        log.Warn ("ResetTimerResolution: timeEndPeriod failed", ex);
+      }
+#endif // !NET40
     }
 
     void CheckGarbageCollection (TimeSpan duration)
@@ -959,7 +1273,7 @@ namespace Lemoine.CncEngine
       if (log.IsDebugEnabled) {
         log.Debug ("ProcessTasks: completed");
       }
-      FillFinalData (m_data);
+      FillFinalData (m_finalData, m_data);
       // Output m_data in the logs
       LogData (m_data);
       if (Lemoine.Info.ConfigSet.LoadAndGet (DATA_STDOUT_KEY, DATA_STDOUT_DEFAULT)) {
@@ -976,13 +1290,67 @@ namespace Lemoine.CncEngine
     }
 
     /// <summary>
+    /// Process once the modules with the attribute frequency="high"
+    ///
+    /// A new data dictionary is used at each call (independent from <see cref="Data"/>).
+    /// The concurrency with the normal acquisition is managed by the semaphore of each module.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    public void ProcessHighFrequencyTasks (CancellationToken cancellationToken)
+    {
+      if (m_disposed) {
+        log.Error ("ProcessHighFrequencyTasks: the object is already disposed");
+        throw new ObjectDisposedException (this.GetType ().FullName);
+      }
+
+      var dateTime = DateTime.UtcNow;
+      var data = new Dictionary<string, object> ();
+      foreach (var moduleElement in m_highFrequencyModuleElements) {
+        cancellationToken.ThrowIfCancellationRequested ();
+
+        if (!CheckIfCondition (moduleElement, data)) {
+          continue;
+        }
+
+        var cncModuleExecutor = m_moduleObjects[moduleElement];
+        Debug.Assert (null != cncModuleExecutor);
+
+        // Note: SetActive is not called here, not to hide a normal acquisition that would not respond any more
+        ProcessModule (moduleElement, cncModuleExecutor, data, cancellationToken, setActive: false);
+      }
+
+      FillFinalData (m_highFrequencyFinalData, data);
+      if (highFrequencyDataLog.IsDebugEnabled) {
+        foreach (var item in data) {
+          try {
+            highFrequencyDataLog.Debug ($"{dateTime:o} {item.Key}={GetStringFromKeyValueItem (item)}");
+          }
+          catch (Exception ex) {
+            log.Error ($"ProcessHighFrequencyTasks: error while trying to log the data for key {item.Key}", ex);
+          }
+        }
+      }
+
+      var handler = HighFrequencyDataAcquired;
+      if (null != handler) {
+        try {
+          handler (dateTime, data);
+        }
+        catch (Exception ex) {
+          log.Error ("ProcessHighFrequencyTasks: exception in a HighFrequencyDataAcquired handler", ex);
+        }
+      }
+    }
+
+    /// <summary>
     /// Process a specific module given its module XML Element and its <see cref="CncModuleExecutor"/>
     /// </summary>
     /// <param name="moduleElement"></param>
     /// <param name="cncModuleExecutor"></param>
     /// <param name="data">not null</param>
     /// <param name="cancellationToken"></param>
-    internal void ProcessModule (XmlElement moduleElement, CncModuleExecutor cncModuleExecutor, IDictionary<string, object> data, CancellationToken cancellationToken)
+    /// <param name="setActive">call SetActive between the instructions</param>
+    internal void ProcessModule (XmlElement moduleElement, CncModuleExecutor cncModuleExecutor, IDictionary<string, object> data, CancellationToken cancellationToken, bool setActive = true)
     {
       Debug.Assert (null != data);
 
@@ -1011,7 +1379,9 @@ namespace Lemoine.CncEngine
 
         // - reset, get and set directives
         foreach (XmlNode child in moduleElement.ChildNodes) {
-          SetActive ();
+          if (setActive) {
+            SetActive ();
+          }
           if (cancellationToken.IsCancellationRequested) {
             log.Error ($"ProcessModule: cancellation requested => return after calling Finish");
             ProcessFinish (cncModuleExecutor, moduleElement);
@@ -1031,18 +1401,18 @@ namespace Lemoine.CncEngine
       } // SemaphoreHolder
     }
 
-    void FillFinalData (IDictionary<string, object> data)
+    void FillFinalData (ConcurrentDictionary<string, object> finalData, IDictionary<string, object> data)
     {
-      var obsoleteFinalDataKeys = m_finalData.Keys
+      var obsoleteFinalDataKeys = finalData.Keys
         .Where (k => !data.ContainsKey (k));
       foreach (var obsoleteFinalDataKey in obsoleteFinalDataKeys) {
-        if (!m_finalData.TryRemove (obsoleteFinalDataKey, out object obsoleteValue)) {
+        if (!finalData.TryRemove (obsoleteFinalDataKey, out object obsoleteValue)) {
           log.Error ($"FillFinalData: key {obsoleteFinalDataKey} could not be removed");
         }
       }
 
       foreach (KeyValuePair<string, object> item in data) {
-        m_finalData[item.Key] = item.Value;
+        finalData[item.Key] = item.Value;
       }
     }
 
@@ -1758,6 +2128,7 @@ namespace Lemoine.CncEngine
 
       if (disposing) {
         // Dispose managed resources
+        StopHighFrequencyThread (); // Before the modules are disposed
         foreach (CncModuleExecutor v in m_moduleObjects.Values) {
           v.Dispose ();
         }
