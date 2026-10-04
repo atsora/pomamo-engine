@@ -96,12 +96,45 @@ namespace Lemoine.CncEngine
     static readonly TimeSpan HIGH_FREQUENCY_STOP_TIMEOUT = TimeSpan.FromSeconds (10);
     static readonly string HIGH_FREQUENCY_DATA_LOG_PREFIX = "Lemoine.CncHighFrequency"; // Not a child of DATA_LOG not to flood it by default
 
+    static readonly string HIGH_FREQUENCY_QUEUE_MAX_SIZE_KEY = "Cnc.DataHandler.HighFrequency.QueueMaxSize"; // Maximum number of samples in the FIFO, the oldest ones are dropped
+    static readonly int HIGH_FREQUENCY_QUEUE_MAX_SIZE_DEFAULT = 6000; // 1 minute at 100 Hz
+
+    /// <summary>
+    /// Data key of the batch of high frequency samples (IList of <see cref="Pomamo.CncModule.HighFrequencySample"/>, oldest first)
+    /// that is set at the beginning of <see cref="ProcessTasks"/> if there is at least one sample
+    /// </summary>
+    public static readonly string HIGH_FREQUENCY_SAMPLES_DATA_KEY = "HighFrequencySamples";
+
+    /// <summary>
+    /// Data key of the number of high frequency samples that were dropped because the FIFO was full,
+    /// since the previous batch (set only if not 0)
+    /// </summary>
+    public static readonly string HIGH_FREQUENCY_DROPPED_SAMPLES_DATA_KEY = "HighFrequencyDroppedSamples";
+
 #if !NET40
     [System.Runtime.InteropServices.DllImport ("winmm.dll")]
     static extern uint timeBeginPeriod (uint uMilliseconds);
 
     [System.Runtime.InteropServices.DllImport ("winmm.dll")]
     static extern uint timeEndPeriod (uint uMilliseconds);
+
+    [System.Runtime.InteropServices.StructLayout (System.Runtime.InteropServices.LayoutKind.Sequential)]
+    struct PROCESS_POWER_THROTTLING_STATE
+    {
+      public uint Version;
+      public uint ControlMask;
+      public uint StateMask;
+    }
+
+    const int PROCESS_POWER_THROTTLING_INFORMATION_CLASS = 4; // ProcessPowerThrottling
+    const uint PROCESS_POWER_THROTTLING_CURRENT_VERSION = 1;
+    const uint PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION = 0x4;
+
+    [System.Runtime.InteropServices.DllImport ("kernel32.dll", SetLastError = true)]
+    static extern bool SetProcessInformation (IntPtr hProcess, int processInformationClass, ref PROCESS_POWER_THROTTLING_STATE processInformation, uint processInformationSize);
+
+    [System.Runtime.InteropServices.DllImport ("kernel32.dll")]
+    static extern IntPtr GetCurrentProcess ();
 #endif // !NET40
 
     readonly IAssemblyLoader m_assemblyLoader;
@@ -127,6 +160,9 @@ namespace Lemoine.CncEngine
     readonly IList<XmlElement> m_highFrequencyModuleElements = new List<XmlElement> ();
     readonly ConcurrentDictionary<string, object> m_highFrequencyFinalData = new ConcurrentDictionary<string, object> ();
     TimeSpan m_highFrequencyPeriod = TimeSpan.FromTicks ((long)(TimeSpan.TicksPerSecond / HIGH_FREQUENCY_DEFAULT));
+    readonly ConcurrentQueue<Pomamo.CncModule.HighFrequencySample> m_highFrequencySamples = new ConcurrentQueue<Pomamo.CncModule.HighFrequencySample> ();
+    int m_highFrequencyQueueMaxSize = HIGH_FREQUENCY_QUEUE_MAX_SIZE_DEFAULT;
+    long m_highFrequencyDroppedSamples = 0; // Since the previous batch, use Interlocked
     Thread m_highFrequencyThread = null;
     CancellationTokenSource m_highFrequencyCancellationTokenSource = null;
 
@@ -196,14 +232,9 @@ namespace Lemoine.CncEngine
     public IDictionary<string, object> HighFrequencyFinalData => m_highFrequencyFinalData;
 
     /// <summary>
-    /// Event raised each time the high frequency modules have been processed,
-    /// with the UTC date/time of the acquisition and the acquired data.
-    ///
-    /// It is raised from the high frequency thread: the handlers must be quick
-    /// and must not keep a reference to a dictionary they modify
-    /// (a new dictionary is created for each acquisition)
+    /// Number of high frequency samples that are waiting in the FIFO for the next batch
     /// </summary>
-    public event Action<DateTime, IDictionary<string, object>> HighFrequencyDataAcquired;
+    public int HighFrequencyQueueCount => m_highFrequencySamples.Count;
 
     /// <summary>
     /// Description of the constructor
@@ -481,6 +512,22 @@ namespace Lemoine.CncEngine
       m_highFrequencyPeriod = TimeSpan.FromTicks ((long)(TimeSpan.TicksPerSecond / highFrequency));
       if (log.IsInfoEnabled) {
         log.Info ($"SetHighFrequencyPeriod: {m_highFrequencyModuleElements.Count} high frequency module(s) at {highFrequency} Hz, period={m_highFrequencyPeriod}");
+      }
+
+      try {
+        var queueMaxSize = Lemoine.Info.ConfigSet.LoadAndGet<int> (HIGH_FREQUENCY_QUEUE_MAX_SIZE_KEY, HIGH_FREQUENCY_QUEUE_MAX_SIZE_DEFAULT);
+        if (queueMaxSize <= 0) {
+          log.Error ($"SetHighFrequencyPeriod: invalid queue max size {queueMaxSize} => use the default {HIGH_FREQUENCY_QUEUE_MAX_SIZE_DEFAULT}");
+        }
+        else {
+          m_highFrequencyQueueMaxSize = queueMaxSize;
+        }
+      }
+      catch (Exception ex) {
+        log.Error ($"SetHighFrequencyPeriod: exception when trying to read {HIGH_FREQUENCY_QUEUE_MAX_SIZE_KEY} => use the default {HIGH_FREQUENCY_QUEUE_MAX_SIZE_DEFAULT}", ex);
+      }
+      if (m_highFrequencyQueueMaxSize < 2 * m_every.Ticks / m_highFrequencyPeriod.Ticks) {
+        log.Warn ($"SetHighFrequencyPeriod: queue max size {m_highFrequencyQueueMaxSize} is too small for every={m_every} and period={m_highFrequencyPeriod}, samples will be dropped");
       }
     }
 
@@ -1173,12 +1220,40 @@ namespace Lemoine.CncEngine
       if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
         return false;
       }
+      DisableTimerResolutionThrottling ();
       try {
         return 0 == timeBeginPeriod (1);
       }
       catch (Exception ex) {
         log.Warn ("SetTimerResolution: timeBeginPeriod failed", ex);
         return false;
+      }
+#endif // !NET40
+    }
+
+    /// <summary>
+    /// Since Windows 11, the timer resolution requests of a process without any visible window
+    /// (a service for example) are ignored by default: opt out from this power throttling.
+    ///
+    /// This is a process-wide setting. It is not supported before Windows 10 1709 (just log it)
+    /// </summary>
+    void DisableTimerResolutionThrottling ()
+    {
+#if !NET40
+      try {
+        var state = new PROCESS_POWER_THROTTLING_STATE {
+          Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+          ControlMask = PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION,
+          StateMask = 0, // 0: always honor the timer resolution requests
+        };
+        if (!SetProcessInformation (GetCurrentProcess (), PROCESS_POWER_THROTTLING_INFORMATION_CLASS, ref state, (uint)System.Runtime.InteropServices.Marshal.SizeOf (state))) {
+          if (log.IsInfoEnabled) {
+            log.Info ($"DisableTimerResolutionThrottling: SetProcessInformation failed with error {System.Runtime.InteropServices.Marshal.GetLastWin32Error ()}, probably an older version of Windows");
+          }
+        }
+      }
+      catch (Exception ex) {
+        log.Info ("DisableTimerResolutionThrottling: SetProcessInformation is not available", ex);
       }
 #endif // !NET40
     }
@@ -1239,6 +1314,9 @@ namespace Lemoine.CncEngine
       // Reset data
       m_data.Clear ();
 
+      // Batch of high frequency samples since the previous call
+      DequeueHighFrequencySamples (m_data);
+
       // Loop on modules
       try {
         foreach (XmlElement moduleElement in m_moduleElements) {
@@ -1273,7 +1351,8 @@ namespace Lemoine.CncEngine
       if (log.IsDebugEnabled) {
         log.Debug ("ProcessTasks: completed");
       }
-      FillFinalData (m_finalData, m_data);
+      // The batch of high frequency samples may be big: not in the final data that is exposed by the web services
+      FillFinalData (m_finalData, m_data, excludedKey: HIGH_FREQUENCY_SAMPLES_DATA_KEY);
       // Output m_data in the logs
       LogData (m_data);
       if (Lemoine.Info.ConfigSet.LoadAndGet (DATA_STDOUT_KEY, DATA_STDOUT_DEFAULT)) {
@@ -1331,15 +1410,57 @@ namespace Lemoine.CncEngine
         }
       }
 
-      var handler = HighFrequencyDataAcquired;
-      if (null != handler) {
-        try {
-          handler (dateTime, data);
-        }
-        catch (Exception ex) {
-          log.Error ("ProcessHighFrequencyTasks: exception in a HighFrequencyDataAcquired handler", ex);
+      if (0 < data.Count) {
+        EnqueueHighFrequencySample (new Pomamo.CncModule.HighFrequencySample (dateTime, data));
+      }
+    }
+
+    /// <summary>
+    /// Append a sample to the FIFO. If the FIFO is full, drop the oldest samples
+    /// </summary>
+    /// <param name="sample">not null</param>
+    void EnqueueHighFrequencySample (Pomamo.CncModule.HighFrequencySample sample)
+    {
+      m_highFrequencySamples.Enqueue (sample);
+      while (m_highFrequencyQueueMaxSize < m_highFrequencySamples.Count) {
+        if (m_highFrequencySamples.TryDequeue (out var _)) {
+          Interlocked.Increment (ref m_highFrequencyDroppedSamples);
         }
       }
+    }
+
+    /// <summary>
+    /// Move the high frequency samples from the FIFO to data, as a batch
+    /// with the key <see cref="HIGH_FREQUENCY_SAMPLES_DATA_KEY"/>, oldest first
+    ///
+    /// Nothing is set if there is no sample, so that ifdefined="HighFrequencySamples" can be used
+    /// in the module elements that process the batch
+    /// </summary>
+    /// <param name="data">not null</param>
+    void DequeueHighFrequencySamples (IDictionary<string, object> data)
+    {
+      var droppedSamples = Interlocked.Exchange (ref m_highFrequencyDroppedSamples, 0);
+      if (0 < droppedSamples) {
+        log.Warn ($"DequeueHighFrequencySamples: {droppedSamples} high frequency samples were dropped because the FIFO was full (max size {m_highFrequencyQueueMaxSize})");
+        data[HIGH_FREQUENCY_DROPPED_SAMPLES_DATA_KEY] = droppedSamples;
+      }
+
+      // Only the samples that are already there: the high frequency thread keeps on enqueuing
+      var count = m_highFrequencySamples.Count;
+      if (0 == count) {
+        return;
+      }
+      var samples = new List<Pomamo.CncModule.HighFrequencySample> (count);
+      for (int i = 0; i < count; ++i) {
+        if (!m_highFrequencySamples.TryDequeue (out var sample)) {
+          break;
+        }
+        samples.Add (sample);
+      }
+      if (log.IsDebugEnabled) {
+        log.Debug ($"DequeueHighFrequencySamples: {samples.Count} samples");
+      }
+      data[HIGH_FREQUENCY_SAMPLES_DATA_KEY] = samples;
     }
 
     /// <summary>
@@ -1401,7 +1522,7 @@ namespace Lemoine.CncEngine
       } // SemaphoreHolder
     }
 
-    void FillFinalData (ConcurrentDictionary<string, object> finalData, IDictionary<string, object> data)
+    void FillFinalData (ConcurrentDictionary<string, object> finalData, IDictionary<string, object> data, string excludedKey = null)
     {
       var obsoleteFinalDataKeys = finalData.Keys
         .Where (k => !data.ContainsKey (k));
@@ -1412,6 +1533,9 @@ namespace Lemoine.CncEngine
       }
 
       foreach (KeyValuePair<string, object> item in data) {
+        if (null != excludedKey && item.Key.Equals (excludedKey)) {
+          continue;
+        }
         finalData[item.Key] = item.Value;
       }
     }
@@ -2065,6 +2189,12 @@ namespace Lemoine.CncEngine
       else if (item.Value is IDictionary<string, string>) {
         IDictionary<string, string> dictionary = (IDictionary<string, string>)ConvertData (item.Value, typeof (IDictionary<string, string>));
         return dictionary.ToDictionaryString (withType);
+      }
+      else if (item.Value is IList<Pomamo.CncModule.HighFrequencySample> samples) {
+        // Only a summary, the samples are logged by the high frequency data logger
+        return (0 == samples.Count)
+          ? "0 samples"
+          : $"{samples.Count} samples from {samples[0].DateTime:o} to {samples[samples.Count - 1].DateTime:o}";
       }
 #if NETSTANDARD || NET48 || NETCOREAPP
       // IEnumerable is covariant, so this covers both IList<CncAlarm> and IList<ICncAlarm>
