@@ -24,8 +24,7 @@
   <Project Path="../../../Libraries/Lemoine.Extensions.Database/Lemoine.Extensions.Database.csproj" />
   <Project Path="../../library/Lemoine.Settings.csproj" />
   <Project Path="../../software/Lem_Settings.csproj">
-    <Platform Project="x86" />
-    <Build Project="false" />
+    <Platform Project="x64" />
   </Project>
   <Project Path="ViewReasons.csproj" />
 </Solution>

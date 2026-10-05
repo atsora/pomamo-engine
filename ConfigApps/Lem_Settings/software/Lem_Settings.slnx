@@ -45,8 +45,6 @@
     <BuildType Solution="VS|Any CPU" Project="Debug" />
   </Project>
   <Project Path="Lem_Settings.csproj">
-    <Platform Solution="*|Any CPU" Project="x86" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

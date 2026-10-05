@@ -127,10 +127,6 @@
     <BuildDependency Project="wizards/WizardCreateMachine/WizardCreateMachine.csproj" />
     <BuildDependency Project="wizards/WizardCreateStampingConfig/WizardCreateStampingConfig.csproj" />
     <BuildDependency Project="wizards/WizardMonitorMachine/WizardMonitorMachine.csproj" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Platform Solution="Debug|Any CPU" Project="x86" />
-    <Platform Solution="Release|Any CPU" Project="x86" />
-    <Platform Solution="VS|Any CPU" Project="x64" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

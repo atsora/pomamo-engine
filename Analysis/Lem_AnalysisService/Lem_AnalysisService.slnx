@@ -188,17 +188,9 @@
     </Project>
   </Folder>
   <Project Path="../Lem_ActivityAnalysis.Console/Lem_ActivityAnalysis.Console.csproj">
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Platform Solution="Debug|Any CPU" Project="x64" />
-    <Platform Solution="Release|Any CPU" Project="x86" />
-    <Platform Solution="VS|Any CPU" Project="x64" />
+    <Platform Project="x64" />
   </Project>
   <Project Path="Lem_AnalysisService.csproj">
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Platform Solution="Debug|Any CPU" Project="x64" />
-    <Platform Solution="Release|Any CPU" Project="x86" />
-    <Platform Solution="VS|Any CPU" Project="x64" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

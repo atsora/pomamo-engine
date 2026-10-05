@@ -4,18 +4,13 @@
     <BuildType Name="Release" />
     <BuildType Name="VS" />
     <Platform Name="Any CPU" />
-    <Platform Name="windows" />
     <Platform Name="x64" />
-    <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Controls/">
     <Project Path="../Controls/Lemoine.BaseControls/Lemoine.BaseControls.csproj" />
     <Project Path="../Controls/Lemoine.ConfigControls/Lemoine.ConfigControls.csproj" />
     <Project Path="../Controls/Lemoine.DataControls/Lemoine.DataControls.csproj" />
-    <Project Path="../Controls/Lemoine.JobControls/Lemoine.JobControls.csproj">
-      <BuildType Solution="VS|x64" Project="Release" />
-      <BuildType Solution="VS|x86" Project="Release" />
-    </Project>
+    <Project Path="../Controls/Lemoine.JobControls/Lemoine.JobControls.csproj" />
   </Folder>
   <Folder Name="/Extensions/">
     <Project Path="../Alert/Lemoine.Extensions.Alert/Lemoine.Extensions.Alert.csproj" />
@@ -52,14 +47,7 @@
   </Folder>
   <Project Path="Lem_OperationExplorer.csproj">
     <BuildType Solution="VS|x64" Project="Release" />
-    <BuildType Solution="VS|x86" Project="Release" />
-    <Platform Solution="*|Any CPU" Project="x86" />
+    <Platform Solution="*|Any CPU" Project="x64" />
     <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Platform Solution="Debug|windows" Project="x86" />
-    <Platform Solution="Release|windows" Project="x86" />
-    <Platform Solution="VS|windows" Project="x64" />
-    <Build Solution="Debug|windows" Project="false" />
-    <Build Solution="Release|windows" Project="false" />
   </Project>
 </Solution>

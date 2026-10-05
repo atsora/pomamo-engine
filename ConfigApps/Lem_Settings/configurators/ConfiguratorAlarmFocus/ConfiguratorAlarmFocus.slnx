@@ -24,8 +24,7 @@
   <Project Path="../../../Plugins/Lemoine.Plugin.MachineStateTemplateChangeEvent/Lemoine.Plugin.MachineStateTemplateChangeEvent.csproj" />
   <Project Path="../../library/Lemoine.Settings.csproj" />
   <Project Path="../../software/Lem_Settings.csproj">
-    <Platform Project="x86" />
-    <Build Solution="*|Any CPU" Project="false" />
+    <Platform Project="x64" />
   </Project>
   <Project Path="ConfiguratorAlarmFocus.csproj" />
 </Solution>
