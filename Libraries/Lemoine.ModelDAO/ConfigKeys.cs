@@ -469,6 +469,11 @@ namespace Lemoine.Model
     /// Spindle load peak limit
     /// </summary>
     SpindleLoadPeakLimit,
+    /// <summary>
+    /// Spindle load peak prominence: minimum increase before and decrease after a local maximum
+    /// to consider it as a peak (high frequency spindle load)
+    /// </summary>
+    SpindleLoadPeakProminence,
   }
   
   /// <summary>

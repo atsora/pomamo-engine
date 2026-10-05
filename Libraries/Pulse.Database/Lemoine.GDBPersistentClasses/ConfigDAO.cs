@@ -264,6 +264,10 @@ namespace Lemoine.GDBPersistentClasses
                            "Cnc config: spindle load peak limit",
                            60);
       InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetCncConfigKey (CncConfigKey.SpindleLoadPeakProminence),
+                           "Cnc config: spindle load peak prominence, minimum increase before and decrease after a local maximum to consider it as a peak",
+                           5);
+      InsertDefaultValue (config);
 
       // - datastructure
       config = new Config (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.SinglePath),
