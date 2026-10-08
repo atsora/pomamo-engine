@@ -19,7 +19,6 @@ namespace Lem_ApplyMachineModifications
   {
     static readonly ILog log = LogManager.GetLogger(typeof (Options).FullName);
 
-    #region Options
     /// <summary>
     /// Additional parameters
     /// 
@@ -50,9 +49,7 @@ namespace Lem_ApplyMachineModifications
     [Option ('u', "updater",
             HelpText = "Updater/User ID")]
     public int UpdaterId { get; set; } = int.MinValue;
-    #endregion // Options
     
-    #region ValueList
     [Value (0, MetaName = "modification descriptions", HelpText = @"type;range;id[;details] where:
   - type: Reason / MachineStateTemplate / ResetTask / Task / ResetWorkOrderComponent / ResetOperation / Operation
   - range is formatted like: [2016-01-13T15:50:35,2016-01-13T16:00:00)
@@ -70,6 +67,5 @@ namespace Lem_ApplyMachineModifications
         If type=MachineStateTemplate, it is the Shift ID
 ", Required = true)]
     public IEnumerable<string> ModificationDescriptions { get; set; } = new List<string> ();
-    #endregion // ValueList
   }
 }

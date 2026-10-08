@@ -178,7 +178,7 @@ namespace Lem_CncService
               log.Error ($"InitializeThreadsAsync: Initialize of ModelDAOConfigReader in exception, skip it", ex);
             }
           }
-          Lemoine.Info.ConfigSet.AddConfigReader (new PersistentCacheConfigReader (modelDaoConfigReader, "cncservice.modaldaoconfig.cache"));
+          Lemoine.Info.ConfigSet.AddConfigReader (new PersistentCacheConfigReader (modelDaoConfigReader, "cncservice.modeldaoconfig.cache"));
 
           if (linkedToken.IsCancellationRequested) {
             return;

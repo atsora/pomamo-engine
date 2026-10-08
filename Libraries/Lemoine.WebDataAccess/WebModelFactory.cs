@@ -633,10 +633,8 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException();
     }
 
-    public IOperationMachineAssociation CreateOperationMachineAssociation(IMachine machine, UtcDateTimeRange range)
-    {
-      throw new NotImplementedException();
-    }
+    public IOperationMachineAssociation CreateOperationMachineAssociation (IMachine machine, UtcDateTimeRange range) =>
+      new OperationMachineAssociation (machine, range);
 
     public IOperationMachineAssociation CreateOperationMachineAssociation(IMachine machine, UtcDateTimeRange range, IModification mainModification, bool partOfDetectionAnalysis)
     {

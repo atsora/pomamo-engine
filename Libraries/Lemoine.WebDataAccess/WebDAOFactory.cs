@@ -718,12 +718,7 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
-    public IOperationDAO OperationDAO
-    {
-      get {
-        throw new NotImplementedException ();
-      }
-    }
+    public IOperationDAO OperationDAO => new OperationDAO ();
     public IOperationCycleDAO OperationCycleDAO
     {
       get {
@@ -736,12 +731,7 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
-    public IOperationMachineAssociationDAO OperationMachineAssociationDAO
-    {
-      get {
-        throw new NotImplementedException ();
-      }
-    }
+    public IOperationMachineAssociationDAO OperationMachineAssociationDAO => new OperationMachineAssociationDAO ();
     public IOperationSlotDAO OperationSlotDAO
     {
       get {
