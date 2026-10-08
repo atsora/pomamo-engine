@@ -304,6 +304,26 @@ namespace Lem_ApplyMachineModifications
               association.Revision = revision;
               ModelDAOHelper.DAOFactory.OperationMachineAssociationDAO.MakePersistent (association);
             }
+            else if (descriptionItems[0].Equals ("Operation")) {
+              IOperation operation = null;
+              if (int.TryParse (descriptionItems[2], out var operationId)) {
+                operation = ModelDAOHelper.DAOFactory.OperationDAO
+                  .FindById (operationId);
+              }
+              if (operation is null) {
+                log.Error ($"Main: operation Id {descriptionItems[2]} is not valid");
+                var dialog = new Lemoine.BaseControls.UsageDialog (usage,
+                                                                   Lemoine.I18N.PulseCatalog.GetString ("InvalidOperation", "Invalid operation"));
+                dialog.ShowDialog ();
+                continue;
+              }
+              var association = ModelDAOHelper.ModelFactory
+                .CreateOperationMachineAssociation (machine, range);
+              modification = association;
+              association.Operation = operation;
+              association.Revision = revision;
+              ModelDAOHelper.DAOFactory.OperationMachineAssociationDAO.MakePersistent (association);
+            }
             else {
               log.ErrorFormat ("Main: " +
                                "not supported modification type, skip it");
