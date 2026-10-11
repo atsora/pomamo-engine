@@ -22,14 +22,11 @@ namespace Lem_ApplyMachineModifications
   /// </summary>
   public partial class MainForm : Form
   {
-    #region Members
     readonly Options m_options;
     ICollection<IModification> m_allModifications = new List<IModification> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// List of modifications the analysis of which must be tracked
     /// </summary>
@@ -38,9 +35,7 @@ namespace Lem_ApplyMachineModifications
       get { return m_allModifications; }
       set { m_allModifications = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Constructors
     /// <summary>
     /// Description of the constructor
     /// </summary>
@@ -58,9 +53,6 @@ namespace Lem_ApplyMachineModifications
       this.Load += new System.EventHandler (this.ModificationProgressFormLoad);
     }
 
-    #endregion // Constructors
-
-    #region Methods
     void ModificationProgressFormLoad (object sender, EventArgs e)
     {
       this.modificationProgressBar1.AddModifications ((System.Collections.ICollection)this.Modifications);
@@ -95,7 +87,6 @@ namespace Lem_ApplyMachineModifications
 
       Application.Exit ();
     }
-    #endregion // Methods
 
     private void MainForm_FormClosed (object sender, FormClosedEventArgs e)
     {
@@ -304,9 +295,28 @@ namespace Lem_ApplyMachineModifications
               association.Revision = revision;
               ModelDAOHelper.DAOFactory.OperationMachineAssociationDAO.MakePersistent (association);
             }
+            else if (descriptionItems[0].Equals ("Operation")) {
+              IOperation operation = null;
+              if (int.TryParse (descriptionItems[2], out var operationId)) {
+                operation = ModelDAOHelper.DAOFactory.OperationDAO
+                  .FindById (operationId);
+              }
+              if (operation is null) {
+                log.Error ($"Main: operation Id {descriptionItems[2]} is not valid");
+                var dialog = new Lemoine.BaseControls.UsageDialog (usage,
+                                                                   Lemoine.I18N.PulseCatalog.GetString ("InvalidOperation", "Invalid operation"));
+                dialog.ShowDialog ();
+                continue;
+              }
+              var association = ModelDAOHelper.ModelFactory
+                .CreateOperationMachineAssociation (machine, range);
+              modification = association;
+              association.Operation = operation;
+              association.Revision = revision;
+              ModelDAOHelper.DAOFactory.OperationMachineAssociationDAO.MakePersistent (association);
+            }
             else {
-              log.ErrorFormat ("Main: " +
-                               "not supported modification type, skip it");
+              log.Error ($"Main: not supported modification type {descriptionItems[0]}, skip it");
               continue;
             }
             this.Modifications.Add (modification);

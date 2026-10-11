@@ -7,7 +7,6 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="Lem_MTConnectSimpleViewer.csproj">
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

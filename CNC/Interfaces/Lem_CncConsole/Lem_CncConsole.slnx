@@ -51,10 +51,6 @@
     <Project Path="../../../Libraries/Pulse.Hosting/Pulse.Hosting.csproj" />
   </Folder>
   <Project Path="Lem_CncConsole.csproj">
-    <Platform Solution="*|Any CPU" Project="x86" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Build Solution="VS|x64" Project="false" />
-    <Build Solution="VS|x86" Project="false" />
+    <Platform Project="x86" />
   </Project>
 </Solution>

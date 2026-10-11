@@ -17,10 +17,6 @@
     <Project Path="../Libraries/Lemoine.ModelDAO/Lemoine.ModelDAO.csproj" />
   </Folder>
   <Project Path="Lem_LanguageSelector.csproj">
-    <Platform Solution="Debug|Any CPU" Project="x86" />
-    <Platform Solution="Release|x86" Project="x86" />
-    <Platform Solution="VS|Any CPU" Project="x86" />
-    <Platform Solution="VS|x64" Project="x64" />
-    <Platform Solution="VS|x86" Project="x86" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

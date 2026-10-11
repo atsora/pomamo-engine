@@ -65,6 +65,5 @@
   <Project Path="Lemoine.Plugin.SwitchByDetectedCyclesProduction/Lemoine.Plugin.SwitchByDetectedCyclesProduction.csproj" />
   <Project Path="Lem_TestDynamicTime.Console/Lem_TestDynamicTime.Console.csproj">
     <Platform Project="x64" />
-    <Build Solution="Debug|x86" Project="false" />
   </Project>
 </Solution>

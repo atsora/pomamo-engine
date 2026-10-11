@@ -105,10 +105,6 @@
     </Project>
   </Folder>
   <Project Path="Lem_AlertService.csproj">
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="Debug|Any CPU" Project="x64" />
-    <Platform Solution="Release|Any CPU" Project="x86" />
-    <Platform Solution="VS|Any CPU" Project="x64" />
-    <Build Solution="Release|Any CPU" Project="false" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

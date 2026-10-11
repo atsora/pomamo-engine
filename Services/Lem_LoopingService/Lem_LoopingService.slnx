@@ -14,8 +14,6 @@
     <Project Path="../../Libraries/Lemoine.ServiceCore/Lemoine.ServiceCore.csproj" />
   </Folder>
   <Project Path="Lem_LoopingService.csproj">
-    <Platform Solution="*|Any CPU" Project="x86" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

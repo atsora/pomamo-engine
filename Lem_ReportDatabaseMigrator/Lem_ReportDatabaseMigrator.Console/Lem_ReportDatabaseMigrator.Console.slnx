@@ -13,12 +13,6 @@
   </Folder>
   <Project Path="../Libraries/Lemoine.ReportDatabaseMigrator/Lemoine.ReportDatabaseMigrator.csproj" />
   <Project Path="Lem_ReportDatabaseMigrator.Console.csproj">
-    <Platform Solution="*|Any CPU" Project="x86" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Build Solution="Debug|Any CPU" Project="false" />
-    <Build Solution="Release|Any CPU" Project="false" />
-    <Build Solution="VS|x64" Project="false" />
-    <Build Solution="VS|x86" Project="false" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

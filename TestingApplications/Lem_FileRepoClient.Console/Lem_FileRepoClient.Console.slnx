@@ -9,6 +9,6 @@
     <Project Path="../../Libraries/Lemoine.FileRepository.Corba/Lemoine.FileRepository.Corba.csproj" />
   </Folder>
   <Project Path="Lem_FileRepoClient.Console.csproj">
-    <Platform Project="x86" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

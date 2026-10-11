@@ -45,11 +45,6 @@
     <Project Path="../../Libraries/Pulse.Hosting/Pulse.Hosting.csproj" />
   </Folder>
   <Project Path="Lem_Configuration.csproj">
-    <Platform Solution="*|Any CPU" Project="x86" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Platform Solution="Debug|x64" Project="x86" />
-    <Platform Solution="Release|x64" Project="x86" />
-    <Platform Solution="VS|x64" Project="x64" />
-    <Build Solution="Release|Any CPU" Project="false" />
+    <Platform Project="x64" />
   </Project>
 </Solution>

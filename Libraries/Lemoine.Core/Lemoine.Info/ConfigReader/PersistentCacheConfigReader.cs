@@ -25,9 +25,8 @@ namespace Lemoine.Info.ConfigReader
 
     CachedConfigReader m_persistentConfigReader = null;
     OptionsFileConfigReader m_fileConfigReader = null;
-    object m_persistentConfigReaderLock = new object ();
+    readonly object m_persistentConfigReaderLock = new object ();
 
-    #region Constructors
     /// <summary>
     /// Constructor
     /// </summary>
@@ -36,11 +35,13 @@ namespace Lemoine.Info.ConfigReader
       m_configReader = configReader;
       m_path = Path.Combine (PulseInfo.LocalConfigurationDirectory, fileName);
     }
-    #endregion // Constructors
 
-    #region IGenericConfigReader implementation
     /// <summary>
     /// <see cref="IGenericConfigReader" />
+    ///
+    /// The main config reader is called outside the lock,
+    /// because it may take other locks and read the configuration again (risk of dead lock).
+    /// Only the accesses to the persistent cache file are protected by the lock.
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
@@ -50,54 +51,66 @@ namespace Lemoine.Info.ConfigReader
         log.Trace ($"Get: key {key}");
       }
 
+      T v;
       try {
-        LoadPersistentConfigReader ();
-      }
-      catch (Exception ex) {
-        log.Error ($"Get: error when loading the persistent config reader => use directly the main config reader for {key}", ex);
-        return m_configReader.Get<T> (key);
-      }
-
-      try {
-        var v = m_configReader.Get<T> (key);
-        CheckCacheValue (key, v);
-        return v;
+        v = m_configReader.Get<T> (key);
       }
       catch (ConfigKeyNotFoundException) {
-        CheckNotFound<T> (key);
+        lock (m_persistentConfigReaderLock) {
+          try {
+            LoadPersistentConfigReader ();
+            CheckNotFound<T> (key);
+          }
+          catch (Exception ex) {
+            log.Error ($"Get: error in the persistent cache for the not found key {key}", ex);
+          }
+        }
         throw;
       }
       catch (Exception ex) {
         log.Error ($"Get: try to read it from persistent cache instead for {key}", ex);
-        if (!File.Exists (m_path)) {
-          log.Error ($"Get: {m_path} does not exist for {key}, throw the exception", ex);
-          throw;
-        }
-        try {
-          return m_persistentConfigReader.Get<T> (key);
-        }
-        catch (ConfigKeyNotFoundException) {
-          throw;
-        }
-        catch (Exception ex1) {
-          log.Error ($"Get: error in persistent config reader for {key}", ex1);
-          throw;
+        lock (m_persistentConfigReaderLock) {
+          if (!File.Exists (m_path)) {
+            log.Error ($"Get: {m_path} does not exist for {key}, throw the exception", ex);
+            throw;
+          }
+          try {
+            LoadPersistentConfigReader ();
+            return m_persistentConfigReader.Get<T> (key);
+          }
+          catch (ConfigKeyNotFoundException) {
+            throw;
+          }
+          catch (Exception ex1) {
+            log.Error ($"Get: error in persistent config reader for {key}", ex1);
+            throw;
+          }
         }
       }
+
+      lock (m_persistentConfigReaderLock) {
+        try {
+          LoadPersistentConfigReader ();
+          CheckCacheValue (key, v);
+        }
+        catch (Exception ex) {
+          log.Error ($"Get: error when updating the persistent cache for {key}, but return the value {v}", ex);
+        }
+      }
+      return v;
     }
-    #endregion // IGenericConfigReader implementation
 
     void LoadPersistentConfigReader ()
     {
-      if (null == m_persistentConfigReader) {
-        if (!File.Exists (m_path)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"LoadPersistentConfigReader: create an empty file {m_path}");
+      lock (m_persistentConfigReaderLock) {
+        if (null == m_persistentConfigReader) {
+          if (!File.Exists (m_path)) {
+            if (log.IsDebugEnabled) {
+              log.Debug ($"LoadPersistentConfigReader: create an empty file {m_path}");
+            }
+            File.WriteAllText (m_path, "");
           }
-          File.WriteAllText (m_path, "");
-        }
 
-        lock (m_persistentConfigReaderLock) {
           m_fileConfigReader = OptionsFileConfigReader.CreateFromPath (m_path);
           m_persistentConfigReader = new CachedConfigReader (m_fileConfigReader);
         }

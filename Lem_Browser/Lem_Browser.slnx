@@ -10,10 +10,6 @@
     <Project Path="../Libraries/Lemoine.Core/Lemoine.Core.csproj" />
   </Folder>
   <Project Path="Lem_Browser.csproj">
-    <Platform Solution="*|x86" Project="x86" />
-    <Platform Solution="Debug|Any CPU" Project="x86" />
-    <Platform Solution="Release|Any CPU" Project="x86" />
-    <Platform Solution="VS|Any CPU" Project="x64" />
-    <Build Solution="Release|Any CPU" Project="false" />
+    <Platform Project="x64" />
   </Project>
 </Solution>
