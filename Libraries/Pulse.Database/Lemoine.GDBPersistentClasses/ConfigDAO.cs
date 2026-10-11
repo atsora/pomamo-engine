@@ -268,6 +268,10 @@ namespace Lemoine.GDBPersistentClasses
                            "Cnc config: spindle load peak prominence, minimum increase before and decrease after a local maximum to consider it as a peak",
                            5);
       InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetCncConfigKey (CncConfigKey.DataPartitionWeekCutOffDay),
+                           "Cnc config: cut-off day of the week partitions of the cncdata tables (partitions from 00:00 UTC of this day)",
+                           DayOfWeek.Sunday);
+      InsertDefaultValue (config);
 
       // - datastructure
       config = new Config (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.SinglePath),

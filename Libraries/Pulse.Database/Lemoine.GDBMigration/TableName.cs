@@ -613,7 +613,23 @@ namespace Lemoine.GDBMigration
     /// cncvalue table name
     /// </summary>
     public static readonly string CNC_VALUE = "cncvalue";
-    
+    /// <summary>
+    /// cncdatasample table name: time-stamped samples of cnc data (high frequency), by batch
+    /// </summary>
+    public static readonly string CNC_DATA_SAMPLE = "cncdatasample";
+    /// <summary>
+    /// cncdatasamplearchive table name: archived (compressed) cncdatasample
+    /// </summary>
+    public static readonly string CNC_DATA_SAMPLE_ARCHIVE = "cncdatasamplearchive";
+    /// <summary>
+    /// cncdataperiod table name: aggregated cnc data on periods, to replace cncvalue
+    /// </summary>
+    public static readonly string CNC_DATA_PERIOD = "cncdataperiod";
+    /// <summary>
+    /// cncdataperiodarchive table name: archived (compressed) cncdataperiod
+    /// </summary>
+    public static readonly string CNC_DATA_PERIOD_ARCHIVE = "cncdataperiodarchive";
+
     /// <summary>
     /// currentcncvalue table name
     /// </summary>

@@ -474,6 +474,11 @@ namespace Lemoine.Model
     /// to consider it as a peak (high frequency spindle load)
     /// </summary>
     SpindleLoadPeakProminence,
+    /// <summary>
+    /// Cut-off day of the week partitions of the cncdata tables (cncdatasample, cncdataperiod) as a DayOfWeek:
+    /// the partitions start at 00:00 UTC of this day. Default: Sunday
+    /// </summary>
+    DataPartitionWeekCutOffDay,
   }
   
   /// <summary>
