@@ -54,6 +54,22 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Constructor with a module
+    /// </summary>
+    /// <param name="level"></param>
+    /// <param name="message"></param>
+    /// <param name="module"></param>
+    /// <param name="state"></param>
+    internal MaintenanceLog (LogLevel level,
+                             string message,
+                             string module,
+                             MaintenanceState state)
+      : this (level, message, state)
+    {
+      this.Module = module;
+    }
+
+    /// <summary>
     /// Protected constructor for NHibernate
     /// </summary>
     internal protected MaintenanceLog ()

@@ -51,12 +51,39 @@ namespace Lemoine.Model
     /// The backend was terminated
     /// </summary>
     TerminateBackendCompleted = 9,
+    /// <summary>
+    /// The maintenance of the cncdata tables (archive and purge) started
+    /// </summary>
+    CncDataMaintenanceStarted = 10,
+    /// <summary>
+    /// An archive partition of a cncdata table was purged
+    /// </summary>
+    CncDataPurgeCompleted = 11,
+    /// <summary>
+    /// A week of a cncdata table was archived
+    /// </summary>
+    CncDataArchiveWeekCompleted = 12,
+    /// <summary>
+    /// The maintenance of the cncdata tables was interrupted at the end of the time window:
+    /// it will go on the next week
+    /// </summary>
+    CncDataMaintenanceInterrupted = 13,
+    /// <summary>
+    /// The maintenance of the cncdata tables is completed
+    /// </summary>
+    CncDataMaintenanceCompleted = 14,
+    /// <summary>
+    /// A step of the maintenance of the cncdata tables failed
+    /// </summary>
+    CncDataMaintenanceError = 15,
   }
-  
+
   /// <summary>
-  /// Description of IMaintenanceLog.
+  /// Log of the maintenance steps (table maintenancelog)
+  ///
+  /// The state is a string, because some states come from SQL scripts (for example the weekly vacuum/reindex)
   /// </summary>
-  public interface IMaintenanceLog
+  public interface IMaintenanceLog : IBaseLog
   {
     /// <summary>
     /// Maintenance state

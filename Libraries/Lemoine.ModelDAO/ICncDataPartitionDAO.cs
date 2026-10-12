@@ -30,6 +30,37 @@ namespace Lemoine.ModelDAO
   }
 
   /// <summary>
+  /// Leaf partition of a cncdata table
+  /// </summary>
+  public interface ICncDataPartition
+  {
+    /// <summary>
+    /// Partitioned table
+    /// </summary>
+    CncDataTable Table { get; }
+
+    /// <summary>
+    /// Machine module
+    /// </summary>
+    int MachineModuleId { get; }
+
+    /// <summary>
+    /// Name of the partition (table)
+    /// </summary>
+    string Name { get; }
+
+    /// <summary>
+    /// UTC lower bound (included)
+    /// </summary>
+    DateTime LowerBound { get; }
+
+    /// <summary>
+    /// UTC upper bound (excluded)
+    /// </summary>
+    DateTime UpperBound { get; }
+  }
+
+  /// <summary>
   /// DAO interface to manage the partitions of the cncdata tables
   ///
   /// The partitions are created in advance (plugin CncDataPartitions).
@@ -96,5 +127,33 @@ namespace Lemoine.ModelDAO
     /// <param name="dateTime">UTC date/time of the written row (its begin)</param>
     /// <param name="unitOfWork">not null</param>
     void RunWithPartition (CncDataTable table, int machineModuleId, DateTime dateTime, Action unitOfWork);
+
+    /// <summary>
+    /// Leaf partitions of a cncdata table, sorted by lower bound and machine module, in their own session
+    /// </summary>
+    /// <param name="table"></param>
+    /// <returns></returns>
+    System.Collections.Generic.IList<ICncDataPartition> FindPartitions (CncDataTable table);
+
+    /// <summary>
+    /// Archive a week partition of cncdatasample or cncdataperiod, without any loss,
+    /// in a single transaction that also drops the archived week partition:
+    /// <item>samples: regrouped by field and by minute in cncdatasamplearchive</item>
+    /// <item>periods: regrouped by field and by day in cncdataperiodarchive</item>
+    ///
+    /// The number of archived samples or periods is checked before the commit.
+    /// If the maximum duration is reached, the transaction is cancelled (nothing is changed)
+    /// </summary>
+    /// <param name="partition">week partition of cncdatasample or cncdataperiod</param>
+    /// <param name="maxDuration">maximum duration of the transaction</param>
+    /// <returns>number of archived samples or periods</returns>
+    long ArchivePartition (ICncDataPartition partition, TimeSpan maxDuration);
+
+    /// <summary>
+    /// Drop a partition (for example an archive partition after the retention), in its own transaction
+    /// </summary>
+    /// <param name="partition"></param>
+    /// <param name="maxDuration">maximum duration of the transaction</param>
+    void DropPartition (ICncDataPartition partition, TimeSpan maxDuration);
   }
 }

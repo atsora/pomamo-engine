@@ -1028,6 +1028,11 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
+    public IMaintenanceLog CreateMaintenanceLog (LogLevel level, string message, string module, MaintenanceState state)
+    {
+      throw new NotImplementedException ();
+    }
+
     public IReasonProposal CreateReasonProposal (IReasonMachineAssociation reasonMachineAssociation, UtcDateTimeRange range)
     {
       throw new NotImplementedException ();

@@ -477,6 +477,19 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
     /// </summary>
+    /// <param name="level"></param>
+    /// <param name="message"></param>
+    /// <param name="module"></param>
+    /// <param name="state"></param>
+    /// <returns></returns>
+    public IMaintenanceLog CreateMaintenanceLog (LogLevel level, string message, string module, MaintenanceState state)
+    {
+      return new MaintenanceLog (level, message, module, state);
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
+    /// </summary>
     /// <param name="machineModule"></param>
     /// <param name="field"></param>
     /// <param name="beginDateTime"></param>

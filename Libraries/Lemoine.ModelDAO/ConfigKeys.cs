@@ -82,6 +82,16 @@ namespace Lemoine.Model
     {
       return ConfigPrefix.Gui.ToString () + "." + GuiConfigPrefix.OperationExplorer.ToString () + "." + key.ToString ();
     }
+
+    /// <summary>
+    /// Get a database maintenance config key
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static string GetDatabaseMaintenanceConfigKey (DatabaseMaintenanceConfigKey key)
+    {
+      return ConfigPrefix.DatabaseMaintenance.ToString () + "." + key.ToString ();
+    }
   }
   
   /// <summary>
@@ -113,6 +123,33 @@ namespace Lemoine.Model
     /// Prefix for the web service configs
     /// </summary>
     WebService,
+    /// <summary>
+    /// Prefix for the database maintenance configs
+    /// </summary>
+    DatabaseMaintenance,
+  }
+
+  /// <summary>
+  /// Set of database maintenance config keys (service AtrackingDatabaseMaintenanceService)
+  ///
+  /// The keys are prefixed by ConfigPrefix.DatabaseMaintenance
+  /// </summary>
+  public enum DatabaseMaintenanceConfigKey
+  {
+    /// <summary>
+    /// Day of the week of the maintenance time window (DayOfWeek). Default: Saturday
+    /// </summary>
+    WindowDay,
+    /// <summary>
+    /// Local start time of the maintenance time window (TimeSpan). Default: 16:00
+    /// </summary>
+    WindowStart,
+    /// <summary>
+    /// Local end time of the maintenance time window (TimeSpan), the next day if not after the start. Default: 23:45
+    ///
+    /// Nothing runs after it: it must end before the weekly vacuum/reindex (cron @weekly, Sunday 00:00)
+    /// </summary>
+    WindowEnd,
   }
   
   /// <summary>
@@ -479,6 +516,14 @@ namespace Lemoine.Model
     /// the partitions start at 00:00 UTC of this day. Default: Sunday
     /// </summary>
     DataPartitionWeekCutOffDay,
+    /// <summary>
+    /// Time after which a week of the cncdata tables is archived (TimeSpan). Default: 30 days
+    /// </summary>
+    DataArchiveDelay,
+    /// <summary>
+    /// Retention of the archived cncdata (TimeSpan). Default: 728 days (104 weeks)
+    /// </summary>
+    DataRetention,
   }
   
   /// <summary>

@@ -272,6 +272,28 @@ namespace Lemoine.GDBPersistentClasses
                            "Cnc config: cut-off day of the week partitions of the cncdata tables (partitions from 00:00 UTC of this day)",
                            DayOfWeek.Sunday);
       InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetCncConfigKey (CncConfigKey.DataArchiveDelay),
+                           "Cnc config: time after which a week of the cncdata tables is archived",
+                           TimeSpan.FromDays (30));
+      InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetCncConfigKey (CncConfigKey.DataRetention),
+                           "Cnc config: retention of the archived cncdata",
+                           TimeSpan.FromDays (7 * 104));
+      InsertDefaultValue (config);
+
+      // - database maintenance
+      config = new Config (ConfigKeys.GetDatabaseMaintenanceConfigKey (DatabaseMaintenanceConfigKey.WindowDay),
+                           "Database maintenance config: day of the week of the maintenance time window",
+                           DayOfWeek.Saturday);
+      InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetDatabaseMaintenanceConfigKey (DatabaseMaintenanceConfigKey.WindowStart),
+                           "Database maintenance config: local start time of the maintenance time window",
+                           TimeSpan.FromHours (16));
+      InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetDatabaseMaintenanceConfigKey (DatabaseMaintenanceConfigKey.WindowEnd),
+                           "Database maintenance config: local end time of the maintenance time window (before the weekly vacuum/reindex at Sunday 00:00)",
+                           new TimeSpan (23, 45, 00));
+      InsertDefaultValue (config);
 
       // - datastructure
       config = new Config (ConfigKeys.GetDataStructureConfigKey (DataStructureConfigKey.SinglePath),

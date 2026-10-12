@@ -207,6 +207,19 @@ namespace Lemoine.Model
                                                       IMachineModule machineModule);
 
     /// <summary>
+    /// Create a MaintenanceLog
+    /// </summary>
+    /// <param name="level"></param>
+    /// <param name="message"></param>
+    /// <param name="module"></param>
+    /// <param name="state"></param>
+    /// <returns></returns>
+    IMaintenanceLog CreateMaintenanceLog (LogLevel level,
+                                          string message,
+                                          string module,
+                                          MaintenanceState state);
+
+    /// <summary>
     /// Create a CncValue object
     /// </summary>
     /// <param name="machineModule"></param>
