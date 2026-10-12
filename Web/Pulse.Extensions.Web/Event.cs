@@ -93,7 +93,7 @@ namespace Pulse.Extensions.Web
       this.Message = message;
       this.DateTime = dateTime;
       this.Severity = severity;
-      this.PauseWhenMachiningNotRunning = PauseWhenMachiningNotRunning;
+      this.PauseWhenMachiningNotRunning = pauseWhenMachiningNotRunning;
       this.PossiblyLate = possiblyLate;
     }
   }
