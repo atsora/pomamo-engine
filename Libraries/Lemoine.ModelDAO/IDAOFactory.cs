@@ -163,6 +163,16 @@ namespace Lemoine.ModelDAO
     ICncDataPartitionDAO CncDataPartitionDAO { get; }
 
     /// <summary>
+    /// Get a ICncDataPeriodDAO
+    /// </summary>
+    ICncDataPeriodDAO CncDataPeriodDAO { get; }
+
+    /// <summary>
+    /// Get a ICncDataSampleDAO
+    /// </summary>
+    ICncDataSampleDAO CncDataSampleDAO { get; }
+
+    /// <summary>
     /// Get a IMaintenanceLogDAO
     /// </summary>
     IMaintenanceLogDAO MaintenanceLogDAO { get; }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <!-- Partitioned by machine module, then by week:
+       machinemoduleid and cncdataperiodbegindatetime are the secondary keys of the update / delete requests
+       and they can't be changed -->
+  <class name="CncDataPeriod" table="cncdataperiod">
+    <id name="Id" column="cncdataperiodid"
+        access="nosetter.camelcase-m-underscore">
+      <!-- Not identity: the identity-style generators are not compatible with the secondary keys.
+           The sequence is the one of the identity column -->
+      <generator class="native">
+        <param name="sequence">cncdataperiod_cncdataperiodid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="cncdataperiodversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="MachineModule"
+                 column="machinemoduleid"
+                 class="MachineModule"
+                 access="nosetter.camelcase-m-underscore"
+                 secondary-key="true"
+                 update="false"
+                 not-null="true" />
+    <many-to-one name="Field"
+                 column="fieldid"
+                 class="Field"
+                 access="nosetter.camelcase-m-underscore"
+                 update="false"
+                 not-null="true"
+                 cascade="none" />
+    <property name="Begin"
+              type="Lemoine.NHibernateTypes.UTCDateTimeMsType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodbegindatetime"
+              secondary-key="true"
+              update="false"
+              not-null="true" />
+    <property name="End"
+              type="Lemoine.NHibernateTypes.UTCDateTimeMsType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodenddatetime"
+              not-null="true" />
+    <property name="Stopped"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodstopped"
+              not-null="true" />
+    <property name="Count"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodcount" />
+    <property name="Average"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodaverage" />
+    <property name="Min"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodmin" />
+    <property name="Max"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodmax" />
+    <property name="StdDev"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodstddev" />
+    <property name="LastValue"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodlastvalue" />
+    <property name="StringValue"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodstringvalue" />
+    <property name="JsonValue"
+              type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database"
+              access="nosetter.camelcase-m-underscore"
+              column="cncdataperiodjsonvalue" />
+  </class>
+</hibernate-mapping>

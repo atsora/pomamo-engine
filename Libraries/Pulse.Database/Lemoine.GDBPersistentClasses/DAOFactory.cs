@@ -314,6 +314,16 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
     /// </summary>
+    public ICncDataPeriodDAO CncDataPeriodDAO => new CncDataPeriodDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
+    public ICncDataSampleDAO CncDataSampleDAO => new CncDataSampleDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
     public IMaintenanceLogDAO MaintenanceLogDAO => new MaintenanceLogDAO ();
 
     /// <summary>

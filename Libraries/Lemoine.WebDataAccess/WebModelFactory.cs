@@ -120,6 +120,11 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException();
     }
 
+    public ICncDataPeriod CreateCncDataPeriod (IMachineModule machineModule, IField field, DateTime begin)
+    {
+      throw new NotImplementedException ();
+    }
+
     public ICompany CreateCompany()
     {
       throw new NotImplementedException();

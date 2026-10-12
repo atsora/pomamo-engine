@@ -105,6 +105,18 @@ namespace Lemoine.ModelDAO
     void CreateWeekPartitions (int machineModuleId, DateTime fromDateTime, int days);
 
     /// <summary>
+    /// Make sure the partition of a cncdata table that contains a date/time exists,
+    /// inside the current session and transaction (safety net of the DAOs that write in a transaction)
+    ///
+    /// The known partitions are cached. A missing partition is created in the current transaction:
+    /// it is cached only once it is seen again, so that a rolled back creation is not cached
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="machineModuleId"></param>
+    /// <param name="dateTime">UTC date/time</param>
+    void EnsurePartition (CncDataTable table, int machineModuleId, DateTime dateTime);
+
+    /// <summary>
     /// Run a unit of work that writes in a cncdata table.
     /// If it fails because the partition is missing, create the partition and run the unit of work once again.
     ///

@@ -245,6 +245,18 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+    public ICncDataPeriodDAO CncDataPeriodDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
+    public ICncDataSampleDAO CncDataSampleDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
     public IMaintenanceLogDAO MaintenanceLogDAO
     {
       get {

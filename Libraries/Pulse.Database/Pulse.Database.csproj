@@ -244,6 +244,10 @@
       <DependentUpon>CncValue.cs</DependentUpon>
       <LogicalName>CncValue.hbm.xml</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\CncDataPeriod.hbm.xml">
+      <DependentUpon>CncDataPeriod.cs</DependentUpon>
+      <LogicalName>CncDataPeriod.hbm.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\FieldLegend.hbm.xml">
       <DependentUpon>FieldLegend.cs</DependentUpon>
       <LogicalName>FieldLegend.hbm.xml</LogicalName>

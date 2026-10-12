@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using Lemoine.Core.Log;
@@ -95,6 +96,73 @@ SELECT public.cncdatacreatepartition (t, @machinemoduleid, d, @cutoffday)
     /// <summary>
     /// <see cref="ICncDataPartitionDAO"/>
     /// </summary>
+    /// <param name="table"></param>
+    /// <param name="machineModuleId"></param>
+    /// <param name="dateTime">UTC date/time</param>
+    public void EnsurePartition (CncDataTable table, int machineModuleId, DateTime dateTime)
+    {
+      var timestamp = ToTimestamp (dateTime);
+      if (s_knownPartitions.TryGetValue ((table, machineModuleId), out var knownPartitions)
+        && knownPartitions.Exists (p => (p.Lower <= timestamp) && (timestamp < p.Upper))) {
+        return;
+      }
+
+      using (var command = CreateCommand ()) {
+        // createdhere: the partition was created (attached) by the current transaction,
+        // that may be rolled back => not cached
+        command.CommandText = @"
+SELECT p.lowerbound, p.upperbound,
+       coalesce (c.xmin::text = (pg_current_xact_id_if_assigned ()::text::bigint % 4294967296)::text, FALSE) AS createdhere
+  FROM public.cncdatapartitions p
+  JOIN pg_catalog.pg_class c ON c.oid = to_regclass (format ('public.%I', p.partitionname))
+ WHERE p.tablename = @table AND p.machinemoduleid = @machinemoduleid
+   AND p.lowerbound <= @datetime AND @datetime < p.upperbound";
+        AddParameter (command, "table", DbType.String, GetTableName (table));
+        AddParameter (command, "machinemoduleid", DbType.Int32, machineModuleId);
+        AddParameter (command, "datetime", DbType.DateTime, timestamp);
+        using (var reader = command.ExecuteReader ()) {
+          if (reader.Read ()) {
+            if (reader.GetBoolean (2)) {
+              return;
+            }
+            var partition = (Lower: reader.GetDateTime (0), Upper: reader.GetDateTime (1));
+            s_knownPartitions.AddOrUpdate ((table, machineModuleId),
+              _ => new List<(DateTime Lower, DateTime Upper)> { partition },
+              (_, l) => new List<(DateTime Lower, DateTime Upper)> (l) { partition });
+            return;
+          }
+        }
+      }
+
+      // Not cached: the creation may be rolled back with the current transaction
+      log.Warn ($"EnsurePartition: missing partition of {table} for machine module {machineModuleId} at {dateTime} => create it in the current transaction");
+      using (var command = CreateCommand ()) {
+        command.CommandText = "SELECT public.cncdatacreatepartition (@table, @machinemoduleid, @datetime, @cutoffday)";
+        AddParameter (command, "table", DbType.String, GetTableName (table));
+        AddParameter (command, "machinemoduleid", DbType.Int32, machineModuleId);
+        AddParameter (command, "datetime", DbType.DateTime, timestamp);
+        AddParameter (command, "cutoffday", DbType.Int32, GetWeekCutOffDay ());
+        command.ExecuteNonQuery ();
+      }
+    }
+
+    // Known partitions by table and machine module, bounds as timestamps without time zone
+    static readonly ConcurrentDictionary<(CncDataTable, int), List<(DateTime Lower, DateTime Upper)>> s_knownPartitions = new ();
+
+    /// <summary>
+    /// Forget the known partitions of a table and a machine module
+    /// (after a partition is dropped or when a partition is unexpectedly missing)
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="machineModuleId"></param>
+    internal static void ForgetPartitions (CncDataTable table, int machineModuleId)
+    {
+      s_knownPartitions.TryRemove ((table, machineModuleId), out _);
+    }
+
+    /// <summary>
+    /// <see cref="ICncDataPartitionDAO"/>
+    /// </summary>
     public T RunWithPartition<T> (CncDataTable table, int machineModuleId, DateTime dateTime, Func<T> unitOfWork)
     {
       try {
@@ -182,6 +250,7 @@ SELECT machinemoduleid, partitionname, lowerbound, upperbound
 
         Execute (deadline, $"DROP TABLE public.{QuoteIdentifier (partition.Name)}", command => { });
         transaction.Commit ();
+        ForgetPartitions (partition.Table, partition.MachineModuleId);
         if (log.IsInfoEnabled) {
           log.Info ($"ArchivePartition: {count} elements of partition {partition.Name} archived");
         }
@@ -200,6 +269,7 @@ SELECT machinemoduleid, partitionname, lowerbound, upperbound
         Execute (deadline, $"DROP TABLE public.{QuoteIdentifier (partition.Name)}", command => { });
         transaction.Commit ();
       }
+      ForgetPartitions (partition.Table, partition.MachineModuleId);
       if (log.IsInfoEnabled) {
         log.Info ($"DropPartition: partition {partition.Name} dropped");
       }
@@ -282,7 +352,7 @@ SELECT coalesce (sum (cardinality (cncdataperiodarchiveids)), 0)
 
     static string QuoteIdentifier (string identifier) => "\"" + identifier.Replace ("\"", "\"\"") + "\"";
 
-    static IDbCommand CreateCommand () => NHibernateHelper.GetCurrentSession ().Connection.CreateCommand ();
+    internal static IDbCommand CreateCommand () => NHibernateHelper.GetCurrentSession ().Connection.CreateCommand ();
 
     /// <summary>
     /// Limit the next statement to the time left before the deadline (and the time to wait for a lock)
@@ -332,13 +402,13 @@ SELECT coalesce (sum (cardinality (cncdataperiodarchiveids)), 0)
     /// <summary>
     /// UTC date/time as a timestamp without time zone (Kind Unspecified, so that no time zone conversion is made)
     /// </summary>
-    static DateTime ToTimestamp (DateTime dateTime)
+    internal static DateTime ToTimestamp (DateTime dateTime)
     {
       var utc = (dateTime.Kind == DateTimeKind.Local) ? dateTime.ToUniversalTime () : dateTime;
       return DateTime.SpecifyKind (utc, DateTimeKind.Unspecified);
     }
 
-    static void AddParameter (IDbCommand command, string name, DbType dbType, object value)
+    internal static void AddParameter (IDbCommand command, string name, DbType dbType, object value)
     {
       var parameter = command.CreateParameter ();
       parameter.ParameterName = name;

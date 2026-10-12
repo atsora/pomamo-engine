@@ -228,6 +228,15 @@ namespace Lemoine.Model
     /// <returns></returns>
     ICncValue CreateCncValue (IMachineModule machineModule, IField field, DateTime beginDateTime);
 
+    /// <summary>
+    /// Create a CncDataPeriod object (End = Begin)
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="field">not null</param>
+    /// <param name="begin">UTC date/time, truncated to the millisecond</param>
+    /// <returns></returns>
+    ICncDataPeriod CreateCncDataPeriod (IMachineModule machineModule, IField field, DateTime begin);
+
 
     /// <summary>
     /// Create a CncVariable object

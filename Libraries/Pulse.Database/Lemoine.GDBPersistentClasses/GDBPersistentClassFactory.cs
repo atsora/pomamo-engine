@@ -503,6 +503,18 @@ namespace Lemoine.GDBPersistentClasses
     /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
     /// </summary>
     /// <param name="machineModule"></param>
+    /// <param name="field"></param>
+    /// <param name="begin"></param>
+    /// <returns></returns>
+    public ICncDataPeriod CreateCncDataPeriod (IMachineModule machineModule, IField field, DateTime begin)
+    {
+      return new CncDataPeriod (machineModule, field, begin);
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
+    /// </summary>
+    /// <param name="machineModule"></param>
     /// <param name="range"></param>
     /// <param name="key"></param>
     /// <param name="v"></param>
