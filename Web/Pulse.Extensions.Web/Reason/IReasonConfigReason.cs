@@ -117,16 +117,17 @@ namespace Pulse.Extensions.Web.Reason
     /// <summary>
     /// Must the operator enter a free detailed entry along with the reason?
     ///
-    /// It applies to the selection entries of the reason, so it is null when they do not
-    /// agree on a value, or when there is none
+    /// It applies to the selection entries of the reason, which another extension than the
+    /// declaring one may contribute. A declaring extension that does not own them leaves it
+    /// null, and the caller consolidates it from the selection entries: their common value,
+    /// or null when they do not agree on one, or when there is none
     /// </summary>
     bool? DetailsRequired { get; }
 
     /// <summary>
     /// Is the reason displayed in the second level, under its reason group?
     ///
-    /// It applies to the selection entries of the reason, so it is null when they do not
-    /// agree on a value, or when there is none
+    /// Consolidated like <see cref="DetailsRequired"/>
     /// </summary>
     bool? AlwaysSecondLevel { get; }
 

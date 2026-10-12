@@ -25,6 +25,10 @@ namespace Pulse.Extensions.Web.Reason
   /// the extensions in the order of the priorities: each reads the options of the reason to
   /// tell whether it is one of its own
   ///
+  /// One reason may then be the work of several extensions: one declares it and writes its
+  /// presentation, others contribute and write its selection or default entries. Which of
+  /// them are active is up to the packages that are installed
+  ///
   /// <b>An id is declared by one extension only.</b> Two extensions that would declare the
   /// same one are a misconfiguration - typically two alternative ways of listing the reasons
   /// of a table, installed together: the caller logs an error and keeps the declaration of
@@ -88,6 +92,19 @@ namespace Pulse.Extensions.Web.Reason
     /// <param name="reason">not null, with no <see cref="IReasonConfigReason.ClassificationId"/> yet</param>
     /// <returns>the created reason, null when the extension does not take it</returns>
     Task<IReasonConfigReason> CreateReasonAsync (IReasonConfigReason reason);
+
+    /// <summary>
+    /// Add the part this extension owns to a reason another extension has just created - its
+    /// selection entries, for instance, so that it may be selected
+    ///
+    /// Once an extension took a creation, every other extension is offered the request,
+    /// in the order of the priorities. It runs in a transaction of its own: the reason is
+    /// already created, whatever happens here
+    /// </summary>
+    /// <param name="request">not null, the request of the creation</param>
+    /// <param name="created">not null, the reason the extension returned, with its <see cref="IReasonConfigReason.ClassificationId"/></param>
+    /// <returns>the extension added something</returns>
+    Task<bool> CompleteCreatedReasonAsync (IReasonConfigReason request, IReasonConfigReason created);
 
     /// <summary>
     /// Apply the part of the reason this extension owns
