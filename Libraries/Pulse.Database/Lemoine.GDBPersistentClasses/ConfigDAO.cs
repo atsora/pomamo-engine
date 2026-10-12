@@ -281,7 +281,7 @@ namespace Lemoine.GDBPersistentClasses
                            TimeSpan.FromDays (7 * 104));
       InsertDefaultValue (config);
       config = new Config (ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage),
-                           "Cnc config: tables where the cnc data of a field are stored if not set in the field (CncValue, CncDataPeriod or both)",
+                           "Cnc config: table where the cnc data of a field are stored if not set in the field (CncValue or CncDataPeriod, a single one)",
                            CncDataStorage.CncValue);
       InsertDefaultValue (config);
 

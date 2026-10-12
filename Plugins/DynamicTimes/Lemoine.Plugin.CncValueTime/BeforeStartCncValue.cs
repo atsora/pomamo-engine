@@ -74,7 +74,7 @@ namespace Lemoine.Plugin.CncValueTime
         .AddImports (new string[] { "System" });
     }
 
-    bool IsMatch (ICncValue cncValue) =>
+    bool IsMatch (ICncValueData cncValue) =>
       (m_lambda?.Invoke (cncValue.Value) ?? true)
       && (m_regexCondition?.IsMatch (cncValue.Value.ToString ()) ?? true);
 
@@ -102,11 +102,11 @@ namespace Lemoine.Plugin.CncValueTime
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Lemoine.Plugin.CncValueTime.BeforeStartCncValue", TransactionLevel.ReadCommitted)) {
-          ICncValue lastCncValue = null;
-          ICncValue matchingCncValue = null;
+          ICncValueData lastCncValue = null;
+          ICncValueData matchingCncValue = null;
 
           var step = TimeSpan.FromHours (4);
-          var cncValues = ModelDAOHelper.DAOFactory.CncValueDAO
+          var cncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindOverlapsRangeDescending (m_machineModule, m_field, range, step);
           foreach (var cncValue in cncValues) {
             if (timeout < DateTime.UtcNow.Subtract (startDateTime)) {
@@ -172,7 +172,7 @@ namespace Lemoine.Plugin.CncValueTime
 
     bool IsValid (DateTime dateTime)
     {
-      var firstCncValueAfter = ModelDAOHelper.DAOFactory.CncValueDAO
+      var firstCncValueAfter = ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindNext (m_machineModule, m_field, dateTime, 1)
         .FirstOrDefault ();
       return null != firstCncValueAfter;

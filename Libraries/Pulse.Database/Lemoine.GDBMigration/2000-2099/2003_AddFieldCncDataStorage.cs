@@ -10,7 +10,7 @@ namespace Lemoine.GDBMigration
 {
   /// <summary>
   /// Migration 2003: storage of the cnc data of a field
-  /// <item>fieldcncdatastorage: tables where the cnc data are stored (flags 1: cncvalue, 2: cncdataperiod),
+  /// <item>fieldcncdatastorage: table where the cnc data are stored, a single one (0: none, 1: cncvalue, 2: cncdataperiod),
   ///       null for the config Cnc.DefaultDataStorage</item>
   /// <item>fieldperiodmaxduration: maximum duration of a period in cncdataperiod, in seconds, null for no limit</item>
   /// </summary>
@@ -27,14 +27,14 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      // No upper limit on the flags, for future storages
+      // A single table at a time (no double storage): a future storage will be added to the constraint
       Database.ExecuteNonQuery ($@"
 ALTER TABLE public.{TableName.FIELD}
-  ADD COLUMN IF NOT EXISTS {CNC_DATA_STORAGE} integer CONSTRAINT {CNC_DATA_STORAGE}_positive CHECK ({CNC_DATA_STORAGE} >= 0),
+  ADD COLUMN IF NOT EXISTS {CNC_DATA_STORAGE} integer CONSTRAINT {CNC_DATA_STORAGE}_single CHECK ({CNC_DATA_STORAGE} IN (0, 1, 2)),
   ADD COLUMN IF NOT EXISTS {PERIOD_MAX_DURATION} double precision CONSTRAINT {PERIOD_MAX_DURATION}_strictlypositive CHECK ({PERIOD_MAX_DURATION} > 0)");
       Database.ExecuteNonQuery ($@"
 COMMENT ON COLUMN public.{TableName.FIELD}.{CNC_DATA_STORAGE} IS
-'Tables where the cnc data are stored (flags 1: cncvalue, 2: cncdataperiod). NULL: config Cnc.DefaultDataStorage'");
+'Table where the cnc data are stored, a single one (0: none, 1: cncvalue, 2: cncdataperiod). NULL: config Cnc.DefaultDataStorage'");
       Database.ExecuteNonQuery ($@"
 COMMENT ON COLUMN public.{TableName.FIELD}.{PERIOD_MAX_DURATION} IS
 'Maximum duration of a period in cncdataperiod in seconds. NULL: no limit (a period never crosses a week bound)'");

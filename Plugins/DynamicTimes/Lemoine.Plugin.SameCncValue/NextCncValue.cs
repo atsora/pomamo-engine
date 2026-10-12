@@ -50,10 +50,10 @@ namespace Lemoine.Plugin.SameCncValue
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("DynamicTime.NextCncValue.IsApplicableAt", TransactionLevel.ReadCommitted)) {
-          var cncValueAtDateTime = ModelDAOHelper.DAOFactory.CncValueDAO
+          var cncValueAtDateTime = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindAt (m_machineModule, m_field, at);
           if (null == cncValueAtDateTime) {
-            var nextCncValue = ModelDAOHelper.DAOFactory.CncValueDAO
+            var nextCncValue = ModelDAOHelper.DAOFactory.CncValueDataDAO
               .FindNext (m_machineModule, m_field, at.AddSeconds (1), 1)
               .FirstOrDefault ();
             if (null == nextCncValue) {
@@ -97,7 +97,7 @@ namespace Lemoine.Plugin.SameCncValue
         using (var transaction = session.BeginReadOnlyTransaction ("DynamicTime.NextCncValue", TransactionLevel.ReadCommitted)) {
           object v = null;
           if (!range.ContainsElement (dateTime)) {
-            var cncValueAtDateTime = ModelDAOHelper.DAOFactory.CncValueDAO
+            var cncValueAtDateTime = ModelDAOHelper.DAOFactory.CncValueDataDAO
               .FindAt (m_machineModule, m_field, dateTime);
             if (null == cncValueAtDateTime) {
               return GetInitialGap (dateTime, limit);
@@ -108,7 +108,7 @@ namespace Lemoine.Plugin.SameCncValue
           }
 
           var step = TimeSpan.FromHours (4);
-          var cncValues = ModelDAOHelper.DAOFactory.CncValueDAO
+          var cncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindOverlapsRangeAscending (m_machineModule, m_field, range, step);
           DateTime lastCncValueEnd = range.Lower.Value;
           foreach (var cncValue in cncValues) {
@@ -214,7 +214,7 @@ namespace Lemoine.Plugin.SameCncValue
 
     IDynamicTimeResponse GetInitialGap (DateTime dateTime, UtcDateTimeRange limit)
     {
-      var nextCncValue = ModelDAOHelper.DAOFactory.CncValueDAO
+      var nextCncValue = ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindNext (m_machineModule, m_field, dateTime.AddSeconds (1), 1)
         .FirstOrDefault ();
       if (null == nextCncValue) {
@@ -228,16 +228,16 @@ namespace Lemoine.Plugin.SameCncValue
       }
     }
 
-    ICncValue GetNextCncValueAfter (DateTime dateTime)
+    ICncValueData GetNextCncValueAfter (DateTime dateTime)
     {
-      return ModelDAOHelper.DAOFactory.CncValueDAO
+      return ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindNext (m_machineModule, m_field, dateTime.AddSeconds (1), 1)
         .FirstOrDefault ();
     }
 
     bool IsCncValueAfter (DateTime dateTime)
     {
-      var nextCncValue = ModelDAOHelper.DAOFactory.CncValueDAO
+      var nextCncValue = ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindNext (m_machineModule, m_field, dateTime.AddSeconds (1), 1)
         .FirstOrDefault ();
       return (null != nextCncValue);

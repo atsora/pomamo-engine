@@ -525,8 +525,8 @@ namespace Lemoine.Model
     /// </summary>
     DataRetention,
     /// <summary>
-    /// Tables where the cnc data of a field are stored when its column fieldcncdatastorage is null
-    /// (CncDataStorage flags: CncValue, CncDataPeriod). Default: CncValue
+    /// Table where the cnc data of a field are stored when its column fieldcncdatastorage is null
+    /// (CncDataStorage: CncValue or CncDataPeriod, a single one). Default: CncValue
     /// </summary>
     DefaultDataStorage,
   }

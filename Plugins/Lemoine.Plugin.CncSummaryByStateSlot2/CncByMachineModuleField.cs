@@ -265,9 +265,9 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         
         // Get all the cnc values in this period
         // and load the cache
-        IList<ICncValue> cncValues = ModelDAOHelper.DAOFactory.CncValueDAO
-          .FindByMachineFieldDateRange (m_machineModule, m_field, m_observationStateSlot.DateTimeRange);
-        foreach (ICncValue cncValue in cncValues) {
+        IList<ICncValueData> cncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO // From cncvalue or cncdataperiod
+          .FindOverlapsRange (m_machineModule, m_field, m_observationStateSlot.DateTimeRange);
+        foreach (ICncValueData cncValue in cncValues) {
           CompleteCache (cncValue);
         }
       }
@@ -332,7 +332,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     /// Before calling this method, m_observationStateSlot must be not null
     /// </summary>
     /// <param name="cncValue"></param>
-    void CompleteCache (ICncValue cncValue)
+    void CompleteCache (ICncValueData cncValue)
     {
       CompleteCache (cncValue.DateTimeRange, (double)cncValue.Value);
     }

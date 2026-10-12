@@ -25,7 +25,7 @@ namespace Lemoine.Business.CncValue
 
     readonly ILog log = LogManager.GetLogger (typeof (RedStackLightDAO).FullName);
 
-    bool IsRedStackLight (ICncValue cncValue)
+    bool IsRedStackLight (ICncValueData cncValue)
     {
       if (null == cncValue) {
         return false;
@@ -48,7 +48,7 @@ namespace Lemoine.Business.CncValue
     /// <param name="field">not null</param>
     /// <param name="cncValue">not null</param>
     /// <returns></returns>
-    protected override ICncValueColor CreateCncValueColor (IField field, ICncValue cncValue)
+    protected override ICncValueColor CreateCncValueColor (IField field, ICncValueData cncValue)
     {
       Debug.Assert (null != field);
       Debug.Assert (null != cncValue);
@@ -61,18 +61,18 @@ namespace Lemoine.Business.CncValue
     }
 
     /// <summary>
-    /// Find a ICncValue at a specific time
+    /// Find a cnc value (from cncvalue or cncdataperiod) at a specific time
     /// </summary>
     /// <param name="machineModule">not null</param>
     /// <param name="field">not null</param>
     /// <param name="dateTime"></param>
     /// <returns></returns>
-    protected override ICncValue FindAt (IMachineModule machineModule, IField field, DateTime dateTime)
+    protected override ICncValueData FindAt (IMachineModule machineModule, IField field, DateTime dateTime)
     {
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      var cncValue = ModelDAOHelper.DAOFactory.CncValueDAO
+      var cncValue = ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindAt (machineModule, field, dateTime);
       if (null == cncValue) {
         return null;
@@ -84,35 +84,35 @@ namespace Lemoine.Business.CncValue
     }
 
     /// <summary>
-    /// Find the ICncValue in a specific date/time range
+    /// Find the cnc values (from cncvalue or cncdataperiod) in a specific date/time range
     /// </summary>
     /// <param name="machineModule"></param>
     /// <param name="field"></param>
     /// <param name="range"></param>
     /// <returns></returns>
-    protected override IEnumerable<ICncValue> FindByMachineFieldDateRange (IMachineModule machineModule, IField field, UtcDateTimeRange range)
+    protected override IEnumerable<ICncValueData> FindByMachineFieldDateRange (IMachineModule machineModule, IField field, UtcDateTimeRange range)
     {
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      return ModelDAOHelper.DAOFactory.CncValueDAO
-        .FindByMachineFieldDateRange (machineModule, field, range)
+      return ModelDAOHelper.DAOFactory.CncValueDataDAO
+        .FindOverlapsRange (machineModule, field, range)
         .Where (v => IsRedStackLight (v));
     }
 
     /// <summary>
-    /// Find the ICncValue with a specific end
+    /// Find the cnc value (from cncvalue or cncdataperiod) with a specific end
     /// </summary>
     /// <param name="machineModule"></param>
     /// <param name="field"></param>
     /// <param name="dateTime"></param>
     /// <returns></returns>
-    protected override ICncValue FindWithEnd (IMachineModule machineModule, IField field, DateTime dateTime)
+    protected override ICncValueData FindWithEnd (IMachineModule machineModule, IField field, DateTime dateTime)
     {
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      var cncValue = ModelDAOHelper.DAOFactory.CncValueDAO
+      var cncValue = ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindWithEnd (machineModule, field, dateTime);
       if (null == cncValue) {
         return null;

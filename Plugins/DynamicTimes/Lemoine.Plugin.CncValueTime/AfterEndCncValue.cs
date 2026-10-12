@@ -74,7 +74,7 @@ namespace Lemoine.Plugin.CncValueTime
         .AddImports (new string[] { "System" });
     }
 
-    bool IsMatch (ICncValue cncValue) =>
+    bool IsMatch (ICncValueData cncValue) =>
       (m_lambda?.Invoke (cncValue.Value) ?? true)
       && (m_regexCondition?.IsMatch (cncValue.Value.ToString ()) ?? true);
 
@@ -101,11 +101,11 @@ namespace Lemoine.Plugin.CncValueTime
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Lemoine.Plugin.CncValueTime.AfterEndCncValue", TransactionLevel.ReadCommitted)) {
-          ICncValue lastCncValue = null;
-          ICncValue matchingCncValue = null;
+          ICncValueData lastCncValue = null;
+          ICncValueData matchingCncValue = null;
 
           var step = TimeSpan.FromHours (4);
-          var cncValues = ModelDAOHelper.DAOFactory.CncValueDAO
+          var cncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindOverlapsRangeAscending (m_machineModule, m_field, range, step);
           foreach (var cncValue in cncValues) {
             if (timeout < DateTime.UtcNow.Subtract (startDateTime)) {
@@ -194,7 +194,7 @@ namespace Lemoine.Plugin.CncValueTime
       }
     }
 
-    IDynamicTimeResponse CreateNewHint (UtcDateTimeRange hint, UtcDateTimeRange limit, ICncValue lastCncValue)
+    IDynamicTimeResponse CreateNewHint (UtcDateTimeRange hint, UtcDateTimeRange limit, ICncValueData lastCncValue)
     {
       if (null == lastCncValue) {
         return this.CreateWithHint (hint);
@@ -211,7 +211,7 @@ namespace Lemoine.Plugin.CncValueTime
       }
     }
 
-    IDynamicTimeResponse CreateNewHintFromMatchingCncValue (UtcDateTimeRange hint, UtcDateTimeRange limit, ICncValue matchingCncValue)
+    IDynamicTimeResponse CreateNewHintFromMatchingCncValue (UtcDateTimeRange hint, UtcDateTimeRange limit, ICncValueData matchingCncValue)
     {
       // Safer to consider .Begin here, else it will be necessary
       // at the next attempt to check if hint corresponds to
@@ -229,9 +229,9 @@ namespace Lemoine.Plugin.CncValueTime
       }
     }
 
-    ICncValue GetNextCncValueAfter (DateTime dateTime)
+    ICncValueData GetNextCncValueAfter (DateTime dateTime)
     {
-      return ModelDAOHelper.DAOFactory.CncValueDAO
+      return ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindNext (m_machineModule, m_field, dateTime.AddSeconds (1), 1)
         .FirstOrDefault ();
     }

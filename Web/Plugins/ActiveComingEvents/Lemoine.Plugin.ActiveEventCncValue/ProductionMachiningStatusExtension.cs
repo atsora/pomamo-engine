@@ -64,7 +64,7 @@ namespace Lemoine.Plugin.ActiveEventCncValue
           if (!m_previousDateTime.HasValue) {
             m_previousDateTime = currentCncValue.DateTime;
           }
-          var lastCncValue = ModelDAOHelper.DAOFactory.CncValueDAO
+          var lastCncValue = ModelDAOHelper.DAOFactory.CncValueDataDAO // From cncvalue or cncdataperiod
             .FindFirstOverlapsRange (m_machineModule, m_field, new UtcDateTimeRange ("(,)"), 1, true)
             .FirstOrDefault ();
           DateTime startDateTime;

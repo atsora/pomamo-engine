@@ -30,7 +30,7 @@ namespace Lemoine.Alert.GDBListeners
     readonly IField m_field;
     readonly IMachineModule m_machineModule;
     IApplicationState m_cncValueMachineModuleListenerState = null;
-    IList<ICncValue> m_fetched = new List<ICncValue> ();
+    IList<ICncValueData> m_fetched = new List<ICncValueData> (); // From cncvalue or cncdataperiod
     XmlSerializer m_xmlSerializer;
 
     ILog log = LogManager.GetLogger (typeof (CncValueMachineModuleListener).FullName);
@@ -73,9 +73,9 @@ namespace Lemoine.Alert.GDBListeners
         var dateTime = (DateTime)m_cncValueMachineModuleListenerState.Value;
         var maxNbFetched = Lemoine.Info.ConfigSet.LoadAndGet<int> (FETCH_MAX_ITEMS_KEY, FETCH_MAX_ITEMS_DEFAULT);
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          m_fetched = ModelDAOHelper.DAOFactory.CncValueDAO
+          m_fetched = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindNext (m_machineModule, m_field, dateTime, maxNbFetched)
-            .ToList<ICncValue> ();
+            .ToList ();
         }
       }
 
@@ -87,16 +87,15 @@ namespace Lemoine.Alert.GDBListeners
         var firstData = m_fetched.First ();
         XmlElement data;
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          // Note: Lock does not work on the line below.
-          //       This is not fully clear why yet, but it generates a message when the Unproxy() method is called.
-          //       Because the event data is read only, FindById may be used instead of Lock.
-          // TODO: understand what exactly happens with Lock and Unproxy
-          firstData = ModelDAOHelper.DAOFactory.CncValueDAO
-            .FindByMachineModuleFieldBegin (m_machineModule, m_field, firstData.Begin);
-          firstData.Unproxy ();
-          // - serialization
+          // - serialization, with the same format whatever the table the value comes from
+          var cncValue = CncValueDataSerialization.ToSerializableCncValue (firstData);
+          if (null == cncValue) {
+            log.Error ($"GetData: {firstData} does not exist any more => skip it");
+            m_fetched.RemoveAt (0);
+            return GetData ();
+          }
           StringWriter sw = new StringWriter ();
-          m_xmlSerializer.Serialize (sw, firstData);
+          m_xmlSerializer.Serialize (sw, cncValue);
           XmlDocument document = new XmlDocument ();
           document.LoadXml (sw.ToString ());
           data = document.DocumentElement;

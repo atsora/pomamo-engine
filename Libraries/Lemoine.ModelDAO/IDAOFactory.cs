@@ -183,6 +183,11 @@ namespace Lemoine.ModelDAO
     ICncValueDAO CncValueDAO { get; }
 
     /// <summary>
+    /// Get a ICncValueDataDAO (read the cnc values from cncvalue and cncdataperiod)
+    /// </summary>
+    ICncValueDataDAO CncValueDataDAO { get; }
+
+    /// <summary>
     /// Get a ICncVariableDAO
     /// </summary>
     ICncVariableDAO CncVariableDAO { get; }

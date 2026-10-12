@@ -187,8 +187,8 @@ namespace Pulse.Web.Operation
                 if (request.ToolNumber
                   && (request.Override || string.IsNullOrEmpty (sequence.ToolNumber))) {
                   Debug.Assert (null != toolNumberField);
-                  IEnumerable<ICncValue> toolNumberValues = ModelDAOHelper.DAOFactory.CncValueDAO
-                    .FindByMachineFieldDateRange (machineModule, toolNumberField,
+                  IEnumerable<ICncValueData> toolNumberValues = ModelDAOHelper.DAOFactory.CncValueDataDAO // From cncvalue or cncdataperiod
+                    .FindOverlapsRange (machineModule, toolNumberField,
                     sequenceSlot.DateTimeRange);
                   if (toolNumberValues.Any ()) {
                     if (1 < toolNumberValues.Count ()) {

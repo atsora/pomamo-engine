@@ -365,6 +365,35 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_stopped; }
       set { m_stopped = value; }
     }
+    /// <summary>
+    /// <see cref="ICncValueData"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual CncValueSource Source => CncValueSource.CncValue;
+
+    /// <summary>
+    /// <see cref="ICncValueData"/>: not in cncvalue
+    /// </summary>
+    [XmlIgnore]
+    public virtual int? Count => null;
+
+    /// <summary>
+    /// <see cref="ICncValueData"/>: not in cncvalue
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? Min => null;
+
+    /// <summary>
+    /// <see cref="ICncValueData"/>: not in cncvalue
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? Max => null;
+
+    /// <summary>
+    /// <see cref="ICncValueData"/>: not in cncvalue
+    /// </summary>
+    [XmlIgnore]
+    public virtual string JsonValue => null;
     #endregion // Getters / Setters
 
     #region Constructors

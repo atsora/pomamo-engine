@@ -103,7 +103,8 @@ namespace Pulse.Web.CncValue
 
           using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.CncValueAt")) {
             foreach (var machineModule in machineModules) {
-              var cncValues = ModelDAOHelper.DAOFactory.CncValueDAO.FindAtWithFieldUnit (machineModule, at)
+              // From cncvalue and from cncdataperiod (a field is stored in a single table at a time)
+              var cncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO.FindAt (machineModule, at)
                 .OrderBy (cncValue => cncValue.Field.Display)
                 .OrderBy (cncValue => IsPerformanceField (cncValue.Field, performanceField) ? 0 : 1);
               if (cncValues.Any ()) {

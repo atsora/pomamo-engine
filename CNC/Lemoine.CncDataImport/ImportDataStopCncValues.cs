@@ -102,7 +102,7 @@ namespace Lemoine.CncDataImport
             return;
           }
 
-          if (!field.GetCncDataStorage ().HasFlag (CncDataStorage.CncValue)) {
+          if ((field.GetCncDataStorage () != CncDataStorage.CncValue)) {
             // Only in table cncdataperiod, see ImportDataStopCncDataPeriods
             return;
           }

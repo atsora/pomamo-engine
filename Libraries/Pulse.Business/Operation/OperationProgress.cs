@@ -651,7 +651,7 @@ namespace Lemoine.Business.Operation
         var feedrateOverride = 100.0;
         if (0 < machining) {
           var field = ModelDAOHelper.DAOFactory.FieldDAO.FindByCode ("FeedrateOverride");
-          var feedrateOverrideCncValues = ModelDAOHelper.DAOFactory.CncValueDAO
+          var feedrateOverrideCncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindFirstOverlapsRange (machineModule, field, range, 1, true);
           var fo = feedrateOverrideCncValues.FirstOrDefault ()?.Double;
           if (null != fo) {
@@ -672,7 +672,7 @@ namespace Lemoine.Business.Operation
         var rapidOverride = 100.0;
         if (0 < rapid) {
           var field = ModelDAOHelper.DAOFactory.FieldDAO.FindByCode ("RapidTraverseOverride");
-          var rapidOverrideCncValues = ModelDAOHelper.DAOFactory.CncValueDAO
+          var rapidOverrideCncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindFirstOverlapsRange (machineModule, field, range, 1, true);
           var ro = rapidOverrideCncValues.FirstOrDefault ()?.Double;
           if (null != ro) {

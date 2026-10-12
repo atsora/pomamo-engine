@@ -97,7 +97,7 @@ namespace Lemoine.Business.CncValue
     /// Alternative constructor
     /// </summary>
     /// <param name="cncValue">not null</param>
-    protected internal CncValueColor (ICncValue cncValue)
+    protected internal CncValueColor (ICncValueData cncValue)
       : this (cncValue.MachineModule, cncValue.Field, GetColor (cncValue),
               cncValue.DateTimeRange, cncValue.DateTimeRange.Duration)
     {
@@ -108,20 +108,20 @@ namespace Lemoine.Business.CncValue
     /// </summary>
     /// <param name="field">not null</param>
     /// <param name="cncValue">not null</param>
-    protected internal CncValueColor (IField field, ICncValue cncValue)
+    protected internal CncValueColor (IField field, ICncValueData cncValue)
       : this (cncValue.MachineModule, field, GetColor (field, cncValue),
               cncValue.DateTimeRange, cncValue.DateTimeRange.Duration)
     {
     }
 
-    static string GetColor (ICncValue cncValue)
+    static string GetColor (ICncValueData cncValue)
     {
       Debug.Assert (null != cncValue);
 
       return Lemoine.Business.ServiceProvider.Get (new Lemoine.Business.Field.FieldValueColor (cncValue));
     }
 
-    static string GetColor (IField field, ICncValue cncValue)
+    static string GetColor (IField field, ICncValueData cncValue)
     {
       Debug.Assert (null != field);
       Debug.Assert (null != cncValue);

@@ -269,6 +269,12 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+    public ICncValueDataDAO CncValueDataDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
     public ICncValueColorDAO CncValueColorDAO
     {
       get {

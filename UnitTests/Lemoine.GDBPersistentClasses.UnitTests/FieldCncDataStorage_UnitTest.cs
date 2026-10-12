@@ -67,9 +67,11 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         var field = ModelDAOHelper.ModelFactory.CreateFieldFromName ("TestCncDataStorage", "Test cnc data storage");
         field.Type = FieldType.Double;
         field.CncDataAggregationType = CncDataAggregationType.Average;
-        field.CncDataStorage = CncDataStorage.CncValue | CncDataStorage.CncDataPeriod;
+        field.CncDataStorage = CncDataStorage.CncDataPeriod;
         field.PeriodMaxDuration = TimeSpan.FromMinutes (1);
         Assert.Throws<ArgumentOutOfRangeException> (() => field.PeriodMaxDuration = TimeSpan.Zero);
+        Assert.Throws<ArgumentOutOfRangeException> (() => field.CncDataStorage = (CncDataStorage)3, "no double storage");
+        Assert.That (field.CncDataStorage, Is.EqualTo (CncDataStorage.CncDataPeriod));
         daoFactory.FieldDAO.MakePersistent (field);
         var custom = ModelDAOHelper.ModelFactory.CreateFieldFromName ("TestCncDataStorageCustom", "Test cnc data storage custom");
         custom.Type = FieldType.Double;
@@ -82,8 +84,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         var reloaded = daoFactory.FieldDAO.FindById (field.Id);
         var reloadedCustom = daoFactory.FieldDAO.FindById (custom.Id);
         Assert.Multiple (() => {
-          Assert.That (reloaded.CncDataStorage, Is.EqualTo (CncDataStorage.CncValue | CncDataStorage.CncDataPeriod));
-          Assert.That (reloaded.GetCncDataStorage (), Is.EqualTo (CncDataStorage.CncValue | CncDataStorage.CncDataPeriod));
+          Assert.That (reloaded.CncDataStorage, Is.EqualTo (CncDataStorage.CncDataPeriod));
+          Assert.That (reloaded.GetCncDataStorage (), Is.EqualTo (CncDataStorage.CncDataPeriod));
           Assert.That (reloaded.PeriodMaxDuration, Is.EqualTo (TimeSpan.FromMinutes (1)));
           Assert.That (reloaded.GetPeriodAggregationKind (), Is.EqualTo (CncDataPeriodAggregationKind.Statistics));
           Assert.That (reloadedCustom.CncDataAggregationType, Is.EqualTo ((CncDataAggregationType)100), "new aggregation type without any migration");
@@ -96,6 +98,8 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         Lemoine.Info.ConfigSet.ForceValue (ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage), CncDataStorage.CncDataPeriod);
         try {
           Assert.That (reloadedCustom.GetCncDataStorage (), Is.EqualTo (CncDataStorage.CncDataPeriod), "config");
+          Lemoine.Info.ConfigSet.ForceValue (ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage), (CncDataStorage)3);
+          Assert.That (reloadedCustom.GetCncDataStorage (), Is.EqualTo (CncDataStorage.CncValue), "invalid config");
         }
         finally {
           Lemoine.Info.ConfigSet.ResetForceValues ();

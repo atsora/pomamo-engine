@@ -257,7 +257,12 @@ namespace Lemoine.GDBPersistentClasses
     [XmlIgnore]
     public virtual CncDataStorage? CncDataStorage {
       get { return m_cncDataStorage; }
-      set { m_cncDataStorage = value; }
+      set {
+        if (value.HasValue && !IFieldExtensions.IsValid (value.Value)) {
+          throw new ArgumentOutOfRangeException (nameof (value), value, "A single table is expected (no double storage)");
+        }
+        m_cncDataStorage = value;
+      }
     }
 
     /// <summary>

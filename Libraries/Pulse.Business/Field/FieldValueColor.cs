@@ -44,7 +44,7 @@ namespace Lemoine.Business.Field
     /// Constructor
     /// </summary>
     /// <param name="cncValue">not null</param>
-    public FieldValueColor (ICncValue cncValue)
+    public FieldValueColor (ICncValueData cncValue)
       : this (cncValue.Field, cncValue.Value)
     {
       Debug.Assert (null != cncValue);

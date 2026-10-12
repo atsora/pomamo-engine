@@ -167,9 +167,11 @@ namespace Lemoine.Model
   }
 
   /// <summary>
-  /// Tables where the cnc data of a field are stored (flags)
+  /// Table where the cnc data of a field are stored
+  ///
+  /// A single table at a time (no double storage): the historical data may be in a table and the new ones in another one,
+  /// without any overlap, so that the view cncvalueall can make the union of all the tables
   /// </summary>
-  [Flags]
   public enum CncDataStorage
   {
     /// <summary>
@@ -341,7 +343,7 @@ namespace Lemoine.Model
     double? LimitDeviation { get; set; }
 
     /// <summary>
-    /// Tables where the cnc data are stored.
+    /// Table where the cnc data are stored (a single one).
     /// null: config Cnc.DefaultDataStorage, see <see cref="IFieldExtensions.GetCncDataStorage(IField)"/>
     /// </summary>
     CncDataStorage? CncDataStorage { get; set; }
@@ -385,16 +387,33 @@ namespace Lemoine.Model
     }
 
     /// <summary>
-    /// Tables where the cnc data of a field are stored:
-    /// <see cref="IField.CncDataStorage"/>, else the config Cnc.DefaultDataStorage (default: CncValue)
+    /// Table where the cnc data of a field are stored:
+    /// <see cref="IField.CncDataStorage"/>, else the config Cnc.DefaultDataStorage (default: CncValue).
+    /// An invalid value of the config is ignored
     /// </summary>
     /// <param name="field">not null</param>
     /// <returns></returns>
     public static CncDataStorage GetCncDataStorage (this IField field)
     {
-      return field.CncDataStorage
-        ?? Lemoine.Info.ConfigSet.LoadAndGet (ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage), Model.CncDataStorage.CncValue);
+      if (field.CncDataStorage.HasValue) {
+        return field.CncDataStorage.Value;
+      }
+      var storage = Lemoine.Info.ConfigSet.LoadAndGet (ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage), Model.CncDataStorage.CncValue);
+      if (!IsValid (storage)) {
+        Lemoine.Core.Log.LogManager.GetLogger (typeof (IFieldExtensions).FullName)
+          .Error ($"GetCncDataStorage: invalid config {ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage)}={storage} (a single table is expected) => use CncValue");
+        return Model.CncDataStorage.CncValue;
+      }
+      return storage;
     }
+
+    /// <summary>
+    /// Is a storage valid: a single table (or none)?
+    /// </summary>
+    /// <param name="storage"></param>
+    /// <returns></returns>
+    public static bool IsValid (CncDataStorage storage) =>
+      (storage == Model.CncDataStorage.None) || (storage == Model.CncDataStorage.CncValue) || (storage == Model.CncDataStorage.CncDataPeriod);
 
     /// <summary>
     /// Kind of the periods of a field in table cncdataperiod,

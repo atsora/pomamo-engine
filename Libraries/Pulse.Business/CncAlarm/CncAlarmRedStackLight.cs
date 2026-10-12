@@ -93,7 +93,7 @@ namespace Lemoine.Business.CncAlarm
     /// </summary>
     /// <param name="cncAlarm"></param>
     /// <param name="redStackLight"></param>
-    public CncAlarmRedStackLight (ICncAlarm cncAlarm, ICncValue redStackLight)
+    public CncAlarmRedStackLight (ICncAlarm cncAlarm, ICncValueData redStackLight)
       : this (cncAlarm.MachineModule.MonitoredMachine, new UtcDateTimeRange (cncAlarm.DateTimeRange.Intersects (redStackLight.DateTimeRange)))
     {
       Debug.Assert (null != cncAlarm);

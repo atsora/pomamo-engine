@@ -280,7 +280,7 @@ namespace Lemoine.CncDataImport
             log.Error ($"ImportDatas: field code={key} is unknown => skip the record");
             return;
           }
-          if (!field.Active || !field.GetCncDataStorage ().HasFlag (CncDataStorage.CncDataPeriod)) {
+          if (!field.Active || (field.GetCncDataStorage () != CncDataStorage.CncDataPeriod)) {
             return;
           }
           var kind = field.GetPeriodAggregationKind ();

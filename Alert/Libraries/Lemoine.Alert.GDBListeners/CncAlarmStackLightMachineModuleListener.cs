@@ -32,7 +32,8 @@ namespace Lemoine.Alert.GDBListeners
     readonly IField m_field;
     readonly IMachineModule m_machineModule;
     IApplicationState m_cncAlarmMachineModuleListenerState = null;
-    List<SerializableTuple<CncValue, List<CncAlarm>>> m_fetched = new List<SerializableTuple<CncValue, List<CncAlarm>>> ();
+    // Stack light values from cncvalue or cncdataperiod and their alarms, converted into CncValue to be serialized
+    List<(ICncValueData CncValue, List<CncAlarm> Alarms)> m_fetched = new List<(ICncValueData CncValue, List<CncAlarm> Alarms)> ();
     XmlSerializer m_xmlSerializer;
     #endregion // Members
 
@@ -81,7 +82,7 @@ namespace Lemoine.Alert.GDBListeners
         var dateTime = (DateTime)m_cncAlarmMachineModuleListenerState.Value;
         var maxNbFetched = Lemoine.Info.ConfigSet.LoadAndGet<int> (FETCH_MAX_ITEMS_KEY, FETCH_MAX_ITEMS_DEFAULT);
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-          var cncValues = ModelDAOHelper.DAOFactory.CncValueDAO
+          var cncValues = ModelDAOHelper.DAOFactory.CncValueDataDAO
             .FindNext (m_machineModule, m_field, dateTime, FETCH_MAX_ITEMS_DEFAULT);
 
           // Keep a track on the periods processed
@@ -96,13 +97,14 @@ namespace Lemoine.Alert.GDBListeners
               bool isRed = light.IsOnOrFlashingIfAcquired (StackLightColor.Red);
               lastTime = cncValue.Begin;
               if (isYellow || isRed) {
-                // Try to find alarms starting around the beginning of the stacklight
-                var startPeriod = cncValues[0].Begin.AddSeconds (-MARGIN_SECONDS);
+                // Try to find alarms starting around the beginning of this stack light value
+                // (and not of the first value of the batch)
+                var startPeriod = cncValue.Begin.AddSeconds (-MARGIN_SECONDS);
                 if (oldEnd.HasValue && startPeriod < oldEnd.Value) {
                   startPeriod = oldEnd.Value;
                 }
 
-                var endPeriod = cncValues[0].Begin.AddSeconds (MARGIN_SECONDS);
+                var endPeriod = cncValue.Begin.AddSeconds (MARGIN_SECONDS);
                 oldEnd = endPeriod;
 
                 // Start may be postponed so we check that it is still before the end
@@ -117,7 +119,7 @@ namespace Lemoine.Alert.GDBListeners
                       alarms.Add (alarm as CncAlarm);
                     }
 
-                    m_fetched.Add (new SerializableTuple<CncValue, List<CncAlarm>> (cncValue as CncValue, alarms));
+                    m_fetched.Add ((cncValue, alarms));
                   }
                 }
               }
@@ -148,19 +150,27 @@ namespace Lemoine.Alert.GDBListeners
       }
 
       // Get the first data in the list
-      var firstData = m_fetched[0];
+      var (fetchedCncValue, fetchedAlarms) = m_fetched[0];
       XmlElement data;
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        // Same format whatever the table the stack light value comes from
+        var cncValue = CncValueDataSerialization.ToSerializableCncValue (fetchedCncValue);
+        if (null == cncValue) {
+          log.Error ($"GetData: {fetchedCncValue} does not exist any more => skip it");
+          m_fetched.RemoveAt (0);
+          return GetData ();
+        }
         // Note: Lock does not work on the line below.
         //       This is not fully clear why yet, but it generates a message when the Unproxy() method is called.
         //       Because the event data is read only, FindById may be used instead of Lock.
         // TODO: understand what exactly happens with Lock and Unproxy
-        firstData.Item1 = ModelDAOHelper.DAOFactory.CncValueDAO.FindById (firstData.Item1.Id, m_machineModule) as CncValue;
-        firstData.Item1.Unproxy ();
-        for (int i = 0; i < firstData.Item2.Count; i++) {
-          firstData.Item2[i] = ModelDAOHelper.DAOFactory.CncAlarmDAO.FindById (firstData.Item2[i].Id, m_machineModule) as CncAlarm;
-          firstData.Item2[i].Unproxy ();
+        var alarms = new List<CncAlarm> ();
+        foreach (var fetchedAlarm in fetchedAlarms) {
+          var alarm = ModelDAOHelper.DAOFactory.CncAlarmDAO.FindById (fetchedAlarm.Id, m_machineModule) as CncAlarm;
+          alarm.Unproxy ();
+          alarms.Add (alarm);
         }
+        var firstData = new SerializableTuple<CncValue, List<CncAlarm>> (cncValue, alarms);
 
         // - serialization
         var sw = new StringWriter ();

@@ -38,7 +38,7 @@ namespace Lemoine.Business.CncValue
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      ICncValue cncValue = FindAt (machineModule, field, dateTime);
+      ICncValueData cncValue = FindAt (machineModule, field, dateTime);
       if (null == cncValue) {
         return null;
       }
@@ -65,7 +65,7 @@ namespace Lemoine.Business.CncValue
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      IEnumerable<ICncValue> cncValues = FindByMachineFieldDateRange (machineModule, field, range);
+      IEnumerable<ICncValueData> cncValues = FindByMachineFieldDateRange (machineModule, field, range);
       return Merge (field, cncValues, extend);
     }
 
@@ -168,7 +168,7 @@ namespace Lemoine.Business.CncValue
       return result;
     }
 
-    IList<ICncValueColor> Merge (IField field, IEnumerable<ICncValue> cncValues, bool extend)
+    IList<ICncValueColor> Merge (IField field, IEnumerable<ICncValueData> cncValues, bool extend)
     {
       IList<ICncValueColor> result = new List<ICncValueColor> ();
 
@@ -211,7 +211,7 @@ namespace Lemoine.Business.CncValue
         return slot;
       }
       else {
-        ICncValue leftCncValue = FindWithEnd (slot.MachineModule, field, slot.DateTimeRange.Lower.Value);
+        ICncValueData leftCncValue = FindWithEnd (slot.MachineModule, field, slot.DateTimeRange.Lower.Value);
         if (null == leftCncValue) {
           return slot;
         }
@@ -251,7 +251,7 @@ namespace Lemoine.Business.CncValue
         return slot;
       }
       else {
-        ICncValue rightCncValue = FindAt (slot.MachineModule, field, slot.DateTimeRange.Upper.Value);
+        ICncValueData rightCncValue = FindAt (slot.MachineModule, field, slot.DateTimeRange.Upper.Value);
         if (null == rightCncValue) {
           return slot;
         }
@@ -282,7 +282,7 @@ namespace Lemoine.Business.CncValue
     /// <param name="field">not null</param>
     /// <param name="cncValue">not null</param>
     /// <returns></returns>
-    protected virtual ICncValueColor CreateCncValueColor (IField field, ICncValue cncValue)
+    protected virtual ICncValueColor CreateCncValueColor (IField field, ICncValueData cncValue)
     {
       Debug.Assert (null != field);
       Debug.Assert (null != cncValue);
@@ -291,50 +291,50 @@ namespace Lemoine.Business.CncValue
     }
 
     /// <summary>
-    /// Find a ICncValue at a specific time
+    /// Find a cnc value (from cncvalue or cncdataperiod) at a specific time
     /// </summary>
     /// <param name="machineModule">not null</param>
     /// <param name="field">not null</param>
     /// <param name="dateTime"></param>
     /// <returns></returns>
-    protected virtual ICncValue FindAt (IMachineModule machineModule, IField field, DateTime dateTime)
+    protected virtual ICncValueData FindAt (IMachineModule machineModule, IField field, DateTime dateTime)
     {
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      return ModelDAOHelper.DAOFactory.CncValueDAO
+      return ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindAt (machineModule, field, dateTime);
     }
 
     /// <summary>
-    /// Find the ICncValue in a specific date/time range
+    /// Find the cnc values (from cncvalue or cncdataperiod) in a specific date/time range
     /// </summary>
     /// <param name="machineModule"></param>
     /// <param name="field"></param>
     /// <param name="range"></param>
     /// <returns></returns>
-    protected virtual IEnumerable<ICncValue> FindByMachineFieldDateRange (IMachineModule machineModule, IField field, UtcDateTimeRange range)
+    protected virtual IEnumerable<ICncValueData> FindByMachineFieldDateRange (IMachineModule machineModule, IField field, UtcDateTimeRange range)
     {
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      return ModelDAOHelper.DAOFactory.CncValueDAO
-        .FindByMachineFieldDateRange (machineModule, field, range);
+      return ModelDAOHelper.DAOFactory.CncValueDataDAO
+        .FindOverlapsRange (machineModule, field, range);
     }
 
     /// <summary>
-    /// Find the ICncValue with a specific end
+    /// Find the cnc value (from cncvalue or cncdataperiod) with a specific end
     /// </summary>
     /// <param name="machineModule"></param>
     /// <param name="field"></param>
     /// <param name="dateTime"></param>
     /// <returns></returns>
-    protected virtual ICncValue FindWithEnd (IMachineModule machineModule, IField field, DateTime dateTime)
+    protected virtual ICncValueData FindWithEnd (IMachineModule machineModule, IField field, DateTime dateTime)
     {
       Debug.Assert (null != machineModule);
       Debug.Assert (null != field);
 
-      return ModelDAOHelper.DAOFactory.CncValueDAO
+      return ModelDAOHelper.DAOFactory.CncValueDataDAO
         .FindWithEnd (machineModule, field, dateTime);
     }
 

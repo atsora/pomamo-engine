@@ -43,8 +43,8 @@ namespace Lemoine.Business.CncAlarm
         .FindById ((int)FieldId.StackLight);
       Debug.Assert (null != field);
 
-      var redStackLights = ModelDAOHelper.DAOFactory.CncValueDAO
-        .FindByMachineFieldDateRange (mainMachineModule, field, range)
+      var redStackLights = ModelDAOHelper.DAOFactory.CncValueDataDAO // From cncvalue or cncdataperiod
+        .FindOverlapsRange (mainMachineModule, field, range)
         .Where (v => ((StackLight)v.Value).IsOnOrFlashing (StackLightColor.Red))
         .OrderBy (v => v.DateTimeRange.Lower.Value.Ticks);
 
