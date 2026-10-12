@@ -77,6 +77,39 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     }
 
     /// <summary>
+    /// Replay samples that were already partially written: the existing rows are ignored
+    /// </summary>
+    [Test]
+    public void TestInsertIgnoringDuplicates ()
+    {
+      var daoFactory = ModelDAOHelper.DAOFactory;
+      using (var session = daoFactory.OpenSession ())
+      using (var transaction = session.BeginTransaction ()) {
+        var monitoredMachine = daoFactory.MonitoredMachineDAO.FindByIdWithMachineModules (MACHINE_ID);
+        var machineModule = monitoredMachine.MachineModules.OrderBy (m => m.Id).First ();
+        var field = daoFactory.FieldDAO.FindById (FIELD_ID);
+        var jsonField = daoFactory.FieldDAO.FindById (JSON_FIELD_ID);
+        var values = Enumerable.Range (0, 100)
+          .Select (i => new CncDataSampleValue (T0.AddMilliseconds (10 * i), i))
+          .ToList ();
+        var jsonValues = new List<CncDataSampleValue> { new CncDataSampleValue (T0, "[1]") };
+
+        Assert.That (daoFactory.CncDataSampleDAO.Insert (machineModule, new CncDataSampleSeries[] {
+          new CncDataSampleSeries (field, values) }), Is.EqualTo (1));
+        Assert.That (daoFactory.CncDataSampleDAO.InsertIgnoringDuplicates (machineModule, new CncDataSampleSeries[] {
+          new CncDataSampleSeries (field, values),
+          new CncDataSampleSeries (jsonField, jsonValues) }), Is.EqualTo (1), "only the json row is new");
+        Assert.That (daoFactory.CncDataSampleDAO.InsertIgnoringDuplicates (machineModule, new CncDataSampleSeries[] {
+          new CncDataSampleSeries (field, values) }), Is.EqualTo (0), "second call in the same transaction");
+
+        Assert.Multiple (() => {
+          Assert.That (daoFactory.CncDataSampleDAO.FindInRange (machineModule, field, new UtcDateTimeRange (T0, T0.AddMinutes (1))), Has.Count.EqualTo (100));
+          Assert.That (daoFactory.CncDataSampleDAO.FindInRange (machineModule, jsonField, new UtcDateTimeRange (T0, T0.AddMinutes (1))), Has.Count.EqualTo (1));
+        });
+      }
+    }
+
+    /// <summary>
     /// Insert samples with COPY and read them, by page too
     /// </summary>
     [Test]

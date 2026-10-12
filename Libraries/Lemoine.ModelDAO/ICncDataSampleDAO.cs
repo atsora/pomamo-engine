@@ -28,6 +28,18 @@ namespace Lemoine.ModelDAO
     int Insert (IMachineModule machineModule, IEnumerable<CncDataSampleSeries> series);
 
     /// <summary>
+    /// Same as <see cref="Insert(IMachineModule, IEnumerable{CncDataSampleSeries})"/>,
+    /// but the rows that already exist (same machine module, field and begin) are ignored.
+    ///
+    /// Slower (COPY into a temporary table, then INSERT ... ON CONFLICT DO NOTHING):
+    /// to replay some samples that may have been already written
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="series">not null</param>
+    /// <returns>number of inserted rows (without the ignored ones)</returns>
+    int InsertIgnoringDuplicates (IMachineModule machineModule, IEnumerable<CncDataSampleSeries> series);
+
+    /// <summary>
     /// Read the recent and archived samples of a field in a range, ordered by date/time
     /// (function cncdatasamplerange)
     /// </summary>

@@ -103,6 +103,22 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public int Insert (IMachineModule machineModule, IEnumerable<CncDataSampleSeries> series)
     {
+      return Insert (machineModule, series, false);
+    }
+
+    /// <summary>
+    /// <see cref="ICncDataSampleDAO"/>
+    /// </summary>
+    public int InsertIgnoringDuplicates (IMachineModule machineModule, IEnumerable<CncDataSampleSeries> series)
+    {
+      return Insert (machineModule, series, true);
+    }
+
+    static readonly string COLUMNS = @"machinemoduleid, fieldid, cncdatasamplebegindatetime, cncdatasampleenddatetime,
+  cncdatasampledeltas, cncdatasampledoublevalues, cncdatasamplejsonvalues";
+
+    int Insert (IMachineModule machineModule, IEnumerable<CncDataSampleSeries> series, bool ignoreDuplicates)
+    {
       Debug.Assert (null != machineModule);
       Debug.Assert (null != series);
 
@@ -123,11 +139,30 @@ namespace Lemoine.GDBPersistentClasses
         log.Fatal ("Insert: the connection is not a Npgsql connection");
         throw new InvalidOperationException ("Not a Npgsql connection");
       }
+      var insertedRows = rows.Count;
       try {
-        using (var writer = connection.BeginBinaryImport (@"
-COPY public.cncdatasample (machinemoduleid, fieldid, cncdatasamplebegindatetime, cncdatasampleenddatetime,
-  cncdatasampledeltas, cncdatasampledoublevalues, cncdatasamplejsonvalues)
-FROM STDIN (FORMAT BINARY)")) {
+        string table;
+        if (ignoreDuplicates) {
+          table = "pg_temp.cncdatasamplereplay";
+          using (var command = connection.CreateCommand ()) {
+            command.CommandText = $@"
+CREATE TEMPORARY TABLE IF NOT EXISTS cncdatasamplereplay (
+  machinemoduleid integer NOT NULL,
+  fieldid integer NOT NULL,
+  cncdatasamplebegindatetime timestamp(3) without time zone NOT NULL,
+  cncdatasampleenddatetime timestamp(3) without time zone NOT NULL,
+  cncdatasampledeltas smallint[] NOT NULL,
+  cncdatasampledoublevalues double precision[],
+  cncdatasamplejsonvalues jsonb
+) ON COMMIT DELETE ROWS;
+TRUNCATE pg_temp.cncdatasamplereplay";
+            command.ExecuteNonQuery ();
+          }
+        }
+        else {
+          table = "public.cncdatasample";
+        }
+        using (var writer = connection.BeginBinaryImport ($"COPY {table} ({COLUMNS}) FROM STDIN (FORMAT BINARY)")) {
           foreach (var row in rows) {
             writer.StartRow ();
             writer.Write (machineModule.Id, NpgsqlDbType.Integer);
@@ -146,6 +181,18 @@ FROM STDIN (FORMAT BINARY)")) {
           }
           writer.Complete ();
         }
+        if (ignoreDuplicates) {
+          using (var command = connection.CreateCommand ()) {
+            command.CommandText = $@"
+INSERT INTO public.cncdatasample ({COLUMNS})
+SELECT {COLUMNS} FROM pg_temp.cncdatasamplereplay
+ON CONFLICT DO NOTHING";
+            insertedRows = command.ExecuteNonQuery ();
+          }
+          if (insertedRows < rows.Count) {
+            log.Info ($"Insert: {rows.Count - insertedRows} rows of machine module {machineModule.Id} were already inserted");
+          }
+        }
       }
       catch (Exception ex) when (partitionDAO.IsMissingPartition (ex)) {
         log.Error ($"Insert: unexpected missing partition for machine module {machineModule.Id}", ex);
@@ -153,9 +200,9 @@ FROM STDIN (FORMAT BINARY)")) {
         throw;
       }
       if (log.IsDebugEnabled) {
-        log.Debug ($"Insert: {rows.Count} rows inserted for machine module {machineModule.Id}");
+        log.Debug ($"Insert: {insertedRows} rows inserted for machine module {machineModule.Id}");
       }
-      return rows.Count;
+      return insertedRows;
     }
 
     /// <summary>
