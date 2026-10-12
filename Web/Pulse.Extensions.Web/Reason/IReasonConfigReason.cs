@@ -41,9 +41,10 @@ namespace Pulse.Extensions.Web.Reason
     /// The properties of this reason the declaring extension may not write, so that a client
     /// does not offer them
     ///
-    /// They are named the way the schema names them: "name", "code", "description", "color",
-    /// "reportColor", "reasonGroup", "linkDirection", "displayPriority", "productionState",
-    /// "planned", "detailsRequired", "alwaysSecondLevel", "options"
+    /// They are named the way the schema names them, see <see cref="ReasonConfigPropertyNames"/>:
+    /// "name", "code", "description", "color", "reportColor", "reasonGroup", "linkDirection",
+    /// "displayPriority", "productionState", "planned", "detailsRequired",
+    /// "alwaysSecondLevel", "maxDuration", "options"
     ///
     /// An id is declared once, so this list stands as it is: there is nothing to merge
     ///
@@ -117,19 +118,29 @@ namespace Pulse.Extensions.Web.Reason
     /// <summary>
     /// Must the operator enter a free detailed entry along with the reason?
     ///
-    /// It applies to the selection entries of the reason, which another extension than the
-    /// declaring one may contribute. A declaring extension that does not own them leaves it
-    /// null, and the caller consolidates it from the selection entries: their common value,
-    /// or null when they do not agree on one, or when there is none
+    /// It applies to the selection entries of the reason, so it is null when they do not
+    /// agree on a value, or when there is none
     /// </summary>
     bool? DetailsRequired { get; }
 
     /// <summary>
     /// Is the reason displayed in the second level, under its reason group?
     ///
-    /// Consolidated like <see cref="DetailsRequired"/>
+    /// It applies to the selection entries of the reason, so it is null when they do not
+    /// agree on a value, or when there is none
     /// </summary>
     bool? AlwaysSecondLevel { get; }
+
+    /// <summary>
+    /// Maximum duration the reason applies to when it is set by default
+    ///
+    /// It applies to the default entries of the reason. Read, it is their common value - null
+    /// meaning no limitation - and null as well when they do not agree on a value, or when
+    /// there is none: read alone, null does not tell those apart. Written, it is only
+    /// considered when the update lists it among the provided properties, null then meaning
+    /// no limitation
+    /// </summary>
+    TimeSpan? MaxDuration { get; }
 
     /// <summary>
     /// The additional options this reason carries, never null

@@ -25,10 +25,6 @@ namespace Pulse.Extensions.Web.Reason
   /// the extensions in the order of the priorities: each reads the options of the reason to
   /// tell whether it is one of its own
   ///
-  /// One reason may then be the work of several extensions: one declares it and writes its
-  /// presentation, others contribute and write its selection or default entries. Which of
-  /// them are active is up to the packages that are installed
-  ///
   /// <b>An id is declared by one extension only.</b> Two extensions that would declare the
   /// same one are a misconfiguration - typically two alternative ways of listing the reasons
   /// of a table, installed together: the caller logs an error and keeps the declaration of
@@ -94,29 +90,23 @@ namespace Pulse.Extensions.Web.Reason
     Task<IReasonConfigReason> CreateReasonAsync (IReasonConfigReason reason);
 
     /// <summary>
-    /// Add the part this extension owns to a reason another extension has just created - its
-    /// selection entries, for instance, so that it may be selected
-    ///
-    /// Once an extension took a creation, every other extension is offered the request,
-    /// in the order of the priorities. It runs in a transaction of its own: the reason is
-    /// already created, whatever happens here
-    /// </summary>
-    /// <param name="request">not null, the request of the creation</param>
-    /// <param name="created">not null, the reason the extension returned, with its <see cref="IReasonConfigReason.ClassificationId"/></param>
-    /// <returns>the extension added something</returns>
-    Task<bool> CompleteCreatedReasonAsync (IReasonConfigReason request, IReasonConfigReason created);
-
-    /// <summary>
     /// Apply the part of the reason this extension owns
     ///
     /// The reason is complete: the caller has read the current one and applied the
     /// properties the client provided. Every extension is offered it, and each writes what
     /// it owns - the one that declared the reason writes its presentation, the ones that
     /// contribute its selection or default entries write theirs
+    ///
+    /// Only the properties listed in <paramref name="providedProperties"/> are written: a
+    /// property that is not listed is left unchanged, and a listed property that is null is
+    /// reset to null. It is what tells the two apart on a property that is consolidated from
+    /// several rows, whose current value may read null although the rows carry values - see
+    /// <see cref="IReasonConfigReason.MaxDuration"/>
     /// </summary>
     /// <param name="reason">not null</param>
+    /// <param name="providedProperties">not null, the properties the client provided, see <see cref="ReasonConfigPropertyNames"/></param>
     /// <returns>the extension applied something</returns>
-    Task<bool> UpdateReasonAsync (IReasonConfigReason reason);
+    Task<bool> UpdateReasonAsync (IReasonConfigReason reason, IEnumerable<string> providedProperties);
 
     /// <summary>
     /// Archive a reason: remove or disable every selection entry and every default value
