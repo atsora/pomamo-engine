@@ -158,6 +158,11 @@ namespace Lemoine.ModelDAO
     ICncDataImportLogDAO CncDataImportLogDAO { get; }
 
     /// <summary>
+    /// Get a ICncDataPartitionDAO
+    /// </summary>
+    ICncDataPartitionDAO CncDataPartitionDAO { get; }
+
+    /// <summary>
     /// Get a ICncValueDAO
     /// </summary>
     ICncValueDAO CncValueDAO { get; }

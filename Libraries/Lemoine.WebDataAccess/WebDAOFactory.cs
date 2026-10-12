@@ -239,6 +239,12 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+    public ICncDataPartitionDAO CncDataPartitionDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
     public ICncValueDAO CncValueDAO
     {
       get {

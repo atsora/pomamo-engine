@@ -309,6 +309,11 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
     /// </summary>
+    public ICncDataPartitionDAO CncDataPartitionDAO => new CncDataPartitionDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
     public ICncValueDAO CncValueDAO
     {
       get { return new CncValueDAO (); }
