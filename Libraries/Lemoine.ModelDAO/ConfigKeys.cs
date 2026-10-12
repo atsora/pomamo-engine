@@ -524,6 +524,11 @@ namespace Lemoine.Model
     /// Retention of the archived cncdata (TimeSpan). Default: 728 days (104 weeks)
     /// </summary>
     DataRetention,
+    /// <summary>
+    /// Tables where the cnc data of a field are stored when its column fieldcncdatastorage is null
+    /// (CncDataStorage flags: CncValue, CncDataPeriod). Default: CncValue
+    /// </summary>
+    DefaultDataStorage,
   }
   
   /// <summary>

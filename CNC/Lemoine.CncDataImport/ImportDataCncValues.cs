@@ -181,6 +181,11 @@ namespace Lemoine.CncDataImport
             return;
           }
 
+          if (!field.GetCncDataStorage ().HasFlag (CncDataStorage.CncValue)) {
+            // Only in table cncdataperiod, see ImportDataCncDataPeriods
+            return;
+          }
+
           if (SkipOldSecondaryCncValuesAfter.HasValue) {
             ExchangeData lastData = datas[datas.Count - 1];
             Debug.Assert (lastData.DateTime <= DateTime.UtcNow);

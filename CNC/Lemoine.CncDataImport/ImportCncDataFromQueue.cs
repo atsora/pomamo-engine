@@ -156,9 +156,17 @@ namespace Lemoine.CncDataImport
       m_importData[ExchangeDataCommand.MachineModuleActivity] = new ImportDataMachineModule (machineModule);
 
       // CncValue and StopCncValue share the same cache
+      // Each field is imported in cncdataperiod and/or in cncvalue according to its storage (IField.GetCncDataStorage).
+      // cncdataperiod first: if the import in cncvalue fails, the import in cncdataperiod skips the data it already imported
       var cache = new CacheCncValue (machineModule);
-      m_importData[ExchangeDataCommand.CncValue] = new ImportDataCncValues (machineModule, cache, this);
-      m_importData[ExchangeDataCommand.StopCncValue] = new ImportDataStopCncValues (machineModule, cache);
+      var periodCache = new CacheCncDataPeriod (machineModule);
+      var importDataCncDataPeriods = new ImportDataCncDataPeriods (machineModule, periodCache, cache, this);
+      m_importData[ExchangeDataCommand.CncValue] = new ImportDataComposite (
+        importDataCncDataPeriods,
+        new ImportDataCncValues (machineModule, cache, this));
+      m_importData[ExchangeDataCommand.StopCncValue] = new ImportDataComposite (
+        new ImportDataStopCncDataPeriods (machineModule, periodCache, importDataCncDataPeriods),
+        new ImportDataStopCncValues (machineModule, cache));
 
       foreach (var importData in m_importData.Values) {
         importData.LastVisitDateTime = DateTime.UtcNow;

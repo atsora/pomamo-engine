@@ -280,6 +280,10 @@ namespace Lemoine.GDBPersistentClasses
                            "Cnc config: retention of the archived cncdata",
                            TimeSpan.FromDays (7 * 104));
       InsertDefaultValue (config);
+      config = new Config (ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage),
+                           "Cnc config: tables where the cnc data of a field are stored if not set in the field (CncValue, CncDataPeriod or both)",
+                           CncDataStorage.CncValue);
+      InsertDefaultValue (config);
 
       // - database maintenance
       config = new Config (ConfigKeys.GetDatabaseMaintenanceConfigKey (DatabaseMaintenanceConfigKey.WindowDay),

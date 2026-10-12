@@ -102,6 +102,11 @@ namespace Lemoine.CncDataImport
             return;
           }
 
+          if (!field.GetCncDataStorage ().HasFlag (CncDataStorage.CncValue)) {
+            // Only in table cncdataperiod, see ImportDataStopCncDataPeriods
+            return;
+          }
+
           if (m_machineModule == null) {
             log.Error ($"ImportStopCncValue: machine module is unknown => skip the record");
             return;

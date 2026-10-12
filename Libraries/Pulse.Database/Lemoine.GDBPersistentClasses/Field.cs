@@ -39,6 +39,8 @@ namespace Lemoine.GDBPersistentClasses
     string m_associatedProperty = null;
     TimeSpan? m_minTime = null;
     double? m_limitDeviation = null;
+    CncDataStorage? m_cncDataStorage = null;
+    TimeSpan? m_periodMaxDuration = null;
     bool m_custom = true;
     bool m_active = true;
     #endregion // Members
@@ -247,6 +249,29 @@ namespace Lemoine.GDBPersistentClasses
     public virtual double? LimitDeviation {
       get { return m_limitDeviation; }
       set { m_limitDeviation = value; }
+    }
+
+    /// <summary>
+    /// <see cref="IField"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual CncDataStorage? CncDataStorage {
+      get { return m_cncDataStorage; }
+      set { m_cncDataStorage = value; }
+    }
+
+    /// <summary>
+    /// <see cref="IField"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual TimeSpan? PeriodMaxDuration {
+      get { return m_periodMaxDuration; }
+      set {
+        if (value.HasValue && value.Value <= TimeSpan.Zero) {
+          throw new ArgumentOutOfRangeException (nameof (value), value, "The maximum duration of a period must be strictly positive");
+        }
+        m_periodMaxDuration = value;
+      }
     }
     
     /// <summary>

@@ -135,6 +135,12 @@ namespace Lemoine.Model
   
   /// <summary>
   /// Action to take with a new Cnc value
+  ///
+  /// The column is an integer: some new aggregation types may be added without any migration.
+  /// Their behavior in table cncdataperiod is given by <see cref="CncDataAggregationTypeExtensions.GetPeriodAggregationKind(CncDataAggregationType?)"/>:
+  /// a new type that is not known there is <see cref="CncDataPeriodAggregationKind.Custom"/>,
+  /// to be processed by an extension.
+  /// Recommendation: values from 100 for the types that are specific to a plugin
   /// </summary>
   public enum CncDataAggregationType
   {
@@ -158,6 +164,92 @@ namespace Lemoine.Model
     /// Keep the local maximum
     /// </summary>
     Max = 4,
+  }
+
+  /// <summary>
+  /// Tables where the cnc data of a field are stored (flags)
+  /// </summary>
+  [Flags]
+  public enum CncDataStorage
+  {
+    /// <summary>
+    /// Not stored
+    /// </summary>
+    None = 0,
+    /// <summary>
+    /// Table cncvalue
+    /// </summary>
+    CncValue = 1,
+    /// <summary>
+    /// Table cncdataperiod
+    /// </summary>
+    CncDataPeriod = 2,
+  }
+
+  /// <summary>
+  /// Kind of the periods of a field in table cncdataperiod
+  /// </summary>
+  public enum CncDataPeriodAggregationKind
+  {
+    /// <summary>
+    /// No period
+    /// </summary>
+    None = 0,
+    /// <summary>
+    /// A new period each time the value changes (StringValue, JsonValue or LastValue)
+    /// </summary>
+    Change = 1,
+    /// <summary>
+    /// Combinable statistics (Count, Average, Min, Max, StdDev, LastValue),
+    /// a new period after MinTime if the average differs from the previous period of more than LimitDeviation
+    /// </summary>
+    Statistics = 2,
+    /// <summary>
+    /// Aggregation type without any built-in behavior: to be processed by an extension
+    /// </summary>
+    Custom = 3,
+  }
+
+  /// <summary>
+  /// Extensions to <see cref="CncDataAggregationType"/>
+  /// </summary>
+  public static class CncDataAggregationTypeExtensions
+  {
+    /// <summary>
+    /// Kind of the periods in table cncdataperiod for an aggregation type
+    /// <item>None (or null): no period</item>
+    /// <item>NewValue: a new period each time the value changes</item>
+    /// <item>Average, Sum, Max: statistics (all of them are stored, Sum = Average * Count)</item>
+    /// <item>other: custom, to be processed by an extension</item>
+    /// </summary>
+    /// <param name="aggregationType"></param>
+    /// <returns></returns>
+    public static CncDataPeriodAggregationKind GetPeriodAggregationKind (this CncDataAggregationType? aggregationType)
+    {
+      if (!aggregationType.HasValue) {
+        return CncDataPeriodAggregationKind.None;
+      }
+      switch (aggregationType.Value) {
+      case CncDataAggregationType.None:
+        return CncDataPeriodAggregationKind.None;
+      case CncDataAggregationType.NewValue:
+        return CncDataPeriodAggregationKind.Change;
+      case CncDataAggregationType.Average:
+      case CncDataAggregationType.Sum:
+      case CncDataAggregationType.Max:
+        return CncDataPeriodAggregationKind.Statistics;
+      default:
+        return CncDataPeriodAggregationKind.Custom;
+      }
+    }
+
+    /// <summary>
+    /// <see cref="GetPeriodAggregationKind(CncDataAggregationType?)"/>
+    /// </summary>
+    /// <param name="aggregationType"></param>
+    /// <returns></returns>
+    public static CncDataPeriodAggregationKind GetPeriodAggregationKind (this CncDataAggregationType aggregationType) =>
+      ((CncDataAggregationType?)aggregationType).GetPeriodAggregationKind ();
   }
   
   /// <summary>
@@ -247,7 +339,19 @@ namespace Lemoine.Model
     /// For a max aggregation type, keep a deviation that is less than this deviation
     /// </summary>
     double? LimitDeviation { get; set; }
-    
+
+    /// <summary>
+    /// Tables where the cnc data are stored.
+    /// null: config Cnc.DefaultDataStorage, see <see cref="IFieldExtensions.GetCncDataStorage(IField)"/>
+    /// </summary>
+    CncDataStorage? CncDataStorage { get; set; }
+
+    /// <summary>
+    /// Maximum duration of a period in table cncdataperiod (any aggregation).
+    /// null: no limit, but a period never crosses a week bound
+    /// </summary>
+    TimeSpan? PeriodMaxDuration { get; set; }
+
     /// <summary>
     /// If false, the field can't be deleted
     /// </summary>
@@ -279,5 +383,26 @@ namespace Lemoine.Model
         return $"[{data.GetType ().Name} {data.Id}]";
       }
     }
+
+    /// <summary>
+    /// Tables where the cnc data of a field are stored:
+    /// <see cref="IField.CncDataStorage"/>, else the config Cnc.DefaultDataStorage (default: CncValue)
+    /// </summary>
+    /// <param name="field">not null</param>
+    /// <returns></returns>
+    public static CncDataStorage GetCncDataStorage (this IField field)
+    {
+      return field.CncDataStorage
+        ?? Lemoine.Info.ConfigSet.LoadAndGet (ConfigKeys.GetCncConfigKey (CncConfigKey.DefaultDataStorage), Model.CncDataStorage.CncValue);
+    }
+
+    /// <summary>
+    /// Kind of the periods of a field in table cncdataperiod,
+    /// see <see cref="CncDataAggregationTypeExtensions.GetPeriodAggregationKind(CncDataAggregationType?)"/>
+    /// </summary>
+    /// <param name="field">not null</param>
+    /// <returns></returns>
+    public static CncDataPeriodAggregationKind GetPeriodAggregationKind (this IField field) =>
+      field.CncDataAggregationType.GetPeriodAggregationKind ();
   }
 }

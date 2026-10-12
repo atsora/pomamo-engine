@@ -37,6 +37,9 @@
     <property name="MinTime" column="fieldmintime"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
     <property name="LimitDeviation" column="fieldlimitdeviation" />
+    <property name="CncDataStorage" column="fieldcncdatastorage" />
+    <property name="PeriodMaxDuration" column="fieldperiodmaxduration"
+              type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
     <property name="Custom" column="fieldcustom"
               access="nosetter.camelcase-m-underscore"
               not-null="true" />
