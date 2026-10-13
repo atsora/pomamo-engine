@@ -329,6 +329,10 @@ namespace Lemoine.Model
     /// Warm-up mode
     /// </summary>
     WarmUp = 80,
+    /// <summary>
+    /// Loading (or unloading) of the machine, for example by a loader
+    /// </summary>
+    Loading = 81,
   }
 
   /// <summary>

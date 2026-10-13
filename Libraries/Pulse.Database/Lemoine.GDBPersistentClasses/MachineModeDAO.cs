@@ -547,6 +547,13 @@ namespace Lemoine.GDBPersistentClasses
       warmUp.AutoSequence = true;
       warmUp.Color = "#993399"; // Purple
       InsertDefaultValue (warmUp);
+      // Loading
+      IMachineMode loading = new MachineMode ((int)MachineModeId.Loading, "MachineModeLoading",
+                                              true, MachineModeCategoryId.Active, autoActive);
+      loading.Auto = true;
+      loading.AutoSequence = false;
+      loading.Color = "#026450"; // Dark Green/Blue
+      InsertDefaultValue (loading);
     }
     
     /// <summary>
