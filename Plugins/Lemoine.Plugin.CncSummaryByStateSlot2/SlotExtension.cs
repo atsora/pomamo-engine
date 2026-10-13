@@ -5,6 +5,7 @@
 
 using System;
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,9 +23,11 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     : Lemoine.Extensions.UniqueInstanceConfigurableExtension<Configuration>
     , Pulse.Extensions.Database.ISlotExtension
   {
-    IEnumerable<IMachineModule> m_machineModules = null; // Warning: it may remain null (if not a monitored machine or plugin not active) !
-    IEnumerable<IField> m_fields = null; // Warning: it may remain null (if the plugin is not active) or it can be empty (plugin active with no configured field)
-    bool m_initialized = false;
+    // Note: the slot extensions are global (see SlotDAO): the same instance is shared by all the machines,
+    // and by the analysis threads of the different machines
+    readonly object m_fieldsLock = new object ();
+    IEnumerable<IField> m_fields = null; // Warning: it can be empty (plugin active with no configured field)
+    readonly ConcurrentDictionary<int, IEnumerable<IMachineModule>> m_machineModules = new ConcurrentDictionary<int, IEnumerable<IMachineModule>> (); // Key: machine id
 
     static readonly ILog log = LogManager.GetLogger(typeof (SlotExtension).FullName);
 
@@ -82,46 +85,63 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
 
     #endregion // ISlotExtension
     
-    void Initialize (IMachine machine)
+    /// <summary>
+    /// Configured fields, loaded once
+    /// </summary>
+    /// <returns>not null</returns>
+    IEnumerable<IField> GetFields ()
     {
-      if (m_initialized) {
-        return;
-      }
-      
-      var fieldIds = new HashSet<int>();
+      lock (m_fieldsLock) {
+        if (null != m_fields) {
+          return m_fields;
+        }
 
-      var configurations = LoadConfigurations ();
-      foreach (var configuration in configurations) {
-        foreach (var cncFieldId in configuration.CncFieldIds) {
-          fieldIds.Add (cncFieldId);
+        var fieldIds = new HashSet<int> ();
+
+        var configurations = LoadConfigurations ();
+        foreach (var configuration in configurations) {
+          foreach (var cncFieldId in configuration.CncFieldIds) {
+            fieldIds.Add (cncFieldId);
+          }
         }
+        var fields = new List<IField> ();
+        foreach (var fieldId in fieldIds) {
+          IField field = ModelDAOHelper.DAOFactory.FieldDAO
+            .FindById (fieldId);
+          if (null == field) {
+            log.Warn ($"GetFields: no field with id {fieldId}");
+          }
+          else {
+            fields.Add (field);
+          }
+        }
+        m_fields = fields;
+        return m_fields;
       }
-      var fields = new List<IField> ();
-      foreach (var fieldId in fieldIds) {
-        IField field = ModelDAOHelper.DAOFactory.FieldDAO
-          .FindById (fieldId);
-        if (null == field) {
-          log.Warn ($"Initialize: no field with id {fieldId}");
-        }
-        else {
-          fields.Add (field);
-        }
+    }
+
+    /// <summary>
+    /// Machine modules of a machine
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <returns>null if not a monitored machine</returns>
+    IEnumerable<IMachineModule> GetMachineModules (IMachine machine)
+    {
+      if (m_machineModules.TryGetValue (machine.Id, out var machineModules)) {
+        return machineModules;
       }
-      m_fields = fields;
-      
+
       IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
         .FindByIdWithMachineModules (machine.Id);
       if (null == monitoredMachine) {
-        log.Warn ($"Initialize: no monitored machine with id {machine.Id}");
-        m_initialized = true;
-        Debug.Assert (null != m_fields);
-        return;
+        log.Warn ($"GetMachineModules: no monitored machine with id {machine.Id}");
+        return null;
       }
-      m_machineModules = monitoredMachine.MachineModules;
-      
-      Debug.Assert (null != m_machineModules);
-      Debug.Assert (null != m_fields);
-      m_initialized = true;
+      machineModules = monitoredMachine.MachineModules.ToList ();
+      if (machineModules.Any ()) { // Not cached else: the machine modules may be created later
+        m_machineModules[machine.Id] = machineModules;
+      }
+      return machineModules;
     }
     
     void AddModify (IObservationStateSlot slot)
@@ -140,33 +160,29 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         return;
       }
 
-      Initialize (slot.Machine);
-
-      if (null == m_fields) { // Plugin not active
-        return;
-      }
-      if (!m_fields.Any ()) { // No configured field
+      var fields = GetFields ();
+      if (!fields.Any ()) { // No configured field
         return;
       }
 
-      if (null == m_machineModules) { // Not a monitored machine: nothing to do
+      Debug.Assert (null != slot.Machine);
+      var machineModules = GetMachineModules (slot.Machine);
+      if (null == machineModules) { // Not a monitored machine: nothing to do
         return;
       }
-      
-      if (ExistsSameRange (slot)) { // And update the slot properties in the same time
+
+      if (ExistsSameRange (slot, machineModules)) { // And update the slot properties in the same time
         // A slot already exists with the same range: nothing to do
         return;
       }
 
       // Remove any data that are deprecated now
-      Debug.Assert (null != slot.Machine);
-      RemoveOverlapsNotSameRange (slot.Machine.Id, slot.DateTimeRange);
-      
+      RemoveOverlapsNotSameRange (slot.Machine.Id, slot.DateTimeRange, machineModules);
+
       if (CncByMachineModuleField.IsRangeValid (slot.DateTimeRange, log)
           && CncByMachineModuleField.IsObservationStateSlotValid (slot, log)) {
-        Debug.Assert (null != m_machineModules);
-        foreach (var machineModule in m_machineModules) {
-          foreach (var field in m_fields) {
+        foreach (var machineModule in machineModules) {
+          foreach (var field in fields) {
             var implementation = new CncByMachineModuleField (machineModule, field);
             implementation.Recompute (slot.DateTimeRange);
           }
@@ -210,21 +226,20 @@ WHERE t.machineid={0} AND t.machinemoduleid={1}
     }
 
     /// <summary>
-    /// Initialize() must be run before calling ExistsSameRange
+    /// Check if some data already exist with the same range, and update the slot properties in the same time
     /// </summary>
     /// <param name="slot"></param>
+    /// <param name="machineModules">machine modules of the machine of the slot</param>
     /// <returns></returns>
-    bool ExistsSameRange (IObservationStateSlot slot)
+    bool ExistsSameRange (IObservationStateSlot slot, IEnumerable<IMachineModule> machineModules)
     {
-      Debug.Assert (m_initialized);
-      
       Debug.Assert (null != slot);
       if (null == slot) {
         log.Error ("ExistsSameRange: null slot");
         return false;
       }
-      
-      if (null == m_machineModules) { // Not a monitored machine => no data
+
+      if (null == machineModules) { // Not a monitored machine => no data
         return false;        
       }
       
@@ -248,7 +263,7 @@ WHERE t.machineid={0} AND t.machinemoduleid={1}
       Debug.Assert (slot.EndDay.HasValue);
       
       var connection = ModelDAOHelper.DAOFactory.GetConnection ();
-      foreach (var machineModule in m_machineModules) {
+      foreach (var machineModule in machineModules) {
         using (var command = connection.CreateCommand ())
         {
           command.CommandText =
@@ -288,22 +303,21 @@ RETURNING id
     }
 
     /// <summary>
-    /// Initialize() must be called before calling this method
+    /// Remove the data that overlap range but with another range
     /// </summary>
     /// <param name="machineId"></param>
     /// <param name="range"></param>
-    void RemoveOverlapsNotSameRange (int machineId, UtcDateTimeRange range)
+    /// <param name="machineModules">machine modules of the machine</param>
+    void RemoveOverlapsNotSameRange (int machineId, UtcDateTimeRange range, IEnumerable<IMachineModule> machineModules)
     {
       Debug.Assert (range.Lower.HasValue);
-      
-      Debug.Assert (m_initialized);
-      
-      if (null == m_machineModules) { // Not a monitored machine, nothing to do
+
+      if (null == machineModules) { // Not a monitored machine, nothing to do
         return;
       }
-      
+
       var connection = ModelDAOHelper.DAOFactory.GetConnection ();
-      foreach (var machineModule in m_machineModules) {
+      foreach (var machineModule in machineModules) {
         using (var command = connection.CreateCommand ())
         {
           if (!range.Upper.HasValue) {
