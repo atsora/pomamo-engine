@@ -48,6 +48,45 @@ namespace Lemoine.CncDataImport
   }
 
   /// <summary>
+  /// Read-only copy of a cnc data period, given to the extensions after the commit
+  /// </summary>
+  internal sealed class CncDataPeriodSnapshot : ICncDataPeriodValue
+  {
+    public long Id { get; }
+    public DateTime Begin { get; }
+    public DateTime End { get; }
+    public bool Stopped { get; }
+    public int? Count { get; }
+    public double? Average { get; }
+    public double? Min { get; }
+    public double? Max { get; }
+    public double? StdDev { get; }
+    public double? LastValue { get; }
+    public string StringValue { get; }
+    public string JsonValue { get; }
+    public bool Archived => false;
+    public UtcDateTimeRange DateTimeRange => new UtcDateTimeRange (this.Begin, this.End);
+
+    public CncDataPeriodSnapshot (ICncDataPeriodValue period)
+    {
+      this.Id = period.Id;
+      this.Begin = period.Begin;
+      this.End = period.End;
+      this.Stopped = period.Stopped;
+      this.Count = period.Count;
+      this.Average = period.Average;
+      this.Min = period.Min;
+      this.Max = period.Max;
+      this.StdDev = period.StdDev;
+      this.LastValue = period.LastValue;
+      this.StringValue = period.StringValue;
+      this.JsonValue = period.JsonValue;
+    }
+
+    public override string ToString () => $"[CncDataPeriodSnapshot {this.Id} {this.Begin:o}-{this.End:o}]";
+  }
+
+  /// <summary>
   /// Conversion of the values of the cnc data queue for table cncdataperiod
   /// </summary>
   internal static class CncDataPeriodValues
@@ -213,6 +252,11 @@ namespace Lemoine.CncDataImport
     readonly Lemoine.Threading.IChecked m_caller;
     readonly IEnumerable<Lemoine.Extensions.Cnc.IImportCncDataPeriodExtension> m_extensions;
     readonly ISet<int> m_unsupportedFields = new HashSet<int> ();
+    readonly IEnumerable<Lemoine.Extensions.Cnc.IImportCncDataPeriodsExtension> m_afterCommitExtensions;
+    DateTime? m_writtenLower = null; // Range of the periods written by the current import
+    DateTime? m_writtenUpper = null;
+    readonly IList<ICncDataPeriod> m_writtenPeriods = new List<ICncDataPeriod> (); // Periods written by the current import
+    readonly IList<CncDataIncrement> m_increments = new List<CncDataIncrement> (); // New numeric data of the current import
 
     /// <summary>
     /// <see cref="IImportData"/>
@@ -251,6 +295,40 @@ namespace Lemoine.CncDataImport
         .GetExtensions<Lemoine.Extensions.Cnc.IImportCncDataPeriodExtension> ()
         .Where (extension => extension.Initialize (m_machineModule))
         .ToList ();
+      m_afterCommitExtensions = ExtensionManager
+        .GetExtensions<Lemoine.Extensions.Cnc.IImportCncDataPeriodsExtension> ()
+        .Where (extension => extension.Initialize (m_machineModule))
+        .ToList ();
+    }
+
+    /// <summary>
+    /// Extend the range of the written periods
+    /// </summary>
+    void AddWritten (DateTime begin, DateTime end)
+    {
+      if (!m_writtenLower.HasValue || (begin < m_writtenLower.Value)) {
+        m_writtenLower = begin;
+      }
+      if (!m_writtenUpper.HasValue || (m_writtenUpper.Value < end)) {
+        m_writtenUpper = end;
+      }
+    }
+
+    /// <summary>
+    /// Call the extensions after the commit, outside the session.
+    /// Their exceptions are logged: the data are already committed
+    /// </summary>
+    void NotifyAfterCommit (IField field, UtcDateTimeRange range, IList<ICncDataPeriodValue> writtenPeriods, IList<CncDataIncrement> increments)
+    {
+      foreach (var extension in m_afterCommitExtensions) {
+        try {
+          SetActive ();
+          extension.AfterCommit (m_machineModule, field, range, writtenPeriods, increments);
+        }
+        catch (Exception ex) {
+          log.Error ($"NotifyAfterCommit: exception in extension {extension} for field {field.Code} and range {range}, but the data was committed => skip it", ex);
+        }
+      }
     }
 
     void SetActive () => m_caller?.SetActive ();
@@ -273,6 +351,13 @@ namespace Lemoine.CncDataImport
       var key = datas[0].Key;
 
       IField field = null;
+      UtcDateTimeRange committedRange = null;
+      IList<ICncDataPeriodValue> committedPeriods = null;
+      IList<CncDataIncrement> committedIncrements = null;
+      m_writtenLower = null;
+      m_writtenUpper = null;
+      m_writtenPeriods.Clear ();
+      m_increments.Clear ();
       try {
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           field = ModelDAOHelper.DAOFactory.FieldDAO.FindByCode (key);
@@ -327,12 +412,23 @@ namespace Lemoine.CncDataImport
                 if (null != extension) {
                   extension.Import (m_machineModule, field,
                     datas.Select (d => new KeyValuePair<DateTime, object> (d.DateTime, d.Value)).ToList ());
+                  // The extension writes the periods itself: range of the imported values
+                  AddWritten (CncDataWeek.TruncateToMilliseconds (datas[0].DateTime), CncDataWeek.TruncateToMilliseconds (datas[datas.Count - 1].DateTime));
                 }
               }
               break;
             }
             SetActive ();
             transaction.Commit ();
+          }
+          if (m_writtenLower.HasValue) {
+            committedRange = new UtcDateTimeRange (m_writtenLower.Value, m_writtenUpper.Value, "[]");
+            // Read-only copies in their state after the commit (with the ids of the new periods)
+            committedPeriods = m_writtenPeriods
+              .Select (p => (ICncDataPeriodValue)new CncDataPeriodSnapshot (p))
+              .OrderBy (p => p.Begin)
+              .ToList ();
+            committedIncrements = m_increments.ToList ();
           }
         }
       }
@@ -342,6 +438,11 @@ namespace Lemoine.CncDataImport
           Reset (field.Id);
         }
         throw;
+      }
+
+      // After the commit and outside the session
+      if (null != committedRange) {
+        NotifyAfterCommit (field, committedRange, committedPeriods, committedIncrements);
       }
     }
     #endregion // IImportData implementation
@@ -380,6 +481,17 @@ namespace Lemoine.CncDataImport
     void Persist (ICncDataPeriod period)
     {
       ModelDAOHelper.DAOFactory.CncDataPeriodDAO.MakePersistent (period);
+      AddWritten (period.Begin, period.End);
+      if (!m_writtenPeriods.Any (p => object.ReferenceEquals (p, period))) {
+        m_writtenPeriods.Add (period);
+      }
+    }
+
+    void AddIncrement (DateTime begin, DateTime end, double? value, CncDataStatistics? received)
+    {
+      if (value.HasValue || received.HasValue) {
+        m_increments.Add (new CncDataIncrement (begin, end, value, received));
+      }
     }
 
     ICncDataPeriod Create (IField field, DateTime begin)
@@ -452,6 +564,8 @@ namespace Lemoine.CncDataImport
 
       if (!IsNewPeriodRequired (field, state, dateTime)) {
         var period = state.Period;
+        // The previous value lasts up to the new value
+        AddIncrement (period.End, dateTime, period.LastValue, null);
         // The previous value lasts up to the week bound, then continues in the next week
         while (period.MaxEnd < dateTime) {
           var weekEnd = period.MaxEnd;
@@ -473,6 +587,7 @@ namespace Lemoine.CncDataImport
       }
 
       // New period
+      AddIncrement (dateTime, dateTime, value.Number, value.Number.HasValue ? CncDataStatistics.FromValue (value.Number.Value) : (CncDataStatistics?)null);
       var newPeriod = Create (field, dateTime);
       SetChangeValue (newPeriod, value);
       Persist (newPeriod);
@@ -490,11 +605,14 @@ namespace Lemoine.CncDataImport
       }
 
       if (IsNewPeriodRequired (field, state, dateTime)) {
+        AddIncrement (dateTime, dateTime, statistics.Average, statistics);
         StartStatistics (field, state, dateTime, dateTime, statistics);
         return;
       }
 
       var period = state.Period;
+      // The new values cover the time since the previous data, whatever the periods become (extended, split, week bound)
+      AddIncrement (period.End, dateTime, statistics.Average, statistics);
       if (period.MaxEnd < dateTime) {
         // Close the period at the week bound, the value starts a period in the next week
         var weekEnd = period.MaxEnd;
