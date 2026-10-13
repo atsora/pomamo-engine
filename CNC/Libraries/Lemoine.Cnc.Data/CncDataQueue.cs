@@ -16,6 +16,7 @@ namespace Lemoine.Cnc.Data
   public class CncDataQueue<T>
     : ICncDataQueue
     , IConfigurable
+    , IEnqueueRange
     where T : IExtendedQueue<ExchangeData>
   {
     readonly string MACHINE_ID_KEY = "MachineId";
@@ -161,6 +162,14 @@ namespace Lemoine.Cnc.Data
     public void Enqueue (ExchangeData item)
     {
       m_extendedQueue.Enqueue (item);
+    }
+
+    /// <summary>
+    /// <see cref="IEnqueueRange" />
+    /// </summary>
+    public void EnqueueRange (IList<ExchangeData> items)
+    {
+      m_extendedQueue.EnqueueRange (items);
     }
 
     /// <summary>

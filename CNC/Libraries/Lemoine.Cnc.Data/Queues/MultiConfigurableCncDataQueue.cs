@@ -20,6 +20,7 @@ namespace Lemoine.Cnc.Data
   /// </summary>
   public sealed class MultiConfigurableCncDataQueue
     : IMultiCncDataQueue
+    , IEnqueueRange
     , IConfigurable
     , IListConfigurable
     , IChecked
@@ -282,16 +283,35 @@ namespace Lemoine.Cnc.Data
     {
       Initialize ();
 
+      GetWriteQueue (item)?.Enqueue (item);
+    }
+
+    /// <summary>
+    /// <see cref="IEnqueueRange"/>
+    /// </summary>
+    /// <param name="items"></param>
+    public void EnqueueRange (IList<ExchangeData> items)
+    {
+      Initialize ();
+
+      EnqueueRangeExtensions.EnqueueRangeInSubQueues (items, GetWriteQueue);
+    }
+
+    /// <summary>
+    /// Sub-queue to write a data in, null if none
+    /// </summary>
+    IQueue<ExchangeData> GetWriteQueue (ExchangeData item)
+    {
       if (m_prioritizedWriteQueues.ContainsKey (item.Command)) {
         foreach (var triple in m_prioritizedWriteQueues[item.Command]) {
           if (triple.Item2.IsMatch (item.Key ?? "")) {
-            triple.Item3.Enqueue (item);
-            return;
+            return triple.Item3;
           }
         }
       }
 
       log.Warn ($"No queues configured for storing {item}");
+      return null;
     }
 
     /// <summary>

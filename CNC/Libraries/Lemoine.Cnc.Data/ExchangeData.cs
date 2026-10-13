@@ -120,6 +120,11 @@ namespace Lemoine.Cnc.Data
       return new DateTime (dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond), dt.Kind);
     }
 
+    static DateTime TruncateToMilliseconds (DateTime dt)
+    {
+      return new DateTime (dt.Ticks - (dt.Ticks % TimeSpan.TicksPerMillisecond), dt.Kind);
+    }
+
     static readonly ILog log = LogManager.GetLogger (typeof (ExchangeData).FullName);
 
     /// <summary>
@@ -133,13 +138,22 @@ namespace Lemoine.Cnc.Data
     public int MachineModuleId { get; set; }
 
     /// <summary>
-    /// Date/time of the data
+    /// Date/time of the data, truncated to the second
+    /// (the precision of the historical tables and of the historical acquisition frequency)
     /// </summary>
     public DateTime DateTime
     {
       get { return TruncateToSeconds (m_dateTime); }
       set { m_dateTime = value; }
     }
+
+    /// <summary>
+    /// Date/time of the data, truncated to the millisecond, for the consumers that need it (table cncdataperiod).
+    ///
+    /// The queues store this date/time. A data that was stored by a previous version (truncated to the second)
+    /// has the same date/time here as in <see cref="DateTime"/>
+    /// </summary>
+    public DateTime PreciseDateTime => TruncateToMilliseconds (m_dateTime);
 
     /// <summary>
     /// Command
@@ -644,7 +658,7 @@ namespace Lemoine.Cnc.Data
     {
       info.AddValue ("M", this.MachineId, typeof (int));
       info.AddValue ("MM", this.MachineModuleId, typeof (int));
-      info.AddValue ("DT", this.DateTime, typeof (DateTime));
+      info.AddValue ("DT", this.PreciseDateTime, typeof (DateTime)); // A previous version reading it truncates it to the second
       info.AddValue ("CO", this.Command.ToString (), typeof (ExchangeDataCommand));
       info.AddValue ("K", this.Key, typeof (string));
 

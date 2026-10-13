@@ -60,7 +60,7 @@ namespace Lemoine.CncDataImport
     public void ImportDatas (IList<ExchangeData> datas, CancellationToken cancellationToken = default)
     {
       var key = datas[0].Key;
-      var dateTime = datas[0].DateTime;
+      var dateTime = datas[0].PreciseDateTime;
 
       IField field = null;
       try {

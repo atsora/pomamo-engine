@@ -15,7 +15,7 @@ namespace Lemoine.Cnc.Data
   /// according to the kind of data
   /// </summary>
   public abstract class MultiGenericCncDataQueue
-    : IMultiCncDataQueue, IDisposable, IChecked
+    : IMultiCncDataQueue, IDisposable, IChecked, IEnqueueRange
   {
     /// <summary>
     /// <see cref="ICncDataQueue" />
@@ -276,33 +276,49 @@ namespace Lemoine.Cnc.Data
     {
       Initialize ();
 
+      GetQueue (data)?.Enqueue (data);
+    }
+
+    /// <summary>
+    /// <see cref="IEnqueueRange"/>
+    /// </summary>
+    /// <param name="items"></param>
+    public void EnqueueRange (IList<ExchangeData> items)
+    {
+      Initialize ();
+
+      EnqueueRangeExtensions.EnqueueRangeInSubQueues (items, GetQueue);
+    }
+
+    /// <summary>
+    /// Sub-queue of a data, null if none
+    /// </summary>
+    IQueue<ExchangeData> GetQueue (ExchangeData data)
+    {
       switch (data.Command) {
       case ExchangeDataCommand.MachineMode:
-        m_machineModeQueue.Enqueue (data);
-        break;
+        return m_machineModeQueue;
       case ExchangeDataCommand.MachineModuleActivity:
-        m_machineModuleActivityQueue.Enqueue (data);
-        break;
+        return m_machineModuleActivityQueue;
       case ExchangeDataCommand.Stamp:
       case ExchangeDataCommand.Action:
       case ExchangeDataCommand.DetectionTimeStamp:
       case ExchangeDataCommand.CncVariableSet:
       case ExchangeDataCommand.SequenceMilestone:
-        m_stampActionVariableQueue.Enqueue (data);
-        break;
+        return m_stampActionVariableQueue;
       case ExchangeDataCommand.CncValue:
       case ExchangeDataCommand.StopCncValue:
         string fieldKey = data.Key;
         if (m_cncValueToQueue.ContainsKey (fieldKey)) {
-          m_cncValueToQueue[fieldKey].Enqueue (data);
+          return m_cncValueToQueue[fieldKey];
         }
         else {
-          m_otherCncValues.Enqueue (data);
+          return m_otherCncValues;
         }
-        break;
       case ExchangeDataCommand.CncAlarm:
-        m_alarmQueue.Enqueue (data);
-        break;
+        return m_alarmQueue;
+      default:
+        return null;
       }
     }
 

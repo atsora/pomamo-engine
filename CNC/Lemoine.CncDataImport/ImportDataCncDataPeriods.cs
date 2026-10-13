@@ -386,7 +386,7 @@ namespace Lemoine.CncDataImport
                 foreach (var data in datas) {
                   SetActive ();
                   if (CncDataPeriodValues.TryGetChangeValue (field, data.Value, out var value)) {
-                    ProcessChange (field, state, data.DateTime, value);
+                    ProcessChange (field, state, data.PreciseDateTime, value);
                   }
                   else {
                     log.Error ($"ImportDatas: value {data.Value} of {data} can't be converted for field {field.Code} of type {field.Type} => skip it");
@@ -399,7 +399,7 @@ namespace Lemoine.CncDataImport
                 foreach (var data in datas) {
                   SetActive ();
                   if (CncDataPeriodValues.TryGetStatistics (data.Value, out var statistics)) {
-                    ProcessStatistics (field, state, data.DateTime, statistics);
+                    ProcessStatistics (field, state, data.PreciseDateTime, statistics);
                   }
                   else {
                     log.Error ($"ImportDatas: value {data.Value} of {data} is not numeric for field {field.Code} => skip it");
@@ -411,9 +411,9 @@ namespace Lemoine.CncDataImport
                 var extension = GetExtension (field);
                 if (null != extension) {
                   extension.Import (m_machineModule, field,
-                    datas.Select (d => new KeyValuePair<DateTime, object> (d.DateTime, d.Value)).ToList ());
+                    datas.Select (d => new KeyValuePair<DateTime, object> (d.PreciseDateTime, d.Value)).ToList ());
                   // The extension writes the periods itself: range of the imported values
-                  AddWritten (CncDataWeek.TruncateToMilliseconds (datas[0].DateTime), CncDataWeek.TruncateToMilliseconds (datas[datas.Count - 1].DateTime));
+                  AddWritten (datas[0].PreciseDateTime, datas[datas.Count - 1].PreciseDateTime);
                 }
               }
               break;
