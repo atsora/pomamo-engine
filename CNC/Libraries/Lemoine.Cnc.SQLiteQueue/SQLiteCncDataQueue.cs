@@ -53,6 +53,9 @@ namespace Lemoine.Cnc.SQLiteQueue
     static readonly string JOURNAL_MODE_KEY = "JournalMode";
     static readonly string JOURNAL_MODE_DEFAULT = "Wal"; // Wal / Default (keep the mode of the file) / Delete / Truncate / Persist / Memory / Off
 
+    static readonly string MAX_ROWS_KEY = "MaxRows"; // Maximum number of data in the queue, the oldest ones are removed. 0: no limit
+    static readonly TimeSpan DROP_LOG_PERIOD = TimeSpan.FromMinutes (1);
+
     static readonly string SERIALIZER_KEY = "SQLiteQueue.Serializer";
     static readonly string SERIALIZER_MESSAGEPACK = "MessagePack";
     static readonly string SERIALIZER_DEFAULT = SERIALIZER_MESSAGEPACK; // MessagePack / BinaryFormatter
@@ -81,6 +84,10 @@ namespace Lemoine.Cnc.SQLiteQueue
     MemoryConfigReader m_defaultConfigReader = new MemoryConfigReader ();
     SQLiteConnection m_connection;
     SQLiteCommand m_insertCommand = null; // Prepared insert command
+    List<long> m_lastPeekIds = new List<long> (); // Ids of the data returned by the last Peek, not dequeued yet
+    int m_maxRows = 0; // 0: no limit
+    long m_droppedRows = 0; // Rows removed because of MaxRows, not logged yet
+    DateTime m_lastDropLog = DateTime.MinValue;
     SQLiteJournalModeEnum m_journalMode = SQLiteJournalModeEnum.Wal;
     string m_fileName = null;
     string m_filePath;
@@ -175,6 +182,7 @@ namespace Lemoine.Cnc.SQLiteQueue
       m_defaultConfigReader.Add ("SynchroMode", "Normal");
       m_defaultConfigReader.Add ("CheckIntegrity", false);
       m_defaultConfigReader.Add (JOURNAL_MODE_KEY, JOURNAL_MODE_DEFAULT);
+      m_defaultConfigReader.Add (MAX_ROWS_KEY, 0);
 
       string directory = Path.Combine (PulseInfo.LocalConfigurationDirectory, "Cnc");
       if (!Directory.Exists (directory)) {
@@ -244,6 +252,12 @@ namespace Lemoine.Cnc.SQLiteQueue
       catch (Exception ex) {
         log.Error ($"Initialize: {JOURNAL_MODE_KEY} is not defined, use the default {m_journalMode}", ex);
       }
+      try {
+        m_maxRows = Math.Max (0, m_configReader.Get<int> (MAX_ROWS_KEY));
+      }
+      catch (Exception ex) {
+        log.Error ($"Initialize: {MAX_ROWS_KEY} is not defined, no limit", ex);
+      }
 
       // Directory
       string directory;
@@ -312,6 +326,12 @@ namespace Lemoine.Cnc.SQLiteQueue
       m_tableName = tableName;
 
       string filePath = Path.Combine (directory, fileName);
+      // For example a directory in a tmpfs (/dev/shm/...) that does not exist any more after a reboot
+      var fileDirectory = Path.GetDirectoryName (Path.GetFullPath (filePath));
+      if (!string.IsNullOrEmpty (fileDirectory) && !Directory.Exists (fileDirectory)) {
+        log.Info ($"Initialize: create the directory {fileDirectory}");
+        Directory.CreateDirectory (fileDirectory);
+      }
       var connBuilder = new SQLiteConnectionStringBuilder {
         DataSource = filePath,
         // WAL: the writer (CncService) and the reader (CncDataService) do not block each other,
@@ -599,6 +619,7 @@ WHERE Id>=(SELECT FirstId FROM {0}FirstId)",
     public void Clear ()
     {
       Initialize ();
+      m_lastPeekIds.Clear ();
 
       using (DbCommand command = m_connection.CreateCommand ()) {
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
@@ -628,28 +649,56 @@ SET FirstId= COALESCE ((SELECT MAX(Id) from {0})+1, 0)", m_tableName);
       using (DbTransaction transaction = m_connection.BeginTransaction ()) {
         ExchangeData data = Peek ();
 
-        using (DbCommand command = m_connection.CreateCommand ()) {
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
-          command.CommandText = string.Format (@"
-UPDATE {0}FirstId
-SET FirstId=(SELECT MIN(Id)
-             FROM {0}
-             WHERE Id>=(SELECT FirstId FROM {0}FirstId))+1",
-                                               m_tableName);
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-          try {
-            command.ExecuteNonQuery ();
-          }
-          catch (Exception ex) {
-            log.Error ($"Peek: DELETE FROM {m_tableName} failed", ex);
-            transaction.Rollback ();
-            throw;
-          }
+        try {
+          AdvanceFirstId (1);
+        }
+        catch (Exception ex) {
+          log.Error ($"Dequeue: UPDATE {m_tableName}FirstId failed", ex);
+          transaction.Rollback ();
+          throw;
         }
 
         transaction.Commit ();
 
         return data;
+      }
+    }
+
+    /// <summary>
+    /// Move the first id after the n first data, in the current transaction.
+    ///
+    /// If the n data were returned by the last Peek, the first id is moved just after the n-th of them,
+    /// so that the data that were removed in the meantime (MaxRows) or that could not be read are not counted.
+    /// Else (previous behavior), the first id is moved n rows after the first remaining row
+    /// </summary>
+    void AdvanceFirstId (int n)
+    {
+      using (DbCommand command = m_connection.CreateCommand ()) {
+        if ((0 < n) && (n <= m_lastPeekIds.Count)) {
+          var lastId = m_lastPeekIds[n - 1];
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+          command.CommandText = string.Format (@"
+UPDATE {0}FirstId
+SET FirstId=MAX(FirstId, {1})",
+                                               m_tableName,
+                                               lastId + 1);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+          command.ExecuteNonQuery ();
+          m_lastPeekIds.RemoveRange (0, n);
+        }
+        else {
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+          command.CommandText = string.Format (@"
+UPDATE {0}FirstId
+SET FirstId=(SELECT MIN(Id)
+             FROM {0}
+             WHERE Id>=(SELECT FirstId FROM {0}FirstId))+{1}",
+                                               m_tableName,
+                                               n);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+          command.ExecuteNonQuery ();
+          m_lastPeekIds.Clear ();
+        }
       }
     }
 
@@ -670,22 +719,9 @@ SET FirstId=(SELECT MIN(Id)
     {
       Initialize ();
 
-      DateTime refTime = DateTime.UtcNow;
-
-      using (DbTransaction transaction = m_connection.BeginTransaction ())
-      using (DbCommand command = m_connection.CreateCommand ()) {
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
-        command.CommandText = string.Format (@"
-UPDATE {0}FirstId
-SET FirstId=(SELECT MIN(Id)
-             FROM {0}
-             WHERE Id>=(SELECT FirstId FROM {0}FirstId))+{1}",
-                                             m_tableName,
-                                             n);
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-
+      using (DbTransaction transaction = m_connection.BeginTransaction ()) {
         try {
-          command.ExecuteNonQuery ();
+          AdvanceFirstId (n);
         }
         catch (Exception ex) {
           log.Error ($"UnsafeDequeue: UPDATE {m_tableName}FirstId failed", ex);
@@ -784,6 +820,54 @@ SET FirstId=(SELECT MIN(Id)
     }
 
     /// <summary>
+    /// If MaxRows is set, remove the oldest data beyond it, in the current transaction (writer side),
+    /// for example for a queue in RAM (tmpfs) when the consumer or the database stops for a long time.
+    ///
+    /// The ids are consecutive (AUTOINCREMENT, inserts only): the number of data is MAX(Id) - FirstId + 1,
+    /// without any COUNT. The first id only moves forward; the removed rows are deleted later as the dequeued ones
+    /// </summary>
+    void EnforceMaxRows ()
+    {
+      if (m_maxRows <= 0) {
+        return;
+      }
+      long firstId, maxId;
+      using (DbCommand command = m_connection.CreateCommand ()) {
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+        command.CommandText = string.Format (@"
+SELECT (SELECT FirstId FROM {0}FirstId), (SELECT COALESCE (MAX(Id), 0) FROM {0})",
+                                             m_tableName);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+        using (var reader = command.ExecuteReader ()) {
+          reader.Read ();
+          firstId = Convert.ToInt64 (reader[0]);
+          maxId = Convert.ToInt64 (reader[1]);
+        }
+      }
+      var newFirstId = maxId - m_maxRows + 1;
+      if (newFirstId <= firstId) {
+        return;
+      }
+      using (DbCommand command = m_connection.CreateCommand ()) {
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+        command.CommandText = string.Format (@"
+UPDATE {0}FirstId
+SET FirstId=MAX(FirstId, {1})",
+                                             m_tableName,
+                                             newFirstId);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+        command.ExecuteNonQuery ();
+      }
+      m_droppedRows += newFirstId - firstId;
+      var now = DateTime.UtcNow;
+      if (DROP_LOG_PERIOD <= now.Subtract (m_lastDropLog)) {
+        log.Warn ($"EnforceMaxRows: {m_droppedRows} data were removed because the queue {m_fileName} reached {m_maxRows} data (consumer or database too slow or stopped)");
+        m_droppedRows = 0;
+        m_lastDropLog = now;
+      }
+    }
+
+    /// <summary>
     /// Delete the data that were dequeued, at most every MIN_DELAY_BETWEEN_DELETE
     /// </summary>
     void DeleteDequeuedIfNeeded ()
@@ -864,6 +948,7 @@ VALUES (@MachineId, @MachineModuleId, @DateTime, @Command, @Key, @ValueType, @Va
               throw;
             }
           }
+          EnforceMaxRows ();
           transaction.Commit ();
         }
         finally {
@@ -1079,13 +1164,14 @@ VALUES (@MachineId, @MachineModuleId, @DateTime, @Command, @Key, @ValueType, @Va
       log.Debug ("Peek /B");
 
       IList<ExchangeData> datas = new List<ExchangeData> ();
+      var peekIds = new List<long> ();
       DbDataReader reader = null;
 
       try {
         using (DbCommand command = m_connection.CreateCommand ()) {
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
           command.CommandText = string.Format (@"
-SELECT MachineId, MachineModuleId, DateTime, Command, Key, ValueType, ValueString, ValueInt, ValueDouble, ValueBinary
+SELECT MachineId, MachineModuleId, DateTime, Command, Key, ValueType, ValueString, ValueInt, ValueDouble, ValueBinary, Id
 FROM {0}
 WHERE Id>=(SELECT FirstId FROM {0}FirstId)
 ORDER BY Id Asc
@@ -1179,6 +1265,7 @@ LIMIT {1}",
                                                                dateTime, dataCommand, key, val);
 
             datas.Add (data);
+            peekIds.Add (Convert.ToInt64 (reader[10]));
           }
           catch (Exception ex) {
             log.Error ($"Peek.{machineId}.{machineModuleId}: error while getting the data key={key} at={dateTime}, skip it", ex);
@@ -1192,6 +1279,7 @@ LIMIT {1}",
         }
       }
 
+      m_lastPeekIds = peekIds; // For UnsafeDequeue
       if (log.IsDebugEnabled) {
         log.Debug ($"Peek: return {datas.Count} elements from the {nbElements} asked elements");
       }

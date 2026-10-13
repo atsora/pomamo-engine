@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!-- Configuration of the queues between the cnc acquisition (AtrackingCncCoreService / Lem_CncService)
+     and Lem_CncDataService, for a small local Linux server
+
+  /++++++++++/    /+++++++++++++++/    /++++++++++++++++/              /++++++++++++++++++++/    /++++++++++/
+ / Machines / => / Input modules / => / Acquisition    / => QUEUES => / Lem_CncDataService / => / Database /
+/++++++++++/    /+++++++++++++++/    /++++++++++++++++/              /++++++++++++++++++++/    /++++++++++/
+
+To use it, copy it in the install directory and rename the copy into CncQueues.overwrite.xml
+
+Principle:
+- The data that must not be lost (machine modes, stamps / actions / variables, machine module activity,
+  cnc alarms, stack light) remain on disk, in SQLite files with the journal mode WAL (default directory).
+- The other cnc values (feedrates, overrides, loads, speeds, statistics...) are stored in RAM,
+  in SQLite files in the tmpfs /dev/shm/atracking (created if needed):
+  * no disk write and no synchronization (SynchroMode="Off"): low CPU and no wear of the disk;
+  * the data survive a restart of the acquisition or of Lem_CncDataService,
+    but they are lost after a reboot of the server;
+  * MaxRows bounds each queue: if Lem_CncDataService or the database stops for a long time,
+    the oldest data are removed (a warning is logged at most every minute).
+    About 150 bytes per data: 200 000 data = about 30 MB of RAM per queue,
+    that is about 2 days for a field at 1 value/s.
+
+Requirements:
+- Lem_CncDataService and the acquisition run with the same user (atracking) and without PrivateTmp,
+  so that they share /dev/shm (this is the case of the atracking-*.service units).
+- /dev/shm is limited by default to half the RAM: check the sum of the MaxRows fits in it,
+  or use a dedicated tmpfs with a size limit, for example in /etc/fstab:
+    tmpfs /var/lib/atracking/ramqueues tmpfs size=256m,mode=0750,uid=atracking,gid=atracking 0 0
+  and replace /dev/shm/atracking below.
+
+To keep a field on disk, add a sub-queue for it without the Directory / SynchroMode / MaxRows attributes,
+with a write priority lower than the one of the RAM sub-queues (the first matching sub-queue is used).
+-->
+<queueconfiguration xmlns="http://config.cnc.pulse.lemoinetechnologies.com"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <queue type="Lemoine.Cnc.Data.MultiConfigurableCncDataQueue, Lemoine.Cnc.Data">
+    <configuration prefix="CncDataFifoDb-"
+                   SynchroMode="Normal"
+                   JournalMode="Wal"
+                   CheckIntegrity="false"
+                   Persistent="true"
+                   QueueType="Lemoine.Cnc.SQLiteQueue.SQLiteCncDataQueue, Lemoine.Cnc.SQLiteQueue" />
+    <queues>
+      <!-- ON DISK -->
+
+      <!-- Machine modes -->
+      <queue>
+        <configuration suffix=""
+                       commandfilter="MachineMode|MachineModePeriod"
+                       regexfieldfilter=""
+                       writepriority="0"
+                       readpriority="0" />
+      </queue>
+
+      <!-- Stamps, actions (cycles, quantities), variables -->
+      <queue>
+        <configuration suffix="-StampAction"
+                       commandfilter="Stamp|Action|DetectionTimeStamp|CncVariableSet|SequenceMilestone"
+                       regexfieldfilter=""
+                       writepriority="10"
+                       readpriority="10" />
+      </queue>
+
+      <!-- Machine module activity -->
+      <queue>
+        <configuration suffix="-MachineModuleActivity"
+                       commandfilter="MachineModuleActivity"
+                       regexfieldfilter=""
+                       writepriority="20"
+                       readpriority="20" />
+      </queue>
+
+      <!-- Cnc alarms -->
+      <queue>
+        <configuration suffix="-CncAlarm"
+                       commandfilter="CncAlarm"
+                       regexfieldfilter=""
+                       writepriority="30"
+                       readpriority="30" />
+      </queue>
+
+      <!-- Stack light (alerts, red stack light) -->
+      <queue>
+        <configuration suffix="-StackLight"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^StackLight$"
+                       writepriority="40"
+                       readpriority="40" />
+      </queue>
+
+      <!-- IN RAM (tmpfs) -->
+
+      <!-- Overrides -->
+      <queue>
+        <configuration suffix="-CV-Overrides"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^(FeedrateOverride|RapidTraverseOverride|SpindleSpeedOverride|EffectiveOverride|EffectiveFeedrateOverride|EffectiveRapidTraverseOverride|EffectiveSpindleSpeedOverride)$"
+                       writepriority="100"
+                       readpriority="100"
+                       Directory="/dev/shm/atracking"
+                       SynchroMode="Off"
+                       MaxRows="200000" />
+      </queue>
+
+      <!-- Spindle and feed: speeds, loads, feedrates and their statistics -->
+      <queue>
+        <configuration suffix="-CV-SpindleFeed"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter="^(SpindleLoad|SpindleLoadPeak|SpindleSpeed|Feedrate|FeedrateUS|RapidTraverseRate|RapidTraverseRateUS)(Statistics)?$"
+                       writepriority="110"
+                       readpriority="110"
+                       Directory="/dev/shm/atracking"
+                       SynchroMode="Off"
+                       MaxRows="200000" />
+      </queue>
+
+      <!-- All the other cnc values -->
+      <queue>
+        <configuration suffix="-CV-other"
+                       commandfilter="CncValue|StopCncValue"
+                       regexfieldfilter=""
+                       writepriority="200"
+                       readpriority="-1"
+                       Directory="/dev/shm/atracking"
+                       SynchroMode="Off"
+                       MaxRows="200000" />
+      </queue>
+    </queues>
+  </queue>
+</queueconfiguration>
