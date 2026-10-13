@@ -487,11 +487,33 @@ namespace Lemoine.CncDataImport
       }
     }
 
-    void AddIncrement (DateTime begin, DateTime end, double? value, CncDataStatistics? received)
+    /// <summary>
+    /// Add an increment, combined with the previous one when they are contiguous and their values close enough:
+    /// same rule as the periods, the value differs of at most LimitDeviation from the combined value
+    /// (no combination if LimitDeviation is null) and the combined increment does not last more than PeriodMaxDuration
+    /// </summary>
+    void AddIncrement (IField field, DateTime begin, DateTime end, double? value, CncDataStatistics? received)
     {
-      if (value.HasValue || received.HasValue) {
-        m_increments.Add (new CncDataIncrement (begin, end, value, received));
+      if (!value.HasValue && !received.HasValue) {
+        return;
       }
+      if (0 < m_increments.Count) {
+        var last = m_increments[m_increments.Count - 1];
+        if (field.LimitDeviation.HasValue
+          && (last.End == begin)
+          && last.Value.HasValue && value.HasValue
+          && (Math.Abs (value.Value - last.Value.Value) <= field.LimitDeviation.Value)
+          && (!field.PeriodMaxDuration.HasValue || (end.Subtract (last.Begin) <= field.PeriodMaxDuration.Value))) {
+          var lastSeconds = last.Duration.TotalSeconds;
+          var seconds = end.Subtract (begin).TotalSeconds;
+          var combinedValue = (0 < lastSeconds + seconds)
+            ? (last.Value.Value * lastSeconds + value.Value * seconds) / (lastSeconds + seconds) // Time-weighted
+            : last.Value.Value;
+          m_increments[m_increments.Count - 1] = new CncDataIncrement (last.Begin, end, combinedValue, Combine (last.Received, received));
+          return;
+        }
+      }
+      m_increments.Add (new CncDataIncrement (begin, end, value, received));
     }
 
     ICncDataPeriod Create (IField field, DateTime begin)
@@ -565,7 +587,7 @@ namespace Lemoine.CncDataImport
       if (!IsNewPeriodRequired (field, state, dateTime)) {
         var period = state.Period;
         // The previous value lasts up to the new value
-        AddIncrement (period.End, dateTime, period.LastValue, null);
+        AddIncrement (field, period.End, dateTime, period.LastValue, null);
         // The previous value lasts up to the week bound, then continues in the next week
         while (period.MaxEnd < dateTime) {
           var weekEnd = period.MaxEnd;
@@ -587,7 +609,7 @@ namespace Lemoine.CncDataImport
       }
 
       // New period
-      AddIncrement (dateTime, dateTime, value.Number, value.Number.HasValue ? CncDataStatistics.FromValue (value.Number.Value) : (CncDataStatistics?)null);
+      AddIncrement (field, dateTime, dateTime, value.Number, value.Number.HasValue ? CncDataStatistics.FromValue (value.Number.Value) : (CncDataStatistics?)null);
       var newPeriod = Create (field, dateTime);
       SetChangeValue (newPeriod, value);
       Persist (newPeriod);
@@ -605,14 +627,14 @@ namespace Lemoine.CncDataImport
       }
 
       if (IsNewPeriodRequired (field, state, dateTime)) {
-        AddIncrement (dateTime, dateTime, statistics.Average, statistics);
+        AddIncrement (field, dateTime, dateTime, statistics.Average, statistics);
         StartStatistics (field, state, dateTime, dateTime, statistics);
         return;
       }
 
       var period = state.Period;
       // The new values cover the time since the previous data, whatever the periods become (extended, split, week bound)
-      AddIncrement (period.End, dateTime, statistics.Average, statistics);
+      AddIncrement (field, period.End, dateTime, statistics.Average, statistics);
       if (period.MaxEnd < dateTime) {
         // Close the period at the week bound, the value starts a period in the next week
         var weekEnd = period.MaxEnd;

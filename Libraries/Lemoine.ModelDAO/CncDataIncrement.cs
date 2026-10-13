@@ -15,6 +15,10 @@ namespace Lemoine.Model
   /// <item>Change aggregation: the previous value lasts up to the new value: [previous date/time, End] with Value = previous value,
   ///       then [End, End] with the new value in Received</item>
   /// <item>Statistics aggregation: [end of the previous data, End] with the statistics of the new values (Value = their average)</item>
+  ///
+  /// Contiguous increments are combined while their values remain within the LimitDeviation of the field
+  /// (Value: time-weighted average, Received: combined statistics), with the same rule as the periods:
+  /// a difference larger than LimitDeviation, or no LimitDeviation, starts a new increment
   /// </summary>
   public sealed class CncDataIncrement
   {
