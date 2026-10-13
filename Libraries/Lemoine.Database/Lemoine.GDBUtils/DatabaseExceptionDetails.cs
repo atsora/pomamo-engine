@@ -181,8 +181,9 @@ namespace Lemoine.GDBUtils
       m_databaseExceptionMessage = postgresException.Message;
       m_sqlState = postgresException.SqlState;
       m_detail = postgresException.Detail;
-      if (null != postgresException.Statement) {
-        m_errorSql = postgresException.Statement.SQL;
+      // Since Npgsql 7, Statement is replaced by BatchCommand
+      if (postgresException.BatchCommand is not null) {
+        m_errorSql = postgresException.BatchCommand.CommandText;
       }
       m_file = postgresException.File;
       m_hint = postgresException.Hint;

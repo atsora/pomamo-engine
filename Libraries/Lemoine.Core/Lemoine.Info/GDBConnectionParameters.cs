@@ -113,6 +113,15 @@ namespace Lemoine.Info
     static readonly string CONNECTION_IDLE_LIFETIME_KEY = "Database.Npgsql.ConnectionIdleLifetime";
     static readonly TimeSpan CONNECTION_IDLE_LIFETIME_DEFAULT = TimeSpan.FromSeconds (0); // 0s: default value
 
+    /// <summary>
+    /// Disable the conversion of DateTime.MinValue and DateTime.MaxValue to -infinity and infinity
+    /// that was introduced in Npgsql 6
+    ///
+    /// Default: true (behavior of Npgsql 5)
+    /// </summary>
+    static readonly string DISABLE_DATETIME_INFINITY_CONVERSIONS_KEY = "Database.Npgsql.DisableDateTimeInfinityConversions";
+    static readonly bool DISABLE_DATETIME_INFINITY_CONVERSIONS_DEFAULT = true;
+
     static readonly ILog log = LogManager.GetLogger(typeof (GDBConnectionParameters).FullName);
 
     #region Getters / Setters
@@ -241,7 +250,27 @@ namespace Lemoine.Info
     /// </summary>
     private GDBConnectionParameters()
     {
+      SetNpgsqlSwitches ();
       LoadGDBParameters ();
+    }
+
+    /// <summary>
+    /// Set the Npgsql global switches.
+    ///
+    /// They must be set before the first use of Npgsql
+    /// </summary>
+    static void SetNpgsqlSwitches ()
+    {
+#if !NET40 // AppContext is not available in .NET Framework 4.0, where Npgsql is not used
+      // Since Npgsql 6, DateTime.MinValue and DateTime.MaxValue are converted to -infinity and infinity.
+      // Keep the behavior of Npgsql 5: no infinity conversion
+      var disableDateTimeInfinityConversions = Lemoine.Info.ConfigSet
+        .LoadAndGet (DISABLE_DATETIME_INFINITY_CONVERSIONS_KEY, DISABLE_DATETIME_INFINITY_CONVERSIONS_DEFAULT);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"SetNpgsqlSwitches: Npgsql.DisableDateTimeInfinityConversions={disableDateTimeInfinityConversions}");
+      }
+      AppContext.SetSwitch ("Npgsql.DisableDateTimeInfinityConversions", disableDateTimeInfinityConversions);
+#endif // !NET40
     }
     #endregion
 

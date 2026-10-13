@@ -73,7 +73,7 @@ namespace Lemoine.Database.Persistent
       configuration.SetProperty ("connection.provider",
                                  "NHibernate.Connection.DriverConnectionProvider");
       configuration.SetProperty ("connection.driver_class",
-                                 "NHibernate.Driver.NpgsqlDriver");
+                                 "NHibernate.Driver.Npgsql5CompatibilityDriver, Lemoine.NHibernate");
       configuration.SetProperty ("connection.connection_string", GetDefaultConnectionString ());
       configuration.SetProperty ("dialect",
                                  "NHibernate.Dialect.PostgreSQLPulseDialect, Lemoine.NHibernate");

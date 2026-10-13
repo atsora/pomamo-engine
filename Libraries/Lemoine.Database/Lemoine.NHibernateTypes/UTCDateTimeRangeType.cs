@@ -72,7 +72,9 @@ namespace Lemoine.NHibernateTypes
     /// <returns></returns>
     protected override DateTime SetBoundToDb (DateTime bound)
     {
-      return bound;
+      // Since Npgsql 6, a DateTime with Kind=Utc can't be written to a timestamp without time zone
+      var utcBound = (bound.Kind == DateTimeKind.Local) ? bound.ToUniversalTime () : bound;
+      return DateTime.SpecifyKind (utcBound, DateTimeKind.Unspecified);
     }
 
     /// <summary>

@@ -73,8 +73,11 @@ namespace Lemoine.NHibernateTypes
     /// <returns></returns>
     protected override object Set (T v)
     {
-      var lower = v.Lower.HasValue ? SetBoundToDb (v.Lower.Value) : DateTime.UtcNow;
-      var upper = v.Upper.HasValue ? SetBoundToDb (v.Upper.Value) : DateTime.UtcNow;
+      // Note: the value of an infinite bound is not used.
+      // A DateTime with Kind=Unspecified is used because a DateTime with Kind=Utc can't be written
+      // to a timestamp without time zone since Npgsql 6
+      var lower = v.Lower.HasValue ? SetBoundToDb (v.Lower.Value) : default (DateTime);
+      var upper = v.Upper.HasValue ? SetBoundToDb (v.Upper.Value) : default (DateTime);
       var lowerInfinite = !v.Lower.HasValue;
       var upperInfinite = !v.Upper.HasValue;
       return new NpgsqlTypes.NpgsqlRange<System.DateTime> (lower, v.LowerInclusive, lowerInfinite, upper, v.UpperInclusive, upperInfinite);
