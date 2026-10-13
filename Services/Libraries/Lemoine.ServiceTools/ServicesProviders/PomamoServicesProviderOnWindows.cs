@@ -23,7 +23,8 @@ namespace Lemoine.ServiceTools.ServicesProviders
     /// Constructor
     /// </summary>
     public PomamoServicesProviderOnWindows()
-      : base ("Lem_AlertService", "Lem_AnalysisService", "Lem_SynchronizationService", "Lem_AspService", "Lem_CncService", "Lem_CncCoreService", "Lem_OpcUaClientService", "Lem_CncDataService", "Lem_StampingService", "Lem_StampFileWatchService", "TAO_NT_Naming_Service", "omninames", "Tomcat9", "Tomcat11", "nscp", "MTConnect Agent", "MTConnectAdapterService")
+      : base (new string[] { "Lem_AlertService", "Lem_AnalysisService", "Lem_SynchronizationService", "Lem_AspService", "Lem_CncService", "Lem_CncCoreService", "Lem_OpcUaClientService", "Lem_CncDataService", "Lem_StampingService", "Lem_StampFileWatchService" },
+              new string[] { "TAO_NT_Naming_Service", "omninames", "Tomcat9", "Tomcat11", "nscp", "MTConnect Agent", "MTConnectAdapterService" })
     {
     }
   }

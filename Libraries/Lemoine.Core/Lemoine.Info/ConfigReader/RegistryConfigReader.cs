@@ -32,5 +32,17 @@ namespace Lemoine.Info.ConfigReader
       : base ("Lemoine.Core.TargetSpecific", "Lemoine.Info.ConfigReader.TargetSpecific.RegistryConfigReader", new object[] { lazy })
     {
     }
+
+    /// <summary>
+    /// Constructor considering the default key with a suffix, for example HKLM\SOFTWARE\Atsora\Tracking-dev
+    ///
+    /// The key with a suffix may not exist
+    /// </summary>
+    /// <param name="lazy"></param>
+    /// <param name="keySuffix"></param>
+    public RegistryConfigReader (bool lazy, string keySuffix)
+      : base ("Lemoine.Core.TargetSpecific", "Lemoine.Info.ConfigReader.TargetSpecific.RegistryConfigReader", new object[] { lazy, keySuffix })
+    {
+    }
   }
 }
