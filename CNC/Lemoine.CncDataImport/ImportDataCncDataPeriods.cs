@@ -299,6 +299,15 @@ namespace Lemoine.CncDataImport
         .GetExtensions<Lemoine.Extensions.Cnc.IImportCncDataPeriodsExtension> ()
         .Where (extension => extension.Initialize (m_machineModule))
         .ToList ();
+
+      // Partitions of the current week (for example for a new machine module), in their own short transaction,
+      // so that they are not created in the transaction of an import (see EnsurePartition)
+      try {
+        ModelDAOHelper.DAOFactory.CncDataPartitionDAO.CreateWeekPartitions (m_machineModule.Id, DateTime.UtcNow, 7);
+      }
+      catch (Exception ex) {
+        log.Warn ($"ImportDataCncDataPeriods: the partitions of the current week could not be created, they will be created when needed", ex);
+      }
     }
 
     /// <summary>

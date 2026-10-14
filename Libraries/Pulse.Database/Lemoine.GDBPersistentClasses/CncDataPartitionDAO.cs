@@ -275,6 +275,25 @@ SELECT machinemoduleid, partitionname, lowerbound, upperbound
       }
     }
 
+    /// <summary>
+    /// <see cref="ICncDataPartitionDAO"/>
+    /// </summary>
+    public int DropOrphanPartitions (TimeSpan maxDuration)
+    {
+      var deadline = DateTime.UtcNow.Add (maxDuration);
+      long count;
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (var transaction = session.BeginTransaction ("CncDataPartition.DropOrphanPartitions")) {
+        count = Scalar (deadline, "SELECT public.cncdatadroporphanpartitions ()", command => { });
+        transaction.Commit ();
+      }
+      if (0 < count) {
+        s_knownPartitions.Clear ();
+        log.Info ($"DropOrphanPartitions: {count} partitions of deleted machine modules dropped");
+      }
+      return (int)count;
+    }
+
     static readonly TimeSpan LOCK_TIMEOUT = TimeSpan.FromMinutes (1);
 
     // Samples: regrouped by field and by minute of their own date/time, so that an archive row lasts less than 1 minute.

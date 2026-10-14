@@ -167,5 +167,13 @@ namespace Lemoine.ModelDAO
     /// <param name="partition"></param>
     /// <param name="maxDuration">maximum duration of the transaction</param>
     void DropPartition (ICncDataPartition partition, TimeSpan maxDuration);
+
+    /// <summary>
+    /// Drop the partitions of the machine modules that do not exist any more, in its own transaction
+    /// (normally dropped with the machine module, see the trigger of migration 2005)
+    /// </summary>
+    /// <param name="maxDuration">maximum duration of the transaction</param>
+    /// <returns>number of dropped machine module level partitions</returns>
+    int DropOrphanPartitions (TimeSpan maxDuration);
   }
 }

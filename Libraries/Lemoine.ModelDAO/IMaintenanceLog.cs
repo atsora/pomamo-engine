@@ -76,6 +76,10 @@ namespace Lemoine.Model
     /// A step of the maintenance of the cncdata tables failed
     /// </summary>
     CncDataMaintenanceError = 15,
+    /// <summary>
+    /// The partitions of some deleted machine modules were dropped
+    /// </summary>
+    CncDataOrphanPartitionsDropped = 16,
   }
 
   /// <summary>
