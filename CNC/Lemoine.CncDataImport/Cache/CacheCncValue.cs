@@ -101,7 +101,22 @@ namespace Lemoine.CncDataImport.Cache
     /// <returns></returns>
     public bool IsEndCncValueRequested (IField field, ICncValue cncValue, DateTime dateTime)
     {
-      return IsEndCncValueRequired (field.Code, cncValue.End, dateTime, cncValue.Stopped);
+      return IsEndCncValueRequired (field, cncValue.End, dateTime, cncValue.Stopped);
+    }
+
+    /// <summary>
+    /// Is the end of the cnc value requested ? Same as <see cref="IsEndCncValueRequired(string, DateTime, DateTime, bool, TimeSpan?)"/>
+    /// with the maximum gap of the field (cnc data parameter MaxGap), if defined
+    /// </summary>
+    /// <param name="field">not null</param>
+    /// <param name="previousDateTime"></param>
+    /// <param name="newDateTime"></param>
+    /// <param name="previousStopped"></param>
+    /// <returns></returns>
+    public bool IsEndCncValueRequired (IField field, DateTime previousDateTime, DateTime newDateTime, bool previousStopped)
+    {
+      var maxGap = field.GetCncDataParameter<TimeSpan?> (CncDataParameterNames.MaxGap);
+      return IsEndCncValueRequired (field.Code, previousDateTime, newDateTime, previousStopped, maxGap);
     }
 
     /// <summary>
@@ -116,10 +131,11 @@ namespace Lemoine.CncDataImport.Cache
     /// <param name="previousDateTime"></param>
     /// <param name="newDateTime"></param>
     /// <param name="previousStopped"></param>
+    /// <param name="maxGap">maximum gap of the field, default: config Cnc.DataImport.MaxCncValueGap</param>
     /// <returns></returns>
     public bool IsEndCncValueRequired (string fieldCode,
                                        DateTime previousDateTime, DateTime newDateTime,
-                                       bool previousStopped)
+                                       bool previousStopped, TimeSpan? maxGap = null)
     {
       foreach (var extension in m_endCncValueExtensions) {
         bool? result = extension.IsEndCncValueRequested (fieldCode,
@@ -137,7 +153,7 @@ namespace Lemoine.CncDataImport.Cache
         return true;
       }
 
-      TimeSpan maxCncValueGap = Lemoine.Info.ConfigSet
+      TimeSpan maxCncValueGap = maxGap ?? Lemoine.Info.ConfigSet
         .LoadAndGet<TimeSpan> (MAX_CNC_VALUE_GAP_KEY,
                                MAX_CNC_VALUE_GAP_DEFAULT);
       if (newDateTime < previousDateTime) {

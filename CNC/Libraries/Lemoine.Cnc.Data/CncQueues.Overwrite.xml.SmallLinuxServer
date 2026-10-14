@@ -11,6 +11,8 @@ To use it, copy it in the install directory and rename the copy into CncQueues.o
 Principle:
 - The data that must not be lost (machine modes, stamps / actions / variables, machine module activity,
   cnc alarms, stack light) remain on disk, in SQLite files with the journal mode WAL (default directory).
+  The rare data that cannot be rebuilt (machine modes, stamps / actions, activity, alarms) use SynchroMode="Full":
+  a commit survives a power cut, so that nothing is lost or imported twice (about 1 ms per commit with WAL).
 - The other cnc values (feedrates, overrides, loads, speeds, statistics...) are stored in RAM,
   in SQLite files in the tmpfs /dev/shm/atracking (created if needed):
   * no disk write and no synchronization (SynchroMode="Off"): low CPU and no wear of the disk;
@@ -50,7 +52,8 @@ with a write priority lower than the one of the RAM sub-queues (the first matchi
                        commandfilter="MachineMode|MachineModePeriod"
                        regexfieldfilter=""
                        writepriority="0"
-                       readpriority="0" />
+                       readpriority="0"
+                       SynchroMode="Full" />
       </queue>
 
       <!-- Stamps, actions (cycles, quantities), variables -->
@@ -59,7 +62,8 @@ with a write priority lower than the one of the RAM sub-queues (the first matchi
                        commandfilter="Stamp|Action|DetectionTimeStamp|CncVariableSet|SequenceMilestone"
                        regexfieldfilter=""
                        writepriority="10"
-                       readpriority="10" />
+                       readpriority="10"
+                       SynchroMode="Full" />
       </queue>
 
       <!-- Machine module activity -->
@@ -68,7 +72,8 @@ with a write priority lower than the one of the RAM sub-queues (the first matchi
                        commandfilter="MachineModuleActivity"
                        regexfieldfilter=""
                        writepriority="20"
-                       readpriority="20" />
+                       readpriority="20"
+                       SynchroMode="Full" />
       </queue>
 
       <!-- Cnc alarms -->
@@ -77,7 +82,8 @@ with a write priority lower than the one of the RAM sub-queues (the first matchi
                        commandfilter="CncAlarm"
                        regexfieldfilter=""
                        writepriority="30"
-                       readpriority="30" />
+                       readpriority="30"
+                       SynchroMode="Full" />
       </queue>
 
       <!-- Stack light (alerts, red stack light) -->

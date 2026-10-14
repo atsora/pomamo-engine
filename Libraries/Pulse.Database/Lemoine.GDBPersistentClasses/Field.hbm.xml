@@ -38,6 +38,9 @@
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
     <property name="LimitDeviation" column="fieldlimitdeviation" />
     <property name="CncDataStorage" column="fieldcncdatastorage" />
+    <property name="CncDataParameters" column="fieldcncdataparameters"
+              type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database"
+              access="field.camelcase-m-underscore" />
     <property name="PeriodMaxDuration" column="fieldperiodmaxduration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database" />
     <property name="Custom" column="fieldcustom"

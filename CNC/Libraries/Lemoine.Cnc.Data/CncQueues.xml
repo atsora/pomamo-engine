@@ -29,40 +29,49 @@ in the install directory and rename the copy into CncQueues.overwrite.xml
                    Persistent="true"
                    QueueType="Lemoine.Cnc.SQLiteQueue.SQLiteCncDataQueue, Lemoine.Cnc.SQLiteQueue" />
     <queues>
+      <!-- SynchroMode="Full" for the sub-queues of rare data that can't be rebuilt (machine modes, cycles and quantities,
+           machine module activity, alarms): a commit (an acquisition cycle for the writer, a dequeue for the reader)
+           survives a power cut, so that no data is lost or imported twice (a cycle counted twice).
+           Cost with the journal mode WAL: about 1 ms per commit. The other sub-queues keep SynchroMode="Normal". -->
+
       <!-- Sub queue for machine mode -->
       <queue>
         <configuration suffix=""
                        commandfilter="MachineMode|MachineModePeriod"
                        regexfieldfilter=""
                        writepriority="0"
-                       readpriority="0" />
+                       readpriority="0"
+                       SynchroMode="Full" />
       </queue>
-      
+
       <!-- Sub queue for stamp action -->
       <queue>
         <configuration suffix="-StampAction"
-                       commandfilter="Stamp|Action|DetectionTimeStamp|CncVariableSet"
+                       commandfilter="Stamp|Action|DetectionTimeStamp|CncVariableSet|SequenceMilestone"
                        regexfieldfilter=""
                        writepriority="10"
-                       readpriority="10" />
+                       readpriority="10"
+                       SynchroMode="Full" />
       </queue>
-      
+
       <!-- Sub queue for machine module activity -->
       <queue>
         <configuration suffix="-MachineModuleActivity"
                        commandfilter="MachineModuleActivity"
                        regexfieldfilter=""
                        writepriority="20"
-                       readpriority="20" />
+                       readpriority="20"
+                       SynchroMode="Full" />
       </queue>
-      
+
       <!-- Sub queue for cnc alarms -->
       <queue>
         <configuration suffix="-CncAlarm"
                        commandfilter="CncAlarm"
                        regexfieldfilter=""
                        writepriority="30"
-                       readpriority="30" />
+                       readpriority="30"
+                       SynchroMode="Full" />
       </queue>
       
       <!-- CNC VALUES -->

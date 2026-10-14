@@ -41,6 +41,7 @@ namespace Lemoine.GDBPersistentClasses
     double? m_limitDeviation = null;
     CncDataStorage? m_cncDataStorage = null;
     TimeSpan? m_periodMaxDuration = null;
+    string m_cncDataParameters = null;
     bool m_custom = true;
     bool m_active = true;
     #endregion // Members
@@ -276,6 +277,20 @@ namespace Lemoine.GDBPersistentClasses
           throw new ArgumentOutOfRangeException (nameof (value), value, "The maximum duration of a period must be strictly positive");
         }
         m_periodMaxDuration = value;
+      }
+    }
+
+    /// <summary>
+    /// <see cref="IField"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual string CncDataParameters {
+      get { return m_cncDataParameters; }
+      set {
+        if (!string.IsNullOrEmpty (value)) {
+          IFieldExtensions.ParseCncDataParameters (value); // Throws an ArgumentException if it is not a json object
+        }
+        m_cncDataParameters = string.IsNullOrEmpty (value) ? null : value;
       }
     }
     

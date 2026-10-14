@@ -56,6 +56,52 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     }
 
     /// <summary>
+    /// Cnc data parameters (column fieldcncdataparameters, migration 2006): stored, read with a type (case insensitive),
+    /// an invalid json or a json that is not an object is rejected, JsonType to deserialize the json values
+    /// </summary>
+    [Test]
+    public void TestCncDataParameters ()
+    {
+      var daoFactory = ModelDAOHelper.DAOFactory;
+      using (var session = daoFactory.OpenSession ())
+      using (var transaction = session.BeginTransaction ()) {
+        try {
+          var field = ModelDAOHelper.ModelFactory.CreateFieldFromName ("TestCncDataParameters", "Test cnc data parameters");
+          field.Type = FieldType.String;
+          Assert.Throws<ArgumentException> (() => field.CncDataParameters = "{ not json");
+          Assert.Throws<ArgumentException> (() => field.CncDataParameters = "[1, 2]", "not an object");
+          field.CncDataParameters = @"{ ""MaxGap"": ""00:05:00"", ""Factor"": 1.5,
+  ""JsonType"": ""System.Collections.Generic.Dictionary`2[[System.String],[System.Double]]"" }";
+          daoFactory.FieldDAO.MakePersistent (field);
+          daoFactory.FlushData ();
+          NHibernateHelper.GetCurrentSession ().Evict (field);
+
+          var reloaded = daoFactory.FieldDAO.FindById (field.Id);
+          Assert.Multiple (() => {
+            Assert.That (reloaded.CncDataParameters, Is.Not.Null);
+            Assert.That (reloaded.GetCncDataParameter<TimeSpan?> (CncDataParameterNames.MaxGap), Is.EqualTo (TimeSpan.FromMinutes (5)));
+            Assert.That (reloaded.GetCncDataParameter<double> ("factor"), Is.EqualTo (1.5), "case insensitive");
+            Assert.That (reloaded.GetCncDataParameter ("Missing", 7), Is.EqualTo (7), "default value");
+            Assert.That (reloaded.GetCncDataParameter ("Factor", "x"), Is.EqualTo ("x"), "invalid type: default value");
+            Assert.That (reloaded.GetJsonType (), Is.EqualTo (typeof (System.Collections.Generic.Dictionary<string, double>)));
+            var value = reloaded.DeserializeJsonValue (@"{ ""a"": 1.5 }");
+            Assert.That (value, Is.InstanceOf<System.Collections.Generic.Dictionary<string, double>> ());
+            Assert.That (((System.Collections.Generic.Dictionary<string, double>)value)["a"], Is.EqualTo (1.5));
+          });
+
+          reloaded.CncDataParameters = null;
+          Assert.Multiple (() => {
+            Assert.That (reloaded.GetJsonType (), Is.Null);
+            Assert.That (reloaded.DeserializeJsonValue (@"{ ""a"": 1 }"), Is.InstanceOf<System.Text.Json.JsonElement> (), "no JsonType");
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
     /// The new columns are stored, the default storage comes from the config
     /// </summary>
     [Test]

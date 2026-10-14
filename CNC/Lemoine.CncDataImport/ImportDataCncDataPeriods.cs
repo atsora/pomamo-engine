@@ -551,7 +551,7 @@ namespace Lemoine.CncDataImport
     {
       return (null == state.Period)
         || state.Period.Stopped
-        || m_cncValueCache.IsEndCncValueRequired (field.Code, state.Period.End, dateTime, false);
+        || m_cncValueCache.IsEndCncValueRequired (field, state.Period.End, dateTime, false);
     }
 
     /// <summary>
@@ -566,7 +566,7 @@ namespace Lemoine.CncDataImport
       if (period.MaxEnd < dateTime) {
         return false;
       }
-      if (m_cncValueCache.IsEndCncValueRequired (field.Code, period.End, dateTime, false)) { // Gap
+      if (m_cncValueCache.IsEndCncValueRequired (field, period.End, dateTime, false)) { // Gap
         return false;
       }
       period.End = dateTime;

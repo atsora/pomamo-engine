@@ -30,7 +30,7 @@
       <!-- Sub queue for stamp action -->
       <queue>
         <configuration suffix="-StampAction"
-                       commandfilter="Stamp|Action|DetectionTimeStamp|CncVariableSet"
+                       commandfilter="Stamp|Action|DetectionTimeStamp|CncVariableSet|SequenceMilestone"
                        regexfieldfilter=""
                        writepriority="10"
                        readpriority="10" />

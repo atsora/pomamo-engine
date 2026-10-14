@@ -355,6 +355,13 @@ namespace Lemoine.Model
     TimeSpan? PeriodMaxDuration { get; set; }
 
     /// <summary>
+    /// Parameters of the cnc data of the field, as a json object (column fieldcncdataparameters), null if none.
+    /// Read them with <see cref="IFieldExtensions.GetCncDataParameter{T}(IField, string, T)"/>,
+    /// see the known names in <see cref="CncDataParameterNames"/>
+    /// </summary>
+    string CncDataParameters { get; set; }
+
+    /// <summary>
     /// If false, the field can't be deleted
     /// </summary>
     bool Custom { get; }
@@ -423,5 +430,141 @@ namespace Lemoine.Model
     /// <returns></returns>
     public static CncDataPeriodAggregationKind GetPeriodAggregationKind (this IField field) =>
       field.CncDataAggregationType.GetPeriodAggregationKind ();
+
+    // Parsed parameters by json text (the same text is shared by the instances of a field)
+    static readonly System.Collections.Concurrent.ConcurrentDictionary<string, System.Text.Json.JsonElement> s_parsedParameters
+      = new System.Collections.Concurrent.ConcurrentDictionary<string, System.Text.Json.JsonElement> ();
+
+    static readonly System.Text.Json.JsonSerializerOptions s_parameterOptions = new System.Text.Json.JsonSerializerOptions {
+      PropertyNameCaseInsensitive = true,
+    };
+
+    /// <summary>
+    /// Parse some cnc data parameters, that must be a json object
+    /// </summary>
+    /// <param name="parameters">not null</param>
+    /// <returns>root element (an object)</returns>
+    /// <exception cref="ArgumentException">not a json object</exception>
+    public static System.Text.Json.JsonElement ParseCncDataParameters (string parameters)
+    {
+      return s_parsedParameters.GetOrAdd (parameters, p => {
+        try {
+          using (var document = System.Text.Json.JsonDocument.Parse (p)) {
+            if (document.RootElement.ValueKind != System.Text.Json.JsonValueKind.Object) {
+              throw new ArgumentException ($"The cnc data parameters must be a json object: {p}", nameof (parameters));
+            }
+            return document.RootElement.Clone ();
+          }
+        }
+        catch (System.Text.Json.JsonException ex) {
+          throw new ArgumentException ($"Invalid json in the cnc data parameters: {p}", nameof (parameters), ex);
+        }
+      });
+    }
+
+    /// <summary>
+    /// Get a cnc data parameter of a field (case insensitive name), or a default value if it is not defined or invalid
+    /// </summary>
+    /// <typeparam name="T">for example double, int, string, TimeSpan (format "hh:mm:ss"), or a class</typeparam>
+    /// <param name="field">not null</param>
+    /// <param name="name">parameter name, see <see cref="CncDataParameterNames"/></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static T GetCncDataParameter<T> (this IField field, string name, T defaultValue = default)
+    {
+      return TryGetCncDataParameter<T> (field, name, out var value) ? value : defaultValue;
+    }
+
+    /// <summary>
+    /// Try to get a cnc data parameter of a field (case insensitive name)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="field">not null</param>
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    /// <returns>the parameter is defined and valid</returns>
+    public static bool TryGetCncDataParameter<T> (this IField field, string name, out T value)
+    {
+      value = default;
+      var parameters = field.CncDataParameters;
+      if (string.IsNullOrEmpty (parameters)) {
+        return false;
+      }
+      try {
+        var root = ParseCncDataParameters (parameters);
+        foreach (var property in root.EnumerateObject ()) {
+          if (string.Equals (property.Name, name, StringComparison.OrdinalIgnoreCase)) {
+            if (property.Value.ValueKind == System.Text.Json.JsonValueKind.Null) {
+              return false;
+            }
+            value = System.Text.Json.JsonSerializer.Deserialize<T> (property.Value.GetRawText (), s_parameterOptions);
+            return true;
+          }
+        }
+        return false;
+      }
+      catch (Exception ex) {
+        Lemoine.Core.Log.LogManager.GetLogger (typeof (IFieldExtensions).FullName)
+          .Error ($"TryGetCncDataParameter: invalid parameter {name} of field {field.Code} in {parameters}", ex);
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// .NET type of the json values of a field (parameter <see cref="CncDataParameterNames.JsonType"/>), null if none or unknown
+    /// </summary>
+    /// <param name="field">not null</param>
+    /// <returns></returns>
+    public static Type GetJsonType (this IField field)
+    {
+      var typeName = field.GetCncDataParameter<string> (CncDataParameterNames.JsonType);
+      if (string.IsNullOrEmpty (typeName)) {
+        return null;
+      }
+      var type = Type.GetType (typeName);
+      if (null == type) {
+        Lemoine.Core.Log.LogManager.GetLogger (typeof (IFieldExtensions).FullName)
+          .Error ($"GetJsonType: unknown type {typeName} of field {field.Code}");
+      }
+      return type;
+    }
+
+    /// <summary>
+    /// Deserialize a json value of a field: in the type of the parameter <see cref="CncDataParameterNames.JsonType"/> if defined,
+    /// else as a <see cref="System.Text.Json.JsonElement"/>
+    /// </summary>
+    /// <param name="field">not null</param>
+    /// <param name="json">nullable</param>
+    /// <returns>null if json is null</returns>
+    public static object DeserializeJsonValue (this IField field, string json)
+    {
+      if (null == json) {
+        return null;
+      }
+      var type = field.GetJsonType ();
+      if (null != type) {
+        return System.Text.Json.JsonSerializer.Deserialize (json, type, s_parameterOptions);
+      }
+      using (var document = System.Text.Json.JsonDocument.Parse (json)) {
+        return document.RootElement.Clone ();
+      }
+    }
+  }
+
+  /// <summary>
+  /// Names of the known cnc data parameters of a field (<see cref="IField.CncDataParameters"/>)
+  /// </summary>
+  public static class CncDataParameterNames
+  {
+    /// <summary>
+    /// .NET type (assembly qualified name) to deserialize the json values of the field
+    /// </summary>
+    public static readonly string JsonType = "JsonType";
+
+    /// <summary>
+    /// Maximum duration without any value after which a new period (or cnc value) starts, as "hh:mm:ss".
+    /// Default: config Cnc.DataImport.MaxCncValueGap (1 minute). For example longer for a slow source (LoRaWAN sensor)
+    /// </summary>
+    public static readonly string MaxGap = "MaxGap";
   }
 }
