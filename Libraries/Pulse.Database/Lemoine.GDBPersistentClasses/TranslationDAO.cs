@@ -1499,6 +1499,22 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
 
+      {
+        ITranslation translation = new Translation ("", "MachineModeLoading");
+        translation.TranslationValue = "Loading";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "MachineModeLoading");
+        translation.TranslationValue = "Chargement";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "MachineModeLoading");
+        translation.TranslationValue = "Beladung";
+        InsertDefaultValue (translation);
+      }
+
       // Reason groups
       {
         ITranslation translation = new Translation ("", "ReasonGroupDefault");

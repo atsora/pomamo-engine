@@ -53,12 +53,17 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
         && OperatingSystem.IsWindows ()
 #endif // NET5_0_OR_GREATER
           ) {
+          // In a dev instance, the registry key with the -dev suffix is considered first
+          m_multiConfigReader.Add (new DevInstanceConfigReader (new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry64, false, InstanceInfo.DEV_SUFFIX)));
+          m_multiConfigReader.Add (new DevInstanceConfigReader (new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry32, false, InstanceInfo.DEV_SUFFIX)));
           var registryConfigReader64 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry64);
           m_multiConfigReader.Add (registryConfigReader64);
           var registryConfigReader32 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry32);
           m_multiConfigReader.Add (registryConfigReader32);
         }
         else {
+          // In a dev instance, the registry key with the -dev suffix is considered first
+          m_multiConfigReader.Add (new DevInstanceConfigReader (new RegistryConfigReader (false, InstanceInfo.DEV_SUFFIX)));
           var registryConfigReader = new RegistryConfigReader ();
           m_multiConfigReader.Add (registryConfigReader);
         }
@@ -107,12 +112,17 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
         && OperatingSystem.IsWindows ()
 #endif // NET5_0_OR_GREATER
           ) {
+          // In a dev instance, the registry key with the -dev suffix is considered first
+          m_multiConfigReader.Add (new DevInstanceConfigReader (new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry64, false, InstanceInfo.DEV_SUFFIX)));
+          m_multiConfigReader.Add (new DevInstanceConfigReader (new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry32, false, InstanceInfo.DEV_SUFFIX)));
           var registryConfigReader64 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry64);
           m_multiConfigReader.Add (registryConfigReader64);
           var registryConfigReader32 = new RegistryConfigReader (Microsoft.Win32.RegistryView.Registry32);
           m_multiConfigReader.Add (registryConfigReader32);
         }
         else {
+          // In a dev instance, the registry key with the -dev suffix is considered first
+          m_multiConfigReader.Add (new DevInstanceConfigReader (new RegistryConfigReader (false, InstanceInfo.DEV_SUFFIX)));
           var registryConfigReader = new RegistryConfigReader ();
           m_multiConfigReader.Add (registryConfigReader);
         }

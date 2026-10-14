@@ -78,6 +78,7 @@ namespace Lemoine.Info
       }
       osConfigReader.Add (new EnvironmentConfigReader ());
       if (isWindows) {
+        osConfigReader.Add (new DevInstanceConfigReader (new RegistryConfigReader (false, InstanceInfo.DEV_SUFFIX)));
         osConfigReader.Add (new RegistryConfigReader ());
         osConfigReader.Add (new OdbcConfigReader ());
         osConfigReader.Add (new InstallerConfigReader ());
@@ -88,6 +89,7 @@ namespace Lemoine.Info
       var multiConfigReader = new MultiConfigReader ();
       multiConfigReader.Add (m_commandLineConfigReader);
       multiConfigReader.Add (OptionsFileConfigReader.CreateFromExtension ());
+      multiConfigReader.Add (CreateInstanceOptionsConfigReader ());
       multiConfigReader.Add (OptionsFileConfigReader.CreateFromExtension (".defaultoptions"));
       multiConfigReader.Add (m_osConfigReader);
       multiConfigReader.Add (m_additionalConfigReaders);
@@ -97,6 +99,21 @@ namespace Lemoine.Info
 
       // Active config reader
       m_configReader = m_baseConfigReader;
+    }
+
+    /// <summary>
+    /// Options file common to all the programs of the installation directory,
+    /// for example to set dev=true in a dev instance (see <see cref="InstanceInfo"/>)
+    /// </summary>
+    /// <returns></returns>
+    static IGenericConfigReader CreateInstanceOptionsConfigReader ()
+    {
+      var path = InstanceInfo.InstanceOptionsPath;
+      if (path is null || !System.IO.File.Exists (path)) {
+        // The file is optional: it is only present in a specific instance
+        return new DummyConfigReader ();
+      }
+      return OptionsFileConfigReader.CreateFromPath (path);
     }
 
     /// <summary>

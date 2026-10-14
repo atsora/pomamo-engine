@@ -30,11 +30,6 @@ namespace Lemoine.Info
     static readonly string DEFAULT_DSN_NAME_KEY = "DefaultDSNName";
     static readonly string DEFAULT_DSN_NAME_DEFAULT = Constants.DEFAULT_DSN_NAME;
 
-    static readonly string DEV_KEY = "dev";
-    static readonly bool DEV_DEFAULT = true; // Restore to false when the code is branch master
-
-    static readonly string DEV_SUFFIX = "-dev";
-
     string m_dsnName = Constants.DEFAULT_DSN_NAME;
     string m_server = "localhost";
     string m_port = PORT_DEFAULT;
@@ -230,16 +225,14 @@ namespace Lemoine.Info
     /// <returns>Success</returns>
     public bool LoadParameters ()
     {
-      bool dev = Lemoine.Info.ConfigSet.LoadAndGet<bool> (DEV_KEY,
-                                                          DEV_DEFAULT);
-      if (dev) {
-        if (LoadParametersWithSuffix (DEV_SUFFIX)) {
-          log.Info ($"LoadParameters: consider suffix {DEV_SUFFIX}");
+      if (InstanceInfo.IsDev) {
+        if (LoadParametersWithSuffix (InstanceInfo.DEV_SUFFIX)) {
+          log.Info ($"LoadParameters: consider suffix {InstanceInfo.DEV_SUFFIX}");
           return true;
         }
         else {
           if (log.IsDebugEnabled) {
-            log.Debug ($"LoadParameters: no dsn name with suffix {DEV_SUFFIX}");
+            log.Debug ($"LoadParameters: no dsn name with suffix {InstanceInfo.DEV_SUFFIX}");
           }
         }
       }

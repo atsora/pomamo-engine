@@ -28,6 +28,16 @@ namespace Lemoine.ServiceTools.ServicesProviders
     {
     }
 
+    /// <summary>
+    /// Constructor that distinguishes the services of the product from the external services
+    /// </summary>
+    /// <param name="productServiceNames">Services of the product, whose name gets the suffix of the instance, -dev in a dev instance</param>
+    /// <param name="externalServiceNames">External services, whose name does not depend on the instance</param>
+    public AutoServicesProviderOnWindows (IEnumerable<string> productServiceNames, IEnumerable<string> externalServiceNames)
+      : base (productServiceNames, externalServiceNames)
+    {
+    }
+
     bool IsAuto (WindowsServiceController service)
     {
       try {

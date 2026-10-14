@@ -289,7 +289,8 @@ namespace Lemoine.Info
 #else // NETSTANDARD
         if (RuntimeInformation.IsOSPlatform (OSPlatform.Windows)) {
 #endif // NETSTANDARD
-          var path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData), COMPANY_NAME, PRODUCT_NAME);
+          // A dev instance has its own directory, for example C:\ProgramData\Atsora\Tracking-dev
+          var path = Path.Combine (GetFolderPath (SpecialFolder.CommonApplicationData), COMPANY_NAME, PRODUCT_NAME + InstanceInfo.Suffix);
           log.Warn ($"CommonConfigurationDirectory: consider default windows folder {path}");
           if (!Directory.Exists (path)) {
             if (log.IsDebugEnabled) {
@@ -579,8 +580,9 @@ namespace Lemoine.Info
             log.Info ($"Load: fallback localApplicationData to {localApplicationData} from home {home}");
           }
         }
+        // A dev instance has its own directory, for example atracking-dev
         m_defaultLocalConfigurationDirectory = Path
-          .Combine (localApplicationData, ProductFolderName);
+          .Combine (localApplicationData, ProductFolderName + InstanceInfo.Suffix);
         try {
           if (!System.IO.Directory.Exists (m_defaultLocalConfigurationDirectory)) {
             System.IO.Directory.CreateDirectory (m_defaultLocalConfigurationDirectory);

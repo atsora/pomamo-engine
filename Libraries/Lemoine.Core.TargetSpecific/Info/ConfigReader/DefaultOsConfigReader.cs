@@ -157,6 +157,8 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
 #else
       "Pomamo");
 #endif
+        // A dev instance has its own directory, for example C:\ProgramData\Atsora\Tracking-dev
+        path += InstanceInfo.Suffix;
       }
       else {
         path = LINUX_CONF_DIRECTORY;

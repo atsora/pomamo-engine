@@ -28,6 +28,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     readonly RegistryHive m_root;
     readonly RegistryView m_view;
     readonly string m_key;
+    readonly bool m_optionalKey = false;
     readonly IDictionary<string, object> m_keyValue = new ConcurrentDictionary<string, object> ();
     readonly IDictionary<string, byte> m_notFoundKeys = new ConcurrentDictionary<string, byte> (); // Because there is no concurrent set
 
@@ -61,18 +62,46 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     /// <param name="lazy"></param>
     public RegistryConfigReader (RegistryView registryView, bool lazy = false)
       : this (REGISTRY_KEY, registryView, lazy)
-    { 
+    {
+    }
+
+    /// <summary>
+    /// Constructor considering the default key REGISTRY_KEY with a suffix, for example -dev.
+    ///
+    /// The key with a suffix is optional: it is not an error if it does not exist
+    /// </summary>
+    /// <param name="lazy"></param>
+    /// <param name="keySuffix"></param>
+    public RegistryConfigReader (bool lazy, string keySuffix)
+      : this (REGISTRY_KEY + keySuffix, default, lazy, optionalKey: !string.IsNullOrEmpty (keySuffix))
+    {
+    }
+
+    /// <summary>
+    /// Constructor considering the default key REGISTRY_KEY with a suffix, for example -dev.
+    ///
+    /// The key with a suffix is optional: it is not an error if it does not exist
+    /// </summary>
+    /// <param name="registryView"></param>
+    /// <param name="lazy"></param>
+    /// <param name="keySuffix"></param>
+    public RegistryConfigReader (RegistryView registryView, bool lazy, string keySuffix)
+      : this (REGISTRY_KEY + keySuffix, registryView, lazy, optionalKey: !string.IsNullOrEmpty (keySuffix))
+    {
     }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="key"></param>
+    /// <param name="registryView"></param>
     /// <param name="lazy"></param>
+    /// <param name="optionalKey">the registry key may not exist</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-    RegistryConfigReader (string key, RegistryView registryView = default, bool lazy = false)
+    RegistryConfigReader (string key, RegistryView registryView = default, bool lazy = false, bool optionalKey = false)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     {
+      m_optionalKey = optionalKey;
 #if NETSTANDARD
       log.Fatal ($"GetString: .Net Standard compilation is not supported");
       m_supportedPlatform = false;
@@ -117,7 +146,14 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
         using (var rootKey = RegistryKey.OpenBaseKey (m_root, m_view)) {
           using (RegistryKey odbcKey = rootKey.OpenSubKey (m_key)) {
             if (null == odbcKey) {
-              log.Error ($"Load: key {m_key} does not exist");
+              if (m_optionalKey) {
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Load: optional key {m_key} does not exist");
+                }
+              }
+              else {
+                log.Error ($"Load: key {m_key} does not exist");
+              }
             }
             else { // null != odbcKey
               string[] names = odbcKey.GetValueNames ();
