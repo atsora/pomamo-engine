@@ -24,7 +24,7 @@ namespace Lemoine.NHibernateTypes
     /// <summary>
     /// Constructor
     /// </summary>
-    public GenericDateTimeRangeType () : base (new SqlType (DbType.Object), NpgsqlTypes.NpgsqlDbType.Range | NpgsqlTypes.NpgsqlDbType.Timestamp, false)
+    public GenericDateTimeRangeType () : base (new SqlType (DbType.Object), NpgsqlTypes.NpgsqlDbType.TimestampRange, false)
     {
     }
 

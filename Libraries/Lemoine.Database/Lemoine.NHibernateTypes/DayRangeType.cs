@@ -22,7 +22,7 @@ namespace Lemoine.NHibernateTypes
     /// Constructor
     /// </summary>
     public DayRangeType ()
-      : base (new SqlType (DbType.Object), NpgsqlTypes.NpgsqlDbType.Range | NpgsqlTypes.NpgsqlDbType.Date, false)
+      : base (new SqlType (DbType.Object), NpgsqlTypes.NpgsqlDbType.DateRange, false)
     {
     }
 

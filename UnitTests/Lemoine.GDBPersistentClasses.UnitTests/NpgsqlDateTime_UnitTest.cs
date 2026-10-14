@@ -156,6 +156,54 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .UniqueResult<string> ();
         Assert.That (infiniteText, Is.EqualTo ("[\"2024-01-01 12:00:00\",)"));
 
+        var type = NHibernateHelper.GetCurrentSession ()
+          .CreateSQLQuery ("SELECT CAST(pg_typeof(:r) AS text) AS t")
+          .AddScalar ("t", NHibernate.NHibernateUtil.String)
+          .SetParameter ("r", range, new Lemoine.NHibernateTypes.UTCDateTimeRangeType ())
+          .UniqueResult<string> ();
+        Assert.That (type, Is.EqualTo ("tsrange"));
+
+        transaction.Rollback ();
+      }
+    }
+
+    /// <summary>
+    /// A day range parameter is sent as a daterange and read back
+    /// </summary>
+    [Test]
+    public void TestDayRangeParameter ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        var range = new DayRange (new LowerBound<DateTime> (new DateTime (2024, 01, 01)),
+          new UpperBound<DateTime> (new DateTime (2024, 01, 31)), true, true);
+
+        var type = NHibernateHelper.GetCurrentSession ()
+          .CreateSQLQuery ("SELECT CAST(pg_typeof(:r) AS text) AS t")
+          .AddScalar ("t", NHibernate.NHibernateUtil.String)
+          .SetParameter ("r", range, new Lemoine.NHibernateTypes.DayRangeType ())
+          .UniqueResult<string> ();
+        Assert.That (type, Is.EqualTo ("daterange"));
+
+        var text = NHibernateHelper.GetCurrentSession ()
+          .CreateSQLQuery ("SELECT CAST(:r AS text) AS t")
+          .AddScalar ("t", NHibernate.NHibernateUtil.String)
+          .SetParameter ("r", range, new Lemoine.NHibernateTypes.DayRangeType ())
+          .UniqueResult<string> ();
+        Assert.That (text, Is.EqualTo ("[2024-01-01,2024-02-01)"));
+
+        var infiniteRange = new DayRange (new LowerBound<DateTime> (new DateTime (2024, 01, 01)),
+          new UpperBound<DateTime> (null), true, false);
+        var readRange = NHibernateHelper.GetCurrentSession ()
+          .CreateSQLQuery ("SELECT :r AS r")
+          .AddScalar ("r", new Lemoine.NHibernateTypes.DayRangeType ())
+          .SetParameter ("r", infiniteRange, new Lemoine.NHibernateTypes.DayRangeType ())
+          .UniqueResult<DayRange> ();
+        Assert.Multiple (() => {
+          Assert.That (readRange.Lower.Value, Is.EqualTo (new DateTime (2024, 01, 01)));
+          Assert.That (readRange.Upper.HasValue, Is.False);
+        });
+
         transaction.Rollback ();
       }
     }
