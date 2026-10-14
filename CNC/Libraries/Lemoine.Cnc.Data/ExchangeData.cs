@@ -510,6 +510,41 @@ namespace Lemoine.Cnc.Data
     }
 
     /// <summary>
+    /// Value of a StopCncValue data that corresponds to a cut, see <see cref="BuildCutCncValueExchangeData"/>
+    /// </summary>
+    public static readonly string STOP_CNC_VALUE_CUT = "Cut";
+
+    /// <summary>
+    /// Build an exchange data corresponding to a cut of a CNC value:
+    /// the current period of the field ends at dateTime and a new one starts at dateTime, without any interruption
+    /// (for example at a change of sequence, so that a cumulated value is known at this date/time)
+    ///
+    /// It is a StopCncValue with the value <see cref="STOP_CNC_VALUE_CUT"/>: the previous versions of the import,
+    /// that ignore the value of a StopCncValue, process it as a stop, and the queues route it with the cnc values
+    /// </summary>
+    /// <param name="machineId"></param>
+    /// <param name="machineModuleId"></param>
+    /// <param name="dateTime"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static ExchangeData
+      BuildCutCncValueExchangeData (int machineId,
+                                   int machineModuleId,
+                                   DateTime dateTime,
+                                   string key)
+    {
+      return BuildExchangeData (machineId, machineModuleId, dateTime,
+                               ExchangeDataCommand.StopCncValue,
+                               key, STOP_CNC_VALUE_CUT);
+    }
+
+    /// <summary>
+    /// Is it a cut of a CNC value? (see <see cref="BuildCutCncValueExchangeData"/>)
+    /// </summary>
+    public bool IsCut =>
+      (ExchangeDataCommand.StopCncValue == this.Command) && STOP_CNC_VALUE_CUT.Equals (this.Value as string);
+
+    /// <summary>
     /// Build an exchange data corresponding to a CNC variable
     /// </summary>
     /// <param name="machineId"></param>

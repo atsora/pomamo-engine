@@ -15,8 +15,12 @@ using Lemoine.ModelDAO;
 namespace Lemoine.CncDataImport
 {
   /// <summary>
-  /// Import the stops of the cnc values in table cncdataperiod:
-  /// the current period of the field gets the Stopped property, the next value starts a new period
+  /// Import the stops and the cuts of the cnc values in table cncdataperiod:
+  /// <item>stop: the current period gets the Stopped property (its end remains the date/time of the last value),
+  ///       the next value starts a new period</item>
+  /// <item>cut (StopCncValue with the value Cut, see <see cref="ExchangeData.BuildCutCncValueExchangeData"/>):
+  ///       the current period ends at the cut and the next value starts a new period at the cut, without any interruption</item>
+  /// For a custom aggregation, both are a stop of the extension
   /// </summary>
   internal sealed class ImportDataStopCncDataPeriods : IImportData
   {
@@ -47,11 +51,11 @@ namespace Lemoine.CncDataImport
     }
 
     /// <summary>
-    /// <see cref="IImportData"/>: same key (duplicate)
+    /// <see cref="IImportData"/>: same key and both stops or both cuts (duplicate)
     /// </summary>
     public bool IsMergeable (ExchangeData data, ExchangeData otherData)
     {
-      return data.Key.Equals (otherData.Key);
+      return data.Key.Equals (otherData.Key) && (data.IsCut == otherData.IsCut);
     }
 
     /// <summary>
@@ -61,6 +65,7 @@ namespace Lemoine.CncDataImport
     {
       var key = datas[0].Key;
       var dateTime = datas[0].PreciseDateTime;
+      var cut = datas[0].IsCut;
 
       IField field = null;
       try {
@@ -84,16 +89,14 @@ namespace Lemoine.CncDataImport
             }
             else {
               var state = m_cache.Get (field);
-              var period = state.Period;
-              if ((null != period) && !period.Stopped) {
-                if (log.IsDebugEnabled) {
-                  log.Debug ($"ImportDatas: stop {period} at {dateTime}");
-                }
-                period.Stopped = true;
-                ModelDAOHelper.DAOFactory.CncDataPeriodDAO.MakePersistent (period);
-                state.BaseStatistics = period.Statistics;
-                state.SegmentBegin = period.End;
-                state.SegmentStatistics = null;
+              if (log.IsDebugEnabled) {
+                log.Debug ($"ImportDatas: {(cut ? "cut" : "stop")} {state.Period} at {dateTime}");
+              }
+              if (cut) {
+                m_importDataCncDataPeriods.ProcessCut (field, state, dateTime);
+              }
+              else {
+                m_importDataCncDataPeriods.ProcessStop (field, state, dateTime);
               }
             }
             transaction.Commit ();

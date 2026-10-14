@@ -554,6 +554,74 @@ namespace Lemoine.CncDataImport
         || m_cncValueCache.IsEndCncValueRequired (field.Code, state.Period.End, dateTime, false);
     }
 
+    /// <summary>
+    /// Extend a period up to dateTime, except after a gap (same rule as the values) or beyond the week bound
+    /// </summary>
+    /// <returns>the period ends at dateTime</returns>
+    bool ExtendTo (IField field, ICncDataPeriod period, DateTime dateTime)
+    {
+      if (dateTime <= period.End) {
+        return dateTime == period.End;
+      }
+      if (period.MaxEnd < dateTime) {
+        return false;
+      }
+      if (m_cncValueCache.IsEndCncValueRequired (field.Code, period.End, dateTime, false)) { // Gap
+        return false;
+      }
+      period.End = dateTime;
+      return true;
+    }
+
+    /// <summary>
+    /// Stop of a field with an aggregation of kind Change or Statistics:
+    /// the current period gets the Stopped property (its end remains the date/time of the last value, as in cncvalue)
+    /// and the next value starts a new period
+    /// </summary>
+    internal void ProcessStop (IField field, CncDataPeriodState state, DateTime dateTime)
+    {
+      var period = state.Period;
+      if ((null == period) || period.Stopped) {
+        return;
+      }
+      period.Stopped = true;
+      Persist (period);
+      state.BaseStatistics = period.Statistics;
+      state.SegmentBegin = period.End;
+      state.SegmentStatistics = null;
+      state.CutDateTime = null;
+    }
+
+    /// <summary>
+    /// Cut of a field with an aggregation of kind Change or Statistics (see <see cref="ExchangeData.BuildCutCncValueExchangeData"/>):
+    /// the current period ends at the cut (without the Stopped property) and the next value starts a new period at the cut,
+    /// without any interruption:
+    /// <item>Change: the previous value lasts from the cut up to the next value</item>
+    /// <item>Statistics: the new period starts at the cut</item>
+    ///
+    /// Nothing is done after a gap, beyond the week bound (the next value starts a new period anyway)
+    /// or if the field is stopped
+    /// </summary>
+    internal void ProcessCut (IField field, CncDataPeriodState state, DateTime dateTime)
+    {
+      dateTime = CncDataWeek.TruncateToMilliseconds (dateTime);
+      var period = state.Period;
+      if ((null == period) || period.Stopped) {
+        return;
+      }
+      if (!ExtendTo (field, period, dateTime)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessCut: cut of {period} at {dateTime} after a gap, beyond the week bound or before its end => skip it");
+        }
+        return;
+      }
+      Persist (period);
+      state.BaseStatistics = period.Statistics;
+      state.SegmentBegin = period.End;
+      state.SegmentStatistics = null;
+      state.CutDateTime = dateTime;
+    }
+
     static void SetChangeValue (ICncDataPeriod period, CncDataChangeValue value)
     {
       period.LastValue = value.Number;
@@ -593,7 +661,23 @@ namespace Lemoine.CncDataImport
         return;
       }
 
-      if (!IsNewPeriodRequired (field, state, dateTime)) {
+      var forceNewPeriod = false;
+      if (state.CutDateTime.HasValue) { // Cut not processed yet
+        var cut = state.CutDateTime.Value;
+        state.CutDateTime = null;
+        if ((cut < dateTime) && !IsNewPeriodRequired (field, state, dateTime)) {
+          // The previous value lasts from the cut up to this value, in a new period
+          var next = Create (field, cut);
+          SetChangeValue (next, GetChangeValue (state.Period));
+          Persist (next);
+          state.Start (next, cut, null);
+        }
+        else { // Value at the date/time of the cut, or after a gap
+          forceNewPeriod = true;
+        }
+      }
+
+      if (!forceNewPeriod && !IsNewPeriodRequired (field, state, dateTime)) {
         var period = state.Period;
         // The previous value lasts up to the new value
         AddIncrement (field, period.End, dateTime, period.LastValue, null);
@@ -632,6 +716,19 @@ namespace Lemoine.CncDataImport
     {
       dateTime = CncDataWeek.TruncateToMilliseconds (dateTime);
       if (IsAlreadyImported (state, dateTime)) {
+        return;
+      }
+
+      if (state.CutDateTime.HasValue) { // Cut not processed yet: the new period starts at the cut, except after a gap
+        var cut = state.CutDateTime.Value;
+        state.CutDateTime = null;
+        var begin = dateTime;
+        if ((cut < dateTime) && !IsNewPeriodRequired (field, state, dateTime)) {
+          var weekStart = CncDataWeek.GetWeekStart (dateTime, (DayOfWeek)ModelDAOHelper.DAOFactory.CncDataPartitionDAO.GetWeekCutOffDay ());
+          begin = (cut < weekStart) ? weekStart : cut;
+        }
+        AddIncrement (field, begin, dateTime, statistics.Average, statistics);
+        StartStatistics (field, state, begin, dateTime, statistics);
         return;
       }
 

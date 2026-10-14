@@ -37,6 +37,14 @@ namespace Lemoine.CncDataImport.Cache
     public CncDataStatistics? SegmentStatistics { get; set; }
 
     /// <summary>
+    /// Date/time of a cut of the current period, not processed yet (null if none):
+    /// the next value starts a new period at this date/time (except after a gap)
+    ///
+    /// Note: it is kept only in memory. After a restart, the next value continues the period that ends at the cut
+    /// </summary>
+    public DateTime? CutDateTime { get; set; }
+
+    /// <summary>
     /// Set a new period that starts the statistics
     /// </summary>
     /// <param name="period"></param>
@@ -48,6 +56,7 @@ namespace Lemoine.CncDataImport.Cache
       this.BaseStatistics = null;
       this.SegmentBegin = segmentBegin;
       this.SegmentStatistics = segmentStatistics;
+      this.CutDateTime = null;
     }
   }
 
