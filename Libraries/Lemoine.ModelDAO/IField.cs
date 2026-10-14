@@ -164,6 +164,18 @@ namespace Lemoine.Model
     /// Keep the local maximum
     /// </summary>
     Max = 4,
+    /// <summary>
+    /// The value is already a cumulated value (energy index, pulse counter...):
+    /// a cumulated total is recorded at a regular interval (cncdataperiod only), resets and rollovers are corrected,
+    /// see <see cref="CncDataPeriodAggregationKind.Counter"/>
+    /// </summary>
+    Counter = 5,
+    /// <summary>
+    /// The value is an instantaneous value (power, current, feedrate...) that is integrated over time:
+    /// a cumulated total (energy, distance) is recorded at a regular interval (cncdataperiod only),
+    /// see <see cref="CncDataPeriodAggregationKind.Integral"/>
+    /// </summary>
+    Integral = 6,
   }
 
   /// <summary>
@@ -210,6 +222,23 @@ namespace Lemoine.Model
     /// Aggregation type without any built-in behavior: to be processed by an extension
     /// </summary>
     Custom = 3,
+    /// <summary>
+    /// Cumulated total from a value that is already cumulated (energy index, pulse counter):
+    /// total = (value + offset) * Factor, a decrease of the value being a reset (or a rollover, parameter Rollover).
+    /// Periods as <see cref="Integral"/>
+    /// </summary>
+    Counter = 4,
+    /// <summary>
+    /// Cumulated total from an instantaneous value, integrated over time:
+    /// total += value * Factor * duration / TimeUnit (trapezoidal rule, or the average of a batch over its duration),
+    /// no increase during a gap or a stop.
+    ///
+    /// Periods: one every MinTime (default 30 s), with bounds aligned on the clock (multiples of MinTime since 00:00 UTC),
+    /// at the week bounds and at the cuts. Min = total at the begin, Max = LastValue = total at the end
+    /// (the total is interpolated at a bound), Count = number of values, Average = average rate (Integral only),
+    /// JsonValue = state to continue after a restart
+    /// </summary>
+    Integral = 5,
   }
 
   /// <summary>
@@ -240,6 +269,10 @@ namespace Lemoine.Model
       case CncDataAggregationType.Sum:
       case CncDataAggregationType.Max:
         return CncDataPeriodAggregationKind.Statistics;
+      case CncDataAggregationType.Counter:
+        return CncDataPeriodAggregationKind.Counter;
+      case CncDataAggregationType.Integral:
+        return CncDataPeriodAggregationKind.Integral;
       default:
         return CncDataPeriodAggregationKind.Custom;
       }
@@ -566,5 +599,37 @@ namespace Lemoine.Model
     /// Default: config Cnc.DataImport.MaxCncValueGap (1 minute). For example longer for a slow source (LoRaWAN sensor)
     /// </summary>
     public static readonly string MaxGap = "MaxGap";
+
+    /// <summary>
+    /// Counter, Integral: multiplicative factor of the value (for example Wh per pulse, or a unit conversion). Default: 1
+    /// </summary>
+    public static readonly string Factor = "Factor";
+
+    /// <summary>
+    /// Counter: value after which the counter restarts from 0 (for example 65536 for a 16 bit counter).
+    /// Default: a decrease is a reset, the counter restarts from 0
+    /// </summary>
+    public static readonly string Rollover = "Rollover";
+
+    /// <summary>
+    /// Integral: duration unit of the total, as "hh:mm:ss". Default: 01:00:00 (for example kW => kWh).
+    /// 00:01:00 for a feedrate in mm/min => mm
+    /// </summary>
+    public static readonly string TimeUnit = "TimeUnit";
+
+    /// <summary>
+    /// Integral of a current: voltage (V). The factor becomes Voltage * PowerFactor (* √3 if ThreePhase) * Factor / 1000 (A => kW)
+    /// </summary>
+    public static readonly string Voltage = "Voltage";
+
+    /// <summary>
+    /// Integral of a current: power factor (cos φ). Default: 1
+    /// </summary>
+    public static readonly string PowerFactor = "PowerFactor";
+
+    /// <summary>
+    /// Integral of a current: three-phase (factor √3). Default: false
+    /// </summary>
+    public static readonly string ThreePhase = "ThreePhase";
   }
 }

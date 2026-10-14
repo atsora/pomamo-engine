@@ -45,6 +45,60 @@ namespace Lemoine.CncDataImport.Cache
     public DateTime? CutDateTime { get; set; }
 
     /// <summary>
+    /// Counter, Integral: cumulated total at the last value (null if none)
+    /// </summary>
+    public double? CumulatedTotal { get; set; }
+
+    /// <summary>
+    /// Counter, Integral: date/time of the last value (null if none)
+    /// </summary>
+    public DateTime? CumulatedDateTime { get; set; }
+
+    /// <summary>
+    /// Counter: last raw value of the counter (null if none)
+    /// </summary>
+    public double? CounterRaw { get; set; }
+
+    /// <summary>
+    /// Counter: offset to add to the raw value after the resets and the rollovers
+    /// </summary>
+    public double CounterOffset { get; set; }
+
+    /// <summary>
+    /// Integral: last instantaneous value, multiplied by the factor (null if none)
+    /// </summary>
+    public double? IntegralRate { get; set; }
+
+    /// <summary>
+    /// Counter, Integral: restore the state from the last period (total, and the json value written by the import)
+    /// </summary>
+    /// <param name="last">not null</param>
+    public void RestoreCumulated (ICncDataPeriod last)
+    {
+      this.CumulatedTotal = last.LastValue;
+      this.CumulatedDateTime = last.End;
+      if (string.IsNullOrEmpty (last.JsonValue)) {
+        return;
+      }
+      try {
+        using (var document = System.Text.Json.JsonDocument.Parse (last.JsonValue)) {
+          var root = document.RootElement;
+          if (root.TryGetProperty ("raw", out var raw) && (raw.ValueKind == System.Text.Json.JsonValueKind.Number)) {
+            this.CounterRaw = raw.GetDouble ();
+          }
+          if (root.TryGetProperty ("offset", out var offset) && (offset.ValueKind == System.Text.Json.JsonValueKind.Number)) {
+            this.CounterOffset = offset.GetDouble ();
+          }
+          if (root.TryGetProperty ("rate", out var rate) && (rate.ValueKind == System.Text.Json.JsonValueKind.Number)) {
+            this.IntegralRate = rate.GetDouble ();
+          }
+        }
+      }
+      catch (System.Text.Json.JsonException) {
+      }
+    }
+
+    /// <summary>
     /// Set a new period that starts the statistics
     /// </summary>
     /// <param name="period"></param>
@@ -99,6 +153,10 @@ namespace Lemoine.CncDataImport.Cache
           state.Period = last;
           state.BaseStatistics = last.Statistics;
           state.SegmentBegin = last.End;
+          var kind = field.GetPeriodAggregationKind ();
+          if ((CncDataPeriodAggregationKind.Counter == kind) || (CncDataPeriodAggregationKind.Integral == kind)) {
+            state.RestoreCumulated (last);
+          }
         }
         if (log.IsDebugEnabled) {
           log.Debug ($"Get: initial state of field {field.Id} from the last period {last}");

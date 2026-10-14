@@ -416,6 +416,32 @@ namespace Lemoine.CncDataImport
                 }
               }
               break;
+            case CncDataPeriodAggregationKind.Counter: {
+                var state = m_cache.Get (field);
+                foreach (var data in datas) {
+                  SetActive ();
+                  if (CncDataPeriodValues.TryGetDouble (data.Value, out var raw)) {
+                    ProcessCounter (field, state, data.PreciseDateTime, raw);
+                  }
+                  else {
+                    log.Error ($"ImportDatas: value {data.Value} of {data} is not numeric for counter field {field.Code} => skip it");
+                  }
+                }
+              }
+              break;
+            case CncDataPeriodAggregationKind.Integral: {
+                var state = m_cache.Get (field);
+                foreach (var data in datas) {
+                  SetActive ();
+                  if (CncDataPeriodValues.TryGetStatistics (data.Value, out var statistics)) {
+                    ProcessIntegral (field, state, data.PreciseDateTime, statistics);
+                  }
+                  else {
+                    log.Error ($"ImportDatas: value {data.Value} of {data} is not numeric for integral field {field.Code} => skip it");
+                  }
+                }
+              }
+              break;
             case CncDataPeriodAggregationKind.Custom: {
                 var extension = GetExtension (field);
                 if (null != extension) {
@@ -792,6 +818,213 @@ namespace Lemoine.CncDataImport
         period.Statistics = Combine (state.BaseStatistics, segment);
       }
       Persist (period);
+    }
+
+    static readonly TimeSpan DEFAULT_CUMULATED_INTERVAL = TimeSpan.FromSeconds (30);
+
+    /// <summary>
+    /// Process a value of a field with an aggregation of kind Counter (a value that is already cumulated)
+    /// </summary>
+    internal void ProcessCounter (IField field, CncDataPeriodState state, DateTime dateTime, double raw)
+    {
+      dateTime = CncDataWeek.TruncateToMilliseconds (dateTime);
+      if (IsAlreadyImported (state, dateTime)) {
+        return;
+      }
+
+      // A decrease is a reset (the counter restarts from 0) or a rollover
+      if (state.CounterRaw.HasValue && (raw < state.CounterRaw.Value)) {
+        var rollover = field.GetCncDataParameter<double?> (CncDataParameterNames.Rollover);
+        var added = rollover ?? state.CounterRaw.Value;
+        log.Warn ($"ProcessCounter: counter {field.Code} decreased from {state.CounterRaw.Value} to {raw} at {dateTime} => {(rollover.HasValue ? "rollover" : "reset")}, offset + {added}");
+        state.CounterOffset += added;
+      }
+      state.CounterRaw = raw;
+      var factor = field.GetCncDataParameter (CncDataParameterNames.Factor, 1.0);
+      var total = (raw + state.CounterOffset) * factor;
+      ProcessCumulated (field, state, dateTime, total, 1, null);
+    }
+
+    /// <summary>
+    /// Factor of an integrated value: Factor, or for a current Voltage * PowerFactor (* √3 if ThreePhase) * Factor / 1000 (A => kW)
+    /// </summary>
+    static double GetIntegralFactor (IField field)
+    {
+      var factor = field.GetCncDataParameter (CncDataParameterNames.Factor, 1.0);
+      var voltage = field.GetCncDataParameter<double?> (CncDataParameterNames.Voltage);
+      if (voltage.HasValue) {
+        factor *= voltage.Value * field.GetCncDataParameter (CncDataParameterNames.PowerFactor, 1.0) / 1000.0;
+        if (field.GetCncDataParameter (CncDataParameterNames.ThreePhase, false)) {
+          factor *= Math.Sqrt (3.0);
+        }
+      }
+      return factor;
+    }
+
+    /// <summary>
+    /// Process a value (or the statistics of a batch) of a field with an aggregation of kind Integral:
+    /// the value is integrated since the previous value (trapezoidal rule, or the average of a batch over its duration),
+    /// except after a gap or a stop
+    /// </summary>
+    internal void ProcessIntegral (IField field, CncDataPeriodState state, DateTime dateTime, CncDataStatistics statistics)
+    {
+      dateTime = CncDataWeek.TruncateToMilliseconds (dateTime);
+      if (IsAlreadyImported (state, dateTime)) {
+        return;
+      }
+
+      var rate = statistics.Average * GetIntegralFactor (field);
+      var total = state.CumulatedTotal ?? 0.0;
+      if (state.CumulatedTotal.HasValue && state.CumulatedDateTime.HasValue && (state.CumulatedDateTime.Value < dateTime)
+        && !IsNewPeriodRequired (field, state, dateTime)) {
+        var timeUnit = field.GetCncDataParameter (CncDataParameterNames.TimeUnit, TimeSpan.FromHours (1));
+        var duration = dateTime.Subtract (state.CumulatedDateTime.Value).TotalSeconds / timeUnit.TotalSeconds;
+        var averageRate = ((1 < statistics.Count) || !state.IntegralRate.HasValue)
+          ? rate // Average of a batch over its duration
+          : (state.IntegralRate.Value + rate) / 2.0; // Trapezoidal rule
+        total += averageRate * duration;
+      }
+      state.IntegralRate = rate;
+      ProcessCumulated (field, state, dateTime, total, statistics.Count, rate);
+    }
+
+    /// <summary>
+    /// Common part of Counter and Integral: record the cumulated total at dateTime
+    /// <item>after a gap or a stop (or without any period): a new period starts at dateTime</item>
+    /// <item>after a cut: the total at the cut is interpolated, the current period ends there and a new one starts there</item>
+    /// <item>at each bound of the clock grid (multiples of MinTime since 00:00 UTC) and at the week bound:
+    ///       the total is interpolated, the current period ends there and a new one starts there</item>
+    /// </summary>
+    /// <param name="field"></param>
+    /// <param name="state"></param>
+    /// <param name="dateTime">truncated to the millisecond</param>
+    /// <param name="total">cumulated total at dateTime</param>
+    /// <param name="count">number of received values</param>
+    /// <param name="rate">Integral: instantaneous rate (for the json value), else null</param>
+    void ProcessCumulated (IField field, CncDataPeriodState state, DateTime dateTime, double total, int count, double? rate)
+    {
+      var interval = ((field.MinTime ?? TimeSpan.Zero) <= TimeSpan.Zero) ? DEFAULT_CUMULATED_INTERVAL : field.MinTime.Value;
+      var interrupted = IsNewPeriodRequired (field, state, dateTime);
+      var period = state.Period;
+      var previousDateTime = state.CumulatedDateTime;
+      var previousTotal = state.CumulatedTotal;
+
+      if (state.CutDateTime.HasValue) {
+        var cut = state.CutDateTime.Value;
+        state.CutDateTime = null;
+        if (!interrupted && (cut <= dateTime)) {
+          var totalAtCut = Interpolate (previousDateTime, previousTotal, dateTime, total, cut);
+          CloseCumulated (field, period, cut, totalAtCut);
+          period = StartCumulated (field, state, cut, totalAtCut);
+        }
+        else {
+          interrupted = true;
+        }
+      }
+
+      if (interrupted) {
+        period = StartCumulated (field, state, dateTime, total);
+      }
+      else {
+        // Bounds of the clock grid and week bound
+        while (true) {
+          var gridBound = GetGridBound (dateTime, interval);
+          DateTime? bound = null;
+          if (period.MaxEnd < dateTime) {
+            bound = period.MaxEnd;
+          }
+          if ((period.Begin < gridBound) && (!bound.HasValue || (gridBound < bound.Value))) {
+            bound = gridBound;
+          }
+          if (!bound.HasValue) {
+            break;
+          }
+          var totalAtBound = Interpolate (previousDateTime, previousTotal, dateTime, total, bound.Value);
+          CloseCumulated (field, period, bound.Value, totalAtBound);
+          period = StartCumulated (field, state, bound.Value, totalAtBound);
+        }
+      }
+
+      period.End = dateTime;
+      period.Max = total;
+      period.LastValue = total;
+      period.Count = (period.Count ?? 0) + count;
+      SetCumulatedAverage (field, period);
+      period.JsonValue = GetCumulatedJson (state, rate);
+      Persist (period);
+      state.CumulatedTotal = total;
+      state.CumulatedDateTime = dateTime;
+    }
+
+    /// <summary>
+    /// Last bound of the clock grid before or at dateTime (multiples of interval since 00:00 UTC)
+    /// </summary>
+    static DateTime GetGridBound (DateTime dateTime, TimeSpan interval)
+    {
+      var day = dateTime.Date;
+      var sinceDay = dateTime.Subtract (day).Ticks;
+      return new DateTime (day.Ticks + sinceDay - sinceDay % interval.Ticks, dateTime.Kind);
+    }
+
+    /// <summary>
+    /// Value at a date/time, interpolated between (previousDateTime, previousValue) and (dateTime, value)
+    /// </summary>
+    static double Interpolate (DateTime? previousDateTime, double? previousValue, DateTime dateTime, double value, DateTime at)
+    {
+      if (!previousDateTime.HasValue || !previousValue.HasValue || (dateTime <= previousDateTime.Value) || (dateTime <= at)) {
+        return value;
+      }
+      if (at <= previousDateTime.Value) {
+        return previousValue.Value;
+      }
+      return previousValue.Value + (value - previousValue.Value) * at.Subtract (previousDateTime.Value).Ticks / dateTime.Subtract (previousDateTime.Value).Ticks;
+    }
+
+    void CloseCumulated (IField field, ICncDataPeriod period, DateTime end, double total)
+    {
+      period.End = end;
+      period.Max = total;
+      period.LastValue = total;
+      SetCumulatedAverage (field, period);
+      Persist (period);
+    }
+
+    ICncDataPeriod StartCumulated (IField field, CncDataPeriodState state, DateTime begin, double total)
+    {
+      var period = Create (field, begin);
+      period.Min = total;
+      period.Max = total;
+      period.LastValue = total;
+      period.Count = 0;
+      state.Start (period, begin, null);
+      return period;
+    }
+
+    /// <summary>
+    /// Integral: average rate of the period, in units of the value multiplied by the factor
+    /// </summary>
+    static void SetCumulatedAverage (IField field, ICncDataPeriod period)
+    {
+      if ((CncDataPeriodAggregationKind.Integral != field.GetPeriodAggregationKind ())
+        || !period.Min.HasValue || !period.Max.HasValue || (period.End <= period.Begin)) {
+        return;
+      }
+      var timeUnit = field.GetCncDataParameter (CncDataParameterNames.TimeUnit, TimeSpan.FromHours (1));
+      period.Average = (period.Max.Value - period.Min.Value) / (period.End.Subtract (period.Begin).TotalSeconds / timeUnit.TotalSeconds);
+    }
+
+    /// <summary>
+    /// State to continue after a restart (see <see cref="CncDataPeriodState.RestoreCumulated"/>)
+    /// </summary>
+    static string GetCumulatedJson (CncDataPeriodState state, double? rate)
+    {
+      if (rate.HasValue) {
+        return string.Format (CultureInfo.InvariantCulture, @"{{""rate"": {0:R}}}", rate.Value);
+      }
+      if (state.CounterRaw.HasValue) {
+        return string.Format (CultureInfo.InvariantCulture, @"{{""raw"": {0:R}, ""offset"": {1:R}}}", state.CounterRaw.Value, state.CounterOffset);
+      }
+      return null;
     }
 
     void StartStatistics (IField field, CncDataPeriodState state, DateTime begin, DateTime dateTime, CncDataStatistics statistics)

@@ -18,10 +18,12 @@ namespace Lemoine.GDBMigration
   /// and the new ones in cncdataperiod, without any overlap, so a simple union is enough.
   ///
   /// The periods are translated into the columns of cncvalue according to field.cncdataaggregationtype:
-  /// <item>cncvaluedouble: NewValue (3) last value, Max (4) maximum, Sum (2) average * count, Average (1) average</item>
+  /// <item>cncvaluedouble: NewValue (3) last value, Max (4) maximum, Sum (2) average * count, Average (1) average,
+  ///       Counter (5) cumulated total at the end, Integral (6) average rate (the cumulated totals are in cncvaluemin / cncvaluemax)</item>
   /// <item>cncvaluedeviation: Average standard deviation, Max max - min (as in cncvalue), else null</item>
   /// <item>cncvalueint: integer part of cncvaluedouble (not for a String field)</item>
-  /// <item>cncvaluestring: string value, else json value, else True/False for a Boolean field, else cncvaluedouble as text</item>
+  /// <item>cncvaluestring: string value, else json value (except for Counter and Integral, where it is a state of the import),
+  ///       else True/False for a Boolean field, else cncvaluedouble as text</item>
   /// Additional columns: cncvaluesource (cncvalue, cncdataperiod, cncdataperiodarchive), cncvaluecount, cncvaluemin, cncvaluemax, cncvaluejson,
   /// rowbegindatetime / rowenddatetime (stored row, to prune the partitions).
   ///
@@ -40,12 +42,14 @@ CASE f.cncdataaggregationtype
   WHEN 4 THEN p.max
   WHEN 2 THEN p.average * p.count
   WHEN 1 THEN p.average
+  WHEN 5 THEN p.lastvalue
+  WHEN 6 THEN p.average
   ELSE coalesce (p.average, p.lastvalue)
 END";
     static readonly string STRING = @"
 CASE
   WHEN p.stringvalue IS NOT NULL THEN p.stringvalue
-  WHEN p.jsonvalue IS NOT NULL THEN p.jsonvalue::text
+  WHEN p.jsonvalue IS NOT NULL AND coalesce (f.cncdataaggregationtype, 0) NOT IN (5, 6) THEN p.jsonvalue::text
   WHEN x.d IS NULL THEN NULL
   WHEN f.fieldtype = 'Boolean' THEN CASE WHEN x.d <> 0 THEN 'True' ELSE 'False' END
   ELSE x.d::text
