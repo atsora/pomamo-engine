@@ -274,7 +274,7 @@ namespace Lemoine.WebDataAccess
       get => throw new NotImplementedException ();
       set => throw new NotImplementedException ();
     }
-    public Lemoine.Model.ITask Task {
+    public Lemoine.Model.IManufacturingOrder ManufacturingOrder {
       get => throw new NotImplementedException ();
       set => throw new NotImplementedException ();
     }

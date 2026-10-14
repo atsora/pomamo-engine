@@ -53,11 +53,15 @@ namespace Lemoine.WebDataAccess
     [Newtonsoft.Json.JsonIgnore]
     public TimeSpan? MachiningDuration { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
 
+    public DurationSource MachiningDurationSource { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
+
     public TimeSpan? SetUpDuration { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
 
     public TimeSpan? TearDownDuration { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
 
     public TimeSpan? LoadingDuration { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
+
+    public DurationSource LoadingDurationSource { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
 
     public TimeSpan? UnloadingDuration { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
 
