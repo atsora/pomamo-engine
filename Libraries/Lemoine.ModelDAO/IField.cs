@@ -631,5 +631,16 @@ namespace Lemoine.Model
     /// Integral of a current: three-phase (factor √3). Default: false
     /// </summary>
     public static readonly string ThreePhase = "ThreePhase";
+
+    /// <summary>
+    /// Summary of the cnc data: values below this threshold are not considered (no effective cutting),
+    /// for example the spindle load without any cutting or the base level of a vibration sensor. Default: none
+    /// </summary>
+    public static readonly string EffectiveThreshold = "EffectiveThreshold";
+
+    /// <summary>
+    /// Summary of the cnc data: threshold to compute the time spent above it (overload, vibration alarm). Default: none
+    /// </summary>
+    public static readonly string HighThreshold = "HighThreshold";
   }
 }
