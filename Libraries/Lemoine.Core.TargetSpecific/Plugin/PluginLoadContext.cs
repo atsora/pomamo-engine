@@ -250,6 +250,25 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     }
 
 #if (NETCOREAPP && !NETCOREAPP2_2 && !NETCOREAPP2_1 && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0)
+    /// <summary>
+    /// Load an assembly of the program directory in the default load context, so that it is
+    /// shared by the program and all the plugins, whatever the order they are loaded in.
+    /// Else a plugin that is loaded before the program uses the assembly gets its own copy of
+    /// it, with types that are different from the ones of the program (for example a GraphQL
+    /// scalar type of a plugin that is not a HotChocolate schema type for the program)
+    ///
+    /// If the assembly could not be loaded in the default load context, it is loaded in this
+    /// plugin load context
+    ///
+    /// Note: the static members of these assemblies are shared by the program and all the
+    /// plugins too. If a plugin requires its own static state of a library, this library must
+    /// stay in the plugin load context: in this case, add a per-plugin list of the assemblies
+    /// to keep local, declared with an assembly attribute in the plugin and read by
+    /// <see cref="AssemblyLoader"/> right after the plugin assembly is loaded, before its types
+    /// are enumerated (the types enumeration already resolves the dependencies)
+    /// </summary>
+    /// <param name="assemblyName"></param>
+    /// <returns></returns>
     Assembly LoadFromProgramDirectory (AssemblyName assemblyName)
     {
       var programDirectory = Lemoine.Info.ProgramInfo.AbsoluteDirectory;
@@ -265,7 +284,14 @@ namespace Lemoine.Core.Plugin.TargetSpecific
             log.Debug ($"LoadFromProgramDirectory: try to load {assemblyName} from programDirectory {programDirectory}, path {path}");
           }
           try {
-            var assembly = LoadFromAssemblyPath (path);
+            Assembly assembly;
+            try {
+              assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath (path);
+            }
+            catch (Exception ex) {
+              log.Warn ($"LoadFromProgramDirectory: {assemblyName} could not be loaded in the default load context, path {path} => load it in the plugin load context", ex);
+              assembly = LoadFromAssemblyPath (path);
+            }
             if (log.IsInfoEnabled) {
               log.Info ($"LoadFromProgramDirectory: success for {assemblyName} with path {path} based on programDirectory {programDirectory}");
             }
