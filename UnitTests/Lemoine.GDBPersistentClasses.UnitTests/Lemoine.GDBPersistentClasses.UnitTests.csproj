@@ -51,7 +51,6 @@
     <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.IntermediateWorkPieceSummary\Lemoine.Plugin.IntermediateWorkPieceSummary.csproj" />
     <ProjectReference Include="..\..\Plugins\Analysis\Accumulator\Lemoine.Plugin.OperationSlotCycles\Lemoine.Plugin.OperationSlotCycles.csproj" />
     <ProjectReference Include="..\..\Plugins\Analysis\ProductionState\Lemoine.Plugin.RunningMachineModeIsProduction\Lemoine.Plugin.RunningMachineModeIsProduction.csproj" />
-    <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.AcquisitionDelayEvent\Lemoine.Plugin.AcquisitionDelayEvent.csproj" />
     <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.AcquisitionErrorEvent\Lemoine.Plugin.AcquisitionErrorEvent.csproj" />
     <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.CyclesWithRealEndFull\Lemoine.Plugin.CyclesWithRealEndFull.csproj" />
     <ProjectReference Include="..\..\Plugins\Lemoine.Plugin.MachineStateTemplateChangeEvent\Lemoine.Plugin.MachineStateTemplateChangeEvent.csproj" />
