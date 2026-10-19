@@ -94,7 +94,10 @@ namespace Pulse.Extensions.Web.Doc
             throw new DataProcessingException ($"No document storage is configured for path {path}", ErrorStatus.MissingConfiguration);
           }
 
-          doc ??= await ModelDAOHelper.DAOFactory.DocDAO.FindOrCreateByPathAsync (path);
+          // Note: no ??= here, this library is also compiled in C# 7.3 for net48
+          if (doc is null) {
+            doc = await ModelDAOHelper.DAOFactory.DocDAO.FindOrCreateByPathAsync (path);
+          }
 
           int revision;
           try {
