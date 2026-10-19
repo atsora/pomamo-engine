@@ -161,7 +161,8 @@ namespace Lemoine.WebMiddleware
       if (!string.IsNullOrEmpty (contentType)) {
         context.GetCustomData ().ResponseContentType = contentType;
       }
-      await m_responseWriter.WriteToBodyAsync (context, outputDTO, contentType);
+      // The responseType query parameter has the priority, then the content type of the handler
+      await m_responseWriter.WriteToBodyAsync (context, outputDTO, context.GetResponseContentType ());
     }
 
     private async Task<object> AwaitUnserializedResponse (Func<Task> task, Type expectedResultType)

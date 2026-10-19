@@ -65,7 +65,16 @@ namespace Lemoine.Core.Extensions.Web
       context.Response.ContentType = effectiveContentType;
 
       string s;
-      if (effectiveContentType.Equals ("application/json")) {
+      if (!effectiveContentType.Equals ("application/json") && (responseObject is byte[] bytes)) {
+        // Binary content (application/octet-stream, application/pdf, image/png, ...)
+        if (log.IsDebugEnabled) {
+          log.Debug ($"WriteToBodyAsync: content type is {effectiveContentType} => send directly the bytes");
+        }
+        context.Response.ContentLength = bytes.Length;
+        await context.Response.Body.WriteAsync (bytes, 0, bytes.Length);
+        return;
+      }
+      else if (effectiveContentType.Equals ("application/json")) {
         // Note: because the following code does not work:
         /*
         JsonSerializer.SerializeAsync (context.Response.Body, responseObject);
@@ -80,20 +89,8 @@ namespace Lemoine.Core.Extensions.Web
         s = JsonSerializer.Serialize (responseObject, options);
       }
       else if (effectiveContentType.Equals ("application/octet-stream")) {
-        if (log.IsDebugEnabled) {
-          log.Debug ($"WriteToBodyAsync: content type is {effectiveContentType} => send directly the bytes");
-        }
-        if (responseObject is byte[]) {
-          byte[] responseBytes = (byte[])responseObject;
-          await using (var streamWriter = new BinaryWriter (context.Response.Body)) {
-            streamWriter.Write (responseBytes);
-          }
-          return;
-        }
-        else {
-          s = responseObject?.ToString () ?? "";
-          log.Error ($"WriteToBodyAsync: content type is {effectiveContentType} while the type {responseObject?.GetType ()} is not byte[] => fallback to {s}");
-        }
+        s = responseObject?.ToString () ?? "";
+        log.Error ($"WriteToBodyAsync: content type is {effectiveContentType} while the type {responseObject?.GetType ()} is not byte[] => fallback to {s}");
       }
       else {
         if (log.IsDebugEnabled) {

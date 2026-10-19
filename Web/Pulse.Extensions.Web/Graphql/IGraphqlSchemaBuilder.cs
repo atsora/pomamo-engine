@@ -79,6 +79,16 @@ namespace Pulse.Extensions.Web.Graphql
     IGraphqlSchemaBuilder BindRuntimeType (Type runtimeType, Type schemaType);
 
     /// <summary>
+    /// Add the Upload scalar, for the file arguments of the mutations
+    ///
+    /// A client sends the files with a multipart/form-data request that follows the
+    /// GraphQL multipart request specification, with a GraphQL-Preflight header
+    /// (protection against the cross-site request forgery)
+    /// </summary>
+    /// <returns>this, so that the calls may be chained</returns>
+    IGraphqlSchemaBuilder AddUploadType ();
+
+    /// <summary>
     /// Should the details of an exception, its stack trace included, be returned to the
     /// client? They are internals of the plugin, so it is off by default
     /// </summary>

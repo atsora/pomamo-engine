@@ -37,5 +37,12 @@ namespace Lemoine.ModelDAO
     /// <param name="path">not null and not empty</param>
     /// <returns>not null</returns>
     IDoc FindOrCreateByPath (string path);
+
+    /// <summary>
+    /// Asynchronous version of <see cref="FindOrCreateByPath(string)"/>
+    /// </summary>
+    /// <param name="path">not null and not empty</param>
+    /// <returns>not null</returns>
+    Task<IDoc> FindOrCreateByPathAsync (string path);
   }
 }

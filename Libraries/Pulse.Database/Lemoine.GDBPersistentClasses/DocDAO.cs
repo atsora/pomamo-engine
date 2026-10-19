@@ -83,5 +83,26 @@ namespace Lemoine.GDBPersistentClasses
       var newDoc = ModelDAOHelper.ModelFactory.CreateDoc (path);
       return MakePersistent (newDoc);
     }
+
+    /// <summary>
+    /// <see cref="IDocDAO"/>
+    /// </summary>
+    /// <param name="path">not null and not empty</param>
+    /// <returns>not null</returns>
+    public async Task<IDoc> FindOrCreateByPathAsync (string path)
+    {
+      Debug.Assert (!string.IsNullOrEmpty (path));
+
+      var doc = await FindByPathAsync (path);
+      if (doc is not null) {
+        return doc;
+      }
+
+      if (log.IsDebugEnabled) {
+        log.Debug ($"FindOrCreateByPathAsync: create a new doc for path {path}");
+      }
+      var newDoc = ModelDAOHelper.ModelFactory.CreateDoc (path);
+      return await MakePersistentAsync (newDoc);
+    }
   }
 }
