@@ -15,6 +15,7 @@ using Lemoine.Extensions.Business.Group;
 using Lemoine.Extensions.Business;
 using System.Threading.Tasks;
 using Lemoine.Extensions.Business.Operation;
+using Lemoine.ModelDAO;
 
 namespace Lemoine.Business.Machine
 {
@@ -334,11 +335,24 @@ namespace Lemoine.Business.Machine
 
   /// <summary>
   /// Request class to get a group and its machine ids from a group id
+  ///
+  /// The group id may be:
+  /// <list type="bullet">
+  /// <item>a group id of a group extension</item>
+  /// <item>a combined group: group ids separated by '_', the intersection of these groups</item>
+  /// <item>an ordered list of machine ids separated by <see cref="MACHINE_LIST_SEPARATOR"/>,
+  /// for example 4,2: only integers are accepted between the separators</item>
+  /// </list>
   /// </summary>
   public sealed class GroupFromId
     : IRequest<IGroup>
   {
     static readonly ILog log = LogManager.GetLogger (typeof (GroupFromId).FullName);
+
+    /// <summary>
+    /// Separator of the machine ids in an ordered list of machines
+    /// </summary>
+    public static readonly char MACHINE_LIST_SEPARATOR = ',';
 
     /// <summary>
     /// Group Id
@@ -373,13 +387,51 @@ namespace Lemoine.Business.Machine
         log.Debug ($"Get: group id {this.GroupId}");
       }
 
-      var separator = CombinedGroup.SEPARATOR;
-      if (this.GroupId.Contains (separator)) {
+      if (this.GroupId.Contains (MACHINE_LIST_SEPARATOR)) {
+        return GetFromMachineList ();
+      }
+      else if (this.GroupId.Contains (CombinedGroup.SEPARATOR)) {
         return CombinedGroup.Create (this.GroupId);
       }
       else {
         return GetFromUniqueExtension ();
       }
+    }
+
+    /// <summary>
+    /// Get a static group from an ordered list of machine ids
+    /// </summary>
+    /// <returns>null if an item is not an integer or a machine does not exist</returns>
+    IGroup GetFromMachineList ()
+    {
+      var machineIds = new List<int> ();
+      foreach (var item in this.GroupId.Split (MACHINE_LIST_SEPARATOR)) {
+        if (!int.TryParse (item.Trim (), out var machineId)) {
+          log.Error ($"GetFromMachineList: {item} in {this.GroupId} is not a machine id => return null");
+          return null;
+        }
+        if (!machineIds.Contains (machineId)) {
+          machineIds.Add (machineId);
+        }
+      }
+
+      IList<IMachine> allMachines;
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        allMachines = ModelDAOHelper.DAOFactory.MachineDAO
+          .FindAll ();
+      }
+      var machines = new List<IMachine> ();
+      foreach (var machineId in machineIds) {
+        var machine = allMachines.FirstOrDefault (m => m.Id == machineId);
+        if (machine is null) {
+          log.Error ($"GetFromMachineList: machine {machineId} in {this.GroupId} does not exist => return null");
+          return null;
+        }
+        machines.Add (machine);
+      }
+
+      var name = string.Join (", ", machines.Select (m => m.Name));
+      return new Lemoine.Extensions.Business.Group.Impl.GroupFromMachineList (this.GroupId, name, "MachineList", machines, null, true, false);
     }
 
     /// <summary>
