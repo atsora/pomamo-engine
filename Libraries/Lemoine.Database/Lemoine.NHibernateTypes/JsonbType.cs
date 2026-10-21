@@ -45,6 +45,18 @@ namespace Lemoine.NHibernateTypes
     /// <returns></returns>
     protected override string DeepCopyValue (string v) => v;
 
+    /// <summary>
+    /// Compare the JSON contents, not the texts
+    ///
+    /// PostgreSQL returns a jsonb in its own normalized form (white spaces, order of the keys),
+    /// which differs from the text the application sets. Comparing the texts would make
+    /// the entity dirty, and updated at each flush, including in a read-only transaction
+    /// </summary>
+    /// <param name="x">not null</param>
+    /// <param name="y">not null</param>
+    /// <returns></returns>
+    public override bool TestEquality (string x, string y) => Lemoine.Conversion.JsonComparison.AreEqual (x, y);
+
     #region AbstractType implementation
     /// <summary>
     /// AbstractType implementation

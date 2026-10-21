@@ -295,14 +295,7 @@ namespace Pulse.Business.Reason
           return false;
         }
         else { // both are not null or empty
-          if (string.Equals (json1, json2)) {
-            return true;
-          }
-          else {
-            var node1 = System.Text.Json.Nodes.JsonNode.Parse (json1);
-            var node2 = System.Text.Json.Nodes.JsonNode.Parse (json2);
-            return System.Text.Json.Nodes.JsonNode.DeepEquals (node1, node2);
-          }
+          return Lemoine.Conversion.JsonComparison.AreEqual (json1, json2);
         }
       }
     }
