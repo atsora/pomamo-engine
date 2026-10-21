@@ -36,7 +36,28 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       {
         IWorkOrderStatus workOrderStatus = ModelDAOHelper.DAOFactory.WorkOrderStatusDAO.FindById(1);
         Assert.That (workOrderStatus.Display, Is.AnyOf ("Non défini", "Undefined"));
-      }      
+      }
+    }
+
+    /// <summary>
+    /// The Display of a role is read from the display column: its name, else the translation
+    /// of its translation key
+    /// </summary>
+    [Test]
+    public void TestRoleDisplay ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        var roles = ModelDAOHelper.DAOFactory.RoleDAO.FindAll ();
+        Assert.That (roles, Is.Not.Empty);
+        Assert.Multiple (() => {
+          foreach (var role in roles) {
+            Assert.That (role.Display, Is.Not.Null.And.Not.Empty, $"role {role.Id}");
+            if (!string.IsNullOrEmpty (role.Name)) {
+              Assert.That (role.Display, Is.EqualTo (role.Name), $"role {role.Id}");
+            }
+          }
+        });
+      }
     }
 
     [OneTimeSetUp]

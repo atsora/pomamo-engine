@@ -16,13 +16,13 @@ namespace Lemoine.GDBPersistentClasses
   /// Persistent class of table Role
   /// </summary>
   [Serializable]
-  public class Role: DataWithTranslation, IRole, IVersionable
+  public class Role: DataWithDisplayFunction, IRole, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
+    string m_name; // Can't be empty but can be null
+    string m_translationKey; // Can't be empty but can be null
     string m_webAppKey = "";
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Role).FullName);
 
@@ -54,6 +54,37 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return this.m_version; }
     }
+
+    /// <summary>
+    /// Name
+    ///
+    /// Note an empty string is converted to null.
+    /// </summary>
+    [XmlAttribute ("Name")]
+    public virtual string Name
+    {
+      get => m_name;
+      set => m_name = value;
+    }
+
+    /// <summary>
+    /// Translation key
+    ///
+    /// Note an empty string is converted to null.
+    /// </summary>
+    [XmlAttribute ("TranslationKey")]
+    public virtual string TranslationKey
+    {
+      get => m_translationKey;
+      set => m_translationKey = value;
+    }
+
+    /// <summary>
+    /// Translated name of the object (if applicable, else the name of the object)
+    /// </summary>
+    [XmlIgnore]
+    public virtual string NameOrTranslation => DataWithTranslation
+      .GetTranslationFromNameTranslationKey (this.Name, this.TranslationKey);
 
     /// <summary>
     /// Text to use in a selection dialog

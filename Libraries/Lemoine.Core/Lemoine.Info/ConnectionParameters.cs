@@ -230,6 +230,11 @@ namespace Lemoine.Info
           log.Info ($"LoadParameters: consider suffix {InstanceInfo.DEV_SUFFIX}");
           return true;
         }
+        else if (IsUnitTestDsn ()) {
+          // Never fall back to the unit test connection without suffix:
+          // it is the one of the normal instance, whose schema may be behind
+          return LoadDefaultUnitTestParameters ($"DbConnection.{m_dsnName}{InstanceInfo.DEV_SUFFIX}");
+        }
         else {
           if (log.IsDebugEnabled) {
             log.Debug ($"LoadParameters: no dsn name with suffix {InstanceInfo.DEV_SUFFIX}");
@@ -269,25 +274,42 @@ namespace Lemoine.Info
         }
       }
 
-      if (string.IsNullOrEmpty (suffix)
-        && string.Equals (dsnNameWithSuffix, Constants.DEFAULT_DSN_UNIT_TEST_NAME, StringComparison.InvariantCultureIgnoreCase)) {
-        // Never fall back to the default database in the unit tests
-        m_server = "localhost";
-        m_port = PORT_DEFAULT;
-        m_database = Constants.DEFAULT_DATABASE_UNIT_TEST_NAME;
-        m_username = USERNAME_DEFAULT;
-        m_password = PASSWORD_DEFAULT;
-        if (null != Updated) {
-          Updated (this, new System.EventArgs ());
-        }
-        log.Warn ($"LoadParametersWithSuffix: no config key {configKeyPrefix}.{dsnNameWithSuffix}, use the default unit test database {m_database} on localhost");
-        return true;
+      if (string.IsNullOrEmpty (suffix) && IsUnitTestDsn ()) {
+        return LoadDefaultUnitTestParameters ($"{configKeyPrefix}.{dsnNameWithSuffix}");
       }
 
       if (log.IsWarnEnabled) {
         log.Warn ($"LoadParametersWithSuffix: no valid config key for DSN={m_dsnName} and suffix={suffix}");
       }
       return false;
+    }
+
+    bool IsUnitTestDsn () =>
+      string.Equals (m_dsnName, Constants.DEFAULT_DSN_UNIT_TEST_NAME, StringComparison.InvariantCultureIgnoreCase);
+
+    /// <summary>
+    /// Default unit test database: suffixed by -dev in a dev instance
+    /// </summary>
+    static string DefaultUnitTestDatabase => Constants.DEFAULT_DATABASE_UNIT_TEST_NAME + InstanceInfo.Suffix;
+
+    /// <summary>
+    /// Default parameters of the unit tests, when no connection is configured:
+    /// never fall back to the default database in the unit tests
+    /// </summary>
+    /// <param name="missingConfigKey">config key that was not found, for the log</param>
+    /// <returns>true</returns>
+    bool LoadDefaultUnitTestParameters (string missingConfigKey)
+    {
+      m_server = "localhost";
+      m_port = PORT_DEFAULT;
+      m_database = DefaultUnitTestDatabase;
+      m_username = USERNAME_DEFAULT;
+      m_password = PASSWORD_DEFAULT;
+      if (null != Updated) {
+        Updated (this, new System.EventArgs ());
+      }
+      log.Warn ($"LoadDefaultUnitTestParameters: no config key {missingConfigKey}, use the default unit test database {m_database} on localhost");
+      return true;
     }
 
     bool LoadParametersFromConfigKey (string configKey)
@@ -341,6 +363,11 @@ namespace Lemoine.Info
         if (databaseGroup.Success) {
           m_database = databaseGroup.Value;
         }
+        else if (IsUnitTestDsn ()) {
+          // Never fall back to the default database in the unit tests
+          log.Debug ("LoadParametersWithSuffix: default unit test database");
+          m_database = DefaultUnitTestDatabase;
+        }
         else {
           log.Debug ("LoadParametersWithSuffix: default database");
           m_database = DATABASE_DEFAULT;
@@ -349,10 +376,9 @@ namespace Lemoine.Info
         if (null != Updated) {
           Updated (this, new System.EventArgs ());
         }
-        log.InfoFormat ("LoadParameters: " +
-                        "The connection parameters taken from configset are " +
-                        "server={0} port={1} database={2} user={3} password={4}",
-                        m_server, m_port, m_database, m_username, m_password);
+        if (log.IsInfoEnabled) {
+          log.Info ($"LoadParameters: the connection parameters taken from configset are server={m_server} port={m_port} database={m_database} user={m_username}");
+        }
         return true;
       }
       catch (Exception ex) {

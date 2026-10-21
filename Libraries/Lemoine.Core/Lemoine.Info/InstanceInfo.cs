@@ -14,11 +14,13 @@ namespace Lemoine.Info
   /// A dev instance (for example a beta) can be installed next to the normal instance.
   /// It is activated by the config key dev=true, usually set in the file instance.options
   /// of the installation directory, so that it only applies to the programs of this installation.
+  /// It is the default in a development branch of the next major release (NEXT_MAJOR).
   /// The resources the two instances would share are then suffixed by -dev:
   /// <item>the registry key, which is considered first, before the normal one</item>
   /// <item>the common and local configuration directories (ProgramData, LocalAppData)</item>
   /// <item>the Windows service names</item>
-  /// <item>the DSN name of the database connection, if a connection with this suffix is defined</item>
+  /// <item>the DSN name of the database connection, if a connection with this suffix is defined.
+  /// The unit test connection never falls back to the one without suffix</item>
   /// </summary>
   public static class InstanceInfo
   {
@@ -26,7 +28,21 @@ namespace Lemoine.Info
     /// Config key to activate the dev instance
     /// </summary>
     public static readonly string DEV_KEY = "dev";
-    static readonly bool DEV_DEFAULT = false;
+
+    /// <summary>
+    /// Default value of the config key dev
+    ///
+    /// true in a development branch of the next major release (NEXT_MAJOR, see Directory.Build.props),
+    /// whose programs and unit tests must not share the resources of the current release,
+    /// the database first. It may be overridden by dev=false
+    /// </summary>
+    public static readonly bool DEV_DEFAULT =
+#if NEXT_MAJOR
+      true
+#else
+      false
+#endif
+      ;
 
     /// <summary>
     /// Suffix of the resources of a dev instance

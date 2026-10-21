@@ -11,6 +11,8 @@
     </id>
     <version name="Version" column="Roleversion"
              access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
     <property name="Name" column="rolename"
               type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
     <property name="TranslationKey" column="roletranslationkey"

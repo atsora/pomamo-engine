@@ -44,10 +44,9 @@ namespace Lemoine.Info.UnitTests
       Lemoine.Info.ConfigSet.SetPersistentConfig (key, true);
       Assert.That (Lemoine.Info.ConfigSet.Get<bool> (key), Is.True);
       {
-        var commonApplicationData = System.Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
-        var commonConfigDirectory = Path.Combine (commonApplicationData, "Pomamo");
-        var path = Path.Combine (commonConfigDirectory, $"{PulseInfo.ProductFolderName}.options.d", key + ".options");
-        Assert.That (File.Exists (path), Is.True);
+        // Same directory as the persistent config writer of the OsConfigReader, -dev suffixed in a dev instance
+        var path = Path.Combine (PulseInfo.CommonConfigurationDirectory, $"{PulseInfo.LinuxPackageName}.options.d", key + ".options");
+        Assert.That (File.Exists (path), Is.True, $"{path} does not exist");
       }
       Lemoine.Info.ConfigSet.ResetPersistentConfig (key);
       Assert.Throws<ConfigKeyNotFoundException> (() => Lemoine.Info.ConfigSet.Get<bool> (key));

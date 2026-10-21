@@ -25,7 +25,11 @@ namespace Lemoine.Info
 
     /// <summary>
     /// Default database name for the unit tests,
-    /// used when no DbConnection.{DEFAULT_DSN_UNIT_TEST_NAME} config key is set
+    /// used when the DbConnection.{DEFAULT_DSN_UNIT_TEST_NAME} config key is not set
+    /// or does not specify any database.
+    ///
+    /// It is suffixed by -dev in a dev instance (see <see cref="InstanceInfo"/>),
+    /// for example in a development branch of the next major release
     /// </summary>
     public static string DEFAULT_DATABASE_UNIT_TEST_NAME =>
 #if ATSORA
@@ -38,7 +42,8 @@ namespace Lemoine.Info
     /// <summary>
     /// DSN name of the unit tests.
     ///
-    /// The connection parameters are read in the DbConnection.UnitTests config key
+    /// The connection parameters are read in the DbConnection.UnitTests config key,
+    /// or DbConnection.UnitTests-dev in a dev instance (see <see cref="InstanceInfo"/>)
     /// </summary>
     public static string DEFAULT_DSN_UNIT_TEST_NAME => "UnitTests";
 

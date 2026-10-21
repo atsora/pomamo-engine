@@ -3375,17 +3375,17 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       {
-        ITranslation translation = new Translation ("", "RoleSetup");
+        ITranslation translation = new Translation ("", "RoleSetUp");
         translation.TranslationValue = "Set-up";
         InsertDefaultValue (translation);
       }
       {
-        ITranslation translation = new Translation ("fr", "RoleSetup");
+        ITranslation translation = new Translation ("fr", "RoleSetUp");
         translation.TranslationValue = "Régleur";
         InsertDefaultValue (translation);
       }
       {
-        ITranslation translation = new Translation ("de", "RoleSetup");
+        ITranslation translation = new Translation ("de", "RoleSetUp");
         translation.TranslationValue = "Einrichtung";
         InsertDefaultValue (translation);
       }
