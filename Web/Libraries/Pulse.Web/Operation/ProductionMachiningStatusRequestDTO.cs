@@ -27,6 +27,11 @@ namespace Pulse.Web.Operation
     /// Consider the manufacturing order for the period to track
     /// </summary>
     TrackManufacturingOrder = 1,
+    /// <summary>
+    /// Former name of <see cref="TrackManufacturingOrder"/>, kept for the clients that still send it
+    /// </summary>
+    [Obsolete ("Use TrackManufacturingOrder")]
+    TrackTask = TrackManufacturingOrder,
   }
 
   /// <summary>

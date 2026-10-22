@@ -84,15 +84,33 @@ namespace Lemoine.WebMiddleware.Contracts.DataTypeConverters
 
     object? ConvertAuto (Type t, string s)
     {
-      try {
-        return Enum.Parse (t, s);
-      }
-      catch (Exception ex) {
-        if (log.IsDebugEnabled) {
-          log.Debug ("ConvertAuto: not a valid Enum", ex);
-        }
+      if (t.IsEnum) {
+        return ConvertEnum (t, s);
       }
       return Convert.ChangeType (s, t);
+    }
+
+    /// <summary>
+    /// Convert a query parameter into an enum value, whatever its case
+    ///
+    /// An empty parameter gives the default value, the way the numeric converters do
+    /// </summary>
+    /// <param name="t">enum type</param>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">s is not a value of the enum</exception>
+    object ConvertEnum (Type t, string s)
+    {
+      if (string.IsNullOrWhiteSpace (s)) {
+        return Activator.CreateInstance (t)!;
+      }
+      try {
+        return Enum.Parse (t, s.Trim (), true);
+      }
+      catch (Exception ex) {
+        log.Error ($"ConvertEnum: {s} is not a valid value of {t}", ex);
+        throw new ArgumentException ($"Invalid value {s} for {t.Name}, valid values: {string.Join (", ", Enum.GetNames (t))}", ex);
+      }
     }
 
     public Func<string, T> GetConverterNotNullable<T> ()

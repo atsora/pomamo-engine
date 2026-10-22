@@ -43,5 +43,12 @@ namespace Pulse.Extensions.Web.Graphql
     /// </summary>
     public static IGraphqlSchemaBuilder BindRuntimeType<TRuntimeType, TSchemaType> (this IGraphqlSchemaBuilder builder)
       => builder.BindRuntimeType (typeof (TRuntimeType), typeof (TSchemaType));
+
+    /// <summary>
+    /// <see cref="IGraphqlSchemaBuilder.AddSingleton(Type, object)"/>
+    /// </summary>
+    public static IGraphqlSchemaBuilder AddSingleton<TService> (this IGraphqlSchemaBuilder builder, TService instance)
+      where TService : class
+      => builder.AddSingleton (typeof (TService), instance);
   }
 }

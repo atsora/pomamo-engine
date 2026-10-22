@@ -89,11 +89,37 @@ namespace Pulse.Extensions.Web.Graphql
     IGraphqlSchemaBuilder AddUploadType ();
 
     /// <summary>
+    /// Register an instance that the resolvers of the schema get as a service, typically the
+    /// configuration of the plugin
+    ///
+    /// The instance is registered in the services of the web service, which all the schemas
+    /// share: its type must be specific to the plugin, so that it never replaces the service
+    /// of another plugin
+    /// </summary>
+    /// <param name="serviceType">not null</param>
+    /// <param name="instance">not null, an instance of serviceType</param>
+    /// <returns>this, so that the calls may be chained</returns>
+    IGraphqlSchemaBuilder AddSingleton (Type serviceType, object instance);
+
+    /// <summary>
     /// Should the details of an exception, its stack trace included, be returned to the
     /// client? They are internals of the plugin, so it is off by default
     /// </summary>
     /// <param name="includeExceptionDetails"></param>
     /// <returns>this, so that the calls may be chained</returns>
     IGraphqlSchemaBuilder IncludeExceptionDetails (bool includeExceptionDetails);
+
+    /// <summary>
+    /// Each resolver opens its own database session, and no session is shared by the request
+    ///
+    /// By default, one database session is opened for the whole request: the resolvers may
+    /// return NHibernate entities whose lazy associations are loaded while the response is
+    /// serialized. A session is not thread-safe, so the resolvers are then run serially.
+    /// With this option, the resolvers are run in parallel: each of them must open its own
+    /// session, and return objects that do not need it any more once it is closed, DTOs or
+    /// entities whose associations are all loaded
+    /// </summary>
+    /// <returns>this, so that the calls may be chained</returns>
+    IGraphqlSchemaBuilder UseSessionPerResolver ();
   }
 }
