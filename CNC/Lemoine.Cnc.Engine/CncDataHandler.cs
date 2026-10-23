@@ -1061,7 +1061,7 @@ namespace Lemoine.CncEngine
       try { // Run the Start method if it exists
         var result = cncModuleExecutor.Start (moduleElement, data);
         if (!result) {
-          log.Warn ("ProcessStart: Start method of {cncModuleExecutor.CncModule} failed => skip the elements of this module");
+          log.Warn ($"ProcessStart: Start method of {cncModuleExecutor.CncModule} failed => skip the elements of this module");
           RecordStartError (moduleElement, data);
           return false;
         }
