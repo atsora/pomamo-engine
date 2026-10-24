@@ -52,6 +52,27 @@ namespace Lemoine.Conversion.UnitTests
       });
     }
 
+    /// <summary>
+    /// Conversion of a number into a boolean, used by the if/ifnot conditions of the cnc configurations
+    /// (e.g. if="Table1" where Table1 is the int value of a macro variable)
+    /// </summary>
+    [Test]
+    public void TestAutoConvertNumberToBool ()
+    {
+      var converter = new DefaultAutoConverter ();
+      Assert.Multiple (() => {
+        Assert.That (converter.ConvertAuto<bool> (0), Is.False);
+        Assert.That (converter.ConvertAuto<bool> (1), Is.True);
+        Assert.That (converter.ConvertAuto<bool> (2), Is.True);
+        Assert.That (converter.ConvertAuto<bool> (0L), Is.False);
+        Assert.That (converter.ConvertAuto<bool> (1L), Is.True);
+        Assert.That (converter.ConvertAuto<bool> (0.0), Is.False);
+        Assert.That (converter.ConvertAuto<bool> (1.0), Is.True);
+        Assert.That (converter.ConvertAuto ((object)0, typeof (bool)), Is.False);
+        Assert.That (converter.ConvertAuto ((object)1, typeof (bool)), Is.True);
+      });
+    }
+
     [Test]
     public void TestAutoConvertEnumerable ()
     {
