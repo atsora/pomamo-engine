@@ -147,9 +147,11 @@ namespace Lemoine.Business.Operation
       var number = Lemoine.Info.ConfigSet.LoadAndGet (PRODUCTION_PERIODS_KEY, PRODUCTION_PERIODS_DEFAULT);
       var minCycles = Lemoine.Info.ConfigSet.LoadAndGet (MIN_CYCLES_KEY, MIN_CYCLES_DEFAULT);
 
-      var slots = await ServiceProvider.GetAsync (new MachineObservationState.ProductionPeriods (m_machine,
-        new UtcDateTimeRange (m_until.Subtract (lookBack), m_until)));
-      var periods = GetLastProductionPeriods (slots, number);
+      var range = new UtcDateTimeRange (m_until.Subtract (lookBack), m_until);
+      var slots = await ServiceProvider.GetAsync (new MachineObservationState.ProductionPeriods (m_machine, range));
+      // The slots are returned whole: they are cut to the look back period
+      var periods = GetLastProductionPeriods (slots
+        .Select (x => (new UtcDateTimeRange (x.Item1.Intersects (range)), x.Item2)), number);
       var cycles = 0;
       var duration = TimeSpan.Zero;
       foreach (var period in periods) {
