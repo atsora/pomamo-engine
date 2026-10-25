@@ -41,7 +41,14 @@ namespace Pulse.Graphql.Type
       else {
         Field<ListGraphType<WorkInfoGraphType>, IList<IProject>> ("parents").Resolve (ctx => new List<IProject> { ctx.Source.Project });
       }
-      Field<ListGraphType<WorkInfoGraphType>, IEnumerable<IOperation>> ("children").Resolve (ctx => ctx.Source.ComponentIntermediateWorkPieces.Select (x => x.IntermediateWorkPiece.Operation));
+      // The intermediate work pieces are a level between the components and the operations,
+      // unless they make simple operations
+      if (dataStructure.IntermediateWorkPieceOperationIsSimpleOperation) {
+        Field<ListGraphType<WorkInfoGraphType>, IEnumerable<ISimpleOperation>> ("children").Resolve (ctx => ctx.Source.ComponentIntermediateWorkPieces.Select (x => x.IntermediateWorkPiece.SimpleOperation));
+      }
+      else {
+        Field<ListGraphType<WorkInfoGraphType>, IEnumerable<IIntermediateWorkPiece>> ("children").Resolve (ctx => ctx.Source.ComponentIntermediateWorkPieces.Select (x => x.IntermediateWorkPiece));
+      }
       Field<NonNullGraphType<ComponentTypeGraphType>, IComponentType> ("type");
       Field<IntermediateWorkPieceGraphType, IIntermediateWorkPiece> ("finalWorkPiece");
       Field<double> ("estimatedHours");

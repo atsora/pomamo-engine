@@ -33,7 +33,12 @@ namespace Pulse.Graphql.Type
       Field<string> ("externalCode", nullable: true);
       Field<string> ("documentLink", nullable: true);
       Field<string> ("display");
-      if (dataStructure.ProjectComponentIsPart) {
+      // The intermediate work pieces are a level between the components and the operations,
+      // unless they make simple operations
+      if (!dataStructure.IntermediateWorkPieceOperationIsSimpleOperation) {
+        Field<ListGraphType<WorkInfoGraphType>, ICollection<IIntermediateWorkPiece>> ("parents").Resolve (ctx => ctx.Source.IntermediateWorkPieces);
+      }
+      else if (dataStructure.ProjectComponentIsPart) {
         Field<ListGraphType<WorkInfoGraphType>, IEnumerable<IPart>> ("parents").Resolve (ctx => ctx.Source.IntermediateWorkPieces.SelectMany (x => x.ComponentIntermediateWorkPieces.Select (y => y.Component.Part)));
       }
       else {
@@ -42,6 +47,10 @@ namespace Pulse.Graphql.Type
       Field<ListGraphType<WorkInfoGraphType>> ("children").Resolve (ctx => null);
       Field<string> ("longdisplay");
       Field<string> ("shortdisplay");
+      // The reference schema names them in camelCase: the lowercase names are kept for the
+      // clients that read them
+      Field<string> ("longDisplay", nullable: true);
+      Field<string> ("shortDisplay", nullable: true);
       Field<NonNullGraphType<OperationTypeGraphType>, IOperationType> ("type");
       if (dataStructure.IntermediateWorkPieceOperationIsSimpleOperation) {
         Field<IntGraphType, int?> ("quantity")

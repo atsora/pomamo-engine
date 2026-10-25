@@ -42,5 +42,14 @@ namespace Lemoine.ModelDAO
     /// <returns></returns>
     IList<IManufacturingOrder> GetNext (IMachine machine,
                           IOperation operation);
+
+    /// <summary>
+    /// Find the items whose external code contains the text, whatever the case,
+    /// in the order of their ids
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults">maximum number of items to return</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IManufacturingOrder>> FindBySearchAsync (string search, int maxResults);
   }
 }

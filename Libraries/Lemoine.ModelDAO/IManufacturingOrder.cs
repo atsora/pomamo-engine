@@ -8,7 +8,10 @@ using System;
 namespace Lemoine.Model
 {
   /// <summary>
-  /// Task status
+  /// Manufacturing order status
+  ///
+  /// The values are the ids of the manuforderstatus table, see
+  /// <see cref="IManufacturingOrderStatus"/> for their display and color
   /// </summary>
   public enum ManufacturingOrderStatus
   {
@@ -17,17 +20,21 @@ namespace Lemoine.Model
     /// </summary>
     New = 1,
     /// <summary>
+    /// Ready
+    /// </summary>
+    Ready = 2,
+    /// <summary>
     /// Running
     /// </summary>
-    Running = 2,
+    Running = 3,
     /// <summary>
     /// Completed
     /// </summary>
-    Completed = 3,
+    Completed = 4,
     /// <summary>
     /// Hold
     /// </summary>
-    Hold = 4
+    Hold = 5
   }
   
   /// <summary>
@@ -49,7 +56,7 @@ namespace Lemoine.Model
     /// 
     /// Nullable
     /// </summary>
-    IOperation Operation { get; }
+    IOperation Operation { get; set; }
     
     /// <summary>
     /// Associated component (optional)

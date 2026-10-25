@@ -823,6 +823,11 @@ namespace Lemoine.ModelDAO
     IManufacturingOrderDAO ManufacturingOrderDAO { get; }
 
     /// <summary>
+    /// Get a IManufacturingOrderStatusDAO
+    /// </summary>
+    IManufacturingOrderStatusDAO ManufacturingOrderStatusDAO { get; }
+
+    /// <summary>
     /// Get a IManufacturingOrderMachineAssociationDAO
     /// </summary>
     IManufacturingOrderMachineAssociationDAO ManufacturingOrderMachineAssociationDAO { get; }

@@ -96,6 +96,7 @@ namespace Lemoine.GDBPersistentClasses
       return new Disjunction ()
         .Add (Restrictions.IsNull ("ManufacturingOrderStatus"))
         .Add (Restrictions.Eq ("ManufacturingOrderStatus", ManufacturingOrderStatus.New))
+        .Add (Restrictions.Eq ("ManufacturingOrderStatus", ManufacturingOrderStatus.Ready))
         .Add (Restrictions.Eq ("ManufacturingOrderStatus", ManufacturingOrderStatus.Running));
     }
     
@@ -202,6 +203,21 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateUtil.Initialize (result.WorkOrder);
       NHibernateUtil.Initialize (result.Machine);
       return result;
+    }
+
+    /// <summary>
+    /// <see cref="IManufacturingOrderDAO"/>
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IManufacturingOrder>> FindBySearchAsync (string search, int maxResults)
+    {
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<ManufacturingOrder> ()
+        .Add (WorkInfoSearch.Matches (search, "ExternalCode"));
+      return await WorkInfoSearch.OrderAndLimit (criteria, null, maxResults)
+        .ListAsync<IManufacturingOrder> ();
     }
   }
 }

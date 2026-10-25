@@ -41,6 +41,7 @@ namespace Pulse.Graphql.Type
       }
       Field<ListGraphType<WorkInfoGraphType>, IList<IOperation>> ("children")
         .Resolve (ctx => new List<IOperation> { ctx.Source.Operation });
+      Field<OperationGraphType, IOperation> ("operation");
       Field<int> ("operationQuantity", nullable: true);
       Field<double> ("weight", nullable: true);
 

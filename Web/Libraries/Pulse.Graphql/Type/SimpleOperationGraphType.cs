@@ -40,6 +40,12 @@ namespace Pulse.Graphql.Type
       Field<ListGraphType<WorkInfoGraphType>> ("children").Resolve (ctx => null);
       Field<string> ("longdisplay");
       Field<string> ("shortdisplay");
+      // The reference schema names them in camelCase: the lowercase names are kept for the
+      // clients that read them. A simple operation carries the displays of its operation
+      Field<StringGraphType, string> ("longDisplay")
+        .Resolve (ctx => ctx.Source.Operation?.LongDisplay);
+      Field<StringGraphType, string> ("shortDisplay")
+        .Resolve (ctx => ctx.Source.Operation?.ShortDisplay);
       Field<NonNullGraphType<OperationTypeGraphType>, IOperationType> ("type");
       Field<int> ("quantity", nullable: true);
       Field<double> ("weight", nullable: true);

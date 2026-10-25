@@ -28,6 +28,10 @@ namespace Pulse.Graphql.Type
       Name = "Machine";
       Field<NonNullGraphType<IdGraphType>> ("id");
       Field<string> ("name");
+      // The reference schema names it display: name is kept for the clients that read it
+      Field<string> ("display", nullable: false);
+
+      Interface<DisplayableInterface> ();
     }
   }
 }

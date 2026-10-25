@@ -26,6 +26,7 @@ namespace Pulse.Graphql.Type
     public SequenceOperationModelGraphType ()
     {
       Name = "SequenceOperationModel";
+      Field<NonNullGraphType<IdGraphType>> ("id");
       Field<NonNullGraphType<SequenceGraphType>, ISequence> ("sequence");
       Field<NonNullGraphType<OperationModelGraphType>, IOperationModel> ("operationModel");
       Field<double> ("order", nullable: false);

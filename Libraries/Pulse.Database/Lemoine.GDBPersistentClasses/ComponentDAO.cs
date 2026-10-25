@@ -299,6 +299,46 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IComponentDAO"/>
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="id"></param>
+    /// <param name="projectId"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<bool> IfExistsOtherWithSameNameAsync (string name, int id, int projectId)
+    {
+      var count = await NHibernateHelper.GetCurrentSession ().CreateCriteria<Project> ()
+        .CreateAlias ("Components", "component")
+        .Add (Restrictions.Eq ("this.Id", projectId))
+        .Add (Restrictions.Not (Restrictions.Eq ("component.Id", id)))
+        .Add (Restrictions.Eq ("component.Name", name))
+        .Add (Restrictions.IsNotNull ("component.Name"))
+        .SetProjection (Projections.RowCount ())
+        .UniqueResultAsync<int> ();
+      return (count > 0);
+    }
+
+    /// <summary>
+    /// <see cref="IComponentDAO"/>
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="id"></param>
+    /// <param name="projectId"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<bool> IfExistsOtherWithSameCodeAsync (string code, int id, int projectId)
+    {
+      var count = await NHibernateHelper.GetCurrentSession ().CreateCriteria<Project> ()
+        .CreateAlias ("Components", "component")
+        .Add (Restrictions.Eq ("this.Id", projectId))
+        .Add (Restrictions.Not (Restrictions.Eq ("component.Id", id)))
+        .Add (Restrictions.Eq ("component.Code", code))
+        .Add (Restrictions.IsNotNull ("component.Code"))
+        .SetProjection (Projections.RowCount ())
+        .UniqueResultAsync<int> ();
+      return (count > 0);
+    }
+
+    /// <summary>
     /// Tests if exists Component have same name
     /// </summary>
     /// <param name="name"></param>
@@ -377,6 +417,31 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IComponentDAO"/>
+    /// </summary>
+    /// <param name="component">not null</param>
+    /// <param name="newProject">not null</param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task ChangeProjectAsync (IComponent component, IProject newProject)
+    {
+      Debug.Assert (null != component);
+      Debug.Assert (null != newProject);
+
+      await ModelDAOHelper.DAOFactory.ProjectDAO.LockAsync (component.Project);
+      IProject oldProject = component.Project;
+      await NHibernateUtil.InitializeAsync (oldProject.Components);
+      component.Project = newProject;
+      await ModelDAOHelper.DAOFactory.ProjectDAO.MakePersistentAsync (oldProject);
+      await ModelDAOHelper.DAOFactory.ProjectDAO.MakePersistentAsync (newProject);
+      await ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistentAsync (component);
+
+      IProjectComponentUpdate update = ModelDAOHelper.ModelFactory
+        .CreateProjectComponentUpdate (component, oldProject, newProject);
+      update.DateTime = DateTime.UtcNow;
+      await ModelDAOHelper.DAOFactory.ProjectComponentUpdateDAO.MakePersistentAsync (update);
+    }
+
+    /// <summary>
     /// Reload an entity (for example after an update operation fails or because it was changed somewhere else)
     /// </summary>
     /// <param name="entity"></param>
@@ -409,5 +474,21 @@ namespace Lemoine.GDBPersistentClasses
         .List<IComponent> ();
     }
     #endregion // Methods
+
+    /// <summary>
+    /// <see cref="IComponentDAO"/>
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IComponent>> FindBySearchAsync (string search, int maxResults)
+    {
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<Component> ()
+        .CreateAlias ("Project", "project")
+        .Add (WorkInfoSearch.MatchesNameOrCode (search));
+      return await WorkInfoSearch.OrderAndLimit (criteria, "project.ArchiveDateTime", maxResults)
+        .ListAsync<IComponent> ();
+    }
   }
 }

@@ -277,5 +277,20 @@ namespace Lemoine.GDBPersistentClasses
         // .SetCacheable (true) // SetCacheable is not behaving well with FetchMode.Eager
         .UniqueResult<IOperation> ();
     }
+
+    /// <summary>
+    /// <see cref="IOperationDAO"/>
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IOperation>> FindBySearchAsync (string search, int maxResults)
+    {
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<Operation> ()
+        .Add (WorkInfoSearch.MatchesNameOrCode (search));
+      return await WorkInfoSearch.OrderAndLimit (criteria, "ArchiveDateTime", maxResults)
+        .ListAsync<IOperation> ();
+    }
   }
 }

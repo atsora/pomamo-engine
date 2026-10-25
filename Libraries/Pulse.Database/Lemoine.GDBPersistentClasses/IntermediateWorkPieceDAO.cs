@@ -237,5 +237,20 @@ namespace Lemoine.GDBPersistentClasses
       return componentIntermediateWorkPieces
         .Select (x => x.IntermediateWorkPiece);
     }
+
+    /// <summary>
+    /// <see cref="IIntermediateWorkPieceDAO"/>
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IIntermediateWorkPiece>> FindBySearchAsync (string search, int maxResults)
+    {
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<IntermediateWorkPiece> ()
+        .Add (WorkInfoSearch.MatchesNameOrCode (search));
+      return await WorkInfoSearch.OrderAndLimit (criteria, null, maxResults)
+        .ListAsync<IIntermediateWorkPiece> ();
+    }
   }
 }

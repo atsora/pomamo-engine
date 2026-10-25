@@ -47,5 +47,39 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Eq ("Project.Id", project.Id))
         .UniqueResult<WorkOrderProject> ();
     }
+
+    /// <summary>
+    /// <see cref="IWorkOrderProjectDAO"/>
+    /// </summary>
+    /// <param name="workOrder">not null</param>
+    /// <param name="project">not null</param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IWorkOrderProject> GetAsync (IWorkOrder workOrder, IProject project)
+    {
+      Debug.Assert (null != workOrder);
+      Debug.Assert (null != project);
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<WorkOrderProject> ()
+        .Add (Restrictions.Eq ("WorkOrder.Id", workOrder.Id))
+        .Add (Restrictions.Eq ("Project.Id", project.Id))
+        .UniqueResultAsync<WorkOrderProject> ();
+    }
+
+    /// <summary>
+    /// <see cref="IWorkOrderProjectDAO"/>
+    /// </summary>
+    /// <param name="workOrder">not null</param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IWorkOrderProject>> FindByWorkOrderAsync (IWorkOrder workOrder)
+    {
+      Debug.Assert (null != workOrder);
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<WorkOrderProject> ()
+        .Add (Restrictions.Eq ("WorkOrder.Id", workOrder.Id))
+        .AddOrder (Order.Asc ("Id"))
+        .ListAsync<IWorkOrderProject> ();
+    }
   }
 }

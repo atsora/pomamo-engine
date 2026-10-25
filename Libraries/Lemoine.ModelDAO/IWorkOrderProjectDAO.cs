@@ -21,5 +21,21 @@ namespace Lemoine.ModelDAO
     /// <param name="project">not null</param>
     /// <returns></returns>
     IWorkOrderProject Get (IWorkOrder workOrder, IProject project);
+
+    /// <summary>
+    /// Get the unique <see cref="IWorkOrderProject"/>
+    /// given the associated work order and project
+    /// </summary>
+    /// <param name="workOrder">not null</param>
+    /// <param name="project">not null</param>
+    /// <returns>null if the work order and the project are not associated</returns>
+    System.Threading.Tasks.Task<IWorkOrderProject> GetAsync (IWorkOrder workOrder, IProject project);
+
+    /// <summary>
+    /// Find all the <see cref="IWorkOrderProject"/> of a work order
+    /// </summary>
+    /// <param name="workOrder">not null</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IWorkOrderProject>> FindByWorkOrderAsync (IWorkOrder workOrder);
   }
 }

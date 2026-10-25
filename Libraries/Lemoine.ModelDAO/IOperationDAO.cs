@@ -40,5 +40,14 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <param name="operation"></param>
     void InitializeIntermediateWorkPieces (IOperation operation);
+
+    /// <summary>
+    /// Find the items whose name, code or external code contains the text, whatever the case,
+    /// the archived ones last, then in the order of their ids
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults">maximum number of items to return</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IOperation>> FindBySearchAsync (string search, int maxResults);
   }
 }

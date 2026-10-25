@@ -47,6 +47,26 @@ namespace Lemoine.ModelDAO
     Boolean IfExistsOtherWithSameCode(String code, int id);
 
     /// <summary>
+    /// Tests if another project than the one with the given id has the same name
+    ///
+    /// To test a project that is not created yet, use an id of 0
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<bool> IfExistsOtherWithSameNameAsync (string name, int id);
+
+    /// <summary>
+    /// Tests if another project than the one with the given id has the same code
+    ///
+    /// To test a project that is not created yet, use an id of 0
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<bool> IfExistsOtherWithSameCodeAsync (string code, int id);
+
+    /// <summary>
     /// Tests if exists Project have same name
     /// </summary>
     /// <param name="name"></param>
@@ -71,5 +91,14 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <param name="project"></param>
     void InitializeComponents (IProject project);
+
+    /// <summary>
+    /// Find the items whose name, code or external code contains the text, whatever the case,
+    /// the archived ones last, then in the order of their ids
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults">maximum number of items to return</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IProject>> FindBySearchAsync (string search, int maxResults);
   }
 }

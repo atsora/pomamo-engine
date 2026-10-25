@@ -994,6 +994,12 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+    public IManufacturingOrderStatusDAO ManufacturingOrderStatusDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
     public IManufacturingOrderMachineAssociationDAO ManufacturingOrderMachineAssociationDAO
     {
       get {

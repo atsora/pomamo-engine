@@ -35,7 +35,14 @@ namespace Pulse.Graphql.Type
       Field<string> ("display");
       Field<ListGraphType<WorkInfoGraphType>, ICollection<IWorkOrder>> ("parents")
         .Resolve (ctx => ctx.Source.WorkOrders);
-      Field<ListGraphType<WorkInfoGraphType>, IEnumerable<IOperation>> ("children").Resolve (ctx => ctx.Source.ComponentIntermediateWorkPieces.Select (x => x.IntermediateWorkPiece.Operation));
+      // The intermediate work pieces are a level between the components and the operations,
+      // unless they make simple operations
+      if (dataStructure.IntermediateWorkPieceOperationIsSimpleOperation) {
+        Field<ListGraphType<WorkInfoGraphType>, IEnumerable<ISimpleOperation>> ("children").Resolve (ctx => ctx.Source.ComponentIntermediateWorkPieces.Select (x => x.IntermediateWorkPiece.SimpleOperation));
+      }
+      else {
+        Field<ListGraphType<WorkInfoGraphType>, IEnumerable<IIntermediateWorkPiece>> ("children").Resolve (ctx => ctx.Source.ComponentIntermediateWorkPieces.Select (x => x.IntermediateWorkPiece));
+      }
       Field<NonNullGraphType<ComponentTypeGraphType>, IComponentType> ("type");
       Field<CustomerGraphType, ICustomer> ("customer");
       Field<NonNullGraphType<UtcDateTimeGraphType>, DateTime> ("creationDateTime");
@@ -44,6 +51,10 @@ namespace Pulse.Graphql.Type
       Field<IntermediateWorkPieceGraphType, IIntermediateWorkPiece> ("finalWorkPiece");
       Field<double> ("estimatedHours");
       Field<NonNullGraphType<ListGraphType<NonNullGraphType<ComponentIntermediateWorkPieceGraphType>>>, ICollection<IComponentIntermediateWorkPiece>> ("componentIntermediateWorkPieces");
+      // The reference schema names it intermediateWorkPieces on a part: the former name is kept
+      // for the clients that read it
+      Field<NonNullGraphType<ListGraphType<NonNullGraphType<ComponentIntermediateWorkPieceGraphType>>>, ICollection<IComponentIntermediateWorkPiece>> ("intermediateWorkPieces")
+        .Resolve (ctx => ctx.Source.ComponentIntermediateWorkPieces);
 
       Interface<DisplayableInterface> ();
       Interface<WorkInfoInterface> ();

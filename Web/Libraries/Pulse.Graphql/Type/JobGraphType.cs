@@ -9,6 +9,7 @@ using System.Linq;
 using GraphQL.Types;
 using Lemoine.Core.Log;
 using Lemoine.Model;
+using Lemoine.ModelDAO;
 
 namespace Pulse.Graphql.Type
 {
@@ -40,7 +41,11 @@ namespace Pulse.Graphql.Type
       Field<NonNullGraphType<UtcDateTimeGraphType>, DateTime> ("creationDateTime");
       Field<NonNullGraphType<UtcDateTimeGraphType>, DateTime> ("reactivationDateTime");
       Field<UtcDateTimeGraphType, DateTime?> ("archiveDateTime");
-      Field<int> ("quantity", nullable: true);
+      Field<IntGraphType, int?> ("quantity")
+        .Description ("the quantity of the project the job carries, in its work order")
+        .Resolve (ctx => ModelDAOHelper.DAOFactory.WorkOrderProjectDAO
+          .Get (ctx.Source.WorkOrder, ctx.Source.Project)
+          ?.Quantity);
 
       Interface<DisplayableInterface> ();
       Interface<WorkInfoInterface> ();

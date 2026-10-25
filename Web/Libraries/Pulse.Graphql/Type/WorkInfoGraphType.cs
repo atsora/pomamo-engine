@@ -31,6 +31,7 @@ namespace Pulse.Graphql.Type
       Type<PartGraphType> ();
       Type<OperationGraphType> ();
       Type<SimpleOperationGraphType> ();
+      Type<IntermediateWorkPieceGraphType> ();
     }
   }
 }

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <!-- Read-only reference data: the statuses are created by the migration -->
+  <class name="ManufacturingOrderStatusEntity" table="manuforderstatus" mutable="false">
+    <cache usage="read-only" />
+    <id name="Id" column="manuforderstatusid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="assigned" />
+    </id>
+    <version name="Version" column="manuforderstatusversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Name" column="manuforderstatusname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="manuforderstatustranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Color" column="manuforderstatuscolor"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

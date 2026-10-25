@@ -1367,6 +1367,11 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
     /// </summary>
+    public IManufacturingOrderStatusDAO ManufacturingOrderStatusDAO => new ManufacturingOrderStatusDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
     public IManufacturingOrderMachineAssociationDAO ManufacturingOrderMachineAssociationDAO
     {
       get { return new ManufacturingOrderMachineAssociationDAO (); }

@@ -27,7 +27,9 @@ namespace Pulse.Graphql.Type
     {
       Name = "OperationRevision";
       Field<NonNullGraphType<IdGraphType>> ("id");
+      Field<NonNullGraphType<OperationGraphType>, IOperation> ("operation");
       Field<string> ("display", nullable: false);
+      Field<NonNullGraphType<UtcDateTimeGraphType>, DateTime> ("dateTime");
       Field<int?> ("number", nullable: true);
       Field<string> ("description", nullable: true);
       Field<NonNullGraphType<ListGraphType<NonNullGraphType<OperationModelGraphType>>>, IEnumerable<IOperationModel>> ("operationModels");

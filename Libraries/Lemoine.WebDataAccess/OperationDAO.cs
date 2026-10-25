@@ -57,5 +57,7 @@ namespace Lemoine.WebDataAccess
     public Task MakeTransientAsync (IOperation entity) => throw new NotImplementedException ();
 
     public Task LockAsync (IOperation entity) => throw new NotImplementedException ();
+
+    public Task<IList<IOperation>> FindBySearchAsync (string search, int maxResults) => throw new NotImplementedException ();
   }
 }

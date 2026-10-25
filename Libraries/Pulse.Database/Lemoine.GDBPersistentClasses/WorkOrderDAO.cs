@@ -308,5 +308,20 @@ namespace Lemoine.GDBPersistentClasses
     {
       NHibernateUtil.Initialize(workOrder.Projects);
     }
+
+    /// <summary>
+    /// <see cref="IWorkOrderDAO"/>
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IWorkOrder>> FindBySearchAsync (string search, int maxResults)
+    {
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<WorkOrder> ()
+        .Add (WorkInfoSearch.MatchesNameOrCode (search));
+      return await WorkInfoSearch.OrderAndLimit (criteria, null, maxResults)
+        .ListAsync<IWorkOrder> ();
+    }
   }
 }

@@ -199,6 +199,40 @@ namespace Lemoine.GDBPersistentClasses
 
 
     /// <summary>
+    /// <see cref="IProjectDAO"/>
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<bool> IfExistsOtherWithSameNameAsync (string name, int id)
+    {
+      var count = await NHibernateHelper.GetCurrentSession ().CreateCriteria<Project> ()
+        .Add (Restrictions.Eq ("Name", name))
+        .Add (Restrictions.IsNotNull ("Name"))
+        .Add (Restrictions.Not (Restrictions.Eq ("Id", id)))
+        .SetProjection (Projections.RowCount ())
+        .UniqueResultAsync<int> ();
+      return (count > 0);
+    }
+
+    /// <summary>
+    /// <see cref="IProjectDAO"/>
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<bool> IfExistsOtherWithSameCodeAsync (string code, int id)
+    {
+      var count = await NHibernateHelper.GetCurrentSession ().CreateCriteria<Project> ()
+        .Add (Restrictions.Eq ("Code", code))
+        .Add (Restrictions.IsNotNull ("Code"))
+        .Add (Restrictions.Not (Restrictions.Eq ("Id", id)))
+        .SetProjection (Projections.RowCount ())
+        .UniqueResultAsync<int> ();
+      return (count > 0);
+    }
+
+    /// <summary>
     /// Tests if exists Project have same name
     /// </summary>
     /// <param name="name"></param>
@@ -246,6 +280,21 @@ namespace Lemoine.GDBPersistentClasses
     public void InitializeComponents (IProject project)
     {
       NHibernateUtil.Initialize (project.Components);
+    }
+
+    /// <summary>
+    /// <see cref="IProjectDAO"/>
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IProject>> FindBySearchAsync (string search, int maxResults)
+    {
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<Project> ()
+        .Add (WorkInfoSearch.MatchesNameOrCode (search));
+      return await WorkInfoSearch.OrderAndLimit (criteria, "ArchiveDateTime", maxResults)
+        .ListAsync<IProject> ();
     }
   }
 }

@@ -610,6 +610,10 @@
       <DependentUpon>WorkOrderProject.cs</DependentUpon>
       <LogicalName>WorkOrderProject.hbm.xml</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ManufacturingOrderStatusEntity.hbm.xml">
+      <DependentUpon>ManufacturingOrderStatusEntity.cs</DependentUpon>
+      <LogicalName>ManufacturingOrderStatusEntity.hbm.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\WorkOrderStatus.hbm.xml">
       <DependentUpon>WorkOrderStatus.cs</DependentUpon>
       <LogicalName>WorkOrderStatus.hbm.xml</LogicalName>

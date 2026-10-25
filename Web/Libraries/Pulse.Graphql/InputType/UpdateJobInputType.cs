@@ -155,6 +155,13 @@ namespace Pulse.Graphql.InputType
     public int? StatusId { get; set; }
 
     /// <summary>
+    /// Quantity of the project in its work order
+    ///
+    /// If null, do not make any change
+    /// </summary>
+    public int? Quantity { get; set; }
+
+    /// <summary>
     /// Apply the change
     /// </summary>
     /// <returns></returns>
@@ -208,6 +215,16 @@ namespace Pulse.Graphql.InputType
             }
             job.Status = status;
           }
+          if (this.Quantity is not null) {
+            var workOrderProject = ModelDAOHelper.DAOFactory.WorkOrderProjectDAO
+              .Get (job.WorkOrder, job.Project);
+            if (workOrderProject is null) {
+              log.Error ($"Update: no work order / project pair for job id={id}");
+              throw new InvalidOperationException ($"no work order / project pair for job id={id}");
+            }
+            workOrderProject.Quantity = this.Quantity.Value;
+            ModelDAOHelper.DAOFactory.WorkOrderProjectDAO.MakePersistent (workOrderProject);
+          }
           ModelDAOHelper.DAOFactory.JobDAO.MakePersistent (job);
           transaction.Commit ();
           return job;
@@ -237,6 +254,7 @@ namespace Pulse.Graphql.InputType
       Field<IdGraphType, int?> ("customerId");
       Field<UtcDateTimeGraphType, DateTime?> ("deliveryDate");
       Field<IdGraphType, int?> ("statusId");
+      Field<IntGraphType, int?> ("quantity");
     }
   }
 }

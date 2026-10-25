@@ -40,5 +40,14 @@ namespace Lemoine.ModelDAO
     /// <param name="order"></param>
     /// <returns></returns>
     IEnumerable<IIntermediateWorkPiece> FindWithOrderForComponent (IComponent component, int order);
+
+    /// <summary>
+    /// Find the items whose name, code or external code contains the text, whatever the case,
+    /// in the order of their ids
+    /// </summary>
+    /// <param name="search">not null or empty</param>
+    /// <param name="maxResults">maximum number of items to return</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IIntermediateWorkPiece>> FindBySearchAsync (string search, int maxResults);
   }
 }
