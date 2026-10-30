@@ -292,5 +292,19 @@ namespace Lemoine.GDBPersistentClasses
       return await WorkInfoSearch.OrderAndLimit (criteria, "ArchiveDateTime", maxResults)
         .ListAsync<IOperation> ();
     }
+
+    /// <summary>
+    /// <see cref="IOperationDAO"/>
+    /// </summary>
+    /// <param name="prefix">not null</param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IOperation>> FindByNameStartAsync (string prefix)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<Operation> ()
+        .Add (WorkInfoSearch.StartsWith ("Name", prefix))
+        .AddOrder (Order.Asc ("Id"))
+        .ListAsync<IOperation> ();
+    }
   }
 }

@@ -55,5 +55,20 @@ namespace Lemoine.GDBPersistentClasses
     {
       NHibernateUtil.Initialize (path.Sequences);
     }
+
+    /// <summary>
+    /// <see cref="IPathDAO"/>
+    /// </summary>
+    /// <param name="operation">not null</param>
+    /// <param name="pathNumber"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IPath> FindByOperationAndNumberAsync (IOperation operation, int pathNumber)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<OpPath> ()
+        .Add (Restrictions.Eq ("Operation", operation))
+        .Add (Restrictions.Eq ("Number", pathNumber))
+        .UniqueResultAsync<IPath> ();
+    }
   }
 }

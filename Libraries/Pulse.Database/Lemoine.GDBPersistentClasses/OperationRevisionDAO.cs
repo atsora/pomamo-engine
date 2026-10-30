@@ -56,7 +56,7 @@ namespace Lemoine.GDBPersistentClasses
       // Note: the operation model id and the operation id are the same for the moment
       var operation = ModelDAOHelper.DAOFactory.OperationDAO
         .FindById (id);
-      return operation.ActiveRevision;
+      return operation?.ActiveRevision;
     }
 
     /// <summary>
@@ -70,9 +70,12 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IOperationRevisionDAO"/>
     /// </summary>
-    public Task<IOperationRevision> FindByIdAsync (int id)
+    public async Task<IOperationRevision> FindByIdAsync (int id)
     {
-      throw new NotImplementedException ();
+      // Note: the operation model id and the operation id are the same for the moment
+      var operation = await ModelDAOHelper.DAOFactory.OperationDAO
+        .FindByIdAsync (id);
+      return operation?.ActiveRevision;
     }
 
     /// <summary>

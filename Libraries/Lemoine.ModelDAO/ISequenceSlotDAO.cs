@@ -128,5 +128,12 @@ namespace Lemoine.ModelDAO
     /// <returns></returns>
     IList<ISequenceSlot> FindAllNextBeginFrom (IMachineModule machineModule,
                                                DateTime dateTime);
+
+    /// <summary>
+    /// Is there a sequence slot, on any machine module, with the specified sequence?
+    /// </summary>
+    /// <param name="sequence">not null</param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<bool> ExistsWithSequenceAsync (ISequence sequence);
   }
 }

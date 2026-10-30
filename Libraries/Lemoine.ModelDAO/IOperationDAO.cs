@@ -49,5 +49,12 @@ namespace Lemoine.ModelDAO
     /// <param name="maxResults">maximum number of items to return</param>
     /// <returns>not null</returns>
     System.Threading.Tasks.Task<IList<IOperation>> FindBySearchAsync (string search, int maxResults);
+
+    /// <summary>
+    /// Find the operations whose name starts with the specified text, in the order of their ids
+    /// </summary>
+    /// <param name="prefix">not null</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IOperation>> FindByNameStartAsync (string prefix);
   }
 }

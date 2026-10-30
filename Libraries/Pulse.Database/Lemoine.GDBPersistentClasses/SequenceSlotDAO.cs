@@ -270,5 +270,22 @@ namespace Lemoine.GDBPersistentClasses
       }
       return sequenceSlots;
     }
+
+    /// <summary>
+    /// <see cref="ISequenceSlotDAO"/>
+    /// </summary>
+    /// <param name="sequence">not null</param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<bool> ExistsWithSequenceAsync (ISequence sequence)
+    {
+      Debug.Assert (null != sequence);
+
+      var slots = await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<SequenceSlot> ()
+        .Add (Restrictions.Eq ("Sequence.Id", sequence.Id))
+        .SetMaxResults (1)
+        .ListAsync<ISequenceSlot> ();
+      return 0 < slots.Count;
+    }
   }
 }

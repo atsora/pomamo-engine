@@ -31,5 +31,13 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <param name="path"></param>
     void InitializeSequences (IPath path);
+
+    /// <summary>
+    /// Find the path of an operation with the specified number
+    /// </summary>
+    /// <param name="operation">not null</param>
+    /// <param name="pathNumber"></param>
+    /// <returns>null if the operation has no path with this number</returns>
+    System.Threading.Tasks.Task<IPath> FindByOperationAndNumberAsync (IOperation operation, int pathNumber);
   }
 }

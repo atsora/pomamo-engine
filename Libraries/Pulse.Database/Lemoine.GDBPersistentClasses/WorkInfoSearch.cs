@@ -44,6 +44,15 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Criterion that matches the start of a property, as it is for its wildcards
+    /// </summary>
+    /// <param name="property">not null or empty</param>
+    /// <param name="prefix">not null</param>
+    /// <returns></returns>
+    public static ICriterion StartsWith (string property, string prefix) =>
+      new LikeExpression (property, Escape (prefix), MatchMode.Start, ESCAPE_CHAR, false);
+
+    /// <summary>
     /// Criterion that matches the text anywhere in the name, the code or the external code,
     /// whatever the case
     /// </summary>
