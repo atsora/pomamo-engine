@@ -26,7 +26,7 @@ namespace Lemoine.Analysis
     /// <param name="extension">not null, initialized</param>
     public BackgroundAnalysis (IBackgroundAnalysisExtension extension)
     {
-      Debug.Assert (extension is not null);
+      Debug.Assert (null != extension);
 
       m_extension = extension;
       log = LogManager.GetLogger ($"{typeof (BackgroundAnalysis).FullName}.{extension.GetType ().Name}");
