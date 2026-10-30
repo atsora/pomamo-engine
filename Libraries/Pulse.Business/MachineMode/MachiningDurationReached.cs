@@ -27,6 +27,7 @@ namespace Lemoine.Business.MachineMode
     readonly IMachine m_machine;
     readonly DateTime m_since;
     readonly int m_seconds;
+    readonly MachineModeFilter m_filter;
 
     /// <summary>
     /// Constructor
@@ -34,7 +35,8 @@ namespace Lemoine.Business.MachineMode
     /// <param name="machine">not null</param>
     /// <param name="since">in UTC</param>
     /// <param name="seconds">number of seconds of machining time to reach</param>
-    public MachiningDurationReached (IMachine machine, DateTime since, int seconds)
+    /// <param name="filter">machine modes whose time is counted. Default: the running ones</param>
+    public MachiningDurationReached (IMachine machine, DateTime since, int seconds, MachineModeFilter filter = MachineModeFilter.Running)
     {
       if (machine is null) {
         log.Fatal ("MachiningDurationReached: machine is null");
@@ -44,6 +46,7 @@ namespace Lemoine.Business.MachineMode
       m_machine = machine;
       m_since = since;
       m_seconds = seconds;
+      m_filter = filter;
     }
 
     /// <summary>
@@ -69,7 +72,7 @@ namespace Lemoine.Business.MachineMode
           var countedRange = new UtcDateTimeRange (m_since);
           var reasonSlots = (await ModelDAOHelper.DAOFactory.ReasonSlotDAO
             .FindAllInUtcRangeWithMachineModeAsync (m_machine, countedRange))
-            .Where (x => x.Running)
+            .Where (x => (m_filter == MachineModeFilter.Running) ? x.Running : m_filter.Matches (x.MachineMode))
             .OrderBy (x => x.DateTimeRange.Lower.HasValue ? x.DateTimeRange.Lower.Value : DateTime.MinValue);
 
           var remaining = TimeSpan.FromSeconds (m_seconds);
@@ -99,7 +102,7 @@ namespace Lemoine.Business.MachineMode
     /// <returns></returns>
     public string GetCacheKey ()
     {
-      return $"Business.MachineMode.MachiningDurationReached.{m_machine.Id}.{m_since.Ticks}.{m_seconds}";
+      return $"Business.MachineMode.MachiningDurationReached.{m_machine.Id}.{m_since.Ticks}.{m_seconds}{m_filter.GetCacheKeySuffix ()}";
     }
 
     /// <summary>

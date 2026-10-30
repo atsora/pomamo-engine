@@ -234,6 +234,33 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="ICncValueDAO"/>
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="field">not null</param>
+    /// <param name="at"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<ICncValue> FindAtAsync (IMachineModule machineModule,
+                                                                     IField field,
+                                                                     DateTime at)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CncValue> ()
+        .Add (Restrictions.Eq ("MachineModule.Id", machineModule.Id))
+        .Add (Restrictions.Eq ("Field.Id", field.Id))
+        .Add (Restrictions.Le ("Begin", at))
+        .Add (Restrictions.Disjunction ()
+              .Add (Restrictions.Gt ("End", at))
+              .Add (Restrictions.Conjunction ()
+                    .Add (Restrictions.Eq ("End", at))
+                    .Add (Restrictions.EqProperty ("Begin", "End"))
+                    )
+        )
+        // Not cacheable, see FindAt
+        .UniqueResultAsync<ICncValue> ();
+    }
+
+    /// <summary>
     /// Find the ICncValue with a specified end date/time
     /// 
     /// This request is not cacheable, because it does not behave well with a partitioned table
@@ -318,6 +345,33 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="ICncValueDAO"/>
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="field">not null</param>
+    /// <param name="range"></param>
+    /// <param name="n">maximum number elements to retrieve</param>
+    /// <param name="descending">False: ascending order, True: descending order</param>
+    /// <returns></returns>
+    public virtual async System.Threading.Tasks.Task<IEnumerable<ICncValue>> FindFirstOverlapsRangeAsync (IMachineModule machineModule, IField field, UtcDateTimeRange range, int n, bool descending)
+    {
+      Debug.Assert (null != machineModule);
+      Debug.Assert (null != field);
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CncValue> ()
+        .Add (Restrictions.Eq ("MachineModule.Id", machineModule.Id))
+        .Add (Restrictions.Eq ("Field.Id", field.Id))
+        .Add (InUtcRange (range))
+        .AddOrder (descending
+                   ? Order.Desc ("Begin")
+                   : Order.Asc ("Begin"))
+        .SetMaxResults (n)
+        // Not cacheable, see FindFirstOverlapsRange
+        .ListAsync<ICncValue> ();
+    }
+
+    /// <summary>
     /// Find the ICncValues for specified machineModule and field
     /// in the specified range
     /// </summary>
@@ -341,6 +395,30 @@ namespace Lemoine.GDBPersistentClasses
         // Not cacheable because it may cause some problems with a partitioned table:
         // there is a risk to make NHibernate use a FindById without the secondary key
         .List<ICncValue> ();
+    }
+
+    /// <summary>
+    /// <see cref="ICncValueDAO"/>
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="field">not null</param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<ICncValue>> FindOverlapsRangeAsync (IMachineModule machineModule,
+      IField field,
+      UtcDateTimeRange range)
+    {
+      Debug.Assert (null != machineModule);
+      Debug.Assert (null != field);
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CncValue> ()
+        .Add (Restrictions.Eq ("MachineModule.Id", machineModule.Id))
+        .Add (Restrictions.Eq ("Field.Id", field.Id))
+        .Add (InUtcRange (range))
+        .AddOrder (Order.Asc ("Begin"))
+        // Not cacheable, see FindOverlapsRange
+        .ListAsync<ICncValue> ();
     }
 
     /// <summary>

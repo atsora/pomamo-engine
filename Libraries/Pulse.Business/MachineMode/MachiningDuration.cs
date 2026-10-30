@@ -46,17 +46,24 @@ namespace Lemoine.Business.MachineMode
     UtcDateTimeRange Range { get; set; }
 
     /// <summary>
+    /// Machine modes whose time is counted
+    /// </summary>
+    MachineModeFilter Filter { get; set; }
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="range">not empty</param>
-    public MachiningDuration (IMachine machine, UtcDateTimeRange range)
+    /// <param name="filter">machine modes whose time is counted. Default: the running ones</param>
+    public MachiningDuration (IMachine machine, UtcDateTimeRange range, MachineModeFilter filter = MachineModeFilter.Running)
     {
       Debug.Assert (null != machine);
       Debug.Assert (!range.IsEmpty ());
 
       this.Machine = machine;
       this.Range = range;
+      this.Filter = filter;
     }
 
     /// <summary>
@@ -83,7 +90,7 @@ namespace Lemoine.Business.MachineMode
             var pastRange = GetPastRange (upperDaySlot);
             var past = (pastRange is null)
               ? null
-              : ServiceProvider.Get (new MachiningDuration (this.Machine, pastRange));
+              : ServiceProvider.Get (new MachiningDuration (this.Machine, pastRange, this.Filter));
             result = ComputeInsideDay (upperDaySlot, past);
           }
           else {
@@ -117,7 +124,7 @@ namespace Lemoine.Business.MachineMode
             var pastRange = GetPastRange (upperDaySlot);
             var past = (pastRange is null)
               ? null
-              : await ServiceProvider.GetAsync (new MachiningDuration (this.Machine, pastRange));
+              : await ServiceProvider.GetAsync (new MachiningDuration (this.Machine, pastRange, this.Filter));
             result = await ComputeInsideDayAsync (upperDaySlot, past);
           }
           else {
@@ -254,7 +261,7 @@ namespace Lemoine.Business.MachineMode
         var summaries = ModelDAOHelper.DAOFactory.MachineActivitySummaryDAO
           .FindInDayRangeWithMachineMode (this.Machine, dayRange);
         var runningSeconds = summaries
-          .Where (s => s.MachineMode.Running.HasValue && s.MachineMode.Running.Value)
+          .Where (s => this.Filter.Matches (s.MachineMode))
           .Sum (s => s.Time.TotalSeconds);
         duration = duration.Add (TimeSpan.FromSeconds (runningSeconds));
       }
@@ -309,7 +316,7 @@ namespace Lemoine.Business.MachineMode
         var summaries = await ModelDAOHelper.DAOFactory.MachineActivitySummaryDAO
           .FindInDayRangeWithMachineModeAsync (this.Machine, dayRange);
         var runningSeconds = summaries
-          .Where (s => s.MachineMode.Running.HasValue && s.MachineMode.Running.Value)
+          .Where (s => this.Filter.Matches (s.MachineMode))
           .Sum (s => s.Time.TotalSeconds);
         duration = duration.Add (TimeSpan.FromSeconds (runningSeconds));
       }
@@ -342,7 +349,7 @@ namespace Lemoine.Business.MachineMode
     {
       var reasonSlots = ModelDAOHelper.DAOFactory.ReasonSlotDAO
         .FindAllInUtcRangeWithMachineMode (this.Machine, range);
-      return SumRunningReasonSlots (reasonSlots, range);
+      return SumRunningReasonSlots (reasonSlots, range, this.Filter);
     }
 
     /// <summary>
@@ -351,11 +358,12 @@ namespace Lemoine.Business.MachineMode
     /// </summary>
     /// <param name="reasonSlots">not null</param>
     /// <param name="range">not empty</param>
+    /// <param name="filter">machine modes whose time is counted</param>
     /// <returns>the machining duration, and the date/time the reason slots stop at</returns>
-    static (TimeSpan Duration, DateTime CountedUntil) SumRunningReasonSlots (IEnumerable<IReasonSlot> reasonSlots, UtcDateTimeRange range)
+    static (TimeSpan Duration, DateTime CountedUntil) SumRunningReasonSlots (IEnumerable<IReasonSlot> reasonSlots, UtcDateTimeRange range, MachineModeFilter filter)
     {
       var runningSeconds = reasonSlots
-        .Where (s => s.Running)
+        .Where (s => (filter == MachineModeFilter.Running) ? s.Running : filter.Matches (s.MachineMode))
         .Where (s => s.Duration.HasValue)
         .Sum (s => s.Duration.Value.TotalSeconds);
 
@@ -386,7 +394,7 @@ namespace Lemoine.Business.MachineMode
     {
       var reasonSlots = await ModelDAOHelper.DAOFactory.ReasonSlotDAO
         .FindAllInUtcRangeWithMachineModeAsync (this.Machine, range);
-      return SumRunningReasonSlots (reasonSlots, range);
+      return SumRunningReasonSlots (reasonSlots, range, this.Filter);
     }
 
     /// <summary>
@@ -414,7 +422,8 @@ namespace Lemoine.Business.MachineMode
     public string GetCacheKey ()
     {
       return "Business.MachineMode.MachiningDuration." + this.Machine.Id + "."
-        + this.Range.ToString (dt => dt.ToString ("yyyy-MM-ddTHH:mm:ss"));
+        + this.Range.ToString (dt => dt.ToString ("yyyy-MM-ddTHH:mm:ss"))
+        + this.Filter.GetCacheKeySuffix ();
     }
 
     /// <summary>

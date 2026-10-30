@@ -40,13 +40,15 @@ namespace Lemoine.Business.MachineMode
 
     readonly IMachine m_machine;
     readonly DateTime m_since;
+    readonly MachineModeFilter m_filter;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="since">in UTC</param>
-    public MachiningDurationSince (IMachine machine, DateTime since)
+    /// <param name="filter">machine modes whose time is counted. Default: the running ones</param>
+    public MachiningDurationSince (IMachine machine, DateTime since, MachineModeFilter filter = MachineModeFilter.Running)
     {
       if (machine is null) {
         log.Fatal ("MachiningDurationSince: machine is null");
@@ -55,6 +57,7 @@ namespace Lemoine.Business.MachineMode
 
       m_machine = machine;
       m_since = since;
+      m_filter = filter;
     }
 
     /// <summary>
@@ -155,7 +158,7 @@ namespace Lemoine.Business.MachineMode
     async Task<(TimeSpan Duration, DateTime Until)> GetMachiningDurationFromAsync (DateTime from)
     {
       var response = await ServiceProvider
-        .GetAsync (new MachiningDuration (m_machine, new UtcDateTimeRange (from)));
+        .GetAsync (new MachiningDuration (m_machine, new UtcDateTimeRange (from), m_filter));
       return (response.Duration, GetUntil (response, from));
     }
 
@@ -183,7 +186,7 @@ namespace Lemoine.Business.MachineMode
     {
       // The full precision of the date/time is kept: two periods that start in the same
       // second on a same machine must not share the accumulator
-      return $"Business.MachineMode.MachiningDurationSince.{m_machine.Id}.{m_since.Ticks}";
+      return $"Business.MachineMode.MachiningDurationSince.{m_machine.Id}.{m_since.Ticks}{m_filter.GetCacheKeySuffix ()}";
     }
 
     /// <summary>

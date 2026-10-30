@@ -116,6 +116,20 @@ namespace Lemoine.ModelDAO
                       DateTime at);
 
     /// <summary>
+    /// Find the ICncValue at a specified date/time asynchronously
+    ///
+    /// This request is not cacheable, because it does not behave well with a partitioned table
+    /// (there is a risk to check the validity of the item again with only the ID)
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="field">not null</param>
+    /// <param name="at"></param>
+    /// <returns>null if there is no value at that date/time</returns>
+    System.Threading.Tasks.Task<ICncValue> FindAtAsync (IMachineModule machineModule,
+                                                        IField field,
+                                                        DateTime at);
+
+    /// <summary>
     /// Find the ICncValue with a specified end date/time
     /// 
     /// This request is cacheable
@@ -140,6 +154,17 @@ namespace Lemoine.ModelDAO
     IEnumerable<ICncValue> FindFirstOverlapsRange (IMachineModule machineModule, IField field, UtcDateTimeRange range, int n, bool descending);
 
     /// <summary>
+    /// Find the first n elements in the range in the specified order asynchronously
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="field">not null</param>
+    /// <param name="range"></param>
+    /// <param name="n">maximum number elements to retrieve</param>
+    /// <param name="descending">False: ascending order, True: descending order</param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IEnumerable<ICncValue>> FindFirstOverlapsRangeAsync (IMachineModule machineModule, IField field, UtcDateTimeRange range, int n, bool descending);
+
+    /// <summary>
     /// Find the ICncValues for specified machineModule and field
     /// in the specified range
     /// </summary>
@@ -150,6 +175,18 @@ namespace Lemoine.ModelDAO
     IList<ICncValue> FindOverlapsRange (IMachineModule machineModule,
                                         IField field,
                                         UtcDateTimeRange range);
+
+    /// <summary>
+    /// Find the ICncValues for specified machineModule and field
+    /// in the specified range, in an ascending order, asynchronously
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="field">not null</param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IList<ICncValue>> FindOverlapsRangeAsync (IMachineModule machineModule,
+                                                                          IField field,
+                                                                          UtcDateTimeRange range);
 
     /// <summary>
     /// Find all the slots that overlap the specified range
