@@ -19,5 +19,13 @@ namespace Lemoine.ModelDAO
     /// <param name="config"></param>
     /// <returns></returns>
     IList<IEventCncValue> FindWithConfig (IEventCncValueConfig config);
+
+    /// <summary>
+    /// Find the events of some machine modules in a range, the oldest first
+    /// </summary>
+    /// <param name="machineModuleIds">not null</param>
+    /// <param name="range">not null</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IEventCncValue>> FindInRangeAsync (int[] machineModuleIds, UtcDateTimeRange range);
   }
 }

@@ -838,6 +838,21 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException();
     }
 
+    public IShiftSummary CreateShiftSummary (IMachine machine, DateTime day, IShift shift, UtcDateTimeRange range)
+    {
+      throw new NotImplementedException ();
+    }
+
+    public IShiftSummarySection CreateShiftSummarySection (IShiftSummary shiftSummary, string sectionKey)
+    {
+      throw new NotImplementedException ();
+    }
+
+    public IShiftSummaryContent CreateShiftSummaryContent (IShiftSummary shiftSummary, string generator)
+    {
+      throw new NotImplementedException ();
+    }
+
     public IShiftTemplate CreateShiftTemplate(string name)
     {
       throw new NotImplementedException();

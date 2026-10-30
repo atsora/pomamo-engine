@@ -30,5 +30,15 @@ namespace Lemoine.ModelDAO
     /// <param name="range">in UTC</param>
     /// <returns></returns>
     IList<ICncVariable> FindOverlapsRange (IMachineModule machineModule, string key, UtcDateTimeRange range);
+
+    /// <summary>
+    /// Find all the slots in the specified UTC date/time range whose key starts with a prefix,
+    /// sorted by key and by range
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="keyPrefix">not null and not empty</param>
+    /// <param name="range">in UTC</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<ICncVariable>> FindOverlapsRangeByKeyPrefixAsync (IMachineModule machineModule, string keyPrefix, UtcDateTimeRange range);
   }
 }

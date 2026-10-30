@@ -181,6 +181,23 @@ namespace Lemoine.GDBPersistentClasses
 
     /// <summary>
     /// <see cref="ICncAlarmDAO"/>
+    /// </summary>
+    /// <param name="machineModule"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<ICncAlarm>> FindOverlapsRangeWithSeverityAsync (IMachineModule machineModule, UtcDateTimeRange range)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CncAlarm> ()
+        .Add (Restrictions.Eq ("MachineModule", machineModule))
+        .Add (OverlapRange (range))
+        .AddOrder (Order.Asc ("DateTimeRange"))
+        .Fetch (SelectMode.Fetch, "Severity")
+        .ListAsync<ICncAlarm> ();
+    }
+
+    /// <summary>
+    /// <see cref="ICncAlarmDAO"/>
     ///
     /// A projection is used so that the dynamic column cncalarmseverityid is not requested
     /// </summary>

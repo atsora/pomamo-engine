@@ -1648,6 +1648,32 @@ namespace Lemoine.Model
                                 UtcDateTimeRange range);
 
     /// <summary>
+    /// Create a ShiftSummary
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="day"></param>
+    /// <param name="shift">nullable</param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    IShiftSummary CreateShiftSummary (IMachine machine, DateTime day, IShift shift, UtcDateTimeRange range);
+
+    /// <summary>
+    /// Create a ShiftSummarySection, to compute
+    /// </summary>
+    /// <param name="shiftSummary">not null</param>
+    /// <param name="sectionKey">not null and not empty</param>
+    /// <returns></returns>
+    IShiftSummarySection CreateShiftSummarySection (IShiftSummary shiftSummary, string sectionKey);
+
+    /// <summary>
+    /// Create a ShiftSummaryContent
+    /// </summary>
+    /// <param name="shiftSummary">not null</param>
+    /// <param name="generator">not null and not empty</param>
+    /// <returns></returns>
+    IShiftSummaryContent CreateShiftSummaryContent (IShiftSummary shiftSummary, string generator);
+
+    /// <summary>
     /// Create a ShiftTemplate
     /// </summary>
     /// <param name="name"></param>

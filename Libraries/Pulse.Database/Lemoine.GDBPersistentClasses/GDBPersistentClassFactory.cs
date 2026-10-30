@@ -2470,6 +2470,41 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
     /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="day"></param>
+    /// <param name="shift">nullable</param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public IShiftSummary CreateShiftSummary (IMachine machine, DateTime day, IShift shift, UtcDateTimeRange range)
+    {
+      return new ShiftSummary (machine, day, shift, range);
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
+    /// </summary>
+    /// <param name="shiftSummary">not null</param>
+    /// <param name="sectionKey">not null and not empty</param>
+    /// <returns></returns>
+    public IShiftSummarySection CreateShiftSummarySection (IShiftSummary shiftSummary, string sectionKey)
+    {
+      return new ShiftSummarySection (shiftSummary, sectionKey);
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
+    /// </summary>
+    /// <param name="shiftSummary">not null</param>
+    /// <param name="generator">not null and not empty</param>
+    /// <returns></returns>
+    public IShiftSummaryContent CreateShiftSummaryContent (IShiftSummary shiftSummary, string generator)
+    {
+      return new ShiftSummaryContent (shiftSummary, generator);
+    }
+
+    /// <summary>
+    /// <see cref="Lemoine.Model.IModelFactory">IModelFactory</see> implementation
+    /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
     public IShiftTemplate CreateShiftTemplate (string name)

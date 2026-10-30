@@ -73,6 +73,14 @@ namespace Lemoine.ModelDAO
     IList<ICncAlarm> FindOverlapsRangeWithSeverity (IMachineModule machineModule, UtcDateTimeRange range);
 
     /// <summary>
+    /// Asynchronous version of <see cref="FindOverlapsRangeWithSeverity(IMachineModule, UtcDateTimeRange)"/>
+    /// </summary>
+    /// <param name="machineModule"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IList<ICncAlarm>> FindOverlapsRangeWithSeverityAsync (IMachineModule machineModule, UtcDateTimeRange range);
+
+    /// <summary>
     /// Find all the slots that overlap the specified range
     /// without requesting the dynamic column cncalarmseverityid, which is costly
     ///

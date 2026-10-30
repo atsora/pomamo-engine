@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="ShiftSummary" table="shiftsummary">
+    <id name="Id" column="shiftsummaryid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">shiftsummary_shiftsummaryid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="shiftsummaryversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="Machine" column="machineid" class="Machine"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="Day" column="shiftsummaryday" type="Date"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <many-to-one name="Shift" column="shiftid" class="Shift"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none" />
+    <property name="DateTimeRange" column="shiftsummarydatetimerange"
+              type="Lemoine.NHibernateTypes.UTCDateTimeRangeType, Lemoine.Database"
+              not-null="true" />
+    <property name="DateTime" column="shiftsummarydatetime"
+              access="nosetter.camelcase-m-underscore"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              not-null="true" />
+  </class>
+
+  <class name="ShiftSummarySection" table="shiftsummarysection">
+    <id name="Id" column="shiftsummarysectionid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">shiftsummarysection_shiftsummarysectionid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="shiftsummarysectionversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="ShiftSummary" column="shiftsummaryid" class="ShiftSummary"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="SectionKey" column="shiftsummarysectionkey"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Items" column="shiftsummarysectionitems"
+              type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database"
+              not-null="true" />
+    <property name="DataUntil" column="shiftsummarysectiondatauntil"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+    <property name="UpdateRequired" column="shiftsummarysectionupdaterequired" not-null="true" />
+    <property name="DateTime" column="shiftsummarysectiondatetime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database" />
+  </class>
+
+  <class name="ShiftSummaryContent" table="shiftsummarycontent">
+    <id name="Id" column="shiftsummarycontentid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">shiftsummarycontent_shiftsummarycontentid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="shiftsummarycontentversion"
+             access="nosetter.camelcase-m-underscore" />
+    <many-to-one name="ShiftSummary" column="shiftsummaryid" class="ShiftSummary"
+                 access="nosetter.camelcase-m-underscore"
+                 cascade="none"
+                 not-null="true"
+                 not-found="exception" />
+    <property name="Generator" column="shiftsummarycontentgenerator"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="Content" column="shiftsummarycontentcontent"
+              type="Lemoine.NHibernateTypes.JsonbType, Lemoine.Database"
+              not-null="true" />
+    <property name="Text" column="shiftsummarycontenttext" />
+    <property name="SourceVersion" column="shiftsummarycontentsourceversion" not-null="true" />
+    <property name="DateTime" column="shiftsummarycontentdatetime"
+              type="Lemoine.NHibernateTypes.UTCDateTimeFullType, Lemoine.Database"
+              not-null="true" />
+  </class>
+</hibernate-mapping>

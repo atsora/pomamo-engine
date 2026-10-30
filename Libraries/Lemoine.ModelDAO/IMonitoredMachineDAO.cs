@@ -21,6 +21,13 @@ namespace Lemoine.ModelDAO
     IMonitoredMachine FindByIdWithMachineModules (int id);
 
     /// <summary>
+    /// Asynchronous version of <see cref="FindByIdWithMachineModules(int)"/>
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IMonitoredMachine> FindByIdWithMachineModulesAsync (int id);
+
+    /// <summary>
     /// Find by Id with an eager fetch of the monitoring type
     /// </summary>
     /// <returns></returns>

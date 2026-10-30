@@ -53,6 +53,20 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IMonitoredMachineDAO"/>
+    /// </summary>
+    /// <param name="id">Id</param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IMonitoredMachine> FindByIdWithMachineModulesAsync (int id)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<MonitoredMachine> ()
+        .Add (Restrictions.IdEq (id))
+        .Fetch (SelectMode.Fetch, "MachineModules")
+        .UniqueResultAsync<IMonitoredMachine> ();
+    }
+
+    /// <summary>
     /// Find by Id with an eager fetch of:
     /// <item>the main machine module</item>
     /// <item>the performance field</item>

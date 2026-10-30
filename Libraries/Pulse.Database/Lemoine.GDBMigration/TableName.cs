@@ -893,5 +893,17 @@ namespace Lemoine.GDBMigration
     /// doc table
     /// </summary>
     public static readonly string DOC = "doc";
+    /// <summary>
+    /// shiftsummary table
+    /// </summary>
+    public static readonly string SHIFT_SUMMARY = "shiftsummary";
+    /// <summary>
+    /// shiftsummarysection table
+    /// </summary>
+    public static readonly string SHIFT_SUMMARY_SECTION = "shiftsummarysection";
+    /// <summary>
+    /// shiftsummarycontent table
+    /// </summary>
+    public static readonly string SHIFT_SUMMARY_CONTENT = "shiftsummarycontent";
   }
 }

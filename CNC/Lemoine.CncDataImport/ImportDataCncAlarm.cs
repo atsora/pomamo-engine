@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Lemoine.Cnc.Data;
 using Lemoine.Info;
 using Lemoine.Model;
@@ -41,6 +42,7 @@ namespace Lemoine.CncDataImport
     readonly ILog log;
     readonly IMachineModule m_machineModule;
     readonly CacheAlarm m_cache;
+    readonly IList<Lemoine.Extensions.Cnc.IImportCncAlarmExtension> m_extensions;
 
     /// <summary>
     /// Last datetime when the method "ImportDatas" has been visited
@@ -68,6 +70,10 @@ namespace Lemoine.CncDataImport
                                                machineModule.Id));
       m_cache = new CacheAlarm (machineModule);
       MaxAlarmGap = ConfigSet.LoadAndGet<TimeSpan> ("MaxAlarmGap", DEFAULT_MAX_ALARM_GAP);
+      m_extensions = Lemoine.Extensions.ExtensionManager
+        .GetExtensions<Lemoine.Extensions.Cnc.IImportCncAlarmExtension> ()
+        .Where (x => x.Initialize (machineModule))
+        .ToList ();
     }
 
     #region IImportData implementation
@@ -296,6 +302,7 @@ namespace Lemoine.CncDataImport
 
       // Get the previous cnc value
       ICncAlarm cachedCncAlarm = m_cache.GetStoredReattachedCncAlarm (alarmKey);
+      var isNew = (cachedCncAlarm is null);
 
       if (log.IsDebugEnabled) {
         log.Debug ($"ProcessCncAlarm: /B new alarm={cncAlarm} at {startDatetime} for key={alarmKey} and machineModule={m_machineModule}");
@@ -334,6 +341,16 @@ namespace Lemoine.CncDataImport
       }
       else {
         ModelDAOHelper.DAOFactory.CncAlarmDAO.MakePersistent (cachedCncAlarm);
+        if (isNew) {
+          foreach (var extension in m_extensions) {
+            try {
+              extension.AfterNewCncAlarm (cachedCncAlarm);
+            }
+            catch (Exception ex) {
+              log.Error ($"ProcessCncAlarm: extension {extension} failed for alarm {cachedCncAlarm}", ex);
+            }
+          }
+        }
       }
     }
   }

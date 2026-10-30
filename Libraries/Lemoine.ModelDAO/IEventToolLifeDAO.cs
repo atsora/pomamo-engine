@@ -57,5 +57,16 @@ namespace Lemoine.ModelDAO
                                             EventToolLifeType eventToolLifeType,
                                             UtcDateTimeRange dateTimeRange,
                                             string toolId);
+
+    /// <summary>
+    /// Find the events of some types in a range, whatever the tool, the oldest first
+    /// </summary>
+    /// <param name="machineModuleIds">not null</param>
+    /// <param name="eventToolLifeTypes">not null and not empty</param>
+    /// <param name="dateTimeRange">not null</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IList<IEventToolLife>> FindByTypesInRangeAsync (int[] machineModuleIds,
+                                                                              EventToolLifeType[] eventToolLifeTypes,
+                                                                              UtcDateTimeRange dateTimeRange);
   }
 }

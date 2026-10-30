@@ -103,6 +103,7 @@ namespace Lemoine.Analysis
     readonly IDictionary<int, MachineActivityAnalysis> m_machineAnalysisList =
       new Dictionary<int, MachineActivityAnalysis> ();
     readonly CheckThreadsAndProcesses m_checkThreads = new CheckThreadsAndProcesses ();
+    readonly IList<BackgroundAnalysis> m_backgroundAnalyses = new List<BackgroundAnalysis> ();
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ActivityAnalysis).FullName);
@@ -177,6 +178,19 @@ namespace Lemoine.Analysis
         m_machineAnalysisList.Add (notMonitoredMachine.Id, machineActivityAnalysis);
         RegisterCancelCallback (machineActivityAnalysis.Interrupt);
         m_checkThreads.AddThread (machineActivityAnalysis);
+      }
+
+      // Background analyses, each one in its own thread, not synchronized with the other analyses
+      var backgroundExtensions = Lemoine.Extensions.ExtensionManager
+        .GetExtensions<Lemoine.Extensions.Analysis.IBackgroundAnalysisExtension> ()
+        .Where (ext => ext.Initialize ())
+        .ToList ();
+      foreach (var backgroundExtension in backgroundExtensions) {
+        log.Info ($"ActivityAnalysis: background analysis {backgroundExtension.GetType ().FullName}");
+        var backgroundAnalysis = new BackgroundAnalysis (backgroundExtension);
+        m_backgroundAnalyses.Add (backgroundAnalysis);
+        RegisterCancelCallback (backgroundAnalysis.Interrupt);
+        m_checkThreads.AddThread (backgroundAnalysis);
       }
 
       m_initialized = true;
@@ -324,6 +338,9 @@ namespace Lemoine.Analysis
           try {
             m_checkThreads.NotRespondingTimeout = notRespondingTimeout;
             m_checkThreads.StartIfUnstarted (cancellationToken);
+            foreach (var backgroundAnalysis in m_backgroundAnalyses) {
+              backgroundAnalysis.StartIfUnstarted (cancellationToken);
+            }
             RunAnalysis (cancellationToken);
             log.Fatal ("Run: RunAnalysis should loop and never return ! => try again in a few seconds");
           }

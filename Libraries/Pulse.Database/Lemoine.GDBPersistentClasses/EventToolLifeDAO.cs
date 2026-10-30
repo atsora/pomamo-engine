@@ -120,5 +120,39 @@ namespace Lemoine.GDBPersistentClasses
 
       return criteria.List<IEventToolLife> ();
     }
+
+    /// <summary>
+    /// <see cref="IEventToolLifeDAO"/>
+    /// </summary>
+    /// <param name="machineModuleIds">not null</param>
+    /// <param name="eventToolLifeTypes">not null and not empty</param>
+    /// <param name="dateTimeRange">not null</param>
+    /// <returns>not null</returns>
+    public async System.Threading.Tasks.Task<IList<IEventToolLife>> FindByTypesInRangeAsync (int[] machineModuleIds,
+                                                                                          EventToolLifeType[] eventToolLifeTypes,
+                                                                                          UtcDateTimeRange dateTimeRange)
+    {
+      Debug.Assert (null != machineModuleIds);
+      Debug.Assert (null != eventToolLifeTypes);
+      Debug.Assert (null != dateTimeRange);
+
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<EventToolLife> ()
+        .Add (Restrictions.In ("MachineModule.Id", machineModuleIds))
+        .Add (Restrictions.In ("EventType", eventToolLifeTypes));
+      if (dateTimeRange.Lower.HasValue) {
+        criteria = criteria.Add (dateTimeRange.LowerInclusive
+          ? Restrictions.Ge ("DateTime", dateTimeRange.Lower.Value)
+          : Restrictions.Gt ("DateTime", dateTimeRange.Lower.Value));
+      }
+      if (dateTimeRange.Upper.HasValue) {
+        criteria = criteria.Add (dateTimeRange.UpperInclusive
+          ? Restrictions.Le ("DateTime", dateTimeRange.Upper.Value)
+          : Restrictions.Lt ("DateTime", dateTimeRange.Upper.Value));
+      }
+      return await criteria
+        .AddOrder (Order.Asc ("DateTime"))
+        .ListAsync<IEventToolLife> ();
+    }
   }
 }

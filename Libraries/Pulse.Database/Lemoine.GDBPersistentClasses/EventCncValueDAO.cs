@@ -32,5 +32,31 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Eq ("Config", config))
         .List<IEventCncValue>();
     }
+
+    /// <summary>
+    /// <see cref="IEventCncValueDAO"/>
+    /// </summary>
+    /// <param name="machineModuleIds">not null</param>
+    /// <param name="range">not null</param>
+    /// <returns>not null</returns>
+    public async System.Threading.Tasks.Task<IList<IEventCncValue>> FindInRangeAsync (int[] machineModuleIds, UtcDateTimeRange range)
+    {
+      var criteria = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<EventCncValue> ()
+        .Add (Restrictions.In ("MachineModule.Id", machineModuleIds));
+      if (range.Lower.HasValue) {
+        criteria = criteria.Add (range.LowerInclusive
+          ? Restrictions.Ge ("DateTime", range.Lower.Value)
+          : Restrictions.Gt ("DateTime", range.Lower.Value));
+      }
+      if (range.Upper.HasValue) {
+        criteria = criteria.Add (range.UpperInclusive
+          ? Restrictions.Le ("DateTime", range.Upper.Value)
+          : Restrictions.Lt ("DateTime", range.Upper.Value));
+      }
+      return await criteria
+        .AddOrder (Order.Asc ("DateTime"))
+        .ListAsync<IEventCncValue> ();
+    }
   }
 }

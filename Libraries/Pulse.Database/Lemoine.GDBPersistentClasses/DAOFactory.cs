@@ -1306,6 +1306,21 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
     /// </summary>
+    public IShiftSummaryDAO ShiftSummaryDAO => new ShiftSummaryDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
+    public IShiftSummarySectionDAO ShiftSummarySectionDAO => new ShiftSummarySectionDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
+    public IShiftSummaryContentDAO ShiftSummaryContentDAO => new ShiftSummaryContentDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
     public IShiftTemplateDAO ShiftTemplateDAO
     {
       get { return new ShiftTemplateDAO (); }

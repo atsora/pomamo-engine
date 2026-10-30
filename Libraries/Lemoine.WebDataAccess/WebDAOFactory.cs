@@ -949,6 +949,24 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+    public IShiftSummaryDAO ShiftSummaryDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
+    public IShiftSummarySectionDAO ShiftSummarySectionDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
+    public IShiftSummaryContentDAO ShiftSummaryContentDAO
+    {
+      get {
+        throw new NotImplementedException ();
+      }
+    }
     public IShiftTemplateDAO ShiftTemplateDAO
     {
       get {

@@ -70,6 +70,28 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="ICncVariableDAO"/>
+    /// </summary>
+    /// <param name="machineModule">not null</param>
+    /// <param name="keyPrefix">not null and not empty</param>
+    /// <param name="range">in UTC</param>
+    /// <returns>not null</returns>
+    public virtual async System.Threading.Tasks.Task<IList<ICncVariable>> FindOverlapsRangeByKeyPrefixAsync (IMachineModule machineModule, string keyPrefix, UtcDateTimeRange range)
+    {
+      Debug.Assert (null != machineModule);
+      Debug.Assert (!string.IsNullOrEmpty (keyPrefix));
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<CncVariable> ()
+        .Add (Restrictions.Eq ("MachineModule", machineModule))
+        .Add (Restrictions.Like ("Key", keyPrefix, MatchMode.Start))
+        .Add (InUtcRange (range))
+        .AddOrder (Order.Asc ("Key"))
+        .AddOrder (Order.Asc ("DateTimeRange"))
+        .ListAsync<ICncVariable> ();
+    }
+
+    /// <summary>
     /// Range criterion with UTC date/times
     /// </summary>
     /// <param name="range"></param>

@@ -783,6 +783,21 @@ namespace Lemoine.ModelDAO
     IShiftSlotDAO ShiftSlotDAO { get; }
 
     /// <summary>
+    /// Get a IShiftSummaryDAO
+    /// </summary>
+    IShiftSummaryDAO ShiftSummaryDAO { get; }
+
+    /// <summary>
+    /// Get a IShiftSummarySectionDAO
+    /// </summary>
+    IShiftSummarySectionDAO ShiftSummarySectionDAO { get; }
+
+    /// <summary>
+    /// Get a IShiftSummaryContentDAO
+    /// </summary>
+    IShiftSummaryContentDAO ShiftSummaryContentDAO { get; }
+
+    /// <summary>
     /// Get a IShiftTemplateDAO
     /// </summary>
     IShiftTemplateDAO ShiftTemplateDAO { get; }
