@@ -174,6 +174,9 @@ namespace Lemoine.Database.Persistent
     /// <returns></returns>
     public static ISession GetSession (Lemoine.ModelDAO.IDAOSession daoSession)
     {
+      if (daoSession is DAOSessionAdvanced daoSessionAdvanced) {
+        return daoSessionAdvanced.Session;
+      }
       return ((DAOSession)daoSession).Session;
     }
 
