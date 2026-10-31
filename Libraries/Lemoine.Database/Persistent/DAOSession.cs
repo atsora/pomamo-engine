@@ -1,4 +1,5 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
+// Copyright (C) 2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
@@ -11,12 +12,22 @@ using Lemoine.Core.Log;
 using NHibernate;
 using NHibernate.Context;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lemoine.Database.Persistent
 {
   /// <summary>
-  /// Description of DAOSession.
+  /// Database session that wraps a NHibernate session.
+  ///
+  /// It re-uses the NHibernate session that is bound to the current async context, if any.
+  ///
+  /// DAOSession is single-threaded: a session must not be used by several tasks or threads at the same time.
+  /// Note that a task that is run in parallel (Task.WhenAll, Task.Run, fire and forget task)
+  /// inherits the session of the async context: it must not use it while the calling code still uses it.
+  /// Else the database connection may be lost for ever (never returned to the connection pool).
+  /// Such a concurrent use is detected and logged as Fatal with the stack trace, but it is not prevented.
+  /// See <see cref="DAOSessionAdvanced"/> for a version that prevents it
   /// </summary>
   public sealed class DAOSession : IDAOSession
   {
@@ -27,6 +38,19 @@ namespace Lemoine.Database.Persistent
     const string SEND_MESSAGES_METHOD_DEFAULT = ""; // "pool" or "thread" or "async" (previous default but could drive to a deadlock) or "nowait" or default ("sync" / "")
 
     static volatile ISession s_uniqueSession = null;
+
+    /// <summary>
+    /// Innermost active DAOSession of the current async context (concurrent use detection)
+    /// </summary>
+    static readonly AsyncLocal<DAOSession> s_currentDAOSession = new AsyncLocal<DAOSession> ();
+
+    /// <summary>
+    /// Active DAOSession of each NHibernate session, in creation order (concurrent use detection)
+    /// </summary>
+    static readonly ConditionalWeakTable<ISession, List<DAOSession>> s_activeDAOSessions = new ConditionalWeakTable<ISession, List<DAOSession>> ();
+
+    DAOSession m_parentDAOSession = null;
+    List<DAOSession> m_activeDAOSessions = null;
 
     ISession m_session;
     bool m_sessionCreated = false;
@@ -79,6 +103,8 @@ namespace Lemoine.Database.Persistent
         log.Fatal ("DAOSession: m_session is null");
         throw new NullReferenceException ("m_session");
       }
+
+      CheckConcurrentUse ();
     }
 
     /// <summary>
@@ -114,6 +140,66 @@ namespace Lemoine.Database.Persistent
       if (null == m_session) {
         log.Fatal ("DAOSession: m_session is null");
         throw new NullReferenceException ("m_session");
+      }
+
+      CheckConcurrentUse ();
+    }
+
+    /// <summary>
+    /// Detect a use of the session by several tasks or threads at the same time and log it as Fatal.
+    ///
+    /// In a single async context, the DAOSession that wrap the same NHibernate session are nested.
+    /// If the innermost active DAOSession of the NHibernate session is not the innermost DAOSession
+    /// of the current async context, the NHibernate session is currently used by another task or thread.
+    ///
+    /// This never throws an exception
+    /// </summary>
+    void CheckConcurrentUse ()
+    {
+      try {
+        var activeDAOSessions = s_activeDAOSessions.GetValue (m_session, x => new List<DAOSession> ());
+        var parentDAOSession = s_currentDAOSession.Value;
+        lock (activeDAOSessions) {
+          var lastActiveDAOSession = activeDAOSessions.LastOrDefault ();
+          if ((null != lastActiveDAOSession) && !object.ReferenceEquals (lastActiveDAOSession, parentDAOSession)) {
+            log.Fatal ($"CheckConcurrentUse: the session is re-used while it is currently used by another task or thread (task that inherited the session through the async context?). DAOSession is single-threaded, else the database connection may be lost. Thread={Thread.CurrentThread.ManagedThreadId} StackTrace={System.Environment.StackTrace}");
+          }
+          activeDAOSessions.Add (this);
+        }
+        m_activeDAOSessions = activeDAOSessions;
+        m_parentDAOSession = parentDAOSession;
+        s_currentDAOSession.Value = this;
+      }
+      catch (Exception ex) {
+        log.Error ("CheckConcurrentUse: exception", ex);
+      }
+    }
+
+    /// <summary>
+    /// Counterpart of <see cref="CheckConcurrentUse"/> in Dispose: detect a close of the session
+    /// while it is still used by another task or thread and log it as Fatal.
+    ///
+    /// This never throws an exception
+    /// </summary>
+    void ReleaseConcurrentUse ()
+    {
+      if (null == m_activeDAOSessions) {
+        return;
+      }
+      try {
+        if (object.ReferenceEquals (s_currentDAOSession.Value, this)) {
+          s_currentDAOSession.Value = m_parentDAOSession;
+        }
+        lock (m_activeDAOSessions) {
+          m_activeDAOSessions.Remove (this);
+          if (m_sessionCreated && m_activeDAOSessions.Any ()) {
+            log.Fatal ($"ReleaseConcurrentUse: the session is closed while it is still used by {m_activeDAOSessions.Count} DAOSession(s) of another task or thread. DAOSession is single-threaded, else the database connection may be lost. Thread={Thread.CurrentThread.ManagedThreadId} StackTrace={System.Environment.StackTrace}");
+          }
+        }
+        m_activeDAOSessions = null;
+      }
+      catch (Exception ex) {
+        log.Error ("ReleaseConcurrentUse: exception", ex);
       }
     }
 
@@ -384,6 +470,8 @@ WHERE table_type='LOCAL TEMPORARY'
     public void Dispose ()
     {
       log.Trace ("Dispose /B");
+
+      ReleaseConcurrentUse ();
 
       if (m_sessionCreated) {
         log.Debug ("Dispose: the session was created by this");

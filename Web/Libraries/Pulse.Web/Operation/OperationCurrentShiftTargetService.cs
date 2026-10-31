@@ -58,12 +58,15 @@ namespace Pulse.Web.Operation
         return new ErrorDTO ("Invalid group", ErrorStatus.WrongRequestParameter);
       }
 
-      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        var businessRequest = new OperationCurrentShiftTarget (group);
-        var operationCurrentShiftTarget = await Lemoine.Business.ServiceProvider
-          .GetAsync (businessRequest);
-        Debug.Assert (null != operationCurrentShiftTarget);
+      // The business request is run outside any session:
+      // it runs some tasks in parallel (one per machine of the group) that inherit the session of the async context,
+      // and a session must not be used concurrently, else a database connection may be lost
+      var businessRequest = new OperationCurrentShiftTarget (group);
+      var operationCurrentShiftTarget = await Lemoine.Business.ServiceProvider
+        .GetAsync (businessRequest);
+      Debug.Assert (null != operationCurrentShiftTarget);
 
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         var responseDto = new OperationCurrentShiftTargetResponseDTO () {
           DateTime = operationCurrentShiftTarget.DateTime,
           ShiftGoal = operationCurrentShiftTarget.ShiftGoal

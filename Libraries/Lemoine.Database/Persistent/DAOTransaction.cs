@@ -20,7 +20,7 @@ namespace Lemoine.Database.Persistent
   public sealed class DAOTransaction : IDAOTransaction
   {
     #region Members
-    DAOSession m_session;
+    ITransactionSession m_session;
     string m_name;
     string m_beginStackTrace = System.Environment.StackTrace;
     bool m_topTransaction = false;
@@ -117,6 +117,18 @@ namespace Lemoine.Database.Persistent
     /// <param name="topTransaction"></param>
     /// <param name="notTop">set to true to specify that this transaction is normally not a top transaction</param>
     internal DAOTransaction (DAOSession session, string name, bool topTransaction, bool notTop = false)
+      : this (new DAOSessionTransactionAdapter (session), name, topTransaction, notTop)
+    {
+    }
+
+    /// <summary>
+    /// Constructor from any session that manages the transactions (for example <see cref="DAOSessionAdvanced"/>)
+    /// </summary>
+    /// <param name="session"></param>
+    /// <param name="name"></param>
+    /// <param name="topTransaction"></param>
+    /// <param name="notTop">set to true to specify that this transaction is normally not a top transaction</param>
+    internal DAOTransaction (ITransactionSession session, string name, bool topTransaction, bool notTop = false)
     {
       if (topTransaction && notTop) {
         log.Fatal ($"DAOTransaction: transaction {name} was created although it is flagged as a notTop transaction. Is the notTop agument valid? {System.Environment.StackTrace}");

@@ -16,6 +16,13 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class DAOFactory : Lemoine.ModelDAO.IDAOFactory, IDatabaseConnection
   {
+    /// <summary>
+    /// Use <see cref="DAOSessionAdvanced"/> instead of <see cref="DAOSession"/>:
+    /// protection against a use of the same session by several tasks or threads
+    /// </summary>
+    static readonly string ADVANCED_SESSION_KEY = "Database.Session.Advanced";
+    static readonly bool ADVANCED_SESSION_DEFAULT = false;
+
     static readonly ILog log = LogManager.GetLogger (typeof (DAOFactory).FullName);
 
     readonly IPersistentClassModel m_persistentClassModel;
@@ -46,7 +53,12 @@ namespace Lemoine.GDBPersistentClasses
     public IDAOSession OpenSession ()
     {
       try {
-        return new DAOSession ();
+        if (Lemoine.Info.ConfigSet.LoadAndGet (ADVANCED_SESSION_KEY, ADVANCED_SESSION_DEFAULT)) {
+          return new DAOSessionAdvanced ();
+        }
+        else {
+          return new DAOSession ();
+        }
       }
       catch (Exception ex) {
         log.Error ("OpenSession: exception", ex);
