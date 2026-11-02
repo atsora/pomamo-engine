@@ -116,15 +116,53 @@ namespace Lemoine.I18N
         log.Error ("SetLanguageFromConfigSet: exception", ex);
         throw;
       }
-      if (language == null) {
+      // On Linux, the Language key comes from the LANGUAGE environment variable, a POSIX locale
+      var cultureName = ToCultureName (language);
+      if (cultureName is null) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SetLanguageFromConfigSet: no culture in {LANGUAGE_KEY}={language}");
+        }
         return false;
       }
-      else {
-        SetLanguage (language);
-        log.InfoFormat ("The following language <{0}> was successfully set from the config set",
-                        language);
-        return true;
+      try {
+        SetLanguage (cultureName);
       }
+      catch (CultureNotFoundException ex) {
+        log.Warn ($"SetLanguageFromConfigSet: invalid culture {cultureName} from {LANGUAGE_KEY}={language}, ignore it", ex);
+        return false;
+      }
+      log.Info ($"The following language <{cultureName}> was successfully set from the config set");
+      return true;
+    }
+
+    /// <summary>
+    /// Convert a language setting into a .NET culture name.
+    ///
+    /// A POSIX locale, for example en_US.UTF-8 or en_US:en (LANGUAGE environment variable),
+    /// is converted into en-US: first item of a ':' list, without encoding or modifier.
+    /// </summary>
+    /// <param name="language">language setting, for example en-US, fr or en_US.UTF-8</param>
+    /// <returns>culture name, or null if no culture is specified (empty, C or POSIX)</returns>
+    public static string ToCultureName (string language)
+    {
+      var cultureName = language?.Split (':')[0].Trim ();
+      if (string.IsNullOrEmpty (cultureName)) {
+        return null;
+      }
+      var modifierIndex = cultureName.IndexOf ('@');
+      if (0 <= modifierIndex) {
+        cultureName = cultureName.Substring (0, modifierIndex);
+      }
+      var encodingIndex = cultureName.IndexOf ('.');
+      if (0 <= encodingIndex) {
+        cultureName = cultureName.Substring (0, encodingIndex);
+      }
+      if (string.IsNullOrEmpty (cultureName)
+        || string.Equals (cultureName, "C", StringComparison.InvariantCultureIgnoreCase)
+        || string.Equals (cultureName, "POSIX", StringComparison.InvariantCultureIgnoreCase)) {
+        return null;
+      }
+      return cultureName.Replace ('_', '-');
     }
 
     #region Instance
