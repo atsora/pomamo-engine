@@ -22,8 +22,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      CheckPostgresqlVersion ();
-
       Database.AddColumn (TableName.SHIFT_SLOT_BREAK,
                           new Column (TableName.SHIFT_SLOT_BREAK + "range", DbType.Int32, ColumnProperty.Null));
       MakeColumnTsRange (TableName.SHIFT_SLOT_BREAK, TableName.SHIFT_SLOT_BREAK + "range");

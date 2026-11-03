@@ -23,8 +23,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      CheckPostgresqlVersion ();
-      
       AddNoOverlapConstraint (TableName.OBSERVATION_STATE_SLOT,
                               TableName.OBSERVATION_STATE_SLOT + "datetimerange",
                               ColumnName.MACHINE_ID);

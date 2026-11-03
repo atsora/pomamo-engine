@@ -22,11 +22,10 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      if (GetPostgresqlVersion() >= 9004000) {
-        // Use of the function gen_random_uuid() in pgcrypto
-        Database.ExecuteNonQuery (@"CREATE EXTENSION IF NOT EXISTS pgcrypto");
-        
-        Database.ExecuteNonQuery (@"
+      // Use of the function gen_random_uuid() in pgcrypto
+      Database.ExecuteNonQuery (@"CREATE EXTENSION IF NOT EXISTS pgcrypto");
+
+      Database.ExecuteNonQuery (@"
 CREATE OR REPLACE VIEW machinestatetemplateslot AS
 SELECT gen_random_uuid() AS machinestatetemplateslotuuid, machineid, machinestatetemplateid, UNNEST(ranges) AS machinestatetemplateslotdatetimerange
 FROM (
@@ -35,18 +34,6 @@ FROM (
   GROUP BY machineid, machinestatetemplateid
 ) a;
 ");
-      } else {
-        // Create a UUID v4 based on the clock
-        Database.ExecuteNonQuery (@"
-CREATE OR REPLACE VIEW machinestatetemplateslot AS
-SELECT uuid_in(md5(random()::text || now()::text)::cstring) AS machinestatetemplateslotuuid, machineid, machinestatetemplateid, UNNEST(ranges) AS machinestatetemplateslotdatetimerange
-FROM (
-  SELECT machineid, machinestatetemplateid, merge_ranges (observationstateslotdatetimerange) AS ranges
-  FROM observationstateslot
-  GROUP BY machineid, machinestatetemplateid
-) a;
-");
-      }
       
       // Note: the same request with a CTE is not so efficient because the CTE prevents
       //       from using the partitioning key machineid

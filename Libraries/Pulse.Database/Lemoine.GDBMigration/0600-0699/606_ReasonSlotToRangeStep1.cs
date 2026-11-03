@@ -24,8 +24,6 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      CheckPostgreSQL95 ();
-      
       RemoveOldIndexes ();
 
       Database.AddColumn (TableName.REASON_SLOT,
@@ -64,15 +62,6 @@ namespace Lemoine.GDBMigration
       RestoreOldIndexes ();
     }
 
-    void CheckPostgreSQL95 ()
-    {
-      int version = GetPostgresqlVersion ();
-      if (version < 9005000) {
-        log.FatalFormat ("Please upgrade PostgreSQL first to >= 9.5");
-        throw new Exception ("Please upgrade PostgreSQL to >= 9.5");
-      }
-    }
-    
     void RemoveOldIndexes ()
     {
       RemoveIndex(TableName.REASON_SLOT,

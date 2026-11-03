@@ -483,8 +483,6 @@ SET DATA TYPE DATERANGE USING '[,)'::daterange",
     /// <param name="column"></param>
     public void AddNoOverlapConstraintV1 (string table, string column)
     {
-      CheckPostgresqlVersion ();
-
       RemoveNoOverlapConstraint (table, column);
       Database.ExecuteNonQuery (string.Format (@"ALTER TABLE {0}
   ADD CONSTRAINT {2} EXCLUDE USING gist ({1} WITH &&)
@@ -1410,24 +1408,6 @@ ON {0} (datetime);",
       }
 
       return result;
-    }
-
-    /// <summary>
-    /// Some versions of PostgreSQL are bugged. Check it is not one of them
-    /// </summary>
-    public void CheckPostgresqlVersion ()
-    {
-      // Note: on versions < 9.3.7 and < 9.4.2 there is a bug
-      //       that may drive to some problems with the nooverlap constraint
-      // http://git.postgresql.org/gitweb/?p=postgresql.git;a=commit;h=20781765f77c1fb6465aba97d211636ce92e7a0e
-      // If such a version is detected, raise an exception
-      int version = GetPostgresqlVersion ();
-      if (((9003000 <= version) && (version < 9003007))
-          || ((9004000 <= version) && (version < 9004002))) {
-        log.FatalFormat ("There is a bug in PostgreSQL version {0} " +
-                         "=> please upgrade it first to >= 9.3.7 or >= 9.4.2 or >= 9.5.0");
-        throw new Exception ("Bug in PostgreSQL. Please upgrade it.");
-      }
     }
     #endregion // Other
 
