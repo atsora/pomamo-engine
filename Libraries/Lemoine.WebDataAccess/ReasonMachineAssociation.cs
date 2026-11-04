@@ -53,6 +53,19 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
+    public IList<string> ForceDynamicEnd (DateTime end, string message)
+    {
+      throw new NotImplementedException ();
+    }
+
+    /// <summary>
+    /// <see cref="IReasonMachineAssociation"/>
+    /// </summary>
+    public IList<string> CancelAutoReason (string message)
+    {
+      throw new NotImplementedException ();
+    }
+
     public void MarkAsStepTimeout()
     {
       throw new NotImplementedException();

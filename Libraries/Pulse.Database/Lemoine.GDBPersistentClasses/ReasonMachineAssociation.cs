@@ -888,6 +888,180 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IReasonMachineAssociation"/>
+    /// </summary>
+    /// <param name="end"></param>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public virtual IList<string> ForceDynamicEnd (DateTime end, string message)
+    {
+      CheckForceDynamicEndIsPossible ();
+      return ForceDynamicEndCore (end, $"Dynamic end {this.DynamicEnd} forced at {end:o} (UTC). {message}");
+    }
+
+    /// <summary>
+    /// <see cref="IReasonMachineAssociation"/>
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public virtual IList<string> CancelAutoReason (string message)
+    {
+      CheckForceDynamicEndIsPossible ();
+
+      // Cancel = stop at the start of the modification, or at the start of its reason proposal if before
+      var end = this.Begin.HasValue
+        ? this.Begin.Value
+        : new DateTime (1970, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+      var reasonProposal = ModelDAOHelper.DAOFactory.ReasonProposalDAO
+        .Get (this);
+      if (reasonProposal?.DateTimeRange.Lower.HasValue ?? false) {
+        var proposalStart = reasonProposal.DateTimeRange.Lower.Value;
+        if (proposalStart < end) {
+          end = proposalStart;
+        }
+      }
+      return ForceDynamicEndCore (end, $"Auto-reason with dynamic {this.Dynamic} cancelled completely. {message}");
+    }
+
+    void CheckForceDynamicEndIsPossible ()
+    {
+      if (null != this.Parent) {
+        log.Error ($"ForceDynamicEnd: modification id={this.Id} is not a root modification");
+        throw new InvalidOperationException ("ForceDynamicEnd must be called on a root modification");
+      }
+      var rootWaitingForSubModifications = AnalysisStatus.PendingSubModifications.Equals (this.AnalysisStatus);
+      if (!rootWaitingForSubModifications && IsAnalysisCompleted ()) {
+        log.Error ($"ForceDynamicEnd: modification id={this.Id} is already completed, status={this.AnalysisStatus}");
+        throw new InvalidOperationException ($"Modification {this.Id} is already completed (status {this.AnalysisStatus})");
+      }
+      if (this.Kind.HasFlag (ReasonMachineAssociationKind.Reset)
+        || this.Kind.HasFlag (ReasonMachineAssociationKind.TrackDynamicEnd)) {
+        log.Error ($"ForceDynamicEnd: unexpected kind {this.Kind} for root modification id={this.Id}");
+        throw new InvalidOperationException ($"Unexpected kind {this.Kind} for modification {this.Id}");
+      }
+    }
+
+    IList<string> ForceDynamicEndCore (DateTime end, string analysisLogMessage)
+    {
+      var rootWaitingForSubModifications = AnalysisStatus.PendingSubModifications.Equals (this.AnalysisStatus);
+      var actions = new List<string> ();
+
+      // 1. Reason proposal and reset of the reason slots after end
+      //    This must be done first, so that the root modification has a sub-modification
+      //    that is processed before it is completed
+      ForceReasonProposalEnd (end, actions);
+
+      // 2. Not completed modifications of the tree (including the root itself if it is still active)
+      ForceDynamicEndInTree (this, end, actions);
+
+      // 3. Final status of the root
+      if (rootWaitingForSubModifications) {
+        MarkAsCancel ();
+        ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (this);
+        actions.Add ($"root modification {this.Id}: final status will be Cancel once its sub-modifications are processed");
+      }
+
+      AddAnalysisLog (LogLevel.INFO, analysisLogMessage);
+
+      return actions;
+    }
+
+    void ForceReasonProposalEnd (DateTime end, IList<string> actions)
+    {
+      var reasonProposal = ModelDAOHelper.DAOFactory.ReasonProposalDAO
+        .Get (this);
+      if (null == reasonProposal) {
+        actions.Add ($"no reason proposal for modification {this.Id}");
+        return;
+      }
+      var proposalRange = reasonProposal.DateTimeRange;
+      if (Bound.Compare<DateTime> (proposalRange.Upper, end) <= 0) {
+        actions.Add ($"reason proposal {reasonProposal.Id} {proposalRange} already ends before {end:o}: kept");
+        return;
+      }
+
+      var newRange = new UtcDateTimeRange (proposalRange
+        .Intersects (new UtcDateTimeRange (new LowerBound<DateTime> (null), end)));
+      if (newRange.IsEmpty ()) {
+        ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakeTransient (reasonProposal);
+        actions.Add ($"reason proposal {reasonProposal.Id} {proposalRange} removed");
+      }
+      else {
+        reasonProposal.DateTimeRange = newRange;
+        ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakePersistent (reasonProposal);
+        actions.Add ($"reason proposal {reasonProposal.Id} shortened from {proposalRange} to {newRange}");
+      }
+
+      var cancelRange = new UtcDateTimeRange (proposalRange
+        .Intersects (new UtcDateTimeRange (end)));
+      if (!cancelRange.IsEmpty ()) {
+        var resetModification = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+          .InsertSub (this, cancelRange, CancelDataSubChange, this);
+        actions.Add ($"new sub-modification {((IDataWithId<long>)resetModification).Id} (Reset) to cancel the reason slots in {cancelRange}");
+      }
+    }
+
+    static void ForceDynamicEndInTree (ReasonMachineAssociation modification, DateTime end, IList<string> actions)
+    {
+      // Sub-modifications first (before new ones are added to this modification)
+      if (modification.AnalysisSubMachineModifications) {
+        var subModifications = ModelDAOHelper.DAOFactory.MachineModificationDAO
+          .GetNotCompletedSubMachineModifications (modification)
+          .ToList ();
+        foreach (var subModification in subModifications) {
+          if (subModification is ReasonMachineAssociation subReasonMachineAssociation) {
+            ForceDynamicEndInTree (subReasonMachineAssociation, end, actions);
+          }
+          else {
+            actions.Add ($"sub-modification {((IDataWithId<long>)subModification).Id} of type {subModification.ModificationType}: kept");
+          }
+        }
+      }
+
+      if (AnalysisStatus.PendingSubModifications.Equals (modification.AnalysisStatus)) {
+        // Waiting for its sub-modifications that were processed above
+        return;
+      }
+      if (modification.Kind.HasFlag (ReasonMachineAssociationKind.Reset)) {
+        return;
+      }
+      if (modification.Kind.HasFlag (ReasonMachineAssociationKind.TrackDynamicEnd)) {
+        modification.MarkAsCancel ();
+        ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (modification);
+        actions.Add ($"dynamic end tracker {modification.Id} ({modification.DynamicEnd}) cancelled");
+        return;
+      }
+
+      var notProcessedRange = modification.GetNotPocessedRange ();
+      var withDynamicEnd = !string.IsNullOrEmpty (modification.DynamicEnd);
+      var afterEnd = Bound.Compare<DateTime> (end, notProcessedRange.Upper) < 0;
+      if (!withDynamicEnd && !afterEnd) {
+        // This modification ends before end: keep it
+        return;
+      }
+
+      var applyRange = new UtcDateTimeRange (notProcessedRange
+        .Intersects (new UtcDateTimeRange (new LowerBound<DateTime> (null), end)));
+      if (!applyRange.IsEmpty ()) {
+        var applySubModification = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+          .InsertSub (modification, applyRange, ForceDynamicEndApplySubChange, modification);
+        actions.Add ($"new sub-modification {((IDataWithId<long>)applySubModification).Id} to apply the reason in {applyRange} (without dynamic end)");
+      }
+      modification.MarkAsCancel ();
+      ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (modification);
+      actions.Add ($"modification {modification.Id} (dynamic={modification.Dynamic}, not processed={notProcessedRange}) cancelled");
+    }
+
+    static void ForceDynamicEndApplySubChange (IReasonMachineAssociation association)
+    {
+      association.Dynamic = null;
+      if (association.Option.HasValue && association.Option.Value.HasFlag (AssociationOption.TrackSlotChanges)) {
+        association.Option = association.Option.Value
+          .Remove (AssociationOption.TrackSlotChanges);
+      }
+    }
+
+    /// <summary>
     /// Check no reason proposal is associated to this. Log it if it is the case.
     /// 
     /// This method can be removed later if no such log is found

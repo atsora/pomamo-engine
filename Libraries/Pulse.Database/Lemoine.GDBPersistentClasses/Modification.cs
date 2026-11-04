@@ -1038,6 +1038,38 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Mark the modification as manually cancelled (status Cancel)
+    ///
+    /// Contrary to <see cref="MarkAsError"/>, <see cref="Cancel"/> is not called:
+    /// the data that was already processed by the modification is kept.
+    ///
+    /// If the modification has some sub-modifications, the status becomes PendingSubModifications
+    /// and the final status will be Cancel once all the sub-modifications are completed
+    /// </summary>
+    protected virtual void MarkAsCancel ()
+    {
+      CheckIsAnalysisNotCompleted ();
+
+      if (this.AnalysisSubGlobalModifications || this.AnalysisSubMachineModifications) {
+        m_nextAnalysisStatus = AnalysisStatus.Cancel;
+        int newPriority = this.StatusPriority;
+        if (this.AnalysisSubMachineModifications) {
+          var notCompletedSubMachineModifications = this.SubMachineModifications
+            .Where (m => m.AnalysisStatus.IsNotCompleted ());
+          if (notCompletedSubMachineModifications.Any ()) {
+            newPriority = notCompletedSubMachineModifications
+              .Max (m => m.StatusPriority);
+          }
+        }
+        UpdateStatus (AnalysisStatus.PendingSubModifications, newPriority);
+      }
+      else {
+        UpdateStatus (AnalysisStatus.Cancel);
+      }
+      SetCompletionOrder ();
+    }
+
+    /// <summary>
     /// Mark the modification as Pending
     /// </summary>
     /// <param name="effectiveEnd"></param>
