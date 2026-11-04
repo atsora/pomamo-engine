@@ -127,6 +127,14 @@ namespace Lemoine.WebDataAccess
       throw new NotImplementedException ();
     }
 
+    /// <summary>
+    /// <see cref="IReasonMachineAssociationDAO"/>
+    /// </summary>
+    public IList<string> StopOrphanReasonProposal (IReasonProposal reasonProposal, DateTime end, string message)
+    {
+      throw new NotImplementedException ();
+    }
+
     public IReasonMachineAssociation FindById (int id, IMachine machine)
     {
       throw new NotImplementedException ();
