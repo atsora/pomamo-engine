@@ -173,8 +173,10 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
     static void ProcessModification (IModification modification)
     {
+      // Note: like in the analysis service, a cancelled modification is considered as completed
       if (!modification.AnalysisStatus.Equals (AnalysisStatus.PendingSubModifications)
-        && !modification.AnalysisStatus.IsCompletedSuccessfully ()) {
+        && !modification.AnalysisStatus.IsCompletedSuccessfully ()
+        && !modification.AnalysisStatus.Equals (AnalysisStatus.Cancel)) {
         ((Modification)modification).MakeAnalysis ();
       }
       if (modification.AnalysisStatus.Equals (AnalysisStatus.PendingSubModifications)) {
@@ -182,7 +184,7 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
         foreach (IModification subModification in subModifications) {
           ProcessModification (subModification);
         }
-        if (modification.SubModifications.All (m => m.AnalysisStatus.IsCompletedSuccessfully ())) {
+        if (modification.SubModifications.All (m => m.AnalysisStatus.IsCompletedSuccessfully () || m.AnalysisStatus.Equals (AnalysisStatus.Cancel))) {
           modification.MarkAllSubModificationsCompleted ();
         }
         ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (modification);

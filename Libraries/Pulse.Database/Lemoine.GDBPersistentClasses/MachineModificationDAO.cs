@@ -893,8 +893,7 @@ WHERE table_schema='pgfkpart'
         .AddScalar ("exists", NHibernate.NHibernateUtil.Boolean)
         .UniqueResult<bool> ();
       if (partitionExists) {
-        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_IN_PARTITION_KEY, UPSERT_ACTIVE_IN_PARTITION_DEFAULT)
-            && ModelDAOHelper.DAOFactory.IsPostgreSQLVersionGreaterOrEqual (90500)) { // With PostgreSQL 9.5, use upsert
+        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_IN_PARTITION_KEY, UPSERT_ACTIVE_IN_PARTITION_DEFAULT)) { // Use upsert
           return string.Format (@"
 INSERT INTO pgfkpart.machinemodificationstatus_p{0} (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
 SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
@@ -905,7 +904,7 @@ ON CONFLICT (modificationid) DO NOTHING
 ;", machine.Id, modificationIdsString);
           // Note: if you ommit AND NOT EXISTS (), the request is pretty slow
         }
-        else { // version < 9.5 or no upsert
+        else { // Upsert is deactivated
           return string.Format (@"
 INSERT INTO pgfkpart.machinemodificationstatus_p{0} (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
 SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
@@ -916,8 +915,7 @@ WHERE machinemodificationmachineid={0}
         }
       }
       else { // !partitionExists
-        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_KEY, UPSERT_ACTIVE_DEFAULT)
-            && ModelDAOHelper.DAOFactory.IsPostgreSQLVersionGreaterOrEqual (90500)) { // With PostgreSQL 9.5, use upsert
+        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_KEY, UPSERT_ACTIVE_DEFAULT)) { // Use upsert
           return string.Format (@"
 INSERT INTO machinemodificationstatus (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
 SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
@@ -927,7 +925,7 @@ WHERE machinemodificationmachineid={0}
 ON CONFLICT (modificationid) DO NOTHING
 ;", machine.Id, modificationIdsString);
         }
-        else { // version < 9.5 or no upsert
+        else { // Upsert is deactivated
           return string.Format (@"
 INSERT INTO machinemodificationstatus (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
 SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0

@@ -380,9 +380,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       if (null == observationStateSlot) { // Nothing to store
         return;
       }
-      
-      // Note: with PostgreSQL 9.5, INSERT ... ON CONFLICT UPDATE can be used
-      
+
       // Note: startdatetime and enddatetime must be replaced with a tsrange
       //       If begin or end has no value, there may be some problems
       
@@ -404,8 +402,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       var connection = ModelDAOHelper.DAOFactory.GetConnection ();
       using (var command = connection.CreateCommand ())
       {
-        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_KEY, UPSERT_ACTIVE_DEFAULT)
-            && ModelDAOHelper.DAOFactory.IsPostgreSQLVersionGreaterOrEqual (90500)) { // PostgreSQL >= 9.5, use upsert
+        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_KEY, UPSERT_ACTIVE_DEFAULT)) { // Use upsert
           command.CommandText =
             string.Format (@"
 INSERT INTO plugins.cncsummarybystateslot2_values (machineid, machinemoduleid, fieldid,
@@ -431,7 +428,7 @@ ON CONFLICT ON CONSTRAINT cncsummarybystateslot2_values_machineid_machinemodulei
                            duration.TotalSeconds.ToString (CultureInfo.InvariantCulture) // 10: computedseconds
                           );
         }
-        else { // PostgreSQL < 9.5, upsert is not available
+        else { // Upsert is deactivated
           command.CommandText = string.Format (@"
 WITH new_values (machineid, machinemoduleid, fieldid, startdatetime, startday, enddatetime, endday,
   machineobservationstateid, shiftid, average, computedseconds) AS (

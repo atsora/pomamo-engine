@@ -263,21 +263,10 @@ namespace Lemoine.Database.Persistent
     /// <summary>
     /// Kill orphaned connections for the same client IP address and the same application name
     /// </summary>
-    /// <returns>The number of killed connections (-1 in case the PostgreSQL version is not valid)</returns>
+    /// <returns>The number of killed connections</returns>
     /// <exception cref="Exception">in case the SQL request fails</exception>
     public static long KillOrphanedConnections (this IDatabaseConnection databaseConnection)
     {
-      try {
-        if (!databaseConnection.IsPostgreSQLVersionGreaterOrEqual (90200)) {
-          log.Fatal ("KillOrphanedConnections: PostgreSQL version is < 9.2 => not supported");
-          return -1;
-        }
-      }
-      catch (Exception ex) {
-        log.Error ("KillOrphanedConnections: could not check the version of PostgreSQL, give up", ex);
-        throw;
-      }
-
       long requestResult;
       using (var session = databaseConnection.OpenSession ()) {
         var connection = databaseConnection.GetConnection ();
@@ -310,10 +299,10 @@ select count(*) from terminated
       }
 
       if (2 < requestResult) {
-        log.FatalFormat ("KillOrphanedConnections: {0} orphaned connections were killed", requestResult);
+        log.Fatal ($"KillOrphanedConnections: {requestResult} orphaned connections were killed");
       }
       else if (0 < requestResult) {
-        log.InfoFormat ("KillOrphanedConnections: {0} orphaned connections were killed", requestResult);
+        log.Info ($"KillOrphanedConnections: {requestResult} orphaned connections were killed");
       }
       else {
         log.Debug ("KillOrphanedConnections: no killed connection");

@@ -122,8 +122,6 @@ WHERE daytemplatename='migration'");
     
     void AddShiftTemplateSlot ()
     {
-      CheckPostgresqlVersion ();
-
       Database.AddTable (TableName.SHIFT_TEMPLATE_SLOT,
                          new Column (TableName.SHIFT_TEMPLATE_SLOT + "id", DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
                          new Column (TableName.SHIFT_TEMPLATE_SLOT + "version", DbType.Int32, ColumnProperty.NotNull, 1),

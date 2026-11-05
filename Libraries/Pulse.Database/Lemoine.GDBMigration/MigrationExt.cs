@@ -121,16 +121,12 @@ namespace Lemoine.GDBMigration
     }
     
     /// <summary>
-    /// Convert a column to a json type (or jsonb if postgresql version >= 9.4.0)
+    /// Convert a column to a jsonb type
     /// </summary>
     /// <param name="table"></param>
     /// <param name="column"></param>
     internal void MakeColumnJson(string table, string column)
     {
-      if (GetPostgresqlVersion () < 9004000) {
-        throw new Exception ("Please upgrade postgreSQL (version >= 9.4) so that a jsonb column can be created.");
-      }
-
       m_transformationProviderExt.MakeColumnJsonB(table, column);
     }
     #endregion // Make columns
@@ -757,14 +753,6 @@ namespace Lemoine.GDBMigration
     public int GetPostgresqlVersion()
     {
       return m_transformationProviderExt.GetPostgresqlVersion ();
-    }
-    
-    /// <summary>
-    /// Some versions of PostgreSQL are bugged. Check it is not one of them
-    /// </summary>
-    protected void CheckPostgresqlVersion ()
-    {
-      m_transformationProviderExt.CheckPostgresqlVersion ();
     }
 
     /// <summary>

@@ -1521,6 +1521,399 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     }
 
     /// <summary>
+    /// Dynamic end that is never resolved: it always returns a hint after T(2)
+    /// </summary>
+    class NeverEndingDynamicEndExtension
+      : Lemoine.UnitTests.WithHourTimeStamp
+      , Lemoine.Extensions.Business.DynamicTimes.IDynamicTimeExtension
+    {
+      public NeverEndingDynamicEndExtension ()
+        : base (UtcDateTime.From (2018, 10, 01, 08, 00, 00))
+      {
+      }
+
+      public bool Initialize (IMachine machine, string parameter)
+      {
+        this.Machine = machine;
+        return true;
+      }
+
+      public IMachine Machine { get; set; }
+
+      public string Name => "Never";
+
+      public bool UniqueInstance => true;
+
+      public bool IsApplicable () => true;
+
+      public DynamicTimeApplicableStatus IsApplicableAt (DateTime at) => throw new NotImplementedException ();
+
+      public IDynamicTimeResponse Get (DateTime dateTime, UtcDateTimeRange hint, UtcDateTimeRange limit) => this.CreateWithHint (R (2));
+
+      public TimeSpan GetCacheTimeout (IDynamicTimeResponse data) => TimeSpan.FromTicks (0);
+    }
+
+    void CreateForceDynamicEndReferenceData (IMonitoredMachine machine, IMachineMode inactive, IMachineObservationState attended, IReason reasonUnanswered)
+    {
+      var daoFactory = ModelDAOHelper.DAOFactory;
+      IReasonSlot existingSlot = new ReasonSlot (machine, R (1, 5));
+      existingSlot.MachineMode = inactive;
+      existingSlot.MachineObservationState = attended;
+      ((ReasonSlot)existingSlot).SetDefaultReason (reasonUnanswered, 10.0, true, false);
+      daoFactory.ReasonSlotDAO.MakePersistent (existingSlot);
+      var activitySummary = ModelDAOHelper.ModelFactory.CreateMachineActivitySummary (machine, T (0).Date, attended, inactive);
+      activitySummary.Time = TimeSpan.FromHours (4);
+      daoFactory.MachineActivitySummaryDAO.MakePersistent (activitySummary);
+      IReasonSummary reasonSummary = new ReasonSummary (machine, T (0).Date, null, attended, reasonUnanswered);
+      reasonSummary.Time = TimeSpan.FromHours (4);
+      reasonSummary.Number = 1;
+      daoFactory.ReasonSummaryDAO.MakePersistent (reasonSummary);
+      IMachineStatus machineStatus = new MachineStatus (machine);
+      machineStatus.CncMachineMode = inactive;
+      machineStatus.MachineMode = inactive;
+      machineStatus.MachineObservationState = attended;
+      machineStatus.ManualActivity = false;
+      machineStatus.Reason = reasonUnanswered;
+      machineStatus.ReasonSlotEnd = T (5);
+      daoFactory.MachineStatusDAO.MakePersistent (machineStatus);
+    }
+
+    void CheckForceDynamicEndResult (ISession session, IMonitoredMachine machine, long rootId, IReason reasonCoffee, IReason reasonUnanswered)
+    {
+      IList<ReasonSlot> slots = session.CreateCriteria<ReasonSlot> ()
+        .Add (Expression.Eq ("Machine", machine))
+        .AddOrder (Order.Asc ("DateTimeRange"))
+        .List<ReasonSlot> ();
+      Assert.That (slots, Has.Count.EqualTo (2), "Number of reason slots");
+      Assert.Multiple (() => {
+        Assert.That (slots[0].Reason, Is.EqualTo (reasonCoffee));
+        Assert.That (slots[0].BeginDateTime.Value, Is.EqualTo (T (1)));
+        Assert.That (slots[0].EndDateTime.Value, Is.EqualTo (T (3)));
+        Assert.That (slots[1].Reason, Is.EqualTo (reasonUnanswered));
+        Assert.That (slots[1].BeginDateTime.Value, Is.EqualTo (T (3)));
+        Assert.That (slots[1].EndDateTime.Value, Is.EqualTo (T (5)));
+      });
+      var root = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO.FindById (rootId, machine);
+      Assert.That (root.AnalysisStatus, Is.EqualTo (AnalysisStatus.Cancel), "Root status");
+      var reasonProposal = ModelDAOHelper.DAOFactory.ReasonProposalDAO.Get (root);
+      Assert.That (reasonProposal, Is.Not.Null);
+      Assert.That (reasonProposal.DateTimeRange, Is.EqualTo (R (1, 3)), "Reason proposal range");
+    }
+
+    /// <summary>
+    /// Force the dynamic end of an aggressive auto-reason whose dynamic end is never reached
+    /// </summary>
+    [Test]
+    public void TestForceDynamicEndAggressive ()
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+      Lemoine.Extensions.ExtensionManager.Add (typeof (NeverEndingDynamicEndExtension));
+      Lemoine.Extensions.ExtensionManager.Add (typeof (UnitTests.AutoReasonCoffee));
+
+      try {
+        Lemoine.Info.ConfigSet
+          .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended = daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonCoffee = daoFactory.ReasonDAO.FindById (28);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          CreateForceDynamicEndReferenceData (machine1, inactive, attended, reasonUnanswered);
+
+          var rootId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+            .InsertAutoReason (machine1, R (1, 5), reasonCoffee, 100.0, "", ",Never", false, null);
+
+          // Aggressive: the reason is applied until T(5) and the dynamic end tracker remains pending
+          // Note: RunMakeAnalysis can't be used because the dynamic end tracker is never completed
+          RunFirstSeveralTimes (2);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+          {
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            Assert.That (root.AnalysisStatus, Is.EqualTo (AnalysisStatus.PendingSubModifications));
+            var reasonProposal = daoFactory.ReasonProposalDAO.Get (root);
+            Assert.That (reasonProposal.DateTimeRange, Is.EqualTo (R (1, 5)));
+          }
+
+          { // Force the end at T(3)
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            var actions = root.ForceDynamicEnd (T (3), "unit test");
+            Assert.That (actions, Is.Not.Empty);
+            ModelDAOHelper.DAOFactory.FlushData ();
+          }
+
+          RunFirstSeveralTimes (3);
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+
+          CheckForceDynamicEndResult (session, machine1, rootId, reasonCoffee, reasonUnanswered);
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        Lemoine.Info.ConfigSet.ResetForceValues ();
+      }
+    }
+
+    static void RunFirstSeveralTimes (int n)
+    {
+      for (int i = 0; i < n; ++i) {
+        AnalysisUnitTests.RunFirst ();
+      }
+    }
+
+    /// <summary>
+    /// Force the dynamic end of a progressive auto-reason whose dynamic end is never reached
+    /// </summary>
+    [Test]
+    public void TestForceDynamicEndProgressive ()
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+      Lemoine.Extensions.ExtensionManager.Add (typeof (NeverEndingDynamicEndExtension));
+      Lemoine.Extensions.ExtensionManager.Add (typeof (UnitTests.AutoReasonCoffee));
+
+      try {
+        Lemoine.Info.ConfigSet
+          .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended = daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonCoffee = daoFactory.ReasonDAO.FindById (28);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          CreateForceDynamicEndReferenceData (machine1, inactive, attended, reasonUnanswered);
+
+          var rootId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+            .InsertAutoReason (machine1, R (1), reasonCoffee, 100.0, "", ",Never", false, AssociationOption.ProgressiveStrategy);
+
+          // Progressive: the reason is applied until T(2) and a sub-modification with the dynamic end remains pending
+          RunFirstSeveralTimes (2);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+          {
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            Assert.That (root.AnalysisStatus, Is.EqualTo (AnalysisStatus.PendingSubModifications));
+            var reasonProposal = daoFactory.ReasonProposalDAO.Get (root);
+            Assert.That (reasonProposal.DateTimeRange, Is.EqualTo (R (1, 2)));
+          }
+
+          { // Force the end at T(3)
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            var actions = root.ForceDynamicEnd (T (3), "unit test");
+            Assert.That (actions, Is.Not.Empty);
+            ModelDAOHelper.DAOFactory.FlushData ();
+          }
+
+          RunFirstSeveralTimes (3);
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+
+          CheckForceDynamicEndResult (session, machine1, rootId, reasonCoffee, reasonUnanswered);
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        Lemoine.Info.ConfigSet.ResetForceValues ();
+      }
+    }
+
+    /// <summary>
+    /// Cancel completely an auto-reason whose dynamic end is never reached,
+    /// in aggressive or progressive mode
+    /// </summary>
+    [TestCase (false)]
+    [TestCase (true)]
+    public void TestCancelAutoReason (bool progressive)
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+      Lemoine.Extensions.ExtensionManager.Add (typeof (NeverEndingDynamicEndExtension));
+      Lemoine.Extensions.ExtensionManager.Add (typeof (UnitTests.AutoReasonCoffee));
+
+      try {
+        Lemoine.Info.ConfigSet
+          .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended = daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonCoffee = daoFactory.ReasonDAO.FindById (28);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          CreateForceDynamicEndReferenceData (machine1, inactive, attended, reasonUnanswered);
+
+          var rootId = progressive
+            ? ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+              .InsertAutoReason (machine1, R (1), reasonCoffee, 100.0, "", ",Never", false, AssociationOption.ProgressiveStrategy)
+            : ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+              .InsertAutoReason (machine1, R (1, 5), reasonCoffee, 100.0, "", ",Never", false, null);
+
+          RunFirstSeveralTimes (2);
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+          {
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            Assert.That (root.AnalysisStatus, Is.EqualTo (AnalysisStatus.PendingSubModifications));
+            var reasonProposal = daoFactory.ReasonProposalDAO.Get (root);
+            Assert.That (reasonProposal, Is.Not.Null);
+            var slots = session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .List<ReasonSlot> ();
+            Assert.That (slots.Any (s => object.Equals (s.Reason, reasonCoffee)), Is.True, "Coffee reason applied before the cancel");
+          }
+
+          { // Cancel
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            var actions = root.CancelAutoReason ("unit test");
+            Assert.That (actions, Is.Not.Empty);
+            ModelDAOHelper.DAOFactory.FlushData ();
+          }
+
+          RunFirstSeveralTimes (3);
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+
+          {
+            IList<ReasonSlot> slots = session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .AddOrder (Order.Asc ("DateTimeRange"))
+              .List<ReasonSlot> ();
+            Assert.That (slots, Is.Not.Empty, "Number of reason slots");
+            Assert.Multiple (() => {
+              Assert.That (slots.All (s => object.Equals (s.Reason, reasonUnanswered)), Is.True, "All the reason slots are back to the default reason");
+              Assert.That (slots.First ().BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots.Last ().EndDateTime.Value, Is.EqualTo (T (5)));
+            });
+            var root = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            Assert.That (root.AnalysisStatus, Is.EqualTo (AnalysisStatus.Cancel), "Root status");
+            Assert.That (ModelDAOHelper.DAOFactory.ReasonProposalDAO.Get (root), Is.Null, "Reason proposal removed");
+          }
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        Lemoine.Info.ConfigSet.ResetForceValues ();
+      }
+    }
+
+    /// <summary>
+    /// Stop an orphan auto reason proposal (its modification is completed)
+    /// at a given date/time, or completely if the date/time is before its start
+    /// </summary>
+    [TestCase (3)]
+    [TestCase (1)]
+    public void TestStopOrphanReasonProposal (int stopAt)
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+      Lemoine.Extensions.ExtensionManager.Add (typeof (UnitTests.AutoReasonCoffee));
+
+      try {
+        Lemoine.Info.ConfigSet
+          .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended = daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonCoffee = daoFactory.ReasonDAO.FindById (28);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          CreateForceDynamicEndReferenceData (machine1, inactive, attended, reasonUnanswered);
+
+          // Auto-reason with no dynamic end: the modification is completed and the reason proposal remains
+          var rootId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+            .InsertAutoReason (machine1, R (1, 5), reasonCoffee, 100.0, "", null, false, null);
+          AnalysisUnitTests.RunMakeAnalysis ();
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+          IReasonProposal reasonProposal;
+          {
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            Assert.That (root.AnalysisStatus.IsCompletedSuccessfully (), Is.True, "Root completed");
+            reasonProposal = daoFactory.ReasonProposalDAO.Get (root);
+            Assert.That (reasonProposal, Is.Not.Null);
+            Assert.That (reasonProposal.DateTimeRange, Is.EqualTo (R (1, 5)));
+            var slotsBefore = session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .List<ReasonSlot> ();
+            Assert.That (slotsBefore.All (s => object.Equals (s.Reason, reasonCoffee)), Is.True, "Coffee reason applied before the stop");
+          }
+
+          var actions = daoFactory.ReasonMachineAssociationDAO
+            .StopOrphanReasonProposal (reasonProposal, T (stopAt), "unit test");
+          Assert.That (actions, Is.Not.Empty);
+          ModelDAOHelper.DAOFactory.FlushData ();
+
+          AnalysisUnitTests.RunMakeAnalysis ();
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+
+          {
+            IList<ReasonSlot> slots = session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .AddOrder (Order.Asc ("DateTimeRange"))
+              .List<ReasonSlot> ();
+            Assert.That (slots, Is.Not.Empty, "Number of reason slots");
+            Assert.Multiple (() => {
+              Assert.That (slots.Where (s => Bound.Compare<DateTime> (s.DateTimeRange.Upper, T (stopAt)) <= 0)
+                .All (s => object.Equals (s.Reason, reasonCoffee)), Is.True, "Coffee before the stop");
+              Assert.That (slots.Where (s => Bound.Compare<DateTime> (T (stopAt), s.DateTimeRange.Lower) <= 0)
+                .All (s => object.Equals (s.Reason, reasonUnanswered)), Is.True, "Default reason after the stop");
+              Assert.That (slots.First ().BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots.Last ().EndDateTime.Value, Is.EqualTo (T (5)));
+            });
+            var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            var newReasonProposal = daoFactory.ReasonProposalDAO.Get (root);
+            if (1 == stopAt) {
+              Assert.That (newReasonProposal, Is.Null, "Reason proposal removed");
+            }
+            else {
+              Assert.That (newReasonProposal.DateTimeRange, Is.EqualTo (R (1, stopAt)), "Reason proposal range");
+            }
+            var resetModifications = session.CreateCriteria<ReasonMachineAssociation> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .List<ReasonMachineAssociation> ()
+              .Where (m => m.Kind.HasFlag (ReasonMachineAssociationKind.Reset) && (null == m.Parent))
+              .ToList ();
+            Assert.That (resetModifications, Has.Count.EqualTo (1), "Reset modification");
+            Assert.That (resetModifications[0].AnalysisStatus.IsCompletedSuccessfully (), Is.True, "Reset modification completed");
+          }
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        Lemoine.Info.ConfigSet.ResetForceValues ();
+      }
+    }
+
+    /// <summary>
     /// Test the dynamic end (aggressive mode) when the range is empty
     /// </summary>
     [Test]

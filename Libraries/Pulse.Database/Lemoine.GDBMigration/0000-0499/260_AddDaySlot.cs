@@ -84,8 +84,6 @@ namespace Lemoine.GDBMigration
 
     void AddDayTemplateSlot ()
     {
-      CheckPostgresqlVersion ();
-
       Database.AddTable (TableName.DAY_TEMPLATE_SLOT,
                          new Column (TableName.DAY_TEMPLATE_SLOT + "id", DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
                          new Column (TableName.DAY_TEMPLATE_SLOT + "version", DbType.Int32, ColumnProperty.NotNull, 1),
@@ -131,8 +129,6 @@ namespace Lemoine.GDBMigration
 
     void AddDaySlotTable ()
     {
-      CheckPostgresqlVersion ();
-
       Database.AddTable (TableName.DAY_SLOT,
                          new Column (TableName.DAY_SLOT + "id", DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
                          new Column (TableName.DAY_SLOT + "version", DbType.Int32, ColumnProperty.NotNull, 1),

@@ -81,6 +81,27 @@ namespace Lemoine.ModelDAO
     /// <param name="range"></param>
     /// <returns></returns>
     IList<IReasonMachineAssociation> FindAppliedAutoInRange (IMachine machine, UtcDateTimeRange range);
+
+    /// <summary>
+    /// Stop at the specified date/time an auto reason proposal that remains active
+    /// while its modification is completed or does not exist any more (orphan reason proposal)
+    ///
+    /// <list type="bullet">
+    /// <item>the reason proposal is shortened, or removed if it starts after end</item>
+    /// <item>a new root reason machine association with the kind Auto | Reset and the same reason
+    /// is inserted to reset the reason slots after end. The reason slots are updated later
+    /// by the analysis service</item>
+    /// <item>an analysis log with level INFO is added to this new modification
+    /// and to the modification of the reason proposal if it still exists</item>
+    /// </list>
+    ///
+    /// The caller is responsible for the transaction.
+    /// </summary>
+    /// <param name="reasonProposal">not null, auto reason proposal</param>
+    /// <param name="end">UTC date/time when the reason proposal must stop</param>
+    /// <param name="message">message to add in the analysis log</param>
+    /// <returns>description of the actions that were made</returns>
+    IList<string> StopOrphanReasonProposal (IReasonProposal reasonProposal, DateTime end, string message);
   }
 
   /// <summary>

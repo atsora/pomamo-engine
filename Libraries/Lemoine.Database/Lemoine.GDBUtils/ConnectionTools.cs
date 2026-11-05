@@ -196,43 +196,30 @@ namespace Lemoine.GDBUtils
     {
       Debug.Assert (!string.IsNullOrEmpty (connectionString));
 
-      try {
-        if (!IsPostgreSQLVersionGreaterOrEqual (connectionString, 90200)) {
-          log.FatalFormat ("KillActiveConnection: PostgreSQL version is < 9.2 => not supported");
-          throw new NotImplementedException ();
-        }
-      }
-      catch (Exception ex) {
-        log.Error ("KillActiveConnection: could not check the version of PostgreSQL, give up", ex);
-        throw;
-      }
-
-      string query = string.Format (@"
+      string query = $"""
 select pg_terminate_backend(a.pid)
 from pg_stat_activity a
-where a.pid = {0}
+where a.pid = {pid}
   and a.state in ('active', 'idle in transaction')
 ;
-", pid);
+""";
       var requestResult = ExecuteScalar<bool?> (connectionString, query);
 
       if (requestResult.HasValue) {
         if (requestResult.Value) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("KillActiveConnection: pid={0} terminated", pid);
+            log.Debug ($"KillActiveConnection: pid={pid} terminated");
           }
           return true;
         }
         else { // !requestResult.Value
-          if (log.IsErrorEnabled) {
-            log.ErrorFormat ("KillActiveConnection: active or idle in transaction pid={0} not terminated", pid);
-          }
+          log.Error ($"KillActiveConnection: active or idle in transaction pid={pid} not terminated");
           return false;
         }
       }
       else { // No value
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("KillActiveConnection: pid={0} not active or idle in transaction", pid);
+          log.Debug ($"KillActiveConnection: pid={pid} not active or idle in transaction");
         }
         return false;
       }
@@ -242,21 +229,10 @@ where a.pid = {0}
     /// Kill orphaned connections for the same client IP address and the same application name
     /// </summary>
     /// <param name="connectionString"></param>
-    /// <returns>The number of killed connections (-1 in case the PostgreSQL version is not valid)</returns>
+    /// <returns>The number of killed connections</returns>
     /// <exception cref="Exception">in case the SQL request fails</exception>
     public static long KillOrphanedConnections (string connectionString)
     {
-      try {
-        if (!IsPostgreSQLVersionGreaterOrEqual (connectionString, 90200)) {
-          log.FatalFormat ("KillOrphanedConnections: PostgreSQL version is < 9.2 => not supported");
-          return -1;
-        }
-      }
-      catch (Exception ex) {
-        log.Error ("KillOrphanedConnections: could not check the version of PostgreSQL, give up", ex);
-        throw;
-      }
-
       string query = @"
 with current_connection as (
   select *
@@ -288,21 +264,10 @@ select count(*) from terminated
     /// Kill orphaned connections for the same client IP address and the same application name
     /// </summary>
     /// <param name="connectionString"></param>
-    /// <returns>The number of killed connections (-1 in case the PostgreSQL version is not valid)</returns>
+    /// <returns>The number of killed connections</returns>
     /// <exception cref="Exception">in case the SQL request fails</exception>
     public static async System.Threading.Tasks.Task<long> KillOrphanedConnectionsAsync (string connectionString)
     {
-      try {
-        if (!await IsPostgreSQLVersionGreaterOrEqualAsync (connectionString, 90200)) {
-          log.FatalFormat ("KillOrphanedConnectionsAsync: PostgreSQL version is < 9.2 => not supported");
-          return -1;
-        }
-      }
-      catch (Exception ex) {
-        log.Error ("KillOrphanedConnectionsAsync: could not check the version of PostgreSQL, give up", ex);
-        throw;
-      }
-
       string query = @"
 with current_connection as (
   select *
@@ -322,7 +287,7 @@ select count(*) from terminated
       long requestResult = await ExecuteScalarAsync<long> (connectionString, query);
 
       if (0 < requestResult) {
-        log.FatalFormat ("KillOrphanedConnectionsAsync: {0} orphaned connections were killed", requestResult);
+        log.Fatal ($"KillOrphanedConnectionsAsync: {requestResult} orphaned connections were killed");
       }
       else {
         log.Debug ("KillOrphanedConnectionsAsync: no killed connection");

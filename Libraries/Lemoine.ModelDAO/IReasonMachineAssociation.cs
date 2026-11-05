@@ -261,6 +261,48 @@ namespace Lemoine.Model
     /// Dynamic end
     /// </summary>
     string DynamicEnd { get; }
+
+    /// <summary>
+    /// Force the end of a reason machine association whose dynamic end is not resolved yet,
+    /// as if the dynamic end was reached at the specified date/time.
+    ///
+    /// It must be called on a root modification (with no parent)
+    /// that is not completed yet (including PendingSubModifications).
+    ///
+    /// <list type="bullet">
+    /// <item>the reason proposal is shortened, and a Reset sub-modification is created to cancel the reason slots after end</item>
+    /// <item>the not completed sub-modifications that track the dynamic end are cancelled</item>
+    /// <item>the not completed sub-modifications (or the root itself) that are still applying the reason with a dynamic end (aggressive or progressive)
+    /// or after end, are cancelled and replaced by a sub-modification that applies the reason until end</item>
+    /// <item>the final status of the root modification will be Cancel</item>
+    /// <item>an analysis log with level INFO is added</item>
+    /// </list>
+    ///
+    /// The reason slots are not updated directly: this is done later by the analysis service
+    /// that processes the new sub-modifications.
+    ///
+    /// The caller is responsible for the transaction (preferably with a lock on the machine partitions
+    /// of the tables machinemodification and reasonmachineassociation).
+    /// </summary>
+    /// <param name="end">UTC date/time when the reason must stop</param>
+    /// <param name="message">message to add in the analysis log</param>
+    /// <returns>description of the actions that were made</returns>
+    IList<string> ForceDynamicEnd (DateTime end, string message);
+
+    /// <summary>
+    /// Cancel completely a reason machine association whose dynamic end is not resolved yet,
+    /// including the part that was already applied.
+    ///
+    /// This is equivalent to <see cref="ForceDynamicEnd(DateTime, string)"/>
+    /// with an end at the start of the modification (or of its reason proposal if it starts before):
+    /// the reason proposal is removed, the reason slots are reset in its whole range
+    /// and all the not completed modifications of the tree are cancelled.
+    ///
+    /// The same conditions and transaction rules as <see cref="ForceDynamicEnd(DateTime, string)"/> apply.
+    /// </summary>
+    /// <param name="message">message to add in the analysis log</param>
+    /// <returns>description of the actions that were made</returns>
+    IList<string> CancelAutoReason (string message);
   }
 
   /// <summary>

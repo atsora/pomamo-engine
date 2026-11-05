@@ -97,6 +97,80 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IReasonMachineAssociationDAO"/>
+    /// </summary>
+    /// <param name="reasonProposal"></param>
+    /// <param name="end"></param>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public IList<string> StopOrphanReasonProposal (IReasonProposal reasonProposal, DateTime end, string message)
+    {
+      if (reasonProposal is null) {
+        log.Fatal ("StopOrphanReasonProposal: null reason proposal");
+        throw new ArgumentNullException (nameof (reasonProposal));
+      }
+      if (!reasonProposal.Kind.IsAuto ()) {
+        log.Error ($"StopOrphanReasonProposal: reason proposal id={reasonProposal.Id} is not an auto reason proposal, kind={reasonProposal.Kind}");
+        throw new InvalidOperationException ($"Reason proposal {reasonProposal.Id} is not an auto reason proposal");
+      }
+
+      var actions = new List<string> ();
+      var proposalRange = reasonProposal.DateTimeRange;
+      if (Bound.Compare<DateTime> (proposalRange.Upper, end) <= 0) {
+        actions.Add ($"reason proposal {reasonProposal.Id} {proposalRange} already ends before {end:o}: kept");
+        return actions;
+      }
+
+      var machine = reasonProposal.Machine;
+      var reason = reasonProposal.Reason;
+      var reasonScore = reasonProposal.ReasonScore;
+      var details = reasonProposal.ReasonDetails;
+      var modificationId = reasonProposal.ModificationId;
+
+      var newRange = new UtcDateTimeRange (proposalRange
+        .Intersects (new UtcDateTimeRange (new LowerBound<DateTime> (null), end)));
+      if (newRange.IsEmpty ()) {
+        ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakeTransient (reasonProposal);
+        actions.Add ($"reason proposal {reasonProposal.Id} {proposalRange} removed");
+      }
+      else {
+        reasonProposal.DateTimeRange = newRange;
+        ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakePersistent (reasonProposal);
+        actions.Add ($"reason proposal {reasonProposal.Id} shortened from {proposalRange} to {newRange}");
+      }
+
+      var logMessage = $"Orphan reason proposal {reasonProposal.Id} {proposalRange} of modification {modificationId} stopped at {end:o} (UTC). {message}";
+      var cancelRange = new UtcDateTimeRange (proposalRange
+        .Intersects (new UtcDateTimeRange (end)));
+      if (!cancelRange.IsEmpty ()) {
+        var association = new ReasonMachineAssociation (machine, cancelRange);
+        association.SetAutoReason (reason, reasonScore, reasonProposal.Kind.IsOverwriteRequired (), details);
+        association.Kind = association.Kind
+          .Add (ReasonMachineAssociationKind.Reset);
+        association.Dynamic = null;
+        association.Priority = Lemoine.Info.ConfigSet
+          .LoadAndGet (AUTO_REASON_PRIORITY_KEY, AUTO_REASON_PRIORITY_DEFAULT);
+        var resetModificationId = Insert (association, false, false);
+        actions.Add ($"new modification {resetModificationId} (Reset) to reset the reason slots in {cancelRange}");
+        var resetModification = FindById (resetModificationId, machine);
+        if (resetModification is null) {
+          log.Error ($"StopOrphanReasonProposal: the new reset modification {resetModificationId} was not found");
+        }
+        else {
+          ModelDAOHelper.DAOFactory.AnalysisLogDAO.Add (resetModification, LogLevel.INFO, logMessage);
+        }
+      }
+
+      var modification = ModelDAOHelper.DAOFactory.MachineModificationDAO
+        .FindById (modificationId, machine);
+      if (modification is not null) {
+        ModelDAOHelper.DAOFactory.AnalysisLogDAO.Add (modification, LogLevel.INFO, logMessage);
+      }
+
+      return actions;
+    }
+
+    /// <summary>
     /// Insert a row in database that corresponds to a sub-modification
     /// </summary>
     /// <param name="association"></param>
