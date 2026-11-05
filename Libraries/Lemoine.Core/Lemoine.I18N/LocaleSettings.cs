@@ -43,12 +43,20 @@ namespace Lemoine.I18N
 
     /// <summary>
     /// Set the language of the current thread.
+    ///
+    /// The UI culture (used by the translations) is also set as the default UI culture
+    /// of all the threads of the application, so that the translations are correct
+    /// in the threads of the thread pool, for example in the web service requests.
+    /// The formatting culture of the other threads is left unchanged.
     /// </summary>
     /// <param name="cultureInfo">Culture to set to the current thread</param>
     public static void SetLanguage (CultureInfo cultureInfo)
     {
       Thread.CurrentThread.CurrentCulture = cultureInfo;
       Thread.CurrentThread.CurrentUICulture = cultureInfo;
+#if !NET40
+      CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+#endif // !NET40
       Instance.m_manuallySet = true;
     }
 
