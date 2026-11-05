@@ -42,6 +42,7 @@ namespace Lemoine.GDBPersistentClasses
     double? m_costInactive;
     double? m_costActive;
     IMachineStateTemplate m_defaultMachineStateTemplate;
+    IList<string> m_tags = new List<string> ();
 
     static readonly ILog log = LogManager.GetLogger(typeof (Machine).FullName);
 
@@ -306,6 +307,24 @@ namespace Lemoine.GDBPersistentClasses
     /// used to serialize DefaultMachineStateTemplate only when not null
     /// </summary>
     public virtual bool XmlSerializationDefaultMachineStateTemplateSpecified => null != this.DefaultMachineStateTemplate;
+
+    /// <summary>
+    /// <see cref="IMachine"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual IList<string> Tags {
+      get => m_tags;
+      set => m_tags = TagsHelper.Normalize (value);
+    }
+
+    /// <summary>
+    /// Tags for XML serialization, separated by a comma. Not serialized when there is no tag
+    /// </summary>
+    [XmlAttribute ("Tags")]
+    public virtual string XmlSerializationTags {
+      get => 0 == m_tags.Count ? null : TagsHelper.Format (m_tags);
+      set => this.Tags = TagsHelper.Parse (value);
+    }
 
     /// <summary>
     /// Text to use in a selection dialog

@@ -18,6 +18,10 @@ namespace WizardCreateMachine
   {
     internal const string MACHINE_NAME = "machine_name";
     internal const string MACHINE_CODE = "machine_code";
+    /// <summary>
+    /// Tags of the machine, as a text where the tags are separated by a comma
+    /// </summary>
+    internal const string MACHINE_TAGS = "machine_tags";
     internal const string COMPANY = "company";
     internal const string DEPARTMENT = "department";
     internal const string CATEGORY = "category";
@@ -99,6 +103,7 @@ namespace WizardCreateMachine
           // Machine identification
           currentMachine.Name = data.Get<string>(MACHINE_NAME);
           currentMachine.Code = data.Get<string>(MACHINE_CODE);
+          currentMachine.Tags = TagsHelper.Parse (data.Get<string> (MACHINE_TAGS));
           
           // Machine attributes
           if (data.Get<ICompany>(COMPANY) != null) {

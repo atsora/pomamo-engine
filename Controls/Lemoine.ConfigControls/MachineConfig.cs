@@ -63,6 +63,8 @@ namespace Lemoine.ConfigControls
       nameColumn.HeaderText = PulseCatalog.GetString ("Name");
       codeColumn.HeaderText = PulseCatalog.GetString ("Code");
       externalCodeColumn.HeaderText = PulseCatalog.GetString ("ExternalCode");
+      tagsColumn.HeaderText = PulseCatalog.GetString ("MachineTags", "Tags");
+      tagsColumn.ToolTipText = PulseCatalog.GetString ("MachineTagsToolTip", "Tags separated by a comma");
       monitoringTypeColumn.HeaderText = PulseCatalog.GetString ("MachineMonitoringType");
       displayPriorityColumn.HeaderText = PulseCatalog.GetString ("DisplayPriority");
       companyColumn.HeaderText = PulseCatalog.GetString ("Company");
@@ -293,6 +295,32 @@ namespace Lemoine.ConfigControls
         if (null != machine) {
           m_updateSet.Add (row);
         }
+      }
+    }
+
+    /// <summary>
+    /// Display the tags as a text, the tags being separated by a comma
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void DataGridViewCellFormatting (object sender, DataGridViewCellFormattingEventArgs e)
+    {
+      if ((e.ColumnIndex == tagsColumn.Index) && (e.Value is IEnumerable<string> tags)) {
+        e.Value = TagsHelper.Format (tags);
+        e.FormattingApplied = true;
+      }
+    }
+
+    /// <summary>
+    /// Convert the text that was typed in the tags column into a list of tags
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void DataGridViewCellParsing (object sender, DataGridViewCellParsingEventArgs e)
+    {
+      if (e.ColumnIndex == tagsColumn.Index) {
+        e.Value = TagsHelper.Parse (e.Value as string);
+        e.ParsingApplied = true;
       }
     }
 

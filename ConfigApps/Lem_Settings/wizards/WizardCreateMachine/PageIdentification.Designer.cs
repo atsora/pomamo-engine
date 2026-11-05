@@ -37,6 +37,8 @@ namespace WizardCreateMachine
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.textName = new System.Windows.Forms.TextBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.textTags = new System.Windows.Forms.TextBox();
       this.baseLayout.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -49,12 +51,15 @@ namespace WizardCreateMachine
       this.baseLayout.Controls.Add(this.label2, 0, 2);
       this.baseLayout.Controls.Add(this.label1, 0, 1);
       this.baseLayout.Controls.Add(this.textName, 1, 1);
+      this.baseLayout.Controls.Add(this.label3, 0, 3);
+      this.baseLayout.Controls.Add(this.textTags, 1, 3);
       this.baseLayout.Dock = System.Windows.Forms.DockStyle.Fill;
       this.baseLayout.Location = new System.Drawing.Point(0, 0);
       this.baseLayout.Margin = new System.Windows.Forms.Padding(0);
       this.baseLayout.Name = "baseLayout";
-      this.baseLayout.RowCount = 4;
+      this.baseLayout.RowCount = 5;
       this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
       this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
       this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
       this.baseLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -100,6 +105,26 @@ namespace WizardCreateMachine
       this.textName.Name = "textName";
       this.textName.Size = new System.Drawing.Size(277, 20);
       this.textName.TabIndex = 3;
+      //
+      // label3
+      //
+      this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.label3.Location = new System.Drawing.Point(0, 146);
+      this.label3.Margin = new System.Windows.Forms.Padding(0);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(70, 21);
+      this.label3.TabIndex = 2;
+      this.label3.Text = "Tags";
+      this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      //
+      // textTags
+      //
+      this.textTags.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.textTags.Location = new System.Drawing.Point(70, 146);
+      this.textTags.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.textTags.Name = "textTags";
+      this.textTags.Size = new System.Drawing.Size(277, 20);
+      this.textTags.TabIndex = 5;
       // 
       // PageIdentification
       // 
@@ -117,5 +142,7 @@ namespace WizardCreateMachine
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.TableLayoutPanel baseLayout;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.TextBox textTags;
   }
 }

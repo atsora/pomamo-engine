@@ -56,6 +56,8 @@
                  class="MachineStateTemplate"
                  cascade="none"
                  not-found="ignore" />
+    <property name="Tags" column="machinetags" not-null="true"
+              type="Lemoine.NHibernateTypes.StringListAsTextArrayType, Lemoine.Database" />
     <joined-subclass name="MonitoredMachine" table="monitoredmachine">
       <key column="machineid" />
       <set name="MachineModules"

@@ -24,8 +24,8 @@ namespace WizardCreateMachine
     /// <summary>
     /// Some help regarding the page
     /// </summary>
-    public string Help { get { return "This page allows you to identify the machine, " +
-          "by specifying a name and an optional code."; } }
+    public string Help => "This page allows you to identify the machine, " +
+          "by specifying a name, an optional code and optional tags, separated by a comma (for example: line1, 5-axis).";
     #endregion // Getters / Setters
 
     #region Constructors
@@ -54,6 +54,7 @@ namespace WizardCreateMachine
     {
       textName.Text = data.Get<string>(AbstractItem.MACHINE_NAME);
       textCode.Text = data.Get<string>(AbstractItem.MACHINE_CODE);
+      textTags.Text = data.Get<string> (AbstractItem.MACHINE_TAGS);
     }
     
     /// <summary>
@@ -64,6 +65,8 @@ namespace WizardCreateMachine
     {
       data.Store(AbstractItem.MACHINE_NAME, textName.Text);
       data.Store(AbstractItem.MACHINE_CODE, textCode.Text);
+      // Normalized text, for example "a,b,,a" => "a, b"
+      data.Store (AbstractItem.MACHINE_TAGS, TagsHelper.Format (TagsHelper.Parse (textTags.Text)));
     }
     
     /// <summary>
@@ -137,6 +140,9 @@ namespace WizardCreateMachine
       else {
         summary.Add("Code: \"" + data.Get<string>(AbstractItem.MACHINE_CODE) + "\"");
       }
+
+      var tags = data.Get<string> (AbstractItem.MACHINE_TAGS);
+      summary.Add (string.IsNullOrEmpty (tags) ? "Tags: -" : $"Tags: {tags}");
 
       return summary;
     }

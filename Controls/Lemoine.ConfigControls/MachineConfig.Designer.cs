@@ -37,6 +37,7 @@ namespace Lemoine.ConfigControls
       this.nameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.codeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.externalCodeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.tagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.monitoringTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.companyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.departmentColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -64,6 +65,7 @@ namespace Lemoine.ConfigControls
                   this.nameColumn,
                   this.codeColumn,
                   this.externalCodeColumn,
+                  this.tagsColumn,
                   this.monitoringTypeColumn,
                   this.companyColumn,
                   this.departmentColumn,
@@ -84,6 +86,8 @@ namespace Lemoine.ConfigControls
       this.dataGridView.Size = new System.Drawing.Size(857, 440);
       this.dataGridView.TabIndex = 0;
       this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewCellValueChanged);
+      this.dataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DataGridViewCellFormatting);
+      this.dataGridView.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.DataGridViewCellParsing);
       // 
       // idColumn
       // 
@@ -117,6 +121,15 @@ namespace Lemoine.ConfigControls
       this.externalCodeColumn.HeaderText = "External Code";
       this.externalCodeColumn.Name = "externalCodeColumn";
       this.externalCodeColumn.Width = 98;
+      //
+      // tagsColumn
+      //
+      this.tagsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.tagsColumn.DataPropertyName = "Tags";
+      this.tagsColumn.HeaderText = "Tags";
+      this.tagsColumn.Name = "tagsColumn";
+      this.tagsColumn.ToolTipText = "Tags separated by a comma";
+      this.tagsColumn.Width = 56;
       // 
       // monitoringTypeColumn
       // 
@@ -236,6 +249,7 @@ namespace Lemoine.ConfigControls
     private System.Windows.Forms.DataGridViewTextBoxColumn companyColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn displayPriorityColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn externalCodeColumn;
+    private System.Windows.Forms.DataGridViewTextBoxColumn tagsColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn codeColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn nameColumn;
     private System.Windows.Forms.DataGridViewTextBoxColumn idColumn;

@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Core.Log;
@@ -233,6 +235,66 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
         transaction.Rollback ();
       }
+    }
+
+    /// <summary>
+    /// Test the tags of a machine (monitored or not): normalization, persistence,
+    /// modification in place and FindByTagAsync
+    /// </summary>
+    [Test]
+    public async Task TestTagsAsync ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var monitored = await ModelDAOHelper.DAOFactory.MachineDAO.FindByIdAsync (1);
+          Assert.That (monitored, Is.InstanceOf<IMonitoredMachine> ());
+          monitored.Tags = TagsHelper.Parse (" unittest-line1 , unittest-5axis;;unittest-line1");
+          Assert.That (monitored.Tags, Is.EqualTo (new[] { "unittest-line1", "unittest-5axis" }));
+
+          var machine = ModelDAOHelper.ModelFactory.CreateMachine ();
+          machine.MonitoringType = await ModelDAOHelper.DAOFactory.MachineMonitoringTypeDAO.FindByIdAsync (1);
+          machine.Name = "TagsTest";
+          Assert.That (machine.Tags, Is.Empty);
+          machine.Tags = new List<string> { "unittest-line1" };
+          await ModelDAOHelper.DAOFactory.MachineDAO.MakePersistentAsync (machine);
+          ModelDAOHelper.DAOFactory.Flush ();
+          NHibernateHelper.GetCurrentSession ().Clear ();
+
+          var readBack = await ModelDAOHelper.DAOFactory.MachineDAO.FindByIdAsync (1);
+          Assert.That (readBack.Tags, Is.EqualTo (new[] { "unittest-line1", "unittest-5axis" }));
+          Assert.That (TagsHelper.Format (readBack.Tags), Is.EqualTo ("unittest-line1, unittest-5axis"));
+
+          // A modification of the list in place makes the machine dirty
+          readBack.Tags.Remove ("unittest-5axis");
+          ModelDAOHelper.DAOFactory.Flush ();
+          NHibernateHelper.GetCurrentSession ().Clear ();
+
+          var line1 = await ModelDAOHelper.DAOFactory.MachineDAO.FindByTagAsync ("unittest-line1");
+          var fiveAxis = await ModelDAOHelper.DAOFactory.MachineDAO.FindByTagAsync ("unittest-5axis");
+          Assert.Multiple (() => {
+            Assert.That (line1.Select (x => x.Id), Is.EquivalentTo (new[] { 1, machine.Id }));
+            Assert.That (fiveAxis, Is.Empty);
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test the tags are serialized in XML as a single attribute, only when there is a tag
+    /// </summary>
+    [Test]
+    public void TestTagsXmlSerialization ()
+    {
+      var machine = (Machine)ModelDAOHelper.ModelFactory.CreateMachine ();
+      Assert.That (machine.XmlSerializationTags, Is.Null);
+      machine.Tags = new List<string> { "a", "b" };
+      Assert.That (machine.XmlSerializationTags, Is.EqualTo ("a, b"));
+      machine.XmlSerializationTags = "c,d";
+      Assert.That (machine.Tags, Is.EqualTo (new[] { "c", "d" }));
     }
 
     [OneTimeSetUp]

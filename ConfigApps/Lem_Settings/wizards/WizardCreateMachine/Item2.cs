@@ -78,6 +78,7 @@ namespace WizardCreateMachine
       
       data.InitValue(MACHINE_NAME, typeof(string), "", true);
       data.InitValue(MACHINE_CODE, typeof(string), "", true);
+      data.InitValue (MACHINE_TAGS, typeof (string), "", true);
       data.InitValue(COMPANY, typeof(ICompany), null, true);
       data.InitValue(DEPARTMENT, typeof(IDepartment), null, true);
       data.InitValue(CATEGORY, typeof(IMachineCategory), null, true);

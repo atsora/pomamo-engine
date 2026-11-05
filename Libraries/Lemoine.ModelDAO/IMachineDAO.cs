@@ -87,5 +87,14 @@ namespace Lemoine.ModelDAO
     /// <param name="cellId"></param>
     /// <returns></returns>
     IList<IMachine> FindAllInCell (int cellId);
+
+    /// <summary>
+    /// Find all the <see cref="IMachine"/> that are associated to the specified tag
+    ///
+    /// The search uses the gin index on the tags (case sensitive)
+    /// </summary>
+    /// <param name="tag">not null and not empty</param>
+    /// <returns>not null, ordered by display priority, code and name</returns>
+    System.Threading.Tasks.Task<IList<IMachine>> FindByTagAsync (string tag);
   }
 }

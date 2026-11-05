@@ -125,6 +125,7 @@ namespace WizardCreateMachine
             ModelDAOHelper.DAOFactory.MachineDAO.Lock(machine);
             data.Store(AbstractItem.MACHINE_CODE, machine.Code);
             data.Store(AbstractItem.MACHINE_NAME, machine.Name);
+            data.Store (AbstractItem.MACHINE_TAGS, TagsHelper.Format (machine.Tags));
             data.Store(AbstractItem.CATEGORY, machine.Category);
             data.Store(AbstractItem.SUBCATEGORY, machine.SubCategory);
             data.Store(AbstractItem.DEPARTMENT, machine.Department);

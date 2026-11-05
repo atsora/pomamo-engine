@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lemoine.Core.Log;
 using Lemoine.Database.Persistent;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
@@ -20,6 +21,8 @@ namespace Lemoine.GDBPersistentClasses
     : VersionableNHibernateDAO<Machine, IMachine, int>
     , IMachineDAO
   {
+    static readonly ILog log = LogManager.GetLogger (typeof (MachineDAO).FullName);
+
     /// <summary>
     /// Find all IMachine ordered by displaypriority / code / name
     /// 
@@ -232,6 +235,33 @@ namespace Lemoine.GDBPersistentClasses
         .AddOrder(Order.Asc("Name"))
         .SetCacheable (true)
         .List<IMachine> ();
+    }
+
+    /// <summary>
+    /// <see cref="IMachineDAO"/>
+    ///
+    /// The @> operator on the array is required for the gin index to be used
+    ///
+    /// Note: no square bracket in the SQL criterion (ARRAY[?] or text[]), NHibernate
+    /// takes them for a quoted identifier. _text is the name of the type text[]
+    /// </summary>
+    /// <param name="tag">not null and not empty</param>
+    /// <returns>not null</returns>
+    public async Task<IList<IMachine>> FindByTagAsync (string tag)
+    {
+      if (string.IsNullOrEmpty (tag)) {
+        log.Fatal ("FindByTagAsync: tag is null or empty");
+        throw new ArgumentNullException (nameof (tag));
+      }
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<Machine> ()
+        .Add (Expression.Sql ("{alias}.machinetags @> array_append(CAST(NULL AS _text), ?)", tag.Trim (), NHibernateUtil.String))
+        .AddOrder (Order.Asc ("DisplayPriority"))
+        .AddOrder (Order.Asc ("Code"))
+        .AddOrder (Order.Asc ("Name"))
+        .SetCacheable (true)
+        .ListAsync<IMachine> ();
     }
   }
 }

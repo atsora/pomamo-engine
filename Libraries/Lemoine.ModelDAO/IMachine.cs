@@ -1,9 +1,10 @@
 // Copyright (C) 2009-2023 Lemoine Automation Technologies
-// Copyright (C) 2025 Atsora Solutions
+// Copyright (C) 2025-2026 Atsora Solutions
 //
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 
 namespace Lemoine.Model
 {
@@ -103,7 +104,15 @@ namespace Lemoine.Model
     /// This is an optional (nullable) reference to a machine state template
     /// </summary>
     IMachineStateTemplate DefaultMachineStateTemplate { get; set; }
-    
+
+    /// <summary>
+    /// Tags that are associated to the machine
+    ///
+    /// Not null, but possibly empty. The tags are trimmed, not empty and unique
+    /// when they are set with the setter. Setting null clears the tags
+    /// </summary>
+    IList<string> Tags { get; set; }
+
     /// <summary>
     /// Is the machine monitored ?
     /// </summary>

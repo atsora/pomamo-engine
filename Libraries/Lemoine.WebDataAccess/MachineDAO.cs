@@ -61,6 +61,11 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException();
     }
+
+    public Task<IList<IMachine>> FindByTagAsync (string tag)
+    {
+      throw new NotImplementedException ();
+    }
     #endregion
     #region IGenericUpdateDAO implementation
     public IMachine FindByIdAndLock(int id)

@@ -149,6 +149,7 @@ namespace Lemoine.WebDataAccess
     public double? CostInactive { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
     public double? CostActive { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
     public IMachineStateTemplate DefaultMachineStateTemplate { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
+    public IList<string> Tags { get => throw new NotImplementedException (); set => throw new NotImplementedException (); }
     #endregion
     #region IComparable implementation
     /// <summary>

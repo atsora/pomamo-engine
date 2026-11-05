@@ -30,6 +30,9 @@ namespace Pulse.Graphql.Type
       Field<string> ("name");
       // The reference schema names it display: name is kept for the clients that read it
       Field<string> ("display", nullable: false);
+      Field<NonNullGraphType<ListGraphType<NonNullGraphType<StringGraphType>>>, IList<string>> ("tags")
+        .Description ("Tags of the machine. Empty if no tag is associated to it")
+        .Resolve (context => context.Source.Tags);
 
       Interface<DisplayableInterface> ();
     }

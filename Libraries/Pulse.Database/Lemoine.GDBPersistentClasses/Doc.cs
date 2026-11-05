@@ -59,21 +59,8 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual IList<string> Tags {
       get => m_tags;
-      set => m_tags = NormalizeTags (value);
+      set => m_tags = TagsHelper.Normalize (value);
     }
-
-    /// <summary>
-    /// Trim the tags, and remove the empty and duplicate ones, keeping the order
-    /// </summary>
-    /// <param name="tags">nullable</param>
-    /// <returns>not null</returns>
-    static IList<string> NormalizeTags (IEnumerable<string> tags) =>
-      (tags ?? Enumerable.Empty<string> ())
-        .Where (tag => tag is not null)
-        .Select (tag => tag.Trim ())
-        .Where (tag => 0 < tag.Length)
-        .Distinct (StringComparer.Ordinal)
-        .ToList ();
 
     /// <summary>
     /// Text to use in a selection dialog
