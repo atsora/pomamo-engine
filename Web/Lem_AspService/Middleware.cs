@@ -18,6 +18,7 @@ namespace Lem_AspService
     public static IApplicationBuilder InjectPulseMiddleware (this IApplicationBuilder builder)
     {
       return builder
+        .UseMiddleware<RequestCultureMiddleware> () // First, so that all the next middlewares use the culture of the request
         .UseMiddleware<ExceptionMiddleware> ()
         .UseMiddleware<MaintenanceMiddleware> ()
         .UseMiddleware<RequestLoggerMiddleware> ()

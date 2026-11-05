@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Lemoine.Core.Cache;
@@ -178,11 +179,17 @@ namespace Lemoine.WebMiddleware
         .Where (q => !ExcludeQueryFromCache (q.Key))
         .OrderBy (q => q.Key);
       var queryString = string.Join ('&', queryItems);
-      return path + queryString;
+      // The response may contain translated strings: the key depends on the UI culture
+      // (set by RequestCultureMiddleware from the query or from the Accept-Language header).
+      // It is added at the end not to change the prefixes the cache invalidation regexes are based on
+      return $"{path}{queryString}|{CultureInfo.CurrentUICulture.Name}";
     }
 
     bool ExcludeQueryFromCache (string queryKey)
     {
+      if (RequestCultureMiddleware.IsCultureQueryKey (queryKey)) { // Replaced by the resolved UI culture in the key
+        return true;
+      }
       switch (queryKey.ToLowerInvariant ()) {
       case "_":
       case "cache":
