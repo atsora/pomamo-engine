@@ -5,6 +5,8 @@
 using System;
 
 using System.Diagnostics;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Lemoine.Core.Cache;
 using Lemoine.Core.Log;
@@ -71,7 +73,7 @@ namespace Lemoine.Business
     {
       Debug.Assert (null != request);
 
-      string key = request.GetCacheKey ();
+      string key = GetCacheKey (request);
       CacheValue<T> cached = m_cacheClient.Get<CacheValue<T>> (key);
       if (null != cached) {
         if (request.IsCacheValid (cached)) {
@@ -104,7 +106,7 @@ namespace Lemoine.Business
     {
       Debug.Assert (null != request);
 
-      string key = request.GetCacheKey ();
+      string key = GetCacheKey (request);
       CacheValue<T> cached = m_cacheClient.Get<CacheValue<T>> (key);
       if (null != cached) {
         if (request.IsCacheValid (cached)) {
@@ -160,9 +162,42 @@ namespace Lemoine.Business
     {
       Debug.Assert (null != request);
 
-      string key = request.GetCacheKey ();
+      string key = GetCacheKey (request);
       CacheValue<T> cached = m_cacheClient.Get<CacheValue<T>> (key);
       return cached;
+    }
+
+    /// <summary>
+    /// Cache key of a request: the key of the request, followed by the UI culture,
+    /// because the result may contain translated strings and the UI culture may change
+    /// from a web request to another one (see RequestCultureMiddleware).
+    ///
+    /// The culture is added at the end so that the cache invalidation regexes,
+    /// that are based on the prefix of the key, still match.
+    /// </summary>
+    static string GetCacheKey<T> (IRequest<T> request) =>
+      $"{request.GetCacheKey ()}|{CultureInfo.CurrentUICulture.Name}";
+
+    /// <summary>
+    /// Remove from the cache the result of a request, whatever the UI culture it was computed with
+    ///
+    /// Use it instead of <see cref="ICacheClient.Remove(string)"/> with the key of the request,
+    /// which does not match any more the key in cache because of the UI culture suffix
+    /// </summary>
+    /// <param name="cacheClient">not null</param>
+    /// <param name="requestCacheKey">key returned by <see cref="IRequest{T}.GetCacheKey"/></param>
+    public static void RemoveRequest (ICacheClient cacheClient, string requestCacheKey)
+    {
+      if (cacheClient is null) {
+        log.Fatal ("RemoveRequest: cacheClient is null");
+        throw new ArgumentNullException (nameof (cacheClient));
+      }
+      if (requestCacheKey is null) {
+        log.Fatal ("RemoveRequest: requestCacheKey is null");
+        throw new ArgumentNullException (nameof (requestCacheKey));
+      }
+
+      cacheClient.RemoveByRegex ($"^{Regex.Escape (requestCacheKey)}\\|");
     }
 
     // Note: using IsDefault() is not necessary any more because the cache contains a CacheValue is just a normal object (nullable)

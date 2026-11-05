@@ -26,6 +26,9 @@ namespace Lemoine.Business
    
     /// <summary>
     /// Return a cache key
+    ///
+    /// The UI culture does not need to be part of it:
+    /// <see cref="CachedService"/> adds it, since the result may contain translated strings
     /// </summary>
     /// <returns></returns>
     string GetCacheKey ();
