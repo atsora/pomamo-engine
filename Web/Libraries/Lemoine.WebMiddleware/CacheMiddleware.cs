@@ -170,22 +170,30 @@ namespace Lemoine.WebMiddleware
     }
     #endregion // Constructors
 
-    string GetCacheKey (Microsoft.AspNetCore.Http.HttpContext context)
+    /// <summary>
+    /// Cache key of a request, in the form path?key1=value1&amp;key2=value2&amp;culture=fr,
+    /// the format the cache invalidation regexes are based on (see the ICacheDomainExtension implementations)
+    ///
+    /// The query parameters are sorted by key. The response may contain translated strings,
+    /// so the key always ends with the UI culture (set by RequestCultureMiddleware
+    /// from the query or from the Accept-Language header).
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    internal static string GetCacheKey (Microsoft.AspNetCore.Http.HttpContext context)
     {
       var path = context.Request.Path.HasValue
         ? context.Request.Path.Value
         : "";
       var queryItems = context.Request.Query
         .Where (q => !ExcludeQueryFromCache (q.Key))
-        .OrderBy (q => q.Key);
-      var queryString = string.Join ('&', queryItems);
-      // The response may contain translated strings: the key depends on the UI culture
-      // (set by RequestCultureMiddleware from the query or from the Accept-Language header).
-      // It is added at the end not to change the prefixes the cache invalidation regexes are based on
-      return $"{path}{queryString}|{CultureInfo.CurrentUICulture.Name}";
+        .OrderBy (q => q.Key, StringComparer.Ordinal)
+        .Select (q => $"{q.Key}={q.Value}")
+        .Append ($"{RequestCultureMiddleware.CULTURE_QUERY_KEY}={CultureInfo.CurrentUICulture.Name}");
+      return $"{path}?{string.Join ('&', queryItems)}";
     }
 
-    bool ExcludeQueryFromCache (string queryKey)
+    static bool ExcludeQueryFromCache (string queryKey)
     {
       if (RequestCultureMiddleware.IsCultureQueryKey (queryKey)) { // Replaced by the resolved UI culture in the key
         return true;
