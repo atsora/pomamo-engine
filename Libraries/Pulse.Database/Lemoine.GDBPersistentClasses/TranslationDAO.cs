@@ -16,7 +16,7 @@ namespace Lemoine.GDBPersistentClasses
   /// <summary>
   /// Implementation of <see cref="Lemoine.ModelDAO.ITranslationDAO">ITranslationDAO</see>
   /// </summary>
-  public class TranslationDAO
+  public partial class TranslationDAO
     : VersionableNHibernateDAO<Translation, ITranslation, int>
     , ITranslationDAO
   {
@@ -4321,14 +4321,14 @@ namespace Lemoine.GDBPersistentClasses
         translation.TranslationValue = "Keine Einheit";
         InsertDefaultValue (translation);
       }
+
+      InsertJapaneseDefaultValues ();
     }
 
     private void InsertDefaultValue (ITranslation translation)
     {
       if (null == Find (translation.Locale, translation.TranslationKey)) { // the translation does not exist => create it
-        log.InfoFormat ("InsertDefaultValue: " +
-                        "add translation {0} for locale={1} key={2}",
-                        translation.TranslationValue, translation.Locale, translation.TranslationKey);
+        log.Info ($"InsertDefaultValue: add translation {translation.TranslationValue} for locale={translation.Locale} key={translation.TranslationKey}");
         MakePersistent (translation);
       }
     }

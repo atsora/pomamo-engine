@@ -1,0 +1,335 @@
+// Copyright (C) 2026 Atsora Solutions
+//
+// SPDX-License-Identifier: Apache-2.0
+
+using System;
+using System.Collections.Generic;
+using Lemoine.Database.Persistent;
+
+namespace Lemoine.GDBPersistentClasses
+{
+  /// <summary>
+  /// Japanese default values of <see cref="TranslationDAO"/>
+  /// </summary>
+  public partial class TranslationDAO
+  {
+    const string JAPANESE_LOCALE = "ja";
+
+    /// <summary>
+    /// Japanese default translations, by translation key
+    /// </summary>
+    static readonly IReadOnlyDictionary<string, string> JAPANESE_DEFAULT_VALUES = new Dictionary<string, string> {
+      ["UndefinedValue"] = "未定義",
+      ["WorkOrderProjectIsJob"] = "作業指示 + プロジェクト = ジョブ",
+      ["ProjectComponentIsPart"] = "プロジェクト + コンポーネント = 部品",
+      ["IntermediateWorkPieceOperationIsSimpleOperation"] = "中間ワーク + 工程 = 単純工程",
+      ["UniqueWorkOrderFromProjectOrComponent"] = "プロジェクト/コンポーネント/部品 => 作業指示 1件",
+      ["UniqueComponentFromOperation"] = "工程 => コンポーネント/部品 1件",
+      ["ComponentFromOperationOnly"] = "プロジェクト/コンポーネント/部品 <= 工程のみ",
+      ["WorkOrderFromComponentOnly"] = "作業指示 <= プロジェクト/コンポーネント/部品のみ",
+      ["MachineModeCategoryInactive"] = "非稼働",
+      ["MachineModeCategoryActive"] = "稼働",
+      ["MachineModeCategoryError"] = "機械エラー",
+      ["MachineModeCategoryUnknown"] = "不明",
+      ["MachineModeCategoryEco"] = "エコ",
+      ["MachineModeInactive"] = "非稼働",
+      ["MachineModeActive"] = "稼働",
+      ["MachineModeUnknown"] = "不明",
+      ["MachineModeInactiveOn"] = "非稼働 (電源オン)",
+      ["MachineModeAutoInactive"] = "非稼働 (自動)",
+      ["MachineModeAutoActive"] = "稼働 (自動)",
+      ["MachineModeManualActive"] = "稼働 (手動)",
+      ["MachineModeSingleBlockActive"] = "稼働 (シングルブロック)",
+      ["MachineModeJogActive"] = "稼働 (ジョグ)",
+      ["MachineModeHandleActive"] = "稼働 (ハンドル)",
+      ["MachineModeMdiActive"] = "稼働 (MDI)",
+      ["MachineModeNoData"] = "データなし (データ収集なし)",
+      ["MachineModeUnavailable"] = "機械使用不可",
+      ["MachineModeError"] = "エラー",
+      ["MachineModeOff"] = "電源オフ",
+      ["MachineModeAutoNoRunningProgram"] = "非稼働 (自動) - 実行中のプログラムなし",
+      ["MachineModeInterrupted"] = "中断",
+      ["MachineModeHold"] = "フィードホールド",
+      ["MachineModeReady"] = "プログラム準備完了",
+      ["MachineModeStopped"] = "プログラム停止",
+      ["MachineModeFinished"] = "プログラム終了",
+      ["MachineModeReset"] = "プログラムリセット",
+      ["MachineModeNotReady"] = "プログラム準備未完了",
+      ["MachineModeAutoError"] = "プログラム実行エラー",
+      ["MachineModeAutoErrorCleared"] = "プログラム実行エラー解除",
+      ["MachineModeAutoEmergency"] = "非常停止 (自動)",
+      ["MachineModeAutoNullOverride"] = "オーバーライド0によるプログラム中断",
+      ["MachineModeAutoNullFeedrateOverride"] = "送り速度オーバーライド0によるプログラム中断",
+      ["MachineModeAutoNullRapidTraverseOverride"] = "早送りオーバーライド0によるプログラム中断",
+      ["MachineModeAutoMachining"] = "加工中 (自動)",
+      ["MachineModeAutoFeed"] = "切削送り (自動)",
+      ["MachineModeAutoRapidTraverse"] = "早送り (自動)",
+      ["MachineModeMachining"] = "加工中 (自動または手動)",
+      ["MachineModeRapidTraverse"] = "早送り (自動または手動)",
+      ["MachineModeAutoOtherOperation"] = "加工以外の動作 (自動)",
+      ["MachineModeAutoToolChange"] = "工具交換 (自動)",
+      ["MachineModeAutoLaserCheck"] = "レーザー計測 (自動)",
+      ["MachineModeAutoPalletChange"] = "パレット交換 (自動)",
+      ["MachineModeAutoProbingCycle"] = "計測サイクル (自動)",
+      ["MachineModeAutoHomePositioning"] = "原点復帰 (自動)",
+      ["MachineModeMStop"] = "プログラムによる機械停止",
+      ["MachineModeM0"] = "M0 (プログラムストップ)",
+      ["MachineModeM1"] = "M1 (オプショナルストップ)",
+      ["MachineModeM60"] = "M60 (パレット交換と停止)",
+      ["MachineModeMWait"] = "プログラムによるオペレーター入力待ち",
+      ["MachineModeEmergency"] = "非常停止",
+      ["MachineModeManualInactive"] = "非稼働 (手動)",
+      ["MachineModeSingleBlockInactive"] = "非稼働 (シングルブロック)",
+      ["MachineModeMdiInactive"] = "非稼働 (MDI)",
+      ["MachineModeJogInactive"] = "非稼働 (ジョグ)",
+      ["MachineModeHandleInactive"] = "非稼働 (ハンドル)",
+      ["MachineModeProbingCycle"] = "計測サイクル (自動または手動)",
+      ["MachineModeManualUnknown"] = "不明 (手動)",
+      ["MachineModeSingleBlock"] = "不明 (シングルブロック)",
+      ["MachineModeMdi"] = "不明 (MDI)",
+      ["MachineModeJog"] = "不明 (ジョグ)",
+      ["MachineModeHandle"] = "不明 (ハンドル)",
+      ["MachineModeAcquisitionError"] = "データ収集エラー",
+      ["MachineModeReference"] = "手動原点復帰",
+      ["MachineModeDryRun"] = "ドライラン",
+      ["MachineModeMachineLock"] = "マシンロック (テストモード)",
+      ["MachineModeAutoNormalActive"] = "稼働 (自動、通常実行)",
+      ["MachineModeAutoTestActive"] = "稼働 (自動、テストモード)",
+      ["MachineModeMissingInfo"] = "稼働状況を取得するための情報が不足",
+      ["MachineModeNoMotion"] = "動作なし (切削送り・早送りなし)",
+      ["MachineModeAutoNoMotion"] = "自動モードで動作なし",
+      ["MachineModeManualNoMotion"] = "手動モードで動作なし",
+      ["MachineModeSingleBlockNoMotion"] = "シングルブロックモードで動作なし",
+      ["MachineModeMdiNoMotion"] = "MDIモードで動作なし",
+      ["MachineModeJogNoMotion"] = "ジョグモードで動作なし",
+      ["MachineModeHandleNoMotion"] = "ハンドルモードで動作なし",
+      ["MachineModeProbablyOff"] = "電源オフの可能性",
+      ["MachineModeAutoUnknown"] = "不明 (自動)",
+      ["MachineModeAlarmStop"] = "アラームによる停止",
+      ["MachineModeAutoAlarmStop"] = "アラームによる停止 (自動)",
+      ["MachineModeProbingCycleInactive"] = "計測サイクル非稼働",
+      ["MachineModeProbingCycleUnknown"] = "計測サイクル - 状態不明",
+      ["MachineModeProbingCycleAny"] = "計測サイクル - 任意の状態",
+      ["MachineModeWarmUp"] = "暖機運転",
+      ["MachineModeLoading"] = "ローディング",
+      ["ReasonGroupDefault"] = "未分類の理由",
+      ["ReasonGroupMotion"] = "動作中",
+      ["ReasonGroupShort"] = "短時間停止",
+      ["ReasonGroupIdle"] = "停止",
+      ["ReasonGroupUnanswered"] = "未回答",
+      ["ReasonGroupUnknown"] = "状態不明",
+      ["ReasonGroupAuto"] = "自動理由",
+      ["ReasonMotion"] = "動作中",
+      ["ReasonShort"] = "短時間停止",
+      ["ReasonUnanswered"] = "未回答",
+      ["ReasonUnattended"] = "無人",
+      ["ReasonOff"] = "電源オフ",
+      ["ReasonUnknown"] = "状態不明",
+      ["ReasonProcessing"] = "処理中",
+      ["ReasonBreak"] = "休憩",
+      ["ReasonInactive"] = "非稼働",
+      ["MonitoringTypeMonitored"] = "監視対象",
+      ["MonitoringTypeNotMonitored"] = "監視対象外",
+      ["MonitoringTypeOutsource"] = "外注",
+      ["MonitoringTypeObsolete"] = "廃止",
+      ["MachineObservationStateAttended"] = "機械オン、オペレーターあり (有人)",
+      ["MachineObservationStateUnattended"] = "機械オン、オペレーターなし (無人)",
+      ["MachineObservationStateOnSite"] = "機械オン、オペレーターあり (在席)",
+      ["MachineObservationStateOnCall"] = "機械オン、待機オペレーター (不在)",
+      ["MachineObservationStateOff"] = "機械オフ",
+      ["MachineObservationStateUnknown"] = "不明",
+      ["MachineObservationStateSetUp"] = "段取り",
+      ["MachineObservationStateQualityCheck"] = "品質検査",
+      ["MachineObservationStateProduction"] = "生産",
+      ["MachineObservationStateMaintenance"] = "保守",
+      ["MachineObservationStateBreak"] = "休憩",
+      ["MachineObservationStateCleanup"] = "清掃",
+      ["MachineObservationStateWeekEnd"] = "週末",
+      ["MachineObservationStateNight"] = "夜間",
+      ["MachineObservationStateNoProduction"] = "生産なし",
+      ["MachineStateTemplateAttended"] = "機械オン、オペレーターあり (有人)",
+      ["MachineStateTemplateUnattended"] = "機械オン、オペレーターなし (無人)",
+      ["MachineStateTemplateOnSite"] = "機械オン、オペレーターあり (在席)",
+      ["MachineStateTemplateOnCall"] = "機械オン、待機オペレーター (不在)",
+      ["MachineStateTemplateOff"] = "機械オフ",
+      ["MachineStateTemplateSetUp"] = "段取り",
+      ["MachineStateTemplateQualityCheck"] = "品質検査",
+      ["MachineStateTemplateProduction"] = "生産",
+      ["MachineStateTemplateMaintenance"] = "保守",
+      ["MachineStateTemplateNoProduction"] = "生産なし",
+      ["FieldCADModelName"] = "CADモデル名",
+      ["FieldProjectName"] = "プロジェクト名",
+      ["FieldComponentName"] = "コンポーネント名",
+      ["FieldComponentTypeCode"] = "コンポーネント種類コード",
+      ["FieldOperationName"] = "工程名",
+      ["FieldOperationTypeCode"] = "工程種類コード",
+      ["FieldToolDiameter"] = "工具径",
+      ["FieldToolRadius"] = "工具半径",
+      ["FieldStrategy"] = "加工戦略",
+      ["FieldContext"] = "コンテキスト",
+      ["FieldDepth"] = "深さ",
+      ["FieldWidth"] = "幅",
+      ["FieldTolerance"] = "公差",
+      ["FieldStock"] = "取り代",
+      ["FieldProgrammedFeedrate"] = "指令送り速度",
+      ["FieldProgrammedSpindleSpeed"] = "指令主軸回転数",
+      ["FieldFeedrate"] = "送り速度",
+      ["FieldSpindleSpeed"] = "主軸回転数",
+      ["FieldSpindleLoad"] = "主軸負荷",
+      ["FieldFeedrateOverride"] = "送り速度オーバーライド",
+      ["FieldSpindleSpeedOverride"] = "主軸回転数オーバーライド",
+      ["FieldRapidTraverse"] = "早送り",
+      ["FieldRapidTraverseOverride"] = "早送りオーバーライド",
+      ["FieldCuttingFeedRate"] = "切削送り速度",
+      ["FieldRapidTraverseRate"] = "早送り速度",
+      ["FieldFeedrateUS"] = "送り速度",
+      ["FieldRapidTraverseRateUS"] = "早送り速度",
+      ["FieldProgramName"] = "プログラム名",
+      ["FieldSubProgramName"] = "サブプログラム名",
+      ["FieldProgramFileName"] = "プログラムファイル名",
+      ["FieldSubProgramFileName"] = "サブプログラムファイル名",
+      ["FieldCncModes"] = "CNCモード",
+      ["FieldHold"] = "ホールド",
+      ["FieldOptionalStopSwitch"] = "オプショナルストップスイッチ",
+      ["FieldBlockDeleteSwitch"] = "ブロックデリートスイッチ",
+      ["FieldDryRun"] = "ドライラン",
+      ["FieldToolName"] = "工具名",
+      ["FieldToolNumber"] = "工具番号",
+      ["FieldSingleBlock"] = "シングルブロック",
+      ["FieldMachineLock"] = "マシンロック",
+      ["FieldSpindleLoadPeak"] = "主軸負荷ピーク",
+      ["FieldAlarmSignal"] = "アラーム信号",
+      ["FieldPalletNumber"] = "パレット番号",
+      ["FieldPalletReady"] = "パレット準備完了",
+      ["FieldStackLight"] = "シグナルタワー",
+      ["FieldProgramComment"] = "プログラムコメント",
+      ["FieldSubProgramComment"] = "サブプログラムコメント",
+      ["FieldCncPartCount"] = "CNC加工数",
+      ["FieldCncSequenceNumber"] = "CNCシーケンス番号",
+      ["FieldBlockNumber"] = "ブロック番号",
+      ["FieldFlow"] = "流量",
+      ["FieldEffectiveOverride"] = "実効オーバーライド",
+      ["FieldEffectiveFeedrateOverride"] = "実効送り速度オーバーライド",
+      ["FieldEffectiveSpindleSpeedOverride"] = "実効主軸回転数オーバーライド",
+      ["FieldEffectiveRapidTraverseOverride"] = "実効早送りオーバーライド",
+      ["FieldFanucAutoManualMode"] = "自動/手動モード (Fanuc)",
+      ["FieldFanucRunningStatus"] = "運転状態 (Fanuc)",
+      ["FieldFanucMotionStatus"] = "動作状態 (Fanuc)",
+      ["FieldMTConnectControllerMode"] = "コントローラーモード (MTConnect)",
+      ["FieldMTConnectExecution"] = "実行状態 (MTConnect)",
+      ["FieldMoriSeikiOperationMode"] = "運転モード (Mori Seiki)",
+      ["FieldHeidenhainExecutionMode"] = "実行モード (Heidenhain)",
+      ["FieldHeidenhainProgramStatus"] = "プログラム状態 (Heidenhain)",
+      ["FieldRoedersMode"] = "モード (Roeders)",
+      ["FieldRoedersState"] = "状態 (Roeders)",
+      ["FieldSelcaNCStatusCode"] = "NCステータスコード (Selca)",
+      ["FieldWarmUp"] = "暖機運転",
+      ["ProductionStateProduction"] = "生産",
+      ["ProductionStateNoProduction"] = "生産なし",
+      ["NoShift"] = "シフトなし",
+      ["RoleOperator"] = "オペレーター",
+      ["RoleSetUp"] = "段取り",
+      ["RoleQuality"] = "品質",
+      ["RoleSupervisor"] = "監督者",
+      ["RoleManager"] = "マネージャー",
+      ["RoleAdministrator"] = "管理者",
+      ["GoalUtilizationPercentage"] = "稼働率目標",
+      ["GoalQuantityVsProductionCycleDuration"] = "理論生産速度に対する予定数量 (%)",
+      ["UnitFeedrate"] = "mm/min",
+      ["UnitFeedrateUS"] = "IPM",
+      ["UnitRotationSpeed"] = "RPM",
+      ["UnitPercent"] = "%",
+      ["UnitNumberOfParts"] = "個",
+      ["UnitNone"] = "",
+      ["UnitDistanceMillimeter"] = "mm",
+      ["UnitDistanceInch"] = "インチ",
+      ["UnitDistanceMeter"] = "m",
+      ["UnitDistanceFeet"] = "フィート",
+      ["UnitDurationSeconds"] = "s",
+      ["UnitDurationMinutes"] = "min",
+      ["UnitDurationHours"] = "h",
+      ["UnitUnknown"] = "",
+      ["UnitToolNumberOfCycles"] = "サイクル",
+      ["UnitToolNumberOfTimes"] = "回",
+      ["UnitWear"] = "(摩耗)",
+      ["UnitFlowRate"] = "L/s",
+      ["EventLevelAlert"] = "アラート",
+      ["EventLevelError"] = "エラー",
+      ["EventLevelWarn"] = "警告",
+      ["EventLevelNotice"] = "通知",
+      ["EventLevelInfo"] = "情報",
+      ["CadModelNull"] = "CADモデルなし",
+      ["CncAcquisitionNull"] = "CNCデータ収集なし",
+      ["CellNull"] = "セルなし",
+      ["CompanyNull"] = "会社なし",
+      ["ComputerNull"] = "コンピューターなし",
+      ["DateTimeNull"] = "日時なし",
+      ["DepartmentNull"] = "部門なし",
+      ["EventLevelNull"] = "イベントレベルなし",
+      ["FieldNull"] = "フィールドなし",
+      ["FileRepositoryNull"] = "ファイルなし",
+      ["MachineCategoryNull"] = "機械カテゴリなし",
+      ["MachineFilterNull"] = "機械フィルターなし",
+      ["MachineModeNull"] = "機械モードなし",
+      ["MachineModuleNull"] = "機械モジュールなし",
+      ["MachineMonitoringTypeNull"] = "監視タイプなし",
+      ["MachineObservationStateNull"] = "計画状態なし",
+      ["MachineStateTemplateNull"] = "機械状態テンプレートなし",
+      ["MachineSubCategoryNull"] = "機械サブカテゴリなし",
+      ["MonitoredMachineNull"] = "監視対象機械なし",
+      ["OperationCycleNull"] = "工程サイクルなし",
+      ["OperationSlotNull"] = "工程スロットなし",
+      ["ReasonGroupNull"] = "理由グループなし",
+      ["ReasonReasonGroupNull"] = "理由なし",
+      ["RoleNull"] = "ロールなし",
+      ["ShiftNull"] = "シフトなし",
+      ["TimePeriodOfDayNull"] = "時間帯なし",
+      ["ToolNull"] = "工具なし",
+      ["TranslationKeyNull"] = "翻訳キーなし",
+      ["UnitNull"] = "単位なし",
+    };
+
+    /// <summary>
+    /// Insert the Japanese default values
+    ///
+    /// They are inserted only in a database whose encoding is UTF8:
+    /// in a database with another encoding (WIN1252, LATIN1...), the Japanese characters can't be stored
+    /// and the translations fall back to the default (English) ones
+    /// </summary>
+    internal void InsertJapaneseDefaultValues ()
+    {
+      if (!IsServerEncodingUtf8 ()) {
+        log.Warn ("InsertJapaneseDefaultValues: the database encoding is not UTF8, skip the Japanese translations");
+        return;
+      }
+
+      foreach (var keyValue in JAPANESE_DEFAULT_VALUES) {
+        var translation = new Translation (JAPANESE_LOCALE, keyValue.Key) {
+          TranslationValue = keyValue.Value
+        };
+        InsertDefaultValue (translation);
+      }
+    }
+
+    /// <summary>
+    /// Is the encoding of the database UTF8?
+    /// </summary>
+    /// <returns>false if it is another encoding or if it could not be determined</returns>
+    internal bool IsServerEncodingUtf8 ()
+    {
+      try {
+        var encoding = NHibernateHelper.GetCurrentSession ()
+          .CreateSQLQuery ("SELECT current_setting('server_encoding')")
+          .UniqueResult<string> ();
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsServerEncodingUtf8: server encoding is {encoding}");
+        }
+        return string.Equals (encoding, "UTF8", StringComparison.InvariantCultureIgnoreCase);
+      }
+      catch (Exception ex) {
+        log.Error ("IsServerEncodingUtf8: the server encoding could not be determined", ex);
+        return false;
+      }
+    }
+  }
+}
