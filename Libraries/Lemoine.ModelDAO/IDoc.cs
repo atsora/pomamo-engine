@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 
 namespace Lemoine.Model
 {
@@ -28,5 +29,13 @@ namespace Lemoine.Model
     /// Unique, not null and not empty
     /// </summary>
     string Path { get; set; }
+
+    /// <summary>
+    /// Tags that are associated to the document
+    ///
+    /// Not null, but possibly empty. The tags are trimmed, not empty and unique
+    /// when they are set with the setter. Setting null clears the tags
+    /// </summary>
+    IList<string> Tags { get; set; }
   }
 }

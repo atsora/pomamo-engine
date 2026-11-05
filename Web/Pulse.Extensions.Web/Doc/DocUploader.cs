@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Atsora Solutions
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,6 +27,11 @@ namespace Pulse.Extensions.Web.Doc
     /// Path of the document
     /// </summary>
     public string Path { get; set; }
+
+    /// <summary>
+    /// Tags of the document
+    /// </summary>
+    public IList<string> Tags { get; set; }
 
     /// <summary>
     /// Revision of the document after the upload
@@ -54,9 +60,10 @@ namespace Pulse.Extensions.Web.Doc
     /// <param name="path">path of the document, created if it does not exist yet. If neither docId nor path is set, a path is generated from fileName</param>
     /// <param name="fileName">only considered to generate the path</param>
     /// <param name="description">description of the new revision</param>
+    /// <param name="tags">tags of the document, that replace the existing ones. If null, the tags are left unchanged</param>
     /// <returns></returns>
     /// <exception cref="DataProcessingException">invalid parameters, missing configuration or upload failure</exception>
-    public static async Task<DocUploadResult> UploadAsync (Stream content, int? docId, string path, string fileName, string description)
+    public static async Task<DocUploadResult> UploadAsync (Stream content, int? docId, string path, string fileName, string description, IEnumerable<string> tags = null)
     {
       if (content is null) {
         log.Fatal ("UploadAsync: content is null");
@@ -98,6 +105,10 @@ namespace Pulse.Extensions.Web.Doc
           if (doc is null) {
             doc = await ModelDAOHelper.DAOFactory.DocDAO.FindOrCreateByPathAsync (path);
           }
+          if (null != tags) {
+            // Normalized by the setter, saved at the commit
+            doc.Tags = tags.ToList ();
+          }
 
           int revision;
           try {
@@ -117,6 +128,7 @@ namespace Pulse.Extensions.Web.Doc
           return new DocUploadResult {
             DocId = doc.Id,
             Path = doc.Path,
+            Tags = doc.Tags.ToList (),
             Revision = revision
           };
         }

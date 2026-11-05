@@ -44,5 +44,14 @@ namespace Lemoine.ModelDAO
     /// <param name="path">not null and not empty</param>
     /// <returns>not null</returns>
     Task<IDoc> FindOrCreateByPathAsync (string path);
+
+    /// <summary>
+    /// Find all the <see cref="IDoc"/> that are associated to the specified tag
+    ///
+    /// The search uses the gin index on the tags (case sensitive)
+    /// </summary>
+    /// <param name="tag">not null and not empty</param>
+    /// <returns>not null, ordered by id</returns>
+    Task<IList<IDoc>> FindByTagAsync (string tag);
   }
 }

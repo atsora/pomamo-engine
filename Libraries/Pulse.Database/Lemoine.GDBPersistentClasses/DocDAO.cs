@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Lemoine.Core.Log;
@@ -103,6 +104,32 @@ namespace Lemoine.GDBPersistentClasses
       }
       var newDoc = ModelDAOHelper.ModelFactory.CreateDoc (path);
       return await MakePersistentAsync (newDoc);
+    }
+
+    /// <summary>
+    /// <see cref="IDocDAO"/>
+    ///
+    /// The @> operator on the array is required for the gin index to be used
+    /// </summary>
+    /// <param name="tag">not null and not empty</param>
+    /// <returns>not null, ordered by id</returns>
+    public async Task<IList<IDoc>> FindByTagAsync (string tag)
+    {
+      if (string.IsNullOrEmpty (tag)) {
+        log.Fatal ("FindByTagAsync: tag is null or empty");
+        throw new ArgumentNullException (nameof (tag));
+      }
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateSQLQuery ("""
+SELECT {doc.*}
+FROM doc {doc}
+WHERE {doc}.doctags @> ARRAY[:tag]
+ORDER BY {doc}.docid
+""")
+        .AddEntity ("doc", typeof (Doc))
+        .SetString ("tag", tag.Trim ())
+        .ListAsync<IDoc> ();
     }
   }
 }

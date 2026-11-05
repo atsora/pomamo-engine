@@ -800,6 +800,16 @@ AND (lower_inf({0}) OR upper_inf({0}) OR (upper({0})<>lower({0})))",
     }
 
     /// <summary>
+    /// Add a gin index on columns, for example on an array or a jsonb column
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="columnNames"></param>
+    public void AddGinIndex (string table, params string[] columnNames)
+    {
+      AddGenericIndex ("gin", table, columnNames);
+    }
+
+    /// <summary>
     /// Add a gist index on a single column with a condition
     /// </summary>
     /// <param name="table"></param>

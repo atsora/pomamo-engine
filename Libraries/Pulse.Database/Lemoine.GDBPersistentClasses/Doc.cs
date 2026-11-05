@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml.Serialization;
 using Lemoine.Core.Log;
 using Lemoine.Model;
@@ -26,6 +28,7 @@ namespace Lemoine.GDBPersistentClasses
     int m_id = 0;
     int m_version = 0;
     string m_path;
+    IList<string> m_tags = new List<string> ();
 
     /// <summary>
     /// <see cref="IDoc"/>
@@ -50,6 +53,27 @@ namespace Lemoine.GDBPersistentClasses
         m_path = value;
       }
     }
+
+    /// <summary>
+    /// <see cref="IDoc"/>
+    /// </summary>
+    public virtual IList<string> Tags {
+      get => m_tags;
+      set => m_tags = NormalizeTags (value);
+    }
+
+    /// <summary>
+    /// Trim the tags, and remove the empty and duplicate ones, keeping the order
+    /// </summary>
+    /// <param name="tags">nullable</param>
+    /// <returns>not null</returns>
+    static IList<string> NormalizeTags (IEnumerable<string> tags) =>
+      (tags ?? Enumerable.Empty<string> ())
+        .Where (tag => tag is not null)
+        .Select (tag => tag.Trim ())
+        .Where (tag => 0 < tag.Length)
+        .Distinct (StringComparer.Ordinal)
+        .ToList ();
 
     /// <summary>
     /// Text to use in a selection dialog

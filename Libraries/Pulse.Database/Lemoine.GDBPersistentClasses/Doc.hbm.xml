@@ -12,5 +12,7 @@
     <version name="Version" column="docversion"
              access="nosetter.camelcase-m-underscore" />
     <property name="Path" column="docpath" not-null="true" />
+    <property name="Tags" column="doctags" not-null="true"
+              type="Lemoine.NHibernateTypes.StringListAsTextArrayType, Lemoine.Database" />
   </class>
 </hibernate-mapping>
