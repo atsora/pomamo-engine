@@ -35,6 +35,7 @@ namespace Lemoine.GDBPersistentClasses
     int? m_displayPriority;
     double? m_defaultRate;
     ProductionClass? m_productionClass;
+    string m_longDisplay; // Computed by PostgreSQL
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProductionState).FullName);
 
@@ -66,13 +67,24 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Long display: reason group with its description
+    /// Long display: production state with its description
+    ///
+    /// Computed by PostgreSQL, translated if the UI culture differs from the locale of the database
     /// </summary>
     [XmlIgnore]
     public virtual string LongDisplay
     {
-      get; set;
+      get => DisplayTranslation.GetDisplay (this, "ProductionState", "Long", m_longDisplay);
+      set => m_longDisplay = value;
     }
+
+    /// <summary>
+    /// <see cref="DataWithDisplayFunction"/>
+    /// </summary>
+    /// <param name="sqlDisplay"></param>
+    /// <returns></returns>
+    protected override string GetTranslatedDisplay (string sqlDisplay) =>
+      DisplayTranslation.GetDisplay (this, "ProductionState", null, sqlDisplay);
 
     /// <summary>
     /// Name

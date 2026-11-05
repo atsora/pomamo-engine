@@ -19,13 +19,32 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger (typeof (DataWithDisplayFunction).FullName);
 
+    string m_display; // Display computed by PostgreSQL, field mapped by the classes that translate their display
+
     /// <summary>
     /// Display name that is retrieved with a display function
+    ///
+    /// It is the display computed by PostgreSQL, unless a class translates it
+    /// in the current UI culture (<see cref="GetTranslatedDisplay(string)"/>)
     /// </summary>
     [XmlIgnore]
     public virtual string Display
     {
-      get; set;
+      get => GetTranslatedDisplay (m_display);
+      set => m_display = value;
     }
+
+    /// <summary>
+    /// Display in the current UI culture, from the display that PostgreSQL computed
+    /// with the locale of the database
+    ///
+    /// Default is the display of the database. The classes whose display pattern
+    /// contains a translation override it (with <see cref="DisplayTranslation"/>),
+    /// and map their display column with access="field.camelcase-m-underscore",
+    /// so that NHibernate never gets the translated display.
+    /// </summary>
+    /// <param name="sqlDisplay">display computed by PostgreSQL</param>
+    /// <returns></returns>
+    protected virtual string GetTranslatedDisplay (string sqlDisplay) => sqlDisplay;
   }
 }

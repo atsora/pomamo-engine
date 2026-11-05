@@ -39,6 +39,7 @@ namespace Lemoine.GDBPersistentClasses
     string m_reportColor = DEFAULT_COLOR;
     ICollection<IReason> m_reasons = new InitialNullIdSet<IReason, int> ();
     int? m_displayPriority;
+    string m_longDisplay; // Computed by PostgreSQL
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonGroup).FullName);
@@ -73,12 +74,23 @@ namespace Lemoine.GDBPersistentClasses
 
     /// <summary>
     /// Long display: reason group with its description
+    ///
+    /// Computed by PostgreSQL, translated if the UI culture differs from the locale of the database
     /// </summary>
     [XmlIgnore]
     public virtual string LongDisplay
     {
-      get; set;
+      get => DisplayTranslation.GetDisplay (this, "ReasonGroup", "Long", m_longDisplay);
+      set => m_longDisplay = value;
     }
+
+    /// <summary>
+    /// <see cref="DataWithDisplayFunction"/>
+    /// </summary>
+    /// <param name="sqlDisplay"></param>
+    /// <returns></returns>
+    protected override string GetTranslatedDisplay (string sqlDisplay) =>
+      DisplayTranslation.GetDisplay (this, "ReasonGroup", null, sqlDisplay);
 
     /// <summary>
     /// Name

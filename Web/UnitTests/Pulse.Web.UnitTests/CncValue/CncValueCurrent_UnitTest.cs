@@ -37,8 +37,12 @@ namespace Pulse.Web.UnitTests.CncValue
 
     /// <summary>
     /// Test with the main performance field only
+    ///
+    /// The display of the field is translated: the UI culture is set to English,
+    /// so that the test does not depend on the locale of the database (config i18n.locale.default)
     /// </summary>
     [Test]
+    [SetUICulture ("en-US")]
     public void TestMainPerformanceFieldSuccess ()
     {
       var request = new CncValueCurrentRequestDTO ();
@@ -60,11 +64,21 @@ namespace Pulse.Web.UnitTests.CncValue
     public void Init ()
     {
       m_service = new CncValueCurrentService ();
+
+      // Translations of the database, like the catalog of the web service
+      m_previousCatalog = Lemoine.I18N.PulseCatalog.Implementation;
+      var multiCatalog = new Lemoine.I18N.MultiCatalog ();
+      multiCatalog.Add (new Lemoine.ModelDAO.TranslationDAOCatalog ());
+      multiCatalog.Add (new Lemoine.I18N.DefaultTextFileCatalog ());
+      Lemoine.I18N.PulseCatalog.Implementation = new Lemoine.I18N.CachedCatalog (multiCatalog);
     }
 
     [OneTimeTearDown]
     public void Dispose ()
     {
+      Lemoine.I18N.PulseCatalog.Implementation = m_previousCatalog;
     }
+
+    Lemoine.I18N.ICatalog m_previousCatalog;
   }
 }

@@ -11,9 +11,9 @@
     </id>
     <version name="Version" column="reasongroupversion"
              access="nosetter.camelcase-m-underscore" />
-    <property name="Display" column="display"
+    <property name="Display" column="display" access="field.camelcase-m-underscore"
               update="false" insert="false" generated="always" />
-    <property name="LongDisplay" column="display_long"
+    <property name="LongDisplay" column="display_long" access="field.camelcase-m-underscore"
               update="false" insert="false" generated="always" />
     <property name="Name" column="reasongroupname"
               type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />

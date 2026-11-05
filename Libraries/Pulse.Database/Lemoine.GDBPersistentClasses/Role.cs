@@ -114,6 +114,16 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_webAppKey; }
       set { m_webAppKey = value; }
     }
+
+    /// <summary>
+    /// <see cref="DataWithDisplayFunction"/>
+    ///
+    /// The display of a role in the database is its translated name (SQL function displayfromnametranslationkey)
+    /// </summary>
+    /// <param name="sqlDisplay"></param>
+    /// <returns></returns>
+    protected override string GetTranslatedDisplay (string sqlDisplay) =>
+      DisplayTranslation.GetNameOrTranslationDisplay (() => this.NameOrTranslation, sqlDisplay);
     #endregion // Getters / Setters
 
     #region Constructors

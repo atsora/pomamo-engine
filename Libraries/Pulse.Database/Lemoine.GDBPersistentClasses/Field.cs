@@ -114,7 +114,15 @@ namespace Lemoine.GDBPersistentClasses
         base.Display = value;
       }
     }
-    
+
+    /// <summary>
+    /// <see cref="DataWithDisplayFunction"/>
+    /// </summary>
+    /// <param name="sqlDisplay"></param>
+    /// <returns></returns>
+    protected override string GetTranslatedDisplay (string sqlDisplay) =>
+      DisplayTranslation.GetDisplay (this, "Field", null, sqlDisplay);
+
     /// <summary>
     /// Name
     /// 
