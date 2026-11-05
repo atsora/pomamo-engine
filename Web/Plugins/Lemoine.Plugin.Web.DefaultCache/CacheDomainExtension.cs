@@ -26,7 +26,7 @@ namespace Lemoine.Plugin.Web.DefaultCache
     {
       var prefixes = GetPrefixes (domain);
       return prefixes
-        .Select (p => p + "[?/].*|$");
+        .Select (p => p + "([?/].*|$)");
     }
 
     IEnumerable<string> GetPrefixes (string domain)
@@ -83,9 +83,9 @@ namespace Lemoine.Plugin.Web.DefaultCache
     {
       var prefixes = GetPrefixesByMachineModule (domain);
       var patterns1 = prefixes
-        .Select (p => p + "([?](.*&)?|/.*[&?])MachineModuleId=" + machineModuleId + "(&.*)|$");
+        .Select (p => p + "([?](.*&)?|/.*[&?])MachineModuleId=" + machineModuleId + "(&.*|$)");
       var patterns2 = prefixes
-        .Select (p => p + "/(.*/)?" + machineModuleId + "(/.*)|$");
+        .Select (p => p + "/(.*/)?" + machineModuleId + "([/?].*|$)");
       return patterns1.Concat (patterns2);
     }
 
@@ -113,13 +113,13 @@ namespace Lemoine.Plugin.Web.DefaultCache
     {
       var prefixes = GetPrefixesByMachine (domain);
       var patterns1 = prefixes
-        .Select (p => p + "([?](.*&)?|/.*[&?])MachineId=" + machineId + "(&.*)|$");
+        .Select (p => p + "([?](.*&)?|/.*[&?])MachineId=" + machineId + "(&.*|$)");
       var patterns2 = prefixes
-        .Select (p => p + "/(.*/)?" + machineId + "(/.*)|$");
+        .Select (p => p + "/(.*/)?" + machineId + "([/?].*|$)");
       var patterns3 = prefixes
-        .Select (p => p + "([?](.*&)?|/.*[&?])GroupId=" + machineId + "(&.*)|$");
+        .Select (p => p + "([?](.*&)?|/.*[&?])GroupId=" + machineId + "(&.*|$)");
       var patterns4 = prefixes
-        .Select (p => p + @"([?](.*&)?|/.*[&?])GroupId=\d*[a-zA-Z].*(&.*)|$"); // Any group id which is not numeric
+        .Select (p => p + @"([?](.*&)?|/.*[&?])GroupId=\d*[a-zA-Z].*(&.*|$)"); // Any group id which is not numeric
       return patterns1.Concat (patterns2).Concat (patterns3).Concat (patterns4);
     }
 

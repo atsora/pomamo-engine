@@ -148,7 +148,7 @@ namespace Lemoine.Plugin.Business.DefaultCache
     {
       var prefixes = GetPrefixesByMachine (domain);
       var patterns = prefixes
-        .Select (p => p + @".*\." + machineId + @"(\..*)|$");
+        .Select (p => p + @".*\." + machineId + @"(\..*|$)");
       return patterns;
     }
 

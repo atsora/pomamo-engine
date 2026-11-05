@@ -44,8 +44,8 @@ namespace Lemoine.Plugin.ProductionTracker
       case "machineobservationstateassociation":
       case "business.operation.partproductionrange":
         return new List<string> {
-          $@"ProductionTracker([?](.*&)?|/.*[&?])GroupId={machineId}(&.*)|$",
-          $@"ProductionTracker([?](.*&)?|/.*[&?])GroupId=\d*[a-zA-Z].*(&.*)|$", // All the group ids that are not numeric
+          $@"ProductionTracker([?](.*&)?|/.*[&?])GroupId={machineId}(&.*|$)",
+          $@"ProductionTracker([?](.*&)?|/.*[&?])GroupId=\d*[a-zA-Z].*(&.*|$)", // All the group ids that are not numeric
         };
       default:
         if (log.IsDebugEnabled) {

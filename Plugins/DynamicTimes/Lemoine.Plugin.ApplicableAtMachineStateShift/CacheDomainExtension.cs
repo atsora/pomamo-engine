@@ -41,7 +41,7 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
     {
       var prefixes = GetPrefixexByMachine (domain);
       var patterns = prefixes
-        .Select (p => p + @".*\." + machineId + @"(\..*)|$");
+        .Select (p => p + @".*\." + machineId + @"(\..*|$)");
       return patterns;
     }
 
