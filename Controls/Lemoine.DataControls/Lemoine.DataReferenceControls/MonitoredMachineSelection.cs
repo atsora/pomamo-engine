@@ -25,6 +25,7 @@ namespace Lemoine.DataReferenceControls
     string m_displayedProperty = "Display";
     IList<IMonitoredMachine> m_monitoredMachines = null;
     IMonitoredMachine m_monitoredMachine = null;
+    bool m_loaded = false;
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MonitoredMachineSelection).FullName);
@@ -90,8 +91,11 @@ namespace Lemoine.DataReferenceControls
         return list;
       }
       set {
-        if(value != null && value.Count >= 1){
-          this.m_monitoredMachines = value;
+        this.m_monitoredMachines = value;
+        if (m_loaded) {
+          // The list box is already filled: apply the new selection now
+          listBox.ClearSelected ();
+          this.SetSelectedMonitoredMachines ();
         }
       }
     }
@@ -208,6 +212,7 @@ namespace Lemoine.DataReferenceControls
       
       this.SetSelectedMonitoredMachine();
       this.SetSelectedMonitoredMachines();
+      m_loaded = true;
     }
     
     void NullCheckBoxCheckedChanged(object sender, EventArgs e)
