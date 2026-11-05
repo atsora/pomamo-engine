@@ -73,6 +73,13 @@ namespace Lemoine.Model
     /// List of stamps (and then ISO files) that are associated to this component
     /// </summary>
     ICollection<IStamp> Stamps { get; }
+
+    /// <summary>
+    /// Documents that are associated to the component (drawing, ...)
+    ///
+    /// A document is associated at most once to a component
+    /// </summary>
+    ICollection<IDoc> Docs { get; }
     
 
     /// <summary>

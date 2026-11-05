@@ -96,6 +96,16 @@
       <key column="operationid" on-delete="cascade" />
       <one-to-many class="OpSequence" entity-name="opseq" />
     </set>
+    <!-- Documents of the operation revision: a revision is an operation in this version -->
+    <set name="RevisionDocs"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IDoc, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         table="operationrevisiondoc"
+         lazy="true"
+         cascade="none">
+      <key column="operationrevisionid" />
+      <many-to-many class="Doc" column="docid" />
+    </set>
     <set name="Stamps"
          access="nosetter.camelcase-m-underscore"
          collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IStamp, Lemoine.ModelDAO],System.Int32], Lemoine.Database"

@@ -831,6 +831,10 @@
       <DependentUpon>Doc.cs</DependentUpon>
       <LogicalName>Doc.hbm.xml</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Lemoine.GDBPersistentClasses\DocKind.hbm.xml">
+      <DependentUpon>DocKind.cs</DependentUpon>
+      <LogicalName>DocKind.hbm.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Lemoine.GDBPersistentClasses\ShiftSummary.hbm.xml">
       <DependentUpon>ShiftSummary.cs</DependentUpon>
       <LogicalName>ShiftSummary.hbm.xml</LogicalName>

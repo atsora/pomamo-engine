@@ -494,6 +494,11 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
     /// </summary>
+    public IDocKindDAO DocKindDAO => new DocKindDAO ();
+
+    /// <summary>
+    /// <see cref="Lemoine.ModelDAO.IDAOFactory">IDAOFactory</see> implementation
+    /// </summary>
     public IEmailConfigDAO EmailConfigDAO
     {
       get { return new EmailConfigDAO (); }

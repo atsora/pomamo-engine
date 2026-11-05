@@ -37,5 +37,12 @@ namespace Lemoine.Model
     /// when they are set with the setter. Setting null clears the tags
     /// </summary>
     IList<string> Tags { get; set; }
+
+    /// <summary>
+    /// Kind of the document: NC main program, drawing, setup instructions, ...
+    ///
+    /// nullable: a document may have no kind
+    /// </summary>
+    IDocKind Kind { get; set; }
   }
 }

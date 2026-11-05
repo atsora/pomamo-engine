@@ -4322,6 +4322,23 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (translation);
       }
 
+      // Doc kinds
+      var docKinds = new (string Key, string En, string Fr, string De)[] {
+        ("DocKindNcMainProgram", "NC main program", "Programme principal", "NC-Hauptprogramm"),
+        ("DocKindNcSubProgram", "NC sub-program", "Sous-programme", "NC-Unterprogramm"),
+        ("DocKindDrawing", "Drawing", "Plan", "Zeichnung"),
+        ("DocKindSetupInstructions", "Setup instructions", "Instructions de montage", "Rüstanweisung"),
+        ("DocKindWorkInstructions", "Work instructions", "Instructions de travail", "Arbeitsanweisung"),
+        ("DocKindToolList", "Tool list", "Liste d'outils", "Werkzeugliste"),
+        ("DocKindInspectionPlan", "Inspection plan", "Plan de contrôle", "Prüfplan"),
+        ("DocKindModel3D", "3D model", "Modèle 3D", "3D-Modell"),
+      };
+      foreach (var docKind in docKinds) {
+        InsertDefaultValue (new Translation ("", docKind.Key) { TranslationValue = docKind.En });
+        InsertDefaultValue (new Translation ("fr", docKind.Key) { TranslationValue = docKind.Fr });
+        InsertDefaultValue (new Translation ("de", docKind.Key) { TranslationValue = docKind.De });
+      }
+
       InsertJapaneseDefaultValues ();
     }
 

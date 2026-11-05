@@ -63,6 +63,11 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IDoc"/>
+    /// </summary>
+    public virtual IDocKind Kind { get; set; }
+
+    /// <summary>
     /// Text to use in a selection dialog
     /// </summary>
     [XmlIgnore]

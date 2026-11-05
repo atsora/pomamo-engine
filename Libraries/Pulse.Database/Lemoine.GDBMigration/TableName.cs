@@ -894,6 +894,18 @@ namespace Lemoine.GDBMigration
     /// </summary>
     public static readonly string DOC = "doc";
     /// <summary>
+    /// dockind table
+    /// </summary>
+    public static readonly string DOC_KIND = "dockind";
+    /// <summary>
+    /// componentdoc table
+    /// </summary>
+    public static readonly string COMPONENT_DOC = "componentdoc";
+    /// <summary>
+    /// operationrevisiondoc table
+    /// </summary>
+    public static readonly string OPERATION_REVISION_DOC = "operationrevisiondoc";
+    /// <summary>
     /// shiftsummary table
     /// </summary>
     public static readonly string SHIFT_SUMMARY = "shiftsummary";

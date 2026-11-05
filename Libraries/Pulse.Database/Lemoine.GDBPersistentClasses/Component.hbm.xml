@@ -54,5 +54,14 @@
       <key column="componentid" />
       <one-to-many class="Stamp" />
     </set>
+    <set name="Docs"
+         access="nosetter.camelcase-m-underscore"
+         collection-type="Lemoine.NHibernateTypes.InitialNullIdSetType`2[[Lemoine.Model.IDoc, Lemoine.ModelDAO],System.Int32], Lemoine.Database"
+         table="componentdoc"
+         lazy="true"
+         cascade="none">
+      <key column="componentid" />
+      <many-to-many class="Doc" column="docid" />
+    </set>
   </class>
 </hibernate-mapping>

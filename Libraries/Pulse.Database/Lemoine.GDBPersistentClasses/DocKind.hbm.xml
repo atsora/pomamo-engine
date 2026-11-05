@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  namespace="Lemoine.GDBPersistentClasses"
+  assembly="Pulse.Database">
+  <class name="DocKind" table="dockind">
+    <id name="Id" column="dockindid"
+        access="nosetter.camelcase-m-underscore">
+      <generator class="native">
+        <param name="sequence">dockind_dockindid_seq</param>
+      </generator>
+    </id>
+    <version name="Version" column="dockindversion"
+             access="nosetter.camelcase-m-underscore" />
+    <property name="Display" column="display"
+              update="false" insert="false" generated="always" />
+    <property name="Name" column="dockindname"
+              type="Lemoine.NHibernateTypes.CitextEmptyIsNullType, Lemoine.Database" />
+    <property name="TranslationKey" column="dockindtranslationkey"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+    <property name="Icon" column="dockindicon"
+              type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
+  </class>
+</hibernate-mapping>

@@ -268,6 +268,11 @@ namespace Lemoine.ModelDAO
     IDocDAO DocDAO { get; }
 
     /// <summary>
+    /// Get a IDocKindDAO
+    /// </summary>
+    IDocKindDAO DocKindDAO { get; }
+
+    /// <summary>
     /// Get a IEmailConfigDAO
     /// </summary>
     IEmailConfigDAO EmailConfigDAO { get; }

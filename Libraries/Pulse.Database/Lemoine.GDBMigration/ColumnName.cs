@@ -586,5 +586,15 @@ namespace Lemoine.GDBMigration
     /// Id of the doc table
     /// </summary>
     public static readonly string DOC_ID = $"{TableName.DOC}id";
+    /// <summary>
+    /// Id of the dockind table
+    /// </summary>
+    public static readonly string DOC_KIND_ID = $"{TableName.DOC_KIND}id";
+    /// <summary>
+    /// Id of an operation revision
+    ///
+    /// There is no operationrevision table yet: a revision is an operation in this version
+    /// </summary>
+    public static readonly string OPERATION_REVISION_ID = "operationrevisionid";
   }
 }

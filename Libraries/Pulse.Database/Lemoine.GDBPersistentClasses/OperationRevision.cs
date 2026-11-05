@@ -91,6 +91,23 @@ namespace Lemoine.GDBPersistentClasses
     /// <see cref="IOperationRevision"/>
     /// </summary>
     public virtual IEnumerable<IOperationModel> OperationModels => new List<IOperationModel> { new OperationModel (this.Operation) };
+
+    /// <summary>
+    /// <see cref="IOperationRevision"/>
+    ///
+    /// A revision is an operation in this version: the documents are mapped on the operation
+    /// </summary>
+    [XmlIgnore]
+    public virtual ICollection<IDoc> Docs
+    {
+      get {
+        if (m_operation is Operation operation) {
+          return operation.RevisionDocs;
+        }
+        log.Fatal ($"Docs: operation {m_operation} is not a persistent operation");
+        throw new InvalidOperationException ("Not a persistent operation");
+      }
+    }
     #endregion // Getters / Setters
 
     #region Contructors

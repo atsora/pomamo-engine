@@ -362,6 +362,7 @@ namespace Lemoine.WebDataAccess
         throw new NotImplementedException ();
       }
     }
+    public IDocKindDAO DocKindDAO => throw new NotImplementedException ();
     public IEmailConfigDAO EmailConfigDAO
     {
       get {

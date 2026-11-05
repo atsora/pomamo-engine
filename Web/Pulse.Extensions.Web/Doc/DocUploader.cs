@@ -34,6 +34,11 @@ namespace Pulse.Extensions.Web.Doc
     public IList<string> Tags { get; set; }
 
     /// <summary>
+    /// Id of the kind of the document, null if the document has no kind
+    /// </summary>
+    public int? KindId { get; set; }
+
+    /// <summary>
     /// Revision of the document after the upload
     ///
     /// If the uploaded content is the same as the most recent revision,
@@ -61,9 +66,11 @@ namespace Pulse.Extensions.Web.Doc
     /// <param name="fileName">only considered to generate the path</param>
     /// <param name="description">description of the new revision</param>
     /// <param name="tags">tags of the document, that replace the existing ones. If null, the tags are left unchanged</param>
+    /// <param name="setKind">set the kind of the document to kindId. If false, the kind is left unchanged</param>
+    /// <param name="kindId">id of the kind of the document if setKind is true, null to remove the kind</param>
     /// <returns></returns>
     /// <exception cref="DataProcessingException">invalid parameters, missing configuration or upload failure</exception>
-    public static async Task<DocUploadResult> UploadAsync (Stream content, int? docId, string path, string fileName, string description, IEnumerable<string> tags = null)
+    public static async Task<DocUploadResult> UploadAsync (Stream content, int? docId, string path, string fileName, string description, IEnumerable<string> tags = null, bool setKind = false, int? kindId = null)
     {
       if (content is null) {
         log.Fatal ("UploadAsync: content is null");
@@ -109,6 +116,9 @@ namespace Pulse.Extensions.Web.Doc
             // Normalized by the setter, saved at the commit
             doc.Tags = tags.ToList ();
           }
+          if (setKind) {
+            await SetKindAsync (doc, kindId);
+          }
 
           int revision;
           try {
@@ -129,10 +139,37 @@ namespace Pulse.Extensions.Web.Doc
             DocId = doc.Id,
             Path = doc.Path,
             Tags = doc.Tags.ToList (),
+            KindId = doc.Kind?.Id,
             Revision = revision
           };
         }
       }
+    }
+
+    /// <summary>
+    /// Set the kind of a document, in the current session
+    /// </summary>
+    /// <param name="doc">not null</param>
+    /// <param name="kindId">id of the kind, null to remove the kind of the document</param>
+    /// <returns></returns>
+    /// <exception cref="DataProcessingException">no kind with this id</exception>
+    public static async Task SetKindAsync (IDoc doc, int? kindId)
+    {
+      if (doc is null) {
+        log.Fatal ("SetKindAsync: doc is null");
+        throw new ArgumentNullException (nameof (doc));
+      }
+
+      if (!kindId.HasValue) {
+        doc.Kind = null;
+        return;
+      }
+      var kind = await ModelDAOHelper.DAOFactory.DocKindDAO.FindByIdAsync (kindId.Value);
+      if (kind is null) {
+        log.Error ($"SetKindAsync: no doc kind with id {kindId}");
+        throw new DataProcessingException ($"No document kind with id {kindId}", ErrorStatus.WrongRequestParameter);
+      }
+      doc.Kind = kind;
     }
 
     /// <summary>

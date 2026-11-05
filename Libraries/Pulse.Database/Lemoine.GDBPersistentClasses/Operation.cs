@@ -45,6 +45,7 @@ namespace Lemoine.GDBPersistentClasses
     ICollection<IPath> m_paths = new InitialNullIdSortedSet<IPath, int> ();
     ICollection<ISequence> m_sequences = new InitialNullIdSet<ISequence, int> ();
     ICollection<IStamp> m_stamps = new InitialNullIdSet<IStamp, int> ();
+    ICollection<IDoc> m_revisionDocs = new InitialNullIdSet<IDoc, int> ();
     DateTime? m_archiveDateTime = null;
     #endregion // Members
 
@@ -484,6 +485,15 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Documents of the operation revision, see <see cref="IOperationRevision.Docs"/>
+    ///
+    /// A revision is an operation in this version: the documents of the revision are mapped here
+    /// (table operationrevisiondoc) until the operationrevision table exists
+    /// </summary>
+    [XmlIgnore]
+    protected internal virtual ICollection<IDoc> RevisionDocs => m_revisionDocs;
+
+    /// <summary>
     /// Set of paths that are associated to this operation
     /// </summary>
     // do not merge automatically (collection implemented as a sorted set on path number
@@ -637,6 +647,13 @@ namespace Lemoine.GDBPersistentClasses
                                ConflictResolution conflictResolution)
     {
       Mergeable.MergeAuto (this, other, conflictResolution);
+      if (other is Operation otherOperation) {
+        foreach (var doc in otherOperation.RevisionDocs.ToList ()) {
+          if (!this.RevisionDocs.Contains (doc)) {
+            this.RevisionDocs.Add (doc);
+          }
+        }
+      }
       // There is no need to update the quantity here
       ModifyItems<IIntermediateWorkPiece>
         (other.Sources, new Modifier<IIntermediateWorkPiece>

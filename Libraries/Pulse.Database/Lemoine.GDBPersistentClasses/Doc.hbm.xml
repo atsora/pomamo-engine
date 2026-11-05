@@ -14,5 +14,13 @@
     <property name="Path" column="docpath" not-null="true" />
     <property name="Tags" column="doctags" not-null="true"
               type="Lemoine.NHibernateTypes.StringListAsTextArrayType, Lemoine.Database" />
+    <!-- lazy="false": the kind is read with the doc, so that it can be used once the
+         session is closed (GraphQL schemas with a session per resolver) -->
+    <many-to-one name="Kind" column="dockindid"
+                 class="DocKind"
+                 cascade="none"
+                 lazy="false" fetch="join"
+                 not-null="false"
+                 not-found="ignore" />
   </class>
 </hibernate-mapping>

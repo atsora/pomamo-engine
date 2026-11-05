@@ -37,6 +37,13 @@ namespace Lemoine.Model
     /// </summary>
     IEnumerable<IOperationModel> OperationModels { get; }
 
+    /// <summary>
+    /// Documents that are associated to the operation revision (NC programs, setup instructions, ...)
+    ///
+    /// A document is associated at most once to an operation revision
+    /// </summary>
+    ICollection<IDoc> Docs { get; }
+
     // TODO: iso files ?
   }
 }

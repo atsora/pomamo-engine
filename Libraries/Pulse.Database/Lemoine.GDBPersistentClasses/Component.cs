@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 using System.Globalization;
 using System.Xml.Serialization;
@@ -35,6 +36,7 @@ namespace Lemoine.GDBPersistentClasses
     ICollection<IComponentIntermediateWorkPiece> m_componentIntermediateWorkPieces =
       new List<IComponentIntermediateWorkPiece> ();
     ICollection<IStamp> m_stamps = new InitialNullIdSet<IStamp, int> ();
+    ICollection<IDoc> m_docs = new InitialNullIdSet<IDoc, int> ();
     #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Component).FullName);
@@ -243,6 +245,12 @@ namespace Lemoine.GDBPersistentClasses
         return m_stamps;
       }
     }
+
+    /// <summary>
+    /// <see cref="IComponent"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual ICollection<IDoc> Docs => m_docs;
     #endregion // Getters / Setters
 
     #region Contructors
@@ -426,6 +434,11 @@ namespace Lemoine.GDBPersistentClasses
                               ConflictResolution conflictResolution)
     {
       Mergeable.MergeAuto (this, other, conflictResolution);
+      foreach (var doc in other.Docs.ToList ()) {
+        if (!this.Docs.Contains (doc)) {
+          this.Docs.Add (doc);
+        }
+      }
       // There is no need to update the quantity here
       ModifyItems<IComponentIntermediateWorkPiece>
         (other.ComponentIntermediateWorkPieces,
