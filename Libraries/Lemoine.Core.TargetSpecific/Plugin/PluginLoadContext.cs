@@ -36,6 +36,16 @@ namespace Lemoine.Core.Plugin.TargetSpecific
 
     static readonly string ADDITIONAL_PATHS_KEY = "PluginLoadContext.AdditionalPaths";
     static readonly string ADDITIONAL_PATHS_DEFAULT = ""; // Empty: not set. Use ; as a separator between two paths. For example: @"C:\Program Files\dotnet\shared\Microsoft.NETCore.App\3.1.3\netstandard.dll;C:\Program Files\dotnet\..."
+
+    /// <summary>
+    /// Resolve in the program directory the assemblies the default load context does not find
+    /// in the deps.json file of the program (TPA list). Read once, when the first plugin load
+    /// context is created
+    /// </summary>
+    static readonly string DEFAULT_CONTEXT_RESOLVING_KEY = "PluginLoadContext.DefaultContextResolving";
+    static readonly bool DEFAULT_CONTEXT_RESOLVING_DEFAULT = false;
+
+    static readonly ILog staticLog = LogManager.GetLogger ($"{typeof (PluginLoadContext).FullName}.DefaultContext");
 #endif // NETCOREAPP >= 3.0
 
     /// <summary>
@@ -67,6 +77,27 @@ namespace Lemoine.Core.Plugin.TargetSpecific
 
 #if (NETCOREAPP && !NETCOREAPP2_2 && !NETCOREAPP2_1 && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0)
     readonly IEnumerable<AssemblyDependencyResolver> m_resolvers;
+#endif // NETCOREAPP >= 3.0
+
+#if (NETCOREAPP && !NETCOREAPP2_2 && !NETCOREAPP2_1 && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0)
+    /// <summary>
+    /// Static constructor: register once the resolution of the default load context in the
+    /// program directory, if active
+    /// </summary>
+    static PluginLoadContext ()
+    {
+      try {
+        if (Lemoine.Info.ConfigSet.LoadAndGet (DEFAULT_CONTEXT_RESOLVING_KEY, DEFAULT_CONTEXT_RESOLVING_DEFAULT)) {
+          AssemblyLoadContext.Default.Resolving += ResolveInDefaultContextFromProgramDirectory;
+          if (staticLog.IsInfoEnabled) {
+            staticLog.Info ($"PluginLoadContext: resolution of the default load context in the program directory registered");
+          }
+        }
+      }
+      catch (Exception ex) {
+        staticLog.Error ($"PluginLoadContext: the resolution of the default load context in the program directory could not be registered", ex);
+      }
+    }
 #endif // NETCOREAPP >= 3.0
 
     public PluginLoadContext (params string[] paths)
@@ -307,6 +338,45 @@ namespace Lemoine.Core.Plugin.TargetSpecific
       }
 
       return null;
+    }
+
+    /// <summary>
+    /// Resolve in the default load context an assembly of the program directory that is not
+    /// in the deps.json file of the program (TPA list)
+    ///
+    /// Since <see cref="LoadFromProgramDirectory"/> loads the assemblies of the program
+    /// directory in the default load context, their dependencies are resolved by the default
+    /// load context too, which only knows the TPA list
+    ///
+    /// Active only if the config key PluginLoadContext.DefaultContextResolving is true
+    /// </summary>
+    /// <param name="context">default load context</param>
+    /// <param name="assemblyName">not null</param>
+    /// <returns>null if not found</returns>
+    static Assembly ResolveInDefaultContextFromProgramDirectory (AssemblyLoadContext context, AssemblyName assemblyName)
+    {
+      var programDirectory = Lemoine.Info.ProgramInfo.AbsoluteDirectory;
+      if (string.IsNullOrEmpty (programDirectory) || string.IsNullOrEmpty (assemblyName.Name)) {
+        return null;
+      }
+      var path = System.IO.Path.Combine (programDirectory, assemblyName.Name + ".dll");
+      if (!System.IO.File.Exists (path)) {
+        if (staticLog.IsDebugEnabled) {
+          staticLog.Debug ($"ResolveInDefaultContextFromProgramDirectory: {assemblyName} not in programDirectory {programDirectory}");
+        }
+        return null;
+      }
+      try {
+        var assembly = context.LoadFromAssemblyPath (path);
+        if (staticLog.IsInfoEnabled) {
+          staticLog.Info ($"ResolveInDefaultContextFromProgramDirectory: {assemblyName} => {path}");
+        }
+        return assembly;
+      }
+      catch (Exception ex) {
+        staticLog.Error ($"ResolveInDefaultContextFromProgramDirectory: {assemblyName} could not be loaded from {path}", ex);
+        return null;
+      }
     }
 
     Assembly LoadFromResolvers (AssemblyName assemblyName)
