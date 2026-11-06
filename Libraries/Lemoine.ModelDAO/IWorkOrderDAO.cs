@@ -49,6 +49,26 @@ namespace Lemoine.ModelDAO
     Boolean IfExistsOtherWithSameCode(String code, int id);
 
     /// <summary>
+    /// Tests if another work order than the one with the given id has the same name
+    ///
+    /// To test a work order that is not created yet, use an id of 0
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<bool> IfExistsOtherWithSameNameAsync (string name, int id);
+
+    /// <summary>
+    /// Tests if another work order than the one with the given id has the same code
+    ///
+    /// To test a work order that is not created yet, use an id of 0
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<bool> IfExistsOtherWithSameCodeAsync (string code, int id);
+
+    /// <summary>
     /// Tests if exists WorkOrder have same name
     /// </summary>
     /// <param name="name"></param>

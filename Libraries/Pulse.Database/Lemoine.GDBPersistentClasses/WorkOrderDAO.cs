@@ -256,8 +256,41 @@ namespace Lemoine.GDBPersistentClasses
         .UniqueResult();
       return (count > 0)?true:false;
     }
-    
-    
+
+    /// <summary>
+    /// <see cref="IWorkOrderDAO"/>
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<bool> IfExistsOtherWithSameNameAsync (string name, int id)
+    {
+      var count = await NHibernateHelper.GetCurrentSession ().CreateCriteria<WorkOrder> ()
+        .Add (Restrictions.Eq ("Name", name))
+        .Add (Restrictions.IsNotNull ("Name"))
+        .Add (Restrictions.Not (Restrictions.Eq ("Id", id)))
+        .SetProjection (Projections.RowCount ())
+        .UniqueResultAsync<int> ();
+      return (count > 0);
+    }
+
+    /// <summary>
+    /// <see cref="IWorkOrderDAO"/>
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<bool> IfExistsOtherWithSameCodeAsync (string code, int id)
+    {
+      var count = await NHibernateHelper.GetCurrentSession ().CreateCriteria<WorkOrder> ()
+        .Add (Restrictions.Eq ("Code", code))
+        .Add (Restrictions.IsNotNull ("Code"))
+        .Add (Restrictions.Not (Restrictions.Eq ("Id", id)))
+        .SetProjection (Projections.RowCount ())
+        .UniqueResultAsync<int> ();
+      return (count > 0);
+    }
+
     /// <summary>
     /// Tests if exists WorkOrder have same name
     /// </summary>
