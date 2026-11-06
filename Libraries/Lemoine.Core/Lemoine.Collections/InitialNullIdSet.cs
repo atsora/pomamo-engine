@@ -147,6 +147,25 @@ namespace Lemoine.Collections
     }
 
     /// <summary>
+    /// Copy the items, the ones with no id yet included, to an array
+    ///
+    /// <see cref="Count"/> counts the items with no id yet: without this method, the copy
+    /// (List constructor, ToList, ToArray) would leave a default value in place of each of them
+    /// </summary>
+    /// <param name="array">not null</param>
+    /// <param name="arrayIndex"></param>
+    public new void CopyTo (T[] array, int arrayIndex)
+    {
+      if (array is null) {
+        log.Fatal ("CopyTo: array is null");
+        throw new ArgumentNullException (nameof (array));
+      }
+      RehashZeroID ();
+      this.ZeroIdList.CopyTo (array, arrayIndex);
+      base.CopyTo (array, arrayIndex + this.ZeroIdList.Count);
+    }
+
+    /// <summary>
     /// return IEnumerator on set
     /// </summary>
     /// <returns></returns>

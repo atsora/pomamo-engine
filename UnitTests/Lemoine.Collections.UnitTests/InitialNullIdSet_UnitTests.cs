@@ -38,6 +38,34 @@ namespace Lemoine.Collections.UnitTests.InitialNullIdSet
     }
 
     /// <summary>
+    /// The copy to an array or to a list includes the items with no id yet, and the ones
+    /// whose id was set since they were added
+    /// </summary>
+    [Test]
+    public void TestCopyToWithNullIds ()
+    {
+      ICollection<IdClass> customSet = new InitialNullIdSet<IdClass, int> ();
+      var withId = new IdClass { Id = 2 };
+      var noId = new IdClass ();
+      var idSetLater = new IdClass ();
+      customSet.Add (withId);
+      // Note: two IdClass with the id 0 are equal
+      customSet.Add (idSetLater);
+      idSetLater.Id = 3;
+      customSet.Add (noId);
+
+      var list = new List<IdClass> (customSet);
+      var array = new IdClass[4];
+      customSet.CopyTo (array, 1);
+      Assert.Multiple (() => {
+        Assert.That (customSet, Has.Count.EqualTo (3));
+        Assert.That (list, Is.EquivalentTo (new[] { withId, noId, idSetLater }));
+        Assert.That (array[0], Is.Null);
+        Assert.That (array[1..], Is.EquivalentTo (new[] { withId, noId, idSetLater }));
+      });
+    }
+
+    /// <summary>
     /// Test "rehash" of null Id inserted elements
     /// </summary>
     [Test]
