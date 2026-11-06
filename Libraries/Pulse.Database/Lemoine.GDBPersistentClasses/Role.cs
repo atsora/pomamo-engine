@@ -123,7 +123,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="sqlDisplay"></param>
     /// <returns></returns>
     protected override string GetTranslatedDisplay (string sqlDisplay) =>
-      DisplayTranslation.GetNameOrTranslationDisplay (() => this.NameOrTranslation, sqlDisplay);
+      DisplayTranslation.GetNameOrTranslationDisplay (this, () => this.NameOrTranslation, sqlDisplay);
     #endregion // Getters / Setters
 
     #region Constructors

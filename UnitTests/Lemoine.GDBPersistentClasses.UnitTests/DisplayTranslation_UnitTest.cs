@@ -4,8 +4,10 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 using Lemoine.Core.Log;
 using Lemoine.I18N;
+using Lemoine.Model;
 using Lemoine.ModelDAO;
 using NUnit.Framework;
 
@@ -133,6 +135,54 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
             .GetField ("m_display", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
             .GetValue (reason); // FindById returns the entity itself, not a proxy
           Assert.That (reason.Display, Is.EqualTo (sqlDisplay), "display in the locale of the database");
+        }
+      }
+      finally {
+        CultureInfo.CurrentUICulture = previousCulture;
+        PulseCatalog.Implementation = previousCatalog;
+      }
+    }
+
+    /// <summary>
+    /// The display of the tables whose display in the database is the translated name
+    /// (role, dockind) is their name or translation in the UI culture, when it differs from the locale of the database
+    /// </summary>
+    [Test]
+    public void TestNameOrTranslationDisplay ()
+    {
+      var previousCulture = CultureInfo.CurrentUICulture;
+      var previousCatalog = PulseCatalog.Implementation;
+      try {
+        var multiCatalog = new MultiCatalog ();
+        multiCatalog.Add (new Lemoine.ModelDAO.TranslationDAOCatalog ());
+        multiCatalog.Add (new DefaultTextFileCatalog ());
+        PulseCatalog.Implementation = new CachedCatalog (multiCatalog);
+
+        using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+          var databaseLocale = ModelDAOHelper.DAOFactory.ConfigDAO.GetConfig ("i18n.locale.default")?.Value as string;
+          Assume.That (databaseLocale, Is.Not.Null.And.Not.Empty, "no i18n.locale.default in the database");
+          var otherCulture = databaseLocale.StartsWith ("en", StringComparison.OrdinalIgnoreCase) ? "de-DE" : "en-US";
+
+          var role = ModelDAOHelper.DAOFactory.RoleDAO.FindAll ()
+            .FirstOrDefault (r => r.TranslationKey is not null);
+          Assume.That (role, Is.Not.Null, "no role with a translation key");
+
+          System.Collections.Generic.IList<IDocKind> docKinds;
+          try {
+            docKinds = ModelDAOHelper.DAOFactory.DocKindDAO.FindAll ();
+          }
+          catch (Exception ex) {
+            log.Warn ("TestNameOrTranslationDisplay: no dockind table in the unit test database", ex);
+            docKinds = new System.Collections.Generic.List<IDocKind> ();
+          }
+
+          CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo (otherCulture);
+          Assert.Multiple (() => {
+            Assert.That (role.Display, Is.EqualTo (role.NameOrTranslation), $"role in {otherCulture}");
+            foreach (var docKind in docKinds) {
+              Assert.That (docKind.Display, Is.EqualTo (docKind.NameOrTranslation), $"{docKind} in {otherCulture}");
+            }
+          });
         }
       }
       finally {

@@ -48,10 +48,11 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="table">table in the display table, for example Reason</param>
     /// <param name="variant">nullable: variant of the display, for example Long</param>
     /// <param name="sqlDisplay">display computed by PostgreSQL</param>
-    /// <returns>sqlDisplay if the UI culture is the one of the database, or if the pattern can't be applied</returns>
+    /// <returns>sqlDisplay if the UI culture is the one of the database, if the pattern can't be applied,
+    /// or if the entity is not persistent yet (no display computed by the database)</returns>
     public static string GetDisplay (object entity, string table, string variant, string sqlDisplay)
     {
-      if (!IsTranslationRequired ()) {
+      if (IsTransient (entity, sqlDisplay) || !IsTranslationRequired ()) {
         return sqlDisplay;
       }
       try {
@@ -67,12 +68,14 @@ namespace Lemoine.GDBPersistentClasses
     /// Display of an entity whose display in the database is its translated name
     /// (tables of the SQL function displayfromnametranslationkeylist, for example role)
     /// </summary>
+    /// <param name="entity">not null</param>
     /// <param name="getNameOrTranslation">not null</param>
     /// <param name="sqlDisplay">display computed by PostgreSQL</param>
-    /// <returns></returns>
-    public static string GetNameOrTranslationDisplay (Func<string> getNameOrTranslation, string sqlDisplay)
+    /// <returns>sqlDisplay if the UI culture is the one of the database,
+    /// or if the entity is not persistent yet (no display computed by the database)</returns>
+    public static string GetNameOrTranslationDisplay (object entity, Func<string> getNameOrTranslation, string sqlDisplay)
     {
-      if (!IsTranslationRequired ()) {
+      if (IsTransient (entity, sqlDisplay) || !IsTranslationRequired ()) {
         return sqlDisplay;
       }
       try {
@@ -82,6 +85,25 @@ namespace Lemoine.GDBPersistentClasses
         log.Error ($"GetNameOrTranslationDisplay: exception => return the display of the database {sqlDisplay}", ex);
         return sqlDisplay;
       }
+    }
+
+    /// <summary>
+    /// Is the entity not persistent yet ? Then the database has not computed any display,
+    /// which must stay null (for example in the XML serialization of a new entity).
+    ///
+    /// A persistent entity may also have a null display in the database, when its translation is missing:
+    /// then it is computed in .NET
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="sqlDisplay"></param>
+    /// <returns></returns>
+    static bool IsTransient (object entity, string sqlDisplay)
+    {
+      if (sqlDisplay is not null) {
+        return false;
+      }
+      var idProperty = entity.GetType ().GetProperty ("Id", BindingFlags.Public | BindingFlags.Instance);
+      return idProperty?.GetValue (entity) is int id && 0 == id;
     }
 
     /// <summary>

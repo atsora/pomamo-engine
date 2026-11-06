@@ -28,6 +28,11 @@ namespace Lemoine.Model
     string TranslationKey { get; set; }
 
     /// <summary>
+    /// Name if set, else the translation of the translation key in the current UI culture
+    /// </summary>
+    string NameOrTranslation { get; }
+
+    /// <summary>
     /// Name of the icon that represents the kind of document, for the clients
     ///
     /// nullable

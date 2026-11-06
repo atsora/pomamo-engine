@@ -51,6 +51,23 @@ namespace Lemoine.GDBPersistentClasses
     /// <summary>
     /// <see cref="IDocKind"/>
     /// </summary>
+    public virtual string NameOrTranslation => DataWithTranslation
+      .GetTranslationFromNameTranslationKey (this.Name, this.TranslationKey);
+
+    /// <summary>
+    /// <see cref="DataWithDisplayFunction"/>
+    ///
+    /// The display of a kind of document in the database is its translated name
+    /// (SQL function displayfromnametranslationkey)
+    /// </summary>
+    /// <param name="sqlDisplay"></param>
+    /// <returns></returns>
+    protected override string GetTranslatedDisplay (string sqlDisplay) =>
+      DisplayTranslation.GetNameOrTranslationDisplay (this, () => this.NameOrTranslation, sqlDisplay);
+
+    /// <summary>
+    /// <see cref="IDocKind"/>
+    /// </summary>
     public virtual string Icon { get; set; }
 
     /// <summary>
