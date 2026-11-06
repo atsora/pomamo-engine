@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Lemoine.Core.Log;
 using Lemoine.Database.Persistent;
@@ -131,5 +132,67 @@ ORDER BY {doc}.docid
         .SetString ("tag", tag.Trim ())
         .ListAsync<IDoc> ();
     }
+
+    /// <summary>
+    /// <see cref="IDocDAO"/>
+    /// </summary>
+    /// <param name="search">nullable or empty: text the path contains, whatever the case</param>
+    /// <param name="tag">nullable or empty: tag the document carries (case sensitive, gin index)</param>
+    /// <param name="kindId">nullable: id of the kind of the document</param>
+    /// <param name="maxResults">maximum number of returned documents, strictly positive</param>
+    /// <returns>not null, ordered by path</returns>
+    public async Task<IList<IDoc>> FindBySearchAsync (string search, string tag, int? kindId, int maxResults)
+    {
+      if (maxResults <= 0) {
+        log.Fatal ($"FindBySearchAsync: invalid maxResults {maxResults}");
+        throw new ArgumentOutOfRangeException (nameof (maxResults));
+      }
+
+      // Native SQL: the @> operator on the array is required for the gin index to be used,
+      // and a criteria SQL restriction does not bind a parameter inside ARRAY[...]
+      var conditions = new List<string> ();
+      if (!string.IsNullOrWhiteSpace (search)) {
+        conditions.Add ("{doc}.docpath ILIKE :search");
+      }
+      if (!string.IsNullOrWhiteSpace (tag)) {
+        conditions.Add ("{doc}.doctags @> ARRAY[:tag]");
+      }
+      if (kindId.HasValue) {
+        conditions.Add ("{doc}.dockindid = :kindId");
+      }
+      var where = conditions.Any ()
+        ? $"WHERE {string.Join (" AND ", conditions)}"
+        : "";
+      var query = NHibernateHelper.GetCurrentSession ()
+        .CreateSQLQuery ($"""
+SELECT {"{doc.*}"}
+FROM doc {"{doc}"}
+{where}
+ORDER BY {"{doc}"}.docpath
+""")
+        .AddEntity ("doc", typeof (Doc));
+      if (!string.IsNullOrWhiteSpace (search)) {
+        query.SetString ("search", $"%{EscapeLike (search.Trim ())}%");
+      }
+      if (!string.IsNullOrWhiteSpace (tag)) {
+        query.SetString ("tag", tag.Trim ());
+      }
+      if (kindId.HasValue) {
+        query.SetInt32 ("kindId", kindId.Value);
+      }
+      return await query
+        .SetMaxResults (maxResults)
+        .ListAsync<IDoc> ();
+    }
+
+    /// <summary>
+    /// Escape the special characters of a LIKE pattern (default escape character \)
+    /// </summary>
+    /// <param name="text">not null</param>
+    /// <returns></returns>
+    static string EscapeLike (string text) => text
+      .Replace ("\\", "\\\\")
+      .Replace ("%", "\\%")
+      .Replace ("_", "\\_");
   }
 }

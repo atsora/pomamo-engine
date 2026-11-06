@@ -53,5 +53,15 @@ namespace Lemoine.ModelDAO
     /// <param name="tag">not null and not empty</param>
     /// <returns>not null, ordered by id</returns>
     Task<IList<IDoc>> FindByTagAsync (string tag);
+
+    /// <summary>
+    /// Search the <see cref="IDoc"/>s, the criteria that are set being combined
+    /// </summary>
+    /// <param name="search">nullable or empty: text the path contains, whatever the case</param>
+    /// <param name="tag">nullable or empty: tag the document carries (case sensitive, gin index)</param>
+    /// <param name="kindId">nullable: id of the kind of the document</param>
+    /// <param name="maxResults">maximum number of returned documents, strictly positive</param>
+    /// <returns>not null, ordered by path</returns>
+    Task<IList<IDoc>> FindBySearchAsync (string search, string tag, int? kindId, int maxResults);
   }
 }

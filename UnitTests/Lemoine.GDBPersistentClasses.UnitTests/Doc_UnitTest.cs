@@ -140,6 +140,41 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     }
 
     /// <summary>
+    /// Test FindBySearchAsync combines the path, the tag and the kind
+    /// </summary>
+    [Test]
+    public async Task TestFindBySearchAsync ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var marker = Guid.NewGuid ().ToString ("N");
+          var first = ModelDAOHelper.ModelFactory.CreateDoc ($"search/{marker}/Shaft-Drawing.pdf");
+          first.Tags = new List<string> { $"tag-{marker}" };
+          first.Kind = await ModelDAOHelper.DAOFactory.DocKindDAO.FindByIdAsync (3);
+          await ModelDAOHelper.DAOFactory.DocDAO.MakePersistentAsync (first);
+          var second = ModelDAOHelper.ModelFactory.CreateDoc ($"search/{marker}/shaft.nc");
+          await ModelDAOHelper.DAOFactory.DocDAO.MakePersistentAsync (second);
+          ModelDAOHelper.DAOFactory.Flush ();
+
+          var byPath = await ModelDAOHelper.DAOFactory.DocDAO.FindBySearchAsync ($"{marker.ToUpperInvariant ()}/SHAFT", null, null, 10);
+          var byTag = await ModelDAOHelper.DAOFactory.DocDAO.FindBySearchAsync (null, $"tag-{marker}", null, 10);
+          var byKind = await ModelDAOHelper.DAOFactory.DocDAO.FindBySearchAsync (marker, null, 3, 10);
+          var limited = await ModelDAOHelper.DAOFactory.DocDAO.FindBySearchAsync (marker, null, null, 1);
+          Assert.Multiple (() => {
+            Assert.That (byPath.Select (x => x.Id), Is.EqualTo (new[] { first.Id, second.Id }));
+            Assert.That (byTag.Select (x => x.Id), Is.EqualTo (new[] { first.Id }));
+            Assert.That (byKind.Select (x => x.Id), Is.EqualTo (new[] { first.Id }));
+            Assert.That (limited, Has.Count.EqualTo (1));
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
     /// Test FindByTagAsync returns only the docs that carry the tag
     /// </summary>
     [Test]
