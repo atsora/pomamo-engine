@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Atsora Solutions
 
 using System;
+using System.Collections.Generic;
 using Lemoine.Extensions.Web.Attributes;
 
 namespace Pulse.Web.Doc
@@ -20,6 +21,16 @@ namespace Pulse.Web.Doc
     /// Path of the document
     /// </summary>
     public string Path { get; set; }
+
+    /// <summary>
+    /// Tags of the document
+    /// </summary>
+    public IList<string> Tags { get; set; }
+
+    /// <summary>
+    /// Id of the kind of the document, null if it has no kind
+    /// </summary>
+    public int? KindId { get; set; }
 
     /// <summary>
     /// Revision of the document after the upload

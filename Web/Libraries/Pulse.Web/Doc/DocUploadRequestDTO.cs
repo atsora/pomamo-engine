@@ -14,7 +14,7 @@ namespace Pulse.Web.Doc
   /// </summary>
   [Api ("Request DTO for /Doc/Upload service")]
   [ApiResponse (HttpStatusCode.InternalServerError, "Oops, something broke")]
-  [Route ("/Doc/Upload", "POST", Summary = "Upload a new revision of a document, the content being the raw request body", Notes = "To use with ?DocId= (new revision of an existing document), ?Path= (the document is created if it does not exist yet) or neither (new document with a generated path, ending with &FileName= if set), and optionally &Description=")]
+  [Route ("/Doc/Upload", "POST", Summary = "Upload a new revision of a document, the content being the raw request body", Notes = "To use with ?DocId= (new revision of an existing document), ?Path= (the document is created if it does not exist yet) or neither (new document with a generated path, ending with &FileName= if set), and optionally &Description=, &Tags= (separated by a comma) and &KindId=")]
   public class DocUploadRequestDTO : IReturn<DocUploadResponseDTO>
   {
     /// <summary>
@@ -45,5 +45,21 @@ namespace Pulse.Web.Doc
     /// </summary>
     [ApiMember (Name = "Description", Description = "Description of the new revision", ParameterType = "query", DataType = "string", IsRequired = false)]
     public string Description { get; set; }
+
+    /// <summary>
+    /// Tags of the document, separated by a comma, that replace the existing ones
+    ///
+    /// Not set: the tags are left unchanged. Set but empty: the tags are removed
+    /// </summary>
+    [ApiMember (Name = "Tags", Description = "Tags of the document, separated by a comma (or one Tags parameter per tag), that replace the existing ones. Not set: unchanged. Empty: no tag", ParameterType = "query", DataType = "string", IsRequired = false)]
+    public string Tags { get; set; }
+
+    /// <summary>
+    /// Id of the kind of the document
+    ///
+    /// Not set: the kind is left unchanged. Set but empty: the kind is removed
+    /// </summary>
+    [ApiMember (Name = "KindId", Description = "Id of the kind of the document (see the GraphQL query docKinds). Not set: unchanged. Empty: no kind", ParameterType = "query", DataType = "int", IsRequired = false)]
+    public string KindId { get; set; }
   }
 }

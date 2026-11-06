@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Atsora Solutions
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.WebMiddleware.HttpContext;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Pulse.Extensions.Web.Doc;
 using Pulse.Extensions.Web.Graphql;
 
@@ -54,10 +56,16 @@ namespace Pulse.Web.Doc
       // The raw body is not a JSON request DTO: the middleware may still have deserialized
       // some properties from it (for example when a JSON document is uploaded),
       // so consider only the query parameters
+      DocProperties properties = new DocProperties ();
       if (HttpContext is not null) {
         request = GetRequestFromQuery (HttpContext.Request.Query);
         if (request is null) {
           return new ErrorDTO ("Invalid DocId", ErrorStatus.WrongRequestParameter);
+        }
+        var query = HttpContext.Request.Query;
+        var propertiesError = TryGetProperties (key => GetQueryValues (query, key), out properties);
+        if (propertiesError is not null) {
+          return propertiesError;
         }
       }
 
@@ -73,7 +81,7 @@ namespace Pulse.Web.Doc
         }
       }
 
-      return await UploadAsync (m_body, request.DocId, request.Path, request.FileName, request.Description);
+      return await UploadAsync (m_body, request.DocId, request.Path, request.FileName, request.Description, properties);
     }
 
     /// <summary>
@@ -140,12 +148,88 @@ namespace Pulse.Web.Doc
         }
       }
 
+      // A form field first, else a query parameter. null if neither is present
+      StringValues? GetValues (string key)
+      {
+        var formField = form
+          .FirstOrDefault (x => string.Equals (x.Key, key, StringComparison.InvariantCultureIgnoreCase));
+        return formField.Key is not null
+          ? formField.Value
+          : GetQueryValues (httpRequest.Query, key);
+      }
+      var propertiesError = TryGetProperties (GetValues, out var properties);
+      if (propertiesError is not null) {
+        return propertiesError;
+      }
+
       using (var content = file.OpenReadStream ()) {
         return await UploadAsync (content, docId,
           GetValue (nameof (DocUploadFormRequestDTO.Path)),
           file.FileName,
-          GetValue (nameof (DocUploadFormRequestDTO.Description)));
+          GetValue (nameof (DocUploadFormRequestDTO.Description)),
+          properties);
       }
+    }
+
+    /// <summary>
+    /// Tags and kind a client asks to set, with the upload
+    /// </summary>
+    internal struct DocProperties
+    {
+      /// <summary>
+      /// New tags, null to leave them unchanged
+      /// </summary>
+      public IList<string> Tags { get; set; }
+
+      /// <summary>
+      /// Change the kind of the document
+      /// </summary>
+      public bool SetKind { get; set; }
+
+      /// <summary>
+      /// New kind if <see cref="SetKind"/> is set, null to remove it
+      /// </summary>
+      public int? KindId { get; set; }
+    }
+
+    /// <summary>
+    /// Read the optional parameters Tags and KindId
+    ///
+    /// <item>Tags: the tags, separated by a comma, or one tag per parameter.
+    /// Not present: unchanged. Present but empty: no tag</item>
+    /// <item>KindId: the id of the kind. Not present: unchanged. Present but empty: no kind</item>
+    /// </summary>
+    /// <param name="getValues">values of a parameter, null if it is not present</param>
+    /// <param name="properties"></param>
+    /// <returns>null on success, else the error to return</returns>
+    internal static ErrorDTO TryGetProperties (Func<string, StringValues?> getValues, out DocProperties properties)
+    {
+      properties = new DocProperties ();
+
+      var tags = getValues (nameof (DocUploadRequestDTO.Tags));
+      if (tags.HasValue) {
+        properties.Tags = tags.Value
+          .Where (x => x is not null)
+          .SelectMany (x => x.Split (','))
+          .ToList (); // Trimmed and cleaned up by IDoc.Tags
+      }
+
+      var kindId = getValues (nameof (DocUploadRequestDTO.KindId));
+      if (kindId.HasValue) {
+        properties.SetKind = true;
+        var kindIdString = kindId.Value.ToString ().Trim ();
+        if (!string.IsNullOrEmpty (kindIdString)) {
+          if (int.TryParse (kindIdString, out var id)) {
+            properties.KindId = id;
+          }
+          else {
+            log.Error ($"TryGetProperties: invalid KindId {kindIdString}");
+            return new ErrorDTO ("Invalid KindId", ErrorStatus.WrongRequestParameter);
+          }
+        }
+      }
+
+      return null;
     }
 
     /// <summary>
@@ -156,14 +240,18 @@ namespace Pulse.Web.Doc
     /// <param name="path">path of the document, created if it does not exist yet. If neither docId nor path is set, a path is generated</param>
     /// <param name="fileName">only considered to generate the path</param>
     /// <param name="description">description of the new revision</param>
+    /// <param name="properties">tags and kind to set</param>
     /// <returns>a <see cref="DocUploadResponseDTO"/> or an <see cref="ErrorDTO"/></returns>
-    async Task<object> UploadAsync (Stream content, int? docId, string path, string fileName, string description)
+    async Task<object> UploadAsync (Stream content, int? docId, string path, string fileName, string description, DocProperties properties)
     {
       try {
-        var result = await DocUploader.UploadAsync (content, docId, path, fileName, description);
+        var result = await DocUploader.UploadAsync (content, docId, path, fileName, description,
+          properties.Tags, properties.SetKind, properties.KindId);
         return new DocUploadResponseDTO {
           DocId = result.DocId,
           Path = result.Path,
+          Tags = result.Tags,
+          KindId = result.KindId,
           Revision = result.Revision
         };
       }
@@ -200,6 +288,19 @@ namespace Pulse.Web.Doc
         .FirstOrDefault (x => string.Equals (x.Key, key, StringComparison.InvariantCultureIgnoreCase))
         .Value
         .ToString ();
+
+    /// <summary>
+    /// Values of a query parameter
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="key">case insensitive</param>
+    /// <returns>null if the parameter is not present</returns>
+    static StringValues? GetQueryValues (IQueryCollection query, string key)
+    {
+      var parameter = query
+        .FirstOrDefault (x => string.Equals (x.Key, key, StringComparison.InvariantCultureIgnoreCase));
+      return parameter.Key is null ? (StringValues?)null : parameter.Value;
+    }
 
     #region IBodySupport
     /// <summary>
