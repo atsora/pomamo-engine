@@ -46,13 +46,17 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     static readonly bool DEFAULT_CONTEXT_RESOLVING_DEFAULT = false;
 
     static readonly ILog staticLog = LogManager.GetLogger ($"{typeof (PluginLoadContext).FullName}.DefaultContext");
-#endif // NETCOREAPP >= 3.0
 
     /// <summary>
-    /// Accept all the time a change of revision, which is the last number in the version
+    /// Log of the plugin status, where the dependencies that are loaded for each plugin are listed
     /// </summary>
-    static readonly string ACCEPT_REVISION_CHANGE_KEY = "PluginLoadContext.AcceptRevisionChange";
-    static readonly bool ACCEPT_REVISION_CHANGE_DEFAULT = true;
+    static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
+
+    /// <summary>
+    /// Names of the assemblies in the deps.json file of the program (TPA list)
+    /// </summary>
+    static readonly Lazy<HashSet<string>> s_trustedPlatformAssemblyNames = new Lazy<HashSet<string>> (GetTrustedPlatformAssemblyNames);
+#endif // NETCOREAPP >= 3.0
 
     static readonly string ACCEPT_SYSTEM_VERSION_MISMATCH_KEY = "PluginLoadContext.AcceptSystemVersionMismatch";
     static readonly bool ACCEPT_SYSTEM_VERSION_MISMATCH_DEFAULT = false;
@@ -77,6 +81,7 @@ namespace Lemoine.Core.Plugin.TargetSpecific
 
 #if (NETCOREAPP && !NETCOREAPP2_2 && !NETCOREAPP2_1 && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0)
     readonly IEnumerable<AssemblyDependencyResolver> m_resolvers;
+    readonly string m_pluginName = "";
 #endif // NETCOREAPP >= 3.0
 
 #if (NETCOREAPP && !NETCOREAPP2_2 && !NETCOREAPP2_1 && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0)
@@ -112,6 +117,7 @@ namespace Lemoine.Core.Plugin.TargetSpecific
 #if (NETCOREAPP && !NETCOREAPP2_2 && !NETCOREAPP2_1 && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0)
     public PluginLoadContext (string pluginPath, params string[] additionalPaths)
     {
+      m_pluginName = System.IO.Path.GetFileNameWithoutExtension (pluginPath) ?? "";
       var list = new List<AssemblyDependencyResolver>
       {
         new AssemblyDependencyResolver (pluginPath),
@@ -200,13 +206,6 @@ namespace Lemoine.Core.Plugin.TargetSpecific
           }
           return true;
         }
-        if ((vx.Major == vy.Major) && (vx.Minor == vy.Minor) && (vx.Build == vy.Build)
-          && Lemoine.Info.ConfigSet.LoadAndGet (ACCEPT_REVISION_CHANGE_KEY, ACCEPT_REVISION_CHANGE_DEFAULT)) {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"IsAssemblyMatch: only a revision change in {x.FullName}, {vx} VS {vy} => accept it");
-          }
-          return true;
-        }
         if (x.Name.StartsWith ("Lemoine.")
           && vx.ToString ().Equals ("1.0.0.0")
           && Lemoine.Info.ConfigSet.LoadAndGet (ACCEPT_LEMOINE_INITIAL_VERSION_KEY, ACCEPT_LEMOINE_INITIAL_VERSION_DEFAULT)) {
@@ -227,6 +226,12 @@ namespace Lemoine.Core.Plugin.TargetSpecific
             log.Debug ($"IsAssemblyMatch: major version mismatch in System. assembly {x.FullName}, {vx} VS {vy} => return {result}");
           }
           return result;
+        }
+        if (IsVersionCompatible (vx, vy)) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsAssemblyMatch: version {vy} of {y.Name} is compatible with the requested version {vx} => accept it");
+          }
+          return true;
         }
         if (!x.Name.StartsWith ("Lemoine.")) {
           log.Error ($"IsAssemblyMatch: version mismatch in {x.FullName}, {vx} VS {vy}");
@@ -249,6 +254,24 @@ namespace Lemoine.Core.Plugin.TargetSpecific
         }
       }
       return true;
+    }
+
+    /// <summary>
+    /// Is an available version of an assembly compatible with the requested version?
+    ///
+    /// Compatible if the major versions are the same and the available minor version is the
+    /// same or greater: a greater minor version only adds features, without any API break, and
+    /// the build and revision numbers (third and fourth numbers) may be different
+    /// </summary>
+    /// <param name="requested">nullable: any version is compatible</param>
+    /// <param name="available">nullable: unknown, considered compatible</param>
+    /// <returns></returns>
+    internal static bool IsVersionCompatible (Version requested, Version available)
+    {
+      if (requested is null || available is null) {
+        return true;
+      }
+      return (requested.Major == available.Major) && (requested.Minor <= available.Minor);
     }
 
     bool IsDisallowVersionCheck (AssemblyName x)
@@ -282,19 +305,102 @@ namespace Lemoine.Core.Plugin.TargetSpecific
 
 #if (NETCOREAPP && !NETCOREAPP2_2 && !NETCOREAPP2_1 && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0)
     /// <summary>
-    /// Load an assembly of the program directory in the default load context, so that it is
-    /// shared by the program and all the plugins, whatever the order they are loaded in.
-    /// Else a plugin that is loaded before the program uses the assembly gets its own copy of
-    /// it, with types that are different from the ones of the program (for example a GraphQL
-    /// scalar type of a plugin that is not a HotChocolate schema type for the program)
+    /// Names of the assemblies of the TPA list (deps.json file of the program), without extension
+    /// </summary>
+    /// <returns>not null</returns>
+    static HashSet<string> GetTrustedPlatformAssemblyNames ()
+    {
+      var trustedPlatformAssemblies = AppContext.GetData ("TRUSTED_PLATFORM_ASSEMBLIES") as string;
+      if (string.IsNullOrEmpty (trustedPlatformAssemblies)) {
+        staticLog.Warn ($"GetTrustedPlatformAssemblyNames: no TRUSTED_PLATFORM_ASSEMBLIES, no assembly will be loaded in the default load context");
+        return new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+      }
+      return new HashSet<string> (trustedPlatformAssemblies
+        .Split (System.IO.Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+        .Select (p => System.IO.Path.GetFileNameWithoutExtension (p)), StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Is an assembly in the TPA list, which means in the deps.json file of the program (or of
+    /// the framework)?
+    /// </summary>
+    /// <param name="assemblyName">not null</param>
+    /// <returns></returns>
+    static bool IsTrustedPlatformAssembly (AssemblyName assemblyName) =>
+      !string.IsNullOrEmpty (assemblyName.Name) && s_trustedPlatformAssemblyNames.Value.Contains (assemblyName.Name);
+
+    /// <summary>
+    /// Is an assembly a dependency of the plugin, and not the plugin itself?
+    /// </summary>
+    /// <param name="assemblyName">not null</param>
+    /// <returns></returns>
+    bool IsDependency (AssemblyName assemblyName) =>
+      !string.Equals (assemblyName.Name, m_pluginName, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Check the version of an assembly file against the requested version, see
+    /// <see cref="IsVersionCompatible(Version, Version)"/>
+    ///
+    /// The runtime does not check the version of an assembly that is returned by a plugin
+    /// load context: without this check, any version would be loaded, and an incompatible one
+    /// would fail later (MissingMethodException, TypeLoadException...)
+    /// </summary>
+    /// <param name="assemblyName">requested assembly, not null</param>
+    /// <param name="path">path of the assembly file, not null</param>
+    /// <returns>the file can be loaded: compatible version, or not compatible but not in strict mode (PluginLoadContext.StrictVersionCheck)</returns>
+    bool AcceptFileVersion (AssemblyName assemblyName, string path)
+    {
+      Version availableVersion;
+      try {
+        availableVersion = AssemblyName.GetAssemblyName (path).Version;
+      }
+      catch (Exception ex) {
+        log.Warn ($"AcceptFileVersion: the version of {path} could not be read, consider it is compatible", ex);
+        return true;
+      }
+      if (IsVersionCompatible (assemblyName.Version, availableVersion)) {
+        if (log.IsDebugEnabled && !object.Equals (assemblyName.Version, availableVersion)) {
+          log.Debug ($"AcceptFileVersion: version {availableVersion} of {path} is compatible with the requested version {assemblyName.Version}");
+        }
+        return true;
+      }
+      if (IsDisallowVersionCheck (assemblyName)) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AcceptFileVersion: version check disallowed for {assemblyName}");
+        }
+        return true;
+      }
+      var strictVersionCheck = Lemoine.Info.ConfigSet.LoadAndGet (STRICT_VERSION_CHECK_KEY, STRICT_VERSION_CHECK_DEFAULT);
+      var message = $"version {availableVersion} of {path} is not compatible with the requested version {assemblyName.Version} (different major version or lower minor version) => {(strictVersionCheck ? "refuse it" : "load it anyway")}";
+      log.Error ($"AcceptFileVersion: {message}");
+      if (pluginStatusLog.IsErrorEnabled) {
+        pluginStatusLog.Error ($"{m_pluginName}: dependency {assemblyName.Name}: {message}");
+      }
+      return !strictVersionCheck;
+    }
+
+    /// <summary>
+    /// Load an assembly of the program directory
+    ///
+    /// If the assembly is in the deps.json file of the program (TPA list), it is loaded in the
+    /// default load context, so that it is shared by the program and all the plugins, whatever
+    /// the order they are loaded in. Else a plugin that is loaded before the program uses the
+    /// assembly gets its own copy of it, with types that are different from the ones of the
+    /// program (for example a GraphQL scalar type of a plugin that is not a HotChocolate schema
+    /// type for the program). Its dependencies are in the TPA list too
+    ///
+    /// Else (an assembly the program does not know, for example a plugin, a CNC module or a
+    /// library that is only used by a plugin), it is loaded in this plugin load context, where
+    /// its dependencies are resolved by <see cref="Load(AssemblyName)"/>. The default load
+    /// context would not find them, since it only knows the TPA list
     ///
     /// If the assembly could not be loaded in the default load context, it is loaded in this
     /// plugin load context
     ///
-    /// Note: the static members of these assemblies are shared by the program and all the
-    /// plugins too. If a plugin requires its own static state of a library, this library must
-    /// stay in the plugin load context: in this case, add a per-plugin list of the assemblies
-    /// to keep local, declared with an assembly attribute in the plugin and read by
+    /// Note: the static members of the assemblies of the TPA list are shared by the program and
+    /// all the plugins too. If a plugin requires its own static state of a library, this library
+    /// must stay in the plugin load context: in this case, add a per-plugin list of the
+    /// assemblies to keep local, declared with an assembly attribute in the plugin and read by
     /// <see cref="AssemblyLoader"/> right after the plugin assembly is loaded, before its types
     /// are enumerated (the types enumeration already resolves the dependencies)
     /// </summary>
@@ -314,20 +420,37 @@ namespace Lemoine.Core.Plugin.TargetSpecific
           if (log.IsDebugEnabled) {
             log.Debug ($"LoadFromProgramDirectory: try to load {assemblyName} from programDirectory {programDirectory}, path {path}");
           }
+          if (!AcceptFileVersion (assemblyName, path)) {
+            return null;
+          }
           try {
-            Assembly assembly;
-            try {
-              assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath (path);
+            Assembly assembly = null;
+            var contextName = "plugin";
+            if (IsTrustedPlatformAssembly (assemblyName)) {
+              try {
+                // Without the version, that was already checked: the default load context
+                // refuses a lower version, even if only the build or revision number is lower
+                assembly = AssemblyLoadContext.Default.LoadFromAssemblyName (new AssemblyName (assemblyName.Name));
+                contextName = "default";
+              }
+              catch (Exception ex) {
+                log.Warn ($"LoadFromProgramDirectory: {assemblyName} could not be loaded in the default load context => load it from path {path} in the plugin load context", ex);
+              }
             }
-            catch (Exception ex) {
-              log.Warn ($"LoadFromProgramDirectory: {assemblyName} could not be loaded in the default load context, path {path} => load it in the plugin load context", ex);
+            else if (log.IsDebugEnabled) {
+              log.Debug ($"LoadFromProgramDirectory: {assemblyName} is not in the TPA list => load it in the plugin load context");
+            }
+            if (assembly is null) {
               assembly = LoadFromAssemblyPath (path);
             }
             if (log.IsInfoEnabled) {
-              log.Info ($"LoadFromProgramDirectory: success for {assemblyName} with path {path} based on programDirectory {programDirectory}");
+              log.Info ($"LoadFromProgramDirectory: success for {assemblyName} with path {path} based on programDirectory {programDirectory} in the {contextName} load context");
             }
             if (successLog.IsInfoEnabled) {
-              successLog.Info ($"LoadFromProgramDirectory: {assemblyName} => {path}");
+              successLog.Info ($"LoadFromProgramDirectory: {assemblyName} => {path} ({contextName} load context)");
+            }
+            if (pluginStatusLog.IsInfoEnabled && IsDependency (assemblyName)) {
+              pluginStatusLog.Info ($"{m_pluginName}: dependency {assemblyName.Name} {assemblyName.Version} loaded from the program directory {path} ({contextName} load context)");
             }
             return assembly;
           }
@@ -344,9 +467,10 @@ namespace Lemoine.Core.Plugin.TargetSpecific
     /// Resolve in the default load context an assembly of the program directory that is not
     /// in the deps.json file of the program (TPA list)
     ///
-    /// Since <see cref="LoadFromProgramDirectory"/> loads the assemblies of the program
-    /// directory in the default load context, their dependencies are resolved by the default
-    /// load context too, which only knows the TPA list
+    /// <see cref="LoadFromProgramDirectory"/> only loads in the default load context the
+    /// assemblies of the TPA list, whose dependencies are in the TPA list too, so this is
+    /// normally not required. It remains as a fallback, for example for an assembly of the TPA
+    /// list that would depend on an assembly of the program directory that is not in it
     ///
     /// Active only if the config key PluginLoadContext.DefaultContextResolving is true
     /// </summary>
@@ -390,6 +514,9 @@ namespace Lemoine.Core.Plugin.TargetSpecific
           if (log.IsDebugEnabled) {
             log.Debug ($"LoadFromResolvers: path is {assemblyPath} for {assemblyName}");
           }
+          if (!AcceptFileVersion (assemblyName, assemblyPath)) {
+            continue;
+          }
           try {
             var assembly = LoadFromAssemblyPath (assemblyPath);
             if (log.IsInfoEnabled) {
@@ -397,6 +524,9 @@ namespace Lemoine.Core.Plugin.TargetSpecific
             }
             if (successLog.IsInfoEnabled) {
               successLog.Info ($"LoadFromResolvers: {assemblyName} => {assemblyPath}");
+            }
+            if (pluginStatusLog.IsInfoEnabled && IsDependency (assemblyName)) {
+              pluginStatusLog.Info ($"{m_pluginName}: dependency {assemblyName.Name} {assemblyName.Version} loaded from {assemblyPath} (plugin load context)");
             }
             return assembly;
           }
