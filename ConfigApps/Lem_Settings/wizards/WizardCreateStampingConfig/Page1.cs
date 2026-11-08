@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Lemoine.Model;
 using Lemoine.ModelDAO;
 using Lemoine.Settings;
 
@@ -132,6 +133,7 @@ namespace WizardCreateStampingConfig
     {
       data.Store (Item.CONFIG_NAME, nameTextBox.Text);
       data.Store (Item.TEMPLATE_PATH, templatePathTextBox.Text);
+      var previousConfigId = data.Get<int?> (Item.CONFIG_ID);
       if (null != stampingConfigSelection.SelectedStampingConfig) {
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           var stampingConfig = stampingConfigSelection.SelectedStampingConfig;
@@ -140,11 +142,23 @@ namespace WizardCreateStampingConfig
             var json = System.Text.Json.JsonSerializer.Serialize (stampingConfig.Config);
             data.Store (Item.CONFIG_JSON, json);
           }
+          if (previousConfigId != stampingConfig.Id) {
+            // Another config was selected: load the machines that are already associated to it.
+            // Keep the current selection otherwise not to lose the changes made in the next page
+            using (var transaction = session.BeginReadOnlyTransaction ("Settings.WizardCreateStampingConfig.Page1")) {
+              var monitoredMachines = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
+                .FindByStampingConfig (stampingConfig);
+              data.Store (Item.MONITORED_MACHINES, monitoredMachines);
+            }
+          }
         }
       }
       else {
         data.Store (Item.CONFIG_ID, (int?)null);
         data.Store (Item.CONFIG_JSON, "");
+        if (previousConfigId.HasValue) {
+          data.Store (Item.MONITORED_MACHINES, (IList<IMonitoredMachine>)new List<IMonitoredMachine> ());
+        }
       }
     }
 
