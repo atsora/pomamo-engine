@@ -670,11 +670,12 @@ namespace Lemoine.GDBPersistentClasses
     /// After an error, cancel any data that could have been set by the modification or its parent.
     /// The modification will be in error afterwards.
     /// 
-    /// By default, switch all the children to ParentInError
+    /// By default, switch all the children that are not completed to ParentInError,
+    /// including the Pending ones (for example a dynamic end tracker that waits for its dynamic end)
     /// </summary>
     public virtual void Cancel ()
     {
-      foreach (var subModification in this.SubModifications.Where (m => m.AnalysisStatus.IsNotCompleted ())) {
+      foreach (var subModification in this.SubModifications.Where (m => m.AnalysisStatus.IsWaitingOrNotCompleted ())) {
         subModification.MarkAsParentInError (true);
       }
     }
@@ -924,7 +925,8 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
-    /// Mark the modification as completed (Done) or partially completed (InProgress)
+    /// Mark the modification as completed (Done, or PendingSubModifications if it has some sub-modifications)
+    /// and set the date/time until which the modification was applied
     /// </summary>
     /// <param name="message">Message to send to the web service (nullable)</param>
     /// <param name="effectiveEnd"></param>

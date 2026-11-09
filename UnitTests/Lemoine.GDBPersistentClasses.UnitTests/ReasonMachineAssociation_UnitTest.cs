@@ -2175,6 +2175,93 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     }
 
     /// <summary>
+    /// Cancel the parent of a Pending dynamic end tracker (what is done after an error or a timeout):
+    /// the tracker must switch to ParentInError and cancel the data (reason proposal)
+    /// </summary>
+    [Test]
+    public void TestCancelParentOfPendingDynamicEndTracker ()
+    {
+      Lemoine.Plugin.ReasonDefaultManagement.ReasonDefaultManagement.Install ();
+      Lemoine.Extensions.ExtensionManager.Add (typeof (NeverEndingDynamicEndExtension));
+      Lemoine.Extensions.ExtensionManager.Add (typeof (UnitTests.AutoReasonCoffee));
+
+      try {
+        Lemoine.Info.ConfigSet
+          .ForceValue ("ReasonSlotDAO.FindProcessing.LowerLimit", TimeSpan.FromDays (20 * 365));
+
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineObservationState attended = daoFactory.MachineObservationStateDAO.FindById ((int)MachineObservationStateId.Attended);
+          IReason reasonUnanswered = daoFactory.ReasonDAO.FindById (4);
+          IReason reasonCoffee = daoFactory.ReasonDAO.FindById (28);
+          IMachineMode inactive = daoFactory.MachineModeDAO.FindById (1);
+          CreateForceDynamicEndReferenceData (machine1, inactive, attended, reasonUnanswered);
+
+          var rootId = ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
+            .InsertAutoReason (machine1, R (1, 5), reasonCoffee, 100.0, "", ",Never", false, null);
+          RunFirstSeveralTimes (2);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+
+          var root = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+          Assert.That (daoFactory.ReasonProposalDAO.Get (root), Is.Not.Null, "Reason proposal before the cancel");
+          var tracker = session.CreateCriteria<ReasonMachineAssociation> ()
+            .Add (Expression.Eq ("Machine", machine1))
+            .List<ReasonMachineAssociation> ()
+            .Single (m => m.Kind.HasFlag (ReasonMachineAssociationKind.TrackDynamicEnd));
+          Assert.That (tracker.AnalysisStatus, Is.EqualTo (AnalysisStatus.Pending), "The tracker waits for its dynamic end");
+          var trackerParent = (ReasonMachineAssociation)tracker.Parent;
+          Assert.That (trackerParent, Is.Not.Null, "Parent of the tracker");
+
+          trackerParent.Cancel ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+
+          Assert.That (tracker.AnalysisStatus, Is.EqualTo (AnalysisStatus.ParentInError), "Tracker status after the cancel of its parent");
+          Assert.That (daoFactory.ReasonProposalDAO.Get (root), Is.Null, "Reason proposal removed by the tracker");
+          var resetModifications = session.CreateCriteria<ReasonMachineAssociation> ()
+            .Add (Expression.Eq ("Machine", machine1))
+            .List<ReasonMachineAssociation> ()
+            .Where (m => m.Kind.HasFlag (ReasonMachineAssociationKind.Reset))
+            .ToList ();
+          Assert.That (resetModifications, Has.Count.EqualTo (1), "Reset sub-modification to cancel the reason slots");
+          Assert.That (resetModifications[0].Parent, Is.EqualTo (root), "The reset sub-modification is a child of the root");
+
+          // The reset sub-modification must be processed by the analysis, although the tracker is in ParentInError
+          RunFirstSeveralTimes (5);
+          AnalysisUnitTests.RunProcessingReasonSlotsAnalysis (System.Threading.CancellationToken.None, machine1);
+          DAOFactory.EmptyAccumulators ();
+          ModelDAOHelper.DAOFactory.FlushData ();
+          {
+            var resetModification = daoFactory.ReasonMachineAssociationDAO
+              .FindById (((Lemoine.Collections.IDataWithId<long>)resetModifications[0]).Id, machine1);
+            Assert.That (resetModification.AnalysisStatus.IsCompletedSuccessfully (), Is.True, $"Reset sub-modification processed, status={resetModification.AnalysisStatus}");
+            IList<ReasonSlot> slots = session.CreateCriteria<ReasonSlot> ()
+              .Add (Expression.Eq ("Machine", machine1))
+              .AddOrder (Order.Asc ("DateTimeRange"))
+              .List<ReasonSlot> ();
+            Assert.That (slots, Is.Not.Empty);
+            Assert.Multiple (() => {
+              Assert.That (slots.All (s => object.Equals (s.Reason, reasonUnanswered)), Is.True, "Reason slots back to the default reason");
+              Assert.That (slots.First ().BeginDateTime.Value, Is.EqualTo (T (1)));
+              Assert.That (slots.Last ().EndDateTime.Value, Is.EqualTo (T (5)));
+            });
+            var rootAfter = daoFactory.ReasonMachineAssociationDAO.FindById (rootId, machine1);
+            Assert.That (rootAfter.AnalysisStatus, Is.Not.EqualTo (AnalysisStatus.PendingSubModifications), $"Root completed, status={rootAfter.AnalysisStatus}");
+          }
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        Lemoine.Info.ConfigSet.ResetForceValues ();
+      }
+    }
+
+    /// <summary>
     /// Stop an orphan auto reason proposal (its modification is completed)
     /// at a given date/time, or completely if the date/time is before its start
     /// </summary>

@@ -148,13 +148,34 @@ namespace Lemoine.Model
     }
 
     /// <summary>
-    /// Return true if the modification is in progress or new
+    /// Return true if the modification is in progress or new,
+    /// meaning there is some work to do now for the analysis
+    ///
+    /// Pending is not included on purpose: a Pending modification did all it could for the moment
+    /// and waits for some new data (for example a dynamic end tracker).
+    /// It is processed again only during the next global analysis pass,
+    /// and it is considered as applied in the progress computations.
+    /// To include it, use <see cref="IsWaitingOrNotCompleted(AnalysisStatus)"/>
     /// </summary>
     /// <param name="analysisStatus"></param>
     /// <returns></returns>
     public static bool IsNotCompleted (this AnalysisStatus analysisStatus)
     {
       return analysisStatus.IsInProgress () || analysisStatus.IsNew ();
+    }
+
+    /// <summary>
+    /// Return true if the modification is not completed yet, including when it is Pending
+    /// (waiting for some new data, for example a dynamic end tracker).
+    ///
+    /// This corresponds to the not completed criterion that is used in database
+    /// to get the modifications to process
+    /// </summary>
+    /// <param name="analysisStatus"></param>
+    /// <returns></returns>
+    public static bool IsWaitingOrNotCompleted (this AnalysisStatus analysisStatus)
+    {
+      return analysisStatus.Equals (AnalysisStatus.Pending) || analysisStatus.IsNotCompleted ();
     }
 
     /// <summary>
