@@ -303,7 +303,9 @@ namespace Lemoine.Analysis
       // - Analyze them
       bool notCompletedGlobalSubModifications = false;
       foreach (IGlobalModification subGlobalModification in subGlobalModifications) {
-        log.Debug ($"MakeAnalysis: about to analyze sub-modification {subGlobalModification}");
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: about to analyze sub-modification {subGlobalModification}");
+        }
         var subModificationAnalysis = new ModificationAnalysis (subGlobalModification, this.ActivityAnalysis);
         while (!MakeAnalysis (cancellationToken, subGlobalModification, subModificationAnalysis)) {
           log.Info ($"MakeAnalysis: retry the analysis of sub-modification {subGlobalModification}");
@@ -313,13 +315,15 @@ namespace Lemoine.Analysis
         if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
           notCompletedGlobalSubModifications = true;
         }
-        log.Debug ($"MakeAnalysis: analysis of sub-modification {subGlobalModification} is completed");
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: analysis of sub-modification {subGlobalModification} is completed");
+        }
         SetActive ();
       }
 
       // - Update the status of the main modification if there is no pending sub-modification
       if (notCompletedGlobalSubModifications) {
-        log.Debug ($"MakeAnalysis: one sub-modification has a pending status");
+        log.Debug ("MakeAnalysis: one sub-modification has a pending status");
       }
       else { // !pendingGlobalSubModifications
         if (!CheckPendingSubModifications (modification)) {
@@ -334,7 +338,9 @@ namespace Lemoine.Analysis
 
               modification = ReloadModification (modification);
 
-              log.Debug ($"MakeAnalysis: the modification {modification} with sub-modifications is now completed");
+              if (log.IsDebugEnabled) {
+                log.Debug ($"MakeAnalysis: the modification {modification} with sub-modifications is now completed");
+              }
               if (modification.AnalysisStatus.Equals (AnalysisStatus.PendingSubModifications)) {
                 modification.MarkAllSubModificationsCompleted ();
                 allSubModificationsCompleted = true;
@@ -374,14 +380,14 @@ namespace Lemoine.Analysis
               bool pendingMachineSubModifications = ModelDAOHelper.DAOFactory.GlobalModificationDAO
                 .HasNotCompletedSubMachineModifications (modification, machine, false);
               if (pendingMachineSubModifications) {
-                log.Debug ($"CheckPendingSubModifications: there is at least one pending machine sub-modification");
+                log.Debug ("CheckPendingSubModifications: there is at least one pending machine sub-modification");
                 return true;
               }
             }
           } // modification.AnalysisSubMachineModifications
         }
 
-        log.Debug ($"CheckPendingSubModifications: there is no pending sub-modification");
+        log.Debug ("CheckPendingSubModifications: there is no pending sub-modification");
         return false;
       }
     }

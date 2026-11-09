@@ -93,9 +93,7 @@ namespace Lemoine.Analysis
       Debug.Assert (null != machine);
 
       m_machine = machine;
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                this.GetType ().FullName,
-                                                machine.Id));
+      log = LogManager.GetLogger ($"{this.GetType ().FullName}.{machine.Id}");
 
       foreach (var extension in m_extensions) {
         extension.Initialize (machine);
@@ -117,9 +115,7 @@ namespace Lemoine.Analysis
       Debug.Assert (null != machine);
 
       m_machine = machine;
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                this.GetType ().FullName,
-                                                machine.Id));
+      log = LogManager.GetLogger ($"{this.GetType ().FullName}.{machine.Id}");
 
       foreach (var extension in m_extensions) {
         extension.Initialize (machine);
@@ -143,9 +139,7 @@ namespace Lemoine.Analysis
       Debug.Assert (null != machine);
 
       m_machine = machine;
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                this.GetType ().FullName,
-                                                machine.Id));
+      log = LogManager.GetLogger ($"{this.GetType ().FullName}.{machine.Id}");
 
       foreach (var extension in m_extensions) {
         extension.Initialize (machine);
@@ -170,9 +164,7 @@ namespace Lemoine.Analysis
       Debug.Assert (null != machine);
 
       m_machine = machine;
-      log = LogManager.GetLogger (string.Format ("{0}.{1}",
-                                                this.GetType ().FullName,
-                                                machine.Id));
+      log = LogManager.GetLogger ($"{this.GetType ().FullName}.{machine.Id}");
 
       foreach (var extension in m_extensions) {
         extension.Initialize (machine);
@@ -349,7 +341,7 @@ namespace Lemoine.Analysis
 
       if (!ModelDAOHelper.DAOFactory.MachineModificationDAO.Delete (m_machine, AnalysisStatus.Delete, null,
         itemNumberByStep, maxNumberOfModifications, maxDateTime)) {
-        log.WarnFormat ("DeleteFlaggedModifications: not completed (interrupted)");
+        log.Warn ("DeleteFlaggedModifications: not completed (interrupted)");
         return false;
       }
       return true;
@@ -377,7 +369,7 @@ namespace Lemoine.Analysis
 
       if (!ModelDAOHelper.DAOFactory.MachineModificationDAO.Delete (m_machine, AnalysisStatus.DonePurge, maxCompletionDateTime, null,
         itemNumberByStep, maxNumberOfModifications, maxDateTime)) {
-        log.WarnFormat ("DeleteDonePurgeModifications: not completed (interrupted)");
+        log.Warn ("DeleteDonePurgeModifications: not completed (interrupted)");
         return false;
       }
       return true;
