@@ -103,6 +103,17 @@ namespace Lemoine.Analysis
       "Analysis.Activity.PendingModifications.MaxTime.Run";
     static readonly TimeSpan MAX_TIME_PENDING_MODIFICATIONS_RUN_DEFAULT = TimeSpan.FromDays (1);
 
+    /// <summary>
+    /// Minimum frequency at which the analysis status rows of the new modifications are created again
+    /// during a pass on the pending modifications.
+    ///
+    /// Without it, a modification that is inserted during a long pass (for example when a modification
+    /// is retried or continued many times) remains invisible until the end of the pass.
+    /// 0 to create them only once at the start of a pass (former behavior)
+    /// </summary>
+    static readonly string FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_KEY = "Analysis.Modification.FillAnalysisStatus.RefillFrequency";
+    static readonly TimeSpan FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_DEFAULT = TimeSpan.FromMinutes (5);
+
     static readonly string TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_KEY = "Analysis.PendingModificationAnalysis.TemporaryWithDelayException.Sleep";
     static readonly TimeSpan TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (2);
 
@@ -124,6 +135,7 @@ namespace Lemoine.Analysis
     long? m_maxModificationIdAllCompleted;
     long m_limitNewAnalysisStatus = -1; // Not set
     bool m_fillAnalysisStatusCompleted = false;
+    DateTime m_lastFillAnalysisStatusDateTime = DateTime.MinValue;
 
     PendingModificationsProgress m_progress = PendingModificationsProgress.CreateDefault ();
 
@@ -458,7 +470,10 @@ namespace Lemoine.Analysis
 
         // Get the maximum modification ID
         long? maxModificationId = GetMaxModificationId ();
-        if (object.Equals (maxModificationId,  m_maxModificationIdAllCompleted)) { // maxModificationId has already been processed
+        // Note: a modification with a lower id may be committed late without changing maxModificationId,
+        // so a periodic full scan of the analysis status rows prevents this shortcut
+        if (object.Equals (maxModificationId, m_maxModificationIdAllCompleted)
+          && !IsFillAnalysisStatusFullScanDue ()) { // maxModificationId has already been processed
           if (GetLogger ().IsDebugEnabled) {
             GetLogger ().Debug ($"MakeAnalysis: Max ModificationId {maxModificationId} has already been flagged as completed (no change) => nothing to do (except cleaning the modifications)");
           }
@@ -545,8 +560,7 @@ namespace Lemoine.Analysis
             .ToList ();
           if (!pastModifications.Any ()) {
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("ProcessPastPendingModifications: " +
-                "no more past modifications found");
+              GetLogger ().Debug ("ProcessPastPendingModifications: no more past modifications found");
             }
             return true;
           }
@@ -1143,10 +1157,18 @@ namespace Lemoine.Analysis
     /// <returns></returns>
     protected abstract Task<long?> GetMaxModificationIdAsync ();
 
-    void CheckNewAnalysisStatus (CancellationToken cancellationToken)
+    internal void CheckNewAnalysisStatus (CancellationToken cancellationToken)
     {
       if (m_fillAnalysisStatusCompleted) {
-        return;
+        var refillFrequency = Lemoine.Info.ConfigSet
+          .LoadAndGet (FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_KEY, FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_DEFAULT);
+        if ((refillFrequency.Ticks <= 0)
+          || (DateTime.UtcNow < m_lastFillAnalysisStatusDateTime.Add (refillFrequency))) {
+          return;
+        }
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"CheckNewAnalysisStatus: last FillAnalysisStatus at {m_lastFillAnalysisStatusDateTime} older than {refillFrequency} => run it again during this pass");
+        }
       }
 
       long limit;
@@ -1161,6 +1183,7 @@ namespace Lemoine.Analysis
         GetLogger ().Debug ($"CheckNewAnalysisStatus: FillAnalysisStatus with limit {limit}");
       }
       m_fillAnalysisStatusCompleted = FillAnalysisStatus (cancellationToken, limit);
+      m_lastFillAnalysisStatusDateTime = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -1172,6 +1195,14 @@ namespace Lemoine.Analysis
     /// <param name="limit">Maximum number of items to retrieve</param>
     /// <returns>Completed (the limit was not reached)</returns>
     public abstract bool FillAnalysisStatus (CancellationToken cancellationToken, long limit);
+
+    /// <summary>
+    /// Is a full scan of the modifications without any analysis status row due?
+    ///
+    /// Default is false
+    /// </summary>
+    /// <returns></returns>
+    protected virtual bool IsFillAnalysisStatusFullScanDue () => false;
 
     /// <summary>
     /// Get the default limit for the creation of the new analysis status

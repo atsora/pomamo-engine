@@ -61,8 +61,21 @@ namespace Lemoine.Analysis
     static readonly int SUB_MODIFICATION_ATTEMPT_WARNING = 100;
     static readonly int SUB_MODIFICATION_ATTEMPT_FATAL = 10000;
 
+    /// <summary>
+    /// Frequency of a full scan by FillAnalysisStatus (from the first modification), for safety.
+    /// 0 to deactivate it
+    ///
+    /// Usually FillAnalysisStatus only considers the modifications from the last processed modification id.
+    /// A modification id is allocated when the modification is inserted, but the modification is visible
+    /// only once its transaction is committed: a modification with a lower id that is committed late
+    /// would be missed without this full scan
+    /// </summary>
+    static readonly string FILL_ANALYSIS_STATUS_FULL_SCAN_FREQUENCY_KEY = "Analysis.Modification.FillAnalysisStatus.FullScanFrequency";
+    static readonly TimeSpan FILL_ANALYSIS_STATUS_FULL_SCAN_FREQUENCY_DEFAULT = TimeSpan.FromHours (1);
+
     readonly IMachine m_machine;
     long m_lastModificationStatusId = 0;
+    DateTime m_lastFillAnalysisStatusFullScan = DateTime.UtcNow; // The first scan starts from 0 anyway
  
     readonly ILog log = LogManager.GetLogger (typeof (PendingMachineModificationAnalysis).FullName);
 
@@ -412,9 +425,7 @@ namespace Lemoine.Analysis
       int? maxSameMachineSubStatusPriority = null;
       foreach (IMachineModification subSameMachineModification in subSameMachineModifications) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("ProcessSubModifications: " +
-            "about to analyze sub-modification {0}",
-            ((IDataWithId<long>)subSameMachineModification).Id);
+          GetLogger ().Debug ($"ProcessSubModifications: about to analyze sub-modification {((IDataWithId<long>)subSameMachineModification).Id}");
         }
         var subModificationAnalysis = new ModificationAnalysis (subSameMachineModification, this.ActivityAnalysis, m_machine);
         {
@@ -422,19 +433,15 @@ namespace Lemoine.Analysis
           while (!MakeAnalysis (cancellationToken, subSameMachineModification, subModificationAnalysis)) {
             if (SUB_MODIFICATION_ATTEMPT_WARNING < i++) {
               if (GetLogger ().IsWarnEnabled) {
-                GetLogger ().WarnFormat ("ProcessSubModifications: attempt {0} to complete sub-modification {1}",
-                  i, ((IDataWithId<long>)subSameMachineModification).Id);
+                GetLogger ().Warn ($"ProcessSubModifications: attempt {i} to complete sub-modification {((IDataWithId<long>)subSameMachineModification).Id}");
               }
               if (SUB_MODIFICATION_ATTEMPT_FATAL < i) {
-                GetLogger ().FatalFormat ("ProcessSubModifications: attempt {0} to complete sub-modification {1}, throw an exception",
-                  i, ((IDataWithId<long>)subSameMachineModification).Id);
+                GetLogger ().Fatal ($"ProcessSubModifications: attempt {i} to complete sub-modification {((IDataWithId<long>)subSameMachineModification).Id}, throw an exception");
                 throw new Exception ("Attempt limit reached for sub-modification");
               }
             }
             if (GetLogger ().IsInfoEnabled) {
-              GetLogger ().InfoFormat ("ProcessSubModifications: " +
-                "retry the analysis of sub-modification {0}",
-                ((IDataWithId<long>)subSameMachineModification).Id);
+              GetLogger ().Info ($"ProcessSubModifications: retry the analysis of sub-modification {((IDataWithId<long>)subSameMachineModification).Id}");
             }
             SetActive ();
           }
@@ -456,9 +463,7 @@ namespace Lemoine.Analysis
           }
         }
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("ProcessSubModifications: " +
-            "analysis of sub-modification {0} is completed",
-            ((IDataWithId<long>)subSameMachineModification).Id);
+          GetLogger ().Debug ($"ProcessSubModifications: analysis of sub-modification {((IDataWithId<long>)subSameMachineModification).Id} is completed");
         }
         SetActive ();
       }
@@ -494,8 +499,7 @@ namespace Lemoine.Analysis
       }
       else if (AnalysisStatus.PendingSubModifications != analysisStatus) {
         if (GetLogger ().IsErrorEnabled) {
-          GetLogger ().ErrorFormat ("ProcessSubModifications: all sub-modifications were processed but keep the status {0} of modification id={1} unchanged since it is not PendingSubModifications",
-            modification.AnalysisStatus, ((IDataWithId<long>)modification).Id);
+          GetLogger ().Error ($"ProcessSubModifications: all sub-modifications were processed but keep the status {modification.AnalysisStatus} of modification id={((IDataWithId<long>)modification).Id} unchanged since it is not PendingSubModifications");
         }
       }
       else { // !notCompletedSameMachineSubModifications
@@ -511,9 +515,7 @@ namespace Lemoine.Analysis
                 .FindById (((Lemoine.Collections.IDataWithId<long>)modification).Id, modification.Machine);
 
               if (GetLogger ().IsDebugEnabled) {
-                GetLogger ().DebugFormat ("ProcessSubModifications: " +
-                  "the modification {0} with sub-modifications is now completed",
-                  ((IDataWithId<long>)modification).Id);
+                GetLogger ().Debug ($"ProcessSubModifications: the modification {((IDataWithId<long>)modification).Id} with sub-modifications is now completed");
               }
               if (modification.AnalysisStatus.Equals (AnalysisStatus.PendingSubModifications)) {
                 modification.MarkAllSubModificationsCompleted ();
@@ -521,7 +523,7 @@ namespace Lemoine.Analysis
               }
               else {
                 if (GetLogger ().IsInfoEnabled) {
-                  GetLogger ().InfoFormat ("ProcessSubModifications: done but keep the status {0} since it is not PendingSubModifications", analysisStatus);
+                  GetLogger ().Info ($"ProcessSubModifications: done but keep the status {analysisStatus} since it is not PendingSubModifications");
                 }
               }
               ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (modification);
@@ -665,12 +667,49 @@ namespace Lemoine.Analysis
                              lockedTables: lockedTables)) {
           transaction.SynchronousCommitOption = SynchronousCommit.Off; // Because this do not drive to any risk of loosing some data
           // Note: this must be the top serializable transaction
-          m_lastModificationStatusId = ModelDAOHelper.DAOFactory.MachineModificationDAO
-            .CreateNewAnalysisStatus (m_machine, serializable, m_lastModificationStatusId, limit, out limitReached);
+          var minModificationId = GetFillAnalysisStatusMinModificationId ();
+          var maxInsertedModificationId = ModelDAOHelper.DAOFactory.MachineModificationDAO
+            .CreateNewAnalysisStatus (m_machine, serializable, minModificationId, limit, out limitReached);
           transaction.Commit ();
+          if ((minModificationId < maxInsertedModificationId) && (maxInsertedModificationId < m_lastModificationStatusId)) {
+            // Some analysis status rows were missing before the last processed modification id
+            if (GetLogger ().IsWarnEnabled) {
+              GetLogger ().Warn ($"FillAnalysisStatus: missing analysis status rows were created for modification ids up to {maxInsertedModificationId}, before the last processed modification id {m_lastModificationStatusId} (late commit of a modification)");
+            }
+          }
+          // Note: the returned value may be the min modification id, if there is no new modification
+          m_lastModificationStatusId = Math.Max (m_lastModificationStatusId, maxInsertedModificationId);
         }
       }
       return !limitReached;
+    }
+
+    /// <summary>
+    /// <see cref="PendingModificationAnalysis{I, T}"/>
+    /// </summary>
+    /// <returns></returns>
+    protected override bool IsFillAnalysisStatusFullScanDue ()
+    {
+      var fullScanFrequency = Lemoine.Info.ConfigSet
+        .LoadAndGet (FILL_ANALYSIS_STATUS_FULL_SCAN_FREQUENCY_KEY, FILL_ANALYSIS_STATUS_FULL_SCAN_FREQUENCY_DEFAULT);
+      return (0 < fullScanFrequency.Ticks)
+        && (m_lastFillAnalysisStatusFullScan.Add (fullScanFrequency) <= DateTime.UtcNow);
+    }
+
+    /// <summary>
+    /// Get the minimum modification id from which FillAnalysisStatus must scan the modifications:
+    /// the last processed modification id, or 0 for a periodic full scan
+    /// </summary>
+    long GetFillAnalysisStatusMinModificationId ()
+    {
+      if (IsFillAnalysisStatusFullScanDue ()) {
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"GetFillAnalysisStatusMinModificationId: full scan, the last one was at {m_lastFillAnalysisStatusFullScan}");
+        }
+        m_lastFillAnalysisStatusFullScan = DateTime.UtcNow;
+        return 0;
+      }
+      return m_lastModificationStatusId;
     }
   }
 }
