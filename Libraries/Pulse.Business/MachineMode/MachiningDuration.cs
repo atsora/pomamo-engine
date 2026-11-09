@@ -51,6 +51,11 @@ namespace Lemoine.Business.MachineMode
     MachineModeFilter Filter { get; set; }
 
     /// <summary>
+    /// Request of the days before the day of the upper bound of another request
+    /// </summary>
+    readonly bool m_past = false;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="machine">not null</param>
@@ -64,6 +69,21 @@ namespace Lemoine.Business.MachineMode
       this.Machine = machine;
       this.Range = range;
       this.Filter = filter;
+    }
+
+    /// <summary>
+    /// Constructor of the request of the days before the day of the upper bound, made by
+    /// <see cref="GetAsync"/>: its upper bound is the start of a day, so it may not recurse
+    /// again
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <param name="pastRange">not empty</param>
+    /// <param name="filter"></param>
+    /// <param name="past">true</param>
+    MachiningDuration (IMachine machine, UtcDateTimeRange pastRange, MachineModeFilter filter, bool past)
+      : this (machine, pastRange, filter)
+    {
+      m_past = past;
     }
 
     /// <summary>
@@ -83,14 +103,14 @@ namespace Lemoine.Business.MachineMode
         // Read-write because of the day processing
         using (var transaction = session.BeginTransaction ("Business.MachineMode.MachiningDuration")) {
           var upperBound = Bound.GetMinimum<DateTime> (DateTime.UtcNow, this.Range.Upper).Value;
-          var upperDaySlot = ModelDAOHelper.DAOFactory.DaySlotDAO
-            .FindProcessedAt (upperBound);
+          var upperDaySlot = CheckUpperDaySlot (upperBound, ModelDAOHelper.DAOFactory.DaySlotDAO
+            .FindProcessedAt (upperBound));
           MachiningDurationResponse result;
-          if (IsUpperInsideDay (upperBound, upperDaySlot)) {
+          if (IsUpperInsideDay (upperBound, upperDaySlot) && !IsUnexpectedRecursion (upperBound, upperDaySlot)) {
             var pastRange = GetPastRange (upperDaySlot);
             var past = (pastRange is null)
               ? null
-              : ServiceProvider.Get (new MachiningDuration (this.Machine, pastRange, this.Filter));
+              : ServiceProvider.Get (new MachiningDuration (this.Machine, pastRange, this.Filter, true));
             result = ComputeInsideDay (upperDaySlot, past);
           }
           else {
@@ -117,14 +137,14 @@ namespace Lemoine.Business.MachineMode
         // Read-write because of the day processing
         using (var transaction = session.BeginTransaction ("Business.MachineMode.MachiningDuration")) {
           var upperBound = Bound.GetMinimum<DateTime> (DateTime.UtcNow, this.Range.Upper).Value;
-          var upperDaySlot = await ModelDAOHelper.DAOFactory.DaySlotDAO
-            .FindProcessedAtAsync (upperBound);
+          var upperDaySlot = CheckUpperDaySlot (upperBound, await ModelDAOHelper.DAOFactory.DaySlotDAO
+            .FindProcessedAtAsync (upperBound));
           MachiningDurationResponse result;
-          if (IsUpperInsideDay (upperBound, upperDaySlot)) {
+          if (IsUpperInsideDay (upperBound, upperDaySlot) && !IsUnexpectedRecursion (upperBound, upperDaySlot)) {
             var pastRange = GetPastRange (upperDaySlot);
             var past = (pastRange is null)
               ? null
-              : await ServiceProvider.GetAsync (new MachiningDuration (this.Machine, pastRange, this.Filter));
+              : await ServiceProvider.GetAsync (new MachiningDuration (this.Machine, pastRange, this.Filter, true));
             result = await ComputeInsideDayAsync (upperDaySlot, past);
           }
           else {
@@ -134,6 +154,52 @@ namespace Lemoine.Business.MachineMode
           return result;
         }
       }
+    }
+
+    /// <summary>
+    /// Discard a day slot that does not contain the upper bound
+    ///
+    /// The past range that is computed next stops at the start of the day of the upper
+    /// bound. With a day that does not contain it, for example a day that starts after it,
+    /// that past range would not be shorter than the requested range, and the request would
+    /// call itself without end (no stack overflow: the stack is released at each
+    /// asynchronous database call). The day slot is then considered missing: the whole
+    /// period is counted with the full days, without any recursion
+    /// </summary>
+    /// <param name="upperBound"></param>
+    /// <param name="upperDaySlot">may be null</param>
+    /// <returns>upperDaySlot if it contains the upper bound, else null</returns>
+    IDaySlot CheckUpperDaySlot (DateTime upperBound, IDaySlot upperDaySlot)
+    {
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CheckUpperDaySlot: machine {this.Machine.Id} range {this.Range} upper bound {upperBound} => day {upperDaySlot?.Day} range {upperDaySlot?.DateTimeRange}");
+      }
+      if (upperDaySlot is null || upperDaySlot.DateTimeRange.ContainsElement (upperBound)) {
+        return upperDaySlot;
+      }
+      log.Fatal ($"CheckUpperDaySlot: day {upperDaySlot.Day} range {upperDaySlot.DateTimeRange} does not contain {upperBound}, machine {this.Machine.Id} range {this.Range} => count the full days without recursion");
+      return null;
+    }
+
+    /// <summary>
+    /// Would this request call itself a second time?
+    ///
+    /// The request of the days before the day of the upper bound has the start of that day
+    /// as upper bound: it is never inside a day, and it is counted with the full days. If it
+    /// is, the day slots are not consistent, and recursing again could go on without end
+    /// (this happened with more than 17000 nested requests, which never returned). The
+    /// period is then counted with the full days, which is approximative
+    /// </summary>
+    /// <param name="upperBound"></param>
+    /// <param name="upperDaySlot">not null, contains upperBound</param>
+    /// <returns></returns>
+    bool IsUnexpectedRecursion (DateTime upperBound, IDaySlot upperDaySlot)
+    {
+      if (!m_past) {
+        return false;
+      }
+      log.Fatal ($"IsUnexpectedRecursion: machine {this.Machine.Id} range {this.Range} (upper kind {this.Range.Upper.Value.Kind}): upper bound {upperBound:o} (kind {upperBound.Kind}) is inside day {upperDaySlot.Day} range {upperDaySlot.DateTimeRange} (lower {upperDaySlot.DateTimeRange.Lower.Value:o} kind {upperDaySlot.DateTimeRange.Lower.Value.Kind}) => count the full days without recursion, approximative value");
+      return true;
     }
 
     /// <summary>
@@ -157,7 +223,7 @@ namespace Lemoine.Business.MachineMode
         Debug.Assert (false);
         return false;
       }
-      return !Bound<DateTime>.Equals (upperBound, upperDaySlot.DateTimeRange.Lower);
+      return !Bound.Equals<DateTime> (upperDaySlot.DateTimeRange.Lower, upperBound);
     }
 
     /// <summary>
@@ -240,7 +306,7 @@ namespace Lemoine.Business.MachineMode
           Debug.Assert (false);
           lowerFullDay = this.Range.Lower.Value.Date;
         }
-        else if (!Bound<DateTime>.Equals (this.Range.Lower, lowerDaySlot.DateTimeRange.Lower)) {
+        else if (!Bound.Equals<DateTime> (this.Range.Lower, lowerDaySlot.DateTimeRange.Lower)) {
           // Count the period [this.Range.Lower, lowerDaySlot.DateTimeRange.Upper)
           Debug.Assert (lowerDaySlot.DateTimeRange.Upper.HasValue);
           Debug.Assert (this.Range.Lower.Value < lowerDaySlot.DateTimeRange.Upper.Value);
@@ -295,7 +361,7 @@ namespace Lemoine.Business.MachineMode
           Debug.Assert (false);
           lowerFullDay = this.Range.Lower.Value.Date;
         }
-        else if (!Bound<DateTime>.Equals (this.Range.Lower, lowerDaySlot.DateTimeRange.Lower)) {
+        else if (!Bound.Equals<DateTime> (this.Range.Lower, lowerDaySlot.DateTimeRange.Lower)) {
           // Count the period [this.Range.Lower, lowerDaySlot.DateTimeRange.Upper)
           Debug.Assert (lowerDaySlot.DateTimeRange.Upper.HasValue);
           Debug.Assert (this.Range.Lower.Value < lowerDaySlot.DateTimeRange.Upper.Value);
