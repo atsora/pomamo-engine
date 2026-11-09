@@ -45,16 +45,10 @@ namespace Lemoine.Analysis
     static readonly string DELETE_NUMBER_MAX_DURATION_KEY = "Analysis.Modification.Delete.MaxDuration";
     static readonly TimeSpan DELETE_NUMBER_MAX_DURATION_DEFAULT = TimeSpan.FromSeconds (30);
 
-    #region Members
     IList<IMachine> m_machines = null;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (PendingGlobalMachineModificationAnalysis).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
-    #region Constructors
     /// <summary>
     /// Constructor
     /// 
@@ -110,9 +104,7 @@ namespace Lemoine.Analysis
       : base (runInThread, activityAnalysis)
     {
     }
-    #endregion // Constructors
 
-    #region Methods
     void LoadMachines ()
     {
       if (null == m_machines) {
@@ -329,7 +321,7 @@ namespace Lemoine.Analysis
           AnalysisStatus.Delete,
           this,
           itemNumberByStep, maxNumberOfModifications, maxDateTime)) {
-          log.WarnFormat ("DeleteFlaggedModifications: not completed (interrupted)");
+          log.Warn ("DeleteFlaggedModifications: not completed (interrupted)");
           completed = false;
         }
         SetActive ();
@@ -364,7 +356,7 @@ namespace Lemoine.Analysis
         if (!ModelDAOHelper.DAOFactory.MachineModificationDAO.Delete (machine, AnalysisStatus.DonePurge, maxCompletionDateTime,
          this,
          itemNumberByStep, maxNumberOfModifications, maxDateTime)) {
-          log.WarnFormat ("DeleteDonePurgeModifications: not completed (interrupted)");
+          log.Warn ("DeleteDonePurgeModifications: not completed (interrupted)");
           completed = false;
         }
         SetActive ();
@@ -410,9 +402,7 @@ namespace Lemoine.Analysis
           }
           else {
             Debug.Assert (false);
-            log.FatalFormat ("ProcessSubModifications: " +
-                             "not supported/implemented modification type {0}",
-                             modification);
+            log.Fatal ($"ProcessSubModifications: not supported/implemented modification type {modification}");
             throw new Exception ("not supported/implemented modification type");
           }
           transaction.Commit ();
@@ -421,23 +411,21 @@ namespace Lemoine.Analysis
 
       // - Analyze the global sub-modifications
       foreach (IGlobalModification subGlobalModification in subGlobalModifications) {
-        log.DebugFormat ("MakeAnalysis: " +
-                         "about to analyze sub-modification {0}",
-                         subGlobalModification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: about to analyze sub-modification {subGlobalModification}");
+        }
         var subModificationAnalysis = new ModificationAnalysis (subGlobalModification, this.ActivityAnalysis);
         while (!MakeAnalysis (cancellationToken, subGlobalModification, subModificationAnalysis)) {
-          log.InfoFormat ("MakeAnalysis: " +
-                          "retry the analysis of sub-modification {0}",
-                          subGlobalModification);
+          log.Info ($"MakeAnalysis: retry the analysis of sub-modification {subGlobalModification}");
           SetActive ();
         }
         // disable once ConvertIfToOrExpression
         if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
           notCompletedSubModifications = true;
         }
-        log.DebugFormat ("MakeAnalysis: " +
-                         "analysis of sub-modification {0} is completed",
-                         subGlobalModification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: analysis of sub-modification {subGlobalModification} is completed");
+        }
         SetActive ();
       }
 
@@ -459,9 +447,7 @@ namespace Lemoine.Analysis
           }
           else {
             Debug.Assert (false);
-            log.FatalFormat ("ProcessSubModifications: " +
-                             "not supported/implemented modification type {0}",
-                             modification);
+            log.Fatal ($"ProcessSubModifications: not supported/implemented modification type {modification}");
             throw new Exception ("not supported/implemented modification type");
           }
           transaction.Commit ();
@@ -470,35 +456,32 @@ namespace Lemoine.Analysis
 
       // - Analyze the machine sub-modifications
       foreach (IMachineModification subMachineModification in subMachineModifications) {
-        log.DebugFormat ("MakeAnalysis: " +
-                         "about to analyze sub-modification {0}",
-                         subMachineModification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: about to analyze sub-modification {subMachineModification}");
+        }
         var subModificationAnalysis = new ModificationAnalysis (subMachineModification, this.ActivityAnalysis);
         while (!MakeAnalysis (cancellationToken, subMachineModification, subModificationAnalysis)) {
-          log.InfoFormat ("MakeAnalysis: " +
-                          "retry the analysis of sub-modification {0}",
-                          subMachineModification);
+          log.Info ($"MakeAnalysis: retry the analysis of sub-modification {subMachineModification}");
           SetActive ();
         }
         // disable once ConvertIfToOrExpression
         if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
           notCompletedSubModifications = true;
         }
-        log.DebugFormat ("MakeAnalysis: " +
-                         "analysis of sub-modification {0} is completed",
-                         subMachineModification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: analysis of sub-modification {subMachineModification} is completed");
+        }
         SetActive ();
       }
 
       // - Update the status of the main modification if there is no pending sub-modification
       if (notCompletedSubModifications) {
-        log.DebugFormat ("MakeAnalysis: " +
-                         "one sub-modification has a pending status");
+        log.Debug ("MakeAnalysis: one sub-modification has a pending status");
       }
       else { // !pendingGlobalSubModifications
         if (modification.AnalysisStatus.Equals (AnalysisStatus.Pending)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("ProcessSubModifications: all sub-modifications completed, but current status is Pending, do nothing");
+            log.Debug ($"ProcessSubModifications: all sub-modifications completed, but current status is Pending, do nothing");
           }
           return;
         }
@@ -513,15 +496,15 @@ namespace Lemoine.Analysis
 
             modification = ReloadModification (modification);
 
-            log.DebugFormat ("MakeAnalysis: " +
-                             "the modification {0} with sub-modifications is now completed",
-                             modification);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MakeAnalysis: the modification {modification} with sub-modifications is now completed");
+            }
             if (modification.AnalysisStatus.Equals (AnalysisStatus.PendingSubModifications)) {
               modification.MarkAllSubModificationsCompleted ();
               allSubModificationsCompleted = true;
             }
             else {
-              log.InfoFormat ("ProcessSubModifications: done but keep the status {0} since it is not PendingSubModifications", analysisStatus);
+              log.Info ($"ProcessSubModifications: done but keep the status {analysisStatus} since it is not PendingSubModifications");
             }
             ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (modification);
 
@@ -629,6 +612,5 @@ namespace Lemoine.Analysis
 
       return !limitReached;
     }
-    #endregion // Methods
   }
 }

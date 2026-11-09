@@ -39,9 +39,6 @@ namespace Lemoine.Analysis
 
     readonly ILog log = LogManager.GetLogger (typeof (PendingGlobalModificationAnalysis).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     /// <summary>
     /// Constructor
     /// 
@@ -110,7 +107,6 @@ namespace Lemoine.Analysis
       }
     }
 
-    #region Methods
     /// <summary>
     /// Logger
     /// </summary>
@@ -307,30 +303,27 @@ namespace Lemoine.Analysis
       // - Analyze them
       bool notCompletedGlobalSubModifications = false;
       foreach (IGlobalModification subGlobalModification in subGlobalModifications) {
-        log.DebugFormat ("MakeAnalysis: " +
-                         "about to analyze sub-modification {0}",
-                         subGlobalModification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: about to analyze sub-modification {subGlobalModification}");
+        }
         var subModificationAnalysis = new ModificationAnalysis (subGlobalModification, this.ActivityAnalysis);
         while (!MakeAnalysis (cancellationToken, subGlobalModification, subModificationAnalysis)) {
-          log.InfoFormat ("MakeAnalysis: " +
-                          "retry the analysis of sub-modification {0}",
-                          subGlobalModification);
+          log.Info ($"MakeAnalysis: retry the analysis of sub-modification {subGlobalModification}");
           SetActive ();
         }
         // disable once ConvertIfToOrExpression
         if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
           notCompletedGlobalSubModifications = true;
         }
-        log.DebugFormat ("MakeAnalysis: " +
-                         "analysis of sub-modification {0} is completed",
-                         subGlobalModification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: analysis of sub-modification {subGlobalModification} is completed");
+        }
         SetActive ();
       }
 
       // - Update the status of the main modification if there is no pending sub-modification
       if (notCompletedGlobalSubModifications) {
-        log.DebugFormat ("MakeAnalysis: " +
-                         "one sub-modification has a pending status");
+        log.Debug ("MakeAnalysis: one sub-modification has a pending status");
       }
       else { // !pendingGlobalSubModifications
         if (!CheckPendingSubModifications (modification)) {
@@ -345,15 +338,15 @@ namespace Lemoine.Analysis
 
               modification = ReloadModification (modification);
 
-              log.DebugFormat ("MakeAnalysis: " +
-                               "the modification {0} with sub-modifications is now completed",
-                               modification);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"MakeAnalysis: the modification {modification} with sub-modifications is now completed");
+              }
               if (modification.AnalysisStatus.Equals (AnalysisStatus.PendingSubModifications)) {
                 modification.MarkAllSubModificationsCompleted ();
                 allSubModificationsCompleted = true;
               }
               else {
-                log.InfoFormat ("ProcessSubModifications: done but keep the status {0} since it is not PendingSubModifications", modification.AnalysisStatus);
+                log.Info ($"ProcessSubModifications: done but keep the status {modification.AnalysisStatus} since it is not PendingSubModifications");
               }
               ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (modification);
 
@@ -387,16 +380,14 @@ namespace Lemoine.Analysis
               bool pendingMachineSubModifications = ModelDAOHelper.DAOFactory.GlobalModificationDAO
                 .HasNotCompletedSubMachineModifications (modification, machine, false);
               if (pendingMachineSubModifications) {
-                log.DebugFormat ("CheckPendingSubModifications: " +
-                                 "there is at least one pending machine sub-modification");
+                log.Debug ("CheckPendingSubModifications: there is at least one pending machine sub-modification");
                 return true;
               }
             }
           } // modification.AnalysisSubMachineModifications
         }
 
-        log.DebugFormat ("CheckPendingSubModifications: " +
-                         "there is no pending sub-modification");
+        log.Debug ("CheckPendingSubModifications: there is no pending sub-modification");
         return false;
       }
     }
@@ -450,6 +441,5 @@ namespace Lemoine.Analysis
       // Do nothing here because it is not required for the global modifications that are not partitioned by machine
       return true;
     }
-    #endregion // Methods
   }
 }

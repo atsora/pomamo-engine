@@ -103,6 +103,17 @@ namespace Lemoine.Analysis
       "Analysis.Activity.PendingModifications.MaxTime.Run";
     static readonly TimeSpan MAX_TIME_PENDING_MODIFICATIONS_RUN_DEFAULT = TimeSpan.FromDays (1);
 
+    /// <summary>
+    /// Minimum frequency at which the analysis status rows of the new modifications are created again
+    /// during a pass on the pending modifications.
+    ///
+    /// Without it, a modification that is inserted during a long pass (for example when a modification
+    /// is retried or continued many times) remains invisible until the end of the pass.
+    /// 0 to create them only once at the start of a pass (former behavior)
+    /// </summary>
+    static readonly string FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_KEY = "Analysis.Modification.FillAnalysisStatus.RefillFrequency";
+    static readonly TimeSpan FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_DEFAULT = TimeSpan.FromMinutes (5);
+
     static readonly string TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_KEY = "Analysis.PendingModificationAnalysis.TemporaryWithDelayException.Sleep";
     static readonly TimeSpan TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (2);
 
@@ -124,6 +135,7 @@ namespace Lemoine.Analysis
     long? m_maxModificationIdAllCompleted;
     long m_limitNewAnalysisStatus = -1; // Not set
     bool m_fillAnalysisStatusCompleted = false;
+    DateTime m_lastFillAnalysisStatusDateTime = DateTime.MinValue;
 
     PendingModificationsProgress m_progress = PendingModificationsProgress.CreateDefault ();
 
@@ -136,7 +148,6 @@ namespace Lemoine.Analysis
 
     readonly ILog log = LogManager.GetLogger (typeof (PendingModificationAnalysis<I, T>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Run the analysis in a thread (default, for debugging purpose, you can turn this to false)
     /// </summary>
@@ -159,7 +170,6 @@ namespace Lemoine.Analysis
       get { return m_checkedParent; }
       set { m_checkedParent = value; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor
@@ -458,7 +468,10 @@ namespace Lemoine.Analysis
 
         // Get the maximum modification ID
         long? maxModificationId = GetMaxModificationId ();
-        if (object.Equals (maxModificationId,  m_maxModificationIdAllCompleted)) { // maxModificationId has already been processed
+        // Note: a modification with a lower id may be committed late without changing maxModificationId,
+        // so a periodic full scan of the analysis status rows prevents this shortcut
+        if (object.Equals (maxModificationId, m_maxModificationIdAllCompleted)
+          && !IsFillAnalysisStatusFullScanDue ()) { // maxModificationId has already been processed
           if (GetLogger ().IsDebugEnabled) {
             GetLogger ().Debug ($"MakeAnalysis: Max ModificationId {maxModificationId} has already been flagged as completed (no change) => nothing to do (except cleaning the modifications)");
           }
@@ -545,8 +558,7 @@ namespace Lemoine.Analysis
             .ToList ();
           if (!pastModifications.Any ()) {
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("ProcessPastPendingModifications: " +
-                "no more past modifications found");
+              GetLogger ().Debug ("ProcessPastPendingModifications: no more past modifications found");
             }
             return true;
           }
@@ -562,7 +574,9 @@ namespace Lemoine.Analysis
             progress = UpdateProgress (pastModification, minPriority);
             if (GetLogger ().IsDebugEnabled) {
               GetLogger ().Debug ($"ProcessPastPendingModifications: Begin on past modification id {pastModification.Id}");
-              GetLogger ().Debug ($"ProcessPastPendingModifications: new progress is {progress}");
+              if (GetLogger ().IsDebugEnabled) {
+                GetLogger ().Debug ($"ProcessPastPendingModifications: new progress is {progress}");
+              }
             }
             if (MakeAnalysis (cancellationToken, pastModification)) {
               if (GetLogger ().IsDebugEnabled) {
@@ -580,9 +594,7 @@ namespace Lemoine.Analysis
             }
             else {
               if (GetLogger ().IsInfoEnabled) {
-                GetLogger ().InfoFormat ("ProcessPastPendingModifications: " +
-                  "past modification id={0} is retried or continued (because in progress)",
-                  pastModification.Id);
+                GetLogger ().Info ($"ProcessPastPendingModifications: past modification id={pastModification.Id} is retried or continued (because in progress)");
               }
               // Reload pastModification in case the status was updated
               pastModifications[i] = ReloadModification (pastModifications[i], lockTables: true);
@@ -663,15 +675,11 @@ namespace Lemoine.Analysis
 
           firstPendingModification.Caller = this;
           if (GetLogger ().IsDebugEnabled) {
-            GetLogger ().DebugFormat ("ProcessPresentPendingModifications: " +
-              "Begin on present modification id {0}",
-              firstPendingModification.Id);
+            GetLogger ().Debug ($"ProcessPresentPendingModifications: Begin on present modification id {firstPendingModification.Id}");
           }
           if (MakeAnalysis (cancellationToken, firstPendingModification)) {
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("ProcessPresentPendingModifications: " +
-                "End on present modification id {0}",
-                firstPendingModification.Id);
+              GetLogger ().Debug ($"ProcessPresentPendingModifications: End on present modification id {firstPendingModification.Id}");
             }
             progress = UpdateProgress (firstPendingModification, minPriority);
             if (GetLogger ().IsDebugEnabled) {
@@ -688,9 +696,7 @@ namespace Lemoine.Analysis
           }
           else {
             if (GetLogger ().IsInfoEnabled) {
-              GetLogger ().InfoFormat ("ProcessPresentPendingModifications: " +
-                "Present Modification id {0} must be retried or continued",
-                firstPendingModification.Id);
+              GetLogger ().Info ($"ProcessPresentPendingModifications: Present Modification id {firstPendingModification.Id} must be retried or continued");
             }
           }
 
@@ -852,9 +858,9 @@ namespace Lemoine.Analysis
     /// <returns>If true, completed, else retry it</returns>
     protected virtual bool MakeAnalysis (CancellationToken cancellationToken, I modification, ModificationAnalysis modificationAnalysis)
     {
-      GetLogger ().DebugFormat ("MakeAnalysis: modification id={0} type={1}",
-        ((IDataWithId<long>)modification).Id,
-        modification.GetType ());
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"MakeAnalysis: modification id={((IDataWithId<long>)modification).Id} type={modification.GetType ()}");
+      }
 
       foreach (var extension in m_extensions) {
         cancellationToken.ThrowIfCancellationRequested ();
@@ -931,9 +937,9 @@ namespace Lemoine.Analysis
     /// <param name="modification"></param>
     protected virtual void NotifyAllSubModificationsCompleted (I modification)
     {
-      GetLogger ().DebugFormat ("NotifyAllSubModificationsCompleted: modification id={0} type={1}",
-        ((IDataWithId<long>)modification).Id,
-        modification.GetType ());
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"NotifyAllSubModificationsCompleted: modification id={((IDataWithId<long>)modification).Id} type={modification.GetType ()}");
+      }
 
       foreach (var extension in m_extensions) {
         extension.NotifyAllSubModificationsCompleted (modification);
@@ -959,10 +965,7 @@ namespace Lemoine.Analysis
 
       if (modification.AnalysisStatus.Equals (AnalysisStatus.PendingSubModifications)) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("MakeAnalysisNoExtension: " +
-            "modification with pending sub-modifications: " +
-            "process them, and return true. Modification={0}",
-            ((IDataWithId<long>)modification).Id);
+          GetLogger ().Debug ($"MakeAnalysisNoExtension: modification with pending sub-modifications: process them, and return true. Modification={((IDataWithId<long>)modification).Id}");
         }
         ProcessSubModifications (cancellationToken, modification, modification.AnalysisStatus, modification.StatusPriority);
         return true;
@@ -976,9 +979,7 @@ namespace Lemoine.Analysis
                       || (modification.AnalysisStatus.Equals (AnalysisStatus.DatabaseTimeout)));
 
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("MakeAnalysisNoExtension: " +
-            "about to process modification {0} status={1}",
-            ((IDataWithId<long>)modification).Id, modification.AnalysisStatus);
+          GetLogger ().Debug ($"MakeAnalysisNoExtension: about to process modification {((IDataWithId<long>)modification).Id} status={modification.AnalysisStatus}");
         }
 
         if (!m_threadExecution) {
@@ -1040,7 +1041,7 @@ namespace Lemoine.Analysis
                   modification = ReloadModification (modification, lockTables: false); // Not the top transaction: lockTables: false
                   if (GetLogger ().IsErrorEnabled) {
                     if (modification.AnalysisStatus.Equals (AnalysisStatus.Timeout)) {
-                      GetLogger ().ErrorFormat ("MakeAnalysisNoExtension: trying to set again modification id {0} in status Timeout", ((IDataWithId<long>)modification).Id);
+                      GetLogger ().Error ($"MakeAnalysisNoExtension: trying to set again modification id {((IDataWithId<long>)modification).Id} in status Timeout");
                     }
                   }
                   if (!modification.AnalysisBegin.HasValue) {
@@ -1067,7 +1068,7 @@ namespace Lemoine.Analysis
                 try {
                   var killResult = ModelDAOHelper.DAOFactory.KillActiveConnection (modificationAnalysis.AnalysisConnectionId);
                   if (GetLogger ().IsInfoEnabled) {
-                    GetLogger ().InfoFormat ("MakeAnalysisNoExtension: kill active connection id {0} - result {1}", modificationAnalysis.AnalysisConnectionId, killResult);
+                    GetLogger ().Info ($"MakeAnalysisNoExtension: kill active connection id {modificationAnalysis.AnalysisConnectionId} - result {killResult}");
                   }
                   return false;
                 }
@@ -1143,10 +1144,18 @@ namespace Lemoine.Analysis
     /// <returns></returns>
     protected abstract Task<long?> GetMaxModificationIdAsync ();
 
-    void CheckNewAnalysisStatus (CancellationToken cancellationToken)
+    internal void CheckNewAnalysisStatus (CancellationToken cancellationToken)
     {
       if (m_fillAnalysisStatusCompleted) {
-        return;
+        var refillFrequency = Lemoine.Info.ConfigSet
+          .LoadAndGet (FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_KEY, FILL_ANALYSIS_STATUS_REFILL_FREQUENCY_DEFAULT);
+        if ((refillFrequency.Ticks <= 0)
+          || (DateTime.UtcNow < m_lastFillAnalysisStatusDateTime.Add (refillFrequency))) {
+          return;
+        }
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"CheckNewAnalysisStatus: last FillAnalysisStatus at {m_lastFillAnalysisStatusDateTime} older than {refillFrequency} => run it again during this pass");
+        }
       }
 
       long limit;
@@ -1161,6 +1170,7 @@ namespace Lemoine.Analysis
         GetLogger ().Debug ($"CheckNewAnalysisStatus: FillAnalysisStatus with limit {limit}");
       }
       m_fillAnalysisStatusCompleted = FillAnalysisStatus (cancellationToken, limit);
+      m_lastFillAnalysisStatusDateTime = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -1174,12 +1184,19 @@ namespace Lemoine.Analysis
     public abstract bool FillAnalysisStatus (CancellationToken cancellationToken, long limit);
 
     /// <summary>
+    /// Is a full scan of the modifications without any analysis status row due?
+    ///
+    /// Default is false
+    /// </summary>
+    /// <returns></returns>
+    protected virtual bool IsFillAnalysisStatusFullScanDue () => false;
+
+    /// <summary>
     /// Get the default limit for the creation of the new analysis status
     /// </summary>
     /// <returns></returns>
     protected abstract long GetLimitNewAnalysisStatus ();
 
-    #region IDisposable implementation
     /// <summary>
     /// <see cref="IDisposable"/>
     /// </summary>
@@ -1198,7 +1215,5 @@ namespace Lemoine.Analysis
 
       base.Dispose (disposing);
     }
-
-    #endregion // IDisposable implementation
   }
 }
