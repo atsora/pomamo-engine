@@ -23,7 +23,22 @@ namespace Lemoine.Plugin.DefaultCycleCounter
 
     IMonitoredMachine m_machine;
 
-    (UtcDateTimeRange range, IEnumerable<IOperationCycle> data) m_preLoad = (null, null);
+    /// <summary>
+    /// Operation cycles pre-loaded in a previous session (the extension is cached)
+    /// </summary>
+    sealed class PreLoad
+    {
+      public PreLoad (UtcDateTimeRange range, IList<IOperationCycle> data)
+      {
+        Range = range;
+        Data = data;
+      }
+
+      public UtcDateTimeRange Range { get; }
+      public IList<IOperationCycle> Data { get; }
+    }
+
+    PreLoad m_preLoad = null;
     (bool valid, DateTime? dateTime) m_detectionCache = (false, null);
 
     public double Score => 10.0;
@@ -77,14 +92,18 @@ namespace Lemoine.Plugin.DefaultCycleCounter
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginReadOnlyTransaction ("Plugin.DefaultCycleCounter.CycleCounter")) {
 
+          // The extension is cached and may be shared by several requests:
+          // read m_preLoad once, and replace it in one assignment
+          var preLoad = m_preLoad;
           if ((null != preLoadRange)
-          && ((null == m_preLoad.range) || !m_preLoad.range.ContainsRange (preLoadRange))) {
-            m_preLoad = (preLoadRange, (await FindOperationCyclesAsync (preLoadRange)).ToList ());
+          && ((null == preLoad) || !preLoad.Range.ContainsRange (preLoadRange))) {
+            preLoad = new PreLoad (preLoadRange, await PreLoadOperationCyclesAsync (preLoadRange));
+            m_preLoad = preLoad;
           }
 
           IEnumerable<IOperationCycle> operationCycles;
-          if ((null != m_preLoad.range) && m_preLoad.range.ContainsRange (preLoadRange)) {
-            operationCycles = m_preLoad.data
+          if ((null != preLoadRange) && (null != preLoad) && preLoad.Range.ContainsRange (preLoadRange)) {
+            operationCycles = preLoad.Data
               .Where (c => range.ContainsElement (c.DateTime));
           }
           else {
@@ -110,6 +129,31 @@ namespace Lemoine.Plugin.DefaultCycleCounter
     {
       var operationCycles = await ModelDAOHelper.DAOFactory.OperationCycleDAO
         .FindOverlapsRangeAsync (m_machine, range);
+      return operationCycles;
+    }
+
+    /// <summary>
+    /// Find the operation cycles to keep in m_preLoad
+    ///
+    /// They are used in a later session, once this one is closed: initialize now
+    /// the operation slots and their operation and manufacturing order, which the
+    /// grouping by operation and manufacturing order reads, else a
+    /// LazyInitializationException is raised
+    /// </summary>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    async Task<IList<IOperationCycle>> PreLoadOperationCyclesAsync (UtcDateTimeRange range)
+    {
+      var operationCycles = (await FindOperationCyclesAsync (range)).ToList ();
+      foreach (var operationSlot in operationCycles.Select (c => c.OperationSlot).Where (s => null != s).Distinct ()) {
+        ModelDAOHelper.DAOFactory.Initialize (operationSlot);
+        if (null != operationSlot.Operation) {
+          ModelDAOHelper.DAOFactory.Initialize (operationSlot.Operation);
+        }
+        if (null != operationSlot.ManufacturingOrder) {
+          ModelDAOHelper.DAOFactory.Initialize (operationSlot.ManufacturingOrder);
+        }
+      }
       return operationCycles;
     }
 

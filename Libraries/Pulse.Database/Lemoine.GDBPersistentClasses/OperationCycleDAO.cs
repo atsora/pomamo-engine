@@ -273,7 +273,7 @@ namespace Lemoine.GDBPersistentClasses
       query.SetParameter ("RangeBegin", rangeBegin);
       query.SetParameter ("RangeEnd", rangeEnd);
       var operationCycles = query.List<IOperationCycle> ();
-      LoadOperationSlots (operationCycles);
+      LoadOperationSlotsNow (operationCycles);
       return operationCycles;
     }
 
@@ -296,7 +296,7 @@ namespace Lemoine.GDBPersistentClasses
       query.SetParameter ("RangeBegin", rangeBegin);
       query.SetParameter ("RangeEnd", rangeEnd);
       var operationCycles = query.List<IOperationCycle> ();
-      LoadOperationSlots (operationCycles);
+      LoadOperationSlotsNow (operationCycles);
       return operationCycles;
     }
 
@@ -319,7 +319,7 @@ namespace Lemoine.GDBPersistentClasses
       query.SetParameter ("RangeBegin", rangeBegin);
       query.SetParameter ("RangeEnd", rangeEnd);
       var operationCycles = await query.ListAsync<IOperationCycle> ();
-      LoadOperationSlots (operationCycles);
+      LoadOperationSlotsNow (operationCycles);
       return operationCycles;
     }
 
@@ -1256,6 +1256,21 @@ namespace Lemoine.GDBPersistentClasses
       IOperationSlot operationSlot = null;
       foreach (var operationCycle in operationCycles) {
         yield return LoadOperationSlot (operationCycle, ref operationSlot);
+      }
+    }
+
+    /// <summary>
+    /// Load now the operation slots of the specified operation cycles
+    ///
+    /// <see cref="LoadOperationSlots"/> is lazy: it loads the operation slots
+    /// only when its result is enumerated
+    /// </summary>
+    /// <param name="operationCycles">not null</param>
+    void LoadOperationSlotsNow (IEnumerable<IOperationCycle> operationCycles)
+    {
+      IOperationSlot operationSlot = null;
+      foreach (var operationCycle in operationCycles) {
+        LoadOperationSlot (operationCycle, ref operationSlot);
       }
     }
   }
