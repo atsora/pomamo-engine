@@ -312,7 +312,7 @@ namespace Lemoine.Analysis
           SetActive ();
         }
         // disable once ConvertIfToOrExpression
-        if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
+        if (subModificationAnalysis.AnalysisStatus.IsWaitingOrNotCompleted ()) {
           notCompletedGlobalSubModifications = true;
         }
         if (log.IsDebugEnabled) {

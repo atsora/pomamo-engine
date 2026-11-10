@@ -420,7 +420,7 @@ namespace Lemoine.Analysis
           SetActive ();
         }
         // disable once ConvertIfToOrExpression
-        if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
+        if (subModificationAnalysis.AnalysisStatus.IsWaitingOrNotCompleted ()) {
           notCompletedSubModifications = true;
         }
         if (log.IsDebugEnabled) {
@@ -465,7 +465,7 @@ namespace Lemoine.Analysis
           SetActive ();
         }
         // disable once ConvertIfToOrExpression
-        if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
+        if (subModificationAnalysis.AnalysisStatus.IsWaitingOrNotCompleted ()) {
           notCompletedSubModifications = true;
         }
         if (log.IsDebugEnabled) {

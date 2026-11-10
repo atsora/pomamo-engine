@@ -439,7 +439,7 @@ namespace Lemoine.Analysis
           }
         }
         // disable once ConvertIfToOrExpression
-        if (subModificationAnalysis.AnalysisStatus.IsNotCompleted ()) {
+        if (subModificationAnalysis.AnalysisStatus.IsWaitingOrNotCompleted ()) {
           notCompletedSameMachineSubModifications = true;
           if (!maxSameMachineSubStatusPriority.HasValue) {
             if (GetLogger ().IsDebugEnabled) {
