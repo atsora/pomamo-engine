@@ -586,6 +586,29 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IObservationStateSlotDAO"/>
+    /// </summary>
+    /// <param name="range"></param>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <returns></returns>
+    public async Task<IList<IObservationStateSlot>> FindOverlapsRangeMatchingMachineStateTemplateAsync (UtcDateTimeRange range,
+                                                                                                        IMachineStateTemplate machineStateTemplate)
+    {
+      if (machineStateTemplate is null) {
+        log.Fatal ("FindOverlapsRangeMatchingMachineStateTemplateAsync: null machine state template");
+        throw new ArgumentNullException (nameof (machineStateTemplate));
+      }
+
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<ObservationStateSlot> ()
+        .Add (Restrictions.Eq ("MachineStateTemplate.Id", machineStateTemplate.Id))
+        .Add (OverlapRange (range))
+        .AddOrder (Order.Asc ("Machine.Id"))
+        .AddOrder (Order.Asc ("DateTimeRange"))
+        .ListAsync<IObservationStateSlot> ();
+    }
+
+    /// <summary>
     /// Find the slot with the specified end date/time
     /// </summary>
     /// <param name="machine"></param>

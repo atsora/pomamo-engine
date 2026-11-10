@@ -198,6 +198,18 @@ namespace Lemoine.ModelDAO
                                                                                       IMachineStateTemplate machineStateTemplate);
 
     /// <summary>
+    /// Find asynchronously all the observation state slots, on any machine, that carry the
+    /// specified machine state template and that overlap the specified range
+    ///
+    /// They are ordered by machine, then by ascending range
+    /// </summary>
+    /// <param name="range"></param>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <returns></returns>
+    Task<IList<IObservationStateSlot>> FindOverlapsRangeMatchingMachineStateTemplateAsync (UtcDateTimeRange range,
+                                                                                           IMachineStateTemplate machineStateTemplate);
+
+    /// <summary>
     /// Find the slot with the specified end date/time
     /// </summary>
     /// <param name="machine"></param>
