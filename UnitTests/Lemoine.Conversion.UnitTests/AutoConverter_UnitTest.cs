@@ -73,6 +73,33 @@ namespace Lemoine.Conversion.UnitTests
       });
     }
 
+    /// <summary>
+    /// Conversion of a number into a string, used by the set instructions of the cnc configurations
+    /// on a string property (e.g. TextString of TextRegexParser)
+    /// </summary>
+    [Test]
+    public void TestAutoConvertToString ()
+    {
+      var converter = new DefaultAutoConverter ();
+      var currentCulture = System.Globalization.CultureInfo.CurrentCulture;
+      try {
+        System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo ("fr-FR");
+        Assert.Multiple (() => {
+          Assert.That (converter.ConvertAuto<string> (2.15), Is.EqualTo ("2.15"));
+          Assert.That (converter.ConvertAuto ((object)2.15, typeof (string)), Is.EqualTo ("2.15"));
+          Assert.That (converter.ConvertAuto<string> (2.15f), Is.EqualTo ("2.15"));
+          Assert.That (converter.ConvertAuto<string> (123), Is.EqualTo ("123"));
+          Assert.That (converter.ConvertAuto<string> (123L), Is.EqualTo ("123"));
+          Assert.That (converter.ConvertAuto<string> ((double?)2.15), Is.EqualTo ("2.15"));
+          Assert.That (converter.ConvertAuto<string> (true), Is.EqualTo ("True"));
+          Assert.That (converter.ConvertAuto<string> (EnumTest.Second), Is.EqualTo ("Second"));
+        });
+      }
+      finally {
+        System.Globalization.CultureInfo.CurrentCulture = currentCulture;
+      }
+    }
+
     [Test]
     public void TestAutoConvertEnumerable ()
     {
