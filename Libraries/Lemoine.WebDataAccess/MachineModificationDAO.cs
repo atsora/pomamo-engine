@@ -27,6 +27,10 @@ namespace Lemoine.WebDataAccess
     {
       throw new NotImplementedException ();
     }
+    public bool IsConcurrentAnalysisStatusCreationSafe (IMachine machine)
+    {
+      throw new NotImplementedException ();
+    }
     public void UpgradeLock(Lemoine.Model.IMachineModification entity)
     {
       throw new NotImplementedException();

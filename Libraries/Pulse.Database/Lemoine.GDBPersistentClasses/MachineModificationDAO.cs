@@ -29,8 +29,12 @@ namespace Lemoine.GDBPersistentClasses
     // And not sure ON CONFLICT and RETURNING work nice together: keep false for the moment
 
     static readonly string UPSERT_ACTIVE_IN_PARTITION_KEY = "machinemodificationstatus.upsert.active.partition";
-    static readonly bool UPSERT_ACTIVE_IN_PARTITION_DEFAULT = false; // Not really useful after the additional condition AND NOT EXISTS is added
-    // And not sure ON CONFLICT and RETURNING work nice together: keep false for the moment
+    static readonly bool UPSERT_ACTIVE_IN_PARTITION_DEFAULT = true;
+    // In a partition (pgfkpart.machinemodificationstatus_pX), which is a real table, ON CONFLICT DO NOTHING works fine.
+    // The condition AND NOT EXISTS of CreateNewAnalysisStatus is a separate request: it does not prevent
+    // two concurrent transactions from inserting the same rows. With ON CONFLICT DO NOTHING, in READ COMMITTED,
+    // the second transaction skips these rows instead of raising a unique violation; in SERIALIZABLE,
+    // it raises a serialization failure instead of a unique violation (both are retried). No RETURNING clause is used
 
     readonly ILog log = LogManager.GetLogger (typeof (ModificationDAO).FullName);
 
@@ -881,61 +885,64 @@ WHERE machinemodificationmachineid=:MachineId")
 
       // To limit the exclusive locks on the parent table,
       // test first directly in the partitioned table
-      string partitionExistsRequest = string.Format (@"
+      // Note: in insertRequest, all the not null empty fields must be specified else an update is run to initialize them
+      if (StatusPartitionExists (machine)) {
+        // Note: no conflict target in the upsert, so that it does not depend on the unique index of the partition
+        var onConflict = IsUpsertActiveInPartition () ? "ON CONFLICT DO NOTHING" : "";
+        return $"""
+INSERT INTO pgfkpart.machinemodificationstatus_p{machine.Id} (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
+SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
+FROM pgfkpart.machinemodification_p{machine.Id} m
+WHERE machinemodificationmachineid={machine.Id}
+  AND modificationid IN ({modificationIdsString})
+{onConflict};
+""";
+      }
+      else { // !partitionExists
+        // Note: if the parent table is partitioned by pgfkpart, ON CONFLICT is not effective,
+        // because the conflict happens in the partition the trigger inserts into
+        var onConflict = Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_KEY, UPSERT_ACTIVE_DEFAULT)
+          ? "ON CONFLICT (modificationid) DO NOTHING"
+          : "";
+        return $"""
+INSERT INTO machinemodificationstatus (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
+SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
+FROM machinemodification
+WHERE machinemodificationmachineid={machine.Id}
+  AND modificationid IN ({modificationIdsString})
+{onConflict};
+""";
+      }
+    }
+
+    static bool IsUpsertActiveInPartition () =>
+      Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_IN_PARTITION_KEY, UPSERT_ACTIVE_IN_PARTITION_DEFAULT);
+
+    bool StatusPartitionExists (IMachine machine)
+    {
+      var partitionExistsRequest = $"""
 SELECT EXISTS (
 SELECT 1 FROM information_schema.tables
 WHERE table_schema='pgfkpart'
-  AND table_name='machinemodificationstatus_p{0}'
+  AND table_name='machinemodificationstatus_p{machine.Id}'
 );
-", machine.Id);
-      bool partitionExists = NHibernateHelper.GetCurrentSession ()
+""";
+      return NHibernateHelper.GetCurrentSession ()
         .CreateSQLQuery (partitionExistsRequest)
         .AddScalar ("exists", NHibernate.NHibernateUtil.Boolean)
         .UniqueResult<bool> ();
-      if (partitionExists) {
-        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_IN_PARTITION_KEY, UPSERT_ACTIVE_IN_PARTITION_DEFAULT)) { // Use upsert
-          return string.Format (@"
-INSERT INTO pgfkpart.machinemodificationstatus_p{0} (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
-SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
-FROM pgfkpart.machinemodification_p{0} m
-WHERE machinemodificationmachineid={0}
-  AND modificationid IN ({1})
-ON CONFLICT (modificationid) DO NOTHING
-;", machine.Id, modificationIdsString);
-          // Note: if you ommit AND NOT EXISTS (), the request is pretty slow
-        }
-        else { // Upsert is deactivated
-          return string.Format (@"
-INSERT INTO pgfkpart.machinemodificationstatus_p{0} (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
-SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
-FROM pgfkpart.machinemodification_p{0} m
-WHERE machinemodificationmachineid={0}
-  AND modificationid IN ({1})
-;", machine.Id, modificationIdsString);
-        }
-      }
-      else { // !partitionExists
-        if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (UPSERT_ACTIVE_KEY, UPSERT_ACTIVE_DEFAULT)) { // Use upsert
-          return string.Format (@"
-INSERT INTO machinemodificationstatus (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
-SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
-FROM machinemodification
-WHERE machinemodificationmachineid={0}
-  AND modificationid IN ({1})
-ON CONFLICT (modificationid) DO NOTHING
-;", machine.Id, modificationIdsString);
-        }
-        else { // Upsert is deactivated
-          return string.Format (@"
-INSERT INTO machinemodificationstatus (modificationid, machinemodificationstatusmachineid, modificationstatuspriority, analysisiterations, analysistotalduration)
-SELECT modificationid, machinemodificationmachineid, modificationpriority, 0, 0
-FROM machinemodification
-WHERE machinemodificationmachineid={0}
-  AND modificationid IN ({1})
-;", machine.Id, modificationIdsString);
-        }
-      } // partitionExists
-      // Note: in insertRequest, all the not null empty fields must be specified else an update is run to initialize them
+    }
+
+    /// <summary>
+    /// <see cref="IMachineModificationDAO"/>
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <returns></returns>
+    public bool IsConcurrentAnalysisStatusCreationSafe (IMachine machine)
+    {
+      Debug.Assert (null != machine);
+
+      return IsUpsertActiveInPartition () && StatusPartitionExists (machine);
     }
 
     /// <summary>

@@ -236,6 +236,16 @@ namespace Lemoine.ModelDAO
     long CreateNewAnalysisStatusNoLimit (IMachine machine, bool serializable, long minModificationId);
 
     /// <summary>
+    /// Can the analysis status rows of the specified machine be created concurrently
+    /// by different threads with no unique violation error ?
+    ///
+    /// This is the case when an upsert is used to insert them
+    /// </summary>
+    /// <param name="machine">not null</param>
+    /// <returns></returns>
+    bool IsConcurrentAnalysisStatusCreationSafe (IMachine machine);
+
+    /// <summary>
     /// Get all machine modifications not completed that have a revision
     /// </summary>
     /// <param name="application">Name of the application that created the revision (can be null or empty)</param>

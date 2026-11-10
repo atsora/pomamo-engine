@@ -58,6 +58,18 @@ namespace Lemoine.Analysis
     static readonly string LOCK_TABLE_TO_PARTITION_FILL_ANALYSIS_STATUS_KEY = "Analysis.Modification.LockTableToPartition.FillAnalysisStatus";
     static readonly bool LOCK_TABLE_TO_PARTITION_FILL_ANALYSIS_STATUS_VALUE = true;
 
+    /// <summary>
+    /// When the not completed sub-modifications are checked in the database,
+    /// create first the missing analysis status rows of each machine that is checked,
+    /// not only of the machine of the analysis, else the sub-modifications of another machine
+    /// that have no analysis status row yet are not seen.
+    ///
+    /// This is done for a machine only if it is safe, when an upsert is used
+    /// (config key machinemodificationstatus.upsert.active.partition and the table is partitioned)
+    /// </summary>
+    static readonly string CHECK_SUB_MODIFICATIONS_FILL_OTHER_MACHINES_KEY = "Analysis.Modification.CheckSubModifications.FillOtherMachines";
+    static readonly bool CHECK_SUB_MODIFICATIONS_FILL_OTHER_MACHINES_DEFAULT = true;
+
     static readonly int SUB_MODIFICATION_ATTEMPT_WARNING = 100;
     static readonly int SUB_MODIFICATION_ATTEMPT_FATAL = 10000;
 
@@ -539,13 +551,28 @@ namespace Lemoine.Analysis
             machines = ModelDAOHelper.DAOFactory.MachineDAO.FindAll ();
           }
 
+          var minModificationId = ((IDataWithId<long>)modification).Id;
+          using (IDAOTransaction transaction = session.BeginTransaction ("Analysis.CheckPendingSubModifications.FillAnalysisStatus")) {
+            transaction.SynchronousCommitOption = SynchronousCommit.Off; // Because this do not drive to any risk of loosing some data
+            ModelDAOHelper.DAOFactory.MachineModificationDAO
+              .CreateNewAnalysisStatusNoLimit (m_machine, false, minModificationId);
+            transaction.Commit ();
+          }
+          var fillOtherMachines = Lemoine.Info.ConfigSet
+            .LoadAndGet (CHECK_SUB_MODIFICATIONS_FILL_OTHER_MACHINES_KEY, CHECK_SUB_MODIFICATIONS_FILL_OTHER_MACHINES_DEFAULT);
+
           foreach (var machine in machines) {
-            var minModificationId = ((IDataWithId<long>)modification).Id;
-            using (IDAOTransaction transaction = session.BeginTransaction ("Analysis.CheckPendingSubModifications.FillAnalysisStatus")) {
-              transaction.SynchronousCommitOption = SynchronousCommit.Off; // Because this do not drive to any risk of loosing some data
-              ModelDAOHelper.DAOFactory.MachineModificationDAO
-                .CreateNewAnalysisStatusNoLimit (m_machine, false, minModificationId);
-              transaction.Commit ();
+            if (fillOtherMachines && (machine.Id != m_machine.Id)) {
+              // The analysis status rows of the other machines are also created by their own analysis thread:
+              // only if it is safe, without any unique violation error
+              using (IDAOTransaction transaction = session.BeginTransaction ("Analysis.CheckPendingSubModifications.FillAnalysisStatusOtherMachine")) {
+                transaction.SynchronousCommitOption = SynchronousCommit.Off; // Because this do not drive to any risk of loosing some data
+                if (ModelDAOHelper.DAOFactory.MachineModificationDAO.IsConcurrentAnalysisStatusCreationSafe (machine)) {
+                  ModelDAOHelper.DAOFactory.MachineModificationDAO
+                    .CreateNewAnalysisStatusNoLimit (machine, false, minModificationId);
+                }
+                transaction.Commit ();
+              }
             }
             var lockedTables = CreateLockedTables (session, machine);
             using (IDAOTransaction transaction = session
