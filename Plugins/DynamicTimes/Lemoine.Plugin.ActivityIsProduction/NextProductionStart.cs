@@ -217,8 +217,13 @@ namespace Lemoine.Plugin.ActivityIsProduction
             }
           }
           else { // !afterResonse.HasValue
+            // Search from the hint (and not from dateTime), else the facts before the hint
+            // that were already processed are returned again and the hint never progresses
+            var searchFrom = (hint.Lower.HasValue && dateTime < hint.Lower.Value)
+              ? hint.Lower.Value
+              : dateTime;
             var nextFact = ModelDAOHelper.DAOFactory.FactDAO
-              .FindFirstFactAfter (this.Machine, dateTime);
+              .FindFirstFactAfter (this.Machine, searchFrom);
             if (null == nextFact) {
               if (log.IsDebugEnabled) {
                 log.Debug ($"Get: no fact after {dateTime} => return initial Hint ({hint})");
