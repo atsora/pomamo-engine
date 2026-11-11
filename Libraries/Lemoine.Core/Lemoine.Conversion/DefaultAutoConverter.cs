@@ -369,6 +369,13 @@ namespace Lemoine.Conversion
         }
       }
 
+      // Conversion into a string: it must be done before trying the constructors,
+      // else the String (char[]) constructor is used, with a char[] of the length of the number
+      // (e.g. 2.15 is converted into a string of two null characters)
+      if ((type == typeof (string)) && (datavalue is IConvertible convertible)) {
+        return convertible.ToString (System.Globalization.CultureInfo.InvariantCulture);
+      }
+
       // Try with a constructor
       foreach (var constructor in type.GetConstructors ()) {
         var parameters = constructor.GetParameters ();
