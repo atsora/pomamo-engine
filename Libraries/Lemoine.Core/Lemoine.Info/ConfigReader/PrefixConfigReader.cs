@@ -15,15 +15,10 @@ namespace Lemoine.Info.ConfigReader
   /// </summary>
   public sealed class PrefixConfigReader: IGenericConfigReader
   {
-    #region Members
     readonly string m_prefix;
     readonly IGenericConfigReader m_configReader;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (PrefixConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -37,9 +32,6 @@ namespace Lemoine.Info.ConfigReader
       m_configReader = configReader;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IGenericConfigReader implementation
     /// <summary>

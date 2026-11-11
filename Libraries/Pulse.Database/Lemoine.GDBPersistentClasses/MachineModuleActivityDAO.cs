@@ -74,9 +74,9 @@ namespace Lemoine.GDBPersistentClasses
                                                                          UtcDateTimeRange range,
                                                                          int maxNumber)
     {
-      log.DebugFormat ("FindAllBetween: " +
-                       "machineModule={0} range={1} maxNumber={2}",
-                       machineModule, range, maxNumber);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"FindAllBetween: machineModule={machineModule} range={range} maxNumber={maxNumber}");
+      }
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<MachineModuleActivity> ()
         .Add (Restrictions.Eq ("MachineModule", machineModule))

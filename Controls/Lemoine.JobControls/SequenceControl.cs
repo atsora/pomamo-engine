@@ -40,7 +40,6 @@ namespace Lemoine.JobControls
       CREATE = 2
     };
 
-    #region Members
     ISequence m_sequence;
     DisplayMode m_displayMode;
     TreeNode m_node;
@@ -54,11 +53,9 @@ namespace Lemoine.JobControls
     DataTable m_dataTable;
     DataTable m_stampingDetailsDataTable;
     bool m_showPath = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SequenceControl).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Getter / Setter for type of parent of Sequence node
     /// </summary>
@@ -155,7 +152,6 @@ namespace Lemoine.JobControls
     {
       get { return m_displayMode; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -300,8 +296,6 @@ namespace Lemoine.JobControls
     }
     #endregion
 
-
-    #region Methods
 
     /// <summary>
     /// Use informations in Sequence to fill text in box
@@ -528,8 +522,6 @@ namespace Lemoine.JobControls
       return true; // estimated time uses timespan picker (correct by construction)
     }
 
-    #endregion // Methods
-
 
     #region button click Methods
 
@@ -651,7 +643,7 @@ namespace Lemoine.JobControls
               sequence.OperationStep = operationStep;
             }
             else {
-              log.ErrorFormat ("Invalid operation step");
+              log.Error ("Invalid operation step");
               sequence.OperationStep = null;
             }
           }
@@ -661,7 +653,7 @@ namespace Lemoine.JobControls
       }
 
       if (!Lemoine.WebClient.Request.ClearDomain ("operationinformationchange")) {
-        log.ErrorFormat ("SaveBtnClick: clear domain failed");
+        log.Error ("SaveBtnClick: clear domain failed");
       }
 
       m_observable.ReloadTreeNodes (m_node);
@@ -745,7 +737,7 @@ namespace Lemoine.JobControls
         }
 
         if (!Lemoine.WebClient.Request.ClearDomain ("operationinformationchange")) {
-          log.ErrorFormat ("SaveBtnClick: clear domain failed");
+          log.Error ("SaveBtnClick: clear domain failed");
         }
 
         this.m_sequence = sequence;

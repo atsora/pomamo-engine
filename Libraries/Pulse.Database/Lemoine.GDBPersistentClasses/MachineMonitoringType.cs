@@ -23,14 +23,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineMonitoringType: DataWithTranslation, IMachineMonitoringType, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineMonitoringType).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -79,13 +76,12 @@ namespace Lemoine.GDBPersistentClasses
           string.Format ("{0}: {1}",
                          this.Id,
                          this.NameOrTranslation);
-        log.DebugFormat ("SelectionText: " +
-                         "selection text is {0}",
-                         selectionText);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SelectionText: selection text is {selectionText}");
+        }
         return selectionText;
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

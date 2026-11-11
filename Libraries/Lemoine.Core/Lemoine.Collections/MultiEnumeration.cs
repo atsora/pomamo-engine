@@ -17,14 +17,12 @@ namespace Lemoine.Collections
   public sealed class MultiEnumeration<T>: IEnumerator<T>, IEnumerable<T>
     where T: class
   {
-    #region Members
     // Note: the two lists below keep the same number of elements
     IList<T> m_items = new List<T> ();
     IList<IEnumerable<T>> m_enumerables  = new List<IEnumerable<T>> ();
     
     int m_index = -1; // Index in the list
     IEnumerator<T> m_currentEnumerator = null; // In case of current IEnumerable
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MultiEnumeration<T>).FullName);
 
@@ -37,7 +35,6 @@ namespace Lemoine.Collections
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add an item to the multi-enumerator
     /// </summary>
@@ -57,7 +54,6 @@ namespace Lemoine.Collections
       m_items.Add (null);
       m_enumerables.Add (enumerable);
     }
-    #endregion // Methods
     
     #region Implementation of IEnumerator
     /// <summary>

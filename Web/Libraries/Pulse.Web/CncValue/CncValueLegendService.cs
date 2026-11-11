@@ -37,7 +37,6 @@ namespace Pulse.Web.CncValue
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -64,10 +63,7 @@ namespace Pulse.Web.CncValue
             IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindByIdWithMainMachineModulePerformanceFieldUnit (machineId);
             if (null == monitoredMachine) {
-              log.ErrorFormat ("GetWithoutCache: " +
-                               "unknown monitored machine with ID {0}" +
-                               "=> skip it",
-                               machineId);
+              log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}=> skip it");
             }
             else {
               if (null != monitoredMachine.PerformanceField) {
@@ -100,6 +96,5 @@ namespace Pulse.Web.CncValue
         return response;
       }
     }
-#endregion // Methods
   }
 }

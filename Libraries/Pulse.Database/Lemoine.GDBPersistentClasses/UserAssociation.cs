@@ -21,11 +21,8 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof (UserAttendance))]
   public abstract class UserAssociation: PeriodAssociation
   {
-    #region Members
     IUser m_user;
-    #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the User
     /// 
@@ -62,7 +59,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.User as User; }
       set { this.User = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

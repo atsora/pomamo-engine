@@ -20,17 +20,14 @@ namespace Lemoine.JobControls
   /// </summary>
   internal class InversedTreeNode
   {
-    #region Members
     BaseOperationTreeView m_treeView;
     Lemoine.Collections.IDataWithId m_data;
     Type m_type;
     InversedTreeNode m_parent = null;
     List<InversedTreeNode> m_children = new List<InversedTreeNode> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (InversedTreeNode).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Get Data
     /// </summary>
@@ -88,8 +85,6 @@ namespace Lemoine.JobControls
       }
     }
 
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor with data and type
@@ -122,8 +117,6 @@ namespace Lemoine.JobControls
     }
 
     #endregion // Constructors
-
-    #region Methods
 
     /// <summary>
     ///  Add a node in children list
@@ -251,7 +244,6 @@ namespace Lemoine.JobControls
         }
       }
     }
-    #endregion // Methods
 
   }
 }

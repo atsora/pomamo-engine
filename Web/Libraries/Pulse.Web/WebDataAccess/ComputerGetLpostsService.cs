@@ -29,7 +29,6 @@ namespace Pulse.Web.WebDataAccess
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -44,6 +43,5 @@ namespace Pulse.Web.WebDataAccess
         return new ComputerDTOAssembler ().Assemble (lposts);
       }
     }
-    #endregion // Methods
   }
 }

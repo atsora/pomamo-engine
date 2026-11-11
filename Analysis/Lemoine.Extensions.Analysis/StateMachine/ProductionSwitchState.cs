@@ -31,9 +31,6 @@ namespace Lemoine.Extensions.Analysis.StateMachine
     IState<TContext> m_currentNextState = null;
     UpperBound<DateTime> m_currentLimitDateTime = DateTime.MinValue;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

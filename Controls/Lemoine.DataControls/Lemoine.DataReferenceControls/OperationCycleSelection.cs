@@ -21,16 +21,13 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class OperationCycleSelection : UserControl
   {
-    #region Members
     IMonitoredMachine m_machine = null;
     DateTime? m_date;
     TimeSpan? m_duration;
     bool m_OperationSlotMustExit = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OperationCycleSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -149,7 +146,6 @@ namespace Lemoine.DataReferenceControls
       get { return m_OperationSlotMustExit; }
       set { m_OperationSlotMustExit = value; }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -176,7 +172,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -187,7 +182,6 @@ namespace Lemoine.DataReferenceControls
         AfterSelect (this, e);
       }
     }
-    #endregion // Methods
     
     class CustomOperationCycleRow {
       IOperationCycle m_operationCycle;

@@ -42,7 +42,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
     
-    #region Methods
     void AddModifications(Image image, IList<IModification> modifications)
     {
       foreach (var modification in modifications) {
@@ -51,6 +50,5 @@ namespace Lem_Settings
         verticalScroll.AddControl(cell);
       }
     }
-    #endregion // Methods
   }
 }

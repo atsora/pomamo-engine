@@ -16,9 +16,6 @@ namespace Lemoine.Extensions
   public abstract class NotConfigurableExtension
     : IExtension
   {
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     static readonly ILog log = LogManager.GetLogger (typeof (NotConfigurableExtension).FullName);
 
     #region IExtension implementation

@@ -16,12 +16,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class TimeSpanSelection : UserControl
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (TimeSpanSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return Selected TimeSpan
     /// </summary>
@@ -57,8 +53,6 @@ namespace Lemoine.DataReferenceControls
       }
     }
 
-    #endregion // Getters / Setters
-
     #region Events
     /// <summary>
     /// Selection changed
@@ -84,7 +78,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -121,7 +114,6 @@ namespace Lemoine.DataReferenceControls
 
       return dateTime.AddTicks (-(dateTime.Ticks % timeSpan.Ticks));
     }
-    #endregion // Methods
 
     void TimeSpanSelectionLoad (object sender, EventArgs e)
     {

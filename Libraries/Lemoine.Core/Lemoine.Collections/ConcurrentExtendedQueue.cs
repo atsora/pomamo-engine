@@ -24,9 +24,6 @@ namespace Lemoine.Collections
   {
     readonly ILog log = LogManager.GetLogger (typeof (ConcurrentExtendedQueue<T>).FullName);
 
-  #region Getters / Setters
-  #endregion // Getters / Setters
-
   #region Constructors
     /// <summary>
     /// Constructor
@@ -147,9 +144,6 @@ namespace Lemoine.Collections
     readonly ILog log = LogManager.GetLogger (typeof (ConcurrentExtendedQueue<T>));
 
     ConcurrentQueue<T> m_implementation = new ConcurrentQueue<T> ();
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

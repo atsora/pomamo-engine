@@ -16,13 +16,7 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class ReasonSelection : GenericSelection<IReason>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonSelection).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -33,7 +27,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Prepare data for GenericSelection
     /// </summary>
@@ -57,6 +50,5 @@ namespace Lemoine.DataReferenceControls
       
       return reasons;
     }
-    #endregion // Methods
   }
 }

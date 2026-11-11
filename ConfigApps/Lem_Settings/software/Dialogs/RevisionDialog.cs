@@ -15,10 +15,8 @@ namespace Lem_Settings
   /// </summary>
   public partial class RevisionDialog : Form
   {
-    #region Members
     readonly IDictionary<int, RevisionCell> m_inProgressCells = new Dictionary<int, RevisionCell>();
     readonly IDictionary<int, RevisionCell> m_doneCells = new Dictionary<int, RevisionCell>();
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (RevisionDialog).FullName);
 
@@ -34,7 +32,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Select a revision created by a specific item
     /// </summary>
@@ -63,7 +60,6 @@ namespace Lem_Settings
     {
       verticalScroll.ScrollTo(cell);
     }
-    #endregion // Methods
     
     #region Event reactions
     void OnDetailsClicked(WatchedRevision revision)

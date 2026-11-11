@@ -20,9 +20,7 @@ namespace ConfiguratorPlugins
   /// </summary>
   public partial class PackageCell : UserControl
   {
-    #region Members
     readonly IPackage m_package = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (PackageCell).FullName);
 
@@ -118,14 +116,13 @@ namespace ConfiguratorPlugins
     }
     #endregion // Event reactions
 
-    #region Methods
     bool HasPackageProblem()
     {
       Debug.Assert (null != m_package);
       
-      log.DebugFormat ("HasPackageProblem: " +
-                       "package {0}",
-                       m_package.IdentifyingName);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"HasPackageProblem: package {m_package.IdentifyingName}");
+      }
       
       var pluginAssociations = ModelDAOHelper.DAOFactory.PackagePluginAssociationDAO
         .FindByPackage(m_package);
@@ -133,20 +130,16 @@ namespace ConfiguratorPlugins
       foreach (var pluginAssociation in pluginAssociations.Where (a => a.Active)) {
         Debug.Assert (null != pluginAssociation.Plugin);
         
-        log.DebugFormat ("HasPackageProblem: " +
-                         "check plugin {0} association {1}",
-                         pluginAssociation.Plugin.IdentifyingName,
-                         pluginAssociation.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"HasPackageProblem: check plugin {pluginAssociation.Plugin.IdentifyingName} association {pluginAssociation.Name}");
+        }
         
         // Corresponding pluginDll
         var pluginDll = ExtensionManager.GetPlugin(pluginAssociation.Plugin.IdentifyingName);
         
         // No corresponding dll?
         if (null == pluginDll) {
-          log.ErrorFormat ("HasPackageProblems: " +
-                           "plugin {0} association {1} could not be loaded",
-                           pluginAssociation.Plugin.IdentifyingName,
-                           pluginAssociation.Name);
+          log.Error ($"HasPackageProblems: plugin {pluginAssociation.Plugin.IdentifyingName} association {pluginAssociation.Name} could not be loaded");
           return true;
         }
         
@@ -154,23 +147,17 @@ namespace ConfiguratorPlugins
         if (null != pluginAssociation.Parameters) {
           IEnumerable<string> errors = pluginDll.GetConfigurationErrors (pluginAssociation.Parameters);
           if ( (null != errors) && errors.Any ()) {
-            log.ErrorFormat ("HasPackageProblems: " +
-                             "{0} configuration errors in plugin {1} association {2}",
-                             errors.Count (),
-                             pluginAssociation.Plugin.IdentifyingName,
-                             pluginAssociation.Name);
+            log.Error ($"HasPackageProblems: {errors.Count ()} configuration errors in plugin {pluginAssociation.Plugin.IdentifyingName} association {pluginAssociation.Name}");
             return true;
           }
         }
 
-        log.DebugFormat ("HasPackageProblems: " +
-                         "plugin {0} association {1} is ok",
-                         pluginAssociation.Plugin.IdentifyingName,
-                         pluginAssociation.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"HasPackageProblems: plugin {pluginAssociation.Plugin.IdentifyingName} association {pluginAssociation.Name} is ok");
+        }
       }
       
       return false;
     }
-    #endregion // Methods
   }
 }

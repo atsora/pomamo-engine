@@ -16,13 +16,7 @@ namespace Lemoine.Plugin.AllCyclesFull
   /// </summary>
   public class OperationCycleFullExtension: IOperationCycleFullExtension
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (OperationCycleFullExtension).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -32,9 +26,6 @@ namespace Lemoine.Plugin.AllCyclesFull
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IOperationCycleFullExtension implementation
 

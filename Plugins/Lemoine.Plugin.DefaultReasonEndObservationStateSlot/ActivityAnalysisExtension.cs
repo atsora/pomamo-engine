@@ -35,14 +35,12 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
     // Cache on the observation state slots
     IObservationStateSlot m_observationStateSlot = null;
     bool m_isCurrentObservationStateSlot = false;
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
     public IMachine Machine {
       get { return m_machine; }
     }
-    #endregion // Getters / Setters
     
     #region IActivityAnalysisExtension implementation
     /// <summary>
@@ -158,9 +156,7 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
             UtcDateTimeRange applicableRange = new UtcDateTimeRange (at, at.AddSeconds (1));
             bool result = next.ProcessTemplate (cancellationToken, applicableRange, null, false, null, null);
             if (false == result) {
-              log.ErrorFormat ("NotifyReasonSlotAddModify: " +
-                               "template not processed in observation state slot " +
-                               "=> fallback: skip next");
+              log.Error ("NotifyReasonSlotAddModify: template not processed in observation state slot => fallback: skip next");
               next = null;
             }
           }
@@ -185,15 +181,11 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
           // The configuration is ok
           IReason reason = ModelDAOHelper.DAOFactory.ReasonDAO.FindById (configuration.ReasonId);
           if (null == reason) {
-            log.ErrorFormat ("NotifyReasonSlotAddModify: " +
-                             "reason with ID {0} does not exist",
-                             configuration.ReasonId);
+            log.Error ($"NotifyReasonSlotAddModify: reason with ID {configuration.ReasonId} does not exist");
           }
           else {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("NotifyReasonSlotAddModify: " +
-                               "apply reason with ID {0}",
-                               reason.Id);
+              log.Debug ($"NotifyReasonSlotAddModify: apply reason with ID {reason.Id}");
             }
             var possibleReason = new PossibleReason (reason, "", configuration.Score, ReasonSource.DefaultAuto, configuration.OverwriteRequired);
             slot.TryAutoReasonInReset (possibleReason, slot.DateTimeRange.Upper, true);

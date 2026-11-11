@@ -22,14 +22,12 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class ComputerConfig : UserControl
   {
-    #region Members
     SortableBindingList<IComputer> m_computers = new SortableBindingList<IComputer>();
     
     ISet<DataGridViewRow> m_updateSet =
       new HashSet<DataGridViewRow> ();
     IList<IComputer> m_deleteList =
       new List<IComputer> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ComputerConfig).FullName);
 
@@ -67,8 +65,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("ComputerConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("ComputerConfigLoad: no DAO factory is defined");
         return;
       }
       

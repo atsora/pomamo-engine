@@ -20,15 +20,12 @@ namespace Lemoine.BaseControls
   // for more details
   public class TableLayoutPanel: System.Windows.Forms.TableLayoutPanel
   {
-    #region Members
     bool busy;
     bool vScroll;
     bool hScroll;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (TableLayoutPanel).FullName);
 
-    #region Methods
     /// <summary>
     /// Method that contains the workaround to Microsoft's bug
     /// </summary>
@@ -71,6 +68,5 @@ namespace Lemoine.BaseControls
       }
       busy = false;
     }
-    #endregion
   }
 }

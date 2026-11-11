@@ -18,14 +18,11 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class StampingConfigDialog : OKCancelDialog, IValueDialog<IStampingConfigByName>
   {
-    #region Members
     private bool m_nullable;
     private bool m_multiSelet;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (StampingConfigDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null StampingConfig a valid value ?
     /// </summary>
@@ -78,7 +75,6 @@ namespace Lemoine.DataReferenceControls
         this.stampingConfigSelection.SelectedStampingConfigs = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -91,7 +87,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     private void SetNullable (bool value)
     {
       m_nullable = value;
@@ -114,7 +109,6 @@ namespace Lemoine.DataReferenceControls
     {
       this.DialogResult = DialogResult.Cancel;
     }
-    #endregion // Methods
 
     void StampingConfigDialogLoad (object sender, EventArgs e)
     {

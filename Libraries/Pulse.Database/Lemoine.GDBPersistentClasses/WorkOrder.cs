@@ -19,7 +19,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class WorkOrder : DataWithDisplayFunction, IWorkOrder, IMergeable<IWorkOrder>, IEquatable<IWorkOrder>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -30,11 +29,9 @@ namespace Lemoine.GDBPersistentClasses
     DateTime? m_deliveryDate;
     IWorkOrderStatus m_status;
     ICollection<IProject> m_projects = new InitialNullIdSet<IProject, int> ();
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (WorkOrder).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -208,9 +205,7 @@ namespace Lemoine.GDBPersistentClasses
             part = project.Part;
           }
           catch (Exception) {
-            log.WarnFormat ("Parts: " +
-                            "Skip project {0} because it is not a part",
-                            project);
+            log.Warn ($"Parts: Skip project {project} because it is not a part");
             continue;
           }
           parts.Add (part);
@@ -218,7 +213,6 @@ namespace Lemoine.GDBPersistentClasses
         return parts;
       }
     }
-    #endregion
 
     #region Add methods
     /// <summary>
@@ -240,7 +234,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
 
-    #region Methods
     /// <summary>
     /// Check if the work order is undefined
     /// 
@@ -265,7 +258,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[WorkOrder {this.Id}]";
       }
     }
-    #endregion // Methods
 
     #region IMergeable implementation
     /// <summary>

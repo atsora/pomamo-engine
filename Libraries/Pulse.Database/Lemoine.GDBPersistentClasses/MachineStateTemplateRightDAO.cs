@@ -43,9 +43,9 @@ namespace Lemoine.GDBPersistentClasses
         .SetCacheable (true)
         .UniqueResult <IMachineStateTemplateRight> ();
       if (null == defaultRight) { // Not found
-        log.DebugFormat ("GetDefault: " +
-                         "no default MachineStateTemplateRight found " +
-                         "=> return Granted");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetDefault: no default MachineStateTemplateRight found => return Granted");
+        }
         return RightAccessPrivilege.Granted;
       }
       else {

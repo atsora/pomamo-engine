@@ -20,7 +20,6 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class ConfigConfig : UserControl, IConfigControlObservable<IConfig>
   {
-    #region Members
     SortableBindingList<IConfig> m_configs = new SortableBindingList<IConfig>();
     
     string m_filter = "%";
@@ -30,7 +29,6 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IConfig>> m_observers =
       new HashSet<IConfigControlObserver<IConfig> > ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ConfigConfig).FullName);
 
@@ -62,7 +60,6 @@ namespace Lemoine.ConfigControls
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Config filter
     /// </summary>
@@ -71,7 +68,6 @@ namespace Lemoine.ConfigControls
       get { return m_filter; }
       set { m_filter = value; }
     }
-    #endregion // Getters / Setters
     
     void ConfigConfigLoad(object sender, EventArgs e)
     {
@@ -82,8 +78,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("ConfigConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("ConfigConfigLoad: no DAO factory is defined");
         return;
       }
       

@@ -19,14 +19,11 @@ namespace Lemoine.Plugin.AlertConfigDirectory
   /// </summary>
   internal sealed class AlertConfig
   {
-    #region Members
     readonly ICollection<IListener> m_listeners = new List<IListener> ();
     readonly ICollection<TriggeredAction> m_triggeredActions = new List<TriggeredAction> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (AlertConfig).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated listeners
     /// </summary>
@@ -42,7 +39,6 @@ namespace Lemoine.Plugin.AlertConfigDirectory
     {
       get { return m_triggeredActions; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -62,7 +58,6 @@ namespace Lemoine.Plugin.AlertConfigDirectory
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a directory path where triggered actions are configured
     /// </summary>
@@ -110,9 +105,9 @@ namespace Lemoine.Plugin.AlertConfigDirectory
       foreach (XmlNode node in xmlNode.ChildNodes) {
         if (node is XmlElement) {
           XmlElement element = node as XmlElement;
-          log.DebugFormat ("AddXmlConfig: " +
-                           "parse element {0}",
-                           element.Name);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"AddXmlConfig: parse element {element.Name}");
+          }
           if (element.Name.Equals ("listeners")) { // listeners section
             foreach (XmlNode listenerNode in element.ChildNodes) {
               if (listenerNode is XmlElement) {
@@ -129,9 +124,7 @@ namespace Lemoine.Plugin.AlertConfigDirectory
           else if (element.Name.Equals ("configDirectory")) { // configDirectory section
             string directoryPath = element.GetAttribute ("path");
             if (string.IsNullOrEmpty (directoryPath)) {
-              log.ErrorFormat ("AddXmlConfig: " +
-                               "directoryPath is not specified for element {0} ({1})",
-                               element, url);
+              log.Error ($"AddXmlConfig: directoryPath is not specified for element {element} ({url})");
             }
             else {
               try {
@@ -146,9 +139,7 @@ namespace Lemoine.Plugin.AlertConfigDirectory
           else if (element.Name.Equals ("configFile")) { // configFile section
             string filePath = element.GetAttribute ("path");
             if (string.IsNullOrEmpty (filePath)) {
-              log.ErrorFormat ("AddXmlConfig: " +
-                               "filePath is not specified for element {0} ({1})",
-                               element, url);
+              log.Error ($"AddXmlConfig: filePath is not specified for element {element} ({url})");
             }
             else {
               try {
@@ -241,6 +232,5 @@ namespace Lemoine.Plugin.AlertConfigDirectory
 
       return type;
     }
-    #endregion // Methods
   }
 }

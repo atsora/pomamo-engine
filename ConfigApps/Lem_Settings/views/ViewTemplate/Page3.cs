@@ -14,10 +14,6 @@ namespace ViewTemplate
   /// </summary>
   public partial class Page3 : GenericViewPage, IViewPage
   {
-    #region Members
-    #endregion // Members
- 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -37,7 +33,6 @@ namespace ViewTemplate
         return LemSettingsGlobal.PageFlag.NONE;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

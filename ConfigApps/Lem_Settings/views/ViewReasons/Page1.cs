@@ -19,12 +19,9 @@ namespace ViewReasons
   /// </summary>
   internal partial class Page1 : GenericViewPage, IViewPage
   {
-    #region Members
     bool m_loading = false;
     ReasonManager m_reasonManager = new ReasonManager();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -40,7 +37,6 @@ namespace ViewReasons
           "are displayed in gray in the right part. Each override is displayed in blue in the tree.\n\n" +
           "Configuration problems that are detected are displayed in red in the right part. Typically, this " +
           "can be a missing default reason or missing selectable reasons."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -16,11 +16,8 @@ namespace ConfiguratorSlots.UserMachine
   /// </summary>
   public partial class UserMachinePage3 : UserControl, IPartPage3
   {
-    #region Members
     IDictionary<IMachine, IMachineStateTemplate> m_msts = new Dictionary<IMachine, IMachineStateTemplate>();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Name of the category of element, plural with uppercase for the first letter
     /// Ex: "Machines"
@@ -43,7 +40,6 @@ namespace ConfiguratorSlots.UserMachine
     /// An update will trigger a call to Initialize()
     /// </summary>
     public IList<Type> EditableTypes { get { return null; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -55,7 +51,6 @@ namespace ConfiguratorSlots.UserMachine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialization of the page, happening before the first load
     /// This method is called again if the database has been updated
@@ -170,7 +165,6 @@ namespace ConfiguratorSlots.UserMachine
       }
       return names;
     }
-    #endregion // Methods
     
     #region Private methods
     void Display(IMachine machine)

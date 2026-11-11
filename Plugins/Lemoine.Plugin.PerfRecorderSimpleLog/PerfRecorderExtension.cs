@@ -27,7 +27,7 @@ namespace Lemoine.Plugin.PerfRecorderSimpleLog
     public bool Initialize ()
     {
       if (false == LoadConfiguration (out m_configuration)) {
-        log.ErrorFormat ("Initialize: load configuration returned false");
+        log.Error ("Initialize: load configuration returned false");
         return false;
       }
       if (!string.IsNullOrEmpty (m_configuration.Regex)) {
@@ -59,7 +59,7 @@ namespace Lemoine.Plugin.PerfRecorderSimpleLog
       if (null != m_regex) {
         if (!m_regex.IsMatch (key)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Record: key {0} does not match regex {1}", key, m_regex);
+            log.Debug ($"Record: key {key} does not match regex {m_regex}");
           }
           return;
         }

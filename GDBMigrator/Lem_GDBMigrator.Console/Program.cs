@@ -55,19 +55,21 @@ namespace Lem_GDBMigrator.Console
             migrationHelper.Simulate = opt.Simulate;
           }
           if (opt.To != int.MinValue) {
-            log.DebugFormat ("Main: " +
-                             "migrate to {0}",
-                             opt.To);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Main: migrate to {opt.To}");
+            }
             migrationHelper.Migrate (opt.To);
           }
           else if (opt.Upgrade) {
-            log.DebugFormat ("Main: " +
-                             "upgrade");
+            if (log.IsDebugEnabled) {
+              log.Debug ("Main: upgrade");
+            }
             migrationHelper.Migrate ();
           }
           else if (opt.List) {
-            log.DebugFormat ("Main: " +
-                             "list the migrations");
+            if (log.IsDebugEnabled) {
+              log.Debug ("Main: list the migrations");
+            }
             System.Console.Out.WriteLine ("Connection string: {0}",
                                           migrationHelper.ConnectionString);
             System.Console.Out.WriteLine ();

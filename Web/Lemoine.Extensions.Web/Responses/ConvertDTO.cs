@@ -16,13 +16,7 @@ namespace Lemoine.Extensions.Web.Responses
   /// </summary>
   public class ConvertDTO
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (ConvertDTO).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -33,7 +27,6 @@ namespace Lemoine.Extensions.Web.Responses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Convert a day to IsoString with T
     /// </summary>
@@ -199,9 +192,7 @@ namespace Lemoine.Extensions.Web.Responses
       if (utcDateTime.HasValue) {
         Debug.Assert (utcDateTime.Value.Kind != DateTimeKind.Utc); // Undefined peut venir de la BDD
         if (DateTimeKind.Utc == utcDateTime.Value.Kind) {
-          log.WarnFormat ("DateTimeLocalToIsoString: " +
-                          "convert UTC time {0} into local",
-                          utcDateTime.Value);
+          log.Warn ($"DateTimeLocalToIsoString: convert UTC time {utcDateTime.Value} into local");
           DateTime localTime = utcDateTime.Value.ToLocalTime ();
           string dateString = localTime.ToString ("s")
             + "." + localTime.Millisecond.ToString ("D3") // ms
@@ -272,6 +263,5 @@ namespace Lemoine.Extensions.Web.Responses
         return day;
       }
     }
-    #endregion // Methods
   }
 }

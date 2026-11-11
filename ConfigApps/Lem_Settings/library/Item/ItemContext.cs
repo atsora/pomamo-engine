@@ -12,7 +12,6 @@ namespace Lemoine.Settings
   /// </summary>
   public class ItemContext
   {
-    #region Getters / Setters
     /// <summary>
     /// User login
     /// </summary>
@@ -43,7 +42,6 @@ namespace Lemoine.Settings
     /// Return true if the current computer is an LPOST
     /// </summary>
     public bool IsLpost { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

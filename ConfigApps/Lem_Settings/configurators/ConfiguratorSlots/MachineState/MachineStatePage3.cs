@@ -16,7 +16,6 @@ namespace ConfiguratorSlots.MachineState
   /// </summary>
   internal partial class MachineStatePage3 : UserControl, IPartPage3
   {
-    #region Getters / Setters
     /// <summary>
     /// Name of the category of element, plural with uppercase for the first letter
     /// Ex: "Machines"
@@ -45,7 +44,6 @@ namespace ConfiguratorSlots.MachineState
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -57,7 +55,6 @@ namespace ConfiguratorSlots.MachineState
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialization of the page, happening before the first load
     /// This method is called again if the database has been updated
@@ -183,7 +180,6 @@ namespace ConfiguratorSlots.MachineState
       }
       return names;
     }
-    #endregion // Methods
     
     #region Events
     void CheckShiftCheckedChanged(object sender, EventArgs e)

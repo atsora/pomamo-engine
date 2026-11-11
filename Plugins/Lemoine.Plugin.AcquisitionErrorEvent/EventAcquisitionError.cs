@@ -24,12 +24,8 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
     static readonly string MACHINE_MODE_ID = "machinemodeid";
     static readonly string RANGE = "range";
 
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (EventAcquisitionError).FullName);
 
-    #region Getters / Setters
     [XmlIgnore]
     public virtual IMachineMode MachineMode
     {
@@ -138,7 +134,6 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
       // disable once ValueParameterNotUsed
       set { }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

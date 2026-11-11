@@ -101,9 +101,7 @@ namespace Lemoine.WebMiddleware.Log
 
         if (!m_httpContext.Request.Path.HasValue) {
           ILog log = m_loggerFactory.GetLogger (LOG_CATEGORY_PREFIX);
-          log.ErrorFormat ("No valid URL. " +
-                           "Completed in {0}",
-                           duration);
+          log.Error ($"No valid URL. Completed in {duration}");
           return;
         }
         else { // Valid URL

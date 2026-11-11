@@ -38,9 +38,5 @@ namespace Lemoine.Plugin.FordAdfs
     /// Version of the plugin
     /// </summary>
     public override int Version => 1;
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

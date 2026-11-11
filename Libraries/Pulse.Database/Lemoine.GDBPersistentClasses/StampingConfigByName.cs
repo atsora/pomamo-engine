@@ -22,10 +22,8 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger (typeof (StampingConfigByName).FullName);
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
-    #endregion // Members
 
     /// <summary>
     /// <see cref="IStampingConfigByName"/>

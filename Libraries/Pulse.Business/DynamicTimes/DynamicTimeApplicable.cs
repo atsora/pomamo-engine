@@ -21,14 +21,9 @@ namespace Lemoine.Business.DynamicTimes
   internal sealed class DynamicTimeApplicable
     : IRequest<bool>
   {
-    #region Members
     readonly IDynamicTimeExtension m_extension;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DynamicTimeApplicable).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -40,9 +35,6 @@ namespace Lemoine.Business.DynamicTimes
       m_extension = extension;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

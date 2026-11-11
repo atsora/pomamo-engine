@@ -69,9 +69,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("AcquisitionDelayEvent.ConfigurationErrors")) {
           if (null == ModelDAOHelper.DAOFactory.EventLevelDAO
                 .FindById (this.EventLevelId)) {
-              log.ErrorFormat ("GetConfigurationErrors: " +
-                               "Event level {0} does not exist",
-                               this.EventLevelId);
+              log.Error ($"GetConfigurationErrors: Event level {this.EventLevelId} does not exist");
               errorList.Add ("EventLevel with ID "
                           + this.EventLevelId
                           + " does not exist");

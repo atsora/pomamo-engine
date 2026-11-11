@@ -24,17 +24,14 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OperationModel : BaseData, IOperationModel, IEquatable<IOperationModel>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     IOperation m_operation;
     IOperationRevision m_revision;
     /* TODO: for later once the table exists
     DateTime m_dateTime = DateTime.UtcNow;
     */
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationModel).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -112,7 +109,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IEnumerable<ISequenceOperationModel> SequenceOperationModels =>
       this.Operation.Sequences
       .Select (x => new SequenceOperationModel (x.Operation.DefaultActiveModel, x, x.Order, x.Path?.Number));
-    #endregion // Getters / Setters
 
     #region Contructors
     /// <summary>

@@ -27,12 +27,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       return log;
     }
-    
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -68,7 +62,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="Object.GetHashCode" />
     /// </summary>
@@ -96,6 +89,5 @@ namespace Lemoine.GDBPersistentClasses
 
       return Bound.Equals<DateTime> (this.BeginDateTime, other.BeginDateTime);
     }
-    #endregion // Methods
   }
 }

@@ -29,21 +29,16 @@ namespace Lemoine.Alert.GDBListeners
   [Serializable]
   public class ReserveCapacityListener : IListener
   {
-    #region Members
     static readonly string GROUP_LIST_KEY = "ReserveCapacityAlert.GroupList";
 
     DateTime m_lastExecution = DateTime.UtcNow;
     TimeSpan m_frequency = TimeSpan.FromSeconds (2);
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReserveCapacityListener).FullName);
 
-    #region Getters / Setters
     readonly IList<ReserveCapacityGroupListener> m_groupListeners = new List<ReserveCapacityGroupListener> ();
     int m_groupListenersIndex = 0;
     //readonly IList<ReserveCapacityGroupListener> m_machineListeners = new List<ReserveCapacityGroupListener> ();
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -79,7 +74,6 @@ namespace Lemoine.Alert.GDBListeners
 
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// Returns null when there is no data anymore to return
@@ -113,7 +107,5 @@ namespace Lemoine.Alert.GDBListeners
       // Go to the next index
       return GetData ();
     }
-
-    #endregion // Methods
   }
 }

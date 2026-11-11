@@ -33,7 +33,6 @@ namespace Pulse.Web.Machine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -59,8 +58,7 @@ namespace Pulse.Web.Machine
       var groupId = request.GroupId;
       if (string.IsNullOrEmpty (groupId)) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetByGroup: empty group id {0}",
-            request.GroupId);
+          log.Error ($"GetByGroup: empty group id {request.GroupId}");
         }
         return new ErrorDTO ("Empty group id", ErrorStatus.WrongRequestParameter);
       }
@@ -70,8 +68,7 @@ namespace Pulse.Web.Machine
 
       if (null == group) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetByGroup: group with id {0} is not valid",
-            request.GroupId);
+          log.Error ($"GetByGroup: group with id {request.GroupId} is not valid");
         }
         return new ErrorDTO ("Invalid group", ErrorStatus.WrongRequestParameter);
       }
@@ -86,7 +83,7 @@ namespace Pulse.Web.Machine
         var machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById (machineId);
         if (null == machine) {
           if (log.IsErrorEnabled) {
-            log.ErrorFormat ("GetByMachine: machine with id {0} does not exist", machineId);
+            log.Error ($"GetByMachine: machine with id {machineId} does not exist");
           }
           return new ErrorDTO ("Invalid machine id", ErrorStatus.WrongRequestParameter);
         }
@@ -95,6 +92,5 @@ namespace Pulse.Web.Machine
         return response;
       }
     }
-    #endregion // Methods
   }
 }

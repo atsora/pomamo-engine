@@ -19,15 +19,12 @@ namespace Lemoine.Alert.TestListeners
   [Serializable]
   public class LoopListener: IListener
   {
-    #region Members
     DateTime m_lastExecution = DateTime.UtcNow;
     TimeSpan m_frequency = TimeSpan.FromSeconds (2);
     XmlElement m_data;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (LoopListener).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Frequency when a new data must be returned
     /// </summary>
@@ -58,7 +55,6 @@ namespace Lemoine.Alert.TestListeners
         m_data = xmlDocument.DocumentElement;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -69,7 +65,6 @@ namespace Lemoine.Alert.TestListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implements <see cref="IListener" />
     /// </summary>
@@ -85,6 +80,5 @@ namespace Lemoine.Alert.TestListeners
         return m_data;
       }
     }
-    #endregion // Methods
   }
 }

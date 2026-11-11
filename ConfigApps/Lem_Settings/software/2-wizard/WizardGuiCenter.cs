@@ -22,11 +22,9 @@ namespace Lem_Settings
   {
     static readonly ILog log = LogManager.GetLogger (typeof (WizardGuiCenter).FullName);
 
-    #region Members
     readonly IList<IList<string>> m_currentWarnings = new List<IList<string>> ();
     bool m_isRightButtonOk = false;
     SummaryPage m_summaryPage = new SummaryPage ();
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -39,7 +37,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the current wizard
     /// </summary>
@@ -167,7 +164,6 @@ namespace Lem_Settings
     {
       return m_currentPages.Last () as IWizardPage;
     }
-    #endregion // Methods
 
     #region Event reactions
     /// <summary>

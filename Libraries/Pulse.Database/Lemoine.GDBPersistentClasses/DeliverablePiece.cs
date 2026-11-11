@@ -16,17 +16,13 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class DeliverablePiece : DataWithDisplayFunction, IDeliverablePiece
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_code;
     IComponent m_component;
     IWorkOrder m_workOrder;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DeliverablePiece).FullName);
-  
-    #region Getters / Setters
     
     /// <summary>
     /// identifier
@@ -89,9 +85,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.WorkOrder as WorkOrder; }
       set { this.WorkOrder = value; }
     }
-    #endregion // Getters / Setters
-
-    #region Methods
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
@@ -101,7 +94,5 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateHelper.Unproxy<IComponent> (ref m_component);
       NHibernateHelper.Unproxy<IWorkOrder> (ref m_workOrder);
     }
-    
-    #endregion // Methods
   }
 }

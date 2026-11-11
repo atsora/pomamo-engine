@@ -24,7 +24,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObservable<IMachineStateTemplateRight>
     , IConfigControlObserver<IMachineStateTemplate>
   {
-    #region Members
     BindingList<IDataGridViewMachineStateTemplateRight> m_machineStateTemplateRights = new BindingList<IDataGridViewMachineStateTemplateRight>();
     
     ISet<IMachineStateTemplateRight> m_updateSet = new HashSet<IMachineStateTemplateRight> ();
@@ -32,11 +31,9 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IMachineStateTemplateRight>> m_observers = 
       new HashSet<IConfigControlObserver<IMachineStateTemplateRight>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateRightConfig).FullName);
     
-    #region Getter/Setter
     /// <summary>
     /// Return Selected RightAccessPrivilege
     /// </summary>
@@ -70,7 +67,6 @@ namespace Lemoine.ConfigControls
         return RightAccessPrivilege.Granted; //Never got this normaly
       }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -279,7 +275,6 @@ namespace Lemoine.ConfigControls
     }
     #endregion
     
-    #region Methods
     /// <summary>
     /// Return RightAccessPrivilege linked to Role
     /// </summary>
@@ -330,7 +325,6 @@ namespace Lemoine.ConfigControls
         }
       }
     }
-    #endregion
     
     #region IConfigControlObservable implementation
     /// <summary>

@@ -33,7 +33,6 @@ namespace Lemoine.Cnc.Data
       get; set;
     }
 
-    #region Members
     /// <summary>
     /// Queue for machine modes
     /// </summary>
@@ -75,11 +74,9 @@ namespace Lemoine.Cnc.Data
     protected int m_currentQueueIndex = 0;
 
     private IChecked m_checkedCaller = null;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (MultiGenericCncDataQueue).FullName);
 
-    #region Getters / setters
     /// <summary>
     /// Current queue index
     /// </summary>
@@ -115,9 +112,7 @@ namespace Lemoine.Cnc.Data
         return count;
       }
     }
-    #endregion // Getters / setters
 
-    #region Methods
     /// <summary>
     /// Set the caller
     /// </summary>
@@ -400,6 +395,5 @@ namespace Lemoine.Cnc.Data
         queue.Delete ();
       }
     }
-    #endregion // Methods
   }
 }

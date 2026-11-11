@@ -82,7 +82,7 @@ namespace Lemoine.Plugin.SameMachineMode
 
             if (0 == machineModeId) {
               if (!fact.DateTimeRange.ContainsElement (dateTime)) {
-                log.ErrorFormat ("Get: no fact at {0} (initial gap) => not applicable", dateTime);
+                log.Error ($"Get: no fact at {dateTime} (initial gap) => not applicable");
                 if (IsFactAfter (dateTime)) {
                   return this.CreateNotApplicable ();
                 }
@@ -95,12 +95,16 @@ namespace Lemoine.Plugin.SameMachineMode
             else {
               Debug.Assert (0 != machineModeId);
               if (fact.End < lastDateTime) { // Gap
-                log.DebugFormat ("Get: gap {0}-{1}", fact.End, lastDateTime);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Get: gap {fact.End}-{lastDateTime}");
+                }
                 return this.CreateFinal (lastDateTime);
               }
               Debug.Assert (lastDateTime.Equals (fact.End));
               if (fact.CncMachineMode.Id != machineModeId) {
-                log.DebugFormat ("Get: machine mode change at {0}", fact.End);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Get: machine mode change at {fact.End}");
+                }
                 return this.CreateFinal (lastDateTime);
               }
             }
@@ -110,14 +114,13 @@ namespace Lemoine.Plugin.SameMachineMode
           if (0 == machineModeId) { // No fact in range
             if (IsFactAfter (dateTime)) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: no fact in range {0}, but one after => not applicable",
-                  range);
+                log.Debug ($"Get: no fact in range {range}, but one after => not applicable");
               }
               return this.CreateNotApplicable ();
             }
             else {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: no fact in range {0} and after => pending", range);
+                log.Debug ($"Get: no fact in range {range} and after => pending");
               }
               return this.CreatePending ();
             }
@@ -126,7 +129,7 @@ namespace Lemoine.Plugin.SameMachineMode
           int compare = Bound.Compare<DateTime> (range.Lower, lastDateTime);
           if (compare < 0) { // range.Lower < lastDateTime
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: gap at the end, return {0}", lastDateTime);
+              log.Debug ($"Get: gap at the end, return {lastDateTime}");
             }
             return this.CreateFinal (lastDateTime);
           }
@@ -148,8 +151,7 @@ namespace Lemoine.Plugin.SameMachineMode
           }
           else { // lastDateTime < range.Lower
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: before {0} because last fact before range {1}",
-                lastDateTime, range.Lower);
+              log.Debug ($"Get: before {lastDateTime} because last fact before range {range.Lower}");
             }
             return this.CreateWithHint (new UtcDateTimeRange (new LowerBound<DateTime> (null), lastDateTime, "[]"));
           }

@@ -27,7 +27,6 @@ namespace Lemoine.WebService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request for GetMachineTree (no cache)
     /// </summary>
@@ -71,6 +70,5 @@ namespace Lemoine.WebService
         return response;
       }
     }
-    #endregion // Methods
   }
 }

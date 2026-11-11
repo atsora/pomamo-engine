@@ -19,14 +19,9 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
     : Lemoine.Extensions.UniqueInstanceConfigurableExtension<Configuration>
     , Pulse.Extensions.Database.IReasonExtension
   {
-    #region Members
     IEnumerable<Configuration> m_configurations = new List<Configuration> ();
-    #endregion // Members
 
     static ILog log = LogManager.GetLogger (typeof (ReasonExtension).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -36,9 +31,6 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IResetReasonExtension implementation
     public bool Initialize (IMachine machine)

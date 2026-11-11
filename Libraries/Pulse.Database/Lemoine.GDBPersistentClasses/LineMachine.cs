@@ -18,18 +18,15 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class LineMachine: IVersionable, ILineMachine, ISerializableModel
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     ILine m_line = null;
     IMachine m_machine = null;
     LineMachineStatus m_lineMachineStatus = LineMachineStatus.Dedicated;
     IOperation m_operation = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (LineMachine).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// ID
     /// </summary>
@@ -59,7 +56,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.FatalFormat("Line cannot be null");
+          log.Fatal ("Line cannot be null");
           throw new ArgumentNullException("Line");
         }
         m_line = value;
@@ -76,7 +73,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat("Machine cannot be null");
+          log.Fatal ("Machine cannot be null");
           throw new ArgumentNullException("Machine");
         }
         m_machine = value;
@@ -103,13 +100,12 @@ namespace Lemoine.GDBPersistentClasses
       set {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat("Operation cannot be null");
+          log.Fatal ("Operation cannot be null");
           throw new ArgumentNullException("Operation");
         }
         m_operation = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -133,7 +129,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
@@ -143,6 +138,5 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateHelper.Unproxy<IMachine> (ref m_machine);
       NHibernateHelper.Unproxy<IOperation> (ref m_operation);
     }
-    #endregion // Methods
   }
 }

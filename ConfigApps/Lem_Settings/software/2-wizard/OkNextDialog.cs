@@ -17,13 +17,10 @@ namespace Lem_Settings
   /// </summary>
   public partial class OkNextDialog : Form
   {
-    #region Members
     readonly IDictionary<string, IItem> m_nextItems = new Dictionary<string, IItem>();
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (OkNextDialog).FullName);
     
-    #region Getters / Setters
     /// <summary>
     /// Next item to display
     /// </summary>
@@ -33,7 +30,6 @@ namespace Lem_Settings
     /// View mode for the next item to display
     /// </summary>
     public bool ViewMode { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -53,7 +49,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     void ProcessWarnings(ICollection<string> warnings)
     {
       if (warnings == null || warnings.Count == 0) {
@@ -85,11 +80,10 @@ namespace Lem_Settings
               richTextBox.AppendText("\n- ");
               richTextBox.InsertLink(nextItem.Value, nextItem.Key);
             } else {
-              log.ErrorFormat ("ProcessNextItems: couldn't find an item with id {0} and subid {1}", itemID, itemSubID);
+              log.Error ($"ProcessNextItems: couldn't find an item with id {itemID} and subid {itemSubID}");
             }
           } catch (Exception e) {
-            log.ErrorFormat("Couldn't parse next item id {0} ({1}): {2}",
-                            nextItem.Key, nextItem.Value, e);
+            log.Error ($"Couldn't parse next item id {nextItem.Key} ({nextItem.Value}): {e}");
           }
         }
       }
@@ -99,7 +93,6 @@ namespace Lem_Settings
         richTextBox.SelectedText = "\n\n";
       }
     }
-    #endregion // Methods
     
     #region Event reactions
     void RichTextBoxLinkClicked(object sender, LinkClickedEventArgs e)

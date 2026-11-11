@@ -21,10 +21,8 @@ namespace ViewLinePlanning
     public event Action<DateTime> DayDoubleClicked;
     #endregion // Events
     
-    #region Members
     DateTime m_currentDate;
     IList<CalendarMarker> m_markers = new List<CalendarMarker>();
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -37,7 +35,6 @@ namespace ViewLinePlanning
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the current date of the cell
     /// </summary>
@@ -87,7 +84,6 @@ namespace ViewLinePlanning
       
       verticalScrollLayout.UpdateScroll();
     }
-    #endregion // Methods
     
     #region Event reactions
     void OnMarkerDoubleClicked(ILine line)

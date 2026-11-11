@@ -22,10 +22,8 @@ namespace Lemoine.Settings
       UNKNOWN
     }
     
-    #region Members
     readonly IItem m_item;
     readonly ItemType m_itemType;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -49,7 +47,6 @@ namespace Lemoine.Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get a formatted text for the Lemoine wiki
     /// </summary>
@@ -237,6 +234,5 @@ namespace Lemoine.Settings
         .Replace("\n - ", "\n* ")
         .Replace("\n- ", "\n* ");
     }
-    #endregion // Methods
   }
 }

@@ -19,13 +19,10 @@ namespace Lemoine.Plugin.MaintenanceAction
     static readonly string CACHE_TIMEOUT_KEY = "MaintenanceAction.EstimatedDateTime.CacheTimeOut";
     static readonly TimeSpan CACHE_TIMEOUT_DEFAULT = TimeSpan.FromHours (1);
 
-    #region Members
     double? m_utilizationPercentage = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MaintenanceActionEstimatedDateTime).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Maintenance action (not null)
     /// </summary>
@@ -41,7 +38,6 @@ namespace Lemoine.Plugin.MaintenanceAction
         return m_utilizationPercentage.Value;
       }
     }
-    #endregion // Getters / Setters
 
     public MaintenanceActionEstimatedDateTime (MaintenanceAction maintenanceAction)
     {
@@ -67,7 +63,7 @@ namespace Lemoine.Plugin.MaintenanceAction
         var elapsedRange = new UtcDateTimeRange (this.MaintenanceAction.CreationDateTime, nowMinutes);
         TimeSpan elapsedMachiningDuration;
         if (elapsedRange.IsEmpty ()) {
-          log.WarnFormat ("Get: elapsedRange {0} is empty", elapsedRange);
+          log.Warn ($"Get: elapsedRange {elapsedRange} is empty");
           elapsedMachiningDuration = TimeSpan.FromTicks (0);
         }
         else {
@@ -141,8 +137,7 @@ namespace Lemoine.Plugin.MaintenanceAction
             .Where (s => s.Running);
           foreach (var reasonSlot in reasonSlots) {
             if (reasonSlot.Duration.HasValue) {
-              log.FatalFormat ("GetTimeFromExceededMachiningDuration: " +
-                "reason slot with no duration");
+              log.Fatal ("GetTimeFromExceededMachiningDuration: reason slot with no duration");
               Debug.Assert (false);
             }
             else {
@@ -158,7 +153,7 @@ namespace Lemoine.Plugin.MaintenanceAction
         }
       }
 
-      log.FatalFormat ("GetTimeFromExceededMachiningDuration: incoherent data, missing reason slots");
+      log.Fatal ("GetTimeFromExceededMachiningDuration: incoherent data, missing reason slots");
       Debug.Assert (false);
       throw new InvalidProgramException ("Missing reason slots");
     }

@@ -124,9 +124,9 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != machine);
 
-      log.DebugFormat ("FindAllAfter: " +
-                       "machine={0} after={1} maxNumber={2}",
-                       machine, after, maxNumber);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"FindAllAfter: machine={machine} after={after} maxNumber={maxNumber}");
+      }
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<Fact> ()
         .Add (Restrictions.Eq ("Machine.Id", machine.Id))
@@ -152,9 +152,9 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != machine);
 
-      log.DebugFormat ("FindAllAutoSequencePeriodsBetween: " +
-                       "machine={0} range={1} maxNumber={2}",
-                       machine, range, maxNumber);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"FindAllAutoSequencePeriodsBetween: machine={machine} range={range} maxNumber={maxNumber}");
+      }
       return NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<Fact> ()
         .Add (Restrictions.Eq ("Machine.Id", machine.Id))

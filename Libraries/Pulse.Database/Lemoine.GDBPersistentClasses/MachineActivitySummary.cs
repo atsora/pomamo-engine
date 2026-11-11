@@ -24,7 +24,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class MachineActivitySummary: IMachineActivitySummary
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -33,7 +32,6 @@ namespace Lemoine.GDBPersistentClasses
     IMachineMode m_machineMode;
     IShift m_shift;
     TimeSpan m_time;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (MachineActivitySummary).FullName);
 
@@ -78,7 +76,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Summary Id
     /// </summary>
@@ -144,6 +141,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_time; }
       set { m_time = value; }
     }
-    #endregion // Getters / Setters    
   }
 }

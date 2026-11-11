@@ -16,7 +16,6 @@ namespace Lemoine.BaseControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (BarSegment).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Start datetime of the segment
     /// </summary>
@@ -26,7 +25,6 @@ namespace Lemoine.BaseControls
     /// End datetime of the segment
     /// </summary>
     public DateTime? End { get; private set; }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -57,7 +55,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the intersection with a segment
     /// Return true if the intersection exists
@@ -162,6 +159,5 @@ namespace Lemoine.BaseControls
       
       return false;
     }
-    #endregion // Methods
   }
 }

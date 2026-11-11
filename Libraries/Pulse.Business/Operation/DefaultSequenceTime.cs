@@ -113,7 +113,7 @@ namespace Lemoine.Business.Operation
       }
       if (IsNoStandardSequenceTimeMultiPath ()) {
         if (1 < operation.Paths.Where (p => p.Sequences.Any ()).Count ()) {
-          log.InfoFormat ("Get: no standard sequence time for multi-path: return null");
+          log.Info ("Get: no standard sequence time for multi-path: return null");
           var noStandardResponse = new DefaultSequenceTimeResponse ();
           return noStandardResponse;
         }
@@ -182,7 +182,7 @@ namespace Lemoine.Business.Operation
     TimeSpan? GetDefaultSequenceDuration (IOperation operation, IPath path, int numberOfSequences)
     {
       if (0 == numberOfSequences) {
-        log.FatalFormat ("GetDefaultSequenceDuration: number of sequences is 0");
+        log.Fatal ("GetDefaultSequenceDuration: number of sequences is 0");
         Debug.Assert (0 < numberOfSequences);
         return null;
       }

@@ -13,7 +13,6 @@ namespace Lemoine.Plugin.GroupSingleMachine
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category name
     /// </summary>
@@ -40,7 +39,6 @@ namespace Lemoine.Plugin.GroupSingleMachine
     {
       get; set;
     } = 0.0;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

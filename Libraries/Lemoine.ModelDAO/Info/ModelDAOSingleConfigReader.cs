@@ -16,14 +16,9 @@ namespace Lemoine.ModelDAO.Info
   /// </summary>
   public class ModelDAOSingleConfigReader : Lemoine.Info.ConfigReader.IGenericConfigReader
   {
-    #region Members
     volatile bool m_activeRequest = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ModelDAOSingleConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -34,9 +29,6 @@ namespace Lemoine.ModelDAO.Info
     }
     #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
     #region IGenericConfigReader implementation
     /// <summary>
     /// Implementation of <see cref="Lemoine.Info.ConfigReader.IGenericConfigReader"/>
@@ -46,9 +38,9 @@ namespace Lemoine.ModelDAO.Info
     public T Get<T> (string key)
     {
       if (m_activeRequest) { // To avoid any recursion
-        log.DebugFormat ("Get: " +
-                         "a request is already active",
-                         key);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Get: a request is already active, key={key}");
+        }
         throw new Lemoine.Info.ConfigKeyNotFoundException (key, "a request is already active");
       }
 

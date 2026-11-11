@@ -36,13 +36,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ActivityManual : MachineAssociation, IActivityManual
   {
-    #region Members
     IMachineMode m_machineMode;
 
     IEnumerable<IReasonExtension> m_reasonExtensions;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -64,8 +61,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("MachineMode.set: " +
-                           "null value");
+          log.Error ("MachineMode.set: null value");
           throw new ArgumentNullException ("ActivityManual.MachineMode");
         }
         m_machineMode = value;
@@ -81,7 +77,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.MachineMode as MachineMode; }
       set { this.MachineMode = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -179,9 +174,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -199,10 +192,7 @@ namespace Lemoine.GDBPersistentClasses
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "{0} " +
-                         "=> finish in error",
-                         message);
+        log.Error ($"MakeAnalysis: {message} => finish in error");
         AddAnalysisLog (LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -236,15 +226,17 @@ namespace Lemoine.GDBPersistentClasses
 
         if (null != machineStatus) {
           if (Bound.Compare<DateTime> (machineStatus.ReasonSlotEnd, this.Begin) < 0) { // Future
-            log.DebugFormat ("MakeAnalysis: " +
-                             "future MachineMode association");
+            if (log.IsDebugEnabled) {
+              log.Debug ("MakeAnalysis: future MachineMode association");
+            }
             this.MarkAsPending (machineStatus.ReasonSlotEnd);
             return;
           }
           else if (Bound.Compare<DateTime> (machineStatus.ReasonSlotEnd, this.End) < 0) { // Current
             // This impacts the current period => update machineStatus
-            log.DebugFormat ("MakeAnalysis: " +
-                             "current MachineMode association");
+            if (log.IsDebugEnabled) {
+              log.Debug ("MakeAnalysis: current MachineMode association");
+            }
             machineStatus.ManualActivity = true;
             machineStatus.MachineMode = this.MachineMode;
             machineStatus.ManualActivityEnd = (DateTime?)this.End;
@@ -338,7 +330,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 
@@ -416,9 +408,9 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      log.DebugFormat ("ComputeNewSpan: " +
-                       "no better end with the observation state slots, " +
-                       "use the base method instead");
+      if (log.IsDebugEnabled) {
+        log.Debug ("ComputeNewSpan: no better end with the observation state slots, use the base method instead");
+      }
       return base.ComputeNewStepSpan (range);
     }
 

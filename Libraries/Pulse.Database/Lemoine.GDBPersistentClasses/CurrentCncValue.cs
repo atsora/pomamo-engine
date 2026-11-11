@@ -17,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CurrentCncValue: ICurrentCncValue
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineModule m_machineModule;
@@ -26,12 +25,10 @@ namespace Lemoine.GDBPersistentClasses
     string m_string = null;
     int? m_int = null;
     double? m_double = null;
-    #endregion // Members
 
     static readonly ILog staticLog = LogManager.GetLogger (typeof (CurrentCncValue).FullName);
     ILog log = LogManager.GetLogger(typeof (CurrentCncValue).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Id
     /// </summary>
@@ -78,8 +75,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         switch (value.Kind) {
           case DateTimeKind.Unspecified:
-            log.WarnFormat ("DateTime.set: " +
-                            "unspecified DateTimeKind => suppose it is a universal time");
+            log.Warn ("DateTime.set: unspecified DateTimeKind => suppose it is a universal time");
             m_dateTime = new DateTime (value.Ticks, DateTimeKind.Utc);
             break;
           case DateTimeKind.Utc:
@@ -154,9 +150,7 @@ namespace Lemoine.GDBPersistentClasses
           case FieldType.Double:
             return this.Double;
           default:
-            log.ErrorFormat ("Value.get: " +
-                             "unknown field type {0}",
-                             this.Field.Type);
+            log.Error ($"Value.get: unknown field type {this.Field.Type}");
             throw new Exception ("Unknown field type");
         }
       }
@@ -181,14 +175,11 @@ namespace Lemoine.GDBPersistentClasses
           }
         }
         catch (Exception ex) {
-          log.ErrorFormat ("Value.set: " +
-                           "error {0}",
-                           ex);
+          log.Error ($"Value.set: error {ex}");
           throw new InvalidCastException ("The value could not be converted to the right type", ex);
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

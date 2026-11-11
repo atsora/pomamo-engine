@@ -162,7 +162,7 @@ namespace Lemoine.Cnc.Data
         string distantDirectory = extension.GetDistantDirectory (machineId, machineModuleId);
         string distantFileName = extension.GetDistantFileName (machineId, machineModuleId);
         if ((null != distantDirectory) && !string.IsNullOrEmpty (distantFileName)) {
-          log.InfoFormat ("GetRemoteQueueConfigurationPath: loading distant file {0}/{1}", distantDirectory, distantFileName);
+          log.Info ($"GetRemoteQueueConfigurationPath: loading distant file {distantDirectory}/{distantFileName}");
           return System.IO.Path.Combine (distantDirectory, distantFileName);
         }
       }
@@ -186,7 +186,7 @@ namespace Lemoine.Cnc.Data
       }
       var localPath = Path.Combine (baseDirectory, remoteQueueConfigurationPath);
       if (forceSynchronization || (createNewFile && !File.Exists (localPath))) {
-        log.InfoFormat ("LoadConfigurationRemoteFile: synchronize {0}", localPath);
+        log.Info ($"LoadConfigurationRemoteFile: synchronize {localPath}");
         var distantFileName = System.IO.Path.GetFileName (remoteQueueConfigurationPath);
         var distantDirectory = System.IO.Path.GetDirectoryName (remoteQueueConfigurationPath);
         var localDirectory = System.IO.Path.Combine (baseDirectory, distantDirectory);
@@ -204,8 +204,7 @@ namespace Lemoine.Cnc.Data
       if (File.Exists (localPath)) {
         try {
           LoadConfiguration (localPath);
-          log.InfoFormat ("LoadConfigurationRemoteFile: {0} was correctly loaded",
-            localPath);
+          log.Info ($"LoadConfigurationRemoteFile: {localPath} was correctly loaded");
           return;
         }
         catch (Exception ex) {
@@ -214,7 +213,7 @@ namespace Lemoine.Cnc.Data
         }
       }
       else { // !File.Exists (localPath)
-        log.ErrorFormat ("LoadConfigurationRemoteFile: local file {0} from extension not found", localPath);
+        log.Error ($"LoadConfigurationRemoteFile: local file {localPath} from extension not found");
         throw new Exception ("LoadConfigurationRemoteFile: no local configuration file found for the extension");
       }
     }
@@ -322,7 +321,6 @@ namespace Lemoine.Cnc.Data
     }
     #endregion
 
-    #region Methods
     void ProcessDocument (XmlDocument document)
     {
       // Root node and namespace
@@ -359,7 +357,6 @@ namespace Lemoine.Cnc.Data
         }
       }
     }
-    #endregion // Methods
 
     /// <summary>
     /// Get a queue based on a full configuration
@@ -400,7 +397,7 @@ namespace Lemoine.Cnc.Data
 
         if (queue == null) {
           string txt = $"Unknown queue used: {queueType}";
-          log.ErrorFormat ($"CreateQueue: {txt}");
+          log.Error ($"CreateQueue: {txt}");
           throw new Exception (txt);
         }
       }

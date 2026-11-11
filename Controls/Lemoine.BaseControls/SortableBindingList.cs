@@ -21,7 +21,6 @@ namespace Lemoine.BaseControls
   [Serializable()]
   public class SortableBindingList<T> : BindingList<T>, ITypedList
   {
-    #region Members
     private bool                            _isSorted;
     private ListSortDirection               _dir = ListSortDirection.Ascending;
     private bool                            _sortColumns = true;
@@ -31,8 +30,6 @@ namespace Lemoine.BaseControls
 
     [NonSerialized()]
     private PropertyDescriptor              _sort = null;
-
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (SortableBindingList<T>).FullName);
     

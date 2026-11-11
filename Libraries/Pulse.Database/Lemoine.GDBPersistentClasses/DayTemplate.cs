@@ -19,12 +19,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class DayTemplate: BaseData, IDayTemplate, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
     ISet<IDayTemplateItem> m_items = new HashSet<IDayTemplateItem> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DayTemplate).FullName);
 
@@ -45,7 +43,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -111,7 +108,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ISet<IDayTemplateItem> Items {
       get { return m_items; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// IDisplay implementation
@@ -120,8 +116,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public virtual string GetDisplay (string variant)
     {
-      log.WarnFormat ("GetDisplay: " +
-                      "No variant is supported for the DayTemplate");
+      log.Warn ("GetDisplay: No variant is supported for the DayTemplate");
       return this.Display;
     }
     
@@ -162,9 +157,9 @@ namespace Lemoine.GDBPersistentClasses
         if (positiveCutOff.Equals (offset)) { // Same cut-off
           DateTime day = localDateTime.Date;
           if (item.WeekDays.HasFlagDayOfWeek (weekDay.DayOfWeek)) {
-            log.DebugFormat ("AdjustToDayBegin: " +
-                             "dateTime {0} is a day begin",
-                             dateTime);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"AdjustToDayBegin: dateTime {dateTime} is a day begin");
+            }
             return dateTime;
           }
           if (item.WeekDays.HasFlagDayOfWeek (weekDay.AddDays (1).DayOfWeek)) {

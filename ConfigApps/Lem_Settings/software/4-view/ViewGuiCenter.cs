@@ -30,7 +30,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the current view or configurator in view mode
     /// </summary>
@@ -129,7 +128,6 @@ namespace Lem_Settings
     {
       return m_currentPages.Last() as IViewPage;
     }
-    #endregion // Methods
     
     #region Event reactions
     void OnDisplayPage(string pageName, IList<string> errors, bool ignorePossible)

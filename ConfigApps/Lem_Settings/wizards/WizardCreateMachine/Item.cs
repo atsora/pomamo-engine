@@ -14,7 +14,6 @@ namespace WizardCreateMachine
   /// </summary>
   internal class Item : AbstractItem, IWizard
   {
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -81,7 +80,6 @@ namespace WizardCreateMachine
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

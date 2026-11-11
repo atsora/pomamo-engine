@@ -23,11 +23,8 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class IsoFileMachineModuleAssociation: MachineModuleAssociation, IIsoFileMachineModuleAssociation
   {
-    #region Members
     IIsoFile m_isoFile;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -54,7 +51,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_isoFile as IsoFile; }
       set { m_isoFile = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -88,7 +84,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -100,10 +95,7 @@ namespace Lemoine.GDBPersistentClasses
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "{0} " +
-                         "=> finish in error",
-                         message);
+        log.Error ($"MakeAnalysis: {message} => finish in error");
         AddAnalysisLog(LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -191,6 +183,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       base.Unproxy ();
     }
-    #endregion // Methods
   }
 }

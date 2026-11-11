@@ -42,9 +42,7 @@ namespace Lemoine.GDBPersistentClasses
     private void InsertDefaultValue (IGoalType goalType)
     {
       if (null == FindById (goalType.Id)) { // It does not exist, create it
-        log.InfoFormat ("InsertDefaultValue: " +
-                        "add id={0} config={1}",
-                        goalType.Id, goalType.Display);
+        log.Info ($"InsertDefaultValue: add id={goalType.Id} config={goalType.Display}");
         // Use a raw SQL Command, else the Id is resetted
         using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand())
         {

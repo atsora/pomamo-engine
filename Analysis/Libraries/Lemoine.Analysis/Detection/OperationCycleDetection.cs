@@ -124,9 +124,9 @@ namespace Lemoine.Analysis.Detection
       foreach (var fullExtension in m_operationCycleFullDetectionExtensions) {
         var extensionResult = fullExtension.IsFull (operationCycle);
         if (extensionResult.HasValue) {
-          log.DebugFormat ("IsFull: " +
-                           "{0} from extension {1}",
-                           extensionResult.Value, fullExtension);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsFull: {extensionResult.Value} from extension {fullExtension}");
+          }
           return extensionResult.Value;
         }
       }
@@ -190,11 +190,7 @@ namespace Lemoine.Analysis.Detection
           operationSlot.SetCheckedCaller (this);
           // .. If it exists, associate the new operation cycle to it
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("StartCycle: " +
-                             "associate the new partial operation cycle {0}" +
-                             "to operation slot {1}",
-                             operationCycle,
-                             operationSlot);
+            log.Debug ($"StartCycle: associate the new partial operation cycle {operationCycle}to operation slot {operationSlot}");
           }
           operationCycle.OperationSlot = operationSlot;
           if (operationSlot.EndDateTime.HasValue) {
@@ -337,11 +333,7 @@ namespace Lemoine.Analysis.Detection
       Debug.Assert (Bound.Compare<DateTime> (operationSlot.BeginDateTime, operationCycle.End.Value) < 0);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("AssociateNewFullCycleWithNoPreviousPartialCycleToSlot: " +
-                         "the new operation cycle {0} " +
-                         "ends in an existing slot {1}",
-                         operationCycle,
-                         operationSlot);
+        log.Debug ($"AssociateNewFullCycleWithNoPreviousPartialCycleToSlot: the new operation cycle {operationCycle} ends in an existing slot {operationSlot}");
       }
 
       if ((null == lastOperationCycle)

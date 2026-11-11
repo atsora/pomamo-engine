@@ -37,13 +37,11 @@ namespace Lemoine.JobControls
       CREATE = 2
     };
 
-    #region Members
     IOperation m_operation;
     IOperationType[] m_operationTypeArray;
     DisplayMode m_displayMode;
     TreeNode m_node;
     ITreeViewObservable m_observable;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationControl).FullName);
 
@@ -190,7 +188,7 @@ namespace Lemoine.JobControls
         }
       }
       if (!Lemoine.WebClient.Request.ClearDomain ("operationinformationchange")) {
-        log.ErrorFormat ("SaveBtnClick: clear domain failed");
+        log.Error ("SaveBtnClick: clear domain failed");
       }
       m_observable.ReloadTreeNodes (m_node);
       m_node.TreeView.SelectedNode = m_node;
@@ -340,7 +338,6 @@ namespace Lemoine.JobControls
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Use informations in Operation to fill text in box
     /// </summary>
@@ -504,6 +501,5 @@ namespace Lemoine.JobControls
         saveBtn.Enabled = HasBeenChanged ();
       }
     }
-    #endregion // Methods
   }
 }

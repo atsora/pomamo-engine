@@ -71,7 +71,7 @@ namespace Lemoine.Plugin.GroupZoomZoomable
       }
       else {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("ZoomIn: group {0} is not a IZoomable group", parentGroupId);
+          log.Error ($"ZoomIn: group {parentGroupId} is not a IZoomable group");
         }
         children = new List<string> ();
         return false;
@@ -86,7 +86,7 @@ namespace Lemoine.Plugin.GroupZoomZoomable
         .SelectMany (ext => ext.Groups);
       if (!groups.Any ()) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("Initialize: no group is defined");
+          log.Warn ("Initialize: no group is defined");
         }
         parentGroupId = null;
         return false;

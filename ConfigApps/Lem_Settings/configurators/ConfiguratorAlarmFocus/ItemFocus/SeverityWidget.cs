@@ -32,10 +32,8 @@ namespace ConfiguratorAlarmFocus
     public event Action<ICncAlarmSeverity, Color?> ColorChanged;
     #endregion // Events
 
-    #region Members
     ICncAlarmSeverity m_severity = null;
     bool m_initialize = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SeverityWidget).FullName);
 
@@ -75,7 +73,6 @@ namespace ConfiguratorAlarmFocus
     }
     #endregion // Constructors
 
-    #region Methods
     void SetToolTip (Control control, ICncAlarmSeverity severity)
     {
       // Add a tooltip with the description of the severity
@@ -101,7 +98,6 @@ namespace ConfiguratorAlarmFocus
         break;
       }
     }
-    #endregion // Methods
 
     #region Event reactions
     void ColorPickerColorChanged (Color? color)

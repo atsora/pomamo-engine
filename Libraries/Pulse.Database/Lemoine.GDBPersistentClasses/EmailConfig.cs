@@ -15,7 +15,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class EmailConfig: IEmailConfig, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -35,11 +34,9 @@ namespace Lemoine.GDBPersistentClasses
     DateTime? m_beginDateTime = null;
     DateTime? m_endDateTime = null;
     bool m_autoPurge = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EmailConfig).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// EmailConfig Id
     /// </summary>
@@ -106,9 +103,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (value < 0) {
-          log.ErrorFormat ("MaxLevelPriority.set: " +
-                           "invalid value {0}",
-                          value);
+          log.Error ($"MaxLevelPriority.set: invalid value {value}");
           throw new ArgumentOutOfRangeException ("Positive value expected");
         }
         m_maxLevelPriority = value;
@@ -353,7 +348,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_autoPurge; }
       set { m_autoPurge = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

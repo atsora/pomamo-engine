@@ -32,7 +32,6 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string FREQUENCY_KEY = "Alert.Listener.GlobalModificationDelay.Frequency";
     static readonly TimeSpan FREQUENCY_DEFAULT = TimeSpan.FromMinutes (3); // Check it only every 3 minutes by default
 
-    #region Members
     IDictionary<TimeSpan, string> m_thresholds = new SortedDictionary<TimeSpan, string> ();
     int m_margin = DEFAULT_MARGIN; // in %
     TimeSpan m_flappingThreshold = DEFAULT_FLAPPING_THRESHOLD;
@@ -46,11 +45,9 @@ namespace Lemoine.Alert.GDBListeners
     bool m_flapping = false;
 
     DateTime m_lastFetch = DateTime.MinValue;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GlobalModificationDelayListener).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Margin to let the status to be UP again and avoid some flapping status.
     /// It must be set in % and it is between 0 and 100
@@ -64,16 +61,13 @@ namespace Lemoine.Alert.GDBListeners
       set
       {
         if ((0 <= value) && (value < 100)) { // Valid value
-          log.DebugFormat ("Margin.set: " +
-                           "set margin={0}",
-                           value);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Margin.set: set margin={value}");
+          }
           m_margin = value;
         }
         else {
-          log.ErrorFormat ("Margin.set: " +
-                           "invalid margin {0}, " +
-                           "keep {1}",
-                           value, m_margin);
+          log.Error ($"Margin.set: invalid margin {value}, keep {m_margin}");
           throw new ArgumentOutOfRangeException ("Margin");
         }
       }
@@ -106,9 +100,9 @@ namespace Lemoine.Alert.GDBListeners
         foreach (KeyValuePair<TimeSpan, string> threshold in m_thresholds) {
           thresholdsString += threshold.Key.ToString () + "=" + threshold.Value;
         }
-        log.DebugFormat ("Thresholds.get: " +
-                         "{0}",
-                         thresholdsString);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Thresholds.get: {thresholdsString}");
+        }
         return thresholdsString;
       }
       set
@@ -122,22 +116,16 @@ namespace Lemoine.Alert.GDBListeners
               m_thresholds.Add (timeSpan, thresholdMessage[0]);
             }
             else {
-              log.ErrorFormat ("Thresholds.set: " +
-                               "invalid TimeSpan {0} in {1}",
-                               thresholdMessage[1],
-                               threshold);
+              log.Error ($"Thresholds.set: invalid TimeSpan {thresholdMessage[1]} in {threshold}");
             }
           }
           else {
-            log.ErrorFormat ("Thresholds.set: " +
-                             "invalid threshold=message key {0}",
-                             threshold);
+            log.Error ($"Thresholds.set: invalid threshold=message key {threshold}");
           }
         }
         ResetNextThreshold ();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -152,7 +140,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -177,8 +164,9 @@ namespace Lemoine.Alert.GDBListeners
           .GetFirstPendingModification ();
         m_lastFetch = DateTime.UtcNow;
         if (null == firstPendingModification) {
-          log.DebugFormat ("GetData: " +
-                           "no pending modification, no alert to raise");
+          if (log.IsDebugEnabled) {
+            log.Debug ("GetData: no pending modification, no alert to raise");
+          }
           return null;
         }
         else { // null != firstPendingModification
@@ -198,19 +186,13 @@ namespace Lemoine.Alert.GDBListeners
             }
           }
           else {
-            log.WarnFormat ("GetData: " +
-                            "first pending modification {0} is not pending any more " +
-                            "status={1}",
-                            firstPendingModification,
-                            firstPendingModification.AnalysisStatus);
+            log.Warn ($"GetData: first pending modification {firstPendingModification} is not pending any more status={firstPendingModification.AnalysisStatus}");
             return null;
           }
 
           DateTime now = DateTime.UtcNow;
           if (now < lastModificationDateTime) {
-            log.ErrorFormat ("GetData: " +
-                             "date/time {0} of {1} is in the future, give up",
-                             lastModificationDateTime, firstPendingModification);
+            log.Error ($"GetData: date/time {lastModificationDateTime} of {firstPendingModification} is in the future, give up");
             return null;
           }
           TimeSpan age = now.Subtract (lastModificationDateTime);
@@ -224,8 +206,9 @@ namespace Lemoine.Alert.GDBListeners
           if (age < previousReachedThresholdMinusMargin) {
             // - If age is before previousReachedThreshold - margin
             //   => the delay is much better => UP
-            log.DebugFormat ("GetData: " +
-                             "the delay is better");
+            if (log.IsDebugEnabled) {
+              log.Debug ("GetData: the delay is better");
+            }
             return CreateData (firstPendingModification, age, GlobalModificationDelayDirection.UP);
           }
           else if (age < previousReachedThreshold) {
@@ -233,21 +216,24 @@ namespace Lemoine.Alert.GDBListeners
             //   This is done to avoid the data is flapping too much
             //   => no category change for the moment,
             //      visit the next machine
-            log.DebugFormat ("GetData: " +
-                             "just a little better");
+            if (log.IsDebugEnabled) {
+              log.Debug ("GetData: just a little better");
+            }
             return null;
           }
           else {
             // - Get the threshold after previousReachedThreshold
             if (age <= m_nextThreshold) { // No category change
               // Visit the next machine
-              log.DebugFormat ("GetData: " +
-                               "no category change");
+              if (log.IsDebugEnabled) {
+                log.Debug ("GetData: no category change");
+              }
               return null;
             }
             else { // The delay is worse => DOWN
-              log.DebugFormat ("GetData: " +
-                               "the delay is worse");
+              if (log.IsDebugEnabled) {
+                log.Debug ("GetData: the delay is worse");
+              }
               return CreateData (firstPendingModification, age, GlobalModificationDelayDirection.DOWN);
             }
           }
@@ -272,9 +258,9 @@ namespace Lemoine.Alert.GDBListeners
         thresholdReached = true;
       }
       if (!thresholdReached) {
-        log.DebugFormat ("CreateData: " +
-                         "age {0} is before the first defined threshold " +
-                         "=> use the default values 0:00:00 and OK");
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateData: age {age} is before the first defined threshold => use the default values 0:00:00 and OK");
+        }
         Debug.Assert (direction.Equals (GlobalModificationDelayDirection.UP));
       }
       bool flapping = false;
@@ -313,6 +299,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-    #endregion // Methods
   }
 }

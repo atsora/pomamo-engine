@@ -45,7 +45,6 @@ namespace Pulse.Web.Operation
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -70,9 +69,9 @@ namespace Pulse.Web.Operation
       else { // Current or future
         cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
       }
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} for url={1}",
-                       cacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -87,7 +86,7 @@ namespace Pulse.Web.Operation
         UtcDateTimeRange range = ParseRange (request.Range);
 
         if ((request.WorkOrderId <= 0) && (request.ProjectId <= 0)) {
-          log.ErrorFormat ("GetWithoutCache: WorkOrderId or ProjectId parameter is mandatory");
+          log.Error ("GetWithoutCache: WorkOrderId or ProjectId parameter is mandatory");
           return new ErrorDTO ("One of the two parameters WorkOrderId and ProjectId is mandatory", ErrorStatus.WrongRequestParameter);
         }
 
@@ -96,21 +95,21 @@ namespace Pulse.Web.Operation
           if (0 < request.WorkOrderId) {
             job = ModelDAOHelper.DAOFactory.JobDAO.FindByWorkOrderId (request.WorkOrderId);
             if (null == job) {
-              log.ErrorFormat ("GetWithoutCache: no job with work order id {0}", request.WorkOrderId);
+              log.Error ($"GetWithoutCache: no job with work order id {request.WorkOrderId}");
               return new ErrorDTO ("No job with the specified work order id", ErrorStatus.WrongRequestParameter);
             }
           }
           if (0 < request.ProjectId) {
             if (null != job) {
               if (job.ProjectId != request.ProjectId) {
-                log.ErrorFormat ("GetWithoutCache: ProjectId {0} and WorkOrderId {1} are incompatible", request.ProjectId, request.WorkOrderId);
+                log.Error ($"GetWithoutCache: ProjectId {request.ProjectId} and WorkOrderId {request.WorkOrderId} are incompatible");
                 return new ErrorDTO ("ProjectId and WorkOrderId ad incompatible", ErrorStatus.WrongRequestParameter);
               }
             }
             else {
               job = ModelDAOHelper.DAOFactory.JobDAO.FindByProjectId (request.ProjectId);
               if (null == job) {
-                log.ErrorFormat ("GetWithoutCache: no job with project id {0}", request.ProjectId);
+                log.Error ($"GetWithoutCache: no job with project id {request.ProjectId}");
                 return new ErrorDTO ("No job with the specified project id", ErrorStatus.WrongRequestParameter);
               }
             }
@@ -346,6 +345,5 @@ namespace Pulse.Web.Operation
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }

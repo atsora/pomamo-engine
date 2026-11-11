@@ -20,14 +20,9 @@ namespace Lemoine.Business.MachineStateTemplate
   public sealed class CurrentMachineStateTemplate
     : IRequest<CurrentMachineStateTemplateResponse>
   {
-    #region Members
     readonly IMachine m_machine;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CurrentMachineStateTemplate).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -41,9 +36,6 @@ namespace Lemoine.Business.MachineStateTemplate
       m_machine = machine;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

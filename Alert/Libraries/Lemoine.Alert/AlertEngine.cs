@@ -24,16 +24,11 @@ namespace Lemoine.Alert
     static readonly string SLEEP_TIME_KEY = "Alert.Engine.Sleep";
     static readonly TimeSpan SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (2);
 
-    #region Members
     readonly ConfigUpdateChecker m_configUpdateChecker = new ConfigUpdateChecker ();
     readonly IEnumerable<IListener> m_listeners;
     readonly IEnumerable<TriggeredAction> m_triggeredActions;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (AlertEngine).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -46,7 +41,6 @@ namespace Lemoine.Alert
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Main method:
     /// <item>get all the data to process</item>
@@ -110,8 +104,6 @@ namespace Lemoine.Alert
 
       log.Debug ("RunOnePass: completed");
     }
-
-    #endregion // Methods
 
     #region IThreadClass implementation
     /// <summary>

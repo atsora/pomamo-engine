@@ -17,7 +17,6 @@ namespace WizardEventLongPeriod
   /// </summary>
   internal partial class Page2 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -42,7 +41,6 @@ namespace WizardEventLongPeriod
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

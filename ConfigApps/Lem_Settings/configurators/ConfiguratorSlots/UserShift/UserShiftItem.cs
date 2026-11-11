@@ -17,7 +17,6 @@ namespace ConfiguratorSlots.UserShift
   {
     internal const string SHIFT = "shift";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -84,9 +83,7 @@ namespace ConfiguratorSlots.UserShift
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     protected override void InitializeData(ItemData data, ItemData otherData)
     {
       data.CurrentPageName = "";
@@ -102,6 +99,5 @@ namespace ConfiguratorSlots.UserShift
       data.CurrentPageName = "Page3";
       data.InitValue(SHIFT, typeof(IShift), null, true);
     }
-    #endregion // Methods
   }
 }

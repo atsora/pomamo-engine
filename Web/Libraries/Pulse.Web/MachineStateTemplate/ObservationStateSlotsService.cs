@@ -35,7 +35,6 @@ namespace Pulse.Web.MachineStateTemplate
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -66,9 +65,9 @@ namespace Pulse.Web.MachineStateTemplate
       else { // Current or future
         cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
       }
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} for url={1}",
-                       cacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -85,9 +84,7 @@ namespace Pulse.Web.MachineStateTemplate
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -115,6 +112,5 @@ namespace Pulse.Web.MachineStateTemplate
         return result;
       }
     }
-    #endregion // Methods
   }
 }

@@ -17,7 +17,6 @@ namespace ConfiguratorSlots.ShiftTemplate
     internal const string SHIFT_TEMPLATE = "shift_template";
     internal const string FORCE_ASSOCIATION = "force_association";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -81,9 +80,7 @@ namespace ConfiguratorSlots.ShiftTemplate
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     protected override void InitializeData(ItemData data, ItemData otherData)
     {
       data.CurrentPageName = "";
@@ -95,6 +92,5 @@ namespace ConfiguratorSlots.ShiftTemplate
       data.InitValue(SHIFT_TEMPLATE, typeof(IShiftTemplate), null, true);
       data.InitValue(FORCE_ASSOCIATION, typeof(bool), false, true);
     }
-    #endregion // Methods
   }
 }

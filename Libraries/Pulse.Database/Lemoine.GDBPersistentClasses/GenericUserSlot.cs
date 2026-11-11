@@ -28,14 +28,11 @@ namespace Lemoine.GDBPersistentClasses
       return log;
     }
     
-    #region Members
     /// <summary>
     /// Associated user
     /// </summary>
     protected IUser m_user;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the User
     /// </summary>
@@ -49,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
                                                   value.Id));
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -89,15 +85,13 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != user);
       if (null == user) {
-        log.FatalFormat ("UserShiftSlot: " +
-                         "user can't be null");
+        log.Fatal ("UserShiftSlot: user can't be null");
         throw new ArgumentNullException ("user");
       }
       this.m_user = user;
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="Object.GetHashCode" />
     /// </summary>
@@ -129,6 +123,5 @@ namespace Lemoine.GDBPersistentClasses
       return Bound.Equals<DateTime> (this.BeginDateTime, other.BeginDateTime)
         && object.Equals(this.User, other.User);
     }
-    #endregion // Methods
   }
 }

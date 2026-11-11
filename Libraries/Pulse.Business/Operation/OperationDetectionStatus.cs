@@ -61,7 +61,7 @@ namespace Lemoine.Business.Operation
       var operationDetectionStatusExtensions = Business.ServiceProvider
         .Get<IEnumerable<IOperationDetectionStatusExtension>> (operationDetectionStatusRequest);
       if (!operationDetectionStatusExtensions.Any ()) {
-        log.ErrorFormat ("Get: no operation detection status extension registered");
+        log.Error ("Get: no operation detection status extension registered");
         return null;
       }
       foreach (var groupByPriority in operationDetectionStatusExtensions.GroupBy (ext => ext.OperationDetectionStatusPriority)
@@ -72,20 +72,20 @@ namespace Lemoine.Business.Operation
           .Select (x => x.Value);
         if (!operationDetectionDateTimes.Any ()) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Get: no extension returned a date/time for priority {0}", groupByPriority.Key);
+            log.Debug ($"Get: no extension returned a date/time for priority {groupByPriority.Key}");
           }
         }
         else {
           var result = operationDetectionDateTimes.Max ();
           if (log.IsInfoEnabled) {
-            log.InfoFormat ("Get: return {0} from priority {1}", result, groupByPriority.Key);
+            log.Info ($"Get: return {result} from priority {groupByPriority.Key}");
           }
           return result;
         }
       }
 
       if (log.IsWarnEnabled) {
-        log.WarnFormat ("Get: No extension returned a date/time");
+        log.Warn ("Get: No extension returned a date/time");
       }
       return null;
     }

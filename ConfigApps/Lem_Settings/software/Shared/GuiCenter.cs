@@ -45,7 +45,6 @@ namespace Lem_Settings
     public event Action<IItem> ShowRevisionClicked;
     #endregion // Events
 
-    #region Members
     Control m_currentControl = null;
 
     /// <summary>
@@ -88,9 +87,7 @@ namespace Lem_Settings
     /// Allow us to go to the previous page (history)
     /// </summary>
     protected IList<IItemPage> m_currentPages = new List<IItemPage> ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Get or set the protection of the button "home"
     /// </summary>
@@ -106,7 +103,6 @@ namespace Lem_Settings
     /// True if the item has been disabled because at least one revision is in progress
     /// </summary>
     protected bool DisabledByRevisions { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -127,7 +123,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Init references to access foreign objects
     /// </summary>
@@ -165,7 +160,7 @@ namespace Lem_Settings
         }
       }
       catch (Exception ex) {
-        logHistory.ErrorFormat ("Error on UpdateData() => item reinitialized: {0}", ex.Message);
+        logHistory.Error ($"Error on UpdateData() => item reinitialized: {ex.Message}");
         Reinit ();
       }
     }
@@ -253,7 +248,6 @@ namespace Lem_Settings
       SetPage (lastPage);
       ActiveControl = lastPage as Control;
     }
-    #endregion // Methods
 
     #region Gui methods
     /// <summary>

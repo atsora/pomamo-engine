@@ -76,10 +76,7 @@ namespace Lemoine.GDBPersistentClasses
 
       // To be merged, oldComponent and newComponent must be part of the same project
       if (!object.Equals (newComponent.Project, oldComponent.Project)) {
-        log.ErrorFormat ("InternalMerge: " +
-                         "trying to merge two new Components that are part of two different projects " +
-                         "old={0} new={1}",
-                         oldComponent, newComponent);
+        log.Error ($"InternalMerge: trying to merge two new Components that are part of two different projects old={oldComponent} new={newComponent}");
         throw new InvalidOperationException ("The two components must be part of the same project to be merged");
       }
 
@@ -116,9 +113,9 @@ namespace Lemoine.GDBPersistentClasses
                 IWorkOrder workOrder = workOrderLine.WorkOrder;
                 if (!Lemoine.Business.Operation.OperationRelations.IsWorkOrderCompatibleWithComponent (workOrder, newComponent)) {
                   // Associate the work order with the component
-                  log.DebugFormat ("merge: " +
-                                   "associate work order {0} with {1}",
-                                   workOrder, this);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"merge: associate work order {workOrder} with {this}");
+                  }
                   newComponent.Project.AddWorkOrder (workOrder);
                   IWorkOrderProjectUpdate update = ModelDAOHelper.ModelFactory
                     .CreateWorkOrderProjectUpdate (workOrder, newComponent.Project, WorkOrderProjectUpdateModificationType.NEW);
@@ -222,7 +219,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // IMergeDAO implementation
 
-    #region Methods
     /// <summary>
     /// Find Component by Name and Project
     /// </summary>
@@ -473,7 +469,6 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Like ("Name", pattern, MatchMode.Start, null))
         .List<IComponent> ();
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="IComponentDAO"/>

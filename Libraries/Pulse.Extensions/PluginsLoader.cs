@@ -29,7 +29,6 @@ namespace Pulse.Extensions
   /// </summary>
   public class PluginsLoader : IPluginsLoader, IMainPluginsLoader
   {
-    #region Members
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IPluginDirectories m_pluginDirectories;
 
@@ -40,12 +39,10 @@ namespace Pulse.Extensions
 
     readonly IList<IPluginDll> m_activePlugins = new List<IPluginDll> ();
     readonly IList<PluginDllLoader> m_loadErrorPlugins = new List<PluginDllLoader> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (PluginsLoader).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
-    #region Getters / Setters
     /// <summary>
     /// Are the plugins loaded
     /// </summary>
@@ -53,7 +50,6 @@ namespace Pulse.Extensions
     {
       get { return m_loadStatus == 2; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -74,7 +70,6 @@ namespace Pulse.Extensions
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Clear the loaded plugins
     /// </summary>
@@ -89,11 +84,13 @@ namespace Pulse.Extensions
       {
         var threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
         if (threadId == m_loadingThreadId) {
-          log.ErrorFormat ("Clear: current loading thread => unexpected");
+          log.Error ("Clear: current loading thread => unexpected");
           throw new Exception ("Clear/Load from the same thread");
         }
         else {
-          log.DebugFormat ("Clear: waiting for completion");
+          if (log.IsDebugEnabled) {
+            log.Debug ("Clear: waiting for completion");
+          }
           while (1 == m_loadStatus) { // Still in progress
             checkedThread?.SetActive ();
             System.Threading.Thread.Sleep (100);
@@ -143,7 +140,7 @@ namespace Pulse.Extensions
 
       var pluginFlagFilter = pluginFilter.GetPluginFlag ();
       if (m_pluginFlagFilter.Equals (pluginFlagFilter)) {
-        log.WarnFormat ("CheckCache: pluginFlagFilter parameter changed, reset the cache");
+        log.Warn ("CheckCache: pluginFlagFilter parameter changed, reset the cache");
         m_loadStatus = 0;
       }
       m_pluginFlagFilter = pluginFlagFilter;
@@ -724,13 +721,8 @@ namespace Pulse.Extensions
     {
       var confErrors = pluginDll.GetConfigurationErrors (packagePluginAssociation.Parameters);
       if (confErrors != null && confErrors.Any ()) {
-        log.ErrorFormat ("SetConfigurations: " +
-                        "configuration error(s) found for package {0} and plugin {1}: {2} " +
-                        "=> skip this configuration",
-                        packagePluginAssociation.Package.IdentifyingName, plugin.IdentifyingName,
-                        String.Join (";\n- ", confErrors.ToArray ()));
-        pluginStatusLog.ErrorFormat ("{0}:instance {1}: configuration error",
-          plugin.IdentifyingName, packagePluginAssociation.Id);
+        log.Error ($"SetConfigurations: configuration error(s) found for package {packagePluginAssociation.Package.IdentifyingName} and plugin {plugin.IdentifyingName}: {String.Join (";\n- ", confErrors.ToArray ())} => skip this configuration");
+        pluginStatusLog.Error ($"{plugin.IdentifyingName}:instance {packagePluginAssociation.Id}: configuration error");
       }
       else { // Configuration ok
         if (pluginStatusLog.IsDebugEnabled) {
@@ -739,6 +731,5 @@ namespace Pulse.Extensions
         pluginDll.AddInstance (packagePluginAssociation);
       }
     }
-    #endregion // Methods
   }
 }

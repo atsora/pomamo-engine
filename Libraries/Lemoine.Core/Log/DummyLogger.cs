@@ -17,9 +17,6 @@ namespace Lemoine.Core.Log
   {
     readonly string m_name;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

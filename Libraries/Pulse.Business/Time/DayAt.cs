@@ -19,14 +19,9 @@ namespace Lemoine.Business.Time
   public sealed class DayAt
     : IRequest<IDaySlot>
   {
-    #region Members
     readonly DateTime m_at;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DayAt).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -38,9 +33,6 @@ namespace Lemoine.Business.Time
       m_at = at;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

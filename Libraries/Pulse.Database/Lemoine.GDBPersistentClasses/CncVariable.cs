@@ -16,9 +16,7 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class CncVariable : GenericMachineModuleRangeSlot, ICncVariable, IVersionable, Lemoine.Collections.IDataWithId
   {
-    #region Members
     string m_key = "";
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncVariable).FullName);
 
@@ -86,9 +84,7 @@ namespace Lemoine.GDBPersistentClasses
         return CompareTo (other);
       }
 
-      GetLogger ().ErrorFormat ("CompareTo: " +
-                               "object {0} of invalid type",
-                               obj);
+      GetLogger ().Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a ICncVariable");
     }
 
@@ -107,10 +103,7 @@ namespace Lemoine.GDBPersistentClasses
         return comparison;
       }
       else {
-        GetLogger ().ErrorFormat ("CompareTo: " +
-                                  "trying to compare cnc variables " +
-                                  "for different machine modules {0} {1}",
-                                  this, other);
+        GetLogger ().Error ($"CompareTo: trying to compare cnc variables for different machine modules {this} {other}");
         throw new ArgumentException ("Comparison of cnc variables from different machine modules");
       }
     }

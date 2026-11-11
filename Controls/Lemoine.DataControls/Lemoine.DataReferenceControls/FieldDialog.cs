@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (FieldDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null Field a valid value ?
     /// </summary>
@@ -62,7 +61,6 @@ namespace Lemoine.DataReferenceControls
         this.fieldSelection1.SelectedFields = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -81,9 +79,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("FieldDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

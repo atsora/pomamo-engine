@@ -18,7 +18,6 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageConfModule : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -38,7 +37,6 @@ The old configuration, if any, is displayed on the bottom of the page.
 """;
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Description of the constructor

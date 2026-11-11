@@ -179,15 +179,10 @@ namespace Lemoine.Plugin.DefaultAccumulators
     static readonly string CHECK_CONSISTENCY_KEY = "DefaultAccumulators.MachineActivity.CheckConsistency";
     static readonly bool CHECK_CONSISTENCY_DEFAULT = false;
 
-    #region Members
     IDictionary<MachineActivitySummaryKey, TimeSpan> m_machineActivitySummaryAccumulator =
       new Dictionary<MachineActivitySummaryKey, TimeSpan> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachineActivitySummaryAccumulator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -198,7 +193,6 @@ namespace Lemoine.Plugin.DefaultAccumulators
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add some new data in the Summary accumulator
     /// </summary>
@@ -300,6 +294,5 @@ namespace Lemoine.Plugin.DefaultAccumulators
         m_machineActivitySummaryAccumulator.Clear ();
       }
     }
-    #endregion // Methods
   }
 }

@@ -16,13 +16,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class SynchronizationLog : Log, ISynchronizationLog
   {
-    #region Members
     string m_xmlElement;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SynchronizationLog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// XML Element containing the node where the log was recorded
     /// </summary>
@@ -32,7 +29,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_xmlElement; }
       set { m_xmlElement = value; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor

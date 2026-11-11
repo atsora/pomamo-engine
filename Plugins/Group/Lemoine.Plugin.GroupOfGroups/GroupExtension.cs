@@ -95,7 +95,7 @@ namespace Lemoine.Plugin.GroupOfGroups
       var group = Lemoine.Business.ServiceProvider
         .Get (request);
       if ( (null == group) && log.IsErrorEnabled) {
-        log.ErrorFormat ("GetGroup: group of id {0} does not exist", groupId);
+        log.Error ($"GetGroup: group of id {groupId} does not exist");
       }
       return group;
     }

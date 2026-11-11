@@ -31,7 +31,7 @@ namespace Lemoine.DTO
         ModelDAOHelper.DAOFactory.OperationSlotDAO.GetLastOperationNotNullBefore(machine, dateTime);
       
       if (lastSlot == null) {
-        log.InfoFormat("No last operation slot or no operation in slot for machine id {0}", machine.Id);
+        log.Info ($"No last operation slot or no operation in slot for machine id {machine.Id}");
         return null;
       }
       
@@ -39,7 +39,7 @@ namespace Lemoine.DTO
         TimeSpan maxGap = (TimeSpan) ModelDAOHelper.DAOFactory.ConfigDAO.GetWebServiceConfigValue(WebServiceConfigKey.GapLastOperationSlot);
         if (dateTime.Subtract(lastSlot.EndDateTime.Value) > maxGap) {
           // reject slot since it's too old
-          log.InfoFormat("Last operation slot having an operation is tool old for machine id {0}", machine.Id);
+          log.Info ($"Last operation slot having an operation is tool old for machine id {machine.Id}");
           return null;
         }
       }

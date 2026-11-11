@@ -17,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class IsoFile: DataWithDisplayFunction, IIsoFile
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -28,11 +27,9 @@ namespace Lemoine.GDBPersistentClasses
     DateTime m_stampingDateTime;
     // TODO: add m_postProcessor and m_camSystem
     ICollection <IStamp> m_stamps = new List<IStamp> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (IsoFile).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -129,7 +126,6 @@ namespace Lemoine.GDBPersistentClasses
         return m_stamps;
       }
     }    
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

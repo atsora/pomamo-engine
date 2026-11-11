@@ -25,7 +25,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger(typeof (BeginEndSlot).FullName);
 
-    #region Members
     /// <summary>
     /// Start date/time
     /// </summary>
@@ -42,7 +41,6 @@ namespace Lemoine.GDBPersistentClasses
     /// End day
     /// </summary>
     protected UpperBound<DateTime> m_endDay;
-    #endregion // Members
     
     #region Constructors
     /// <summary>
@@ -62,7 +60,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Date/time range of the slot
     /// </summary>
@@ -71,10 +68,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (value.IsEmpty ()) {
-          log.ErrorFormat ("DateTimeRange.set: " +
-                           "value is empty. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Error ($"DateTimeRange.set: value is empty. StackTrace: {System.Environment.StackTrace}");
         }
         
         if (!Bound.Equals<DateTime> (value.Lower, this.BeginDateTime)) {
@@ -102,9 +96,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (Bound.Compare<DateTime> (value, m_beginDateTime) <= 0) {
-          log.ErrorFormat ("EndDateTime.set: " +
-                           "value {0} is before begin {1}",
-                           value, m_beginDateTime);
+          log.Error ($"EndDateTime.set: value {value} is before begin {m_beginDateTime}");
         }
         
         if (object.Equals (value, m_endDateTime)) {
@@ -148,9 +140,7 @@ namespace Lemoine.GDBPersistentClasses
       // disable once ValueParameterNotUsed
       protected set { } // For NHibernate
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Set m_beginDateTime and m_beginDay in the same time
     /// </summary>
@@ -169,9 +159,7 @@ namespace Lemoine.GDBPersistentClasses
     protected void SetEndDateTime (UpperBound<DateTime> endDateTime)
     {
       if (Bound.Compare<DateTime> (endDateTime, m_beginDateTime) <= 0) {
-        log.ErrorFormat ("SetEndDateTime: " +
-                         "new end date/time {0} is before begin {1}",
-                         endDateTime, m_beginDateTime);
+        log.Error ($"SetEndDateTime: new end date/time {endDateTime} is before begin {m_beginDateTime}");
       }
       
       m_endDateTime = endDateTime;
@@ -187,10 +175,7 @@ namespace Lemoine.GDBPersistentClasses
     void SetInitialDateTimeRange (Range<DateTime> initialRange)
     {
       if (initialRange.IsEmpty ()) {
-        log.ErrorFormat ("SetInitialDateTimeRange: " +
-                         "empty initialRange. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"SetInitialDateTimeRange: empty initialRange. StackTrace: {System.Environment.StackTrace}");
       }
 
       SetBeginDateTime (initialRange.Lower);
@@ -204,10 +189,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void UpdateDateTimeRange (UtcDateTimeRange newRange)
     {
       if (newRange.IsEmpty ()) {
-        log.ErrorFormat ("UpdateDateTimeRange: " +
-                         "empty newRange. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"UpdateDateTimeRange: empty newRange. StackTrace: {System.Environment.StackTrace}");
       }
       Debug.Assert (!newRange.IsEmpty ());
       
@@ -216,6 +198,5 @@ namespace Lemoine.GDBPersistentClasses
         SetEndDateTime (newRange.Upper);
       }
     }
-    #endregion // Methods
   }
 }

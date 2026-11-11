@@ -55,7 +55,7 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
       m_machine = machine;
 
       if (!LoadConfiguration (out m_configuration)) {
-        log.ErrorFormat ("Initialize: load configuration error");
+        log.Error ("Initialize: load configuration error");
         return false;
       }
 

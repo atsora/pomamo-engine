@@ -14,7 +14,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class PackagePluginAssociation: IPackagePluginAssociation, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_parameters = "";
@@ -23,11 +22,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_name = null;
     bool m_active = true;
     bool m_custom = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (PackagePluginAssociation).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// PackagePluginAssociation Id
     /// </summary>
@@ -89,7 +86,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_custom; }
       set { m_custom = value; }
     }
-    #endregion // Getters / Setters
 
     #region IPluginInstance
     /// <summary>

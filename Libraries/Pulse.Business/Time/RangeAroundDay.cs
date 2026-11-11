@@ -22,7 +22,6 @@ namespace Lemoine.Business.Time
   {
     static readonly ILog log = LogManager.GetLogger(typeof (RangeAroundDay).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the day
     /// </summary>
@@ -37,7 +36,6 @@ namespace Lemoine.Business.Time
     /// Range size (default: 1)
     /// </summary>
     public int RangeSize { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -186,9 +184,7 @@ namespace Lemoine.Business.Time
         return day.Value.AddYears (offset);
       }
       else {
-        log.FatalFormat ("AddOffset: " +
-                         "range type {0} not supported",
-                         rangeType);
+        log.Fatal ($"AddOffset: range type {rangeType} not supported");
         throw new NotImplementedException ("Range type " + rangeType);
       }
     }

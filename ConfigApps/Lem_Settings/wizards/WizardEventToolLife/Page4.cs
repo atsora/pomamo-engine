@@ -18,11 +18,8 @@ namespace WizardEventToolLife
   /// </summary>
   internal partial class Page4 : GenericWizardPage, IWizardPage
   {
-    #region Members
     readonly IList<EventLevelCell> m_eventLevelCells = new List<EventLevelCell>();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -50,7 +47,6 @@ namespace WizardEventToolLife
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

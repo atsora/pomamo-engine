@@ -18,11 +18,9 @@ namespace Lemoine.Collections
     : IDictionary<TKey, TValue>
     where TKey: class
   {
-    #region Members
     bool m_containsNull = false;
     TValue m_nullValue;
     readonly IDictionary<TKey, TValue> m_dictionary = new Dictionary<TKey, TValue> ();
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (NullableDictionary<TKey,TValue>).FullName);
 

@@ -24,16 +24,13 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OperationRevision : BaseData, IOperationRevision, IEquatable<IOperationRevision>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     IOperation m_operation;
     /* TODO: for later once the table exists
     DateTime m_dateTime = DateTime.UtcNow;
     */
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationRevision).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -108,7 +105,6 @@ namespace Lemoine.GDBPersistentClasses
         throw new InvalidOperationException ("Not a persistent operation");
       }
     }
-    #endregion // Getters / Setters
 
     #region Contructors
     /// <summary>

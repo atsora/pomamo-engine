@@ -47,7 +47,6 @@ namespace Pulse.Web.MachineMode
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -78,9 +77,7 @@ namespace Pulse.Web.MachineMode
       // Time span considering the number of pixels
       Debug.Assert (range.Duration.HasValue);
       if (!range.Duration.HasValue) {
-        log.FatalFormat ("GetCacheTimeOut: " +
-          "no range duration, return {0} for {1}",
-          timeCacheTimeSpan, url);
+        log.Fatal ($"GetCacheTimeOut: no range duration, return {timeCacheTimeSpan} for {url}");
         return timeCacheTimeSpan;
       }
       double rangeSeconds = range.Duration.Value.TotalSeconds;
@@ -88,9 +85,9 @@ namespace Pulse.Web.MachineMode
       TimeSpan durationCacheTimeSpan = TimeSpan.FromSeconds (secondsPerPixel); // No need to expire the cache if you do not get at least one more pixel
 
       TimeSpan cacheTimeSpan = (timeCacheTimeSpan < durationCacheTimeSpan) ? durationCacheTimeSpan : timeCacheTimeSpan; // Longer duration
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} considering time:{1}, considering duration:{2} for url={3}",
-                       cacheTimeSpan, timeCacheTimeSpan, durationCacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} considering time:{timeCacheTimeSpan}, considering duration:{durationCacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -107,9 +104,7 @@ namespace Pulse.Web.MachineMode
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -401,6 +396,5 @@ namespace Pulse.Web.MachineMode
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }

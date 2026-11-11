@@ -26,7 +26,6 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class SMTPStatusStrip : UserControl, IConfigControlObserver<IConfig>
   {
-    #region Members
     int m_port = 25;
     string m_host = null;
     string m_user = null;
@@ -37,13 +36,8 @@ namespace Lemoine.ConfigControls
 
     string m_fromAdress = null;
     string m_toAdress = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SMTPStatusStrip).FullName);
-
-    #region Getters / Setters
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -70,7 +64,6 @@ namespace Lemoine.ConfigControls
       //      TestSMTPConnecting();
     }
 
-    #region Methods
     /// <summary>
     /// Set working Data
     /// </summary>
@@ -78,8 +71,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("SMTPStatusStrip: " +
-                         "no DAO factory is defined");
+        log.Error ("SMTPStatusStrip: no DAO factory is defined");
         return;
       }
 
@@ -109,7 +101,7 @@ namespace Lemoine.ConfigControls
             break;
           }
           default: {
-            log.WarnFormat ("Unknown SMTP option in SMTPStatusStrip");
+            log.Warn ("Unknown SMTP option in SMTPStatusStrip");
             break;
           }
           }
@@ -188,7 +180,6 @@ namespace Lemoine.ConfigControls
       smtpStatusLed.Text = PulseCatalog.GetString ("Sent");
       smtpStatusLed.BackColor = Color.Green;
     }
-    #endregion // Methods
 
     #region IConfigControlObserver Impl.
     /// <summary>

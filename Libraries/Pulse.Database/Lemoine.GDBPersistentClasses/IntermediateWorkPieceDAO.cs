@@ -79,10 +79,7 @@ namespace Lemoine.GDBPersistentClasses
       
       // To be merged, oldIntermediateWorkPiece and newIntermediateWorkPiece must be made by the same operation
       if (!object.Equals (newIntermediateWorkPiece.Operation, oldIntermediateWorkPiece.Operation)) {
-        log.ErrorFormat ("InternalMerge: " +
-                         "trying to merge two new Intermediate Work Pieces that are made by two different operations " +
-                         "old={0} new={1}",
-                         oldIntermediateWorkPiece, newIntermediateWorkPiece);
+        log.Error ($"InternalMerge: trying to merge two new Intermediate Work Pieces that are made by two different operations old={oldIntermediateWorkPiece} new={newIntermediateWorkPiece}");
         throw new InvalidOperationException ("The two intermediate work pieces must be made by the same operation to be merged"); // TODO: i18n
       }
       

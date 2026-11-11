@@ -33,7 +33,6 @@ namespace Pulse.Web.WebDataAccess
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -62,9 +61,7 @@ namespace Pulse.Web.WebDataAccess
             IManufacturingOrder manufacturingOrder = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
               .FindById (request.ManufacturingOrderId.Value);
             if (null == manufacturingOrder) {
-              log.ErrorFormat ("Get: " +
-                               "No reason with ID {0}",
-                               request.ManufacturingOrderId.Value);
+              log.Error ($"Get: No reason with ID {request.ManufacturingOrderId.Value}");
               transaction.Commit ();
               return new ErrorDTO ("No work order with id " + request.ManufacturingOrderId.Value,
                                    ErrorStatus.WrongRequestParameter);
@@ -90,9 +87,7 @@ namespace Pulse.Web.WebDataAccess
               IRevision revision = ModelDAOHelper.DAOFactory.RevisionDAO
                 .FindById (request.RevisionId.Value);
               if (null == revision) {
-                log.WarnFormat ("Get: " +
-                                "No revision with ID {0}",
-                                request.RevisionId.Value);
+                log.Warn ($"Get: No revision with ID {request.RevisionId.Value}");
               }
               else {
                 manufacturingOrderMachineAssociation.Revision = revision;
@@ -110,6 +105,5 @@ namespace Pulse.Web.WebDataAccess
       Debug.Assert (null != manufacturingOrderMachineAssociation);
       return new SaveModificationResponseDTO (manufacturingOrderMachineAssociation);
     }
-    #endregion // Methods
   }
 }

@@ -22,7 +22,6 @@ namespace WizardMonitorMachine
     public CncParameterFactory() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create a ICncParameter based on an .xml description
     /// </summary>
@@ -89,6 +88,5 @@ namespace WizardMonitorMachine
       
       return iCncParameter;
     }
-    #endregion // Methods
   }
 }

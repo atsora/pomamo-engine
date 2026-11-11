@@ -24,7 +24,6 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
   {
     static readonly ILog log = LogManager.GetLogger (typeof (ReasonSelectionFind).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine mode
     /// 
@@ -45,7 +44,6 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     /// If null, applies to all the machines
     /// </summary>
     public IMachine Machine { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

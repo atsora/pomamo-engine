@@ -31,7 +31,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     static readonly string LIMIT_TO_PRODUCTION_ONLY_KEY = "plugin.CncSummaryByStateSlot2.LimitToProductionOnly";
     static readonly bool LIMIT_TO_PRODUCTION_ONLY_DEFAULT = true;
 
-    #region Members
     readonly IMachineModule m_machineModule;
     readonly IField m_field;
     
@@ -40,7 +39,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     double m_cacheValue;
     TimeSpan m_cacheDuration;
     UtcDateTimeRange m_cacheRange;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (CncByMachineModuleField).FullName);
 
@@ -55,7 +53,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Process a new cnc value
     /// 
@@ -166,10 +163,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         .LoadAndGet<TimeSpan> (MAX_OBSERVATION_STATE_SLOT_DURATION_KEY,
                                MAX_OBSERVATION_STATE_SLOT_DURATION_DEFAULT);
       if (maxObservationStateSlotDuration < range.Duration.Value) {
-        log.InfoFormat ("IsRangeValid: " +
-                        "range {0} is too long (longer than {1}) " +
-                        "=> return false",
-                        range.Duration.Value, maxObservationStateSlotDuration);
+        log.Info ($"IsRangeValid: range {range.Duration.Value} is too long (longer than {maxObservationStateSlotDuration}) => return false");
         return false;
       }
       
@@ -180,14 +174,14 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     {
       Debug.Assert (null != observationStateSlot);
       if (null == observationStateSlot) {
-        log.ErrorFormat ("IsObservationStateSlotValid: " +
-                         "null slot => return false");
+        log.Error ("IsObservationStateSlotValid: null slot => return false");
         return false;
       }
       
       if (null == observationStateSlot.MachineObservationState) {
-        log.DebugFormat ("IsObservationStateSlotValid: " +
-                         "null machine observation state => return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsObservationStateSlotValid: null machine observation state => return false");
+        }
         return false;
       }
       
@@ -195,8 +189,9 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         .LoadAndGet<bool> (LIMIT_TO_DEFINED_SHIFT_ONLY_KEY,
                            LIMIT_TO_DEFINED_SHIFT_ONLY_DEFAULT);
       if (limitToDefinedShiftOnly && (null == observationStateSlot.Shift)) {
-        log.DebugFormat ("IsObservationStateSlotValid: " +
-                         "null shift => return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsObservationStateSlotValid: null shift => return false");
+        }
         return false;
       }
       
@@ -206,8 +201,9 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       if (limitToProductionOnly
           && (!observationStateSlot.Production.HasValue
               || !observationStateSlot.Production.Value)) {
-        log.DebugFormat ("IsObservationStateSlotValid: " +
-                         "not a production period => return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsObservationStateSlotValid: not a production period => return false");
+        }
         return false;
       }
       
@@ -240,9 +236,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
           m_observationStateSlot = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
             .FindAt (m_machineModule.MonitoredMachine, dateTime);
           if (null == m_observationStateSlot) {
-            log.FatalFormat ("LoadCache: " +
-                             "no observation state slot found at {0}",
-                             dateTime);
+            log.Fatal ($"LoadCache: no observation state slot found at {dateTime}");
             Debug.Assert (false);
             throw new Exception ("Missing observation state slot");
           }
@@ -250,16 +244,17 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         Debug.Assert (null != m_observationStateSlot);
         
         if (!IsRangeValid (m_observationStateSlot.DateTimeRange, log)) {
-          log.DebugFormat ("LoadCache: " +
-                           "range {0} is not valid => return",
-                           m_observationStateSlot.DateTimeRange);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"LoadCache: range {m_observationStateSlot.DateTimeRange} is not valid => return");
+          }
           return;
         }
         Debug.Assert (m_observationStateSlot.DateTimeRange.Lower.HasValue);
         Debug.Assert (m_observationStateSlot.DateTimeRange.Upper.HasValue);
         if (!IsObservationStateSlotValid (m_observationStateSlot, log)) {
-          log.DebugFormat ("LoadCache: " +
-                           "observation state slot is not valid => return");
+          if (log.IsDebugEnabled) {
+            log.Debug ("LoadCache: observation state slot is not valid => return");
+          }
           return;
         }
         
@@ -279,9 +274,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         if ( (null == observationStateSlot) || (observationStateSlot.Version != m_observationStateSlot.Version)) {
           // The observation state slot was updated
           // => invalid the cache
-          log.InfoFormat ("LoadCache: " +
-                          "the observation state slot {0} was updated",
-                          observationStateSlot);
+          log.Info ($"LoadCache: the observation state slot {observationStateSlot} was updated");
           CleanCache ();
           LoadCache (dateTime, observationStateSlot);
         }
@@ -307,9 +300,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
           return true;
         }
         else {
-          log.WarnFormat ("CheckCacheValidity: " +
-                          "the observation state slot was updated " +
-                          "=> invalid the cache");
+          log.Warn ("CheckCacheValidity: the observation state slot was updated => invalid the cache");
           m_observationStateSlot = null;
           return false;
         }
@@ -347,8 +338,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       Debug.Assert (null != m_observationStateSlot);
       
       if (null == m_observationStateSlot) { // Empty the cache
-        log.FatalFormat ("CompleteCache: " +
-                         "m_observationStateSlot is null");
+        log.Fatal ("CompleteCache: m_observationStateSlot is null");
         return;
       }
       
@@ -385,16 +375,17 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       //       If begin or end has no value, there may be some problems
       
       if (!IsRangeValid (m_observationStateSlot.DateTimeRange, log)) {
-        log.DebugFormat ("Store: " +
-                         "do nothing because the range {0} is not valid",
-                         m_observationStateSlot.DateTimeRange);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Store: do nothing because the range {m_observationStateSlot.DateTimeRange} is not valid");
+        }
         return;
       }
       Debug.Assert (observationStateSlot.DateTimeRange.Lower.HasValue);
       Debug.Assert (observationStateSlot.DateTimeRange.Upper.HasValue);
       if (!IsObservationStateSlotValid (m_observationStateSlot, log)) {
-        log.DebugFormat ("Store: " +
-                         "do nothing because observation state slot is not valid");
+        if (log.IsDebugEnabled) {
+          log.Debug ("Store: do nothing because observation state slot is not valid");
+        }
         return;
       }
       Debug.Assert (null != observationStateSlot.MachineObservationState);
@@ -474,15 +465,10 @@ WHERE NOT EXISTS (SELECT 1 FROM upsert up WHERE up.machineid=new_values.machinei
           command.ExecuteNonQuery();
         }
         catch (Exception ex) {
-          log.ErrorFormat ("Store: " +
-                           "request error in SQL query {0} \n" +
-                           "Exception: {1}",
-                           command.CommandText,
-                           ex);
+          log.Error ($"Store: request error in SQL query {command.CommandText} \nException: {ex}");
           throw;
         }
       }
     }
-    #endregion // Methods
   }
 }

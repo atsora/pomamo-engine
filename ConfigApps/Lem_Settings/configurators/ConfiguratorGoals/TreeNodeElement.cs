@@ -16,7 +16,6 @@ namespace ConfiguratorGoals
 
     static readonly ILog log = LogManager.GetLogger(typeof (TreeNodeElement).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Displayable
     /// </summary>
@@ -47,7 +46,6 @@ namespace ConfiguratorGoals
                              Value.HasValue ? Value.Value.ToString() : "?", Unit);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -61,7 +59,6 @@ namespace ConfiguratorGoals
     }
     #endregion // Constructors
     
-    #region Methods
     public override bool Equals(object obj)
     {
       var other = obj as TreeNodeElement;
@@ -94,6 +91,5 @@ namespace ConfiguratorGoals
     public static bool operator !=(TreeNodeElement lhs, TreeNodeElement rhs) {
       return !(lhs == rhs);
     }
-    #endregion // Methods
   }
 }

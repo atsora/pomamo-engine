@@ -28,7 +28,6 @@ namespace Lemoine.Extensions
   /// </summary>
   public class NHibernatePluginsLoader : INHibernatePluginsLoader
   {
-    #region Members
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IPluginDirectories m_pluginDirectories;
 
@@ -39,12 +38,10 @@ namespace Lemoine.Extensions
 
     readonly IList<IPluginDll> m_activePlugins = new List<IPluginDll> ();
     readonly IList<PluginDllLoader> m_loadErrorPlugins = new List<PluginDllLoader> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (NHibernatePluginsLoader).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
-    #region Getters / Setters
     /// <summary>
     /// Are the plugins loaded
     /// </summary>
@@ -52,7 +49,6 @@ namespace Lemoine.Extensions
     {
       get { return m_loadStatus == 2; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -73,7 +69,6 @@ namespace Lemoine.Extensions
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="IPluginsLoader"/>
     /// </summary>
@@ -88,14 +83,14 @@ namespace Lemoine.Extensions
     {
       if (m_pluginUserDirectoryActive.HasValue
         && (pluginUserDirectoryActive != m_pluginUserDirectoryActive.Value)) { // New pluginUserDirectoryActive parameter
-        log.WarnFormat ("CheckCache: pluginUserDirectoryActive parameter changed, reset the cache");
+        log.Warn ("CheckCache: pluginUserDirectoryActive parameter changed, reset the cache");
         m_loadStatus = 0;
       }
       m_pluginUserDirectoryActive = pluginUserDirectoryActive;
 
       var pluginFlagFilter = pluginFilter.GetPluginFlag ();
       if (m_pluginFlagFilter.Equals (pluginFlagFilter)) {
-        log.WarnFormat ("CheckCache: pluginFlagFilter parameter changed, reset the cache");
+        log.Warn ("CheckCache: pluginFlagFilter parameter changed, reset the cache");
         m_loadStatus = 0;
       }
       m_pluginFlagFilter = pluginFlagFilter;
@@ -176,7 +171,9 @@ namespace Lemoine.Extensions
         }
         try {
           pluginStatusLog.Info ("Load the plugins requested without the database connection");
-          pluginStatusLog.DebugFormat ("Load of the plugins without the database connection requested by {0}", System.Environment.StackTrace);
+          if (pluginStatusLog.IsDebugEnabled) {
+            pluginStatusLog.Debug ($"Load of the plugins without the database connection requested by {System.Environment.StackTrace}");
+          }
           checkedThread?.SetActive ();
           var directories = m_pluginDirectories.GetDirectories (pluginUserDirectoryActive, checkedThread: checkedThread)
             .Select (directory => directory.FullName);
@@ -213,7 +210,7 @@ namespace Lemoine.Extensions
       case 2: // Completed
         return;
       default:
-        log.FatalFormat ("InstanceLoad: unexpected status {0}", loadStatus);
+        log.Fatal ($"InstanceLoad: unexpected status {loadStatus}");
         throw new InvalidOperationException ();
       }
     }
@@ -233,7 +230,9 @@ namespace Lemoine.Extensions
         m_loadingThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
         try {
           pluginStatusLog.Info ("Load the plugins requested without the database connection");
-          pluginStatusLog.DebugFormat ("Load of the plugins without the database connection requested by {0}", System.Environment.StackTrace);
+          if (pluginStatusLog.IsDebugEnabled) {
+            pluginStatusLog.Debug ($"Load of the plugins without the database connection requested by {System.Environment.StackTrace}");
+          }
           checkedThread?.SetActive ();
           var directories = m_pluginDirectories.GetDirectories (pluginUserDirectoryActive, checkedThread: checkedThread)
             .Select (directory => directory.FullName);
@@ -299,7 +298,7 @@ namespace Lemoine.Extensions
       foreach (var directory in directories.Distinct ()) {
         SearchOption searchOption;
         if ((null != pulseServerDirectory) && Path.Equals (pulseServerDirectory, directory)) {
-          log.WarnFormat ("GetPluginDlls: search directory is the Pulse directory");
+          log.Warn ("GetPluginDlls: search directory is the Pulse directory");
           searchOption = SearchOption.TopDirectoryOnly;
         }
         else {
@@ -316,7 +315,7 @@ namespace Lemoine.Extensions
       foreach (var directory in directories.Distinct ()) {
         SearchOption searchOption;
         if ((null != pulseServerDirectory) && Path.Equals (pulseServerDirectory, directory)) {
-          log.WarnFormat ("GetPluginDlls: search directory is the Pulse directory");
+          log.Warn ("GetPluginDlls: search directory is the Pulse directory");
           searchOption = SearchOption.TopDirectoryOnly;
         }
         else {
@@ -395,7 +394,7 @@ namespace Lemoine.Extensions
         else {
           m_loadErrorPlugins.Add (pluginDllLoader);
           if (!pluginDllLoader.FilterMatch) {
-            log.InfoFormat ($"GetAndLoadPluginDllsAsync: do not load plugin {file} because the flags do not match the flag filter {pluginFilter}");
+            log.Info ($"GetAndLoadPluginDllsAsync: do not load plugin {file} because the flags do not match the flag filter {pluginFilter}");
           }
           else {
             log.Error ($"GetAndLoadPluginDllsAsync: plugin {file} is not valid");
@@ -403,6 +402,5 @@ namespace Lemoine.Extensions
         }
       }
     }
-    #endregion // Methods
   }
 }

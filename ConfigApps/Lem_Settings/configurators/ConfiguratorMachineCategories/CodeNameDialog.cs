@@ -16,7 +16,6 @@ namespace ConfiguratorMachineCategories
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CodeNameDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name
     /// </summary>
@@ -32,7 +31,6 @@ namespace ConfiguratorMachineCategories
       get { return textCode.Text; }
       set { textCode.Text = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

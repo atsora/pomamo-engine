@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null Shift a valid value ?
     /// </summary>
@@ -70,8 +69,6 @@ namespace Lemoine.DataReferenceControls
       get { return ShiftSelection1.MultiSelect; }
       set { ShiftSelection1.MultiSelect = value; }
     }
-    
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -90,9 +87,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("ShiftDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

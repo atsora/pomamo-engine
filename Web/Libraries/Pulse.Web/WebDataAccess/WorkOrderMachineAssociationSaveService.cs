@@ -47,9 +47,7 @@ namespace Pulse.Web.WebDataAccess
           IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
             .FindById (request.MachineId);
           if (null == machine) {
-            log.ErrorFormat ("Get: " +
-                             "Machine with {0} does not exist",
-                             request.MachineId);
+            log.Error ($"Get: Machine with {request.MachineId} does not exist");
             transaction.Commit ();
             return new ErrorDTO ("No machine with id " + request.MachineId,
                                  ErrorStatus.WrongRequestParameter);
@@ -61,9 +59,7 @@ namespace Pulse.Web.WebDataAccess
             IWorkOrder workOrder = ModelDAOHelper.DAOFactory.WorkOrderDAO
               .FindById (request.WorkOrderId.Value);
             if (null == workOrder) {
-              log.ErrorFormat ("Get: " +
-                               "No reason with ID {0}",
-                               request.WorkOrderId.Value);
+              log.Error ($"Get: No reason with ID {request.WorkOrderId.Value}");
               transaction.Commit ();
               return new ErrorDTO ("No work order with id " + request.WorkOrderId.Value,
                                    ErrorStatus.WrongRequestParameter);
@@ -92,9 +88,7 @@ namespace Pulse.Web.WebDataAccess
               IRevision revision = ModelDAOHelper.DAOFactory.RevisionDAO
                 .FindById (request.RevisionId.Value);
               if (null == revision) {
-                log.WarnFormat ("Get: " +
-                                "No revision with ID {0}",
-                                request.RevisionId.Value);
+                log.Warn ($"Get: No revision with ID {request.RevisionId.Value}");
               }
               else {
                 workOrderMachineAssociation.Revision = revision;

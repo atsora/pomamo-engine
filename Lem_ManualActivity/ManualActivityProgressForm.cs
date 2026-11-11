@@ -20,18 +20,14 @@ namespace Lem_ManualActivity
   /// </summary>
   public partial class ManualActivityProgressForm : Form
   {
-    #region Members
     IMonitoredMachine m_monitoredMachine;
     IMachineMode m_machineMode;
     DateTime m_beginTime;
     UpperBound<DateTime> m_endTime;
     bool m_noEndDate;
     ICollection<IActivityManual> m_activityManualAssociations = new List<IActivityManual> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ManualActivityProgressForm).FullName);
-
-    #region Getters / Setters
 
     /// <summary>
     /// Monitored machine
@@ -87,8 +83,6 @@ namespace Lem_ManualActivity
       set { m_activityManualAssociations = value; }
     }
 
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -104,10 +98,6 @@ namespace Lem_ManualActivity
     }
 
     #endregion // Constructors
-
-    #region Methods
-
-    #endregion // Methods
 
     void ManualActivityProgressFormLoad (object sender, EventArgs e)
     {

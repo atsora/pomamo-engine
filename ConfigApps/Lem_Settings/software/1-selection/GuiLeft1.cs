@@ -16,13 +16,10 @@ namespace Lem_Settings
   /// </summary>
   public partial class GuiLeft1 : UserControl
   {
-    #region Members
     SelectionGuiCenter m_guiCenter1;
     GuiRight1 m_guiRight1;
     bool m_dontUpdate = false;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Return true if "Recent" is selected
     /// </summary>
@@ -32,7 +29,6 @@ namespace Lem_Settings
     /// Return true if "Favorites" is selected
     /// </summary>
     public bool IsFavorite { get { return listBoxDisplay.SelectedIndex == 2; } }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -45,7 +41,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize references to access foreign objects
     /// </summary>
@@ -103,7 +98,6 @@ namespace Lem_Settings
       textSearch.Focus();
       ControlAnimation.AnimateBackColor(textSearch, Color.LightGreen, SystemColors.Window, 0.4);
     }
-    #endregion // Methods
     
     #region Event reactions
     void ListBoxCategoriesSelectedIndexChanged(object sender, EventArgs e)

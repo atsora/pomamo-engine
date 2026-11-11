@@ -14,7 +14,6 @@ namespace Lemoine.Extensions.Interfaces
   /// </summary>
   public interface IPluginCustomActionControl
   {
-    #region Getters / Setters
     /// <summary>
     /// Title of the action
     /// </summary>
@@ -24,9 +23,7 @@ namespace Lemoine.Extensions.Interfaces
     /// Help text for the configuration
     /// </summary>
     string Help { get; }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Initialize the interface
     /// </summary>
@@ -45,6 +42,5 @@ namespace Lemoine.Extensions.Interfaces
     /// </summary>
     /// <returns></returns>
     IList<string> GetErrors ();
-    #endregion // Methods
   }
 }

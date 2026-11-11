@@ -116,7 +116,6 @@ namespace Lemoine.Plugin.OperationSlotCycles
       }
     };
 
-    #region Members
     readonly IDictionary<OperationSlot, OperationSlotValue> m_operationSlotAccumulator =
       new Dictionary<OperationSlot, OperationSlotValue> ();
     // Set of removed operation slots
@@ -127,12 +126,8 @@ namespace Lemoine.Plugin.OperationSlotCycles
     readonly HashSet<IOperationCycle> m_adjustEndCycles = new HashSet<IOperationCycle> ();
 
     IEnumerable<Pulse.Extensions.Database.IOperationCycleFullExtension> m_operationCycleFullExtensions = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationSlotCyclesAccumulator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -252,9 +247,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
         ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (machine.Id);
       if (null == monitoredMachine) {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("IsMachineExcluded: " +
-                          "machine {0} is not a monitored one",
-                          machine.Id);
+          log.Info ($"IsMachineExcluded: machine {machine.Id} is not a monitored one");
         }
         return true;
       }
@@ -452,10 +445,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
       IMachine machine = operationSlot.Machine;
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat (".{0} AssociateCyclesMatchingSlotPeriod: range={1} " +
-                         "check no new operation cycle " +
-                         "may be associated to the new period",
-                         operationSlot.Machine.Id, range);
+        log.Debug ($".{operationSlot.Machine.Id} AssociateCyclesMatchingSlotPeriod: range={range} check no new operation cycle may be associated to the new period");
       }
       // fetch all cycles that intersect range
       // in ascending order of cycles
@@ -513,10 +503,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
                                                  .Subtract (AnalysisConfigHelper.OperationCycleAssociationMargin),
                                                  lastNotRealEndCycle.Begin.Value) <= 0)) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat (".{0} AssociateCyclesMatchingSlotPeriod: " +
-                                     "merge {1} and {2}",
-                                     operationSlot.Machine.Id,
-                                     lastNotRealEndCycle, operationCycle.Id);
+                    log.Debug ($".{operationSlot.Machine.Id} AssociateCyclesMatchingSlotPeriod: merge {lastNotRealEndCycle} and {operationCycle.Id}");
                   }
                   log.Debug ($".{operationSlot.Machine.Id} AssociateCyclesMatchingSlotPeriod: operationCycle={operationCycle.Id}  MergeCycles lastNotRealEndCycle={lastNotRealEndCycle.Id}");
                   MergeCycles (lastNotRealEndCycle, operationCycle);
@@ -788,10 +775,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
         return operationCycle;
       }
       else {
-        log.FatalFormat (".{0} AssociateCyclesMatchingSlotPeriod: " +
-                         "compatibility={1} but in the same time split and neither BeginOnly nor EndOnly",
-                         operationSlot.Machine.Id,
-                         compatibility);
+        log.Fatal ($".{operationSlot.Machine.Id} AssociateCyclesMatchingSlotPeriod: compatibility={compatibility} but in the same time split and neither BeginOnly nor EndOnly");
         return operationCycle;
       }
     }
@@ -804,12 +788,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
       Debug.Assert (operationCycle.HasRealEnd ());
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat (".{0} MergeCycles: " +
-                         "merge the partial cycle {1} with " +
-                         "the operation cycle ending at {2}",
-                         lastNotRealEndCycle.Machine.Id,
-                         lastNotRealEndCycle.Begin.Value,
-                         operationCycle.End.Value);
+        log.Debug ($".{lastNotRealEndCycle.Machine.Id} MergeCycles: merge the partial cycle {lastNotRealEndCycle.Begin.Value} with the operation cycle ending at {operationCycle.End.Value}");
       }
 
       operationCycle.Begin = lastNotRealEndCycle.Begin.Value;
@@ -863,10 +842,7 @@ namespace Lemoine.Plugin.OperationSlotCycles
         // The same deliverable is already registered with operation cycle
         // => just keep fullDeliverablePiece
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MergePartialDeliverablePiece: " +
-                           "the deliverable piece {0} is already registered with the full cycle" +
-                           "=> just keep fullDeliverablePiece",
-                           fullDeliverablePiece.DeliverablePiece);
+          log.Debug ($"MergePartialDeliverablePiece: the deliverable piece {fullDeliverablePiece.DeliverablePiece} is already registered with the full cycle=> just keep fullDeliverablePiece");
         }
         ModelDAOHelper.DAOFactory.OperationCycleDeliverablePieceDAO.MakeTransient (partialDeliverablePiece);
         return;
@@ -1128,16 +1104,13 @@ namespace Lemoine.Plugin.OperationSlotCycles
         var extensionResult = fullExtension.IsFull (operationCycle);
         if (extensionResult.HasValue) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("IsFull: " +
-                             "{0} from extension {1}",
-                             extensionResult.Value, fullExtension);
+            log.Debug ($"IsFull: {extensionResult.Value} from extension {fullExtension}");
           }
           return extensionResult.Value;
         }
       }
 
-      log.ErrorFormat ("IsFull: no extension is reporting if the operation cycle {0} is full or not",
-        operationCycle.Id);
+      log.Error ($"IsFull: no extension is reporting if the operation cycle {operationCycle.Id} is full or not");
       return false;
     }
   }

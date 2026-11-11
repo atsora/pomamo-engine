@@ -17,12 +17,9 @@ namespace ConfiguratorGoals
   /// </summary>
   public partial class PageReset : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     IGoalType m_goalType = null;
     IList<CellResetGoal> m_cells = new List<CellResetGoal>();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -42,7 +39,6 @@ namespace ConfiguratorGoals
         return LemSettingsGlobal.PageFlag.WITH_VALIDATION;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

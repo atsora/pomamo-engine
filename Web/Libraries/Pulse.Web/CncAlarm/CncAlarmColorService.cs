@@ -49,7 +49,6 @@ namespace Pulse.Web.CncAlarm
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -78,9 +77,7 @@ namespace Pulse.Web.CncAlarm
       // Time span considering the number of pixels
       Debug.Assert (range.Duration.HasValue);
       if (!range.Duration.HasValue) {
-        log.FatalFormat ("GetCacheTimeOut: " +
-          "no range duration, return {0} for {1}",
-          timeCacheTimeSpan, url);
+        log.Fatal ($"GetCacheTimeOut: no range duration, return {timeCacheTimeSpan} for {url}");
         return timeCacheTimeSpan;
       }
       double rangeSeconds = range.Duration.Value.TotalSeconds;
@@ -88,9 +85,9 @@ namespace Pulse.Web.CncAlarm
       TimeSpan durationCacheTimeSpan = TimeSpan.FromSeconds (secondsPerPixel); // No need to expire the cache if you do not get at least one more pixel
 
       TimeSpan cacheTimeSpan = (timeCacheTimeSpan < durationCacheTimeSpan) ? durationCacheTimeSpan : timeCacheTimeSpan; // Longer duration
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} considering time:{1}, considering duration:{2} for url={3}",
-                       cacheTimeSpan, timeCacheTimeSpan, durationCacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} considering time:{timeCacheTimeSpan}, considering duration:{durationCacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -107,9 +104,7 @@ namespace Pulse.Web.CncAlarm
         IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindByIdWithMachineModules (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}");
           return new ErrorDTO ("No monitored machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -176,8 +171,7 @@ namespace Pulse.Web.CncAlarm
             }
             else {
               newDuration = TimeSpan.FromTicks (0);
-              log.WarnFormat ("GeAutoSplit: " +
-                              "new duration is 0"); // should normally not happen really often
+              log.Warn ("GeAutoSplit: new duration is 0"); // should normally not happen really often
               continue;
             }
           }
@@ -277,8 +271,7 @@ namespace Pulse.Web.CncAlarm
             }
             else {
               newDuration = TimeSpan.FromTicks (0);
-              log.WarnFormat ("GeAutoSplit: " +
-                              "new duration is 0"); // should normally not happen really often
+              log.Warn ("GeAutoSplit: new duration is 0"); // should normally not happen really often
               continue;
             }
           }
@@ -408,6 +401,5 @@ namespace Pulse.Web.CncAlarm
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }

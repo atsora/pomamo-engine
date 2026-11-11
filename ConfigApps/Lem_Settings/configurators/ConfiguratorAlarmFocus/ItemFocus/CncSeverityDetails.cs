@@ -49,10 +49,8 @@ namespace ConfiguratorAlarmFocus
     public event Action<ICncAlarmSeverityPattern> DeletePatternClicked;
     #endregion // Events
 
-    #region Members
     readonly ContextMenuStrip m_menu = new ContextMenuStrip ();
     readonly ICncAlarmSeverity m_severity = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncSeverityDetails).FullName);
 
@@ -113,7 +111,6 @@ namespace ConfiguratorAlarmFocus
     }
     #endregion // Constructors
 
-    #region Methods
     void SetToolTip (Control control, ICncAlarmSeverity severity)
     {
       // Add a tooltip with the description of the severity
@@ -121,7 +118,6 @@ namespace ConfiguratorAlarmFocus
       toolTip.SetToolTip (control, severity.FullDescription);
       toolTip.AutoPopDelay = 32000;
     }
-    #endregion // Methods
 
     #region Event reactions
     void ButtonMenuClick (object sender, EventArgs e)

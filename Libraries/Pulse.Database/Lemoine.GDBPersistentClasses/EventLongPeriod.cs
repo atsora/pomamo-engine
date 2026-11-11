@@ -18,12 +18,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventLongPeriod: EventUnion, IEventLongPeriod
   {
-    #region Members
     IMonitoredMachine m_monitoredMachine;
     IMachineMode m_machineMode;
     IMachineObservationState m_machineObservationState;
     IEventLongPeriodConfig m_config;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (EventLongPeriod).FullName);
 
@@ -53,7 +51,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Monitored machine that is associated to the event
     /// </summary>
@@ -62,7 +59,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_monitoredMachine; }
       protected set {
         if (null == value) {
-          log.FatalFormat ("MonitoredMachine can't be null");
+          log.Fatal ("MonitoredMachine can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null MonitoredMachine in EventLongPeriod");
         } else {
@@ -102,7 +99,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set
       {
         if (null == value) {
-          log.FatalFormat ("MachineMode can't be null");
+          log.Fatal ("MachineMode can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null MachineMode in EventLongPeriod");
         }
@@ -130,7 +127,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set
       {
         if (null == value) {
-          log.FatalFormat ("MachineObservationState can't be null");
+          log.Fatal ("MachineObservationState can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null MachineObservationState in EventLongPeriod");
         }
@@ -174,9 +171,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_config; }
       set { m_config = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
@@ -187,6 +182,5 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateHelper.Unproxy<IMachineMode> (ref m_machineMode);
       NHibernateHelper.Unproxy<IMachineObservationState> (ref m_machineObservationState);
     }
-    #endregion // Methods
   }
 }

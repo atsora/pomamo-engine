@@ -76,8 +76,7 @@ namespace Lemoine.Plugin.PushManufacturingOrder
                 ModelDAOHelper.DAOFactory.ManufacturingOrderDAO.MakePersistent (manufacturingOrder);
               }
               else {
-                log.ErrorFormat ("PushManufacturingOrderService: manufacturing order id {0} does not exist and is not required to be created",
-                  request.ManufacturingOrderId);
+                log.Error ($"PushManufacturingOrderService: manufacturing order id {request.ManufacturingOrderId} does not exist and is not required to be created");
                 transaction.Rollback ();
                 return new ErrorDTO ("Missing manufacturing order", ErrorStatus.UnexpectedError);
               }
@@ -85,22 +84,19 @@ namespace Lemoine.Plugin.PushManufacturingOrder
             else { // the manufacturing order already exists
                    // Check the existing values of manufacturing order
               if ((null != manufacturingOrder.Machine) && (manufacturingOrder.Machine.Id != machine.Id)) { // Check machine
-                log.ErrorFormat ("PushManufacturingOrderService: manufacturing order machine id {0} differs from machine id {1}",
-                  manufacturingOrder.Machine.Id, machine.Id);
+                log.Error ($"PushManufacturingOrderService: manufacturing order machine id {manufacturingOrder.Machine.Id} differs from machine id {machine.Id}");
                 transaction.Rollback ();
                 return new ErrorDTO ("Wrong manufacturing order machine", ErrorStatus.UnexpectedError);
               }
               if ((null != workOrder) && (null != manufacturingOrder.WorkOrder)
                 && ((Lemoine.Collections.IDataWithId<int>)manufacturingOrder.WorkOrder).Id != ((Lemoine.Collections.IDataWithId<int>)workOrder).Id) {
-                log.ErrorFormat ("PushManufacturingOrderService: manufacturing order work order id {0} differs from work order id {1}",
-                  ((Lemoine.Collections.IDataWithId<int>)manufacturingOrder.WorkOrder).Id, ((Lemoine.Collections.IDataWithId<int>)workOrder).Id);
+                log.Error ($"PushManufacturingOrderService: manufacturing order work order id {((Lemoine.Collections.IDataWithId<int>)manufacturingOrder.WorkOrder).Id} differs from work order id {((Lemoine.Collections.IDataWithId<int>)workOrder).Id}");
                 transaction.Rollback ();
                 return new ErrorDTO ("Wrong manufacturing order work order", ErrorStatus.UnexpectedError);
               }
               if (!string.IsNullOrEmpty (request.ManufacturingOrderExternalCode) && !string.IsNullOrEmpty (manufacturingOrder.ExternalCode)
                 && !string.Equals (request.ManufacturingOrderExternalCode, manufacturingOrder.ExternalCode, StringComparison.InvariantCultureIgnoreCase)) {
-                log.ErrorFormat ("PushManufacturingOrderService: manufacturing order external code {0} differs from request manufacturing order extenal code {1}",
-                  manufacturingOrder.ExternalCode, request.ManufacturingOrderExternalCode);
+                log.Error ($"PushManufacturingOrderService: manufacturing order external code {manufacturingOrder.ExternalCode} differs from request manufacturing order extenal code {request.ManufacturingOrderExternalCode}");
                 transaction.Rollback ();
                 return new ErrorDTO ("Wrong manufacturing order external code", ErrorStatus.UnexpectedError);
               }
@@ -109,26 +105,30 @@ namespace Lemoine.Plugin.PushManufacturingOrder
               if (request.UpdateManufacturingOrder) {
                 if (null == manufacturingOrder.Machine) {
                   manufacturingOrder.Machine = machine;
-                  log.DebugFormat ("PushManufacturingOrderService: set the machine in manufacturing order id {0}",
-                    ((IDataWithId<int>)manufacturingOrder).Id);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"PushManufacturingOrderService: set the machine in manufacturing order id {((IDataWithId<int>)manufacturingOrder).Id}");
+                  }
                   ModelDAOHelper.DAOFactory.ManufacturingOrderDAO.MakePersistent (manufacturingOrder);
                 }
                 if ((null != workOrder) && (null == manufacturingOrder.WorkOrder)) {
                   manufacturingOrder.WorkOrder = workOrder;
-                  log.DebugFormat ("PushManufacturingOrderService: set the work order in manufacturing order id {0}",
-                    ((IDataWithId<int>)manufacturingOrder).Id);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"PushManufacturingOrderService: set the work order in manufacturing order id {((IDataWithId<int>)manufacturingOrder).Id}");
+                  }
                   ModelDAOHelper.DAOFactory.ManufacturingOrderDAO.MakePersistent (manufacturingOrder);
                 }
                 if (!string.IsNullOrEmpty (request.ManufacturingOrderExternalCode) && string.IsNullOrEmpty (manufacturingOrder.ExternalCode)) {
                   manufacturingOrder.ExternalCode = request.ManufacturingOrderExternalCode;
-                  log.DebugFormat ("PushManufacturingOrderService: set the external code {1} in manufacturing order id {0}",
-                    ((IDataWithId<int>)manufacturingOrder).Id, request.ManufacturingOrderExternalCode);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"PushManufacturingOrderService: set the external code {request.ManufacturingOrderExternalCode} in manufacturing order id {((IDataWithId<int>)manufacturingOrder).Id}");
+                  }
                   ModelDAOHelper.DAOFactory.ManufacturingOrderDAO.MakePersistent (manufacturingOrder);
                 }
                 if (0 < request.ManufacturingOrderQuantity) {
                   manufacturingOrder.Quantity = request.ManufacturingOrderQuantity;
-                  log.DebugFormat ("PushManufacturingOrderService: set the quantity {1} in manufacturing order id {0}",
-                    ((IDataWithId<int>)manufacturingOrder).Id, request.ManufacturingOrderQuantity);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"PushManufacturingOrderService: set the quantity {request.ManufacturingOrderQuantity} in manufacturing order id {((IDataWithId<int>)manufacturingOrder).Id}");
+                  }
                   ModelDAOHelper.DAOFactory.ManufacturingOrderDAO.MakePersistent (manufacturingOrder);
                 }
               }

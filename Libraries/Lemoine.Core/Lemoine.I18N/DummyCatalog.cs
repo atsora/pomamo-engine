@@ -13,13 +13,7 @@ namespace Lemoine.I18N
   /// </summary>
   public class DummyCatalog: ICatalog
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (DummyCatalog).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -29,9 +23,6 @@ namespace Lemoine.I18N
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region ICatalog implementation
     /// <summary>

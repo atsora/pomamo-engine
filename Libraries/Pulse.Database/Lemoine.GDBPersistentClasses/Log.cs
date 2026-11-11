@@ -22,17 +22,14 @@ namespace Lemoine.GDBPersistentClasses
    , XmlInclude(typeof(SynchronizationLog))]
   public abstract class Log: IBaseLog
   {
-    #region Members
     int m_id = 0;
     DateTime m_dateTime = DateTime.UtcNow;
     LogLevel m_level;
     string m_message;
     string m_module;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Log).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Log ID
     /// </summary>
@@ -82,7 +79,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_module; }
       set { m_module = value; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// Constructor

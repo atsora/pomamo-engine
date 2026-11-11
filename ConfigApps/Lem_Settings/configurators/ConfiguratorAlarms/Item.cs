@@ -37,7 +37,6 @@ namespace ConfiguratorAlarms
     internal const string ALERT_ALL_MACHINES = "alert_all_machines";
     internal const string ALERT_USERS = "alert_users";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -109,7 +108,6 @@ namespace ConfiguratorAlarms
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

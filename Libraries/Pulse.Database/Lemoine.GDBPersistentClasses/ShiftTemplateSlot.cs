@@ -17,9 +17,7 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ShiftTemplateSlot: GenericRangeSlot, ISlot, IShiftTemplateSlot
   {
-    #region Members
     IShiftTemplate m_shiftTemplate;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftTemplateSlot).FullName);
 
@@ -55,7 +53,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors and factory methods
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the ShiftTemplate
     /// </summary>
@@ -63,7 +60,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_shiftTemplate; }
       set { m_shiftTemplate = value; }
     }
-    #endregion // Getters / Setters
     
     #region Slot implementation
     /// <summary>
@@ -79,9 +75,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a ShiftTemplateSlot");
     }
 

@@ -158,7 +158,6 @@ namespace Lemoine.Extensions.Package
       return package;
     }
 
-    #region Methods
     /// <summary>
     /// Install a package from its file description
     /// </summary>
@@ -244,18 +243,12 @@ namespace Lemoine.Extensions.Package
                 ModelDAOHelper.DAOFactory.PackagePluginAssociationDAO.MakePersistent (association);
               }
               else if (!association.Custom || overwriteParameters) {
-                log.WarnFormat ("InstallJson: " +
-                                "{0}/{1}/{2} has already a configuration " +
-                                "=> overwrite it, custom={3}",
-                                package, plugin, pluginInstance.Name, association.Custom);
+                log.Warn ($"InstallJson: {package}/{plugin}/{pluginInstance.Name} has already a configuration => overwrite it, custom={association.Custom}");
                 association.Parameters = JsonConvert.SerializeObject (pluginInstance.Parameters, s_jsonSettings);
                 ModelDAOHelper.DAOFactory.PackagePluginAssociationDAO.MakePersistent (association);
               }
               else { // !ovewriteParameters
-                log.InfoFormat ("InstallJson: " +
-                                "{0}/{1}/{2} has already a configuration " +
-                                "=> do nothing",
-                                package, plugin, pluginInstance.Name);
+                log.Info ($"InstallJson: {package}/{plugin}/{pluginInstance.Name} has already a configuration => do nothing");
               }
             }
 
@@ -326,8 +319,7 @@ namespace Lemoine.Extensions.Package
     {
       foreach (var association in associations) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("RemoveAssociations: {0} of package {1} plugin {2} with parameters {3}",
-            association.Name, association.Package.IdentifyingName, association.Plugin.IdentifyingName, association.Parameters);
+          log.Warn ($"RemoveAssociations: {association.Name} of package {association.Package.IdentifyingName} plugin {association.Plugin.IdentifyingName} with parameters {association.Parameters}");
         }
         ModelDAOHelper.DAOFactory.PackagePluginAssociationDAO
           .MakeTransient (association);
@@ -338,13 +330,11 @@ namespace Lemoine.Extensions.Package
     {
       foreach (var association in associations) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("DeactivateAssociations: {0} of package {1} plugin {2} with parameters {3}",
-            association.Name, association.Package.IdentifyingName, association.Plugin.IdentifyingName, association.Parameters);
+          log.Warn ($"DeactivateAssociations: {association.Name} of package {association.Package.IdentifyingName} plugin {association.Plugin.IdentifyingName} with parameters {association.Parameters}");
         }
         association.Active = false;
         ModelDAOHelper.DAOFactory.PackagePluginAssociationDAO.MakePersistent (association);
       }
     }
-    #endregion // Methods
   }
 }

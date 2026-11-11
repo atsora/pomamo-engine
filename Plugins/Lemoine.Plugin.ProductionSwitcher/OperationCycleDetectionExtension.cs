@@ -21,7 +21,6 @@ namespace Lemoine.Plugin.ProductionSwitcher
     , Lemoine.Extensions.Analysis.IOperationCycleDetectionExtension
     , IObservationStateSlotChangeListener
   {
-    #region Members
     IMonitoredMachine m_machine = null;
     bool m_initializedConfiguration = false;
     bool m_active = false;
@@ -40,7 +39,6 @@ namespace Lemoine.Plugin.ProductionSwitcher
     object m_observationStateSlotLock = new object ();
     volatile bool m_observationStateSlotLoaded = false; // was observationstateslot loaded for the current detection process ?
     IObservationStateSlot m_observationStateSlot = null;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (OperationCycleDetectionExtension).FullName);
 

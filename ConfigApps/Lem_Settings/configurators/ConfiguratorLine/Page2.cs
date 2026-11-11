@@ -17,11 +17,8 @@ namespace ConfiguratorLine
   /// </summary>
   public partial class Page2 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     PartData m_partData = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -53,7 +50,6 @@ namespace ConfiguratorLine
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

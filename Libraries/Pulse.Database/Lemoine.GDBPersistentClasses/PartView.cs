@@ -27,7 +27,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class PartView: BaseData, IPartView
   {
-    #region Members
     int m_componentId = 0;
     int m_projectId = 0;
     int m_componentVersion = 0;
@@ -45,11 +44,9 @@ namespace Lemoine.GDBPersistentClasses
     double? m_estimatedHours;
     ICollection<IIntermediateWorkPiece> m_intermediateWorkPieces =
       new List<IIntermediateWorkPiece> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (PartView).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -268,9 +265,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ICollection<IIntermediateWorkPiece> IntermediateWorkPieces {
       get { return m_intermediateWorkPieces; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Check if the part is undefined
     /// 
@@ -284,7 +279,5 @@ namespace Lemoine.GDBPersistentClasses
         && ( (this.Code == null)
             || (0 == this.Code.Length));
     }
-        
-    #endregion // Methods
   }
 }

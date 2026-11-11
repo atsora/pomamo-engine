@@ -22,7 +22,6 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Max duration
     /// </summary>
@@ -44,7 +43,6 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
     {
       get; set;
     } = 100;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -55,7 +53,6 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// ToString implementation
     /// </summary>
@@ -78,9 +75,7 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("NoResetShortGapStoppedCncValue.ConfigurationErrors")) {
           if (null == ModelDAOHelper.DAOFactory.FieldDAO
               .FindById (this.FieldId)) {
-            log.ErrorFormat ("GetConfigurationErrors: " +
-                             "Field {0} does not exist",
-                             this.FieldId);
+            log.Error ($"GetConfigurationErrors: Field {this.FieldId} does not exist");
             errorList.Add ("Field with ID "
                         + this.FieldId
                         + " does not exist");
@@ -96,6 +91,5 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
     {
       return false;
     }
-    #endregion // Methods
   }
 }

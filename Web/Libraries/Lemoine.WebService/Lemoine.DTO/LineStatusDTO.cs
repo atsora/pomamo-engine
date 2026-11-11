@@ -13,7 +13,6 @@ namespace Lemoine.DTO
   /// </summary>
   public class LineStatusDTO
   {
-    #region Members
     /// <summary>
     /// text displayed as line's label
     /// </summary>
@@ -39,8 +38,6 @@ namespace Lemoine.DTO
     /// current status of operation included in production line
     /// </summary>
     public List<IntermediateWorkPieceStatusDTO> IntermediateWorkPieceStatus { get; set; }
-       
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (LineStatusDTO).FullName);
 

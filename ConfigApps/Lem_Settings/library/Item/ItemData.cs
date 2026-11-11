@@ -33,7 +33,7 @@ namespace Lemoine.Settings
   - expected: {0},
   - received: {1} ({2}).",
                                            Type, value.GetType (), value);
-            log.FatalFormat (message);
+            log.Fatal (message);
             throw new ArgumentException (message);
           }
           m_object = value;
@@ -46,12 +46,9 @@ namespace Lemoine.Settings
       Type Type { get; set; }
     }
 
-    #region Members
     readonly IDictionary<string, IDictionary<string, ObjectLogged>> m_values = new Dictionary<string, IDictionary<string, ObjectLogged>> ();
     string m_currentPageName = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the current page, that has to be set prior to every method
     /// An empty string means common data
@@ -61,7 +58,7 @@ namespace Lemoine.Settings
       get {
         if (m_currentPageName == null) {
           const string message = "CurrentPageIndex has never been set";
-          log.FatalFormat (message);
+          log.Fatal (message);
           throw new Exception (message);
         }
         return m_currentPageName;
@@ -69,13 +66,12 @@ namespace Lemoine.Settings
       set {
         if (value == null) {
           const string message = "The name of the page cannot be null";
-          log.FatalFormat (message);
+          log.Fatal (message);
           throw new ArgumentNullException (message);
         }
         m_currentPageName = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -84,7 +80,6 @@ namespace Lemoine.Settings
     public ItemData () { }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize a value having a specific type, associated to a key
     /// Take care CurrentPageName has been previously set
@@ -201,14 +196,14 @@ namespace Lemoine.Settings
 
       if (!found) {
         string message = "ItemData doesn't contain " + key + " for page " + CurrentPageName;
-        log.FatalFormat (message);
+        log.Fatal (message);
         throw new KeyNotFoundException (message);
       }
 
       if (obj != null) {
         if (!(obj is T)) {
           string message = "Tried to convert " + obj.GetType () + " into " + typeof (T);
-          log.FatalFormat (message);
+          log.Fatal (message);
           throw new InvalidCastException (message);
         }
       }
@@ -242,6 +237,5 @@ namespace Lemoine.Settings
 
       return string.Join ("\n", listText.ToArray ());
     }
-    #endregion // Methods
   }
 }

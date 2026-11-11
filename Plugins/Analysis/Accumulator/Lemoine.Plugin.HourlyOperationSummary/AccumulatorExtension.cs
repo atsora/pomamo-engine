@@ -162,15 +162,10 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       public int AdjustedQuantity;
     }
 
-    #region Members
     readonly IDictionary<HourlyOperationSummaryKey, HourlyIntermediateWorkPieceSummaryValue> m_summaryAccumulator =
       new Dictionary<HourlyOperationSummaryKey, HourlyIntermediateWorkPieceSummaryValue> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (HourlyOperationSummaryAccumulator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     public HourlyOperationSummaryAccumulator ()
@@ -189,7 +184,6 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     }
     #endregion // IAccumulator
 
-    #region Methods
     /// <summary>
     /// IOperationCycleAccumulator implementation
     /// </summary>
@@ -228,18 +222,14 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     {
       if (0 == increment) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "increment is 0 => nothing to do");
+          log.Debug ("UpdateCycleCount: increment is 0 => nothing to do");
         }
         return;
       }
 
       if (!operationCycle.Begin.HasValue && !operationCycle.End.HasValue) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "the operation cycle count has not been fully initialized yet " +
-                           "(no begin and no end) " +
-                           "=> nothing to do");
+          log.Debug ("UpdateCycleCount: the operation cycle count has not been fully initialized yet (no begin and no end) => nothing to do");
         }
         return;
       }
@@ -247,9 +237,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       IOperationSlot operationSlot = operationCycle.OperationSlot;
       if (null == operationSlot) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "operationSlot is null " +
-                           "=> skip it");
+          log.Debug ("UpdateCycleCount: operationSlot is null => skip it");
         }
         return;
       }
@@ -259,9 +247,7 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       }
       if (null == operationSlot.Operation) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "operation is null " +
-                           "=> skip it");
+          log.Debug ("UpdateCycleCount: operation is null => skip it");
         }
         return;
       }
@@ -446,6 +432,5 @@ namespace Lemoine.Plugin.HourlyOperationSummary
       m_summaryAccumulator.Clear ();
       SetActive ();
     }
-    #endregion // Methods
   }
 }

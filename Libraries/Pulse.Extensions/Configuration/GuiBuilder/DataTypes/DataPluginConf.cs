@@ -16,9 +16,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
   public abstract class DataPluginConf<T, TConfigurationKey> : IPluginConfDataType
     where T: IDisplayable
   {
-    #region Members
     IEnumerable<T> m_items = null;
-    #endregion // Members
 
     /// <summary>
     /// Not used

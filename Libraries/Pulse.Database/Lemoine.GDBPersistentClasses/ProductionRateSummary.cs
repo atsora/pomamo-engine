@@ -24,7 +24,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ProductionRateSummary : IProductionRateSummary
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -33,7 +32,6 @@ namespace Lemoine.GDBPersistentClasses
     IShift m_shift;
     TimeSpan m_duration;
     double m_productionRate;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (ProductionRateSummary).FullName);
 
@@ -61,7 +59,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Summary Id
     /// </summary>
@@ -131,9 +128,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_productionRate; }
       set { m_productionRate = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// <see cref="Object.GetHashCode" />
     /// </summary>
@@ -174,6 +169,5 @@ namespace Lemoine.GDBPersistentClasses
         && object.Equals (this.Shift, other.Shift)
         && object.Equals (this.MachineObservationState, other.MachineObservationState);
     }
-    #endregion // Methods
   }
 }

@@ -19,13 +19,11 @@ namespace Lemoine.GDBPersistentClasses
   {
     ILog log = LogManager.GetLogger(typeof (MachineStateTemplateSlot).FullName);
 
-    #region Members
     string m_uuid = new System.Guid ().ToString ();
     IMachine m_machine;
     IMachineStateTemplate m_machineStateTemplate;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -49,8 +47,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != machine);
       if (null == machine) {
-        log.FatalFormat ("MachineStateTemplateSlot: " +
-                         "null value");
+        log.Fatal ("MachineStateTemplateSlot: null value");
         throw new ArgumentNullException ();
       }
       m_machine = machine;
@@ -86,7 +83,6 @@ namespace Lemoine.GDBPersistentClasses
     {  }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// UUID
     /// </summary>
@@ -103,8 +99,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat ("Machine.set: " +
-                           "null value");
+          log.Fatal ("Machine.set: null value");
           throw new ArgumentNullException ();
         }
         m_machine = value;
@@ -146,7 +141,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual TimeSpan? Duration {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
     
     #region IMergeableItem implementation
     /// <summary>
@@ -199,17 +193,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.DateTimeRange.CompareTo (other.DateTimeRange);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare slots " +
-                           "for different machines {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare slots for different machines {this} {other}");
           throw new ArgumentException ("Comparison of slots from different machines");
         }
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
     
@@ -224,10 +213,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare MachineStateTemplateSlots " +
-                       "for different machines {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare MachineStateTemplateSlots for different machines {this} {other}");
       throw new ArgumentException ("Comparison of MachineStateTemplateSlots from different machines");
     }
     

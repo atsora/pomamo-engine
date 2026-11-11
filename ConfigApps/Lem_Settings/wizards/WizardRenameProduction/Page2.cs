@@ -15,11 +15,8 @@ namespace WizardRenameProduction
   /// </summary>
   internal partial class Page2 : GenericWizardPage, IWizardPage
   {
-    #region Members
     ILine m_line = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -41,7 +38,6 @@ namespace WizardRenameProduction
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -24,15 +24,12 @@ namespace Lem_TestReports
   {
     
     static readonly Regex REGEX_MULTIVALUED = new Regex(@"\[(.)*](\[(.)*\])*");
-    #region Members
     String m_name;
     ParameterType m_type;
     IList<String> m_values = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Parameter).FullName);
 
-    #region Getters / Setters
     public String Name {
       get{ return m_name; }
       set{ this.m_name = value; }
@@ -47,8 +44,6 @@ namespace Lem_TestReports
       get{ return m_values; }
       set{ this.m_values = value; }
     }
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -70,7 +65,6 @@ namespace Lem_TestReports
 
     #endregion // Constructors
 
-    #region Methods
     public static String buildViewerUrl(IList<Parameter> parameterList, ViewerType viewerType) {
       StringBuilder parameterString = new StringBuilder();
       switch (viewerType) {
@@ -156,7 +150,5 @@ namespace Lem_TestReports
       }
       return parameterList;
     }
-    
-    #endregion // Methods
   }
 }

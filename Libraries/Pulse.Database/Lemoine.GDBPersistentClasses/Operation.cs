@@ -24,7 +24,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Operation : DataWithDisplayFunction, IOperation, IMergeable<IOperation>, IEquatable<IOperation>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -47,11 +46,9 @@ namespace Lemoine.GDBPersistentClasses
     ICollection<IStamp> m_stamps = new InitialNullIdSet<IStamp, int> ();
     ICollection<IDoc> m_revisionDocs = new InitialNullIdSet<IDoc, int> ();
     DateTime? m_archiveDateTime = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Operation).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -544,7 +541,6 @@ namespace Lemoine.GDBPersistentClasses
     /// Durations
     /// </summary>
     public virtual ICollection<IOperationDuration> Durations => new List<IOperationDuration> { new OperationDuration (this) };
-    #endregion // Getters / Setters
 
     #region Contructors
     /// <summary>
@@ -601,9 +597,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void RemovePath (IPath path)
     {
       if (!this.Paths.Contains (path)) {
-        log.WarnFormat ("RemovePath: " +
-                        "Path {0} is not in {1}",
-                        path, this);
+        log.Warn ($"RemovePath: Path {path} is not in {this}");
       }
       else {
         RemovePathForInternalUse (path);
@@ -611,7 +605,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Get the total number of intermediate work pieces
     /// </summary>
@@ -851,7 +844,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

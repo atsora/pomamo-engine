@@ -19,17 +19,12 @@ namespace Lemoine.Analysis
   /// </summary>
   internal sealed class ProductionAnalysis : ISingleAnalysis, Lemoine.Threading.IChecked
   {
-    #region Members
     readonly IMachine m_machine;
     readonly TransactionLevel m_restrictedTransactionLevel;
     readonly Lemoine.Threading.IChecked m_caller;
     IProductionAnalysisStatus m_productionAnalysisStatus = null;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (ProductionAnalysis).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -120,8 +115,7 @@ namespace Lemoine.Analysis
       }
       Debug.Assert (null != m_productionAnalysisStatus);
       if (GetLogger ().IsDebugEnabled) {
-        GetLogger ().DebugFormat ("Initialize: production analysis status {0} loaded for monitored machine {1}",
-          m_productionAnalysisStatus, m_machine);
+        GetLogger ().Debug ($"Initialize: production analysis status {m_productionAnalysisStatus} loaded for monitored machine {m_machine}");
       }
     }
 
@@ -168,7 +162,7 @@ namespace Lemoine.Analysis
           UtcDateTimeRange range = new UtcDateTimeRange (m_productionAnalysisStatus.AnalysisDateTime,
                                                          now);
           if (range.IsEmpty ()) { // This should not happen very often
-            GetLogger ().WarnFormat ("RunOnce: empty range => nothing to do");
+            GetLogger ().Warn ("RunOnce: empty range => nothing to do");
             return true;
           }
 
@@ -195,7 +189,7 @@ namespace Lemoine.Analysis
                                                                        .Intersects (range));
               Debug.Assert (!productionRange.IsEmpty ());
               if (GetLogger ().IsDebugEnabled) {
-                GetLogger ().DebugFormat ($"RunOnce: consider production range {productionRange}");
+                GetLogger ().Debug ($"RunOnce: consider production range {productionRange}");
               }
               // Loop now on operation slots
               IList<IOperationSlot> operationSlots = ModelDAOHelper.DAOFactory.OperationSlotDAO
@@ -300,11 +294,7 @@ namespace Lemoine.Analysis
           throw new Exception ("null ProductionAnalysisStatus");
         }
         else if (!lastProductionAnalysisStatusDateTime.Equals (m_productionAnalysisStatus.AnalysisDateTime)) {
-          GetLogger ().FatalFormat ("ReloadAfterException: " +
-             "Production Analysis DateTime changed from {0} to {1} " +
-             "after the serialization failure, " +
-             "reset lastProductionAnalysisStatusDateTime and continue",
-             lastProductionAnalysisStatusDateTime, m_productionAnalysisStatus.AnalysisDateTime);
+          GetLogger ().Fatal ($"ReloadAfterException: Production Analysis DateTime changed from {lastProductionAnalysisStatusDateTime} to {m_productionAnalysisStatus.AnalysisDateTime} after the serialization failure, reset lastProductionAnalysisStatusDateTime and continue");
         }
       }
       catch (Exception ex1) {

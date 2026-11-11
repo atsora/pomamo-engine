@@ -36,7 +36,6 @@ namespace Pulse.Web.ProductionState
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -88,6 +87,5 @@ namespace Pulse.Web.ProductionState
 
       return response;
     }
-    #endregion // Methods
   }
 }

@@ -24,9 +24,6 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     : Directories
     , IPluginDirectories
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (PluginDirectories).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
@@ -41,7 +38,6 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Logger
     /// </summary>
@@ -59,6 +55,5 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     {
       return "plugins";
     }
-    #endregion // Methods
   }
 }

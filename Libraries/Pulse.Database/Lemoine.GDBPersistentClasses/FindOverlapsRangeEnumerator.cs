@@ -287,9 +287,9 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != partitionKey);
 
       m_log = logger;
-      m_log.DebugFormat ("FindOverlapsRangeEnumerable: " +
-                         "range={0}",
-                         range);
+      if (m_log.IsDebugEnabled) {
+        m_log.Debug ($"FindOverlapsRangeEnumerable: range={range}");
+      }
       var correctedRange = new UtcDateTimeRange (range.Intersects (limitRange));
 
       if (descending) {
@@ -367,9 +367,9 @@ namespace Lemoine.GDBPersistentClasses
       m_maxGap = maxGap;
       m_readWriteTransactions = readWriteTransactions;
 
-      m_log.DebugFormat ("FindOverlapsRangeAscendingEnumerator: " +
-                         "range={0}",
-                         m_range);
+      if (m_log.IsDebugEnabled) {
+        m_log.Debug ($"FindOverlapsRangeAscendingEnumerator: range={m_range}");
+      }
     }
 
     UtcDateTimeRange GetNextRange ()
@@ -408,8 +408,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (m_range.IsEmpty ()) {
         if (m_log.IsDebugEnabled) {
-          m_log.DebugFormat ("MoveNext: " +
-                             "empty range => return false");
+          m_log.Debug ("MoveNext: empty range => return false");
         }
         return false;
       }
@@ -422,7 +421,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if ((null != m_latestSlot) && !m_latestSlot.DateTimeRange.Upper.HasValue) {
         if (m_log.IsDebugEnabled) {
-          m_log.DebugFormat ("MoveNext: the newest possible slot was already found => return false");
+          m_log.Debug ("MoveNext: the newest possible slot was already found => return false");
         }
         return false;
       }
@@ -430,13 +429,13 @@ namespace Lemoine.GDBPersistentClasses
       if (!m_initialStep) {
         if (!m_currentMaxTime.HasValue) {
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: m_currentMaxTime {0} reached +oo => return false", m_currentMaxTime);
+            m_log.Debug ($"MoveNext: m_currentMaxTime {m_currentMaxTime} reached +oo => return false");
           }
           return false;
         }
         if (!m_range.ContainsElement (m_currentMaxTime)) {
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: curent max time {0} not in range {1} => return false", m_currentMaxTime, m_range);
+            m_log.Debug ($"MoveNext: curent max time {m_currentMaxTime} not in range {m_range} => return false");
           }
           return false;
         }
@@ -451,9 +450,7 @@ namespace Lemoine.GDBPersistentClasses
             && m_latestSlot.DateTimeRange.Upper.HasValue
             && (m_maxGap.Value < m_currentMaxTime.Value.Subtract (m_latestSlot.DateTimeRange.Upper.Value))) {
           if (m_log.IsInfoEnabled) {
-            m_log.InfoFormat ("MoveNext: " +
-                              "max gap {0} detected, newestRetrieved={1} VS currentMaxTime={2} => return false",
-                              m_maxGap.Value, m_latestSlot.DateTimeRange.Upper.Value, m_currentMaxTime.Value);
+            m_log.Info ($"MoveNext: max gap {m_maxGap.Value} detected, newestRetrieved={m_latestSlot.DateTimeRange.Upper.Value} VS currentMaxTime={m_currentMaxTime.Value} => return false");
           }
           return false;
         }
@@ -476,7 +473,7 @@ namespace Lemoine.GDBPersistentClasses
       range = new UtcDateTimeRange (range.Intersects (m_range));
       if (range.IsEmpty ()) {
         if (m_log.IsWarnEnabled) {
-          m_log.WarnFormat ("MoveNext: new returned range is empty => return false");
+          m_log.Warn ("MoveNext: new returned range is empty => return false");
         }
         return false;
       }
@@ -497,7 +494,7 @@ namespace Lemoine.GDBPersistentClasses
       try {
         if (!slots.Any ()) {
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: no slot in range {0}", range);
+            m_log.Debug ($"MoveNext: no slot in range {range}");
           }
           if (!m_currentRequest.LimitRange) {
             return false;
@@ -510,7 +507,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         else { // slots.Any ()
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: {0} slots in range {1}", slots.Count (), range);
+            m_log.Debug ($"MoveNext: {slots.Count ()} slots in range {range}");
           }
           m_latestSlot = slots.Last ();
           if (m_currentRequest.MaxResults) {
@@ -546,7 +543,7 @@ namespace Lemoine.GDBPersistentClasses
       get
       {
         if (null == m_currentEnumerator) {
-          m_log.ErrorFormat ("Current: current enumerator is null, MoveNext must be called first");
+          m_log.Error ("Current: current enumerator is null, MoveNext must be called first");
           throw new InvalidOperationException ();
         }
         return m_currentEnumerator.Current;
@@ -614,9 +611,7 @@ namespace Lemoine.GDBPersistentClasses
       m_readWriteTransactions = readWriteTransactions;
 
       if (m_log.IsDebugEnabled) {
-        m_log.DebugFormat ("FindOverlapsRangeDescendingEnumerator: " +
-                           "range={0}",
-                           m_range);
+        m_log.Debug ($"FindOverlapsRangeDescendingEnumerator: range={m_range}");
       }
     }
 
@@ -656,8 +651,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (m_range.IsEmpty ()) {
         if (m_log.IsDebugEnabled) {
-          m_log.DebugFormat ("MoveNext: " +
-                             "empty range => return false");
+          m_log.Debug ("MoveNext: empty range => return false");
         }
         return false;
       }
@@ -670,7 +664,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if ((null != m_latestSlot) && !m_latestSlot.DateTimeRange.Lower.HasValue) {
         if (m_log.IsDebugEnabled) {
-          m_log.DebugFormat ("MoveNext: the oldest possible slot was already found => return false");
+          m_log.Debug ("MoveNext: the oldest possible slot was already found => return false");
         }
         return false;
       }
@@ -678,13 +672,13 @@ namespace Lemoine.GDBPersistentClasses
       if (!m_initialStep) {
         if (!m_currentMinTime.HasValue) {
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: m_currentMinTime {0} reached -oo => return false", m_currentMinTime);
+            m_log.Debug ($"MoveNext: m_currentMinTime {m_currentMinTime} reached -oo => return false");
           }
           return false;
         }
         if (!m_range.ContainsElement (m_currentMinTime)) {
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: curent min time {0} not in range {1} => return false", m_currentMinTime, m_range);
+            m_log.Debug ($"MoveNext: curent min time {m_currentMinTime} not in range {m_range} => return false");
           }
           return false;
         }
@@ -699,9 +693,7 @@ namespace Lemoine.GDBPersistentClasses
             && m_latestSlot.DateTimeRange.Lower.HasValue
             && (m_maxGap.Value < m_latestSlot.DateTimeRange.Lower.Value.Subtract (m_currentMinTime.Value))) {
           if (m_log.IsInfoEnabled) {
-            m_log.InfoFormat ("MoveNext: " +
-                              "max gap {0} detected, oldestRetrieved={1} VS currentMinTime={2} => return false",
-                              m_maxGap.Value, m_latestSlot.DateTimeRange.Lower.Value, m_currentMinTime.Value);
+            m_log.Info ($"MoveNext: max gap {m_maxGap.Value} detected, oldestRetrieved={m_latestSlot.DateTimeRange.Lower.Value} VS currentMinTime={m_currentMinTime.Value} => return false");
           }
           return false;
         }
@@ -724,7 +716,7 @@ namespace Lemoine.GDBPersistentClasses
       range = new UtcDateTimeRange (range.Intersects (m_range));
       if (range.IsEmpty ()) {
         if (m_log.IsWarnEnabled) {
-          m_log.WarnFormat ("MoveNext: new returned range is empty => return false");
+          m_log.Warn ("MoveNext: new returned range is empty => return false");
         }
         return false;
       }
@@ -745,7 +737,7 @@ namespace Lemoine.GDBPersistentClasses
       try {
         if (!slots.Any ()) {
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: no slot in range {0}", range);
+            m_log.Debug ($"MoveNext: no slot in range {range}");
           }
           if (!m_currentRequest.LimitRange) {
             return false;
@@ -758,7 +750,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         else { // slots.Any ()
           if (m_log.IsDebugEnabled) {
-            m_log.DebugFormat ("MoveNext: {0} slots in range {1}", slots.Count (), range);
+            m_log.Debug ($"MoveNext: {slots.Count ()} slots in range {range}");
           }
           m_latestSlot = slots.Last ();
           if (m_currentRequest.MaxResults) {
@@ -794,7 +786,7 @@ namespace Lemoine.GDBPersistentClasses
       get
       {
         if (null == m_currentEnumerator) {
-          m_log.ErrorFormat ("Current: current enumerator is null, MoveNext must be called first");
+          m_log.Error ("Current: current enumerator is null, MoveNext must be called first");
           throw new InvalidOperationException ();
         }
         return m_currentEnumerator.Current;

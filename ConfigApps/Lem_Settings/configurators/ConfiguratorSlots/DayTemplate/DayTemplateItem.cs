@@ -16,7 +16,6 @@ namespace ConfiguratorSlots.DayTemplate
   {
     internal const string DAY_TEMPLATE = "day_template";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -88,9 +87,7 @@ namespace ConfiguratorSlots.DayTemplate
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     protected override void InitializeData(ItemData data, ItemData otherData)
     {
       data.CurrentPageName = "";
@@ -101,6 +98,5 @@ namespace ConfiguratorSlots.DayTemplate
       data.CurrentPageName = "Page3";
       data.InitValue(DAY_TEMPLATE, typeof(IDayTemplate), null, true);
     }
-    #endregion // Methods
   }
 }

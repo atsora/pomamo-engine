@@ -17,9 +17,7 @@ namespace Lemoine.DataRepository
   /// </summary>
   public class ClassicConnectionParameters : IConnectionParameters
   {
-    #region Members
     readonly ConnectionParameters m_connectionParameters = new ConnectionParameters ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ClassicConnectionParameters).FullName);
 
@@ -32,7 +30,6 @@ namespace Lemoine.DataRepository
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Connection string
     /// </summary>
@@ -66,9 +63,7 @@ namespace Lemoine.DataRepository
       m_connectionParameters.Username =
         doc.DocumentElement.GetAttribute ("user", PulseResolver.PULSE_ODBC_NAMESPACE);
       if (0 == m_connectionParameters.Username.Length) {
-        log.InfoFormat ("InitConnectParam: " +
-                        "no parameter pulse:user " +
-                        "in the root element of the schema");
+        log.Info ("InitConnectParam: no parameter pulse:user in the root element of the schema");
       }
 
       // Password
@@ -76,12 +71,9 @@ namespace Lemoine.DataRepository
         doc.DocumentElement.GetAttribute ("password",
                                           PulseResolver.PULSE_ODBC_NAMESPACE);
       if (0 == m_connectionParameters.Password.Length) {
-        log.InfoFormat ("InitConnectParam: " +
-                        "no parameter pulse:password " +
-                        "in the root element of the schema");
+        log.Info ("InitConnectParam: no parameter pulse:password in the root element of the schema");
       }
     }
-    #endregion // Methods
   }
 }
 

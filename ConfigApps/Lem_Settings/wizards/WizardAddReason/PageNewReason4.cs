@@ -15,7 +15,6 @@ namespace WizardAddReason
   /// </summary>
   internal partial class PageNewReason4 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -26,7 +25,6 @@ namespace WizardAddReason
     /// </summary>
     public string Help { get { return "Select here the way the reason is linked to an operation. " +
           "Three options are available as explained.\n\nIf you don't know, select the first choice."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -21,17 +21,14 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OpPath: DataWithDisplayFunction, IPath, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     int m_number = 1;
     IOperation m_operation;
     ICollection<ISequence> m_sequences = new InitialNullIdSortedSet<ISequence, int>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OpPath).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Path Id
     /// </summary>
@@ -119,8 +116,6 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
-    #endregion // Getters / Setters
-
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -146,9 +141,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void RemoveSequence (ISequence sequence)
     {
       if (!this.Sequences.Contains (sequence)) {
-        log.WarnFormat ("RemoveSequence: " +
-                        "Sequence {0} is not in {1}",
-                        sequence, this);
+        log.Warn ($"RemoveSequence: Sequence {sequence} is not in {this}");
       }
       else {
         sequence.Operation = null; // important side-effect here
@@ -166,7 +159,6 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateHelper.Unproxy<IOperation> (ref m_operation);
     }
 
-    #region Methods
     /// <summary>
     /// <see cref="Object.ToString()" />
     /// </summary>
@@ -281,8 +273,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       RemoveFromProxyCollection<ISequence> (m_sequences, sequence);
     }
-
-    #endregion // Methods
     
   }
 }

@@ -31,7 +31,6 @@ namespace Pulse.Web.Time
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -55,15 +54,14 @@ namespace Pulse.Web.Time
             utcNow = daySlot.BeginDateTime.Value;
           }
         } else {
-          log.ErrorFormat ("Couldn't convert {0} into a date", request.CurrentDate);
+          log.Error ($"Couldn't convert {request.CurrentDate} into a date");
         }
       }
 
       // Split arguments
       var durationDefinition = request.RangeDuration.Split (new char[] { '_', ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
       if (2 != durationDefinition.Length) {
-        log.ErrorFormat ("CurrentRangeService: the range duration definition {0} does not contain two elements",
-                         request.RangeDuration);
+        log.Error ($"CurrentRangeService: the range duration definition {request.RangeDuration} does not contain two elements");
         return new ErrorDTO ("The range duration definition does not contain two elements", ErrorStatus.WrongRequestParameter);
       }
 
@@ -76,8 +74,7 @@ namespace Pulse.Web.Time
       // Parse the duration number
       int durationNumber;
       if (!int.TryParse (durationDefinition[0], out durationNumber)) {
-        log.ErrorFormat ("CurrentRangeService: the range duration definition {0} does not start with a number",
-                         request.RangeDuration);
+        log.Error ($"CurrentRangeService: the range duration definition {request.RangeDuration} does not start with a number");
         return new ErrorDTO ("The range definition does not start with a number", ErrorStatus.WrongRequestParameter);
       }
 
@@ -189,8 +186,7 @@ namespace Pulse.Web.Time
           }
           break;
           default:
-            log.ErrorFormat ("CurrentRangeService: duration unit {0} is not valid",
-                             durationUnit);
+            log.Error ($"CurrentRangeService: duration unit {durationUnit} is not valid");
             transaction.Commit ();
             return new ErrorDTO ("The range duration unit is not valid", ErrorStatus.WrongRequestParameter);
           }
@@ -214,6 +210,5 @@ namespace Pulse.Web.Time
 
       return response;
     }
-    #endregion // Methods
   }
 }

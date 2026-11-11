@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   internal class OperationShiftMachineAssociation: MachineAssociation
   {
-    #region Members
     IWorkOrder m_workOrder = null;
     ILine m_line = null;
     IManufacturingOrder m_manufacturingOrder = null;
@@ -33,9 +32,7 @@ namespace Lemoine.GDBPersistentClasses
     OperationMachineAssociation m_operationMachineAssociation;
     bool m_partOfDetectionAnalysis;
     bool m_resetFutureWorkOrderManufacturingOrder = false;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -99,7 +96,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_component; }
       set { m_component = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -117,9 +113,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != operationMachineAssociation);
       Debug.Assert ((null == operationMachineAssociation.MainModification) || (false == partOfDetectionAnalysis));
       if ((null != operationMachineAssociation.MainModification) && partOfDetectionAnalysis) {
-        log.FatalFormat ("OperationMachineAssociation: " +
-                         "incompatible arguments mainModification={0} and partOfDetectionAnalysis={1}",
-                         operationMachineAssociation.MainModification, partOfDetectionAnalysis);
+        log.Fatal ($"OperationMachineAssociation: incompatible arguments mainModification={operationMachineAssociation.MainModification} and partOfDetectionAnalysis={partOfDetectionAnalysis}");
       }
       
       base.Option = operationMachineAssociation.Option;
@@ -134,7 +128,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Add an analysis log for this modification
     /// </summary>
@@ -144,9 +137,9 @@ namespace Lemoine.GDBPersistentClasses
                                             string message)
     {
       if (m_partOfDetectionAnalysis) {
-        log.DebugFormat ("AddAnalysisLog: " +
-                         "add a detection analysis log with the message {0} and level {1}",
-                         message, level);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddAnalysisLog: add a detection analysis log with the message {message} and level {level}");
+        }
         IDetectionAnalysisLog detectionAnalysisLog = ModelDAOHelper.ModelFactory
           .CreateDetectionAnalysisLog (level, message, this.Machine);
         ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
@@ -206,10 +199,7 @@ namespace Lemoine.GDBPersistentClasses
         
         if (!object.Equals (newOperationSlot.Day, this.Day)) {
           if (newOperationSlot.Day.HasValue && this.Day.HasValue) { // Log it only if a real value changed
-            log.WarnFormat ("MergeDataWithOldSlot: " +
-                            "in OperationShiftMachineAssociation, the day is requested to be changed " +
-                            "from {0} to {1}",
-                            newOperationSlot.Day, this.Day);
+            log.Warn ($"MergeDataWithOldSlot: in OperationShiftMachineAssociation, the day is requested to be changed from {newOperationSlot.Day} to {this.Day}");
             AddAnalysisLog (LogLevel.WARN,
                             string.Format ("OperationShiftMachineAssociation: " +
                                            "day change not valid"));
@@ -218,10 +208,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         if (!object.Equals (newOperationSlot.Shift, this.Shift)) {
           if ( (null != newOperationSlot.Shift) && (null != this.Shift)) { // Log it only if a real value changed
-            log.WarnFormat ("MergeDataWithOldSlot: " +
-                            "in OperationShiftMachineAssociation, the shift is requested to be changed " +
-                            "from {0} to {1}",
-                            newOperationSlot.Shift, this.Shift);
+            log.Warn ($"MergeDataWithOldSlot: in OperationShiftMachineAssociation, the shift is requested to be changed from {newOperationSlot.Shift} to {this.Shift}");
             AddAnalysisLog (LogLevel.WARN,
                             string.Format ("OperationShiftMachineAssociation: " +
                                            "shift change not valid"));
@@ -241,9 +228,9 @@ namespace Lemoine.GDBPersistentClasses
           if (Lemoine.Business.Operation.OperationRelations.IsWorkOrderCompatibleWithOperation (oldOperationSlot.WorkOrder,
                                                                  this.Operation)) {
             Debug.Assert (null != newOperationSlot.WorkOrder);
-            log.DebugFormat ("MergeDataWithOldSlot: " +
-                             "keep the old work order {0} which is compatible with operation {1}",
-                             oldOperationSlot.WorkOrder, this.Operation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MergeDataWithOldSlot: keep the old work order {oldOperationSlot.WorkOrder} which is compatible with operation {this.Operation}");
+            }
           }
           else {
             ((OperationSlot)newOperationSlot).WorkOrder = null;
@@ -289,9 +276,9 @@ namespace Lemoine.GDBPersistentClasses
           }
           else { // Compatible with both the work order and the operation
             Debug.Assert (null != newOperationSlot.Component);
-            log.DebugFormat ("MergeDataWithOldSlot: " +
-                             "keep the old component {0} which is compatible with both the work order {1} and the operation {2}",
-                             oldOperationSlot.Component, newOperationSlot.WorkOrder, this.Operation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MergeDataWithOldSlot: keep the old component {oldOperationSlot.Component} which is compatible with both the work order {newOperationSlot.WorkOrder} and the operation {this.Operation}");
+            }
           }
         }
         
@@ -305,9 +292,9 @@ namespace Lemoine.GDBPersistentClasses
           if (Lemoine.Business.Operation.OperationRelations.IsLineCompatibleWithMachineOperation (oldOperationSlot.Line,
                                                                    this.Machine,
                                                                    this.Operation)) {
-            log.DebugFormat ("MergeDataWithOldSlot: " +
-                             "keep the old line {0} which is compatible with {1}",
-                             oldOperationSlot.Line, this.Operation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MergeDataWithOldSlot: keep the old line {oldOperationSlot.Line} which is compatible with {this.Operation}");
+            }
           }
           else {
             ((OperationSlot)newOperationSlot).Line = null;
@@ -331,9 +318,9 @@ namespace Lemoine.GDBPersistentClasses
           if (Lemoine.Business.Operation.OperationRelations.IsManufacturingOrderCompatibleWithMachineOperation (oldOperationSlot.ManufacturingOrder,
                                                                    this.Machine,
                                                                    this.Operation)) {
-            log.DebugFormat ("MergeDataWithOldSlot: " +
-                             "keep the old manufacturing order {0} which is compatible with {1}",
-                             oldOperationSlot.ManufacturingOrder, this.Operation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"MergeDataWithOldSlot: keep the old manufacturing order {oldOperationSlot.ManufacturingOrder} which is compatible with {this.Operation}");
+            }
           }
           else {
             // Get the next manufacturing order that could match this operation
@@ -369,9 +356,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -412,10 +397,9 @@ namespace Lemoine.GDBPersistentClasses
     protected internal virtual void Analyze (IList<IOperationSlot> preFetchedOperationSlots)
     {
       // - Insert the operation/shift in OperationSlot
-      log.DebugFormat ("Analyze: " +
-                       "insert the {0} operation={1} {2}-{3} " +
-                       "into OperationSlot",
-                       this, this.Operation, this.Begin, this.End);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"Analyze: insert the {this} operation={this.Operation} {this.Begin}-{this.End} into OperationSlot");
+      }
       OperationSlotDAO operationSlotDAO = new OperationSlotDAO ();
       operationSlotDAO.Caller = this;
       this.Insert<OperationSlot, IOperationSlot, OperationSlotDAO> (operationSlotDAO,
@@ -430,7 +414,6 @@ namespace Lemoine.GDBPersistentClasses
         m_resetFutureWorkOrderManufacturingOrder = false; // Done
       }
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

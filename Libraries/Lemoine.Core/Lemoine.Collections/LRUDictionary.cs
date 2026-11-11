@@ -24,18 +24,15 @@ namespace Lemoine.Collections
     // disable once StaticFieldInGenericType
     const int DEFAULT_SIZE = 32;
 
-    #region Members
     readonly LinkedList<KeyValuePair<TKey, TValue>> m_list = new LinkedList<KeyValuePair<TKey, TValue>> ();
     readonly SemaphoreSlim m_listSemaphore = new SemaphoreSlim (1, 1);
     readonly TimeSpan m_semaphoreWaitTimeout = TimeSpan.FromMilliseconds (200);
     readonly ConcurrentDictionary<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>> m_dictionary = new ConcurrentDictionary<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>> ();
     volatile int m_size = DEFAULT_SIZE;
     volatile bool m_sizeReached = false;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (LRUDictionary<TKey, TValue>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Maximum size
     /// </summary>
@@ -54,7 +51,6 @@ namespace Lemoine.Collections
         return m_dictionary.Keys;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -67,7 +63,6 @@ namespace Lemoine.Collections
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Clear the whole cache
     /// </summary>
@@ -276,6 +271,5 @@ namespace Lemoine.Collections
         return false;
       }
     }
-    #endregion // Methods
   }
 }

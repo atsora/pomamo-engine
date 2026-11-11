@@ -16,7 +16,6 @@ namespace WizardAddReason
   /// </summary>
   internal partial class PageSelectableReason : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -29,7 +28,6 @@ namespace WizardAddReason
           "the new reason may need additional details by the user. In that case, check the corresponding box.\n\n" +
           "The new reason may also appear only for a couple a machines. In that case, select the appropriate " +
           "machine filter."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -29,7 +29,6 @@ namespace Lemoine.WebMiddleware.HttpContext
 
     readonly Microsoft.AspNetCore.Http.HttpContext m_context;
 
-    #region Getters / Setters
     /// <summary>
     /// Cache action
     /// </summary>
@@ -92,7 +91,6 @@ namespace Lemoine.WebMiddleware.HttpContext
       get { return Get<string?> (RESPONSE_CONTENT_TYPE_KEY, null); }
       set { Set<object?> (RESPONSE_CONTENT_TYPE_KEY, value); }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

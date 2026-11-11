@@ -20,9 +20,7 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger (typeof (IsoFileSlot).FullName);
 
-    #region Members
     IIsoFile m_isoFile;
-    #endregion // Members
 
     #region Constructors and factory methods
     /// <summary>
@@ -45,7 +43,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors and factory methods
 
-    #region getters/setters
     /// <summary>
     /// ID of the iso file
     /// </summary>
@@ -55,14 +52,12 @@ namespace Lemoine.GDBPersistentClasses
       set {
         Debug.Assert (null != value);
         if (value == null) {
-          log.ErrorFormat ("IsoFile.set: " +
-                           "null value");
+          log.Error ("IsoFile.set: null value");
           throw new ArgumentNullException ();
         }
         m_isoFile = value;
       }
     }
-    #endregion // getters/setters
 
     #region Slot implementation
     /// <summary>
@@ -79,17 +74,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.BeginDateTime.CompareTo (other.BeginDateTime);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare isofile slots " +
-                           "for different machine modules {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare isofile slots for different machine modules {this} {other}");
           throw new ArgumentException ("Comparison of IsoFileSlot from different machine modules");
         }
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not an IsoFileSlot");
     }
 
@@ -104,10 +94,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare isofile slots " +
-                       "for different machine modules {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare isofile slots for different machine modules {this} {other}");
       throw new ArgumentException ("Comparison of IsoFileSlot from different machine modules");
     }
 

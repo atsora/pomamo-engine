@@ -17,10 +17,6 @@ namespace WizardEventToolLife
   /// </summary>
   internal partial class Page3 : GenericWizardPage, IWizardPage
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -45,7 +41,6 @@ namespace WizardEventToolLife
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

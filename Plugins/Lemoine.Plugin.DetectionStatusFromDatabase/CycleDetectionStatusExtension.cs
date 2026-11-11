@@ -41,7 +41,7 @@ namespace Lemoine.Plugin.DetectionStatusFromDatabase
         var lastCycle = ModelDAOHelper.DAOFactory.OperationCycleDAO
           .GetLast (m_machine);
         if (null == lastCycle) {
-          log.ErrorFormat ("GetFromOperationCycles: no cycle");
+          log.Error ("GetFromOperationCycles: no cycle");
           return null;
         }
         else { // null != lastCycle

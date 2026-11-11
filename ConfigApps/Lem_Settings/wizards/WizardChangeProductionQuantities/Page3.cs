@@ -15,7 +15,6 @@ namespace WizardChangeProductionQuantities
   /// </summary>
   internal partial class Page3 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -27,7 +26,6 @@ namespace WizardChangeProductionQuantities
     public string Help { get { return "You can change here the new global quantity of parts to produce " +
           "for the current production periods.\n\n" +
           "The \"auto\" value is computed based on the previous number of parts per operation."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

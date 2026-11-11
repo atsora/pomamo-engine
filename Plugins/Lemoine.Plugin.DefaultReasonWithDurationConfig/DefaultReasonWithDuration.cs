@@ -427,7 +427,7 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
           if (matchedMachineModeDefaultReasons.Any ()) {
             var count = matchedMachineModeDefaultReasons.Count ();
             if (1 < count) {
-              log.WarnFormat ("GetRequiredResetKind: different default reasons with the same reason => fallback to Main");
+              log.Warn ("GetRequiredResetKind: different default reasons with the same reason => fallback to Main");
               return RequiredResetKind.Main;
             }
             else if (1 == count) {
@@ -1138,12 +1138,11 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       var currentMachineModeRange = new UtcDateTimeRange (currentMachineMode.Change, currentMachineMode.DateTime);
       if (currentMachineModeRange.ContainsElement (at)) {
         if (currentMachineMode.MachineMode.Id != machineMode.Id) {
-          log.ErrorFormat ("GetRangeFromCurrentMachineMode: current machine mode {0} differs from {1} at {2}",
-            currentMachineMode.MachineMode.Id, machineMode.Id, at);
+          log.Error ($"GetRangeFromCurrentMachineMode: current machine mode {currentMachineMode.MachineMode.Id} differs from {machineMode.Id} at {at}");
           return false;
         }
         if (log.IsDebugEnabled && m_logActive) {
-          log.DebugFormat ("GetRangeFromCurrentMachineMode: from current machine mode {0}", currentMachineModeRange);
+          log.Debug ($"GetRangeFromCurrentMachineMode: from current machine mode {currentMachineModeRange}");
         }
         range = currentMachineModeRange;
         return true;
@@ -1154,12 +1153,11 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       var closeFutureRange = new UtcDateTimeRange (currentMachineMode.Change, currentMachineMode.DateTime.Add (closeFuture));
       if (closeFutureRange.ContainsElement (at)) {
         if (currentMachineMode.MachineMode.Id != machineMode.Id) {
-          log.ErrorFormat ("GetRangeFromCurrentMachineMode: current machine mode {0} in close future differs from {1} at {2}",
-            currentMachineMode.MachineMode.Id, machineMode.Id, at);
+          log.Error ($"GetRangeFromCurrentMachineMode: current machine mode {currentMachineMode.MachineMode.Id} in close future differs from {machineMode.Id} at {at}");
           return false;
         }
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("GetRangeFromCurrentMachineMode: from current machine mode in close future {0} at {1}", closeFutureRange, at);
+          log.Info ($"GetRangeFromCurrentMachineMode: from current machine mode in close future {closeFutureRange} at {at}");
         }
         range = new UtcDateTimeRange (currentMachineMode.Change, at, "[]");
         return true;
@@ -1174,21 +1172,20 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
         .FindAt (m_machine, at);
       if (null == fact) {
         if (log.IsDebugEnabled && m_logActive) {
-          log.DebugFormat ("GetRangeFromFact: no fact at {0}", at);
+          log.Debug ($"GetRangeFromFact: no fact at {at}");
         }
         return GetRangeFromLastFact (at, machineMode, ref range);
       }
       else if (fact.CncMachineMode.Id == machineMode.Id) {
         if (log.IsDebugEnabled && m_logActive) {
-          log.DebugFormat ("GetRangeFromFact: get range {0} from fact {1} {2}-{3}", fact.DateTimeRange, fact.Id, fact.Begin, fact.End);
+          log.Debug ($"GetRangeFromFact: get range {fact.DateTimeRange} from fact {fact.Id} {fact.Begin}-{fact.End}");
         }
         range = fact.DateTimeRange;
         return true;
       }
       else {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("GetRangeFromFact: machine mode {0} of fact {1}-{2} is different from machine mode {3} at {4}",
-            fact.CncMachineMode.Id, fact.Begin, fact.End, machineMode.Id, at);
+          log.Info ($"GetRangeFromFact: machine mode {fact.CncMachineMode.Id} of fact {fact.Begin}-{fact.End} is different from machine mode {machineMode.Id} at {at}");
         }
         return false;
       }
@@ -1204,27 +1201,26 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       }
       else if (Bound.Compare<DateTime> (at, fact.Begin) < 0) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetRangeFromLastFact: last fact starts after {0}", at);
+          log.Warn ($"GetRangeFromLastFact: last fact starts after {at}");
         }
         return false;
       }
       else if (Bound.Compare<DateTime> (at, fact.End) < 0) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetRangeFromLastFact: last fact should have already been returned by the FindAt method");
+          log.Warn ("GetRangeFromLastFact: last fact should have already been returned by the FindAt method");
         }
       }
       Debug.Assert (null != fact);
       if (fact.CncMachineMode.Id == machineMode.Id) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetRangeFromLastFact: get range from fact {0}-{1} at {2}", fact.Begin, fact.End, at);
+          log.Warn ($"GetRangeFromLastFact: get range from fact {fact.Begin}-{fact.End} at {at}");
         }
         range = new UtcDateTimeRange (at, fact.End);
         return true;
       }
       else {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("GetRangeFromLastFact: machine mode {0} of fact {1}-{2} is different from machine mode {3} at {4}",
-            fact.CncMachineMode.Id, fact.Begin, fact.End, machineMode.Id, at);
+          log.Info ($"GetRangeFromLastFact: machine mode {fact.CncMachineMode.Id} of fact {fact.Begin}-{fact.End} is different from machine mode {machineMode.Id} at {at}");
         }
         return false;
       }
@@ -1287,7 +1283,7 @@ namespace Lemoine.Plugin.DefaultReasonWithDurationConfig
       }
       else if (!machineModeDefaultReasons.Any (r => r.Auto)) { // No auto reason in the list
         if (log.IsDebugEnabled && m_logActive) {
-          log.DebugFormat ("GetReasonSelections: no auto default reason in {0} => return an empty list", range);
+          log.Debug ($"GetReasonSelections: no auto default reason in {range} => return an empty list");
         }
         return new List<IReasonSelection> ();
       }

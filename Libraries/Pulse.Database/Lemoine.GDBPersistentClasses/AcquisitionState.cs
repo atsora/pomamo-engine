@@ -15,17 +15,14 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class AcquisitionState : IAcquisitionState
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineModule m_machineModule;
     AcquisitionStateKey m_key;
     DateTime m_dateTime;
-    #endregion // Members
 
     static ILog log = LogManager.GetLogger (typeof (AcquisitionState).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// AcquisitionStatus Id
     /// </summary>
@@ -76,7 +73,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.m_dateTime; }
       set { this.m_dateTime = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

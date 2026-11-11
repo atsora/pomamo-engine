@@ -21,13 +21,8 @@ namespace Lemoine.Analysis
   {
     readonly ILog log = LogManager.GetLogger (typeof (WeekNumberAnalysis).FullName);
 
-    #region Members
     readonly IChecked m_checkedThread = null;
     readonly TransactionLevel m_restrictedTransactionLevel = TransactionLevel.Serializable;
-    #endregion // Members
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

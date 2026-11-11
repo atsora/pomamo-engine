@@ -23,9 +23,6 @@ namespace Lemoine.WebMiddleware.Handlers
 
     readonly IEnumerable<Assembly> m_assemblies;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

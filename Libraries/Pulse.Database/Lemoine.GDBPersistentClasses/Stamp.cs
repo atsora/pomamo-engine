@@ -23,7 +23,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Stamp: IStamp, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IIsoFile m_isoFile;
@@ -34,11 +33,9 @@ namespace Lemoine.GDBPersistentClasses
     bool m_operationCycleBegin = false;
     bool m_operationCycleEnd = false;
     bool m_isoFileEnd = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Stamp).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// ID number found in the ISO file that identifies an operation cycle,
     /// a sequence, an operation or a component
@@ -183,9 +180,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_isoFileEnd; }
       set { m_isoFileEnd = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
@@ -242,6 +237,5 @@ namespace Lemoine.GDBPersistentClasses
         return base.GetHashCode ();
       }
     }
-    #endregion // Methods
   }
 }

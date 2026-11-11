@@ -18,16 +18,11 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly int CACHE_SIZE = 8096; // Make it parametrizable
     
-    #region Members
     LRUDictionary<int, double?> m_lru = new LRUDictionary<int, double?> (CACHE_SIZE); // Sequence ID => Completion
     volatile bool m_active = false;
     object m_lock  = new object ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OperationCompletionCache).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -40,7 +35,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Is the cache active ?
     /// </summary>
@@ -65,7 +59,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns>active status of the cache before</returns>
     public static bool Deactivate ()
     {
-      log.InfoFormat ("Deactivate");
+      log.Info ("Deactivate");
 
       bool active;
       lock (Instance.m_lock)
@@ -75,7 +69,7 @@ namespace Lemoine.GDBPersistentClasses
         Instance.m_lru.Clear ();
       }
 
-      log.InfoFormat ($"Deactivate: OperationCompletionCache returns {active}");
+      log.Info ($"Deactivate: OperationCompletionCache returns {active}");
       return active;
     }
 
@@ -99,16 +93,16 @@ namespace Lemoine.GDBPersistentClasses
     public static void Add (ISequence sequence, double? completion)
     {
       if (!IsActive ()) {
-        log.DebugFormat ("Add: " +
-                         "The cache is not active, return at once");
+        if (log.IsDebugEnabled) {
+          log.Debug ("Add: The cache is not active, return at once");
+        }
         return;
       }
       
       Debug.Assert (null != sequence);
       
       if (null == sequence) {
-        log.FatalFormat ("Add: " +
-                         "sequence is null");
+        log.Fatal ("Add: sequence is null");
         return;
       }
       
@@ -138,8 +132,9 @@ namespace Lemoine.GDBPersistentClasses
     public static bool TryGetValue (int sequenceId, out double? completion)
     {
       if (!IsActive ()) {
-        log.DebugFormat ("TryGetValue: " +
-                         "The cache is not active, return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("TryGetValue: The cache is not active, return false");
+        }
         completion = null;
         return false;
       }
@@ -149,9 +144,7 @@ namespace Lemoine.GDBPersistentClasses
         if (Instance.m_active) {
           bool result = Instance.m_lru.TryGetValue (sequenceId, out completion);
           if (!result) {
-            log.InfoFormat ("TryGetValue: " +
-                            "sequence {0} was not in cache",
-                            sequenceId);
+            log.Info ($"TryGetValue: sequence {sequenceId} was not in cache");
           }
           return result;
         }
@@ -175,7 +168,6 @@ namespace Lemoine.GDBPersistentClasses
         Instance.m_lru.Clear ();
       }
     }
-    #endregion // Methods
     
     #region Instance
     static OperationCompletionCache Instance

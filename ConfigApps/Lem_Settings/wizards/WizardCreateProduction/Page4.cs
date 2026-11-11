@@ -16,11 +16,8 @@ namespace WizardCreateProduction
   /// </summary>
   internal partial class Page4 : GenericWizardPage, IWizardPage
   {
-    #region Members
     DateTime m_endDateFirstProduction;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -32,7 +29,6 @@ namespace WizardCreateProduction
     public string Help { get { return "The period specified, provided it is short enough to allow " +
           "a weekly or daily recurrence, can be repeated here. The same goals will be associated " +
           "with the copied periods."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

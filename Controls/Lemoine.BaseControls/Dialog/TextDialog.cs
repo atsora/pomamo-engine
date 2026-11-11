@@ -14,7 +14,6 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class TextDialog : OKCancelDialog
   {
-    #region Getters / Setters
     /// <summary>
     /// Text
     /// </summary>
@@ -30,7 +29,6 @@ namespace Lemoine.BaseControls
       get { return textLabel.Text; }
       set { textLabel.Text = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

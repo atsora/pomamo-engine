@@ -19,18 +19,14 @@ namespace Lemoine.JobControls
   /// </summary>
   public partial class SelectOperationOrPathDialog : OKCancelDialog, ITreeViewObserver
   {
-    #region Members
     OperationTreeView m_operationTreeView;
     InformationControl m_informationControl;
     IOperation m_selectedOperation = null;
     IPath m_selectedPath = null;
     bool m_onlyPathOK = false;
     bool m_onlyOperationOK = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SelectOperationOrPathDialog).FullName);
-
-    #region Getters / Setters
 
     /// <summary>
     ///   OperationTreeView
@@ -85,8 +81,6 @@ namespace Lemoine.JobControls
       get { return m_onlyOperationOK; }
       set { m_onlyOperationOK = value; }
     }
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -147,7 +141,6 @@ namespace Lemoine.JobControls
 
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Called on observable event on one of the tree views: update
     /// OK button status w.r.t. selected node and acceptable nodes
@@ -225,6 +218,5 @@ namespace Lemoine.JobControls
     {
       this.DialogResult = DialogResult.Cancel;
     }
-    #endregion // Methods
   }
 }

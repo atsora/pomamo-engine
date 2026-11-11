@@ -14,7 +14,6 @@ namespace Lemoine.Plugin.GroupCompany
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category name
     /// </summary>
@@ -60,7 +59,6 @@ namespace Lemoine.Plugin.GroupCompany
     public bool ZoomInMachineSelection {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

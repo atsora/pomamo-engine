@@ -20,9 +20,7 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Job: DataWithPatternName, IJob, IEquatable<IJob>
   {
-    #region Members
     IProject m_project;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Job).FullName);
 
@@ -58,7 +56,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Id
     /// </summary>
@@ -258,7 +255,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_project.Components; }
     }
-    #endregion // Getters / Setters
     
     #region Add methods
     /// <summary>
@@ -271,7 +267,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
     
-    #region Methods
     /// <summary>
     /// Check if the job is undefined
     /// 
@@ -294,7 +289,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       return $"[Job {this.Id}]";
     }
-    #endregion // Methods
 
     /// <summary>
     ///   Indicates whether the current object

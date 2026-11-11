@@ -18,12 +18,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class DateTimeDialog : OKCancelDialog, IValueDialog<DateTime?>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (DateTimeDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return selected DateTime
     /// </summary>
@@ -94,7 +90,6 @@ namespace Lemoine.DataReferenceControls
         this.dateTimeSelection.NoSelectionText = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -110,9 +105,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString("DateTimeDialog");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     void OkButtonClick(object sender, EventArgs e)
     {

@@ -37,7 +37,6 @@ namespace Pulse.Web.FileRepo
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -54,6 +53,5 @@ namespace Pulse.Web.FileRepo
         throw new FileRepoWebException (ex);
       }
     }
-    #endregion // Methods
   }
 }

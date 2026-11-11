@@ -47,7 +47,6 @@ namespace ConfiguratorMachineCategories
       }
     }
     
-    #region Getters / Setters
     /// <summary>
     /// Elements comprised in the container
     /// </summary>
@@ -77,7 +76,6 @@ namespace ConfiguratorMachineCategories
         return true;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -92,7 +90,6 @@ namespace ConfiguratorMachineCategories
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a new element to the list
     /// </summary>
@@ -173,6 +170,5 @@ namespace ConfiguratorMachineCategories
       elTmp.Name = name;
       elTmp.Code = code;
     }
-    #endregion // Methods
   }
 }

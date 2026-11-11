@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
     , IVersionable
     , IComparable, IDisplayPriorityCodeNameComparerItem
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name; // Can't be empty but can be null
@@ -30,11 +29,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_externalCode;
     string m_color = "#808080";
     int? m_displayPriority;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Shift).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -143,9 +140,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
-    #region Members
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
@@ -216,7 +211,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[Shift {this.Id}]";
       }
     }
-    #endregion // Members
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

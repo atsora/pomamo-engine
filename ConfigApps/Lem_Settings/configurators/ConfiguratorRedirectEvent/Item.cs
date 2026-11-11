@@ -14,15 +14,12 @@ namespace ConfiguratorRedirectEvent
   /// </summary>
   internal class Item : GenericItem, IConfigurator
   {
-    #region Members
     readonly bool m_advancedMode;
-    #endregion // Members
     
     internal static readonly string CURRENT_ACTION = "current_action";
     internal static readonly string ACTIVATION_STATE = "activation_state";
     internal static readonly string ACTION_MANAGER = "action_manager";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -98,7 +95,6 @@ namespace ConfiguratorRedirectEvent
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

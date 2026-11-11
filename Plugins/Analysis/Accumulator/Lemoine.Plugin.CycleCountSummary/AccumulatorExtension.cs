@@ -272,18 +272,14 @@ namespace Lemoine.Plugin.CycleCountSummary
     {
       if (0 == increment) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "increment is 0 => nothing to do");
+          log.Debug ("UpdateCycleCount: increment is 0 => nothing to do");
         }
         return;
       }
 
       if (!operationCycle.Begin.HasValue && !operationCycle.End.HasValue) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "the operation cycle count has not been fully initialized yet " +
-                           "(no begin and no end) " +
-                           "=> nothing to do");
+          log.Debug ("UpdateCycleCount: the operation cycle count has not been fully initialized yet (no begin and no end) => nothing to do");
         }
         return;
       }
@@ -291,9 +287,7 @@ namespace Lemoine.Plugin.CycleCountSummary
       IOperationSlot operationSlot = operationCycle.OperationSlot;
       if (null == operationSlot) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "operationSlot is null " +
-                           "=> skip it");
+          log.Debug ("UpdateCycleCount: operationSlot is null => skip it");
         }
         return;
       }
@@ -303,9 +297,7 @@ namespace Lemoine.Plugin.CycleCountSummary
       }
       if (null == operationSlot.Operation) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateCycleCount: " +
-                           "operation is null " +
-                           "=> skip it");
+          log.Debug ("UpdateCycleCount: operation is null => skip it");
         }
         return;
       }
@@ -314,7 +306,7 @@ namespace Lemoine.Plugin.CycleCountSummary
 
       if (AnalysisConfigHelper.OperationSlotSplitOption.IsSplitByDay ()) {
         Debug.Assert (false); // OperationSlotAccumulator used instead
-        log.FatalFormat ("UpdateCycle: UpdateCycle called while the option IsSplitByDay is On");
+        log.Fatal ("UpdateCycle: UpdateCycle called while the option IsSplitByDay is On");
       }
       var day = ModelDAOHelper.DAOFactory.TimeConfigDAO.GetDay (operationCycle.DateTime);
 
@@ -363,13 +355,13 @@ namespace Lemoine.Plugin.CycleCountSummary
         if (null != before) {
           if (!OperationSlotUpdate (before, -1)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("OperationSlotUpdated: OperationSlotUpdate for operation slot before {0} not processed (no day)", before);
+              log.Debug ($"OperationSlotUpdated: OperationSlotUpdate for operation slot before {before} not processed (no day)");
             }
           }
         }
         if (!OperationSlotUpdate (after, +1)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("OperationSlotUpdated: OperationSlotUpdate for operation slot after {0} not processed (no day)", after);
+            log.Debug ($"OperationSlotUpdated: OperationSlotUpdate for operation slot after {after} not processed (no day)");
           }
         }
         return;
@@ -395,9 +387,7 @@ namespace Lemoine.Plugin.CycleCountSummary
                                         before.Component, before.Operation);
             CycleCountSummaryValue v;
             if (!m_cycleCountSummaryAccumulator.TryGetValue (key, out v)) {
-              log.ErrorFormat ("OperationSlotUpdated: " +
-                               "no summary found for cycle {0}, which is not expected",
-                               cycle);
+              log.Error ($"OperationSlotUpdated: no summary found for cycle {cycle}, which is not expected");
             }
             else {
               if (cycle.Full) {
@@ -449,8 +439,7 @@ namespace Lemoine.Plugin.CycleCountSummary
     {
       var processed = OperationSlotUpdate (initialState, -1);
       if (log.IsInfoEnabled && !processed && AnalysisConfigHelper.OperationSlotSplitOption.IsSplitByDay ()) {
-        log.InfoFormat ("OperationSlotRemoved: called on an initial operation slot {0} without any day",
-          initialState.Id);
+        log.Info ($"OperationSlotRemoved: called on an initial operation slot {initialState.Id} without any day");
       }
     }
 
@@ -482,8 +471,7 @@ namespace Lemoine.Plugin.CycleCountSummary
         }
 
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("OperationSlotUpdate: no day for operationSlot with range {0} dayrange {1} yet",
-            operationSlot.DateTimeRange, operationSlot.DayRange);
+          log.Debug ($"OperationSlotUpdate: no day for operationSlot with range {operationSlot.DateTimeRange} dayrange {operationSlot.DayRange} yet");
         }
         return false;
       }

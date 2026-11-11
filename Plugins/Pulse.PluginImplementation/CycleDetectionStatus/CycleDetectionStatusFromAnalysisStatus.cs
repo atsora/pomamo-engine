@@ -70,13 +70,13 @@ namespace Pulse.PluginImplementation.CycleDetectionStatus
             monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindById (m_machine.Id);
             if (null == monitoredMachine) {
-              log.ErrorFormat ("GetCycleDetectionDateTime: not a monitored machine");
+              log.Error ("GetCycleDetectionDateTime: not a monitored machine");
               return null;
             }
           }
           var machineModule = monitoredMachine.MainMachineModule;
           if (null == machineModule) {
-            log.ErrorFormat ("GetCycleDetectionDateTime: no main machine module");
+            log.Error ("GetCycleDetectionDateTime: no main machine module");
             return null;
           }
           var analysisStatus = ModelDAOHelper.DAOFactory.MachineModuleAnalysisStatusDAO

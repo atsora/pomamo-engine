@@ -22,11 +22,9 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class ActivityReasonMachineAssociation : MachineAssociation, ICloneable
   {
-    #region Members
     IMachineObservationState m_machineObservationState;
     IShift m_shift;
     IMachineMode m_machineMode;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -48,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -67,8 +64,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.ErrorFormat ("MachineObservationState.set: " +
-                           "null value");
+          log.Error ("MachineObservationState.set: null value");
           throw new ArgumentNullException ();
         }
 
@@ -98,15 +94,13 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.ErrorFormat ("MachineMode.set: " +
-                           "null value");
+          log.Error ("MachineMode.set: null value");
           throw new ArgumentNullException ();
         }
 
         m_machineMode = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region ICloneable implementation
     /// <summary>
@@ -171,9 +165,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeDataWithOldSlot: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeDataWithOldSlot: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -188,7 +180,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void MakeAnalysis ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("MakeAnalysis: not valid");
+      log.Fatal ("MakeAnalysis: not valid");
       throw new NotImplementedException ("ActivityReasonMachineAssociation.MakeAnalysis");
     }
 

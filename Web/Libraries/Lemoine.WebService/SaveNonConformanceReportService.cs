@@ -35,7 +35,6 @@ namespace Lemoine.WebService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -97,6 +96,5 @@ namespace Lemoine.WebService
         return ServiceHelper.ResponseOkDTO (revId, "Save nonconformance report successful");
       }
     }
-    #endregion // Methods
   }
 }

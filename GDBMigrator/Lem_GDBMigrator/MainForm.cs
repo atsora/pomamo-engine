@@ -20,10 +20,8 @@ namespace Lem_GDBMigrator
   /// </summary>
   public partial class MainForm : Form
   {
-    #region Members
     ConnectionParameters m_connection = new ConnectionParameters ();
     MigrationHelper m_migrationHelper = null;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
@@ -65,7 +63,6 @@ namespace Lem_GDBMigrator
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// List the migrations
     /// </summary>
@@ -102,7 +99,6 @@ namespace Lem_GDBMigrator
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
-    #endregion
 
     #region Event reactions
     /// <summary>
@@ -117,9 +113,7 @@ namespace Lem_GDBMigrator
 
       }
       catch (Exception ex) {
-        log.ErrorFormat ("UpgradeButtonClick: " +
-                         "error {0} in migration",
-                         ex);
+        log.Error ($"UpgradeButtonClick: error {ex} in migration");
         MessageBox.Show (String.Format ("Migration failed with error {0}",
                                         ex),
                          "Migration error",
@@ -147,9 +141,7 @@ namespace Lem_GDBMigrator
         m_migrationHelper.Migrate ((int)versionNumericUpDown.Value);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("MigrateButtonClick: " +
-                         "error {0} in migration",
-                         ex);
+        log.Error ($"MigrateButtonClick: error {ex} in migration");
         MessageBox.Show (String.Format ("Migration failed with error {0}",
                                         ex),
                          "Migration error",

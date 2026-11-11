@@ -26,11 +26,8 @@ namespace WizardCreateLine
       public override string ToString() { return Text; }
     }
     
-    #region Members
     IList<StructOperation> m_operations = new List<StructOperation>();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -50,7 +47,6 @@ namespace WizardCreateLine
     StructMachine CurrentMachine {
       get { return listBox.SelectedValue as StructMachine; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

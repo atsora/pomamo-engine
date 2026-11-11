@@ -14,9 +14,7 @@ namespace Lemoine.Settings
   /// </summary>
   public sealed class IniFilePreferences
   {
-    #region Members
     IniFile m_iniFile = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof(IniFilePreferences).FullName);
     
@@ -91,7 +89,6 @@ namespace Lemoine.Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Retrieve a value
     /// </summary>
@@ -318,7 +315,6 @@ namespace Lemoine.Settings
       }
       return defaultValue;
     }
-    #endregion // Methods
     
     #region Instance
     static IniFilePreferences Instance { get { return Nested.instance; } }

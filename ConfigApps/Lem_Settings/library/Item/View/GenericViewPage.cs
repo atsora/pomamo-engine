@@ -52,7 +52,6 @@ namespace Lemoine.Settings
     public GenericViewPage() : base() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// If the validation step is enabled, get the list of errors before validating
     /// Use short sentences, no uppercase at the beginning and no punctuation.
@@ -99,6 +98,5 @@ namespace Lemoine.Settings
     {
       return null;
     }
-    #endregion // Methods
   }
 }

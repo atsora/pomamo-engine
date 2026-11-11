@@ -21,7 +21,6 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class ShiftTemplateConfig : UserControl, IConfigControlObservable<IShiftTemplate>
   {
-    #region Members
     SortableBindingList<IShiftTemplate> m_shiftTemplates = new SortableBindingList<IShiftTemplate>();
     
     BindingList<IShiftTemplateItem> m_shiftTemplateItems = null;
@@ -36,11 +35,9 @@ namespace Lemoine.ConfigControls
     ISet<IConfigControlObserver<IShiftTemplate>> m_observers = new HashSet<IConfigControlObserver<IShiftTemplate>> ();
 
     IShiftTemplate m_editedSubShiftTemplate = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftTemplateConfig).FullName);
 
-    #region Getters / Setters
     IShiftTemplate SelectedShiftTemplate {
       get {
         if (shiftTemplateDataGridView.SelectedRows.Count == 1) {
@@ -71,7 +68,6 @@ namespace Lemoine.ConfigControls
         return null;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -205,8 +201,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("ShiftTemplateConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("ShiftTemplateConfigLoad: no DAO factory is defined");
         return;
       }
       

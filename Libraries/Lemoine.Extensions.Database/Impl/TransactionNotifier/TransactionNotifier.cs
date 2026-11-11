@@ -16,15 +16,10 @@ namespace Lemoine.Extensions.Database.Impl.TransactionNotifier
   /// </summary>
   public sealed class TransactionNotifier
   {
-    #region Members
     IList<ITransactionListener> m_listeners = new List<ITransactionListener> ();
     readonly SemaphoreSlim m_listenersSemaphore = new SemaphoreSlim (1, 1);
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (TransactionNotifier).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -35,7 +30,6 @@ namespace Lemoine.Extensions.Database.Impl.TransactionNotifier
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a listener
     /// </summary>
@@ -82,7 +76,6 @@ namespace Lemoine.Extensions.Database.Impl.TransactionNotifier
         }
       }
     }
-    #endregion // Methods
 
     #region Instance
     static TransactionNotifier Instance

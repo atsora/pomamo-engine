@@ -18,19 +18,14 @@ namespace Lemoine.Info.ConfigReader
   /// </summary>
   public sealed class MultiConfigReader : IGenericConfigReader
   {
-    #region Members
 #if (NETSTANDARD2_1 || NETCOREAPP2_0)
     readonly ConcurrentQueue<IGenericConfigReader> m_configReaders = new ConcurrentQueue<IGenericConfigReader> ();
 #else
     ConcurrentQueue<IGenericConfigReader> m_configReaders = new ConcurrentQueue<IGenericConfigReader> ();
     readonly SemaphoreSlim m_configReadersSemaphore = new SemaphoreSlim (1, 1);
 #endif
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (MultiConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -41,7 +36,6 @@ namespace Lemoine.Info.ConfigReader
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a config reader
     /// </summary>
@@ -64,7 +58,6 @@ namespace Lemoine.Info.ConfigReader
       }
 #endif // NETSTANDARD2_1 || NETCOREAPP2_0
     }
-    #endregion // Methods
 
     #region IGenericConfigReader implementation
     /// <summary>

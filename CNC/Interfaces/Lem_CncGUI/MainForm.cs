@@ -25,13 +25,11 @@ namespace Lem_CncGUI
   /// </summary>
   public partial class MainForm : Form
   {
-    #region Members
     readonly ICncEngineConfig m_cncEngineConfig;
     readonly IExtensionsLoader m_extensionsLoader;
     readonly IAssemblyLoader m_assemblyLoader;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
     Lemoine.CncEngine.CncDataHandler m_dataHandler = null;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 

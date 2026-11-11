@@ -35,7 +35,6 @@ namespace Lemoine.Web.Config
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -50,9 +49,7 @@ namespace Lemoine.Web.Config
         var applicationState = ModelDAOHelper.DAOFactory.ApplicationStateDAO
           .GetNoCache (ApplicationStateKey.ConfigUpdate.ToKey ());
         if (null == applicationState) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "no application state is defined for {0}",
-                           ApplicationStateKey.ConfigUpdate.ToKey ());
+          log.Error ($"GetWithoutCache: no application state is defined for {ApplicationStateKey.ConfigUpdate.ToKey ()}");
           return new ErrorDTO ("No application state is set for " + ApplicationStateKey.ConfigUpdate.ToKey (),
                                ErrorStatus.NotApplicable);
         }
@@ -63,6 +60,5 @@ namespace Lemoine.Web.Config
         }
       }
     }
-    #endregion // Methods
   }
 }

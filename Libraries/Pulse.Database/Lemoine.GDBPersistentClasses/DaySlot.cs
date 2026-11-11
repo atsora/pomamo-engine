@@ -20,12 +20,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class DaySlot : GenericRangeSlot, ISlot, IDaySlot, IWithTemplate
   {
-    #region Members
     IDayTemplate m_dayTemplate;
     DateTime? m_day;
     int? m_weekYear;
     int? m_weekNumber;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DaySlot).FullName);
 
@@ -58,7 +56,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors and factory methods
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the DayTemplate
     /// 
@@ -178,7 +175,6 @@ namespace Lemoine.GDBPersistentClasses
         return this.DayRange.Upper;
       }
     }
-    #endregion // Getters / Setters
 
     #region Slot implementation
     /// <summary>
@@ -203,9 +199,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      GetLogger ().ErrorFormat ("CompareTo: " +
-                                "object {0} of invalid type",
-                                obj);
+      GetLogger ().Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a DaySlot");
     }
 
@@ -316,18 +310,12 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (applicableRange.Overlaps (this.DateTimeRange));
 
       if (this.Day.HasValue) {
-        GetLogger ().InfoFormat ("ProcessTemplate: " +
-                                 "day is already known {0} " +
-                                 "=> do nothing",
-                                 this.Day.Value);
+        GetLogger ().Info ($"ProcessTemplate: day is already known {this.Day.Value} => do nothing");
         return true;
       }
 
       if (!applicableRange.Overlaps (this.DateTimeRange)) { // Nothing to process, no overlap
-        GetLogger ().InfoFormat ("ProcessTemplate: " +
-                                 "application range {0} does not overlap {1} " +
-                                 "=> nothing to process",
-                                 applicableRange, this.DateTimeRange);
+        GetLogger ().Info ($"ProcessTemplate: application range {applicableRange} does not overlap {this.DateTimeRange} => nothing to process");
         return true;
       }
 
@@ -341,11 +329,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.Lower.Value < AnalysisConfigHelper.MinTemplateProcessDateTime) {
         // The lower value is too small to allow a correct process, increase it
-        GetLogger ().WarnFormat ("ProcessTemplate: " +
-                                 "the range lower value {0} is too small to allow a correct process " +
-                                 "=> increase it to {1}",
-                                 range.Lower.Value,
-                                 AnalysisConfigHelper.MinTemplateProcessDateTime);
+        GetLogger ().Warn ($"ProcessTemplate: the range lower value {range.Lower.Value} is too small to allow a correct process => increase it to {AnalysisConfigHelper.MinTemplateProcessDateTime}");
         range = new UtcDateTimeRange (AnalysisConfigHelper.MinTemplateProcessDateTime,
                                       range.Upper,
                                       range.LowerInclusive,
@@ -387,10 +371,7 @@ namespace Lemoine.GDBPersistentClasses
           checkedThread?.SetActive ();
 
           if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
-            GetLogger ().WarnFormat ("ProcessTemplate: " +
-                                     "maxAnalysisDateTime {0} is reached " +
-                                     "=> return false",
-                                     maxAnalysisDateTime);
+            GetLogger ().Warn ($"ProcessTemplate: maxAnalysisDateTime {maxAnalysisDateTime} is reached => return false");
             return false;
           }
         } // End loop on days
@@ -440,9 +421,9 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
 
-      log.DebugFormat ("ApplyForDay: " +
-                       "day={0} ApplicableRange={1} LocalRange={2}-{3} cutOff={4}",
-                       day, applicableRange, dayLocalBegin, dayLocalEnd, cutOff);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ApplyForDay: day={day} ApplicableRange={applicableRange} LocalRange={dayLocalBegin}-{dayLocalEnd} cutOff={cutOff}");
+      }
 
       { // - Apply the range to day
         ApplyDayRange (day, applicableRange, mainModification, partOfDetectionAnalysis, checkedThread);
@@ -455,9 +436,7 @@ namespace Lemoine.GDBPersistentClasses
           Debug.Assert (previousDaySlot.EndDateTime.HasValue);
           Debug.Assert (Bound.Compare<DateTime> (previousDaySlot.EndDateTime, applicableRange.Lower) <= 0);
           if (Bound.Compare<DateTime> (applicableRange.Lower, previousDaySlot.EndDateTime) < 0) { // - abnormal case
-            GetLogger ().FatalFormat ("ApplyForDay: " +
-                                      "previous day slot end {0} is after current day begin {1}",
-                                      previousDaySlot.EndDateTime, applicableRange.Lower);
+            GetLogger ().Fatal ($"ApplyForDay: previous day slot end {previousDaySlot.EndDateTime} is after current day begin {applicableRange.Lower}");
           }
           else if (Bound.Compare<DateTime> (previousDaySlot.EndDateTime, applicableRange.Lower) < 0) { // extend the day
             UtcDateTimeRange applicablePreviousDayRange =

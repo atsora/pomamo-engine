@@ -13,14 +13,11 @@ namespace Lemoine.ModelDAO
   /// </summary>
   public sealed class ModelDAOHelper
   {
-    #region Members
     IModelFactory m_modelFactory;
     IDAOFactory m_daoFactory;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ModelDAOHelper).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Current ModelFactory
     /// </summary>
@@ -45,7 +42,6 @@ namespace Lemoine.ModelDAO
         return Instance.m_daoFactory;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -460,8 +460,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
         foreach (var autoReasonProposal in autoReasonProposals
           .Where (p => p.DateTimeRange.Overlaps (range))) {
           if (!autoReasonProposal.DateTimeRange.ContainsRange (range)) {
-            log.FatalFormat ("TryResetReason: unexpected, reason proposal {0} {1} does not contain range {2}",
-              autoReasonProposal.Id, autoReasonProposal.DateTimeRange, range);
+            log.Fatal ($"TryResetReason: unexpected, reason proposal {autoReasonProposal.Id} {autoReasonProposal.DateTimeRange} does not contain range {range}");
             Debug.Assert (false);
             continue;
           }
@@ -488,14 +487,14 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
       // At least one auto-reason should have been applied in range
       Debug.Assert (0 < reasonSlot.AutoReasonNumber);
       if (reasonSlot.AutoReasonNumber <= 0) {
-        log.FatalFormat ("TryResetReason: reason slot {0} does not have any auto-reason number, although it was expected, considered range was {1}", reasonSlot, range);
+        log.Fatal ($"TryResetReason: reason slot {reasonSlot} does not have any auto-reason number, although it was expected, considered range was {range}");
       }
     }
 
     bool IsCurrentActivity (UtcDateTimeRange range)
     {
       if (!range.Upper.HasValue) {
-        log.FatalFormat ("IsCurrentActivity: unexpected range upper value in {0}", range);
+        log.Fatal ($"IsCurrentActivity: unexpected range upper value in {range}");
         throw new ArgumentOutOfRangeException ("range", "invalid upper value (+oo)");
       }
 

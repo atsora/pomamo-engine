@@ -16,7 +16,6 @@ namespace Lemoine.Plugin.CncAlarmByMessageAlert
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -43,6 +42,5 @@ namespace Lemoine.Plugin.CncAlarmByMessageAlert
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
   }
 }

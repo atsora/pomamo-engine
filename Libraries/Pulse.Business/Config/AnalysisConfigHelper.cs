@@ -52,7 +52,6 @@ namespace Lemoine.Business.Config
 
     static readonly ILog log = LogManager.GetLogger (typeof (AnalysisConfigHelper).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Default time after which a undone modification table
     /// is considered as obsolete
@@ -452,7 +451,6 @@ namespace Lemoine.Business.Config
                           DEFAULT_AUTO_MODIFICATION_PURGE_DELAY);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -463,7 +461,6 @@ namespace Lemoine.Business.Config
     }
     #endregion // Constructors
 
-    #region Methods
     static T GetConfig<T> (AnalysisConfigKey key, T defaultValue)
     {
       string configKey = ConfigKeys.GetAnalysisConfigKey (key);
@@ -471,7 +468,6 @@ namespace Lemoine.Business.Config
         .LoadAndGet<T> (configKey,
                         defaultValue);
     }
-    #endregion // Methods
 
     #region Instance
     static AnalysisConfigHelper Instance

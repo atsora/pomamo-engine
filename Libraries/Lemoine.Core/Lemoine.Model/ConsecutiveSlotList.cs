@@ -94,8 +94,7 @@ namespace Lemoine.Model
             }
           }
         }
-        log.FatalFormat ("Insert: " +
-                         "it should have already been inserted");
+        log.Fatal ("Insert: it should have already been inserted");
         throw new InvalidOperationException ();
       }
     }
@@ -132,8 +131,7 @@ namespace Lemoine.Model
     public void RemoveFirst ()
     {
       if (0 == this.Count) {
-        log.ErrorFormat ("RemoveFirst: " +
-                         "empty list");
+        log.Error ("RemoveFirst: empty list");
         m_previouslyAddedItem = default (T);
       }
       else if (1 == this.Count) {

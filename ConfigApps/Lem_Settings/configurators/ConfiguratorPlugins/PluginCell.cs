@@ -19,11 +19,9 @@ namespace ConfiguratorPlugins
   /// </summary>
   public partial class PluginCell : UserControl
   {
-    #region Members
     readonly ContextMenuStrip m_menu = new ContextMenuStrip ();
     readonly IPluginDll m_plugin = null;
     readonly IPackagePluginAssociation m_association = null;
-    #endregion // Members
 
     #region Events
     /// <summary>
@@ -174,7 +172,6 @@ namespace ConfiguratorPlugins
     }
     #endregion // Constructors
 
-    #region Methods
     void ShowWarning (string text)
     {
       var toolTip = new ToolTip ();
@@ -280,7 +277,6 @@ namespace ConfiguratorPlugins
       baseLayout.ColumnStyles[8].Width = 0;
       buttonMenu.Hide ();
     }
-    #endregion // Methods
 
     #region Event reactions
     void ButtonMenuClick (object sender, EventArgs e)

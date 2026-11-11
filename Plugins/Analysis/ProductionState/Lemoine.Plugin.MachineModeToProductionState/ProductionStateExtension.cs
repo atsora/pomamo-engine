@@ -122,7 +122,7 @@ namespace Lemoine.Plugin.MachineModeToProductionState
         }
         else {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ($"Initialize: successfully loaded production state {m_defaultProductionStateTranslationKey}: id {m_productionState.Id}");
+            log.Debug ($"Initialize: successfully loaded production state {m_defaultProductionStateTranslationKey}: id {m_productionState.Id}");
           }
         }
 

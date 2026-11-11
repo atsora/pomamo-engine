@@ -18,13 +18,10 @@ namespace ConfiguratorLine
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     LineData m_lineData = null;
     bool m_isEdited = false;
     bool m_preparation = true;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -50,7 +47,6 @@ namespace ConfiguratorLine
     
     private IOperation CurrentOperation { get; set; }
     private IMachine CurrentMachine { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -19,7 +19,6 @@ namespace Lemoine.Core.Cache
   /// </summary>
   public sealed class CacheClientWithCleanExtension : ICacheClientWithCleanExtension
   {
-    #region Members
     readonly ICacheClient m_cacheClient;
 
     readonly ConcurrentDictionary<string, DateTime> m_keyExpiration = new ConcurrentDictionary<string, DateTime> ();
@@ -33,16 +32,13 @@ namespace Lemoine.Core.Cache
 #if !NETCOREAPP || NETCOREAPP1_1 || NETCOREAPP1_0
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1, 1);
 #endif // !NETCOREAPP
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CacheClientWithCleanExtension).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Flush the memory on Dispose
     /// </summary>
     public bool FlushOnDispose { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -66,7 +66,7 @@ namespace Lemoine.GDBPersistentClasses
     public I FindById (int id, int machineId)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: id={0} machineId={1} type={2}", id, machineId, typeof (TSlot));
+        log.Debug ($"FindById: id={id} machineId={machineId} type={typeof (TSlot)}");
       }
 
       // Note: entityInCache may be a MachineModificationProxy for example
@@ -80,8 +80,7 @@ namespace Lemoine.GDBPersistentClasses
           && (entityInCache is I)) {
           var convertedEntity = (I)entityInCache;
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("FindById: the entity id={0} machineId={1} type={2} is taken from cache",
-                            id, machineId, typeof (TSlot));
+            log.Debug ($"FindById: the entity id={id} machineId={machineId} type={typeof (TSlot)} is taken from cache");
           }
           return convertedEntity;
         }
@@ -93,7 +92,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: run a request to get the entity id={0} type={1}", id, typeof (TSlot));
+        log.Debug ($"FindById: run a request to get the entity id={id} type={typeof (TSlot)}");
       }
       var entity = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<TSlot> ()
@@ -101,8 +100,7 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Eq ("Machine.Id", machineId))
         .UniqueResult<I> ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: the entity id={0} type={1} was queried",
-                        id, typeof (TSlot));
+        log.Debug ($"FindById: the entity id={id} type={typeof (TSlot)} was queried");
       }
       return entity;
     }
@@ -249,7 +247,7 @@ namespace Lemoine.GDBPersistentClasses
               .Add (new FunctionExpression ("DateTimeRange", "upper_inf"))
               .UniqueResult<I> ();
           default:
-            log.FatalFormat ("Unexpected BoundType");
+            log.Fatal ("Unexpected BoundType");
             throw new InvalidOperationException ("Invalid BoundType");
         }
       }
@@ -278,9 +276,7 @@ namespace Lemoine.GDBPersistentClasses
           break;
         case DateTimeKind.Unspecified:
         default:
-          log.ErrorFormat ("FindAt: " +
-                           "date/time {0} is of kind Unspecified",
-                           at);
+          log.Error ($"FindAt: date/time {at} is of kind Unspecified");
           Debug.Assert (DateTimeKind.Unspecified != at.Value.Kind);
           utc = at.Value;
           break;
@@ -308,7 +304,7 @@ namespace Lemoine.GDBPersistentClasses
             .Add (new FunctionExpression ("DateTimeRange", "upper_inf"))
             .UniqueResultAsync<I> ();
         default:
-          log.FatalFormat ("Unexpected BoundType");
+          log.Fatal ("Unexpected BoundType");
           throw new InvalidOperationException ("Invalid BoundType");
         }
       }
@@ -328,11 +324,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindOverlapsRange: " +
-                           "empty range " +
-                           "=> return an empty list. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Debug ($"FindOverlapsRange: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         }
         return new List<I> ();
       }
@@ -359,11 +351,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindOverlapsRange: " +
-                           "empty range " +
-                           "=> return an empty list. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Debug ($"FindOverlapsRange: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         }
         return new List<I> ();
       }
@@ -486,11 +474,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindOverlapsRange: " +
-                           "empty range " +
-                           "=> return an empty list. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Debug ($"FindOverlapsRange: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         }
         return new List<I> ();
       }
@@ -519,8 +503,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindOverlapsRange: empty range => return an empty list. StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Debug ($"FindOverlapsRange: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         }
         return new List<I> ();
       }

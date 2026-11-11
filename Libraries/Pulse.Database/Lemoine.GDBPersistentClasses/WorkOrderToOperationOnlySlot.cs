@@ -20,7 +20,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     ILog log = LogManager.GetLogger (typeof (WorkOrderToOperationOnlySlot).FullName);
 
-    #region Members
     IMachine m_machine;
     IManufacturingOrder m_manufacturingOrder;
     IWorkOrder m_workOrder;
@@ -36,7 +35,6 @@ namespace Lemoine.GDBPersistentClasses
     TimeSpan? m_productionDuration;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -82,8 +80,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != machine);
       if (null == machine) {
-        log.FatalFormat ("WorkOrderToOperationOnlySlot: " +
-                         "null value");
+        log.Fatal ("WorkOrderToOperationOnlySlot: null value");
         throw new ArgumentNullException ();
       }
       m_machine = machine;
@@ -157,7 +154,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -290,7 +286,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// IMergeable implementation
@@ -329,17 +324,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.DateTimeRange.CompareTo (other.DateTimeRange);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare slots " +
-                           "for different machines {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare slots for different machines {this} {other}");
           throw new ArgumentException ("Comparison of slots from different machines");
         }
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
 
@@ -354,10 +344,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare WorkOrderToOperationOnlySlots " +
-                       "for different machines {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare WorkOrderToOperationOnlySlots for different machines {this} {other}");
       throw new ArgumentException ("Comparison of WorkOrderToOperationOnlySlots from different machines");
     }
 
@@ -383,8 +370,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.Display;
       }
       else {
-        log.FatalFormat ("GetDisplay: not implemented for variant {0}",
-                         variant);
+        log.Fatal ($"GetDisplay: not implemented for variant {variant}");
         throw new NotImplementedException ("OperationSlot.GetDisplay with variant " + variant);
       }
     }

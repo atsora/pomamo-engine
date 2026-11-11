@@ -28,16 +28,14 @@ namespace Lemoine.ModelDAO
     {
       string translation = GetTranslation (key, cultureInfo);
       if (null != translation) {
-        log.DebugFormat ("GetString: " +
-                         "{0} found for {1} and {2}",
-                         translation, key, cultureInfo.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetString: {translation} found for {key} and {cultureInfo.Name}");
+        }
         return translation;
       }
       else { // null == translation
         if (cultureInfo.Equals (System.Globalization.CultureInfo.InvariantCulture)) {
-          log.WarnFormat ("GetString: " +
-                          "key {0} not found in any of the parent culture",
-                          key);
+          log.Warn ($"GetString: key {key} not found in any of the parent culture");
           return null;
         }
         else { // Not InvariantCulture: search recursively to its parent
@@ -64,15 +62,15 @@ namespace Lemoine.ModelDAO
           ITranslation translation = ModelDAOHelper.DAOFactory.TranslationDAO
             .Find (cultureInfo.Name, key);
           if (null == translation) {
-            log.DebugFormat ("GetTranslation: " +
-                             "no translation found for key {0} locale {1}",
-                             key, cultureInfo.Name);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetTranslation: no translation found for key {key} locale {cultureInfo.Name}");
+            }
             return null;
           }
           else {
-            log.DebugFormat ("GetTranslation: " +
-                             "translation {2} found for key {0} locale {1}",
-                             key, cultureInfo.Name, translation.TranslationValue);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetTranslation: translation {translation.TranslationValue} found for key {key} locale {cultureInfo.Name}");
+            }
             return translation.TranslationValue;
           }
         }
@@ -97,9 +95,9 @@ namespace Lemoine.ModelDAO
             .Find (cultureInfo.Name, key);
           if (null != existing) {
             if (overwrite) {
-              log.DebugFormat ("PushTranslation: " +
-                               "write {0}={1} for locale={2}",
-                               key, translation, cultureInfo.Name);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"PushTranslation: write {key}={translation} for locale={cultureInfo.Name}");
+              }
               existing.TranslationValue = translation;
               ModelDAOHelper.DAOFactory.TranslationDAO.MakePersistent (existing);
               transaction.Commit ();
@@ -111,9 +109,9 @@ namespace Lemoine.ModelDAO
             }
           }
           else { // null == existing
-            log.DebugFormat ("PushTranslation: " +
-                             "write {0}={1} for locale={2}",
-                             key, translation, cultureInfo.Name);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"PushTranslation: write {key}={translation} for locale={cultureInfo.Name}");
+            }
             ITranslation newTranslation = ModelDAOHelper.ModelFactory.CreateTranslation (cultureInfo.Name, key);
             newTranslation.TranslationValue = translation;
             ModelDAOHelper.DAOFactory.TranslationDAO.MakePersistent (newTranslation);

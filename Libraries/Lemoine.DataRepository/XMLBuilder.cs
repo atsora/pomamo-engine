@@ -15,13 +15,10 @@ namespace Lemoine.DataRepository
   /// </summary>
   public class XMLBuilder : IBuilder
   {
-    #region Members
     string m_filename;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (XMLBuilder).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the XML file
     /// </summary>
@@ -30,7 +27,6 @@ namespace Lemoine.DataRepository
       get { return m_filename; }
       set { m_filename = value; }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -43,7 +39,6 @@ namespace Lemoine.DataRepository
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Give the possibility to use an asynchronous commit
     /// </summary>
@@ -64,6 +59,5 @@ namespace Lemoine.DataRepository
     {
       doc.Save (m_filename);
     }
-    #endregion    
   }
 }

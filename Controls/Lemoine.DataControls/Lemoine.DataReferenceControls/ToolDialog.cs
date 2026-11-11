@@ -19,13 +19,8 @@ namespace Lemoine.DataReferenceControls
   public partial class ToolDialog : OKCancelDialog, IValueDialog<ITool>
   {
     static readonly ILog log = LogManager.GetLogger(typeof (ToolDialog).FullName);
-
-    #region members
-   
-    #endregion
     
     
-    #region Getters / Setters
     /// <summary>
     /// Is a null Tool a valid value ?
     /// </summary>
@@ -68,8 +63,6 @@ namespace Lemoine.DataReferenceControls
       }
     }
 
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -84,9 +77,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("ToolDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

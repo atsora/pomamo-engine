@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.PerfRecorderSimpleLog
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     [PluginConf("Text", "Log prefix", Description = "Category prefix to add to the log")]
     [DefaultValue ("Perf.")]
     public string LogPrefix {
@@ -52,7 +51,6 @@ namespace Lemoine.Plugin.PerfRecorderSimpleLog
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -16,13 +16,11 @@ namespace Lemoine.Plugin.DetectionStatusFromDatabase
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     [PluginConf ("Int", "Cycle detection status priority", Description = "Cycle detection status priority", Parameters = "999")]
     public int CycleDetectionStatusPriority { get; set; }
 
     [PluginConf ("Int", "Operation detection status priority", Description = "Operation detection status priority", Parameters = "999")]
     public int OperationDetectionStatusPriority { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

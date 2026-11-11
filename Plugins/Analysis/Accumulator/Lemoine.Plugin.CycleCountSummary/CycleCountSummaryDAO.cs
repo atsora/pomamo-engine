@@ -185,21 +185,10 @@ namespace Lemoine.Plugin.CycleCountSummary
                                                    component,
                                                    operation);
         if ((0 == incrementValue) && (0 == partialIncrementValue)) {
-          log.InfoFormat (".{0} UpdateDay: " +
-                          "new summary with no full or partial cycles " +
-                          "at day {1} " +
-                          "=> skip it",
-                          machine.Id,
-                          day);
+          log.Info ($".{machine.Id} UpdateDay: new summary with no full or partial cycles at day {day} => skip it");
         }
         else if ((incrementValue < 0) || (partialIncrementValue < 0)) {
-          log.ErrorFormat (".{0} UpdateDay: " +
-                           "new summary with a negative number of cycles {1} or partial {2} " +
-                           "at day {3} " +
-                           "=> skip it",
-                           machine.Id,
-                           incrementValue, partialIncrementValue,
-                           day);
+          log.Error ($".{machine.Id} UpdateDay: new summary with a negative number of cycles {incrementValue} or partial {partialIncrementValue} at day {day} => skip it");
           // UNDONE: log it also in analysislog (but there is no access to the modification here)
         }
         else {
@@ -215,25 +204,10 @@ namespace Lemoine.Plugin.CycleCountSummary
             && (cycleCountSummary.Partial + partialIncrementValue <= 0)) {
           if ((0 == cycleCountSummary.Full + incrementValue)
               && (0 == cycleCountSummary.Partial + partialIncrementValue)) {
-            log.InfoFormat (".{0} UpdateDay: " +
-                            "delete summary " +
-                            "because the new number of full cycles would be {1} " +
-                            "and partial cycles {2} " +
-                            "at day {3}",
-                            machine.Id,
-                            cycleCountSummary.Full + incrementValue,
-                            cycleCountSummary.Partial + partialIncrementValue,
-                            day);
+            log.Info ($".{machine.Id} UpdateDay: delete summary because the new number of full cycles would be {cycleCountSummary.Full + incrementValue} and partial cycles {cycleCountSummary.Partial + partialIncrementValue} at day {day}");
           }
           else { // < 0
-            log.ErrorFormat (".{0} UpdateDay: " +
-                             "delete summary " +
-                             "because the new number would be full={1} partial={2} " +
-                             "at day {3}",
-                             machine.Id,
-                             cycleCountSummary.Full + incrementValue,
-                             cycleCountSummary.Partial + partialIncrementValue,
-                             day);
+            log.Error ($".{machine.Id} UpdateDay: delete summary because the new number would be full={cycleCountSummary.Full + incrementValue} partial={cycleCountSummary.Partial + partialIncrementValue} at day {day}");
             // TODO: log it also in analysislog
           }
           MakeTransient (cycleCountSummary);
@@ -243,19 +217,11 @@ namespace Lemoine.Plugin.CycleCountSummary
           cycleCountSummary.Partial += partialIncrementValue;
           Debug.Assert ((0 < cycleCountSummary.Full) || (0 < cycleCountSummary.Partial));
           if (cycleCountSummary.Full < 0) {
-            log.ErrorFormat (".{0} UpdateDay: " +
-                             "the new number of full cycles is negative {1} " +
-                             "=> correct it to 0",
-                             machine.Id,
-                             cycleCountSummary.Full);
+            log.Error ($".{machine.Id} UpdateDay: the new number of full cycles is negative {cycleCountSummary.Full} => correct it to 0");
             cycleCountSummary.Full = 0;
           }
           if (cycleCountSummary.Partial < 0) {
-            log.ErrorFormat (".{0} UpdateDay: " +
-                             "the new number of partial cycles is negative {1} " +
-                             "=> correct it to 0",
-                             machine.Id,
-                             cycleCountSummary.Partial);
+            log.Error ($".{machine.Id} UpdateDay: the new number of partial cycles is negative {cycleCountSummary.Partial} => correct it to 0");
             cycleCountSummary.Partial = 0;
           }
           Debug.Assert (0 <= cycleCountSummary.Full);

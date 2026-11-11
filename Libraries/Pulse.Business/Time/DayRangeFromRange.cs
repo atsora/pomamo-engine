@@ -19,14 +19,9 @@ namespace Lemoine.Business.Time
   public sealed class DayRangeFromRange
     : IRequest<DayRange>
   {
-    #region Members
     readonly UtcDateTimeRange m_range;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DayRangeFromRange).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -38,9 +33,6 @@ namespace Lemoine.Business.Time
       m_range = range;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

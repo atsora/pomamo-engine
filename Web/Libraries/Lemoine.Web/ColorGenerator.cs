@@ -15,7 +15,6 @@ namespace Lemoine.Web
   /// </summary>
   public sealed class ColorGenerator
   {
-    #region Members
     readonly string m_colorId0 = "#D3D3D3"; // Specific color for Id 0/null, lightgray
     readonly string[] m_colors = { // bright
       "#00FFFF", "#FF0000", "#0000FF",
@@ -100,12 +99,8 @@ namespace Lemoine.Web
     };
     IDictionary<string, IList<object>> m_dictionary = new Dictionary<string, IList<object>> ();
     object m_lock = new object ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ColorGenerator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -124,7 +119,6 @@ namespace Lemoine.Web
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Check if id must be considered as the ID 0 / null
     /// </summary>
@@ -250,7 +244,7 @@ namespace Lemoine.Web
       case "":
         return m_opacity5Colors;
       default:
-        log.FatalFormat ("GetColorPallet: invalid name {0}", name);
+        log.Fatal ($"GetColorPallet: invalid name {name}");
         return m_colors;
       }
     }
@@ -275,7 +269,6 @@ namespace Lemoine.Web
         return "#000000";
       }
     }
-    #endregion // Methods
     
     #region Instance
     static ColorGenerator Instance

@@ -16,12 +16,10 @@ namespace ConfiguratorMachineCategories
   /// </summary>
   internal partial class Page : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     string m_elementName;
     Container m_container = null;
     bool m_modified = false;
     bool m_viewMode = false;
-    #endregion // Members
     
     #region Events
     /// <summary>
@@ -35,7 +33,6 @@ namespace ConfiguratorMachineCategories
     public event Action<ListTextValue, Container.Element> OnFillMachines;
     #endregion // Events
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -80,7 +77,6 @@ namespace ConfiguratorMachineCategories
       get { return listElements.SelectedIndex; }
       set { listElements.SelectedIndex = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

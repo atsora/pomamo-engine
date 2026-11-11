@@ -23,13 +23,11 @@ namespace Lemoine.Cnc.SQLiteQueue
     , IConfigurable
     , IChecked
   {
-    #region Members
     bool m_initialized = false;
     IGenericConfigReader m_externalConfigReader;
     MemoryConfigReader m_defaultConfigReader = new MemoryConfigReader ();
     IGenericConfigReader m_configReader;
     ILog log = LogManager.GetLogger(typeof (MultiSQLiteCncDataQueue).FullName);
-    #endregion // Members
     
     static readonly string FILENAME_PREFIX_KEY = "Prefix";
     static readonly string FILENAME_PREFIX_DEFAULT = "CncDataFifoDb-";

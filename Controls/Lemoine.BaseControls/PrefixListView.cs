@@ -18,17 +18,14 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class PrefixListView : ListView
   {
-    #region Members
     string m_property;
     bool m_init = false;
     ICollection m_initCollection = new ArrayList();
     Hashtable m_itemToObject = new Hashtable();
     Hashtable m_objectNameToItem = new Hashtable();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (PrefixListView).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Property name to use to display item
     /// </summary>
@@ -80,7 +77,6 @@ namespace Lemoine.BaseControls
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -101,7 +97,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize the listview items
     /// </summary>
@@ -148,7 +143,5 @@ namespace Lemoine.BaseControls
         }
       }
     }
-    
-    #endregion // Methods
   }
 }

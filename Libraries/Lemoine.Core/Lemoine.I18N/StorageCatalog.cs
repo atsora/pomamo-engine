@@ -15,15 +15,10 @@ namespace Lemoine.I18N
   /// </summary>
   public class StorageCatalog : ICatalogWithPush
   {
-    #region Members
     readonly ICatalog m_catalog;
     readonly ICatalogWithPush m_storage;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (StorageCatalog).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -41,7 +36,6 @@ namespace Lemoine.I18N
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implementation of <see cref="Lemoine.I18N.ICatalog">IPulseCatalog</see>
     /// </summary>
@@ -53,9 +47,7 @@ namespace Lemoine.I18N
       string translation = GetTranslation (key, cultureInfo);
       if (null == translation) {
         if (cultureInfo.Equals (System.Globalization.CultureInfo.InvariantCulture)) {
-          log.WarnFormat ("GetString: " +
-                          "key {0} not found in any of the parent culture",
-                          key);
+          log.Warn ($"GetString: key {key} not found in any of the parent culture");
           return null;
         }
         else { // Not InvariantCulture: search recursively to its parent
@@ -65,9 +57,7 @@ namespace Lemoine.I18N
 
       if (null != translation) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetString: " +
-                           "{0} found for {1} and {2}",
-                           translation, key, cultureInfo.Name);
+          log.Debug ($"GetString: {translation} found for {key} and {cultureInfo.Name}");
         }
       }
       return translation;
@@ -84,9 +74,7 @@ namespace Lemoine.I18N
       string translation = m_storage.GetTranslation (key, cultureInfo);
       if (null != translation) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetTranslation: " +
-                           "{0} found for {1} and {2} from storage",
-                           translation, key, cultureInfo.Name);
+          log.Debug ($"GetTranslation: {translation} found for {key} and {cultureInfo.Name} from storage");
         }
         return translation;
       }
@@ -94,15 +82,12 @@ namespace Lemoine.I18N
       translation = m_catalog.GetTranslation (key, cultureInfo);
       if (null != translation) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetTranslation: " +
-                           "{0} found for {1} and {2}",
-                           translation, key, cultureInfo.Name);
+          log.Debug ($"GetTranslation: {translation} found for {key} and {cultureInfo.Name}");
         }
         m_storage.PushTranslation (key, translation, cultureInfo, false);
       }
       return translation;
     }
-    #endregion // Methods
 
     /// <summary>
     /// Implementation of <see cref="Lemoine.I18N.ICatalogWithPush">IPulseCatalogWithPush</see>

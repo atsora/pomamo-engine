@@ -17,12 +17,9 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class RecursiveTreeView : UserControl
   {
-    #region Members
     readonly TreeViewBuilderRecursive m_singleSelectionBuilder = new TreeViewBuilderRecursive();
     readonly TreeViewBuilderRecursive m_multipleSelectionBuilder = new TreeViewBuilderRecursive();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Name of the property that will be used to find the parent of each item in the tree
     /// </summary>
@@ -95,7 +92,6 @@ namespace Lemoine.DataReferenceControls
     public IList<IList<object>> SelectedPaths {
       get { return treeView.SelectedPaths; }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -116,7 +112,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a Displayable element in the treeview
     /// "RefreshTreeview" must be called then
@@ -151,7 +146,6 @@ namespace Lemoine.DataReferenceControls
     {
       treeView.AddDetermineColorFunction(lambda);
     }
-    #endregion // Methods
     
     #region Event reactions
     void OnSelectionChanged()

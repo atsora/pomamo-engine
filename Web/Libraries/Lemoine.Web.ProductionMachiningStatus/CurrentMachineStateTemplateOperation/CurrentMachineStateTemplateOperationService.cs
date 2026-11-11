@@ -43,9 +43,7 @@ namespace Lemoine.Web.ProductionMachiningStatus.CurrentMachineStateTemplateOpera
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (request.MachineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           request.MachineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {request.MachineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }

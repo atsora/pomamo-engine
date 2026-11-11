@@ -15,14 +15,11 @@ namespace ConfiguratorRedirectEvent
   /// </summary>
   public class Action
   {
-    #region Members
     string m_filePath;
     string m_fileName;
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (Action).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// True if the action is valid
     /// </summary>
@@ -69,7 +66,7 @@ namespace ConfiguratorRedirectEvent
         // Rename the file
         string newName = Name + (value ? ".config" : ".template.config");
         if (File.Exists(Path.Combine(m_filePath, newName))) {
-          log.WarnFormat("ConfiguratorRedirectEvent: deleted file {0} and keep file {1}", m_fileName, newName);
+          log.Warn ($"ConfiguratorRedirectEvent: deleted file {m_fileName} and keep file {newName}");
           File.Delete(Path.Combine(m_filePath, m_fileName));
         } else {
           File.Move(Path.Combine(m_filePath, m_fileName), Path.Combine(m_filePath, newName));
@@ -88,7 +85,6 @@ namespace ConfiguratorRedirectEvent
     /// Full text of the action
     /// </summary>
     public string FullText { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -130,7 +126,6 @@ namespace ConfiguratorRedirectEvent
     }
     #endregion // Constructors
 
-    #region Methods
     void Parse(XmlDocument xmlDoc)
     {
       // Root node and namespace
@@ -166,6 +161,5 @@ namespace ConfiguratorRedirectEvent
         AdvancedMode = (node.InnerText.ToLower() == "true");
       }
     }
-    #endregion // Methods
   }
 }

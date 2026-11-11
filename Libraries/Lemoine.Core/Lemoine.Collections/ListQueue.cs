@@ -14,20 +14,16 @@ namespace Lemoine.Collections
   /// </summary>
   public sealed class ListQueue<T>: IExtendedQueue<T>, IEnumerable<T>, IEnumerable
   {
-    #region Members
     IList<T> m_list = new List<T> ();
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger(typeof (ListQueue<T>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Implements <see cref="IQueue&lt;T&gt;" />
     /// </summary>
     public int Count {
       get { return m_list.Count; }
     }
-    #endregion // Getters / Setters
 
     #region Implementation of IEnumerable<T>
     /// <summary>

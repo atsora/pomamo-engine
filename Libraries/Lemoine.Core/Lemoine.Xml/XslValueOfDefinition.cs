@@ -19,14 +19,11 @@ namespace Lemoine.Xml
   [Serializable]
   public sealed class XslValueOfDefinition: XslDefinition
   {
-    #region Members
     string m_xpath;
     string m_xslFull;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (XslValueOfDefinition).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// XPath definition of the xsl:valueOf node
     /// 
@@ -43,9 +40,7 @@ namespace Lemoine.Xml
           m_xslt.Load (XmlReader.Create (new StringReader (m_xslFull)));
         }
         catch (Exception ex) {
-          log.ErrorFormat ("XPath: " +
-                           "exception {0}",
-                           ex);
+          log.Error ($"XPath: exception {ex}");
           throw;
         }
       }
@@ -58,7 +53,6 @@ namespace Lemoine.Xml
     public string XslFull {
       get { return m_xslFull; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -77,8 +71,5 @@ namespace Lemoine.Xml
       this.XPath = xpath;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

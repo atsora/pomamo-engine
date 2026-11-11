@@ -28,7 +28,6 @@ namespace Pulse.Web.Cache
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -40,6 +39,5 @@ namespace Pulse.Web.Cache
 
       return new OkDTO ("Day slot cache cleared");
     }
-    #endregion // Methods
   }
 }

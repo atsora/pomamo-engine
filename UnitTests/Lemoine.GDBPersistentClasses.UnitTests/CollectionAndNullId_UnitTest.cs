@@ -22,17 +22,13 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
   {
     static readonly ILog log = LogManager.GetLogger (typeof (CollectionAndNullId_UnitTest).FullName);
 
-    #region  Members
     IDAOFactory m_daoFactory;
     IDAOSession m_daoSession;
     ISession m_session;
     string m_previousDSNName;
-    #endregion // Members
 
-    #region Getters/Setters
     IDAOFactory DaoFactory { get { return m_daoFactory; } }
     ISession Session { get { return m_session; } }
-    #endregion // Getters/Setters
 
     // simple test (for those classes having no DAO)
     private void TestSimpleNullIdToNonNullId<T, ID> (T ObjWithId, T OtherObjWithId)

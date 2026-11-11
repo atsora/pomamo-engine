@@ -25,9 +25,6 @@ namespace Lemoine.Core.StateMachine
     readonly IState<TContext> m_maxTimeState;
     readonly bool m_nextIsExceptionState;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

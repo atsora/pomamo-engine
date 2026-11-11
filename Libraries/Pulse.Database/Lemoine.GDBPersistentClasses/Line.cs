@@ -18,17 +18,14 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Line: DataWithDisplayFunction, ILine, IComparable, IEquatable<ILine>, Lemoine.Collections.IDataWithId, ISerializableModel
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
     string m_code;
     ICollection<IComponent> m_components = new InitialNullIdSet<IComponent, int>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Line).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -82,7 +79,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ICollection<IComponent> Components {
       get { return m_components; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -93,7 +89,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a component
     /// </summary>
@@ -101,9 +96,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void AddComponent (IComponent component)
     {
       if (Components.Contains(component)) {
-        log.InfoFormat ("AddComponent: " +
-                        "Component {0} is already in {1}",
-                        component, this);
+        log.Info ($"AddComponent: Component {component} is already in {this}");
       }
       else {
         Components.Add(component);
@@ -124,9 +117,7 @@ namespace Lemoine.GDBPersistentClasses
         //(component as Component).RemoveLineForInternalUse(this);
       }
       else {
-        log.WarnFormat ("RemoveComponent: " +
-                        "Component {0} is not in {1}",
-                        component, this);
+        log.Warn ($"RemoveComponent: Component {component} is not in {this}");
       }
     }
 
@@ -208,7 +199,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       // Nothing here
     }
-    #endregion // Methods
     
     #region IComparable implementation
     /// <summary>

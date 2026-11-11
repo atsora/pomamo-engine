@@ -26,7 +26,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObservable<ICncAcquisition>
     , IConfigControlObserver<IMonitoredMachine>
   {
-    #region Members
     SortableBindingList<ICncAcquisition> m_cncAcquisitions = new SortableBindingList<ICncAcquisition> ();
 
     ISet<DataGridViewRow> m_updateSet =
@@ -36,7 +35,6 @@ namespace Lemoine.ConfigControls
 
     ISet<IConfigControlObserver<ICncAcquisition>> m_observers =
       new HashSet<IConfigControlObserver<ICncAcquisition>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncAcquisitionConfig).FullName);
 

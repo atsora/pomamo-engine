@@ -16,7 +16,6 @@ namespace ConfiguratorSlots.MachineState
   /// </summary>
   internal partial class MachineStatePage2 : UserControl, IPartPage2
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -27,7 +26,6 @@ namespace ConfiguratorSlots.MachineState
     /// </summary>
     public string Help { get { return "Choose here the different machines whose state template " +
           "will be displayed and possibly edited."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

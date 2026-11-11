@@ -35,7 +35,6 @@ namespace Lemoine.WebService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -76,6 +75,5 @@ namespace Lemoine.WebService
         return ServiceHelper.ResponseOkDTO (revId, "Save serial number successful");
       }
     }
-    #endregion // Methods
   }
 }

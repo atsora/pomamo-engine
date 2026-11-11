@@ -38,13 +38,11 @@ namespace Lemoine.JobControls
       CREATE = 2
     };
 
-    #region Members
     IPart m_part;
     IComponentType[] m_componentTypeArray;
     DisplayMode m_displayMode;
     TreeNode m_node;
     ITreeViewObservable m_observable;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (PartControl).FullName);
 
@@ -323,7 +321,6 @@ namespace Lemoine.JobControls
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Use informations in Part to fill text in box
     /// </summary>
@@ -527,6 +524,5 @@ namespace Lemoine.JobControls
       }
       return valid;
     }
-    #endregion // Methods
   }
 }

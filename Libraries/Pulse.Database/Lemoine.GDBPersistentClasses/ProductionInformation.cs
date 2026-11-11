@@ -20,16 +20,13 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ProductionInformation: MachineModification, IProductionInformation
   {
-    #region Members
     DateTime m_informationDateTime;
     IWorkOrder m_workOrder;
     IIntermediateWorkPiece m_intermediateWorkPiece;
     int m_checked = 0;
     int m_scrapped = 0;
     bool? m_inProgress = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -160,7 +157,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -230,9 +226,7 @@ namespace Lemoine.GDBPersistentClasses
           else { // !cycleBegin.HasValue
             string message = string.Format ("cycle {0} has no begin => fallback to end",
                                             firstCycle);
-            log.WarnFormat ("MakeAnalysis: " +
-                            "{0}",
-                            message);
+            log.Warn ($"MakeAnalysis: {message}");
             AddAnalysisLog (LogLevel.WARN, message);
             Debug.Assert (firstCycle.End.HasValue);
             if (firstCycle.End.HasValue) {
@@ -241,9 +235,7 @@ namespace Lemoine.GDBPersistentClasses
             else {
               string message2 = string.Format ("cycle {0} has no end => unexpected",
                                               firstCycle);
-              log.FatalFormat ("MakeAnalysis: " +
-                               "{0}",
-                               message2);
+              log.Fatal ($"MakeAnalysis: {message2}");
               AddAnalysisLog (LogLevel.CRIT, message2);
               MarkAsError ();
               return;
@@ -274,7 +266,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
     

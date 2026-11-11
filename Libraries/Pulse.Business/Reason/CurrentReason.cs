@@ -426,9 +426,7 @@ namespace Lemoine.Business.Reason
           else {
             Debug.Assert (null != currentMachineMode.MachineMode);
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetFromCurrentMachineMode: " +
-                               "consider machine mode {0} from currentmachinemode",
-                               currentMachineMode.MachineMode.Id);
+              log.Debug ($"GetFromCurrentMachineMode: consider machine mode {currentMachineMode.MachineMode.Id} from currentmachinemode");
             }
             machineMode = currentMachineMode.MachineMode;
             dateTime = currentMachineMode.DateTime;
@@ -450,9 +448,9 @@ namespace Lemoine.Business.Reason
           if (DateTime.UtcNow <= fact.End.Add (limitMargin)) {
             // Fact is more recent than currentReason
             Debug.Assert (null != fact.CncMachineMode);
-            log.DebugFormat ("GetMachineModeFromLastFact: " +
-                             "consider machine mode {0} from fact",
-                             fact.CncMachineMode.Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetMachineModeFromLastFact: consider machine mode {fact.CncMachineMode.Id} from fact");
+            }
             machineMode = fact.CncMachineMode;
             dateTime = fact.End;
             if (!notRunningOnlyDuration || !machineMode.Running.HasValue || !machineMode.Running.Value) {
@@ -463,9 +461,9 @@ namespace Lemoine.Business.Reason
         else if ((null != currentMachineMode)
                  && (DateTime.UtcNow <= currentMachineMode.DateTime.Add (limitMargin))) {
           Debug.Assert (null != currentMachineMode.MachineMode);
-          log.DebugFormat ("GetMachineModeFromLastFact: " +
-                           "consider machine mode {0} from currentmachinemode with the limit margin {1}",
-                           currentMachineMode.MachineMode.Id, limitMargin);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetMachineModeFromLastFact: consider machine mode {currentMachineMode.MachineMode.Id} from currentmachinemode with the limit margin {limitMargin}");
+          }
           machineMode = currentMachineMode.MachineMode;
           dateTime = currentMachineMode.DateTime;
         }

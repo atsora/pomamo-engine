@@ -34,9 +34,6 @@ namespace Lemoine.Business.Time
     }
     #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
     #region IRequest implementation
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation

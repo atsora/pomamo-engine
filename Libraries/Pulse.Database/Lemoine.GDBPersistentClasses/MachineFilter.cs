@@ -17,13 +17,11 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class MachineFilter: IMachineFilter, IVersionable, IDisplayable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
     MachineFilterInitialSet m_initialSet = MachineFilterInitialSet.All;
     IList<IMachineFilterItem> m_items = new List<IMachineFilterItem> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineFilter).FullName);
 
@@ -45,7 +43,6 @@ namespace Lemoine.GDBPersistentClasses
     {
     }
     
-    #region Getters / Setters
     /// <summary>
     /// Machine Filter ID
     /// </summary>
@@ -81,8 +78,7 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (null != value);
         
         if (string.IsNullOrEmpty (value)) {
-          log.ErrorFormat ("Name.set: " +
-                           "null or empty argument");
+          log.Error ("Name.set: null or empty argument");
           throw new ArgumentNullException("Name");
         }
         
@@ -114,7 +110,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_items; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// Check if a machine matches this machine filter
@@ -131,12 +126,12 @@ namespace Lemoine.GDBPersistentClasses
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         if (!ModelDAOHelper.DAOFactory.IsInitialized (initializedMachine)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("IsMatch: machine id={0} is not initialized. StackTrace={1}", machine.Id, System.Environment.StackTrace);
+            log.Debug ($"IsMatch: machine id={machine.Id} is not initialized. StackTrace={System.Environment.StackTrace}");
           }
           initializedMachine = ModelDAOHelper.DAOFactory.MachineDAO
             .FindById (machine.Id);
           if (null == initializedMachine) {
-            log.FatalFormat ("IsMatch: no machine with id {0}, unexpected", machine.Id);
+            log.Fatal ($"IsMatch: no machine with id {machine.Id}, unexpected");
             Debug.Assert (false);
             initializedMachine = machine;
           }
@@ -150,9 +145,7 @@ namespace Lemoine.GDBPersistentClasses
             result = true;
             break;
           default:
-            log.FatalFormat ("IsMatch: " +
-                             "invalid MachineFilterInitialSet {0}",
-                             this.InitialSet);
+            log.Fatal ($"IsMatch: invalid MachineFilterInitialSet {this.InitialSet}");
             throw new Exception ("Invalid value for MachineFilterInitialSet");
         }
 
@@ -175,21 +168,18 @@ namespace Lemoine.GDBPersistentClasses
               }
               break;
             default:
-              log.FatalFormat ("IsMatch: " +
-                               "invalid MachineFilterRule {0}",
-                               item.Rule);
+              log.Fatal ($"IsMatch: invalid MachineFilterRule {item.Rule}");
               throw new Exception ("Invalid value for MachineFilterRule");
           }
         }
 
-        log.DebugFormat ("IsMatch: " +
-                         "MachineFilter {0} Machine {1} Result {2}",
-                         this, initializedMachine.Id, result);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsMatch: MachineFilter {this} Machine {initializedMachine.Id} Result {result}");
+        }
       }
       return result;
     }
 
-    #region Methods
     /// <summary>
     /// <see cref="Object.ToString()" />
     /// </summary>
@@ -256,6 +246,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       // Nothing here for the moment
     }
-    #endregion // Methods
   }
 }

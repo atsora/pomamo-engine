@@ -28,16 +28,14 @@ namespace Lemoine.ModelDAO.i18n
     {
       string translation = GetTranslation (key, cultureInfo);
       if (null != translation) {
-        log.DebugFormat ("GetString: " +
-                         "{0} found for {1} and {2}",
-                         translation, key, cultureInfo.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetString: {translation} found for {key} and {cultureInfo.Name}");
+        }
         return translation;
       }
       else { // null == translation
         if (cultureInfo.Equals (System.Globalization.CultureInfo.InvariantCulture)) {
-          log.WarnFormat ("GetString: " +
-                          "key {0} not found in any of the parent culture",
-                          key);
+          log.Warn ($"GetString: key {key} not found in any of the parent culture");
           return key;
         }
         else { // Not InvariantCulture: search recursively to its parent
@@ -60,16 +58,15 @@ namespace Lemoine.ModelDAO.i18n
           ITranslation translation = ModelDAOHelper.DAOFactory.TranslationDAO
             .Find (cultureInfo.Name, key);
           if (null == translation) {
-            log.DebugFormat ("GetTranslation: " +
-                             "no translation found for key {0} culture {1}",
-                             key, cultureInfo.Name);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetTranslation: no translation found for key {key} culture {cultureInfo.Name}");
+            }
             return null;
           }
           else {
-            log.DebugFormat ("GetTranslation: " +
-                             "{0} found for key {1} culture {2}",
-                             translation.TranslationValue,
-                             key, cultureInfo.Name);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetTranslation: {translation.TranslationValue} found for key {key} culture {cultureInfo.Name}");
+            }
             return translation.TranslationValue;
           }
         }

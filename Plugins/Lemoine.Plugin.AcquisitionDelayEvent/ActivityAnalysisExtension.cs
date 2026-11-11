@@ -120,7 +120,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ("Plugin.AcquisitionDelayEvent.CreateEvent", TransactionLevel.ReadCommitted)) {
-          log.InfoFormat ($"CreateEvent: period {range} detected");
+          log.Info ($"CreateEvent: period {range} detected");
           var eventLevel = m_eventLevel;
           var eventAcquisitionDelay = new EventAcquisitionDelay (eventLevel, DateTime.UtcNow, m_machine, range);
           new EventAcquisitionDelayDAO ().MakePersistent (eventAcquisitionDelay);

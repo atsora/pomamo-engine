@@ -22,13 +22,11 @@ namespace Lemoine.Business.ProductionState
   {
     ILog log = LogManager.GetLogger (typeof (ProductionStateColorSlot).FullName);
 
-    #region Members
     IMachine m_machine;
     string m_color;
     double? m_productionRate;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -93,7 +91,6 @@ namespace Lemoine.Business.ProductionState
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -142,7 +139,6 @@ namespace Lemoine.Business.ProductionState
     {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// IMergeable implementation

@@ -44,8 +44,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != operationCycle);
       if (!ModelDAOHelper.DAOFactory.IsInitialized (operationCycle)) {
-        log.ErrorFormat ("FindAllWithOperationCycle: operationCycle is not initialized. StackTrace={0}",
-          System.Environment.StackTrace);
+        log.Error ($"FindAllWithOperationCycle: operationCycle is not initialized. StackTrace={System.Environment.StackTrace}");
       }
       Debug.Assert (null != operationCycle.Machine);
       
@@ -70,8 +69,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != operationCycle);
       if (!ModelDAOHelper.DAOFactory.IsInitialized (operationCycle)) {
-        log.ErrorFormat ("FindAllWithOperationCycle: operationCycle is not initialized. StackTrace={0}",
-          System.Environment.StackTrace);
+        log.Error ($"FindAllWithOperationCycle: operationCycle is not initialized. StackTrace={System.Environment.StackTrace}");
       }
       Debug.Assert (null != operationCycle.Machine);
       Debug.Assert (null != deliverablePiece);

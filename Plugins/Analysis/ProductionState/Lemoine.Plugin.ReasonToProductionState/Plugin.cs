@@ -37,9 +37,5 @@ namespace Lemoine.Plugin.ReasonToProductionState
     /// Version of the plugin
     /// </summary>
     public override int Version => 1;
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

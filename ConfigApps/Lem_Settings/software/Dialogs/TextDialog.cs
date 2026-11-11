@@ -12,7 +12,6 @@ namespace Lem_Settings
   /// </summary>
   public partial class TextDialog : Form
   {
-    #region Getters / Setters
     /// <summary>
     /// Displayed text
     /// </summary>
@@ -20,7 +19,6 @@ namespace Lem_Settings
       get { return richTextBox.Text; }
       set { richTextBox.Text = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

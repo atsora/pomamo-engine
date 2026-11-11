@@ -102,21 +102,22 @@ namespace Lemoine.Business.CncAlarm
     bool IsMergeable (ICncAlarmColor left, ICncAlarmColor right)
     {
       if (!object.Equals (left.Color, right.Color)) {
-        log.DebugFormat ("IsMergeable: " +
-                         "the color is not the same => return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMergeable: the color is not the same => return false");
+        }
         return false;
       }
 
       if (left.DateTimeRange.IsEmpty ()) {
-        log.DebugFormat ("IsMergeable: " +
-                         "left range is empty " +
-                         "=> return true because it can be dismissed");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMergeable: left range is empty => return true because it can be dismissed");
+        }
         return true;
       }
       if (right.DateTimeRange.IsEmpty ()) {
-        log.DebugFormat ("IsMergeable: " +
-                         "right range is empty " +
-                         "=> return true because it can be dismissed");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMergeable: right range is empty => return true because it can be dismissed");
+        }
         return true;
       }
 
@@ -124,9 +125,9 @@ namespace Lemoine.Business.CncAlarm
       // If the ranges overlap with each other, they can be just merged
       Debug.Assert (left.ReferenceDataEquals (right));
       if (left.DateTimeRange.Overlaps (right.DateTimeRange)) {
-        log.DebugFormat ("IsMergeable: " +
-                         "ranges overlap with each other " +
-                         "=> return true because there is a single color for the moment");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMergeable: ranges overlap with each other => return true because there is a single color for the moment");
+        }
         return true;
       }
 

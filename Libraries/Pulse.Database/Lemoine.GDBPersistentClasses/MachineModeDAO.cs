@@ -567,9 +567,7 @@ namespace Lemoine.GDBPersistentClasses
       try {
         IMachineMode existingMachineMode = FindById (machineMode.Id);
         if (null == existingMachineMode) { // the config does not exist => create it
-          log.InfoFormat ("InsertDefaultValue: " +
-                          "add id={0} translationKey={1}",
-                          machineMode.Id, machineMode.TranslationKey);
+          log.Info ($"InsertDefaultValue: add id={machineMode.Id} translationKey={machineMode.TranslationKey}");
           // Use a raw SQL Command, else the Id is reset
           using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand())
           {
@@ -604,11 +602,7 @@ VALUES ({0}, '{1}', {2}, {3}, {4}, {5}, '{6}', {7}, {8})",
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("InsertDefaultValue: " +
-                         "inserting new machine mode {0} " +
-                         "failed with {1}",
-                         machineMode,
-                         ex);
+        log.Error ($"InsertDefaultValue: inserting new machine mode {machineMode} failed with {ex}");
       }
     }
     #endregion // DefaultValues

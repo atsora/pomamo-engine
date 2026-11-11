@@ -19,14 +19,11 @@ namespace WizardMonitorMachine
   /// </summary>
   public partial class ModuleStamping : UserControl
   {
-    #region Members
     readonly IList<ModuleStampingGrid> m_stampingGrids = new List<ModuleStampingGrid> ();
     bool m_readOnlyState = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ModuleStamping).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Readonly state of the controls
     /// </summary>
@@ -42,7 +39,6 @@ namespace WizardMonitorMachine
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -54,7 +50,6 @@ namespace WizardMonitorMachine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize the machine modules
     /// </summary>
@@ -197,6 +192,5 @@ namespace WizardMonitorMachine
 
       tabControl.TabPages.Add (tabPage);
     }
-    #endregion // Methods
   }
 }

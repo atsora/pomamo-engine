@@ -67,7 +67,6 @@ namespace Lemoine.Database.Persistent
     static readonly string TRY_MIGRATE_AND_ADD_DEFAULT_KEY = "Database.TryMigrateAndAddDefault";
     static readonly bool TRY_MIGRATE_AND_ADD_DEFAULT_DEFAULT = false;
 
-    #region Members
     IMigrationHelper m_migrationHelper;
     IExtensionsProvider m_extensionsProvider = null;
     volatile NHibernateStatus m_status = NHibernateStatus.NotInitialized;
@@ -77,7 +76,6 @@ namespace Lemoine.Database.Persistent
     string m_applicationName = null;
     bool m_killOrphanedConnectionsFirst = false;
     readonly ConcurrentDictionary<Type, IPersistentClassModel> m_persistentClassModels = new ConcurrentDictionary<Type, IPersistentClassModel> ();
-    #endregion
 
     /// <summary>
     /// Associated migration helper
@@ -356,8 +354,7 @@ namespace Lemoine.Database.Persistent
       }
 
       if ((null != m_sessionFactory) && m_sessionFactory.IsClosed) {
-        log.FatalFormat ("GetSessionFactory: " +
-                         "sessionFactory is closed although it should not be");
+        log.Fatal ("GetSessionFactory: sessionFactory is closed although it should not be");
       }
 
       return m_sessionFactory;
@@ -620,7 +617,7 @@ namespace Lemoine.Database.Persistent
             insertDefaultValuesCompleted = await AddDefaultValuesAsync (configuration, migrationSuccess);
           }
           else {
-            log.WarnFormat ("TryMigrateBuildSessionDefaultValues: option not to insert the default values on");
+            log.Warn ("TryMigrateBuildSessionDefaultValues: option not to insert the default values on");
             break; // In that case, this is useless to loop
           }
         }

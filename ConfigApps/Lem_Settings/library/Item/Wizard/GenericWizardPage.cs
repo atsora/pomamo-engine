@@ -12,13 +12,11 @@ namespace Lemoine.Settings
   /// </summary>
   public class GenericWizardPage : GenericItemPage
   {
-    #region Getters / Setters
     /// <summary>
     /// List of classes which are allowed to be edited externally, may be null
     /// An update will trigger a call to Initialize()
     /// </summary>
     public virtual IList<Type> EditableTypes { get { return null; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -27,7 +25,6 @@ namespace Lemoine.Settings
     public GenericWizardPage() : base() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Called after SavePage and before going to the previous page
     /// </summary>
@@ -48,6 +45,5 @@ namespace Lemoine.Settings
     /// </summary>
     /// <returns>List of warnings, can be null</returns>
     public virtual IList<string> GetWarnings(ItemData data) { return null; }
-    #endregion // Methods
   }
 }

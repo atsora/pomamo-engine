@@ -62,9 +62,7 @@ namespace Lemoine.WebDataAccess
       }
       
       if (json.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {
-        log.ErrorFormat ("GetNumberOfRemainingModifications: " +
-                         "GetNumberOfRemainingModifications request failed with {0}",
-                         json);
+        log.Error ($"GetNumberOfRemainingModifications: GetNumberOfRemainingModifications request failed with {json}");
         throw new Exception ("GetNumberOfRemainingModifications error");
       }
       

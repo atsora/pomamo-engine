@@ -23,7 +23,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class FieldLegend: IFieldLegend, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IField m_field;
@@ -32,11 +31,9 @@ namespace Lemoine.GDBPersistentClasses
     double? m_maxValue = null;
     string m_text;
     string m_color;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (FieldLegend).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// FieldLegend Id
     /// </summary>
@@ -112,8 +109,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.ErrorFormat ("Text.set: " +
-                           "this property can't be null");
+          log.Error ("Text.set: this property can't be null");
           throw new ArgumentNullException ("Text");
         }
         m_text = value;
@@ -130,14 +126,12 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.ErrorFormat ("Color.set: " +
-                           "this property can't be null");
+          log.Error ("Color.set: this property can't be null");
           throw new ArgumentNullException ("Color");
         }
         m_color = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -155,8 +149,7 @@ namespace Lemoine.GDBPersistentClasses
     public FieldLegend (IField field, string text, string color)
     {
       if (null == field) {
-        log.ErrorFormat ("Cstr: " +
-                         "field can't be null");
+        log.Error ("Cstr: field can't be null");
         throw new ArgumentNullException ("field");
       }
       m_field = field;

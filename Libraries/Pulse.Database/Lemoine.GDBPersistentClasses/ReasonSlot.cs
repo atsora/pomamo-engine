@@ -72,18 +72,11 @@ namespace Lemoine.GDBPersistentClasses
       : base (true, machine, range)
     {
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("ReasonSlot: " +
-                         "create a new slot with an empty range. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"ReasonSlot: create a new slot with an empty range. StackTrace: {System.Environment.StackTrace}");
       }
 
       if (range.Duration.HasValue && (0 == range.Duration.Value.Ticks)) {
-        log.ErrorFormat ("UpdateDateTimeRange: " +
-                         "range {0} with an empty duration {1}. " +
-                         "StackTrace: {2}",
-                         range, range.Duration,
-                         System.Environment.StackTrace);
+        log.Error ($"UpdateDateTimeRange: range {range} with an empty duration {range.Duration}. StackTrace: {System.Environment.StackTrace}");
       }
     }
 
@@ -100,11 +93,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return base.EndDateTime; }
       set {
         if (Bound.Compare<DateTime> (value, this.BeginDateTime) <= 0) {
-          log.ErrorFormat ("EndDateTime.set: " +
-                           "new date/time range is empty {0}-{1}. " +
-                           "StackTrace: {2}",
-                           this.BeginDateTime, value,
-                           System.Environment.StackTrace);
+          log.Error ($"EndDateTime.set: new date/time range is empty {this.BeginDateTime}-{value}. StackTrace: {System.Environment.StackTrace}");
         }
 
         if (object.Equals (value, base.EndDateTime)) {
@@ -169,7 +158,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (null != m_oldSlotFromModification) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("SetOldSlotFromModification: an old slot was already set previously: {0}/modificationid={1} => {2}/modificationid={3}", m_oldSlotFromModification, ((IDataWithId<long>)m_modification).Id, oldSlot, ((IDataWithId<long>)modification).Id);
+          GetLogger ().Debug ($"SetOldSlotFromModification: an old slot was already set previously: {m_oldSlotFromModification}/modificationid={((IDataWithId<long>)m_modification).Id} => {oldSlot}/modificationid={((IDataWithId<long>)modification).Id}");
         }
       }
 
@@ -808,8 +797,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null == m_productionStateExtensions) { // Initialization
         if (!Lemoine.Extensions.ExtensionManager.IsActive ()) {
-          log.WarnFormat ("GetReasonExtensions: " +
-                          "the extensions are not active");
+          log.Warn ("GetReasonExtensions: the extensions are not active");
         }
 
         IMonitoredMachine monitoredMachine;
@@ -952,7 +940,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else { // One of them is not consolidated
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("ReferenceDataEquals: one of the slot is not consolidated before calling ReferenceDataEquals");
+          log.Warn ("ReferenceDataEquals: one of the slot is not consolidated before calling ReferenceDataEquals");
         }
         return true;
       }
@@ -968,11 +956,9 @@ namespace Lemoine.GDBPersistentClasses
 
       if ((null == this.MachineMode)
           || (null == this.MachineObservationState)) {
-        log.DebugFormat ("IsEmpty: ReasonSlot is empty because of " +
-                         "MachineMode={0} " +
-                         "or MachineObservationState={1}",
-                         (null != this.MachineMode) ? this.MachineMode.Id : 0,
-                         (null != this.MachineObservationState) ? this.MachineObservationState.Id : 0);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsEmpty: ReasonSlot is empty because of MachineMode={((null != this.MachineMode) ? this.MachineMode.Id : 0)} or MachineObservationState={((null != this.MachineObservationState) ? this.MachineObservationState.Id : 0)}");
+        }
         return true;
       }
 
@@ -1098,7 +1084,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (!resetRequired.HasFlag (RequiredResetKind.Main)) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("ResetReason: reset is not requested, do not switch to processing");
+          GetLogger ().Debug ("ResetReason: reset is not requested, do not switch to processing");
         }
         return;
       }
@@ -1267,7 +1253,7 @@ namespace Lemoine.GDBPersistentClasses
         --m_autoReasonNumber;
       }
       else {
-        log.ErrorFormat ("TryRemoveAutoReasonNumber: could not remove an auto-reason number because its number is {0}", this.AutoReasonNumber);
+        log.Error ($"TryRemoveAutoReasonNumber: could not remove an auto-reason number because its number is {this.AutoReasonNumber}");
       }
     }
 
@@ -1527,15 +1513,13 @@ namespace Lemoine.GDBPersistentClasses
       if (this.ConsolidationLimit.HasValue
         && (Bound.Compare<DateTime> (this.ConsolidationLimit.Value, newRange.Upper) < 0)) {
         Debug.Assert (false);
-        log.FatalFormat ("UpdateDateTimeRange: invalid consolidation limit {0} VS new range {1}. StackTrace={2}",
-          this.ConsolidationLimit, newRange, System.Environment.StackTrace);
+        log.Fatal ($"UpdateDateTimeRange: invalid consolidation limit {this.ConsolidationLimit} VS new range {newRange}. StackTrace={System.Environment.StackTrace}");
         m_consolidationLimit = newRange.Upper;
       }
 
       if (!this.DateTimeRange.Equals (newRange)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateDateTimeRange: change from {0} to {1} for id={2}",
-            this.DateTimeRange, newRange, this.Id);
+          log.Debug ($"UpdateDateTimeRange: change from {this.DateTimeRange} to {newRange} for id={this.Id}");
         }
 
         base.UpdateDateTimeRange (newRange);

@@ -16,11 +16,9 @@ namespace ConfiguratorLine
   /// </summary>
   public class LineData
   {
-    #region Members
     IList<OperationData> m_operations = new List<OperationData>();
     bool m_modification = false;
     ILine m_currentLine = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (LineData).FullName);
 
@@ -31,7 +29,6 @@ namespace ConfiguratorLine
     public LineData() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get all operations for a specific line
     /// </summary>
@@ -270,6 +267,5 @@ namespace ConfiguratorLine
       
       return string.Join("\n", textParts.ToArray());
     }
-    #endregion // Methods
   }
 }

@@ -36,7 +36,7 @@ namespace Lemoine.Plugin.DebugCycleEnd
 
       var reasonMachineAssociation = (IReasonMachineAssociation)modification;
       if (null == reasonMachineAssociation) {
-        log.ErrorFormat ("Could not convert the reason machine association");
+        log.Error ("Could not convert the reason machine association");
         return;
       }
       if (string.IsNullOrEmpty (reasonMachineAssociation.DynamicEnd)) {
@@ -52,7 +52,7 @@ namespace Lemoine.Plugin.DebugCycleEnd
         var newResponse = Lemoine.Business.DynamicTimes.DynamicTime
         .GetDynamicTime (reasonMachineAssociation.DynamicEnd, m_machine, m_lastRange);
         if (!object.Equals (m_lastResponse.Final, newResponse.Final)) {
-          log.ErrorFormat ("Final {0}=>{1} for {2}", m_lastResponse.Final, newResponse.Final, m_lastRange);
+          log.Error ($"Final {m_lastResponse.Final}=>{newResponse.Final} for {m_lastRange}");
           LogAdditionalInformation ();
         }
       }
@@ -61,8 +61,7 @@ namespace Lemoine.Plugin.DebugCycleEnd
       m_lastResponse = Lemoine.Business.DynamicTimes.DynamicTime
         .GetDynamicTime (reasonMachineAssociation.DynamicEnd, m_machine, reasonMachineAssociation.Range);
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("CycleEnd({0}): Final={1} Hint={2} NoData={3} NotApplicable={4}",
-          reasonMachineAssociation.Range, m_lastResponse.Final, m_lastResponse.Hint, m_lastResponse.NoData, m_lastResponse.NotApplicable);
+        log.Debug ($"CycleEnd({reasonMachineAssociation.Range}): Final={m_lastResponse.Final} Hint={m_lastResponse.Hint} NoData={m_lastResponse.NoData} NotApplicable={m_lastResponse.NotApplicable}");
       }
       LogAdditionalInformation ();
     }
@@ -72,14 +71,18 @@ namespace Lemoine.Plugin.DebugCycleEnd
       try {
         var operationDetectionStatus = Lemoine.Business.ServiceProvider
           .Get (new Lemoine.Business.Operation.OperationDetectionStatus (m_machine));
-        log.DebugFormat ("OperationDetectionStatus: {0}", operationDetectionStatus);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"OperationDetectionStatus: {operationDetectionStatus}");
+        }
 
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (var transaction = session.BeginReadOnlyTransaction ("DebugCycleEnd")) {
             var lastCycle = ModelDAOHelper.DAOFactory.OperationCycleDAO
               .GetLast (m_machine);
             if (null != lastCycle) {
-              log.DebugFormat ("LastCycle: {0}-{1} Status={2} Full={3}", lastCycle.Begin, lastCycle.End, lastCycle.Status, lastCycle.Full);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"LastCycle: {lastCycle.Begin}-{lastCycle.End} Status={lastCycle.Status} Full={lastCycle.Full}");
+              }
             }
           }
         }

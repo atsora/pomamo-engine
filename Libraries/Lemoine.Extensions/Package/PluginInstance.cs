@@ -13,12 +13,8 @@ namespace Lemoine.Extensions.Package
   /// </summary>
   public class PluginInstance
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (PluginInstance).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Configuration name
     /// </summary>
@@ -28,7 +24,6 @@ namespace Lemoine.Extensions.Package
     /// Configuration
     /// </summary>
     public object Parameters { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -38,8 +33,5 @@ namespace Lemoine.Extensions.Package
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

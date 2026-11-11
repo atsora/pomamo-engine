@@ -28,14 +28,13 @@ namespace Lemoine.Net
     {
       if (IPAddress.TryParse (s, out var ipAddress)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsIPAddressV4: family of {0} is {1}",
-            s, ipAddress.AddressFamily);
+          log.Debug ($"IsIPAddressV4: family of {s} is {ipAddress.AddressFamily}");
         }
         return ipAddress.AddressFamily.Equals (System.Net.Sockets.AddressFamily.InterNetwork);
       }
       else {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsIPAddressV4: {0} is not an IP address", s);
+          log.Debug ($"IsIPAddressV4: {s} is not an IP address");
         }
         return false;
       }
@@ -77,8 +76,7 @@ namespace Lemoine.Net
       {
         if (IPAddress.TryParse (address, out var ipAddress)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetIPAddresses: family of {0} is {1}",
-              address, ipAddress.AddressFamily);
+            log.Debug ($"GetIPAddresses: family of {address} is {ipAddress.AddressFamily}");
           }
           if (filter (ipAddress)) {
             yield return ipAddress;

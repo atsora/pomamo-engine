@@ -23,12 +23,9 @@ namespace Lemoine.JobControls
   {
 
     static readonly ILog log = LogManager.GetLogger(typeof (InformationControl).FullName);
-
-    #region Members
     
     ITreeViewObservable m_observable;
     bool m_showId;
-    #endregion
     
     #region Constructors
     /// <summary>
@@ -50,7 +47,6 @@ namespace Lemoine.JobControls
     #endregion // Constructors
     
     
-    #region Getters / Setters
     /// <summary>
     /// List of all observes
     /// </summary>
@@ -165,7 +161,6 @@ namespace Lemoine.JobControls
       get { return m_showId; }
       set { m_showId = value;}
     }
-    #endregion // Getters / Setters
 
     
     #region inherited Methods

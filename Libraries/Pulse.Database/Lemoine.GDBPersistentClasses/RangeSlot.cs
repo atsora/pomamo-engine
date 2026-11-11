@@ -20,7 +20,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     readonly ILog log = LogManager.GetLogger(typeof (RangeSlot).FullName);
 
-    #region Members
     bool m_dayColumns;
     /// <summary>
     /// Associated UTC date/time range
@@ -30,7 +29,6 @@ namespace Lemoine.GDBPersistentClasses
     /// Associated day range, only if there is a day column
     /// </summary>
     protected DayRange m_dayRange; // If m_dayColumns == true
-    #endregion // Members
     
     #region Constructors
     /// <summary>
@@ -54,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Are day columns used ?
     /// </summary>
@@ -136,9 +133,7 @@ namespace Lemoine.GDBPersistentClasses
       // disable once ValueParameterNotUsed
       protected set { } // For NHibernate
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Set only m_dateTimeRange
     /// </summary>
@@ -197,6 +192,5 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (this.DateTimeRange.IsAdjacentTo (nextSlot.DateTimeRange));
       this.DateTimeRange = new UtcDateTimeRange (this.DateTimeRange.Union (nextSlot.DateTimeRange));
     }    
-    #endregion // Methods
   }
 }

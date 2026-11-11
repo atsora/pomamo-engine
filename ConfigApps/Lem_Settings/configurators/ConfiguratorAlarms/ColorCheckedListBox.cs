@@ -14,7 +14,6 @@ namespace ConfiguratorAlarms
   /// </summary>
   public partial class ColorCheckedListBox : CheckedListBox
   {
-    #region Getters / Setters
     /// <summary>
     /// Init alarm manager
     /// </summary>
@@ -24,7 +23,6 @@ namespace ConfiguratorAlarms
     /// Current datatype
     /// </summary>
     public string Datatype { get; set; }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -37,7 +35,6 @@ namespace ConfiguratorAlarms
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Change the color of the alarm
     /// Black by default, blue if the email is linked to an alarm
@@ -72,6 +69,5 @@ namespace ConfiguratorAlarms
         base.OnDrawItem(e2);
       }
     }
-    #endregion // Methods
   }
 }

@@ -58,7 +58,7 @@ namespace Lemoine.GDBPersistentClasses
     public I FindById (int id, int machineModuleId)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: id={0} machineModuleId={1} type={2}", id, machineModuleId, typeof (TSlot));
+        log.Debug ($"FindById: id={id} machineModuleId={machineModuleId} type={typeof (TSlot)}");
       }
 
       // Note: entityInCache may be a MachineModificationProxy for example
@@ -72,9 +72,7 @@ namespace Lemoine.GDBPersistentClasses
           && (entityInCache is I)) {
           var convertedEntity = (I)entityInCache;
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("FindById: " +
-                            "the entity id={0} machineModuleId={1} type={2} is taken from cache",
-                            id, machineModuleId, typeof (TSlot));
+            log.Debug ($"FindById: the entity id={id} machineModuleId={machineModuleId} type={typeof (TSlot)} is taken from cache");
           }
           return convertedEntity;
         }
@@ -86,7 +84,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: run a request to get the entity id={0} type={1}", id, typeof (TSlot));
+        log.Debug ($"FindById: run a request to get the entity id={id} type={typeof (TSlot)}");
       }
       var entity = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<TSlot> ()
@@ -94,9 +92,7 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Eq ("MachineModule.Id", machineModuleId))
         .UniqueResult<I> ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: " +
-                        "the entity id={0} type={1} was queried",
-                        id, typeof (TSlot));
+        log.Debug ($"FindById: the entity id={id} type={typeof (TSlot)} was queried");
       }
       return entity;
     }
@@ -209,37 +205,30 @@ namespace Lemoine.GDBPersistentClasses
         .List<I> ();
       
       if (0 == slots.Count) {
-        log.DebugFormat ("GetCurrent: " +
-                         "no slot in the current time frame {0}-{1} " +
-                         "=> return null",
-                         currentFrameBegin, currentFrameEnd);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetCurrent: no slot in the current time frame {currentFrameBegin}-{currentFrameEnd} => return null");
+        }
         return default(I); // null
       }
       else if (1 == slots.Count) {
-        log.DebugFormat ("GetCurrentOperationSlot: " +
-                         "only one operation slot in the current time frame {0}-{1} " +
-                         "=> return it {2}",
-                         currentFrameBegin, currentFrameEnd,
-                         slots [0]);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetCurrentOperationSlot: only one operation slot in the current time frame {currentFrameBegin}-{currentFrameEnd} => return it {slots [0]}");
+        }
         return slots [0];
       }
       else { // Two operation slots
         Debug.Assert (2 == slots.Count);
         if (slots [0].EndDateTime.HasValue
             && (slots [0].EndDateTime.Value < currentFrameEnd)) {
-          log.DebugFormat ("GetCurrent: " +
-                           "last slot is strictly before currentFrameEnd {0} " +
-                           "=> return it {1}",
-                           currentFrameEnd,
-                           slots [0]);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetCurrent: last slot is strictly before currentFrameEnd {currentFrameEnd} => return it {slots [0]}");
+          }
           return slots [0];
         }
         else {
-          log.DebugFormat ("GetCurrent: " +
-                           "last slot {0} may be consider in the future " +
-                           "=> return the second last operation slot {1}",
-                           slots [0],
-                           slots [1]);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetCurrent: last slot {slots [0]} may be consider in the future => return the second last operation slot {slots [1]}");
+          }
           return slots [1];
         }
       }

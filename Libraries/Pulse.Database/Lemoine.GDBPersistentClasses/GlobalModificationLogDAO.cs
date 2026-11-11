@@ -31,10 +31,7 @@ namespace Lemoine.GDBPersistentClasses
                      string message)
     {
       if (modification.IsMainModificationTransient ()) {
-        log.ErrorFormat ("Add: " +
-                         "level={0} message={1}, " +
-                         "no main modification or transient modification, give up",
-                         level, message);
+        log.Error ($"Add: level={level} message={message}, no main modification or transient modification, give up");
         return;        
       }
       else {

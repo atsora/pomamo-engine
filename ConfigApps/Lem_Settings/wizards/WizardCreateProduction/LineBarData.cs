@@ -17,12 +17,10 @@ namespace WizardCreateProduction
   /// </summary>
   public class LineBarData: IBarObjectFactory
   {
-    #region Getters / Setters
     /// <summary>
     /// Line being represented
     /// </summary>
     public ILine Line { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -33,7 +31,6 @@ namespace WizardCreateProduction
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create all BarObjects included in a period
     /// </summary>
@@ -138,6 +135,5 @@ namespace WizardCreateProduction
       
       return barObjects;
     }
-    #endregion // Methods
   }
 }

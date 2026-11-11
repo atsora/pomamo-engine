@@ -18,9 +18,6 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(EventToolLife))]
   public abstract class EventUnion: Event, IEvent
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (Event).FullName);
 
     #region Constructors
@@ -40,11 +37,5 @@ namespace Lemoine.GDBPersistentClasses
     {
     }
     #endregion // Constructors
-    
-    #region Getters / Setters
-    #endregion // Getters / Setters
-    
-    #region Methods
-    #endregion // Methods
   }
 }

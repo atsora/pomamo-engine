@@ -170,14 +170,14 @@ namespace Lemoine.CncEngine
           // 3. Get all the CncAcquisition for this lpost
           cancellationToken.ThrowIfCancellationRequested ();
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetMachineModules: get the cnc acquisitions for lpost {0}", lpost.Id);
+            log.Debug ($"GetMachineModules: get the cnc acquisitions for lpost {lpost.Id}");
           }
           IList<ICncAcquisition> cncAcquisitions =
             ModelDAOHelper.DAOFactory.CncAcquisitionDAO
             .FindAllForComputer (lpost);
           // TODO: license restriction...
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetMachineModules: got {0} cnc acquisitions for lpost {1}", cncAcquisitions.Count, lpost.Id);
+            log.Debug ($"GetMachineModules: got {cncAcquisitions.Count} cnc acquisitions for lpost {lpost.Id}");
           }
 
           // 4. Get all the modules
@@ -187,14 +187,14 @@ namespace Lemoine.CncEngine
             foreach (IMachineModule machineModule in cncAcquisition.MachineModules) {
               cancellationToken.ThrowIfCancellationRequested ();
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("GetMachineModules: add machine module of id {0}", machineModule.Id);
+                log.Debug ($"GetMachineModules: add machine module of id {machineModule.Id}");
               }
               machineModules.Add ((TMachineModule)machineModule);
             }
           }
 
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetMachineModules: got {0} machine modules", machineModules.Count);
+            log.Debug ($"GetMachineModules: got {machineModules.Count} machine modules");
           }
           return machineModules;
         }

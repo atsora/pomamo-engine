@@ -18,10 +18,8 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   internal sealed class SlotWithDayShift: GenericRangeSlot, ISlot, ISlotWithDayShift
   {
-    #region Members
     DateTime? m_day;
     IShift m_shift;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (SlotWithDayShift).FullName);
 
@@ -36,7 +34,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors and factory methods
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to a shift
     /// 
@@ -60,7 +57,6 @@ namespace Lemoine.GDBPersistentClasses
         m_day = value;
       }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// Combine two ISlotWithDayShift collections
@@ -136,9 +132,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
       
-      GetLogger ().ErrorFormat ("CompareTo: " +
-                                "object {0} of invalid type",
-                                obj);
+      GetLogger ().Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a DaySlot");
     }
 

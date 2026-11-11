@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CellDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null Cell a valid value ?
     /// </summary>
@@ -65,7 +64,6 @@ namespace Lemoine.DataReferenceControls
         this.cellSelection1.SelectedCells = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -84,9 +82,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("CellDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

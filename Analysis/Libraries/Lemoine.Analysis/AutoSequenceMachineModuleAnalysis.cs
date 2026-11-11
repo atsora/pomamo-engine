@@ -19,18 +19,13 @@ namespace Lemoine.Analysis
   /// </summary>
   internal sealed class AutoSequenceMachineModuleAnalysis : Lemoine.Threading.IChecked
   {
-    #region Members
     readonly IMachineModule m_machineModule;
     readonly TransactionLevel m_restrictedTransactionLevel;
     readonly SequenceDetection m_sequenceDetection;
     readonly SequenceMilestoneDetection m_sequenceMilestoneDetection;
     readonly Lemoine.Threading.IChecked m_caller;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (AutoSequenceMachineModuleAnalysis).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -103,7 +98,6 @@ namespace Lemoine.Analysis
     }
     #endregion // IChecked implementation
 
-    #region Methods
     /// <summary>
     /// Not to re-write all the unit tests after the API change
     /// </summary>
@@ -361,9 +355,9 @@ namespace Lemoine.Analysis
       if ((null != previousSlot)
           && autoSequence.Sequence.Equals (previousSlot.Sequence)) {
         if (previousSlot.EndDateTime.Value.Equals (begin)) {
-          log.DebugFormat ("AddAutoOnlySequenceSlot: " +
-                           "extend previous slot {0} to {1} because of overlap",
-                           previousSlot, end);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"AddAutoOnlySequenceSlot: extend previous slot {previousSlot} to {end} because of overlap");
+          }
           return m_sequenceDetection.MakeSequenceSlotLonger (previousSlot, end);
         }
 
@@ -386,9 +380,9 @@ namespace Lemoine.Analysis
                                               begin,
                                               autoSequence.Sequence.Operation);
           if (!existsOperationSlot) {
-            log.DebugFormat ("AddAutoOnlySequenceSlot: " +
-                             "extend the existing sequence slot {0} to {1} because of no big gap",
-                             previousSlot, end);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"AddAutoOnlySequenceSlot: extend the existing sequence slot {previousSlot} to {end} because of no big gap");
+            }
             return m_sequenceDetection.MakeSequenceSlotLonger (previousSlot, end);
           }
         }
@@ -416,22 +410,22 @@ namespace Lemoine.Analysis
     /// <returns>Sequence slot that corresponds to the [begin, end] period</returns>
     ISequenceSlot AddNoSequencePeriod (ISequenceSlot lastSequenceSlot, DateTime begin, DateTime end)
     {
-      log.DebugFormat ("AddNoSequencePeriod: " +
-                       "lastSequenceSlot={0} begin-end={1}-{2}",
-                       lastSequenceSlot, begin, end);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"AddNoSequencePeriod: lastSequenceSlot={lastSequenceSlot} begin-end={begin}-{end}");
+      }
 
       if ((null != lastSequenceSlot)
           && (null == lastSequenceSlot.Sequence)
           && (lastSequenceSlot.EndDateTime.Equals (begin))) {
-        log.DebugFormat ("AddNoSequencePeriod: " +
-                         "make the no sequence slot {0} longer to {1}",
-                         lastSequenceSlot, end);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddNoSequencePeriod: make the no sequence slot {lastSequenceSlot} longer to {end}");
+        }
         return m_sequenceDetection.MakeSequenceSlotLonger (lastSequenceSlot, end);
       }
       else {
-        log.DebugFormat ("AddNoSequencePeriod: " +
-                         "add a new 'no sequence' slot from {0} to {1}",
-                         begin, end);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddNoSequencePeriod: add a new 'no sequence' slot from {begin} to {end}");
+        }
         if ((null != lastSequenceSlot)
             && (!lastSequenceSlot.NextBegin.HasValue
                 || (begin < lastSequenceSlot.NextBegin.Value))) {
@@ -443,7 +437,5 @@ namespace Lemoine.Analysis
         return m_sequenceDetection.AddNewSequenceSlot (null, new UtcDateTimeRange (begin, end));
       }
     }
-
-    #endregion // Methods
   }
 }

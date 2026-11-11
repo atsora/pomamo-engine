@@ -18,7 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class OperationCycleDeliverablePiece : BaseData, IOperationCycleDeliverablePiece
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IDeliverablePiece m_deliverablePiece;
@@ -26,11 +25,8 @@ namespace Lemoine.GDBPersistentClasses
     IMachine m_machine;
     INonConformanceReason m_nonConformanceReason;
     string m_nonConformanceDetails;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OperationCycleDeliverablePiece).FullName);
-
-    #region Getters / Setters
     
     /// <summary>
     /// Possible identifiers
@@ -73,8 +69,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.FatalFormat ("DeliverablePiece.set: " +
-                           "null value");
+          log.Fatal ("DeliverablePiece.set: null value");
           throw new ArgumentNullException ("OperationCycleDeliverablePiece.DeliverablePiece");
         }
         else {
@@ -108,8 +103,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.FatalFormat ("OperationCycle.set: " +
-                           "null value");
+          log.Fatal ("OperationCycle.set: null value");
           throw new ArgumentNullException ("OperationCycleDeliverablePiece.OperationCycle");
         }
         else {
@@ -174,7 +168,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IMachine Machine {
       get { return m_machine; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

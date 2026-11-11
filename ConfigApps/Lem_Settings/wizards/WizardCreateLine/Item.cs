@@ -21,7 +21,6 @@ namespace WizardCreateLine
     internal const string CURRENT_PART_INDEX = "current_part_index";
     internal const string PARTS = "parts";
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -97,7 +96,6 @@ namespace WizardCreateLine
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

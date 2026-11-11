@@ -29,9 +29,6 @@ namespace Lemoine.Database.Persistent
     bool m_reset = false;
     bool m_error = false;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

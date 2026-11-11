@@ -136,7 +136,7 @@ namespace Lemoine.Model
         case ReasonMachineAssociationKind.Manual:
           return ReasonSource.Manual;
         default:
-          log.ErrorFormat ("ConvertToReasonSource: {0} can't be converted. StackTrace={1}", kind, System.Environment.StackTrace);
+          log.Error ($"ConvertToReasonSource: {kind} can't be converted. StackTrace={System.Environment.StackTrace}");
           throw new InvalidCastException ("Invalid cast from ReasonMachineAssociationKind to ReasonSource");
       }
     }
@@ -156,7 +156,7 @@ namespace Lemoine.Model
         case ReasonMachineAssociationKind.Manual:
           return ReasonProposalKind.Manual;
         default:
-          log.ErrorFormat ("ConvertToReasonProposalKind: {0} can't be converted. StackTrace={1}", kind, System.Environment.StackTrace);
+          log.Error ($"ConvertToReasonProposalKind: {kind} can't be converted. StackTrace={System.Environment.StackTrace}");
           throw new InvalidCastException ("Invalid cast from ReasonMachineAssociationKind to ReasonProposalKind");
       }
     }

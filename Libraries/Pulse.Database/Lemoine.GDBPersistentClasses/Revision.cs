@@ -18,7 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Revision: IRevision
   {
-    #region Members
     int m_id = 0;
     IUpdater m_updater;
     DateTime m_dateTime = DateTime.UtcNow;
@@ -27,11 +26,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_application;
     ICollection<IGlobalModification> m_globalModifications = new InitialNullIdSet<IGlobalModification, long> ();
     ICollection<IMachineModification> m_machineModifications = new InitialNullIdSet<IMachineModification, long> ();
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (Revision).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Revision ID
     /// </summary>
@@ -148,7 +145,6 @@ namespace Lemoine.GDBPersistentClasses
           .Concat (this.MachineModifications.Cast<IModification> ());
       }
     }
-    #endregion // Getters / Setters
     
     #region Add methods
     /// <summary>

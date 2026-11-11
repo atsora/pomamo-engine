@@ -30,12 +30,10 @@ namespace Lemoine.WebService
 
     readonly ILog log = LogManager.GetLogger (typeof (GenericSaveService<InputDTO>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Remote Ip
     /// </summary>
     public string RemoteIp { get; set; }
-    #endregion // Getters / Setters
 
 #region Constructors
     /// <summary>
@@ -46,7 +44,6 @@ namespace Lemoine.WebService
     }
 #endregion // Constructors
 
-#region Methods
     /// <summary>
     /// Get
     /// </summary>
@@ -76,92 +73,64 @@ namespace Lemoine.WebService
       Exception lastException = null;
 
       for (int attempt = 0; attempt < MAX_ATTEMPT; attempt++) {
-        log.InfoFormat ("GetRequestAnswer: " +
-                        "request={0} attempt={1}",
-                        request, attempt);
+        log.Info ($"GetRequestAnswer: request={request} attempt={attempt}");
         try {
           return GetSync (request);
         }
         catch (Exception ex) {
           if (ExceptionTest.IsTransactionSerializationFailure (ex, log)) {
-            log.InfoFormat ("GetRequestAnswer: " +
-                            "serialization failure => try again once" +
-                            "Exception is {0}",
-                            ex);
+            log.Info ($"GetRequestAnswer: serialization failure => try again onceException is {ex}");
             lastException = ex;
             continue;
           }
           else if (ExceptionTest.IsTimeoutFailure (ex, log)) {
-            log.WarnFormat ("GetRequestAnswer: " +
-                            "timeout failure => try again " +
-                            "Exception is {0}",
-                            ex);
+            log.Warn ($"GetRequestAnswer: timeout failure => try again Exception is {ex}");
             lastException = ex;
             continue;
           }
           else if (ExceptionTest.IsTemporary (ex, log)) {
-            log.WarnFormat ("GetRequestAnswer: " +
-                            "temporary failure => try again " +
-                            "Exception is {0}",
-                            ex);
+            log.Warn ($"GetRequestAnswer: temporary failure => try again Exception is {ex}");
             lastException = ex;
             continue;
           }
           else if (ExceptionTest.IsIntegrityConstraintViolation (ex, log)) {
-            log.FatalFormat ("GetRequestAnswer: " +
-                             "IntegrityConstraintViolation " +
-                             "=> give up for this request");
+            log.Fatal ("GetRequestAnswer: IntegrityConstraintViolation => give up for this request");
             throw;
           }
           else if (ExceptionTest.IsInvalid (ex, log)) {
-            log.ErrorFormat ("GetRequestAnswer: " +
-                             "Invalid request exception {0} with InnerException {1}" +
-                             "give up just for this request",
-                             ex, ex.InnerException);
+            log.Error ($"GetRequestAnswer: Invalid request exception {ex} with InnerException {ex.InnerException}give up just for this request");
             throw;
           }
           else if (ExceptionTest.RequiresExit (ex, log)) {
-            log.ErrorFormat ("GetRequestAnswer: " +
-                             "exception {0} requires to exit, give up",
-                             ex);
+            log.Error ($"GetRequestAnswer: exception {ex} requires to exit, give up");
             Exit (ex);
             throw;
           }
           else if (ex is ObjectDisposedException) {
-            log.ErrorFormat ("GetRequestAnswer: " +
-                             "ObjectDisposedException {0} " +
-                             "stack trace: {1}",
-                             ex, ex.StackTrace);
+            log.Error ($"GetRequestAnswer: ObjectDisposedException {ex} stack trace: {ex.StackTrace}");
             lastException = ex;
             continue;
           }
           else if (ex is InvalidOperationException) {
-            log.ErrorFormat ("GetRequestAnswer: " +
-                             "InvalidOperationException {0} " +
-                             "stack trace: {1}",
-                             ex, ex.StackTrace);
+            log.Error ($"GetRequestAnswer: InvalidOperationException {ex} stack trace: {ex.StackTrace}");
             lastException = ex;
             continue;
           }
           else {
-            log.FatalFormat ("GetRequestAnswer: " +
-                             "unexpected error {0} " +
-                             "stack trace: {1}",
-                             ex, ex.StackTrace);
+            log.Fatal ($"GetRequestAnswer: unexpected error {ex} stack trace: {ex.StackTrace}");
             throw;
           }
         }
         finally {
-          log.DebugFormat ("GetRequestAnswer: " +
-                           "request={0} is completed",
-                           request);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetRequestAnswer: request={request} is completed");
+          }
         }
       }
 
       Debug.Assert (null != lastException);
       if (null == lastException) {
-        log.FatalFormat ("GetRequestAnswer: " +
-                         "unexpected lastException value (should not be null)");
+        log.Fatal ("GetRequestAnswer: unexpected lastException value (should not be null)");
         throw new InvalidOperationException ("Unexpected lastException value");
       }
       else if ((lastException is ObjectDisposedException) || (lastException is InvalidOperationException)) {
@@ -169,9 +138,7 @@ namespace Lemoine.WebService
       }
       else {
         Debug.Assert (!(lastException is OutOfMemoryException));
-        log.ErrorFormat ("GetRequestAnswer: " +
-                         "second time the exception {0} happens",
-                         lastException);
+        log.Error ($"GetRequestAnswer: second time the exception {lastException} happens");
         throw new Exception ("Second exception", lastException);
       }
     }
@@ -206,7 +173,7 @@ namespace Lemoine.WebService
         catch (Exception ex) {
           if (Lemoine.Core.ExceptionManagement.ExceptionTest.RequiresExit (ex)) {
             try {
-              log.FatalFormat ("Exception {0} requires to exit", ex);
+              log.Fatal ($"Exception {ex} requires to exit");
             }
             catch (Exception) { }
 
@@ -228,9 +195,7 @@ namespace Lemoine.WebService
 #if NSERVICEKIT
       // Debug.Assert (null != m_httpRequest); // No because of the unit tests
       if (null == m_httpRequest) {
-        log.ErrorFormat ("GetRequestRemoteIp: " +
-                         "null http request " +
-                         "=> return an empty IP address");
+        log.Error ("GetRequestRemoteIp: null http request => return an empty IP address");
         return null;
       }
 
@@ -262,6 +227,5 @@ namespace Lemoine.WebService
     {
       this.RemoteIp = remoteIp;
     }
-#endregion // Methods
   }
 }

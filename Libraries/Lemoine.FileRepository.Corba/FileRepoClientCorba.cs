@@ -15,11 +15,9 @@ namespace Lemoine.FileRepository.Corba
   /// </summary>
   public class FileRepoClientCorba : IFileRepoClient
   {
-    #region Members
     static readonly int MAX_ATTEMPT_NB = 1;
     PULSE.FileRepository m_fileRepository = null;
     object m_fileRepositoryLock = new object ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (FileRepoClientCorba).FullName);
 
@@ -87,7 +85,7 @@ namespace Lemoine.FileRepository.Corba
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ListFilesInDirectory: got exception {0}", ex);
+        log.Error ($"ListFilesInDirectory: got exception {ex}");
         throw;
       }
 
@@ -118,7 +116,7 @@ namespace Lemoine.FileRepository.Corba
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ListDirectoriesInDirectory: got exception {0}", ex);
+        log.Error ($"ListDirectoriesInDirectory: got exception {ex}");
         throw;
       }
 
@@ -143,8 +141,7 @@ namespace Lemoine.FileRepository.Corba
       try {
         fileIterator = m_fileRepository.openFile (nspace, path);
         if (null == fileIterator) {
-          log.ErrorFormat ("GetFile: fileRepository.openFile nspace={0} path={1} failed",
-                           nspace, path);
+          log.Error ($"GetFile: fileRepository.openFile nspace={nspace} path={path} failed");
           throw new Exception ("fileRepository.openFile failed");
         }
 
@@ -167,12 +164,12 @@ namespace Lemoine.FileRepository.Corba
       catch (PULSE.BadPath ex) {
         if (log.IsDebugEnabled) {
           log.Debug ("GetFile: BadPath returned", ex);
-          log.DebugFormat ("GetFile: BadPath returned for nspace={0} path={1}", nspace, path);
+          log.Debug ($"GetFile: BadPath returned for nspace={nspace} path={path}");
         }
         throw new MissingFileException (nspace, path, ex);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetFile: nspace={0} path={1}, got exception {2}", nspace, path, ex);
+        log.Error ($"GetFile: nspace={nspace} path={path}, got exception {ex}");
         throw;
       }
       finally {
@@ -230,7 +227,7 @@ namespace Lemoine.FileRepository.Corba
         date = DateTime.FromFileTimeUtc (distantDateTime);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetLastModifiedDate, Corba: got exception {0}", ex);
+        log.Error ($"GetLastModifiedDate, Corba: got exception {ex}");
       }
 
       return date;
@@ -272,8 +269,7 @@ namespace Lemoine.FileRepository.Corba
       try {
         fileIterator = m_fileRepository.openFile (nspace, path);
         if (null == fileIterator) {
-          log.ErrorFormat ("GetString: fileRepository.openFile nspace={0} path={1} failed",
-                           nspace, path);
+          log.Error ($"GetString: fileRepository.openFile nspace={nspace} path={path} failed");
           throw new Exception ("fileRepository.openFile failed");
         }
 
@@ -302,8 +298,7 @@ namespace Lemoine.FileRepository.Corba
       }
       catch (Exception ex) {
         if (attempt < MAX_ATTEMPT_NB) {
-          log.WarnFormat ("GetString: nspace={0} path={1} got exception {2} but make a new attempt " +
-                          "after resetting the CORBA connection", nspace, path, ex);
+          log.Warn ($"GetString: nspace={nspace} path={path} got exception {ex} but make a new attempt after resetting the CORBA connection");
           if (null != fileIterator) {
             fileIterator.shutdown ();
             fileIterator = null;
@@ -312,7 +307,7 @@ namespace Lemoine.FileRepository.Corba
           return GetString (nspace, path, attempt + 1, optional);
         }
         else {
-          log.ErrorFormat ("GetString: nspace={0} path={1} got exception {2} give up", nspace, path, ex);
+          log.Error ($"GetString: nspace={nspace} path={path} got exception {ex} give up");
           throw;
         }
       }
@@ -345,8 +340,7 @@ namespace Lemoine.FileRepository.Corba
       try {
         fileIterator = m_fileRepository.openFile (nspace, path);
         if (null == fileIterator) {
-          log.ErrorFormat ("GetBinary: fileRepository.openFile nspace={0} path={1} failed",
-                           nspace, path);
+          log.Error ($"GetBinary: fileRepository.openFile nspace={nspace} path={path} failed");
           throw new Exception ("fileRepository.openFile failed");
         }
 
@@ -366,14 +360,13 @@ namespace Lemoine.FileRepository.Corba
       catch (PULSE.BadPath ex) {
         if (log.IsDebugEnabled) {
           log.Debug ("GetFile: BadPath returned", ex);
-          log.DebugFormat ("GetFile: BadPath returned for nspace={0} path={1}", nspace, path);
+          log.Debug ($"GetFile: BadPath returned for nspace={nspace} path={path}");
         }
         throw new MissingFileException (nspace, path, ex);
       }
       catch (Exception ex) {
         if (attempt < MAX_ATTEMPT_NB) {
-          log.WarnFormat ("GetFile: got exception {0} but make a new attempt " +
-                          "after resetting the CORBA connection", ex);
+          log.Warn ($"GetFile: got exception {ex} but make a new attempt after resetting the CORBA connection");
           if (null != fileIterator) {
             fileIterator.shutdown ();
             fileIterator = null;
@@ -382,7 +375,7 @@ namespace Lemoine.FileRepository.Corba
           return GetBinary (nspace, path, attempt + 1);
         }
         else {
-          log.ErrorFormat ("GetFile: got exception {0} give up", ex);
+          log.Error ($"GetFile: got exception {ex} give up");
           throw;
         }
       }

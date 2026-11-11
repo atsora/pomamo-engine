@@ -21,11 +21,8 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(WorkOrderLineAssociation))]
   public abstract class LineAssociation : PeriodAssociation
   {
-    #region Members
     ILine m_line;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the Line persistent class
     /// It can't be null
@@ -61,7 +58,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_line as Line; }
       set { m_line = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -97,7 +93,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the impacted slots without considering any pre-fetched slot
     /// </summary>
@@ -148,6 +143,5 @@ namespace Lemoine.GDBPersistentClasses
       string modificationType = this.ModificationType;
       NHibernateHelper.Unproxy<ILine> (ref m_line);
     }
-    #endregion // Methods
   }
 }

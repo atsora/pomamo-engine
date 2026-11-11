@@ -19,23 +19,19 @@ namespace Lem_TestReports
   /// </summary>
   public class ReportDownloader
   {
-    #region Members
     readonly HttpClient m_httpClient;
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     MainForm m_mainForm;
     DataGridViewRow m_row;
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (ReportDownloader).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// DataGridViewRow
     /// </summary>
     DataGridViewRow Row {
       get { return m_row; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

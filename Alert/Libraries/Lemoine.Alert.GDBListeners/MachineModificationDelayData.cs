@@ -30,7 +30,6 @@ namespace Lemoine.Alert.GDBListeners
   [Serializable]
   public class MachineModificationDelayData
   {
-    #region Members
     Machine m_machine;
     MachineModification m_modification;
     MachineModificationDelayDirection m_direction;
@@ -40,11 +39,9 @@ namespace Lemoine.Alert.GDBListeners
     DateTime m_timeStamp;
     bool m_flapping = false;
     bool m_beginFlapping = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineModificationDelayData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machine
     /// </summary>
@@ -134,7 +131,6 @@ namespace Lemoine.Alert.GDBListeners
       get { return m_beginFlapping; }
       set { m_beginFlapping = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -169,8 +165,5 @@ namespace Lemoine.Alert.GDBListeners
       m_beginFlapping = beginFlapping;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

@@ -20,7 +20,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Computer : DataWithDisplayFunction, IComputer, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -32,11 +31,9 @@ namespace Lemoine.GDBPersistentClasses
     bool m_isAutoReason = false;
     bool m_isAlert = false;
     bool m_isSynchronization = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (Computer).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -181,7 +178,6 @@ namespace Lemoine.GDBPersistentClasses
                               this.Id, this.Name, this.Address);
       }
     }
-    #endregion
 
     #region Equals and GetHashCode implementation
     /// <summary>

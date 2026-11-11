@@ -168,9 +168,7 @@ namespace Lemoine.GDBPersistentClasses
             break;
           case DateTimeKind.Unspecified:
           default:
-            log.ErrorFormat ("FindAt: " +
-                             "date/time {0} is of kind Unspecified",
-                             at);
+            log.Error ($"FindAt: date/time {at} is of kind Unspecified");
             Debug.Assert (DateTimeKind.Unspecified != at.Value.Kind);
             utc = at.Value;
             break;
@@ -195,7 +193,7 @@ namespace Lemoine.GDBPersistentClasses
               .Add (IsUpperInfinite ())
               .UniqueResult<I> ();
           default:
-            log.FatalFormat ("Unexpected BoundType");
+            log.Fatal ("Unexpected BoundType");
             throw new InvalidOperationException ("Invalid BoundType");
         }
       }
@@ -221,9 +219,7 @@ namespace Lemoine.GDBPersistentClasses
           break;
         case DateTimeKind.Unspecified:
         default:
-          log.ErrorFormat ("FindAt: " +
-                           "date/time {0} is of kind Unspecified",
-                           at);
+          log.Error ($"FindAt: date/time {at} is of kind Unspecified");
           Debug.Assert (DateTimeKind.Unspecified != at.Value.Kind);
           utc = at.Value;
           break;
@@ -248,7 +244,7 @@ namespace Lemoine.GDBPersistentClasses
             .Add (IsUpperInfinite ())
             .UniqueResultAsync<I> ();
         default:
-          log.FatalFormat ("Unexpected BoundType");
+          log.Fatal ("Unexpected BoundType");
           throw new InvalidOperationException ("Invalid BoundType");
         }
       }

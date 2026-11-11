@@ -21,15 +21,12 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   internal class ComponentShiftMachineAssociation: MachineAssociation
   {
-    #region Members
     IComponent m_component;
     ILine m_line = null;
     IWorkOrder m_workOrder = null;
     DateTime? m_day;
     IShift m_shift;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -77,7 +74,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_line; }
       set { m_line = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -94,7 +90,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="PeriodAssociation.ConvertToSlot" />
     /// </summary>
@@ -116,9 +111,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("ConvertToSlot: " +
-                         "Slot of type {0} is not implemented",
-                         typeof (TSlot));
+        log.Fatal ($"ConvertToSlot: Slot of type {typeof (TSlot)} is not implemented");
         throw new NotImplementedException ("Slot type not implemented");
       }
     }
@@ -147,10 +140,7 @@ namespace Lemoine.GDBPersistentClasses
         
         if (!object.Equals (newOperationSlot.Day, this.Day)) {
           if (newOperationSlot.Day.HasValue && this.Day.HasValue) { // Log it only if a real value changed
-            log.WarnFormat ("MergeDataWithOldSlot: " +
-                            "in ComponentShiftMachineAssociation, the day is requested to be changed " +
-                            "from {0} to {1}",
-                            newOperationSlot.Day, this.Day);
+            log.Warn ($"MergeDataWithOldSlot: in ComponentShiftMachineAssociation, the day is requested to be changed from {newOperationSlot.Day} to {this.Day}");
             AddAnalysisLog (LogLevel.WARN,
                             string.Format ("ComponentShiftMachineAssociation: " +
                                            "day change not valid"));
@@ -159,10 +149,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         if (!object.Equals (newOperationSlot.Shift, this.Shift)) {
           if ( (null != newOperationSlot.Shift) && (null != this.Shift)) { // Log it only if a real value changed
-            log.WarnFormat ("MergeDataWithOldSlot: " +
-                            "in ComponentShiftMachineAssociation, the shift is requested to be changed " +
-                            "from {0} to {1}",
-                            newOperationSlot.Shift, this.Shift);
+            log.Warn ($"MergeDataWithOldSlot: in ComponentShiftMachineAssociation, the shift is requested to be changed from {newOperationSlot.Shift} to {this.Shift}");
             AddAnalysisLog (LogLevel.WARN,
                             string.Format ("ComponentShiftMachineAssociation: " +
                                            "shift change not valid"));
@@ -240,9 +227,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false, "Not a supported slot", oldSlot.GetType ().ToString ());
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -289,7 +274,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Insert<OperationSlot, IOperationSlot, OperationSlotDAO> (operationSlotDAO,
                                                                     preFetchedOperationSlots);
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

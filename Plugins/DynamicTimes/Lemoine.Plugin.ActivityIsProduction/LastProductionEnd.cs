@@ -75,7 +75,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
           }
           else {
             if (IsFactAfter (dateTime)) {
-              log.WarnFormat ("IsApplicableAt: no fact at {0}", dateTime);
+              log.Warn ($"IsApplicableAt: no fact at {dateTime}");
               return DynamicTimeApplicableStatus.YesAtDateTime;
             }
             else {
@@ -124,7 +124,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
               if (Match (fact)) {
                 Debug.Assert (fact.DateTimeRange.Upper.HasValue);
                 if (fact.DateTimeRange.ContainsElement (dateTime)) {
-                  log.InfoFormat ("Get: the fact at {0} is a production period, return NotApplicable", dateTime);
+                  log.Info ($"Get: the fact at {dateTime} is a production period, return NotApplicable");
                   return this.CreateNotApplicable ();
                 }
                 else {

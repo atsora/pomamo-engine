@@ -21,10 +21,8 @@ namespace Lemoine.I18N
   {
     readonly ILog log = LogManager.GetLogger (typeof (CachedCatalog).FullName);
 
-    #region Members
     readonly ICatalog m_catalog;
     readonly IDictionary<CultureInfo, IDictionary<string, string>> m_cache = new ConcurrentDictionary<CultureInfo, IDictionary<string, string>> ();
-    #endregion // Members
 
     #region Constructors
     /// <summary>

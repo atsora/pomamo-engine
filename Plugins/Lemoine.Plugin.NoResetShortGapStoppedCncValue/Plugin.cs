@@ -19,10 +19,6 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -59,7 +55,6 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
 
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
@@ -67,8 +62,5 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
     {
       // Nothing to do
     }
-
-    #region Methods
-    #endregion // Methods
   }
 }

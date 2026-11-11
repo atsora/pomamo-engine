@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ProductionInformationShift: MachineModification, IProductionInformationShift
   {
-    #region Members
     DateTime m_day;
     IShift m_shift;
     IWorkOrder m_workOrder;
@@ -30,9 +29,7 @@ namespace Lemoine.GDBPersistentClasses
     int m_checked = 0;
     int m_scrapped = 0;
     bool? m_inProgress = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -183,7 +180,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -240,24 +236,18 @@ namespace Lemoine.GDBPersistentClasses
             string message = string.Format ("Observation state slot {0} with no machine state template " +
                                             "and no machine observation state",
                                             observationStateSlot);
-            log.ErrorFormat ("ProductionInformationShift: " +
-                             "{0}",
-                             message);
+            log.Error ($"ProductionInformationShift: {message}");
             AddAnalysisLog (LogLevel.ERROR, message);
             MarkAsError ();
             return;
           }
-          log.InfoFormat ("ProductionInformationShift: " +
-                          "process the machine state template {0}",
-                          observationStateSlot.MachineStateTemplate);
+          log.Info ($"ProductionInformationShift: process the machine state template {observationStateSlot.MachineStateTemplate}");
           IDaySlot daySlot = ModelDAOHelper.DAOFactory.DaySlotDAO
             .FindProcessedByDay (m_day);
           if (null == daySlot) { // give up
             string message = string.Format ("No day slot at {0}",
                                             m_day);
-            log.ErrorFormat ("ProductionInformationShift: " +
-                             "{0}",
-                             message);
+            log.Error ($"ProductionInformationShift: {message}");
             AddAnalysisLog (LogLevel.ERROR, message);
             MarkAsError ();
             return;
@@ -274,9 +264,7 @@ namespace Lemoine.GDBPersistentClasses
           if (!observationStateSlot.EndDateTime.HasValue) {
             string message = string.Format ("No observation state slot at {0} for shift {1} has no end",
                                             observationStateSlot.BeginDateTime, observationStateSlot.Shift);
-            log.ErrorFormat ("ProductionInformationShift: " +
-                             "{0}",
-                             message);
+            log.Error ($"ProductionInformationShift: {message}");
             AddAnalysisLog (LogLevel.ERROR, message);
             MarkAsError ();
             return;
@@ -286,9 +274,7 @@ namespace Lemoine.GDBPersistentClasses
             string message = string.Format ("Observation state slot end {0} is after the modification end date/time " +
                                             "=> the data can not be reliable",
                                             observationStateSlot.EndDateTime);
-            log.ErrorFormat ("ProductionInformationShift: " +
-                             "{0}",
-                             message);
+            log.Error ($"ProductionInformationShift: {message}");
             AddAnalysisLog (LogLevel.ERROR, message);
             MarkAsError ();
             return;
@@ -301,9 +287,7 @@ namespace Lemoine.GDBPersistentClasses
       if (!end.HasValue) {
         string message = string.Format ("No period for {0} {1} was detected",
                                         this.Day, this.Shift);
-        log.ErrorFormat ("ProductionInformationShift: " +
-                         "{0}",
-                         message);
+        log.Error ($"ProductionInformationShift: {message}");
         AddAnalysisLog (LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -334,7 +318,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
     

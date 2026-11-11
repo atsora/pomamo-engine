@@ -19,7 +19,6 @@ namespace Lemoine.Database.Persistent
   /// </summary>
   public sealed class DAOTransaction : IDAOTransaction
   {
-    #region Members
     ITransactionSession m_session;
     string m_name;
     string m_beginStackTrace = System.Environment.StackTrace;
@@ -34,11 +33,9 @@ namespace Lemoine.Database.Persistent
     bool m_deferrable = false;
     bool m_synchronousCommitRequestRun = false;
     readonly IList<ILockTableToPartition> m_lockedTables = new List<ILockTableToPartition> ();
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (DAOTransaction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Transaction name
     /// </summary>
@@ -106,7 +103,6 @@ namespace Lemoine.Database.Persistent
       get { return m_deferrable; }
       set { m_deferrable = value; RunDeferrableRequest (); }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -340,10 +336,7 @@ namespace Lemoine.Database.Persistent
     {
       if (!TopTransaction) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("RunTransactionLevelRequest: " +
-                          "do not change the transaction level because it is not the top transaction. " +
-                          "\n{0}",
-                          System.Environment.StackTrace);
+          log.Warn ($"RunTransactionLevelRequest: do not change the transaction level because it is not the top transaction. \n{System.Environment.StackTrace}");
         }
         return;
       }

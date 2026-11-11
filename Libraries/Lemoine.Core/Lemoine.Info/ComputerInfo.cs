@@ -32,7 +32,6 @@ namespace Lemoine.Info
     ulong m_totalPhysicalMemory = 0; // 0: not known yet, -1: exception
     Exception m_totalPhysicalMemoryException = null;
 
-    #region Getters / Setters
     /// <summary>
     /// Total physical memory
     /// </summary>
@@ -57,7 +56,6 @@ namespace Lemoine.Info
         return Instance.m_totalPhysicalMemory;
       }
     }
-    #endregion // Getters / Setters
 
     #region Network
     /// <summary>
@@ -238,8 +236,7 @@ namespace Lemoine.Info
           return memStatus.ullTotalPhys;
         }
         else {
-          log.ErrorFormat ("GetTotalPhysicalMemory: " +
-                           "GlobalMemoryStatusEx failed");
+          log.Error ("GetTotalPhysicalMemory: GlobalMemoryStatusEx failed");
           throw new InvalidOperationException ("GlobalMemoryStatusEx");
         }
       }

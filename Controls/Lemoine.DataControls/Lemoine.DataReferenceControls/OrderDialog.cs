@@ -14,13 +14,10 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class OrderDialog : OKCancelDialog, IValueDialog<int>
   {
-    #region Members
     private bool m_nullable;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OrderDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null DateTime a valid value ?
     /// </summary>
@@ -73,7 +70,6 @@ namespace Lemoine.DataReferenceControls
     public bool UserSpecifiedIndex{
       get { return this.orderSelection.UserSpecifiedIndex; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -92,8 +88,6 @@ namespace Lemoine.DataReferenceControls
 
 
     #endregion // Constructors
-
-    #region Methods
     
     /// <summary>
     /// Set if the return value can be null or not
@@ -108,7 +102,6 @@ namespace Lemoine.DataReferenceControls
         this.cancelButton.Enabled = false;
       }
     }
-    #endregion // Methods
     
   }
 }

@@ -19,14 +19,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class NonConformanceReason:  DataWithDisplayFunction, INonConformanceReason, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_code;
     string m_name;
     string m_description;
     bool   m_detailsrequired;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (NonConformanceReason).FullName);
     
@@ -46,8 +44,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Name = name;
     }
     #endregion // Constructors
-    
-    #region Getters / Setters
     
     /// <summary>
     /// Possible identifiers
@@ -115,9 +111,6 @@ namespace Lemoine.GDBPersistentClasses
       set { this.m_detailsrequired = value; }
     }    
     
-    #endregion // Getters / Setters
-    
-    #region Members
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
@@ -188,9 +181,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[NonConformanceReason {this.Id}]";
       }
     }
-    #endregion // Members
-    
-    #region methods
     
     
     /// <summary>
@@ -200,7 +190,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       //Nothing to do here because there is no field to serialize
     }
-
-    #endregion
   }
 }

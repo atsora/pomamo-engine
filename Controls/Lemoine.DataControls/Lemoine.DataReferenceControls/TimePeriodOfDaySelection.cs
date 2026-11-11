@@ -17,14 +17,11 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class TimePeriodOfDaySelection : UserControl
   {
-    #region Members
     string m_noTi18n = "TimePeriodOfDayNull";
     bool m_validate = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (TimePeriodOfDaySelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is null a valid value ?
     /// </summary>
@@ -83,7 +80,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Events
     /// <summary>
@@ -111,7 +107,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Cancel the control: do not validate it
     /// </summary>
@@ -185,7 +180,6 @@ namespace Lemoine.DataReferenceControls
 
       OnAfterChanged (new EventArgs ());
     }
-    #endregion // Methods
 
     void TimePeriodOfDaySelectionValidating (object sender, CancelEventArgs e)
     {

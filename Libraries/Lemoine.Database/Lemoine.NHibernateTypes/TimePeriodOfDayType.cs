@@ -49,9 +49,7 @@ namespace Lemoine.NHibernateTypes
     protected override object Set (TimePeriodOfDay v)
     {
       if (false == v.IsValid ()) {
-        log.FatalFormat ("NullSafeSet: " +
-                         "TimePeriodOfDay {0} is not valid",
-                         v);
+        log.Fatal ($"NullSafeSet: TimePeriodOfDay {v} is not valid");
         Debug.Assert (false);
         throw new ArgumentException ("Invalid TimePeriodOfDay");
       }

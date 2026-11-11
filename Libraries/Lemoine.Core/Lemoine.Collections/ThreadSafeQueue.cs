@@ -15,10 +15,8 @@ namespace Lemoine.Collections
   /// </summary>
   internal sealed class ThreadSafeQueue<T> : IExtendedQueue<T>
   {
-    #region Members
     readonly Object m_lock = new Object ();
     readonly IExtendedQueue<T> m_queue;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (ThreadSafeQueue<T>).FullName);
 

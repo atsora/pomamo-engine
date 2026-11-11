@@ -318,7 +318,7 @@ namespace Lemoine.JobControls
       }
       catch (IOException ex) {
         string errorMsg = PulseCatalog.GetString ("ProblemOnFileOpenA") + excelFilePath + ".\n" + PulseCatalog.GetString ("CheckNotOpenedInOtherApp");
-        log.ErrorFormat (errorMsg);
+        log.Error (errorMsg);
         throw new ExcelImporterFileAccessException (String.Format ("Problem while accessing Excel file {0}", excelFilePath),
                                                    ex);
       }
@@ -367,7 +367,7 @@ namespace Lemoine.JobControls
               IRow row = firstSheet.GetRow (rowIndex);
               ICell cellSeqId = row.GetCell (sequenceIdIndex);
               if (cellSeqId == null) {
-                log.InfoFormat ("Excel workbook read up to row {0} which has no associated sequence", rowIndex);
+                log.Info ($"Excel workbook read up to row {rowIndex} which has no associated sequence");
                 break;
               }
               int sequenceId = (int)cellSeqId.NumericCellValue;

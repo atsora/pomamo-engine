@@ -20,9 +20,6 @@ namespace Pulse.Web.Time
   {
     static readonly ILog log = LogManager.GetLogger(typeof (DayToDateTimeRangeService).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -33,7 +30,6 @@ namespace Pulse.Web.Time
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -57,6 +53,5 @@ namespace Pulse.Web.Time
       response.LocalDateTimeRange = dayToDateTimeRangeSlot.DateTimeRange.ToLocalTime ().ToString (dt => ConvertDTO.DateTimeLocalToIsoString (dt));
       return response;
     }
-    #endregion // Methods
   }
 }

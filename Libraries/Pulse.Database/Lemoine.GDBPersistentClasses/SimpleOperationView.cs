@@ -26,7 +26,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class SimpleOperationView: BaseData
   {
-    #region Members
     int m_operationId = 0;
     int m_intermediateWorkPieceId = 0;
     string m_name;
@@ -41,11 +40,9 @@ namespace Lemoine.GDBPersistentClasses
     TimeSpan? m_unloadingDuration;
     double? m_weight;
     IComponent m_component;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (SimpleOperationView).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -310,9 +307,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Component as Component; }
       set { this.Component = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Check if the simple operation is undefined
     /// 
@@ -346,6 +341,5 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Methods
   }
 }

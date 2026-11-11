@@ -26,7 +26,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Override of "ShowUpDown", that does nothing
     /// </summary>
@@ -49,6 +48,5 @@ namespace Lemoine.BaseControls
     /// Associated date
     /// </summary>
     public DateTime Date => new DateTime (this.Value.Year, this.Value.Month, this.Value.Day, 00, 00, 00, DateTimeKind.Unspecified);
-    #endregion // Getters / Setters
   }
 }

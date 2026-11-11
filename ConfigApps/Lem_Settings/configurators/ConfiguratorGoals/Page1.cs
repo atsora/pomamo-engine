@@ -16,12 +16,9 @@ namespace ConfiguratorGoals
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     IGoalType m_goalType = null;
     bool m_withDepartment = false;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -61,7 +58,6 @@ namespace ConfiguratorGoals
     public override LemSettingsGlobal.PageFlag Flags {
       get { return LemSettingsGlobal.PageFlag.DONT_SHOW_SUCCESS_INFORMATION; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

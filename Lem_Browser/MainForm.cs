@@ -16,15 +16,10 @@ namespace Lem_Browser
   /// </summary>
   public partial class MainForm : Form
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (MainForm).FullName);
 
-    #region Getters / Setters
     // TODO: Generate here with the Alt-Inser command the wanted getters / setters
     // TODO: Do not forget to add the description of the property with ///
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -46,12 +41,10 @@ namespace Lem_Browser
     // TODO: Add here with Alt-Inser command additional constructors
     #endregion // Constructors
 
-    #region Methods
     // TODO: Add here your methods
     public void Method ()
     {
     }
-    #endregion // Methods
     
     void Button1Click(object sender, EventArgs e)
     {

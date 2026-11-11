@@ -113,9 +113,9 @@ namespace Lemoine.Database.Persistent
         queryString += "=:";
         queryString += key.Replace('.', '_');
       }
-      log.DebugFormat ("FindPersistentClass: " +
-                       "HQL query is {0}",
-                       queryString);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"FindPersistentClass: HQL query is {queryString}");
+      }
       IQuery query = session.CreateQuery (queryString);
       foreach (KeyValuePair<string, object> restriction in restrictions) {
         query.SetParameter (restriction.Key.Replace ('.', '_'),
@@ -194,10 +194,7 @@ namespace Lemoine.Database.Persistent
         PropertyInfo identifierInfo =
           currentObject.GetType ().GetProperty (relativeIdentifier);
         if (null == identifierInfo) {
-          log.WarnFormat ("RefineQuery: " +
-                          "{0} does not have an identifier {1}",
-                          currentObject.GetType (),
-                          relativeIdentifier);
+          log.Warn ($"RefineQuery: {currentObject.GetType ()} does not have an identifier {relativeIdentifier}");
           return false;
         }
         Type identifierType =
@@ -220,9 +217,9 @@ namespace Lemoine.Database.Persistent
         else if ( ((identifierValue is int) && (0 != (int) identifierValue))
                  || ((identifierValue is string) && (0 < ((string) identifierValue).Length))
                  || ((identifierValue is bool) && ((bool) identifierValue))) {
-          log.DebugFormat ("GetValue: " +
-                           "use identifier {0}={1}",
-                           absoluteIdentifier, identifierValue);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetValue: use identifier {absoluteIdentifier}={identifierValue}");
+          }
           restrictions.Add (absoluteIdentifier, identifierValue);
           if (IsIdentifierAnId (absoluteIdentifier)) {
             // This is a an Id:

@@ -115,9 +115,7 @@ namespace Lemoine.WebService
         if ( (null == m_httpRequest)
             || (null == m_httpRequest.RawUrl)) {
           ILog log = LogManager.GetLogger (LOG_CATEGORY_PREFIX);
-          log.ErrorFormat ("No valid URL. " +
-                           "Completed in {0}",
-                           duration);
+          log.Error ($"No valid URL. Completed in {duration}");
           return;
         }
         else { // Valid URL
@@ -145,16 +143,14 @@ namespace Lemoine.WebService
           string source = GetRequestRemoteIp ();
           
           if (null != this.ThrownException) {
-            log.ErrorFormat ("Exception {0} in Source={1} Duration={2} URL={3} StackTrace={4}",
-                             this.ThrownException.Message, source, duration, url, this.ThrownException.StackTrace);
+            log.Error ($"Exception {this.ThrownException.Message} in Source={source} Duration={duration} URL={url} StackTrace={this.ThrownException.StackTrace}");
           }
           
           TimeSpan errorThreshold = Lemoine.Info.ConfigSet
             .LoadAndGet<TimeSpan> (LOG_REQUEST_ERROR_THRESHOLD_KEY,
                                    LOG_REQUEST_ERROR_THRESHOLD_DEFAULT);
           if (errorThreshold <= duration) {
-            log.ErrorFormat ("Source={0} Duration={1} URL={2}",
-                             source, duration, url);
+            log.Error ($"Source={source} Duration={duration} URL={url}");
             return;
           }
           
@@ -162,8 +158,7 @@ namespace Lemoine.WebService
             .LoadAndGet<TimeSpan> (LOG_REQUEST_WARN_THRESHOLD_KEY,
                                    LOG_REQUEST_WARN_THRESHOLD_DEFAULT);
           if (warnThreshold <= duration) {
-            log.WarnFormat ("Source={0} Duration={1} URL={2}",
-                            source, duration, url);
+            log.Warn ($"Source={source} Duration={duration} URL={url}");
             return;
           }
           
@@ -171,19 +166,18 @@ namespace Lemoine.WebService
             .LoadAndGet<TimeSpan> (LOG_REQUEST_INFO_THRESHOLD_KEY,
                                    LOG_REQUEST_INFO_THRESHOLD_DEFAULT);
           if (infoThreshold <= duration) {
-            log.InfoFormat ("Source={0} Duration={1} URL={2}",
-                            source, duration, url);
+            log.Info ($"Source={source} Duration={duration} URL={url}");
             return;
           }
           
-          log.DebugFormat ("Source={0} Duration={1} URL={2}",
-                           source, duration, url);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Source={source} Duration={duration} URL={url}");
+          }
         }
       }
       catch (Exception ex) {
         ILog log = LogManager.GetLogger (LOG_CATEGORY_PREFIX);
-        log.FatalFormat ("Unexpected exception {0}",
-                         ex);
+        log.Fatal ($"Unexpected exception {ex}");
       }
     }
     #endregion // IDisposable implementation

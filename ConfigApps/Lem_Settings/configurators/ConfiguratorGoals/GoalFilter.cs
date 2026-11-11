@@ -16,7 +16,6 @@ namespace ConfiguratorGoals
   {
     static readonly ILog log = LogManager.GetLogger(typeof (GoalFilter).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return true if the filter relates to a full company
     /// </summary>
@@ -40,7 +39,6 @@ namespace ConfiguratorGoals
     IMachineCategory Category { get; set; }
     IMachineSubCategory SubCategory { get; set; }
     IMachine Machine { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -137,7 +135,6 @@ namespace ConfiguratorGoals
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the description of the filter so that we know on what machine(s) it can be applied
     /// </summary>
@@ -315,6 +312,5 @@ namespace ConfiguratorGoals
       goal.Category = Category;
       goal.SubCategory = SubCategory;
     }
-    #endregion // Methods
   }
 }

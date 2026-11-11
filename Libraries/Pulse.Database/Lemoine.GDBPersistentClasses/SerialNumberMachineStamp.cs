@@ -24,11 +24,8 @@ namespace Lemoine.GDBPersistentClasses
   public class SerialNumberMachineStamp
     : MachineStamp, ISerialNumberMachineStamp
   {
-    #region Members
     string m_serialNumber;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -46,8 +43,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_serialNumber; }
       set { m_serialNumber = value; }
     }
-    
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -188,9 +183,7 @@ namespace Lemoine.GDBPersistentClasses
       else {
         // can be a problem (no operation cycle detected yet
         // but could also be a repeated scan)
-        log.ErrorFormat("No free operation cycle found at {0} on machine {1}",
-                        this.DateTime.ToString(),
-                        this.Machine.ToString());
+        log.Error ($"No free operation cycle found at {this.DateTime.ToString()} on machine {this.Machine.ToString()}");
         MarkAsPending (null);
         return;
       }
@@ -205,7 +198,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 

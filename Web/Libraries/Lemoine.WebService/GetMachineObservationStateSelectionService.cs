@@ -29,7 +29,6 @@ namespace Lemoine.WebService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request for GetMachineObservationStateSelection (no cache)
     /// </summary>
@@ -47,6 +46,5 @@ namespace Lemoine.WebService
         return allMachineModesDTOList;
       }
     }
-    #endregion // Methods
   }
 }

@@ -19,13 +19,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ShiftTemplate: BaseData, IShiftTemplate, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
     ISet<IShiftTemplateItem> m_items = new HashSet<IShiftTemplateItem> ();
     ISet<IShiftTemplateBreak> m_breaks = new HashSet<IShiftTemplateBreak> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftTemplate).FullName);
 
@@ -46,7 +44,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -127,7 +124,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ISet<IShiftTemplateBreak> Breaks {
       get { return m_breaks; }
     }
-    #endregion // Getters / Setters
         
     /// <summary>
     /// Append an item with the specified shift

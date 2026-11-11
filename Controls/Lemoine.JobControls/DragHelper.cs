@@ -13,8 +13,6 @@ namespace Lemoine.JobControls
   /// </summary>
   internal class DragHelper
   {
-
-    #region Members
     
     [DllImport("comctl32.dll")]
     public static extern bool InitCommonControls();
@@ -76,8 +74,6 @@ namespace Lemoine.JobControls
     /// <returns>Returns nonzero if successful, or zero otherwise. </returns>
     [DllImport("comctl32.dll", CharSet=CharSet.Auto)]
     public static extern bool ImageList_DragShowNolock(bool fShow);
-
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DragHelper).FullName);
 

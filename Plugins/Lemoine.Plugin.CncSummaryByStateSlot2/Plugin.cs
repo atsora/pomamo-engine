@@ -23,11 +23,8 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -73,9 +70,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         return m_database;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -134,6 +129,5 @@ GRANT SELECT ON TABLE plugins.cncsummarybystateslot2_values TO PUBLIC;");
     {
       Database.RemoveTable ("plugins.cncsummarybystateslot2_values");
     }
-    #endregion // Methods
   }
 }

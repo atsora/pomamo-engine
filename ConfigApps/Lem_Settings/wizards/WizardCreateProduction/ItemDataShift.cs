@@ -12,7 +12,6 @@ namespace WizardCreateProduction
   /// </summary>
   public class ItemDataShift
   {
-    #region Members
     public IList<int> m_quantities = new List<int>();
     public int m_shiftID = 0;
     public string m_shiftDisplay = "";
@@ -20,9 +19,7 @@ namespace WizardCreateProduction
     public DateTime m_startPeriod;
     public DateTime m_endPeriod;
     public bool m_enabled = true;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Information regarding a potential conflict with another production
     /// </summary>
@@ -42,7 +39,6 @@ namespace WizardCreateProduction
         return count;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -76,7 +72,6 @@ namespace WizardCreateProduction
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Textual description of data
     /// </summary>
@@ -86,6 +81,5 @@ namespace WizardCreateProduction
       return string.Format("  Day={0}, ShiftId = {1}\n  Quantities={2}\n  StartPeriod={3}, EndPeriod={4}",
                            m_day, m_shiftID, m_quantities, m_startPeriod, m_endPeriod);
     }
-    #endregion // Methods
   }
 }

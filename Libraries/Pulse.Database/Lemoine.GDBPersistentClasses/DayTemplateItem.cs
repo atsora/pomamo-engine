@@ -18,16 +18,13 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class DayTemplateItem: IDayTemplateItem, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     WeekDay m_weekDays = (WeekDay) Int32.MaxValue;
     TimeSpan m_cutOff;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DayTemplateItem).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// DayTemplateItem Id
     /// </summary>
@@ -83,7 +80,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_weekDays; }
       set { m_weekDays = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

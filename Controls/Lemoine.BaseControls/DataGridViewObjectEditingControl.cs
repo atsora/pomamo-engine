@@ -58,9 +58,7 @@ namespace Lemoine.BaseControls
             this.Value = Parse (this.Text);
           }
           catch (Exception ex) {
-            log.ErrorFormat ("EditingControlFormattedValue.set: " +
-                             "{0}",
-                             ex);
+            log.Error ($"EditingControlFormattedValue.set: {ex}");
           }
         }
       }
@@ -168,10 +166,7 @@ namespace Lemoine.BaseControls
         m_value = Parse (this.Text);
       }
       catch (Exception ex) {
-        log.WarnFormat ("OntTextChanged: " +
-                        "parse failed with {0} for {1} " +
-                        "=> use the initial value {2} instead",
-                        ex, this.Text, m_initialValue);
+        log.Warn ($"OntTextChanged: parse failed with {ex} for {this.Text} => use the initial value {m_initialValue} instead");
         m_value = m_initialValue;
       }
       m_valueChanged = true;
@@ -204,9 +199,7 @@ namespace Lemoine.BaseControls
         return Enum.Parse (typeof (DayOfWeek), text);
       }
       else {
-        log.ErrorFormat ("Parse: " +
-                         "unsupported type for old={0} new={1}",
-                         m_value, text);
+        log.Error ($"Parse: unsupported type for old={m_value} new={text}");
         throw new NotSupportedException ();
       }
       

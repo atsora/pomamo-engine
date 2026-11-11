@@ -122,8 +122,7 @@ namespace Lemoine.WebService
               IObservationStateSlot observationSlot = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
                 .GetLastIntersectWithRange (machine, currentMachineMode.Change, currentMachineMode.DateTime);
               if (null == observationSlot) {
-                log.ErrorFormat ("GetWithoutCache: no observation state slot in range {0}-{1} for machine id {2}",
-                  currentMachineMode.Change, currentMachineMode.DateTime, machine.Id);
+                log.Error ($"GetWithoutCache: no observation state slot in range {currentMachineMode.Change}-{currentMachineMode.DateTime} for machine id {machine.Id}");
               }
               else { // null != observationStateSlot
                 range = new UtcDateTimeRange (range.Intersects (observationSlot.DateTimeRange));

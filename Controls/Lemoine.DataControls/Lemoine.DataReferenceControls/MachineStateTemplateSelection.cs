@@ -19,16 +19,13 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class MachineStateTemplateSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     private System.Windows.Forms.Button m_okButton = null;
     IList<IMachineStateTemplate> m_machineStateTemplates = null;
     IMachineStateTemplate m_machineStateTemplate = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -119,7 +116,6 @@ namespace Lemoine.DataReferenceControls
         this.m_okButton = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -141,7 +137,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -179,7 +174,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void MachineStateTemplateSelectionLoad(object sender, EventArgs e)
     {

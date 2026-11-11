@@ -19,14 +19,9 @@ namespace Lemoine.Business.Time
   public sealed class DaySlotFromDay
     : IRequest<IDaySlot>
   {
-    #region Members
     readonly DateTime m_day;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DaySlotFromDay).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -38,9 +33,6 @@ namespace Lemoine.Business.Time
       m_day = day;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

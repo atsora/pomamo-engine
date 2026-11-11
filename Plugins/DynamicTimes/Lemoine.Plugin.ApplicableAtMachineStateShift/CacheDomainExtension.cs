@@ -28,7 +28,7 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
       {
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }
@@ -65,9 +65,7 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
       case "nonconformancereport":
         return new List<string> { };
       default:
-        log.ErrorFormat ("GetPrefixexByMachine: " +
-                         "unknown domain {0}",
-                         domain);
+        log.Error ($"GetPrefixexByMachine: unknown domain {domain}");
         Debug.Assert (false);
         throw new NotImplementedException ("Domain " + domain);
       }

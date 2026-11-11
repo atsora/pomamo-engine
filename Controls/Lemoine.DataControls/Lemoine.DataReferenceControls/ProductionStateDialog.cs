@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (ProductionStateDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null ProductionState a valid value ?
     /// </summary>
@@ -66,7 +65,6 @@ namespace Lemoine.DataReferenceControls
         this.productionStateSelection1.SelectedProductionStates = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -85,9 +83,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("ProductionStateDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

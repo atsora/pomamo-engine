@@ -100,7 +100,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // IMergeDAO implementation
 
-    #region Methods
     /// <summary>
     /// Find Customer by Name
     /// </summary>
@@ -152,7 +151,6 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Like ("Name", pattern, MatchMode.Start, null))
         .List<ICustomer> ();
     }
-    #endregion // Methods
   }
 }
 

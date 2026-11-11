@@ -41,8 +41,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
     {
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.WarnFormat ("Initialize: " +
-                        "the configuration is not valid");
+        log.Warn ("Initialize: the configuration is not valid");
         return false;
       }
 
@@ -54,9 +53,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
           m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
             .FindById (machineFilterId);
           if (null == m_machineFilter) {
-            log.ErrorFormat ("Initialize: " +
-                             "machine filter id {0} does not exist",
-                             machineFilterId);
+            log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
             return false;
           }
         }
@@ -66,9 +63,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
         m_machineMode = ModelDAOHelper.DAOFactory.MachineModeDAO
           .FindById (machineModeId);
         if (null == m_machineMode) {
-          log.ErrorFormat ("Initialize: " +
-                           "Machine Mode {0} could not be loaded",
-                           machineModeId);
+          log.Error ($"Initialize: Machine Mode {machineModeId} could not be loaded");
           return false;
         }
 
@@ -77,9 +72,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
         m_eventLevel = ModelDAOHelper.DAOFactory.EventLevelDAO
           .FindById (eventLevelId);
         if (null == m_eventLevel) {
-          log.ErrorFormat ("Initialize: " +
-                           "event level {0} could not be loaded",
-                           eventLevelId);
+          log.Error ($"Initialize: event level {eventLevelId} could not be loaded");
           return false;
         }
 
@@ -141,8 +134,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
     void CheckFact (IFact fact)
     {
       if (null == m_machineMode) {
-        log.FatalFormat ("CheckFact: " +
-                         "m_MachineMode is null");
+        log.Fatal ("CheckFact: m_MachineMode is null");
         Debug.Assert (null != m_machineMode);
         return;
       }
@@ -152,7 +144,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
       var activityRange = fact.Range;
 
       if (null == machineMode) {
-        log.FatalFormat ("CheckFact: machineMode is null");
+        log.Fatal ("CheckFact: machineMode is null");
         Debug.Assert (null != machineMode);
         return;
       }
@@ -173,16 +165,16 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
           Debug.Assert (range.Duration.HasValue);
           var duration = range.Duration.Value;
           if (m_maxDuration <= duration) {
-            log.InfoFormat ("CheckFact: period {0}-{1} detected for {2}",
-              m_periodStart.Value, activityRange.Upper.Value, machineMode);
+            log.Info ($"CheckFact: period {m_periodStart.Value}-{activityRange.Upper.Value} detected for {machineMode}");
             CreateEvent (range);
             m_periodProcessed = true;
           }
         }
         else { // !m_periodStart.HasValue
           Debug.Assert (activityRange.Lower.HasValue);
-          log.DebugFormat ("CheckFact: new acquisition error period at {0}, record it",
-            activityRange.Lower.Value);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CheckFact: new acquisition error period at {activityRange.Lower.Value}, record it");
+          }
           Debug.Assert (activityRange.Duration.HasValue);
           var duration = activityRange.Duration.Value;
           if (m_maxDuration <= duration) {
@@ -222,8 +214,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
     {
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (var transaction = session.BeginTransaction ("Plugin.AcquisitionErrorEvent.CreateEvent", TransactionLevel.ReadCommitted)) {
-          log.InfoFormat ("CreateEvent: period {0} detected for {2}",
-            range, m_machineMode);
+          log.Info ($"CreateEvent: period {range} detected for {m_machineMode}");
           var eventLevel = m_eventLevel;
           var eventAcquisitionError = new EventAcquisitionError (eventLevel, DateTime.UtcNow, m_machine, m_machineMode, range);
           new EventAcquisitionErrorDAO ().MakePersistent (eventAcquisitionError);

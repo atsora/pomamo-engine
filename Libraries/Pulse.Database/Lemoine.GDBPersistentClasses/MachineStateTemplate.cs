@@ -62,7 +62,6 @@ namespace Lemoine.GDBPersistentClasses
       m_userRequired = userRequired;
     }
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -259,7 +258,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_stops; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Append an item with the specified machine observation state

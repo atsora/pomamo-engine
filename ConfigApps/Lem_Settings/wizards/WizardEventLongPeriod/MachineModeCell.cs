@@ -14,7 +14,6 @@ namespace WizardEventLongPeriod
   /// </summary>
   public partial class MachineModeCell : UserControl
   {
-    #region Getters / Setters
     /// <summary>
     /// Machine mode represented
     /// </summary>
@@ -27,7 +26,6 @@ namespace WizardEventLongPeriod
       get { return checkBox.Checked; }
       set { checkBox.Checked = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

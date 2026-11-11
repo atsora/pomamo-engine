@@ -17,11 +17,8 @@ namespace ConfiguratorSlots
   /// </summary>
   public partial class Page3 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     IPartPage3 m_part = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -46,7 +43,6 @@ namespace ConfiguratorSlots
     /// An update will trigger a call to Initialize()
     /// </summary>
     public override IList<Type> EditableTypes { get { return m_part.EditableTypes; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

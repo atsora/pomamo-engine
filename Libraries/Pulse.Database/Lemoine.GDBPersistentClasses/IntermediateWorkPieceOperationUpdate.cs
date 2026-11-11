@@ -32,13 +32,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class IntermediateWorkPieceOperationUpdate : GlobalModification, IIntermediateWorkPieceOperationUpdate
   {
-    #region Members
     IIntermediateWorkPiece m_intermediateWorkPiece;
     IOperation m_oldOperation;
     IOperation m_newOperation;
     int m_oldQuantity;
     int m_newQuantity;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (IntermediateWorkPieceOperationUpdate).FullName);
 
@@ -64,7 +62,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -87,8 +84,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("IntermediateWorkPiece.set: " +
-                           "null value");
+          log.Error ("IntermediateWorkPiece.set: null value");
           throw new ArgumentNullException ("IntermediateWorkPieceOperationUpdate.IntermediateWorkPiece");
         }
         m_intermediateWorkPiece = value;
@@ -166,9 +162,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_newQuantity; }
       set { m_newQuantity = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     bool GetDataStructureOption (DataStructureConfigKey key)
     {
       return Lemoine.Info.ConfigSet
@@ -188,9 +182,9 @@ namespace Lemoine.GDBPersistentClasses
       // - If only the operation quantity changed (because for example because of a previous mistake):
       if (object.Equals (this.OldOperation, this.NewOperation)) {
         Debug.Assert (!object.Equals (this.OldQuantity, this.NewQuantity)); // Else, what else for ?
-        log.DebugFormat ("MakeAnalysis: " +
-                         "only the quantity changed from {0} to {1}",
-                         this.OldQuantity, this.NewQuantity);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAnalysis: only the quantity changed from {this.OldQuantity} to {this.NewQuantity}");
+        }
         var extensions = Lemoine.Business.ServiceProvider
         .Get (new Lemoine.Business.Extension.GlobalExtensions<IIntermediateWorkPieceExtension> ());
         foreach (var extension in extensions) {
@@ -257,10 +251,7 @@ namespace Lemoine.GDBPersistentClasses
         // in case the component is unique for an operation
         Debug.Assert (this.IntermediateWorkPiece.ComponentIntermediateWorkPieces.Count <= 1);
         if (this.IntermediateWorkPiece.ComponentIntermediateWorkPieces.Count > 1) {
-          log.FatalFormat ("MakeAnalysis: " +
-                           "more than one component for intermediate work piece {0} " +
-                           "although there should be only one according to the options",
-                           this.IntermediateWorkPiece);
+          log.Fatal ($"MakeAnalysis: more than one component for intermediate work piece {this.IntermediateWorkPiece} although there should be only one according to the options");
         }
         IComponent component = null;
         if (this.IntermediateWorkPiece.ComponentIntermediateWorkPieces.Count > 0) {
@@ -306,10 +297,9 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

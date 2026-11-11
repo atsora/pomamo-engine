@@ -15,9 +15,7 @@ namespace Lemoine.Info
   /// </summary>
   public sealed class OptionsFile
   {
-    #region Members
     IGenericConfigReader m_configReader;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OptionsFile).FullName);
 
@@ -34,7 +32,6 @@ namespace Lemoine.Info
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get an option value
     /// 
@@ -60,7 +57,6 @@ namespace Lemoine.Info
         throw;
       }
     }
-    #endregion // Methods
     
     #region Instance
     static OptionsFile Instance

@@ -23,12 +23,10 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class DataStructureDisplayConfig : UserControl
   {
-    #region Members
     SortableBindingList<IDisplay> m_displays = new SortableBindingList<IDisplay>();
     
     ISet<DataGridViewRow> m_updateSet =
       new HashSet<DataGridViewRow> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DataStructureDisplayConfig).FullName);
 
@@ -62,8 +60,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("DataStructureDisplayConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("DataStructureDisplayConfigLoad: no DAO factory is defined");
         return;
       }
       

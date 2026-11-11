@@ -17,14 +17,12 @@ namespace Lemoine.Plugin.LongPeriodEventConfig
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Priority of the plugin
     /// </summary>
     [PluginConf ("Double", "Priority", Description = "Plugin priority. Default: 20.0", Parameters = "100000:3", Multiple = false, Optional = false)]
     [DefaultValue (20.0)]
     public double Priority { get; set; } = 20.0;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

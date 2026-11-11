@@ -23,7 +23,6 @@ namespace WizardMonitorMachine
     public CncParameterUrl(XmlNode node) : base(node) {}
     #endregion // Constructors
 
-    #region Methods
     protected override bool Parse(XmlAttributeCollection attributes)
     {
       return true;
@@ -64,6 +63,5 @@ namespace WizardMonitorMachine
         return e.Message.Replace("URI", "URL");
       }
     }
-    #endregion // Methods
   }
 }

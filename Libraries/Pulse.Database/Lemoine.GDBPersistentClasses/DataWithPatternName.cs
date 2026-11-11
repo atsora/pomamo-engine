@@ -23,7 +23,6 @@ namespace Lemoine.GDBPersistentClasses
     
     static readonly ILog log = LogManager.GetLogger(typeof (DataWithPatternName).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Display name that is deduced from the display table
     /// </summary>
@@ -36,7 +35,6 @@ namespace Lemoine.GDBPersistentClasses
       }
       set { }
     }
-    #endregion // Getters / Setters
     
     #region IDisplay implementation
     /// <summary>
@@ -49,9 +47,7 @@ namespace Lemoine.GDBPersistentClasses
       Type t = this.GetType();
       string pattern = GetPattern (t, variant);
       if (string.IsNullOrEmpty (pattern)) {
-        log.WarnFormat ("Display.get: " +
-                        "no pattern is defined for {0}",
-                        this.GetType ().Name);
+        log.Warn ($"Display.get: no pattern is defined for {this.GetType ().Name}");
         return "";
       }
       else {
@@ -68,9 +64,7 @@ namespace Lemoine.GDBPersistentClasses
           result = result.Replace (match.Value, GetKeywordValue (this, match.Groups [1].Value));
         }
         catch (Exception ex) {
-          log.ErrorFormat ("GetDisplayFromPattern: " +
-                           "got error {0} in match {1}",
-                           ex, match);
+          log.Error ($"GetDisplayFromPattern: got error {ex} in match {match}");
         }
       }
       return result;
@@ -87,10 +81,7 @@ namespace Lemoine.GDBPersistentClasses
         object subObjectValue =
           property.GetValue (o, null);
         if (null == subObjectValue) {
-          log.InfoFormat ("GetDisplayFromPattern: " +
-                          "sub-object {0} is not valid for {1} " +
-                          "return an empty string",
-                          subObject, o);
+          log.Info ($"GetDisplayFromPattern: sub-object {subObject} is not valid for {o} return an empty string");
           return "";
         }
         else { // null != subObjectValue
@@ -101,10 +92,7 @@ namespace Lemoine.GDBPersistentClasses
         object propertyValue =
           o.GetType ().GetProperty (keyword).GetValue (o, null);
         if (null == propertyValue) {
-          log.InfoFormat ("Display.get: " +
-                          "null value for property {0}, " +
-                          "replace it by an emptpy string",
-                          keyword);
+          log.Info ($"Display.get: null value for property {keyword}, replace it by an emptpy string");
           return "";
         }
         else { // null != propertyValue
@@ -119,9 +107,9 @@ namespace Lemoine.GDBPersistentClasses
             propertyString =
               propertyValue.ToString ().Trim ();
           }
-          log.DebugFormat ("Display.get: " +
-                           "replace property {0} by {1}",
-                           keyword, propertyString);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Display.get: replace property {keyword} by {propertyString}");
+          }
           return propertyString;
         }
       }
@@ -134,42 +122,40 @@ namespace Lemoine.GDBPersistentClasses
       // - Try from the ConfigSet with the variant
       pattern = GetPatternFromConfigSet (type, variant);
       if (!string.IsNullOrEmpty (pattern)) {
-        log.DebugFormat ("GetPattern: " +
-                         "consider pattern {0} from config set for type {1} and variant {2}",
-                         pattern, type, variant);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetPattern: consider pattern {pattern} from config set for type {type} and variant {variant}");
+        }
         return pattern;
       }
       
       // - Try to get it from the database with the variant
       pattern = GetPatternFromDatabase (type, variant);
       if (!string.IsNullOrEmpty (pattern)) {
-        log.DebugFormat ("GetPattern: " +
-                         "consider pattern {0} from database for type {1} and variant {2}",
-                         pattern, type, variant);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetPattern: consider pattern {pattern} from database for type {type} and variant {variant}");
+        }
         return pattern;
       }
       
       // - Try from the ConfigSet without the variant
       pattern = GetPatternFromConfigSet (type, null);
       if (!string.IsNullOrEmpty (pattern)) {
-        log.DebugFormat ("GetPattern: " +
-                         "consider pattern {0} from config set for type {1}",
-                         pattern, type);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetPattern: consider pattern {pattern} from config set for type {type}");
+        }
         return pattern;
       }
       
       // - Try to get it from the database without the variant
       pattern = GetPatternFromDatabase (type, null);
       if (!string.IsNullOrEmpty (pattern)) {
-        log.DebugFormat ("GetPattern: " +
-                         "consider pattern {0} from database for type {1}",
-                         pattern, type);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetPattern: consider pattern {pattern} from database for type {type}");
+        }
         return pattern;
       }
       
-      log.WarnFormat ("GetPattern: " +
-                      "no pattern was found for {0}",
-                      type);
+      log.Warn ($"GetPattern: no pattern was found for {type}");
       return "";
     }
 

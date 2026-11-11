@@ -35,9 +35,6 @@ namespace Lem_LoopingService
 
     readonly IThreadService m_service;
 
-#region Getters / Setters
-#endregion // Getters / Setters
-
 #region Constructors
     /// <summary>
     /// Constructor

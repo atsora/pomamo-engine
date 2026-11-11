@@ -26,7 +26,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class StampingValue: BaseData, IStampingValue, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     ISequence m_sequence;
@@ -34,7 +33,6 @@ namespace Lemoine.GDBPersistentClasses
     string m_string;
     int? m_int;
     double? m_double;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (StampingValue).FullName);
 
@@ -61,8 +59,6 @@ namespace Lemoine.GDBPersistentClasses
       m_sequence.StampingValues.Add (this);
     }
     #endregion // Constructors
-    
-    #region Getters / Setters
     
     /// <summary>
     /// ID
@@ -209,9 +205,6 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual bool XmlSerializationDoubleSpecified{ get { return m_double.HasValue; } }
     
-    #endregion // Getters / Setters
-    
-    #region Methods
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
@@ -268,6 +261,5 @@ namespace Lemoine.GDBPersistentClasses
         return base.GetHashCode ();
       }
     }
-    #endregion // Methods
   }
 }

@@ -20,7 +20,6 @@ namespace Lemoine.Core.Plugin
 
     IAssemblyLoader m_assemblyLoader = null;
 
-    #region Getters / Setters
     /// <summary>
     /// Assembly loader
     /// </summary>
@@ -39,7 +38,6 @@ namespace Lemoine.Core.Plugin
         Instance.m_assemblyLoader = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

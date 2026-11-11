@@ -35,18 +35,15 @@ namespace Lemoine.JobControls
       CREATE = 2
     };
 
-    #region Members
     IPath m_path;
     DisplayMode m_displayMode;
     TreeNode m_node;
     IOperation m_operation;
     ITreeViewObservable m_observable;
     Type m_parentType;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (PathControl).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Getter / Setter for type of parent of Sequence node
     /// </summary>
@@ -89,8 +86,6 @@ namespace Lemoine.JobControls
         }
       }
     }
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -165,7 +160,6 @@ namespace Lemoine.JobControls
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Use informations in Path to fill text in box
     /// </summary>
@@ -194,7 +188,6 @@ namespace Lemoine.JobControls
         saveBtn.Enabled = false;
       }
     }
-    #endregion // Methods
 
     #region button click Methods
 

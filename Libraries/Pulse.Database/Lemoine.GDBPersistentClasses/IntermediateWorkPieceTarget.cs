@@ -18,7 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class IntermediateWorkPieceTarget: BaseData, IIntermediateWorkPieceTarget, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IIntermediateWorkPiece m_intermediateWorkPiece;
@@ -29,11 +28,9 @@ namespace Lemoine.GDBPersistentClasses
     IShift m_shift = null;
     int m_number = 0;
     // Note: if you add some summary values here, do not forget to update the method IsEmpty () accordingly
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (IntermediateWorkPieceTarget).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -197,7 +194,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_number; }
       set { m_number = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

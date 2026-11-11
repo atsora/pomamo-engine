@@ -766,9 +766,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       var range = GetNotAppliedRange ();
       if (GetLogger ().IsDebugEnabled) {
-        GetLogger ().DebugFormat ("MakeAnalysis: " +
-                                  "consider step {0}",
-                                  range);
+        GetLogger ().Debug ($"MakeAnalysis: consider step {range}");
       }
       if (range.IsEmpty ()) { // Already completed
         MarkAsCompleted ("");
@@ -794,8 +792,7 @@ namespace Lemoine.GDBPersistentClasses
           if (Bound.Compare<DateTime> (manualReasonProposal.DateTimeRange.Lower, this.Range.Lower) < 0) {
             Debug.Assert (this.Range.Lower.HasValue);
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("MakeAnalysis: shorten reason proposal id={0} to {1}",
-                manualReasonProposal.Id, this.Range.Lower);
+              GetLogger ().Debug ($"MakeAnalysis: shorten reason proposal id={manualReasonProposal.Id} to {this.Range.Lower}");
             }
             manualReasonProposal.DateTimeRange =
               new UtcDateTimeRange (manualReasonProposal.DateTimeRange.Lower, this.Range.Lower.Value);
@@ -806,8 +803,7 @@ namespace Lemoine.GDBPersistentClasses
           else if (Bound.Compare<DateTime> (this.Range.Upper, manualReasonProposal.DateTimeRange.Upper) < 0) {
             Debug.Assert (this.Range.Upper.HasValue);
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("MakeAnalysis: new start of reason proposal id={0} at {1}",
-                manualReasonProposal.Id, this.Range.Upper);
+              GetLogger ().Debug ($"MakeAnalysis: new start of reason proposal id={manualReasonProposal.Id} at {this.Range.Upper}");
             }
             manualReasonProposal.DateTimeRange =
               new UtcDateTimeRange (this.Range.Upper.Value,
@@ -828,8 +824,7 @@ namespace Lemoine.GDBPersistentClasses
           parentReasonMachineAssociation.CancelFormerManualReasonProposals ();
         }
         else {
-          GetLogger ().ErrorFormat ("CancelFormerManualReasonProposals: parent {0} is not a IReasonMachineAssociation, type is {1}",
-            parent, parent.GetType ());
+          GetLogger ().Error ($"CancelFormerManualReasonProposals: parent {parent} is not a IReasonMachineAssociation, type is {parent.GetType ()}");
         }
       }
     }
@@ -1066,8 +1061,7 @@ namespace Lemoine.GDBPersistentClasses
         var reasonProposal = ModelDAOHelper.DAOFactory.ReasonProposalDAO
           .Get (this);
         if (null != reasonProposal) {
-          GetLogger ().FatalFormat ("CheckNoReasonProposal: a reason proposal was found for parent modification id {0}",
-            ((IDataWithId<long>)this).Id);
+          GetLogger ().Fatal ($"CheckNoReasonProposal: a reason proposal was found for parent modification id {((IDataWithId<long>)this).Id}");
           ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakeTransient (reasonProposal);
           Debug.Assert (false);
         }
@@ -1078,8 +1072,7 @@ namespace Lemoine.GDBPersistentClasses
         parentReasonMachineAssociation.CheckNoReasonProposal ();
       }
       else {
-        GetLogger ().ErrorFormat ("CheckNoReasonProposal: parent {0} is not a IReasonMachineAssociation, type is {1}",
-          parent, parent.GetType ());
+        GetLogger ().Error ($"CheckNoReasonProposal: parent {parent} is not a IReasonMachineAssociation, type is {parent.GetType ()}");
       }
     }
 
@@ -1093,8 +1086,7 @@ namespace Lemoine.GDBPersistentClasses
           parentReasonMachineAssociation.AdjustReasonProposalEnd (end, cancelIfRequired, shortenOnly, ifExistsOnly);
         }
         else {
-          GetLogger ().ErrorFormat ("AdjustReasonProposalEnd: parent {0} is not a IReasonMachineAssociation, type is {1}",
-            parent, parent.GetType ());
+          GetLogger ().Error ($"AdjustReasonProposalEnd: parent {parent} is not a IReasonMachineAssociation, type is {parent.GetType ()}");
         }
       }
       else { // null == parent
@@ -1104,13 +1096,13 @@ namespace Lemoine.GDBPersistentClasses
           var range = new UtcDateTimeRange (reasonProposal.DateTimeRange.Lower, end);
           if (range.IsEmpty ()) {
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("AdjustReasonProposalEnd: new emty range for existing ReasonProposal => remove it");
+              GetLogger ().Debug ("AdjustReasonProposalEnd: new emty range for existing ReasonProposal => remove it");
             }
             if (cancelIfRequired) {
               CancelReasonSlots (reasonProposal.DateTimeRange);
             }
             else {
-              GetLogger ().FatalFormat ("AdjustReasonProposalEnd: about to remove a reason proposal for range {0} while the cancelIfRequired option is off", reasonProposal.DateTimeRange);
+              GetLogger ().Fatal ($"AdjustReasonProposalEnd: about to remove a reason proposal for range {reasonProposal.DateTimeRange} while the cancelIfRequired option is off");
               Debug.Assert (false);
             }
             ModelDAOHelper.DAOFactory.ReasonProposalDAO.MakeTransient (reasonProposal);
@@ -1119,7 +1111,7 @@ namespace Lemoine.GDBPersistentClasses
             var compare = Bound.Compare<DateTime> (end, reasonProposal.DateTimeRange.Upper);
             if (0 == compare) {
               if (GetLogger ().IsDebugEnabled) {
-                GetLogger ().DebugFormat ("AdjustReasonProposalEnd: no change");
+                GetLogger ().Debug ("AdjustReasonProposalEnd: no change");
               }
               return; // No change
             }
@@ -1129,22 +1121,22 @@ namespace Lemoine.GDBPersistentClasses
                 CancelReasonSlots (cancelRange);
               }
               else {
-                GetLogger ().FatalFormat ("AdjustReasonProposalEnd: new end {0} is before existing end {1} while the cancelIfRequired option is off", end, reasonProposal.DateTimeRange.Upper);
+                GetLogger ().Fatal ($"AdjustReasonProposalEnd: new end {end} is before existing end {reasonProposal.DateTimeRange.Upper} while the cancelIfRequired option is off");
                 Debug.Assert (false);
               }
               if (GetLogger ().IsDebugEnabled) {
-                GetLogger ().DebugFormat ("AdjustReasonProposalEnd: shorten reason proposal from {0} to{1}", reasonProposal.DateTimeRange, range);
+                GetLogger ().Debug ($"AdjustReasonProposalEnd: shorten reason proposal from {reasonProposal.DateTimeRange} to{range}");
               }
             }
             else { // 0 < compare: new reason proposal longer
               Debug.Assert (0 < compare);
               Debug.Assert (reasonProposal.DateTimeRange.Upper.HasValue);
               if (GetLogger ().IsDebugEnabled) {
-                GetLogger ().DebugFormat ("AdjustReasonProposalEnd: longer reason proposal: extend {0} to{1}", reasonProposal.DateTimeRange, range);
+                GetLogger ().Debug ($"AdjustReasonProposalEnd: longer reason proposal: extend {reasonProposal.DateTimeRange} to{range}");
               }
               if (shortenOnly) {
                 if (GetLogger ().IsDebugEnabled) {
-                  GetLogger ().DebugFormat ("AdjustReasonProposalEnd: shortenonly option on => do nothing");
+                  GetLogger ().Debug ("AdjustReasonProposalEnd: shortenonly option on => do nothing");
                 }
                 return;
               }
@@ -1157,7 +1149,7 @@ namespace Lemoine.GDBPersistentClasses
           var range = new UtcDateTimeRange (this.Begin, end);
           if (range.IsEmpty ()) {
             if (GetLogger ().IsDebugEnabled) {
-              GetLogger ().DebugFormat ("AdjustReasonProposalEnd: new ReasonProposal with an empty range");
+              GetLogger ().Debug ("AdjustReasonProposalEnd: new ReasonProposal with an empty range");
             }
           }
           else { // !range.IsEmpty ()
@@ -1340,7 +1332,7 @@ namespace Lemoine.GDBPersistentClasses
         // it could not be converted to a IReasonMachineAssociation
         Debug.Assert (null != parent); // Because by design, a Kind=TrackDynamicEnd reason machine association is a sub-modification of a reason machine association with a dynamic end
         if (null == parent) {
-          GetLogger ().FatalFormat ("GetParentMachine: no parent id={0} for modification id={0}", ((IDataWithId<long>)this.Parent).Id, this.Id);
+          GetLogger ().Fatal ($"GetParentMachine: no parent id={((IDataWithId<long>)this.Parent).Id} for modification id={this.Id}");
           AddAnalysisLog (LogLevel.CRIT, "Missing parent for a reasonmachineassociation with Kind=TrackDynamicEnd");
           Debug.Assert (false);
           return null;
@@ -1361,15 +1353,14 @@ namespace Lemoine.GDBPersistentClasses
             return (IReasonMachineAssociation)this.ParentMachine;
           }
           else {
-            GetLogger ().FatalFormat ("GetParentReasonMachineAssociation: ReasonMachineAssociation parent could not be converted to IReasonMachineAssociation, its type is {0}",
-              this.ParentMachine.GetType ());
+            GetLogger ().Fatal ($"GetParentReasonMachineAssociation: ReasonMachineAssociation parent could not be converted to IReasonMachineAssociation, its type is {this.ParentMachine.GetType ()}");
             Debug.Assert (false);
             return null;
           }
         }
         else {
           // Note: for the moment error, because it should never happen...
-          GetLogger ().ErrorFormat ("GetParentReasonMachineAssociation: parent is not a reason machine association, its modification type is {0}", this.ParentMachine.ModificationType);
+          GetLogger ().Error ($"GetParentReasonMachineAssociation: parent is not a reason machine association, its modification type is {this.ParentMachine.ModificationType}");
           return null;
         }
       }
@@ -1381,7 +1372,7 @@ namespace Lemoine.GDBPersistentClasses
         // it could not be converted to a IReasonMachineAssociation
         Debug.Assert (null != parent); // Because by design, a Kind=TrackDynamicEnd reason machine association is a sub-modification of a reason machine association with a dynamic end
         if (null == parent) {
-          GetLogger ().FatalFormat ("GetParentReasonMachineAssociation: no parent id={0} for modification id={0}", ((IDataWithId<long>)this.Parent).Id, this.Id);
+          GetLogger ().Fatal ($"GetParentReasonMachineAssociation: no parent id={((IDataWithId<long>)this.Parent).Id} for modification id={this.Id}");
           AddAnalysisLog (LogLevel.CRIT, "Missing parent for a reasonmachineassociation with Kind=TrackDynamicEnd");
           Debug.Assert (false);
           return null;
@@ -1395,9 +1386,9 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     void CreateLinkOperation ()
     {
-      GetLogger ().DebugFormat ("CreateLinkOperation: " +
-        "create link operation {0}",
-        this.Reason.LinkOperationDirection);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"CreateLinkOperation: create link operation {this.Reason.LinkOperationDirection}");
+      }
       ILinkOperation linkOperation = ModelDAOHelper.ModelFactory
         .CreateLinkOperation (this.Machine, this.Reason.LinkOperationDirection, this.Range);
       ModelDAOHelper.DAOFactory.LinkOperationDAO.MakePersistent (linkOperation);
@@ -1420,8 +1411,7 @@ namespace Lemoine.GDBPersistentClasses
       if (null == machineStatus) {
         string message = string.Format ("no MachineStatus found for {0}, create one",
                                         this.Machine);
-        GetLogger ().WarnFormat ("CheckMachineStatus: {0}",
-                         message);
+        GetLogger ().Warn ($"CheckMachineStatus: {message}");
         AddAnalysisLog (LogLevel.WARN,
                         message);
         var monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
@@ -1431,8 +1421,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       Debug.Assert (null != machineStatus);
       if (GetLogger ().IsDebugEnabled) {
-        GetLogger ().DebugFormat ("CheckMachineStatus: with reason {0} period {1}-{2}",
-                         this.Reason, this.Begin, this.End);
+        GetLogger ().Debug ($"CheckMachineStatus: with reason {this.Reason} period {this.Begin}-{this.End}");
       }
       if (Bound.Compare<DateTime> (machineStatus.ReasonSlotEnd, this.Begin) < 0) { // Future
         GetLogger ().Debug ("CheckMachineStatus: future reason machine association => do it later (status pending)");
@@ -1534,7 +1523,7 @@ namespace Lemoine.GDBPersistentClasses
       var notProcessedRange = GetNotPocessedRange ();
       if (notProcessedRange.IsEmpty ()) {
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("MakeAnalysisDynamicEndProgressive: GetNotProcessedRange returned an empty range => completed");
+          GetLogger ().Debug ("MakeAnalysisDynamicEndProgressive: GetNotProcessedRange returned an empty range => completed");
         }
         MarkAsCompleted ("");
         return;
@@ -1549,7 +1538,7 @@ namespace Lemoine.GDBPersistentClasses
           .GetDynamicTime (dynamicEnd, this.Machine, this.DynamicTimeRange, new UtcDateTimeRange (notProcessedRange.Lower.Value), limit);
       }
       catch (NoDynamicTime) {
-        GetLogger ().ErrorFormat ("MakeAnalysisDynamicEndProgress: unknown dynamic end {0}", dynamicEnd);
+        GetLogger ().Error ($"MakeAnalysisDynamicEndProgress: unknown dynamic end {dynamicEnd}");
         SetModificationInError ("Dynamic end " + dynamicEnd + " unknown");
         return;
       }
@@ -1582,29 +1571,27 @@ namespace Lemoine.GDBPersistentClasses
                                                              dynamicEndResponse.Hint.Lower.Value);
         UtcDateTimeRange restrictedRange = new UtcDateTimeRange (notProcessedRange.Intersects (restriction));
         if (restrictedRange.IsEmpty ()) {
-          GetLogger ().DebugFormat ("MakeAnalysisDynamicEndProgressive: " +
-                           "after / before: restricted range is empty => nothing to do");
+          if (GetLogger ().IsDebugEnabled) {
+            GetLogger ().Debug ("MakeAnalysisDynamicEndProgressive: after / before: restricted range is empty => nothing to do");
+          }
           MarkAsPending (dynamicEndResponse.Hint.Lower.Value);
           return;
         }
         else { // range ok: two sub-modifications
           { // Before After
-            GetLogger ().InfoFormat ("MakeAnalysisDynamicEndProgressive: " +
-                            "after / before: restrict {0} to {1}",
-                            this, dynamicEndResponse.Hint.Lower.Value);
+            GetLogger ().Info ($"MakeAnalysisDynamicEndProgressive: after / before: restrict {this} to {dynamicEndResponse.Hint.Lower.Value}");
             ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
               .InsertSub (this, restrictedRange, (x) => x.Dynamic = null, null);
           }
           { // After After
             UtcDateTimeRange afterRestrictedRange = new UtcDateTimeRange (notProcessedRange.Intersects (dynamicEndResponse.Hint));
             if (afterRestrictedRange.IsEmpty ()) {
-              GetLogger ().DebugFormat ("MakeAnalysisDynamicEndProgressive: " +
-                               "after / after: restricted range is empty => nothing to do");
+              if (GetLogger ().IsDebugEnabled) {
+                GetLogger ().Debug ("MakeAnalysisDynamicEndProgressive: after / after: restricted range is empty => nothing to do");
+              }
             }
             else { // range ok
-              GetLogger ().InfoFormat ("MakeAnalysisDynamicEndProgressive: " +
-                              "after / after: restrict {0} to {1}",
-                              this, dynamicEndResponse.Hint);
+              GetLogger ().Info ($"MakeAnalysisDynamicEndProgressive: after / after: restrict {this} to {dynamicEndResponse.Hint}");
               if (this.Dynamic.EndsWith ("+")) {
                 Debug.Assert (this.End <= afterRestrictedRange.Lower);
                 ModelDAOHelper.DAOFactory.ReasonMachineAssociationDAO
@@ -1704,7 +1691,7 @@ namespace Lemoine.GDBPersistentClasses
           { // One to track the dynamic end and cancel the request if necessary
             if (!dynamicEndResponse.Hint.Overlaps (this.Range)) {
               if (GetLogger ().IsDebugEnabled) {
-                GetLogger ().DebugFormat ("MakeAnalysisDynamicEndAggressive: hint does not overlap range => no DynamicEndTracker");
+                GetLogger ().Debug ("MakeAnalysisDynamicEndAggressive: hint does not overlap range => no DynamicEndTracker");
               }
             }
             else {
@@ -1801,7 +1788,9 @@ namespace Lemoine.GDBPersistentClasses
                                                            dynamicApplicableEnd);
       UtcDateTimeRange restrictedRange = new UtcDateTimeRange (range.Intersects (restriction));
       if (restrictedRange.IsEmpty ()) {
-        GetLogger ().DebugFormat ("ApplyDynamicEnd: restricted range is empty => nothing to do");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("ApplyDynamicEnd: restricted range is empty => nothing to do");
+        }
       }
       else { // range ok
         GetLogger ().Info ($"ApplyDynamicEnd: restrict {this} to {dynamicApplicableEnd}");
@@ -1961,8 +1950,7 @@ namespace Lemoine.GDBPersistentClasses
           }
         }
         if (GetLogger ().IsDebugEnabled) {
-          GetLogger ().DebugFormat ("CancelReasonSlots: process of reason slot id={0} completed with new reason id {1}",
-            reasonSlot.Id, reasonSlot.Reason.Id);
+          GetLogger ().Debug ($"CancelReasonSlots: process of reason slot id={reasonSlot.Id} completed with new reason id {reasonSlot.Reason.Id}");
         }
       }
     }

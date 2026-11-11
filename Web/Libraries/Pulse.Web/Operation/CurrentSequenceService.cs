@@ -41,7 +41,6 @@ namespace Pulse.Web.Operation
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -142,7 +141,7 @@ namespace Pulse.Web.Operation
               range = new UtcDateTimeRange (correctedRange);
               Debug.Assert (!range.IsEmpty ());
               if (range.IsEmpty ()) {
-                log.FatalFormat ("AddMachineModuleData: corrected range is empty, which is unexpected");
+                log.Fatal ("AddMachineModuleData: corrected range is empty, which is unexpected");
               }
             }
             else { // OperationDetectionStatus unknown (or it can't be considered since before the sequenceSlot). Keep only the machining sequences (else they should have been managed in the case above, where the range contains at)
@@ -183,6 +182,5 @@ namespace Pulse.Web.Operation
         }
       }
     }
-    #endregion // Methods
   }
 }

@@ -14,7 +14,6 @@ namespace WizardMonitorMachine
   /// </summary>
   public partial class ModuleStampingGrid : UserControl
   {
-    #region Members
     bool m_readOnlyState = false;
 
     RichTextBox m_textDescription = new RichTextBox ();
@@ -36,9 +35,7 @@ namespace WizardMonitorMachine
     TextBox m_oldSequence = new TextBox ();
     TextBox m_oldMilestone = new TextBox ();
     TextBox m_oldDetection = new TextBox ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Readonly state of the controls
     /// </summary>
@@ -211,7 +208,6 @@ namespace WizardMonitorMachine
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

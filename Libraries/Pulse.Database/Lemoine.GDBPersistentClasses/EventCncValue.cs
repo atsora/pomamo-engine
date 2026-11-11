@@ -68,7 +68,7 @@ namespace Lemoine.GDBPersistentClasses
       set // public because of the XmlSerialization
       {
         if (null == value) {
-          log.FatalFormat ("Message can't be null");
+          log.Fatal ("Message can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Message in EventCncValue");        }
         else {
@@ -88,7 +88,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set
       {
         if (null == value) {
-          log.FatalFormat ("MachineModule can't be null");
+          log.Fatal ("MachineModule can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null MachineModule in EventCncValue");        }
         else {
@@ -147,7 +147,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_field; }
       protected set {
         if (null == value) {
-          log.FatalFormat ("Field can't be null");
+          log.Fatal ("Field can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Field in EventCncValue");
         } else {

@@ -143,12 +143,12 @@ namespace Pulse.Web.CommonResponseDTO
           var businessResponse = Lemoine.Business.ServiceProvider
             .Get (businessRequest);
           if (null == businessResponse) {
-            log.FatalFormat ("GetWithoutCache: unexpected null business response");
+            log.Fatal ("GetWithoutCache: unexpected null business response");
             return;
           }
           if (!businessResponse.Dynamic.HasValue) {
             if (log.IsWarnEnabled) {
-              log.WarnFormat ($"GetWithoutCache: dynamic is not set, no zoom is implemented for {group.Id}, return");
+              log.Warn ($"GetWithoutCache: dynamic is not set, no zoom is implemented for {group.Id}, return");
             }
             return;
           }

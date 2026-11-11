@@ -19,7 +19,6 @@ namespace Lemoine.Plugin.LongCurrentReasonSeverity
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Include periods where the running status is unknown
     /// </summary>
@@ -47,7 +46,6 @@ namespace Lemoine.Plugin.LongCurrentReasonSeverity
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

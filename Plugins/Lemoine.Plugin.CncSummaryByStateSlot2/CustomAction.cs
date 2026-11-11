@@ -22,7 +22,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
   {
     static readonly ILog log = LogManager.GetLogger (typeof (CustomAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Help text for the configuration
     /// </summary>
@@ -33,7 +32,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     /// </summary>
     [PluginConf ("UtcDateTimeRange", "Period", Optional = false)]
     public UtcDateTimeRange Range { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -44,7 +42,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -108,6 +105,5 @@ WHERE startdatetime < '{1}' AND enddatetime > '{0}'
         }
       }
     }
-    #endregion // Methods
   }
 }

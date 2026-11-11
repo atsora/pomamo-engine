@@ -243,8 +243,7 @@ namespace Lemoine.GDBPersistentClasses
       UtcDateTimeRange effectiveRange = new UtcDateTimeRange (range.Intersects (new UtcDateTimeRange (AnalysisConfigHelper.MinTemplateProcessDateTime,
                                                                                                       DateTime.UtcNow.Add (AnalysisConfigHelper.MaxShiftSlotProcess))));
       if (effectiveRange.IsEmpty ()) {
-        log.WarnFormat ("ProcessInRange: " +
-                        "effective range is empty");
+        log.Warn ("ProcessInRange: effective range is empty");
         return;
       }
 

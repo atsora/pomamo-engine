@@ -36,17 +36,12 @@ namespace Lemoine.JobControls
       CREATE = 2
     };
     
-    #region Members
     IIntermediateWorkPiece m_intermediateWorkPiece;
     DisplayMode m_displayMode;
     TreeNode m_node;
     ITreeViewObservable m_observable;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (IntermediateWorkPieceControl).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     
     #region Constructors
@@ -122,8 +117,6 @@ namespace Lemoine.JobControls
     
     #endregion
 
-    
-    #region Methods
     
     /// <summary>
     /// Use informations in IntermediateWorkPiece to fill text in box
@@ -289,8 +282,6 @@ namespace Lemoine.JobControls
       return false;
     }
 
-    #endregion // Methods
-
     
     #region Button Click Methods
     
@@ -323,7 +314,7 @@ namespace Lemoine.JobControls
       }
       if (oldOperationQuantity != m_intermediateWorkPiece.OperationQuantity) {
         if (!Lemoine.WebClient.Request.ClearDomain ("operationinformationchange")) {
-          log.ErrorFormat ("SaveBtnClick: clear domain failed");
+          log.Error ("SaveBtnClick: clear domain failed");
         }
       }
       m_observable.ReloadTreeNodes(m_node);

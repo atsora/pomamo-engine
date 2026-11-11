@@ -20,13 +20,10 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class MachineModeSelection : UserControl
   {
-    #region Members
     IList<IMachineMode> m_machineModes = new List<IMachineMode>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineModeSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -102,7 +99,6 @@ namespace Lemoine.DataReferenceControls
         m_machineModes.Add(value);
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -125,7 +121,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -154,7 +149,6 @@ namespace Lemoine.DataReferenceControls
     {
       treeView.AddDetermineColorFunction(lambda);
     }
-    #endregion // Methods
     
     /// <summary>
     /// Reload the control

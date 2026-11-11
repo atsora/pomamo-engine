@@ -82,7 +82,6 @@ namespace Lemoine.Analysis
       "Analysis.Global.CleanFlaggedModifications.MaxTime";
     static readonly TimeSpan MAX_TIME_CLEAN_FLAGGED_MODIFICATIONS_DEFAULT = TimeSpan.FromMinutes (10);
 
-    #region Members
     readonly IActivityAnalysis m_activityAnalysis;
     bool m_initialized = false;
     readonly Lemoine.ModelDAO.TransactionLevel m_restrictedTransactionLevel = Lemoine.ModelDAO.TransactionLevel.Serializable;
@@ -97,11 +96,9 @@ namespace Lemoine.Analysis
     readonly SemaphoreSlim m_presentSemaphore = new SemaphoreSlim (1, 1);
     IStateMachine<IGlobalAnalysis> m_stateMachine;
     IList<Exception> m_stateExceptions;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (GlobalAnalysis).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IGlobalAnalysis"/>
     /// </summary>
@@ -134,7 +131,6 @@ namespace Lemoine.Analysis
     /// <see cref="IStateMachineAnalysis"/>
     /// </summary>
     public IEnumerable<Exception> StateExceptions => m_stateExceptions;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -448,19 +444,16 @@ namespace Lemoine.Analysis
     {
       Debug.Assert (null != m_dayTemplateAnalysis);
       if (null == m_dayTemplateAnalysis) {
-        log.FatalFormat ("ManageDayTemplates: " +
-                         "m_dayTemplateAnalysis was not initialized " +
-                         "although it should have been initialized by the Initialize method " +
-                         "=> initialize it again");
+        log.Fatal ("ManageDayTemplates: m_dayTemplateAnalysis was not initialized although it should have been initialized by the Initialize method => initialize it again");
         m_dayTemplateAnalysis = new DayTemplateAnalysis (m_restrictedTransactionLevel,
                                                          this);
       }
 
       TimeSpan untilFromNow = AnalysisConfigHelper.MaxDaySlotProcess;
       DateTime until = DateTime.UtcNow.Add (untilFromNow).Date; // Full day, to process a new day only once a day
-      log.DebugFormat ("ManageDayTemplates: " +
-                       "run the analysis until {0}",
-                       until);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ManageDayTemplates: run the analysis until {until}");
+      }
       var present = GetPresent ();
       var maxAnalysisDateTime = GetMaxAnalysisDateTime (maxTime);
       m_dayTemplateAnalysis.Run (cancellationToken, present,
@@ -495,10 +488,7 @@ namespace Lemoine.Analysis
     {
       Debug.Assert (null != m_shiftTemplateAnalysis);
       if (null == m_shiftTemplateAnalysis) {
-        log.FatalFormat ("ManageShiftTemplates: " +
-                         "m_shiftTemplateAnalysis was not initialized " +
-                         "although it should have been initialized by the Initialize method " +
-                         "=> initialize it again");
+        log.Fatal ("ManageShiftTemplates: m_shiftTemplateAnalysis was not initialized although it should have been initialized by the Initialize method => initialize it again");
         m_shiftTemplateAnalysis = new ShiftTemplateAnalysis (m_restrictedTransactionLevel,
                                                              this);
       }
@@ -544,10 +534,7 @@ namespace Lemoine.Analysis
     {
       Debug.Assert (null != m_pendingModificationAnalysis);
       if (null == m_pendingModificationAnalysis) {
-        log.FatalFormat ("ManagePendingModificationAnalysis: " +
-                         "m_pendingModificationAnalysis was not initialized " +
-                         "although it should have been initialized by the Initialize method " +
-                         "=> initialize it again");
+        log.Fatal ("ManagePendingModificationAnalysis: m_pendingModificationAnalysis was not initialized although it should have been initialized by the Initialize method => initialize it again");
         m_pendingModificationAnalysis = new PendingGlobalModificationAnalysis (m_activityAnalysis);
       }
 
@@ -564,10 +551,7 @@ namespace Lemoine.Analysis
     {
       Debug.Assert (null != m_pendingModificationAnalysis);
       if (null == m_pendingModificationAnalysis) {
-        log.FatalFormat ("IsCleanFlaggedModificationsRequired: " +
-                         "m_pendingModificationAnalysis was not initialized " +
-                         "although it should have been initialized by the Initialize method " +
-                         "=> initialize it again");
+        log.Fatal ("IsCleanFlaggedModificationsRequired: m_pendingModificationAnalysis was not initialized although it should have been initialized by the Initialize method => initialize it again");
         m_pendingModificationAnalysis = new PendingGlobalModificationAnalysis (m_activityAnalysis);
       }
       return m_pendingModificationAnalysis.IsCleanRequired ();
@@ -595,10 +579,7 @@ namespace Lemoine.Analysis
     {
       Debug.Assert (null != m_pendingModificationAnalysis);
       if (null == m_pendingModificationAnalysis) {
-        log.FatalFormat ("CleanFlaggedModifications: " +
-                         "m_pendingModificationAnalysis was not initialized " +
-                         "although it should have been initialized by the Initialize method " +
-                         "=> initialize it again");
+        log.Fatal ("CleanFlaggedModifications: m_pendingModificationAnalysis was not initialized although it should have been initialized by the Initialize method => initialize it again");
         m_pendingModificationAnalysis = new PendingGlobalModificationAnalysis (m_activityAnalysis);
       }
 

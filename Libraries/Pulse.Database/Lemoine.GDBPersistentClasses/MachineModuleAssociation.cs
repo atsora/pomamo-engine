@@ -19,11 +19,8 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(IsoFileMachineModuleAssociation))]
   public abstract class MachineModuleAssociation : MachineAssociation, IMachineModuleAssociation
   {
-    #region Members
     IMachineModule m_machineModule;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machine
     /// </summary>
@@ -68,7 +65,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_machineModule as MachineModule; }
       set { m_machineModule = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -104,7 +100,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the impacted slots without considering any pre-fetched slot
     /// </summary>
@@ -148,6 +143,5 @@ namespace Lemoine.GDBPersistentClasses
       string modificationType = this.ModificationType;
       NHibernateHelper.Unproxy<IMachineModule> (ref m_machineModule);
     }
-    #endregion // Methods
   }
 }

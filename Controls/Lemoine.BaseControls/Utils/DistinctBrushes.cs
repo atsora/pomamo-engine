@@ -14,13 +14,11 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class DistinctBrushes
   {
-    #region Members
     IDictionary<object, Brush> m_brushes = new Dictionary<object, Brush>();
     IList<Color> m_colors = new List<Color>();
     IList<HatchStyle> m_styles = new List<HatchStyle>();
     int m_colorIndex = 0;
     int m_styleIndex = -1;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -61,7 +59,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create or retrieve a brush for a specific object
     /// </summary>
@@ -115,6 +112,5 @@ namespace Lemoine.BaseControls
     {
       return m_brushes;
     }
-    #endregion // Methods
   }
 }

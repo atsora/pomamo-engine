@@ -16,12 +16,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class TranslationKeyDialog : OKCancelDialog, IValueDialog<string>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (TranslationKeyDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null TranslationKey a valid value ?
     /// </summary>
@@ -54,7 +50,6 @@ namespace Lemoine.DataReferenceControls
         throw new NotImplementedException();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -72,9 +67,6 @@ namespace Lemoine.DataReferenceControls
       //
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

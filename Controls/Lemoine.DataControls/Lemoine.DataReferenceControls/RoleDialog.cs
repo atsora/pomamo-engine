@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (RoleDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null Role a valid value ?
     /// </summary>
@@ -70,8 +69,6 @@ namespace Lemoine.DataReferenceControls
       get { return RoleSelection1.MultiSelect; }
       set { RoleSelection1.MultiSelect = value; }
     }
-    
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -90,9 +87,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("RoleDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

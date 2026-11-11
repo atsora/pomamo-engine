@@ -53,7 +53,6 @@ namespace Lem_TestReports.Console
     int m_freeExecutions = 0;
     HttpClient m_httpClient = new HttpClient ();
 
-    #region Getters / Setters
     internal Options Options { get; set; }
 
     public string LogFile { get; set; }
@@ -69,7 +68,6 @@ namespace Lem_TestReports.Console
     public string UrlParameters { get; set; }
 
     public int NumberParallelExecutions { get; set; } = 4; // Default value
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

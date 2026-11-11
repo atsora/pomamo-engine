@@ -46,7 +46,7 @@ namespace Lemoine.GDBPersistentClasses
     public I FindById (ID id, int machineId)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: id={0} machineId={1} type={2}", id, machineId, typeof (T));
+        log.Debug ($"FindById: id={id} machineId={machineId} type={typeof (T)}");
       }
 
       // Note: entityInCache may be a MachineModificationProxy for example
@@ -60,9 +60,7 @@ namespace Lemoine.GDBPersistentClasses
           && (entityInCache is I)) {
           var convertedEntity = (I)entityInCache;
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("FindById: " +
-                            "the entity id={0} machineId={1} type={2} is taken from cache",
-                            id, machineId, typeof (T));
+            log.Debug ($"FindById: the entity id={id} machineId={machineId} type={typeof (T)} is taken from cache");
           }
           return convertedEntity;
         }
@@ -74,7 +72,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: run a request to get the entity id={0} type={1}", id, typeof (T));
+        log.Debug ($"FindById: run a request to get the entity id={id} type={typeof (T)}");
       }
       var entity = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<T> ()
@@ -82,9 +80,7 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Eq ("Machine.Id", machineId))
         .UniqueResult<I> ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: " +
-                        "the entity id={0} type={1} was queried",
-                        id, typeof (T));
+        log.Debug ($"FindById: the entity id={id} type={typeof (T)} was queried");
       }
       return entity;
     }

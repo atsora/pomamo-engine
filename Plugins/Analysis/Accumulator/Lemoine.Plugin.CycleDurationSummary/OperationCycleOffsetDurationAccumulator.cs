@@ -79,8 +79,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
         m_initialOperation = null;
         if (null != operationCycle) {
           if (!ModelDAOHelper.DAOFactory.IsInitialized (operationCycle)) {
-            log.ErrorFormat ("OperationCycleValue: operationCycle is not initialized. StackTrace={0}",
-              System.Environment.StackTrace);
+            log.Error ($"OperationCycleValue: operationCycle is not initialized. StackTrace={System.Environment.StackTrace}");
           }
           if ((null != operationCycle.OperationSlot)) {
             m_initialOperation = operationCycle.OperationSlot.Operation;
@@ -92,15 +91,10 @@ namespace Lemoine.Plugin.CycleDurationSummary
       }
     };
 
-    #region Members
     readonly IDictionary<OperationCycle, OperationCycleValue> m_operationCycleAccumulator =
       new Dictionary<OperationCycle, OperationCycleValue> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationCycleOffsetDurationAccumulator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -148,7 +142,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
       else if (0 < increment) {
         if (null != cycle) {
           if (!ModelDAOHelper.DAOFactory.IsInitialized (cycle)) {
-            log.ErrorFormat ("UpdateCycle: cycle is not initialized. StackTrace={0}", System.Environment.StackTrace);
+            log.Error ($"UpdateCycle: cycle is not initialized. StackTrace={System.Environment.StackTrace}");
           }
         }
         if ((null != cycle) && (null != cycle.OperationSlot)) {

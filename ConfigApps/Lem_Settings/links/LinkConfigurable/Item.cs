@@ -16,7 +16,6 @@ namespace LinkConfigurable
   /// </summary>
   internal class Item : GenericItem, ILink
   {
-    #region Members
     readonly string m_title;
     readonly string m_description;
     readonly string m_category;
@@ -27,9 +26,7 @@ namespace LinkConfigurable
     readonly LemSettingsGlobal.ItemFlag m_flags = 0;
     readonly IDictionary<Type, LemSettingsGlobal.InteractionType> m_types =
       new Dictionary<Type, LemSettingsGlobal.InteractionType>();
-    #endregion
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -102,7 +99,6 @@ namespace LinkConfigurable
     /// Url to open
     /// </summary>
     public String UrlLink { get { return m_url; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

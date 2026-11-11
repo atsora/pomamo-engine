@@ -29,7 +29,6 @@ namespace WizardCreateProduction
     internal const string WOLS_TO_DELETE = "productions_to_delete";
     internal const string WOLS_TO_DELETE_RECURRENCE = "productions_to_delete_recurrence";
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -107,7 +106,6 @@ namespace WizardCreateProduction
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

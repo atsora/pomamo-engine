@@ -38,7 +38,7 @@ namespace Lemoine.GDBMigration
           TableName.TOOL_LIFE, ColumnName.TOOL_POSITION_ID));
       } catch (Exception e) {
         // May fail if already not null
-        log.ErrorFormat("Maybe tool position id already not null: {0}", e);
+        log.Error ($"Maybe tool position id already not null: {e}");
       }
       
       // Remove and restore constraint
@@ -48,7 +48,7 @@ namespace Lemoine.GDBMigration
                                     TableName.TOOL_POSITION, ColumnName.TOOL_POSITION_ID,
                                     ForeignKeyConstraint.Cascade);
       } catch (Exception e) {
-        log.ErrorFormat("Couldn't update foreign key tool position for ToolLife table: {0}", e);
+        log.Error ($"Couldn't update foreign key tool position for ToolLife table: {e}");
       }
       
       // Partition the tables
@@ -56,7 +56,7 @@ namespace Lemoine.GDBMigration
         PartitionTable(TableName.TOOL_LIFE, TableName.MACHINE_MODULE);
         PartitionTable(TableName.TOOL_POSITION, TableName.MACHINE_MODULE);
       } catch (Exception e) {
-        log.ErrorFormat("Couldn't partition ToolLife and ToolPosition tables, maybe already done: {0}", e);
+        log.Error ($"Couldn't partition ToolLife and ToolPosition tables, maybe already done: {e}");
       }
     }
     

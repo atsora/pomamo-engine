@@ -47,7 +47,7 @@ namespace Lemoine.Plugin.GroupMachineStateTemplate
 
         if (!m_machineStateTemplates.Any ()) {
           if (log.IsErrorEnabled) {
-            log.ErrorFormat ("Initialize: no valid machine state template selected, return false");
+            log.Error ("Initialize: no valid machine state template selected, return false");
           }
           return false;
         }

@@ -62,9 +62,7 @@ namespace Lemoine.Conversion
     public static string ToLocalIsoString (this DateTime dateTime)
     {
       if (DateTimeKind.Utc == dateTime.Kind) {
-        log.WarnFormat ("DateTimeLocalToIsoString: " +
-                        "convert UTC time {0} into local",
-                        dateTime);
+        log.Warn ($"DateTimeLocalToIsoString: convert UTC time {dateTime} into local");
         string dateString = dateTime.ToLocalTime ().ToString ("s");
         return dateString;
       }

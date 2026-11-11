@@ -18,13 +18,9 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class MailAdressDialog : OKCancelDialog
   {
-    #region Members
-    
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MailAdressDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return a MailAdress object or null
     /// </summary>
@@ -34,7 +30,6 @@ namespace Lemoine.ConfigControls
     /// Return a MailAdress object or null
     /// </summary>
     public string ToAdress => this.toTextBox.Text;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -53,7 +48,6 @@ namespace Lemoine.ConfigControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Validate Input
     /// </summary>
@@ -66,7 +60,6 @@ namespace Lemoine.ConfigControls
       }
       okButton.Enabled = true;
     }
-    #endregion // Methods
     
     void FromTextBoxTextChanged(object sender, EventArgs e)
     {

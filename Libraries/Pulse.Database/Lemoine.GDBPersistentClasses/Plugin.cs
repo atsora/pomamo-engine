@@ -13,18 +13,15 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class Plugin: IPlugin, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0; // Version for the database
     string m_identifyingName = "";
     bool m_activated = true;
     int m_numVersion = 0; // Version of the plugin
     PluginFlag? m_pluginFlag = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof(Plugin).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Id
     /// </summary>
@@ -70,7 +67,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_pluginFlag; }
       set { m_pluginFlag = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

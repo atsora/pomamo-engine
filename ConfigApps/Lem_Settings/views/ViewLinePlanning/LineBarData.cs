@@ -15,12 +15,10 @@ namespace ViewLinePlanning
   /// </summary>
   public class LineBarData: IBarObjectFactory
   {
-    #region Getters / Setters
     /// <summary>
     /// Id of the line being represented
     /// </summary>
     public ILine Line { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -31,7 +29,6 @@ namespace ViewLinePlanning
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create all BarObjects included in a period
     /// </summary>
@@ -133,6 +130,5 @@ namespace ViewLinePlanning
       
       return barObjects;
     }
-    #endregion // Methods
   }
 }

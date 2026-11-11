@@ -25,7 +25,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineObservationState: DataWithTranslation, IMachineObservationState, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     bool m_userRequired;
@@ -38,7 +37,6 @@ namespace Lemoine.GDBPersistentClasses
     double? m_laborCost = null;
     IProductionState m_productionState = null;
     CapacityLevel? m_capacityLevel = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineObservationState).FullName);
 
@@ -63,7 +61,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -254,7 +251,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return string.Format ("{0}: {1}{2}",
                                   this.Id, this.Name, this.TranslationKey); }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

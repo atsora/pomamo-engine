@@ -155,10 +155,9 @@ namespace Lemoine.Model
       }
 
       if (dateIntersection.IsEmpty ()) {
-        log.DebugFormat ("Intersects: " +
-                         "the date range {0} does not intersect the local range {1} " +
-                         "=> return an empty period",
-                         dateRange, this);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Intersects: the date range {dateRange} does not intersect the local range {this} => return an empty period");
+        }
         return dateIntersection; // empty
       }
 
@@ -171,10 +170,9 @@ namespace Lemoine.Model
       TimePeriodOfDay dateIntersectionPeriodOfDay = new TimePeriodOfDay (dateIntersection.Lower.Value.TimeOfDay,
                                                                          dateIntersection.Upper.Value.TimeOfDay);
       if (!dateIntersectionPeriodOfDay.Overlaps (timePeriod)) {
-        log.DebugFormat ("Intersects: " +
-                         "the two time periods {0} and {1} do not overlap with each other " +
-                         "=> return an empty period",
-                         timePeriod, dateIntersectionPeriodOfDay);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Intersects: the two time periods {timePeriod} and {dateIntersectionPeriodOfDay} do not overlap with each other => return an empty period");
+        }
         return new LocalDateTimeRange ();
       }
       else {

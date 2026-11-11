@@ -70,7 +70,6 @@ namespace Lemoine.BaseControls
 
     static readonly ILog log = LogManager.GetLogger(typeof (ControlAnimation).FullName);
 
-    #region Methods
     /// <summary>
     /// Animate the forecolor of a control
     /// </summary>
@@ -156,6 +155,5 @@ namespace Lemoine.BaseControls
         control.BackColor = color;
       }
     }
-    #endregion // Methods
   }
 }

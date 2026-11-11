@@ -25,16 +25,11 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string FETCH_MAX_ITEMS_KEY = "log.fetch.max";
     static readonly int FETCH_MAX_ITEMS_DEFAULT = 1000;
     
-    #region Members
     IApplicationState m_logListenerState = null;
     IList<IBaseLog> m_fetched = new List<IBaseLog> ();
     int m_fetchMaxItems = FETCH_MAX_ITEMS_DEFAULT;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (LogListener).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -45,20 +40,17 @@ namespace Lemoine.Alert.GDBListeners
       string fetchMaxItemsOption = Lemoine.Info.OptionsFile.GetOption (FETCH_MAX_ITEMS_KEY);
       if (!string.IsNullOrEmpty (fetchMaxItemsOption)) {
         if (int.TryParse (fetchMaxItemsOption, out m_fetchMaxItems)) {
-          log.DebugFormat ("LogListener: " +
-                           "option {0}={1}",
-                           FETCH_MAX_ITEMS_KEY, m_fetchMaxItems);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"LogListener: option {FETCH_MAX_ITEMS_KEY}={m_fetchMaxItems}");
+          }
         }
         else {
-          log.ErrorFormat ("LogListener: " +
-                           "invalid option {0}={1}",
-                           FETCH_MAX_ITEMS_KEY, fetchMaxItemsOption);
+          log.Error ($"LogListener: invalid option {FETCH_MAX_ITEMS_KEY}={fetchMaxItemsOption}");
         }
       }
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -78,8 +70,9 @@ namespace Lemoine.Alert.GDBListeners
       }
       
       if (0 == m_fetched.Count) { // No data any more to process
-        log.DebugFormat ("GetData: " +
-                         "no data");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetData: no data");
+        }
         return null;
       }
       else { // 0 < m_fetched.Count
@@ -138,7 +131,5 @@ namespace Lemoine.Alert.GDBListeners
       }
     }
     
-    
-    #endregion // Methods
   }
 }

@@ -165,7 +165,6 @@ namespace Lemoine.CncDataImport
       }
     }
 
-    #region Methods
     /// <summary>
     /// Get the stamp file
     /// </summary>
@@ -560,7 +559,6 @@ namespace Lemoine.CncDataImport
         m_lastCleanDetections = DateTime.UtcNow;
       }
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

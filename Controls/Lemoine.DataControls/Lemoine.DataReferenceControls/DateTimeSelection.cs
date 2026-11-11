@@ -19,13 +19,10 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class DateTimeSelection : UserControl
   {
-    #region Members
     string m_noTi18n = "DateTimeNull";
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DateTimeSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is null a valid value ?
     /// </summary>
@@ -118,7 +115,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -143,7 +139,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -154,7 +149,6 @@ namespace Lemoine.DataReferenceControls
         AfterSelect (this, e);
       }
     }
-    #endregion // Methods
     
     void DateTimeSelectionLoad(object sender, EventArgs e)
     {

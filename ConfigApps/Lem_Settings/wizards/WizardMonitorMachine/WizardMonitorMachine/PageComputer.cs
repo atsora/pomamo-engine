@@ -15,7 +15,6 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageComputer : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -44,7 +43,6 @@ namespace WizardMonitorMachine
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -19,11 +19,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public class TreeViewBuilderDisplayProperties : TreeViewBuilder
   {
-    #region Members
     string[] m_properties;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// List of the properties used to sort elements in the tree
     /// </summary>
@@ -31,7 +28,6 @@ namespace Lemoine.DataReferenceControls
       get { return m_properties; }
       set { m_properties = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -42,7 +38,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Build the tree, dispose and sort all elements
     /// </summary>
@@ -95,6 +90,5 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
   }
 }

@@ -90,15 +90,13 @@ namespace Pulse.Web.CommonResponseDTO
       if (omitGroupCategory) {
         if (1 == this.Groups.Count) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GroupCategoryDTO: omit the group category, replace display {0} by {1}",
-              this.Display, this.Groups.First ().Display);
+            log.Debug ($"GroupCategoryDTO: omit the group category, replace display {this.Display} by {this.Groups.First ().Display}");
           }
           this.OmitGroupCategory = true;
           this.Display = this.Groups.First ().Display;
         }
         else {
-          log.ErrorFormat ("GroupCategoryDTO: omitGroupCategory option with {0} different groups",
-            this.Groups.Count);
+          log.Error ($"GroupCategoryDTO: omitGroupCategory option with {this.Groups.Count} different groups");
         }
       }
     }

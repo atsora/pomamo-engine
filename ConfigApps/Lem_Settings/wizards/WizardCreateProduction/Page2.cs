@@ -17,7 +17,6 @@ namespace WizardCreateProduction
   /// </summary>
   internal partial class Page2 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -30,7 +29,6 @@ namespace WizardCreateProduction
           "can be enabled or disabled. By default, only defined shifts are checked.\n\n" +
           "Menus are present in the horizontal and vertical headers of the table to " +
           "check or uncheck a whole column or row."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

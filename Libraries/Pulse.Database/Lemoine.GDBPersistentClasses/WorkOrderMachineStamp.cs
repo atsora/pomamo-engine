@@ -24,11 +24,8 @@ namespace Lemoine.GDBPersistentClasses
   public class WorkOrderMachineStamp
     : MachineStamp, IWorkOrderMachineStamp
   {
-    #region Members
     IWorkOrder m_workOrder;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -50,8 +47,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("WorkOrder.set: " +
-                           "null value");
+          log.Error ("WorkOrder.set: null value");
           throw new ArgumentNullException ("WorkOrderMachineStamp.WorkOrder");
         }
         m_workOrder = value;
@@ -66,7 +62,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.WorkOrder as WorkOrder; }
       set { this.WorkOrder = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -170,7 +165,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 

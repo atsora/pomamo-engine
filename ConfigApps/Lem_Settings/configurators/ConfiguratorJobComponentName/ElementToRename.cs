@@ -15,14 +15,11 @@ namespace ConfiguratorJobComponentName
   /// </summary>
   public class ElementToRename
   {
-    #region Members
     readonly IProject m_project;
     readonly IComponent m_component;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ElementToRename).FullName);
     
-    #region Getters / Setters
     /// <summary>
     /// Component name to be changed
     /// </summary>
@@ -37,7 +34,6 @@ namespace ConfiguratorJobComponentName
     /// Date of the project
     /// </summary>
     public DateTime Date { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -58,7 +54,6 @@ namespace ConfiguratorJobComponentName
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Configure new names
     /// Must be called within a transaction
@@ -124,6 +119,5 @@ namespace ConfiguratorJobComponentName
       
       return isofiles;
     }
-    #endregion // Methods
   }
 }

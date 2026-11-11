@@ -23,17 +23,14 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageModule : GenericWizardPage, IWizardPage
   {
-    #region Members
     IDictionary<string, CncDocument> m_xmlData = null;
     bool m_modified = false;
     readonly IDictionary<string, string> m_modules = new Dictionary<string, string>();
     readonly IDictionary<string, string> m_deprecatedFiles = new Dictionary<string, string>();
     bool m_preparation = true;
-    #endregion // Members
     
     ILog log = LogManager.GetLogger(typeof(PageModule).FullName);
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -51,7 +48,6 @@ namespace WizardMonitorMachine
           "Filters on the top of the page can help you to find the right configuration file.";
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -99,7 +95,7 @@ namespace WizardMonitorMachine
         filePaths = FileRepoClient.ListFilesInDirectory("cncconfigs");
       }
       catch (Exception e) {
-        log.ErrorFormat("Couldn't read cncconfigs directory: {0}", e);
+        log.Error ($"Couldn't read cncconfigs directory: {e}");
       }
       
       if (filePaths != null) {
@@ -108,7 +104,7 @@ namespace WizardMonitorMachine
             ProcessFile(fullLoad, filePath);
           }
           catch (Exception e) {
-            log.ErrorFormat("Couldn't parse file {0}: {1}", filePath, e);
+            log.Error ($"Couldn't parse file {filePath}: {e}");
           }
         }
       }
@@ -136,7 +132,9 @@ namespace WizardMonitorMachine
           var cncDoc = new CncDocument(fileName, xmlDoc);
           if (cncDoc.Deprecated) {
             // If deprecated, the file cannot be selected
-            log.DebugFormat ("Initialize: {0} is deprecated, skip it", fileName);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Initialize: {fileName} is deprecated, skip it");
+            }
             m_deprecatedFiles[fileName] = cncDoc.AlternativeFile;
           }
           else {

@@ -17,13 +17,10 @@ namespace WizardCreateMachine
   /// </summary>
   internal partial class PageOrder : GenericWizardPage, IWizardPage
   {
-    #region Members
     double m_currentPriority = -1;
     string m_machineName = "";
     IMachine m_currentMachine = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -34,7 +31,6 @@ namespace WizardCreateMachine
     /// </summary>
     public string Help { get { return "You can edit here the order of the machines when " +
           "they are displayed in a list. To move the current machine, use the arrows."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

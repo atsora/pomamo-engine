@@ -24,9 +24,6 @@ namespace Lemoine.Core.StateMachine
     readonly IState<TContext> m_trueState;
     readonly IState<TContext> m_falseState;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

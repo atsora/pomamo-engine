@@ -22,9 +22,7 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class UserShiftAssociation: UserAssociation, IUserShiftAssociation
   {
-    #region Members
     IShift m_shift;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -45,7 +43,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -75,7 +72,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Shift as Shift; }
       set { this.Shift = value; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// <see cref="PeriodAssociation.ConvertToSlot" />
@@ -146,9 +142,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported user slot");
       }
     }
@@ -164,10 +158,7 @@ namespace Lemoine.GDBPersistentClasses
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "{0} " +
-                         "=> finish in error",
-                         message);
+        log.Error ($"MakeAnalysis: {message} => finish in error");
         AddAnalysisLog(LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -218,7 +209,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 

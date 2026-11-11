@@ -15,12 +15,9 @@ namespace ConfiguratorAlarmFocus
   /// </summary>
   internal partial class PageSeverityDescription : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     string m_currentCncType = "";
     ICncAlarmSeverity m_currentSeverity = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -38,7 +35,6 @@ namespace ConfiguratorAlarmFocus
     {
       get { return LemSettingsGlobal.PageFlag.WITH_VALIDATION; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

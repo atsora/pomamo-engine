@@ -48,7 +48,7 @@ namespace Pulse.PluginImplementation.CycleDetectionStatus
                                                  m_machine.Id));
 
       if (!LoadConfiguration (out m_configuration)) {
-        log.ErrorFormat ("Initialize: bad configuration, skip this instance");
+        log.Error ("Initialize: bad configuration, skip this instance");
         return false;
       }
 
@@ -61,7 +61,7 @@ namespace Pulse.PluginImplementation.CycleDetectionStatus
 
       m_cycleDetectionStatus = new CycleDetectionStatusFromAnalysisStatus (m_configuration.CycleDetectionStatusPriority);
       if (!m_cycleDetectionStatus.Initialize (machine)) {
-        log.ErrorFormat ("Initialize: initialization of cycle detection status failed");
+        log.Error ("Initialize: initialization of cycle detection status failed");
         return false;
       }
 
@@ -98,9 +98,7 @@ namespace Pulse.PluginImplementation.CycleDetectionStatus
             machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
               .FindById (machineFilterId);
             if (null == machineFilter) {
-              log.ErrorFormat ("Initialize: " +
-                               "machine filter id {0} does not exist",
-                               machineFilterId);
+              log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
               return false;
             }
             else {

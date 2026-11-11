@@ -16,7 +16,6 @@ namespace Lemoine.GDBUtils
   public class DatabaseExceptionDetails
     : Lemoine.Core.ExceptionManagement.IDatabaseExceptionDetails
   {
-    #region Members
     readonly string m_type;
     readonly bool m_postgresException;
     readonly bool m_adoException;
@@ -41,9 +40,7 @@ namespace Lemoine.GDBUtils
     readonly string m_messageText;
     readonly string m_schemaName;
     readonly string m_tableName;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Database exception source
     /// </summary>
@@ -139,7 +136,6 @@ namespace Lemoine.GDBUtils
     {
       get { return m_where; }
     }
-    #endregion // Getters / Setters
     
     static readonly ILog log = LogManager.GetLogger(typeof (DatabaseExceptionDetails).FullName);
 

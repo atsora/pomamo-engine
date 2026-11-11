@@ -13,12 +13,9 @@ namespace ViewReasons
   /// </summary>
   public class OrderedReason: IComparable
   {
-    #region Members
     int m_hashCode = 0;
     bool m_hashCodeComputed = false;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// True if default
     /// </summary>
@@ -63,7 +60,6 @@ namespace ViewReasons
     /// Color of the reason
     /// </summary>
     public Color Color { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -99,7 +95,6 @@ namespace ViewReasons
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// HashCode override
     /// </summary>
@@ -165,6 +160,5 @@ namespace ViewReasons
 
       return this.Description.CompareTo(other.Description);
     }
-    #endregion // Methods
   }
 }

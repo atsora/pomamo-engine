@@ -47,7 +47,6 @@ namespace Lemoine.Business.Operation
 
     readonly ILog log = LogManager.GetLogger (typeof (OperationProgress).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -57,7 +56,6 @@ namespace Lemoine.Business.Operation
     /// Specify if you want to get the operation progress at a specific date/time
     /// </summary>
     public DateTime? At { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -465,7 +463,7 @@ namespace Lemoine.Business.Operation
           .Select (d => d.Completion.Value)
           .Average ();
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ApproximateCompletionAndOperationEndFromSequences: get {0} from byMachineModule completion", completion);
+          log.Debug ($"ApproximateCompletionAndOperationEndFromSequences: get {completion} from byMachineModule completion");
         }
         response.Completion = completion;
         response.Notices.Add ("Approximated completion from the currently active sequence");

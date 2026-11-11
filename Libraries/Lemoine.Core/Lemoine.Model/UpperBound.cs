@@ -16,12 +16,9 @@ namespace Lemoine.Model
   public struct UpperBound<T>: IBound<T>, IComparable<Bound<T>>, IComparable, IEquatable<Bound<T>>, IComparable<UpperBound<T>>, IEquatable<UpperBound<T>>
     where T: struct, IComparable<T>, IComparable, IEquatable<T>
   {
-    #region Members
     [NonSerialized]
     readonly T? m_boundValue;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Internal nullable value
     /// </summary>
@@ -53,7 +50,6 @@ namespace Lemoine.Model
     public BoundType BoundType {
       get { return BoundType.Upper; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

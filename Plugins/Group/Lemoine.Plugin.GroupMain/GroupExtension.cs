@@ -39,7 +39,7 @@ namespace Lemoine.Plugin.GroupMain
       }
       if (null == m_mainMachine) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("Initialize: main machine id {0} does not exist => return false", m_configuration.MainMachineId);
+          log.Error ($"Initialize: main machine id {m_configuration.MainMachineId} does not exist => return false");
         }
         return false;
       }
@@ -85,7 +85,7 @@ namespace Lemoine.Plugin.GroupMain
               .Select (i => ModelDAOHelper.DAOFactory.MachineDAO.FindById (i));
             if (machines.Any (x => null == x)) {
               if (log.IsErrorEnabled) {
-                log.ErrorFormat ("Groups: one machine does not exist");
+                log.Error ("Groups: one machine does not exist");
               }
               machines = machines
                 .Where (x => null != x);

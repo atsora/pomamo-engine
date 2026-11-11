@@ -116,30 +116,26 @@ namespace Lemoine.CncDataImport
     {
       // Key + Value for the aggregation NewValue, else Key only
       if (!otherData.Key.Equals (data.Key)) {
-        log.DebugFormat ("IsDataCompatible: " +
-                         "the key differs between the new CncValue data {0} and {1} " +
-                         "=> not compatible",
-                         data, otherData);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsDataCompatible: the key differs between the new CncValue data {data} and {otherData} => not compatible");
+        }
         return false;
       }
       if (data.DateTime < otherData.DateTime) {
-        log.FatalFormat ("IsDataCompatible: " +
-                         "new data {0} is before the last data {1} " +
-                         "=> this should not happen",
-                         data, otherData);
+        log.Fatal ($"IsDataCompatible: new data {data} is before the last data {otherData} => this should not happen");
         return false;
       }
 
       if (m_cache.IsEndCncValueRequired (data.Key, otherData.DateTime, data.DateTime, false)) {
-        log.DebugFormat ("IsDataCompatible: " +
-                         "IsResetCncValueRequired returned true (may be because of a gap) " +
-                         "=> return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsDataCompatible: IsResetCncValueRequired returned true (may be because of a gap) => return false");
+        }
         return false;
       }
 
-      log.DebugFormat ("IsDataCompatible: " +
-                       "CncValue data {0} is compatible with {1}",
-                       data, otherData);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"IsDataCompatible: CncValue data {data} is compatible with {otherData}");
+      }
       return true;
     }
 
@@ -166,18 +162,12 @@ namespace Lemoine.CncDataImport
 
           field = daoFactory.FieldDAO.FindByCode (key);
           if (null == field) {
-            log.ErrorFormat ("ImportCncValue: " +
-                             "field code={0} is unknown " +
-                             "=> skip the record",
-                             key);
+            log.Error ($"ImportCncValue: field code={key} is unknown => skip the record");
             return;
           }
 
           if (!field.Active) {
-            log.InfoFormat ("ImportCncValue: " +
-                            "field {0} with code {1} is not active " +
-                            "=> skip it",
-                            field, key);
+            log.Info ($"ImportCncValue: field {field} with code {key} is not active => skip it");
             return;
           }
 
@@ -187,11 +177,7 @@ namespace Lemoine.CncDataImport
             if (!field.Equals (m_machineModule.MonitoredMachine.PerformanceField) &&
                 SkipOldSecondaryCncValuesAfter.Value < DateTime.UtcNow.Subtract (lastData.DateTime)) {
               // caution: this generates a lot of log when parsing old data
-              log.InfoFormat ("ImportCncValue: " +
-                              "do not import {0} dateTime={1} " +
-                              "because it is older than {2}",
-                              lastData, lastData.DateTime,
-                              SkipOldSecondaryCncValuesAfter.Value);
+              log.Info ($"ImportCncValue: do not import {lastData} dateTime={lastData.DateTime} because it is older than {SkipOldSecondaryCncValuesAfter.Value}");
               return;
             }
           }
@@ -201,10 +187,7 @@ namespace Lemoine.CncDataImport
             ICncValue cncValue = m_cache.GetStoredCncValue (field, dateTime);
             if (null != cncValue) {
               if (dateTime < cncValue.End) {
-                log.FatalFormat ("ImportCncValue: " +
-                                 "first recorded CncValue at {0} comes before last CncValue {1} " +
-                                 "=> skip it (this should not happen)",
-                                 datas[0], cncValue);
+                log.Fatal ($"ImportCncValue: first recorded CncValue at {datas[0]} comes before last CncValue {cncValue} => skip it (this should not happen)");
                 return;
               }
             }
@@ -395,14 +378,14 @@ namespace Lemoine.CncDataImport
       Debug.Assert (null == cncValue || cncValue.MachineModule.Id == m_machineModule.Id);
       Debug.Assert (null == cncValue || cncValue.End <= beginDateTime);
 
-      log.DebugFormat ("ProcessCncValueNew: /B " +
-                       "new value={0} at {1} for field={2} and machineModule={3}",
-                       v, beginDateTime, field, m_machineModule);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ProcessCncValueNew: /B new value={v} at {beginDateTime} for field={field} and machineModule={m_machineModule}");
+      }
 
       if ((null != cncValue) && !cncValue.Stopped) { // Make the previous CncValue longer
-        log.DebugFormat ("ProcessCncValueNew: " +
-                         "make the previous CncValue {0} longer to {1}",
-                         cncValue, beginDateTime);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessCncValueNew: make the previous CncValue {cncValue} longer to {beginDateTime}");
+        }
         if (cncValue.Value.ToString ().Equals (v.ToString ())) { // Same value
           cncValue.End = endDateTime;
           cncValue.Stopped = false;
@@ -463,9 +446,9 @@ namespace Lemoine.CncDataImport
       Debug.Assert (null == cncValue || cncValue.MachineModule.Id == m_machineModule.Id);
       Debug.Assert (null == cncValue || cncValue.End <= beginDateTime);
 
-      log.DebugFormat ("ProcessCncValueSum: /B " +
-                      "at {0}-{1} for field={2} and machineModule={3}",
-                      beginDateTime, endDateTime, field, m_machineModule);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ProcessCncValueSum: /B at {beginDateTime}-{endDateTime} for field={field} and machineModule={m_machineModule}");
+      }
 
       bool createNew = (null == cncValue);
       if (null == cncValue) {
@@ -475,9 +458,7 @@ namespace Lemoine.CncDataImport
       cncValue.End = endDateTime;
       switch (field.Type) {
         case FieldType.Boolean:
-          log.ErrorFormat ("ProcessCncValueSum: " +
-                           "Field type Boolean is not supported here " +
-                           "=> skip the record");
+          log.Error ("ProcessCncValueSum: Field type Boolean is not supported here => skip the record");
           return;
         case FieldType.String:
           foreach (ExchangeData data in datas) {
@@ -585,11 +566,7 @@ namespace Lemoine.CncDataImport
         currentAverageValue.Deviation = 0.0;
         Debug.Assert (!currentAverageValue.Stopped);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ($"ProcessCncValueAverage: " +
-                           "initialize currentAverageValue with " +
-                           "{0}-{1} avg={2} dev={3}",
-                           currentAverageValue.Begin, currentAverageValue.End,
-                           currentAverageValue.Double, currentAverageValue.Deviation);
+          log.Debug ($"ProcessCncValueAverage: initialize currentAverageValue with {currentAverageValue.Begin}-{currentAverageValue.End} avg={currentAverageValue.Double} dev={currentAverageValue.Deviation}");
         }
         m_cache.SetCurrentValue (field, currentAverageValue);
 
@@ -621,11 +598,7 @@ namespace Lemoine.CncDataImport
                                                 newValue, 0, newRange.Duration.Value,
                                                 newAverage);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ProcessCncValueAverage: " +
-                           "current average is going from avg={0} dev={1} dur={2} " +
-                           "to avg={3} dev={4} dur={5}",
-                           currentAverageValue.Double, currentAverageValue.Deviation, currentAverageValue.Length,
-                           newAverage, newDeviation, dateTime.Subtract (currentAverageValue.Begin));
+          log.Debug ($"ProcessCncValueAverage: current average is going from avg={currentAverageValue.Double} dev={currentAverageValue.Deviation} dur={currentAverageValue.Length} to avg={newAverage} dev={newDeviation} dur={dateTime.Subtract (currentAverageValue.Begin)}");
         }
         currentAverageValue.Double = newAverage;
         currentAverageValue.Deviation = newDeviation;
@@ -671,10 +644,7 @@ namespace Lemoine.CncDataImport
                  || (currentAverageValue.Double < (previousAverageValue.Double - field.LimitDeviation))) {
           // the new average is not in [avg-maxdev, avg+maxdev]
           // => start a new CncValue
-          log.InfoFormat ("ProcessCncValueAverage: " +
-                          "the new average {0} is not in [{1}-{2}, {1}+{2}] " +
-                          "=> start a new CncValue",
-                          currentAverageValue.Double, previousAverageValue.Double, field.LimitDeviation);
+          log.Info ($"ProcessCncValueAverage: the new average {currentAverageValue.Double} is not in [{previousAverageValue.Double}-{field.LimitDeviation}, {previousAverageValue.Double}+{field.LimitDeviation}] => start a new CncValue");
           cncValue.Stopped = previousAverageValue.Stopped;
           cncValue.End = previousAverageValue.End;
           cncValue.Double = previousAverageValue.Double;
@@ -687,12 +657,7 @@ namespace Lemoine.CncDataImport
         }
         else { // the new average is in [avg-maxdev, avg+maxdev] => combine both of them
           CombineAverageCncValues (ref cncValue, previousAverageValue, currentAverageValue);
-          log.InfoFormat ("ProcessCncValueAverage: " +
-                          "the new average {0} is in [{1}-{2}, {1}+{2}] " +
-                          "=> combine both of them to extend CncValue, " +
-                          "new average is {3}",
-                          currentAverageValue.Double, previousAverageValue.Double, field.LimitDeviation,
-                          cncValue.Double);
+          log.Info ($"ProcessCncValueAverage: the new average {currentAverageValue.Double} is in [{previousAverageValue.Double}-{field.LimitDeviation}, {previousAverageValue.Double}+{field.LimitDeviation}] => combine both of them to extend CncValue, new average is {cncValue.Double}");
           Debug.Assert (!cncValue.Stopped);
           m_cache.SaveOrUpdateCncValue (cncValue);
         }
@@ -749,9 +714,7 @@ namespace Lemoine.CncDataImport
       Debug.Assert (cncValue == null || cncValue.Deviation.HasValue);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("ProcessCncValueMax: /B " +
-                         "new value={0} at {1} for field={2} and machineModule={3}",
-                         v, dateTime, field, m_machineModule);
+        log.Debug ($"ProcessCncValueMax: /B new value={v} at {dateTime} for field={field} and machineModule={m_machineModule}");
       }
 
       double newValue = Convert.ToDouble (v);
@@ -782,12 +745,7 @@ namespace Lemoine.CncDataImport
     {
       if (0 == (int)(period1.TotalSeconds + period2.TotalSeconds)) {
         // Note: this should happen only if the acquisition frequency is less than 1 second
-        log.WarnFormat ("CombineAverage: " +
-                        "the two input period durations were 0 " +
-                        "(this is rounded to the closest number of seconds, " +
-                        "this should happen only if the acquiusition frequency is less than 1 s) " +
-                        "=> return the average of {0} and {1} as a fallback",
-                        average1, average2);
+        log.Warn ($"CombineAverage: the two input period durations were 0 (this is rounded to the closest number of seconds, this should happen only if the acquiusition frequency is less than 1 s) => return the average of {average1} and {average2} as a fallback");
         return (average1 + average2) / 2.0;
       }
 
@@ -804,11 +762,7 @@ namespace Lemoine.CncDataImport
       double variance;
       if (0 == (int)(period1.TotalSeconds + period2.TotalSeconds)) {
         // Note: this should happen only if the acquisition frequency is less than 1 second
-        log.WarnFormat ("CombineDeviation: " +
-                        "the two input period durations were 0 " +
-                        "(this is rounded to the closest number of seconds, " +
-                        "this should happen only if the acquiusition frequency is less than 1 s) " +
-                        "=> fallback, consider the two period durations are the same");
+        log.Warn ("CombineDeviation: the two input period durations were 0 (this is rounded to the closest number of seconds, this should happen only if the acquiusition frequency is less than 1 s) => fallback, consider the two period durations are the same");
         variance = (x1 + x2) / 2.0 - Pow2 (average);
       }
       else {

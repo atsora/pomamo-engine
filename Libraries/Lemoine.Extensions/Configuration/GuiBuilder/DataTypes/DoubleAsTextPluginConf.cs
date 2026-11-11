@@ -76,7 +76,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
             d = double.Parse (s, CultureInfo.InvariantCulture);
           }
           catch (Exception) {
-            log.ErrorFormat ("SetDoublePropertyFromString: could not parse {0}", s);
+            log.Error ($"SetDoublePropertyFromString: could not parse {s}");
             throw;
           }
         }
@@ -88,7 +88,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
           d = double.Parse (s, CultureInfo.InvariantCulture);
         }
         catch (Exception) {
-          log.ErrorFormat ("SetDoublePropertyFromString: could not parse {0}", s);
+          log.Error ($"SetDoublePropertyFromString: could not parse {s}");
           throw;
         }
         SetProperty (propertyInfo, configuration, d);

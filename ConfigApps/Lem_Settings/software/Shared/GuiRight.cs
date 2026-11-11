@@ -23,7 +23,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the current configurator page
     /// </summary>
@@ -32,6 +31,5 @@ namespace Lem_Settings
     {
       richTextBox.Text = page.Help;
     }
-    #endregion // Methods
   }
 }

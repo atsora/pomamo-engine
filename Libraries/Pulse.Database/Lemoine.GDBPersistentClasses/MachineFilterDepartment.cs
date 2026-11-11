@@ -17,13 +17,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineFilterDepartment: MachineFilterItem, IMachineFilterDepartment
   {
-    #region Members
     IDepartment m_department;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineFilterDepartment).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated Department (not null)
     /// </summary>
@@ -34,14 +31,13 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.FatalFormat ("Department.set: null value");
+          log.Fatal ("Department.set: null value");
           throw new ArgumentNullException ("Department.set");
         }
         
         m_department = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

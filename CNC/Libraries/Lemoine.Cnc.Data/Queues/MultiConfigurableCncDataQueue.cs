@@ -24,7 +24,6 @@ namespace Lemoine.Cnc.Data
     , IListConfigurable
     , IChecked
   {
-    #region Members
     bool m_initialized = false;
     IGenericConfigReader m_externalConfigReader;
     MemoryConfigReader m_defaultConfigReader = new MemoryConfigReader ();
@@ -46,7 +45,6 @@ namespace Lemoine.Cnc.Data
     readonly IList<IExtendedQueue<ExchangeData>> m_allQueues = new List<IExtendedQueue<ExchangeData>> ();
 
     ILog log = LogManager.GetLogger (typeof (MultiConfigurableCncDataQueue).FullName);
-    #endregion // Members
 
     /// <summary>
     /// <see cref="ICncDataQueue" />
@@ -264,7 +262,7 @@ namespace Lemoine.Cnc.Data
           MoveNextQueue ();
         }
         catch (Exception ex) {
-          log.ErrorFormat ("Dequeue: an unexpected exception occurred {0}", ex);
+          log.Error ($"Dequeue: an unexpected exception occurred {ex}");
           throw;
         }
         SetActive ();

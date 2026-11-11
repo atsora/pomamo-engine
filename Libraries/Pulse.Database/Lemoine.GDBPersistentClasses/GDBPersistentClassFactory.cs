@@ -24,10 +24,8 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string CONNECTION_INIT_ATTEMPT_SLEEP_KEY = "GDB.ConnectionInitAttemptSleep";
     static readonly TimeSpan CONNECTION_INIT_ATTEMPT_SLEEPT_DEFAULT = TimeSpan.FromSeconds (2.0);
 
-    #region Members
     readonly IPersistentClassModel m_persistentClassModel;
     readonly Lemoine.ModelDAO.IDAOFactory m_daoFactory;
-    #endregion // Members
 
     /// <summary>
     /// Associated DAOFactory

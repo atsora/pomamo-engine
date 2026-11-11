@@ -25,7 +25,6 @@ namespace Lem_CncDataService
   public sealed class Lem_CncDataService
     : Lemoine.Threading.IThreadServiceAsync, IDisposable
   {
-    #region Members
     const string SLEEP = "Sleep";
     const string BREAK_FREQUENCY = "BreakFrequency";
     const string BREAK_TIME = "BreakTime";
@@ -42,7 +41,6 @@ namespace Lem_CncDataService
     readonly IDictionary<int, ImportProcessExecution> m_processImports = new Dictionary<int, ImportProcessExecution> ();
     readonly CheckThreadsAndProcesses m_check = new CheckThreadsAndProcesses ();
     bool m_useProcess = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (Lem_CncDataService).FullName);
 
@@ -60,7 +58,6 @@ namespace Lem_CncDataService
     }
     #endregion // Constructors
 
-    #region Methods
     void CreateImportClasses (CancellationToken cancellationToken)
     {
       // Get the machine modules
@@ -434,13 +431,13 @@ namespace Lem_CncDataService
 
           // 3. Get all the CncAcquisition for this lpost
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetMachineModules: get the cnc acquisitions for lpost {0}", lpost.Id);
+            log.Debug ($"GetMachineModules: get the cnc acquisitions for lpost {lpost.Id}");
           }
           IList<ICncAcquisition> cncAcquisitions =
             ModelDAOHelper.DAOFactory.CncAcquisitionDAO
             .FindAllForComputer (lpost);
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetMachineModules: got {0} cnc acquisitions for lpost {1}", cncAcquisitions.Count, lpost.Id);
+            log.Debug ($"GetMachineModules: got {cncAcquisitions.Count} cnc acquisitions for lpost {lpost.Id}");
           }
 
           // 4. Get all the monitored machines
@@ -459,7 +456,6 @@ namespace Lem_CncDataService
         }
       }
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

@@ -20,16 +20,13 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class GenericSelection<T> : UserControl //where T : IDataWithIdentifiers
   {
-    #region Members
     string m_displayedProperty = "Display";
     string m_noTi18n = "No One";
     IList<T> m_Ts = null;
     T m_T = default(T);
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (GenericSelection<T>).FullName+typeof(T).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -127,7 +124,6 @@ namespace Lemoine.DataReferenceControls
         this.m_T = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -153,7 +149,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -261,6 +256,5 @@ namespace Lemoine.DataReferenceControls
     {
       OnAfterSelect (new EventArgs ());
     }
-    #endregion // Methods
   }
 }

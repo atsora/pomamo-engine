@@ -14,7 +14,6 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class FloatingLine : UserControl
   {
-    #region Getters / Setters
     /// <summary>
     /// Position of the vertical bar
     /// </summary>
@@ -24,7 +23,6 @@ namespace Lemoine.BaseControls
     /// Thickness of the bar
     /// </summary>
     public int Thickness { get; set; }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

@@ -21,13 +21,10 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(EventMachineMessage))]
   public class EventMachineGeneric: EventGeneric, IEventMachine
   {
-    #region Members
     IMachine m_machine;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventMachineGeneric).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machine
     /// </summary>
@@ -44,7 +41,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Machine as Machine; }
       set { throw new InvalidOperationException (); }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -68,7 +64,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Unproxy the entity for XML serialization
     /// </summary>
@@ -77,6 +72,5 @@ namespace Lemoine.GDBPersistentClasses
       base.Unproxy ();
       NHibernateHelper.Unproxy<IMachine> (ref m_machine);
     }
-    #endregion // Methods
   }
 }

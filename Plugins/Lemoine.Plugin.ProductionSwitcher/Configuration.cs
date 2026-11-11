@@ -22,12 +22,8 @@ namespace Lemoine.Plugin.ProductionSwitcher
     : Pulse.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter
     , Pulse.Extensions.Configuration.IConfigurationWithMachineFilter
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// % of the cycle duration that is necessary to trigger the plugin
     /// </summary>
@@ -78,7 +74,6 @@ namespace Lemoine.Plugin.ProductionSwitcher
     {
       get; set;
     } = 1;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -90,7 +85,6 @@ namespace Lemoine.Plugin.ProductionSwitcher
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -137,6 +131,5 @@ namespace Lemoine.Plugin.ProductionSwitcher
     {
       return false;
     }
-    #endregion // Methods
   }
 }

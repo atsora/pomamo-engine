@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.SwitchByDetectedCyclesProduction
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// [Optional] Name prefix
     /// </summary>
@@ -53,7 +52,6 @@ namespace Lemoine.Plugin.SwitchByDetectedCyclesProduction
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

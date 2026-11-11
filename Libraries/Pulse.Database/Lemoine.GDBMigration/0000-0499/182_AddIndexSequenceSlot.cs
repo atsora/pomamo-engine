@@ -24,8 +24,7 @@ namespace Lemoine.GDBMigration
     {
       bool partitioned = IsPartitioned (TableName.SEQUENCE_SLOT);
       if (partitioned) {
-        log.WarnFormat ("Up: " +
-                        "sequenceslot is partitioned");
+        log.Warn ("Up: sequenceslot is partitioned");
         Database.ExecuteNonQuery ("select pgfkpart.unpartition_with_fk ('public', 'sequenceslot');");
       }
       AddIndex (TableName.SEQUENCE_SLOT, ColumnName.MACHINE_MODULE_ID,
@@ -42,8 +41,7 @@ namespace Lemoine.GDBMigration
     {
       bool partitioned = IsPartitioned (TableName.SEQUENCE_SLOT);
       if (partitioned) {
-        log.WarnFormat ("Down: " +
-                        "sequenceslot is partitioned");
+        log.Warn ("Down: sequenceslot is partitioned");
         Database.ExecuteNonQuery ("select pgfkpart.unpartition_with_fk ('public', 'sequenceslot');");
       }
       RemoveIndex (TableName.SEQUENCE_SLOT, ColumnName.MACHINE_MODULE_ID,

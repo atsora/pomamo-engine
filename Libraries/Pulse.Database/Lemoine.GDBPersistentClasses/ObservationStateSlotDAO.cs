@@ -438,8 +438,7 @@ namespace Lemoine.GDBPersistentClasses
       //   return an exception
       var slotsWithNoDuration = ranges.Where (slot => !slot.Duration.HasValue);
       if (slotsWithNoDuration.Any ()) {
-        log.ErrorFormat ("GetProductionDuration: " +
-                         "at least one slot has no duration");
+        log.Error ("GetProductionDuration: at least one slot has no duration");
         throw new Exception ("Slot with no duration");
       }
       
@@ -486,12 +485,12 @@ namespace Lemoine.GDBPersistentClasses
                                                                                        UtcDateTimeRange range)
     {
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("FindFirstStrictlyLeftDifferentMachineStateTemplate: empty range");
+        log.Error ("FindFirstStrictlyLeftDifferentMachineStateTemplate: empty range");
         return null;
       }
 
       if (!range.Lower.HasValue) {
-        log.ErrorFormat ("FindFirstStrictlyLeftDifferentMachineStateTemplate: no lower value, there is no possible slot to return");
+        log.Error ("FindFirstStrictlyLeftDifferentMachineStateTemplate: no lower value, there is no possible slot to return");
         return null;
       }
 
@@ -527,12 +526,12 @@ namespace Lemoine.GDBPersistentClasses
                                                                                         UtcDateTimeRange range)
     {
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("FindFirstStrictlyRightDifferentMachineStateTemplate: empty range");
+        log.Error ("FindFirstStrictlyRightDifferentMachineStateTemplate: empty range");
         return null;
       }
 
       if (!range.Upper.HasValue) {
-        log.ErrorFormat ("FindFirstStrictlyRightDifferentMachineStateTemplate: no upper value, there is no possible slot to return");
+        log.Error ("FindFirstStrictlyRightDifferentMachineStateTemplate: no upper value, there is no possible slot to return");
         return null;
       }
 

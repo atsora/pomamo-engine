@@ -12,7 +12,6 @@ namespace WizardReasonSelection
   /// </summary>
   public class ReasonParameters
   {
-    #region Getters / Setters
     /// <summary>
     /// True if the user has to add details for a reason
     /// </summary>
@@ -22,7 +21,6 @@ namespace WizardReasonSelection
     /// Possible machine filter if the reason cannot be applied to all machines
     /// </summary>
     public IMachineFilter MachineFilter { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

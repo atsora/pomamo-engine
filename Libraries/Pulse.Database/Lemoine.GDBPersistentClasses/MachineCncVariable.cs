@@ -17,17 +17,14 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class MachineCncVariable: IMachineCncVariable, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineFilter m_machineFilter;
     string m_cncVariableKey;
     object m_cncVariableValue;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineCncVariable).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// MachineCncVariable Id
     /// </summary>
@@ -103,7 +100,6 @@ namespace Lemoine.GDBPersistentClasses
         return new string[] { "Id" };
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

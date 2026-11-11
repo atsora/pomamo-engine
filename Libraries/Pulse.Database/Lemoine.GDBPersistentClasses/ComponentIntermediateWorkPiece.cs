@@ -20,14 +20,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ComponentIntermediateWorkPiece : BaseData, IComponentIntermediateWorkPiece
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IComponent m_component = null;
     IIntermediateWorkPiece m_intermediateWorkPiece = null;
     string m_code;
     int? m_order;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (IComponentIntermediateWorkPiece).FullName);
 
@@ -52,7 +50,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -166,7 +163,6 @@ namespace Lemoine.GDBPersistentClasses
           : int.Parse (value);
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// <see cref="Object.ToString()" />

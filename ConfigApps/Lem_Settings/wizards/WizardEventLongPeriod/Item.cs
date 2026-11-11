@@ -25,7 +25,6 @@ namespace WizardEventLongPeriod
     internal const string ALL_MOSS = "all_machine_observation_states";
     internal const string DURATION_LEVELS = "duration_levels";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -111,7 +110,6 @@ namespace WizardEventLongPeriod
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

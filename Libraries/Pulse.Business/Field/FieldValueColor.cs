@@ -22,12 +22,8 @@ namespace Lemoine.Business.Field
   public sealed class FieldValueColor
     : IRequest<string>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (FieldValueColor).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Field (not null)
     /// </summary>
@@ -37,7 +33,6 @@ namespace Lemoine.Business.Field
     /// Value
     /// </summary>
     object Value { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -64,9 +59,6 @@ namespace Lemoine.Business.Field
     }
     #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
     #region IRequest implementation
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
@@ -76,9 +68,9 @@ namespace Lemoine.Business.Field
     {
       Debug.Assert (null != this.Field);
       
-      log.DebugFormat ("Get: " +
-                       "field id {0} value {1}",
-                       this.Field.Id, this.Value);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"Get: field id {this.Field.Id} value {this.Value}");
+      }
       
       IEnumerable<IFieldLegend> legends = ServiceProvider
         .Get<IEnumerable<IFieldLegend>> (new Lemoine.Business.Field.FieldLegends (this.Field));

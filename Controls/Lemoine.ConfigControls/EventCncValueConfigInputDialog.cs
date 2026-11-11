@@ -17,7 +17,6 @@ namespace Lemoine.ConfigControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (EventCncValueInputDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return Name of EventCncValue
     /// </summary>
@@ -45,7 +44,6 @@ namespace Lemoine.ConfigControls
         return eventCncValueConfigInput.SelectedCondition;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -64,9 +62,6 @@ namespace Lemoine.ConfigControls
       this.eventCncValueConfigInput.OkButton = this.okButton;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

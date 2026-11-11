@@ -13,13 +13,7 @@ namespace Lemoine.Plugin.MaintenanceAction
   /// </summary>
   public class NHibernateExtension: Lemoine.Extensions.Database.INHibernateExtension
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (NHibernateExtension).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

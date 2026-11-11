@@ -52,7 +52,6 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     {
     }
 
-    #region Methods
     void ResetCache ()
     {
       m_cacheRange = new UtcDateTimeRange ();
@@ -117,7 +116,6 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
       }
       return m_reasonSelectionExtensions;
     }
-    #endregion // Methods
 
     #region IPossibleReasonExtension implementation
     /// <summary>
@@ -213,7 +211,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     bool IsCurrentActivity (UtcDateTimeRange range)
     {
       if (!range.Upper.HasValue) {
-        log.FatalFormat ("IsCurrentActivity: unexpected range upper value in {0}", range);
+        log.Fatal ($"IsCurrentActivity: unexpected range upper value in {range}");
         throw new ArgumentOutOfRangeException ("range", "invalid upper value (+oo)");
       }
 
@@ -296,8 +294,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
             // Is the reason still active for this machine mode / machine observation state ?
             var isCompatible = GetReasonExtensions ()
               .Any (ext => ext.IsCompatible (newReasonSlot.DateTimeRange, newReasonSlot.MachineMode, newReasonSlot.MachineObservationState, reasonMachineAssociation.Reason, reasonMachineAssociation.ReasonScore, ReasonSource.Manual));
-            log.InfoFormat ("GetRequiredResetKind: old reason is not compatible any more in {0} => return Reset ExtraManual",
-              newReasonSlot);
+            log.Info ($"GetRequiredResetKind: old reason is not compatible any more in {newReasonSlot} => return Reset ExtraManual");
             if (!isCompatible) {
               result = result.Add (RequiredResetKind.ExtraManual);
               break;
@@ -366,7 +363,7 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
         .OrderByDescending (m => m.ReasonScore);
       if (!manualReasonProposals.Any ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("TryResetReason: no manual reason proposal during that period => return");
+          log.Debug ("TryResetReason: no manual reason proposal during that period => return");
         }
         return;
       }

@@ -22,9 +22,7 @@ namespace Lemoine.GDBPersistentClasses
     , IUserMachineSlot
     , ICloneable
   {
-    #region Members
     IDictionary<int, IUserMachineSlotMachine> m_machines = new Dictionary<int, IUserMachineSlotMachine> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (UserMachineSlot).FullName);
 
@@ -47,16 +45,13 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the Machines (not null)
     /// </summary>
     public virtual IDictionary<int, IUserMachineSlotMachine> Machines {
       get { return m_machines; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Remove all the associated machines
     /// </summary>
@@ -98,17 +93,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.BeginDateTime.CompareTo (other.BeginDateTime);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare user slots " +
-                           "for different users {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare user slots for different users {this} {other}");
           throw new ArgumentException ("Comparison of UserMachineSlot from different users");
         }
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a UserMachineSlot");
     }
 
@@ -123,10 +113,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare user slots " +
-                       "for different users {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare user slots for different users {this} {other}");
       throw new ArgumentException ("Comparison of UserMachineSlot from different users");
     }
     
@@ -224,7 +211,6 @@ namespace Lemoine.GDBPersistentClasses
         return object.Equals (this.Machines, other.Machines); // There is a risk to have to unproxy an object
       }
     }
-    #endregion // Methods
     
     #region ICloneable implementation
     /// <summary>

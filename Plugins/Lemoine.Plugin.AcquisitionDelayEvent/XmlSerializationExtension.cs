@@ -13,13 +13,7 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
   /// </summary>
   public class XmlSerializationExtension : Lemoine.Extensions.Database.IXmlSerializationExtension
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (XmlSerializationExtension).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -29,9 +23,6 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IXmlSerializationExtension implementation
 

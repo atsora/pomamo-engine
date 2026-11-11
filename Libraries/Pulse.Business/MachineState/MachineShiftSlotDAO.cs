@@ -197,16 +197,12 @@ namespace Lemoine.Business.MachineState
     {
       if (left.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!left.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "left range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: left range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       if (right.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!right.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "right range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: right range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
 
@@ -280,9 +276,7 @@ namespace Lemoine.Business.MachineState
         else { // null != leftReasonSlot
           if (leftObservationStateSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendLeft: " +
-                             "empty left observation state slot {0}",
-                             leftObservationStateSlot);
+            log.Error ($"ExtendLeft: empty left observation state slot {leftObservationStateSlot}");
             return slot;
           }
           IMachineShiftSlot leftMachineShiftSlot = new MachineShiftSlot (leftObservationStateSlot);
@@ -320,9 +314,7 @@ namespace Lemoine.Business.MachineState
         else { // null != leftReasonSlot
           if (leftObservationStateSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendLeft: " +
-                             "empty left observation state slot {0}",
-                             leftObservationStateSlot);
+            log.Error ($"ExtendLeft: empty left observation state slot {leftObservationStateSlot}");
             return slot;
           }
           IMachineShiftSlot leftMachineShiftSlot = new MachineShiftSlot (leftObservationStateSlot);
@@ -360,8 +352,7 @@ namespace Lemoine.Business.MachineState
         else { // null != rightReasonSlot
           if (rightObservationStateSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRight: empty right observation state slot slot {0}",
-                             rightObservationStateSlot);
+            log.Error ($"ExtendRight: empty right observation state slot slot {rightObservationStateSlot}");
             return slot;
           }
           IMachineShiftSlot rightMachineShiftSlot = new MachineShiftSlot (rightObservationStateSlot);
@@ -398,8 +389,7 @@ namespace Lemoine.Business.MachineState
         else { // null != rightReasonSlot
           if (rightObservationStateSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRightAsync: empty right observation state slot slot {0}",
-                             rightObservationStateSlot);
+            log.Error ($"ExtendRightAsync: empty right observation state slot slot {rightObservationStateSlot}");
             return slot;
           }
           IMachineShiftSlot rightMachineShiftSlot = new MachineShiftSlot (rightObservationStateSlot);

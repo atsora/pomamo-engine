@@ -77,18 +77,15 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public sealed class AnalysisAccumulator : ISessionAccumulator, IEnumerable<IAccumulator>
   {
-    #region Members
     IDictionary<ISession, HashSet<string>> m_messages = new ConcurrentDictionary<ISession, HashSet<string>> (); // Web service messages
     IDictionary<ISession, List<IAccumulator>> m_accumulators = new ConcurrentDictionary<ISession, List<IAccumulator>> (); // NHibernate session => Accumulators
     // Because ISession is not thread safe, each session is in its own thread, and there is no need to keep a mutex for it
 
     IEnumerable<IMessageExtension> m_messageExtensions = null;
     object m_messageExtensionsLock = new object ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (AnalysisAccumulator).FullName);
 
-    #region Methods
     /// <summary>
     /// Check if there are some messages for the specified session
     /// 
@@ -714,8 +711,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != reasonSlot.Reason);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat (".{0} AddReasonSlotPeriodOnly: reasonid={1} range={2}",
-                         reasonSlot.Machine.Id, reasonSlot.Reason.Id, reasonSlot.DateTimeRange);
+        log.Debug ($".{reasonSlot.Machine.Id} AddReasonSlotPeriodOnly: reasonid={reasonSlot.Reason.Id} range={reasonSlot.DateTimeRange}");
       }
 
       // Split by day
@@ -724,18 +720,13 @@ namespace Lemoine.GDBPersistentClasses
       foreach (IDaySlot daySlot in daySlots) {
         Debug.Assert (daySlot.Day.HasValue);
         if (!daySlot.Day.HasValue) {
-          log.FatalFormat ("AddReasonSlotPeriodOnly: " +
-                           "skip daySlot {0} with no day defined",
-                           daySlot);
+          log.Fatal ($"AddReasonSlotPeriodOnly: skip daySlot {daySlot} with no day defined");
           continue;
         }
         UtcDateTimeRange intersection = new UtcDateTimeRange (reasonSlot.DateTimeRange.Intersects (daySlot.DateTimeRange));
         if (intersection.IsEmpty ()) {
           Debug.Assert (false);
-          log.FatalFormat ("AddReasonSlotPeriodOnly: " +
-                           "empty intersection of {0} with day slot {1} " +
-                           "=> skip it",
-                           reasonSlot, daySlot);
+          log.Fatal ($"AddReasonSlotPeriodOnly: empty intersection of {reasonSlot} with day slot {daySlot} => skip it");
         }
         else {
           Debug.Assert (intersection.Duration.HasValue);
@@ -777,8 +768,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != reasonSlot.Reason);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat (".{0} RemoveReasonSlotPeriod: reasonid={1} range={2}",
-          reasonSlot.Machine.Id, reasonSlot.Reason.Id, range);
+        log.Debug ($".{reasonSlot.Machine.Id} RemoveReasonSlotPeriod: reasonid={reasonSlot.Reason.Id} range={range}");
       }
 
       Debug.Assert (range.Lower.HasValue);
@@ -790,18 +780,13 @@ namespace Lemoine.GDBPersistentClasses
       foreach (IDaySlot daySlot in daySlots) {
         Debug.Assert (daySlot.Day.HasValue);
         if (!daySlot.Day.HasValue) {
-          log.FatalFormat ("RemoveReasonSlotPeriod: " +
-                           "skip daySlot {0} with no day defined",
-                           daySlot);
+          log.Fatal ($"RemoveReasonSlotPeriod: skip daySlot {daySlot} with no day defined");
           continue;
         }
         UtcDateTimeRange intersection = new UtcDateTimeRange (range.Intersects (daySlot.DateTimeRange));
         if (intersection.IsEmpty ()) {
           Debug.Assert (false);
-          log.FatalFormat ("RemoveReasonSlotPeriod: " +
-                           "empty intersection of {0} with day slot {1} " +
-                           "=> skip it",
-                           reasonSlot, daySlot);
+          log.Fatal ($"RemoveReasonSlotPeriod: empty intersection of {reasonSlot} with day slot {daySlot} => skip it");
         }
         else {
           Debug.Assert (intersection.Duration.HasValue);
@@ -837,14 +822,11 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != reasonSlot.Reason);
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat (".{0} RemoveReasonSlotPeriodOnly: reasonid={1} range={2}",
-          reasonSlot.Machine.Id, reasonSlot.Reason.Id, reasonSlot.DateTimeRange);
+        log.Debug ($".{reasonSlot.Machine.Id} RemoveReasonSlotPeriodOnly: reasonid={reasonSlot.Reason.Id} range={reasonSlot.DateTimeRange}");
       }
 
       if (reasonSlot.DateTimeRange.IsEmpty ()) {
-        log.ErrorFormat ("RemoveReasonSlotPeriodOnly: " +
-                         "empty date/time range " +
-                         "=> do nothing");
+        log.Error ("RemoveReasonSlotPeriodOnly: empty date/time range => do nothing");
         return;
       }
 
@@ -854,18 +836,13 @@ namespace Lemoine.GDBPersistentClasses
       foreach (IDaySlot daySlot in daySlots) {
         Debug.Assert (daySlot.Day.HasValue);
         if (!daySlot.Day.HasValue) {
-          log.FatalFormat ("RemoveReasonSlotPeriodOnly: " +
-                           "skip daySlot {0} with no day defined",
-                           daySlot);
+          log.Fatal ($"RemoveReasonSlotPeriodOnly: skip daySlot {daySlot} with no day defined");
           continue;
         }
         UtcDateTimeRange intersection = new UtcDateTimeRange (reasonSlot.DateTimeRange.Intersects (daySlot.DateTimeRange));
         if (intersection.IsEmpty ()) {
           Debug.Assert (false);
-          log.FatalFormat ("RemoveReasonSlotPeriodOnly: " +
-                           "empty intersection of {0} with day slot {1} " +
-                           "=> skip it",
-                           reasonSlot, daySlot);
+          log.Fatal ($"RemoveReasonSlotPeriodOnly: empty intersection of {reasonSlot} with day slot {daySlot} => skip it");
         }
         else {
           Debug.Assert (intersection.Duration.HasValue);
@@ -912,8 +889,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != reasonSlot.Reason, "reason null");
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat (".{0} UpdateReasonSlotNumber: reasonid={1} range={2} dayRange={3} offset={3}",
-                         reasonSlot.Machine.Id, reasonSlot.Reason.Id, reasonSlot.DateTimeRange, reasonSlot.DayRange, offset);
+        log.Debug ($".{reasonSlot.Machine.Id} UpdateReasonSlotNumber: reasonid={reasonSlot.Reason.Id} range={reasonSlot.DateTimeRange} dayRange={reasonSlot.DayRange} offset={offset}");
       }
 
       // Note: for the moment, offset takes only the values 1 and -1 because it is private and only called by Add... and Remove...
@@ -925,23 +901,17 @@ namespace Lemoine.GDBPersistentClasses
         IList<IDaySlot> daySlots = ModelDAOHelper.DAOFactory.DaySlotDAO.FindProcessedInDayRange (reasonSlot.DayRange);
         foreach (IDaySlot daySlot in daySlots) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat (".{0} UpdateReasonSlotNumber: day={4} reasonid={1} range={2} offset={3}",
-                             reasonSlot.Machine.Id, reasonSlot.Reason.Id, reasonSlot.DateTimeRange, offset, daySlot.Day);
+            log.Debug ($".{reasonSlot.Machine.Id} UpdateReasonSlotNumber: day={daySlot.Day} reasonid={reasonSlot.Reason.Id} range={reasonSlot.DateTimeRange} offset={offset}");
           }
           Debug.Assert (daySlot.Day.HasValue);
           if (!daySlot.Day.HasValue) {
-            log.FatalFormat (".{0} UpdateReasonSlotNumber: " +
-                             "skip daySlot {1} with no day defined",
-                             reasonSlot.Machine.Id, daySlot);
+            log.Fatal ($".{reasonSlot.Machine.Id} UpdateReasonSlotNumber: skip daySlot {daySlot} with no day defined");
             continue;
           }
           UtcDateTimeRange intersection = new UtcDateTimeRange (reasonSlot.DateTimeRange.Intersects (daySlot.DateTimeRange));
           if (intersection.IsEmpty ()) {
             Debug.Assert (false, "Empty intersection");
-            log.FatalFormat (".{0} UpdateReasonSlotNumber: " +
-                             "empty intersection of {1} with day slot {2} " +
-                             "=> skip it",
-                             reasonSlot.Machine.Id, reasonSlot, daySlot);
+            log.Fatal ($".{reasonSlot.Machine.Id} UpdateReasonSlotNumber: empty intersection of {reasonSlot} with day slot {daySlot} => skip it");
           }
           else {
             Debug.Assert (intersection.Duration.HasValue);
@@ -1002,14 +972,12 @@ namespace Lemoine.GDBPersistentClasses
       if (accumulators.Any (a => a.IsOperationCycleAccumulator ())) {
         if (null != before) {
           if (!ModelDAOHelper.DAOFactory.IsInitialized (before)) {
-            log.ErrorFormat ("OperationCycleUpdated: before is not initialized. StackTrace={0}",
-              System.Environment.StackTrace);
+            log.Error ($"OperationCycleUpdated: before is not initialized. StackTrace={System.Environment.StackTrace}");
           }
         }
         if (null != after) {
           if (!ModelDAOHelper.DAOFactory.IsInitialized (after)) {
-            log.ErrorFormat ("OperationCycleUpdated: after is not initialized. StackTrace={0}",
-              System.Environment.StackTrace);
+            log.Error ($"OperationCycleUpdated: after is not initialized. StackTrace={System.Environment.StackTrace}");
           }
         }
       }
@@ -1068,7 +1036,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       return Instance;
     }
-    #endregion // Methods
 
     #region Implements IEnunerable<IAccumulator>
     /// <summary>

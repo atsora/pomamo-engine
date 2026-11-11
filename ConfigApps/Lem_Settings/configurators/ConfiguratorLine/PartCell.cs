@@ -30,9 +30,7 @@ namespace ConfiguratorLine
 
     static readonly ILog log = LogManager.GetLogger(typeof (PartCell).FullName);
     
-    #region Members
     int m_index = -1;
-    #endregion // Members
 
     #region Constructors
     /// <summary>

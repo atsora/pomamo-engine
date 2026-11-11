@@ -195,7 +195,9 @@ namespace Pulse.PluginImplementation.Analysis
             var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
               .FindAt (detection.MachineModule, this.SequenceVariableKey, detection.DateTime.AddSeconds (-1));
             if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
-              log.DebugFormat ("ProcessSequenceDetection: no cnc variable change");
+              if (log.IsDebugEnabled) {
+                log.Debug ("ProcessSequenceDetection: no cnc variable change");
+              }
             }
             else {
               var oldSequenceVariableValue = oldCncVariable?.Value;
@@ -225,14 +227,15 @@ namespace Pulse.PluginImplementation.Analysis
           var newCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
             .FindAt (detection.MachineModule, this.MilestoneVariableKey, detection.DateTime);
           if (null == newCncVariable) {
-            log.ErrorFormat ("ProcessMilestoneDetection: no cnc variable {0} at {1}",
-              this.SequenceVariableKey, detection.DateTime);
+            log.Error ($"ProcessMilestoneDetection: no cnc variable {this.SequenceVariableKey} at {detection.DateTime}");
           }
           else if (TriggerMilestoneVariableAction (newCncVariable.Value)) {
             var oldCncVariable = ModelDAOHelper.DAOFactory.CncVariableDAO
               .FindAt (detection.MachineModule, this.SequenceVariableKey, detection.DateTime.AddSeconds (-1));
             if ((null != oldCncVariable) && object.Equals (newCncVariable.Value, oldCncVariable.Value)) {
-              log.DebugFormat ("ProcessMilestoneDetection: no cnc variable change");
+              if (log.IsDebugEnabled) {
+                log.Debug ("ProcessMilestoneDetection: no cnc variable change");
+              }
             }
             else {
               var oldSequenceVariableValue = oldCncVariable?.Value;
@@ -498,7 +501,9 @@ namespace Pulse.PluginImplementation.Analysis
     /// <returns></returns>    
     public bool GetOperationNameFromComment (string programOperationcomment, Regex operationRegex, out string operationName, out string revisionName)
     {
-      log.DebugFormat ("GetOperationNameFromComment: programOperationcomment={0}", programOperationcomment);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetOperationNameFromComment: programOperationcomment={programOperationcomment}");
+      }
       bool result = false;
       operationName = null;
       revisionName = null;
@@ -506,7 +511,7 @@ namespace Pulse.PluginImplementation.Analysis
       if (!String.IsNullOrEmpty (programOperationcomment)) {
         var operationMatch = operationRegex.Match (programOperationcomment.Trim ());
         if (!operationMatch.Success) {
-          log.WarnFormat ("GetOperationNameFromComment: no match with regex, invalid operationComment {0}", programOperationcomment);
+          log.Warn ($"GetOperationNameFromComment: no match with regex, invalid operationComment {programOperationcomment}");
         }
         else {
           if (operationMatch.Groups["operation"].Success) {
@@ -582,7 +587,9 @@ namespace Pulse.PluginImplementation.Analysis
     /// <returns></returns>  
     public IMachineCncVariable GetPreviousMachiningCncVariable (DateTime dateTime, string programCommentVariable)
     {
-      log.DebugFormat ("GetPreviousMachiningProgramComment");
+      if (log.IsDebugEnabled) {
+        log.Debug ("GetPreviousMachiningProgramComment");
+      }
       string programComment = null;
       IMachineCncVariable machineCncVariable = null;
       int nbTries = 0;
@@ -595,29 +602,41 @@ namespace Pulse.PluginImplementation.Analysis
              .FindAt (m_machineModule, programCommentVariable, previousDateTime);
             // check if in machinecncvariable
             if (null != cncVariable) {
-              log.DebugFormat ("GetPreviousMachiningProgramComment: cncvariable: {0}", cncVariable.Value.ToString ());
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetPreviousMachiningProgramComment: cncvariable: {cncVariable.Value.ToString ()}");
+              }
               machineCncVariable = ModelDAOHelper.DAOFactory.MachineCncVariableDAO
                 .FindByKeyValue (m_machineModule.MonitoredMachine, programCommentVariable, cncVariable.Value);
               if (null != machineCncVariable) {
-                log.DebugFormat ("GetPreviousMachiningProgramComment: cncvariable in machineCncVariable");
-                log.DebugFormat ("GetPreviousMachiningProgramComment: opid={0}", machineCncVariable.Operation);
+                if (log.IsDebugEnabled) {
+                  log.Debug ("GetPreviousMachiningProgramComment: cncvariable in machineCncVariable");
+                }
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetPreviousMachiningProgramComment: opid={machineCncVariable.Operation}");
+                }
                 // program comment match previously seen machining operation
                 programComment = cncVariable.Value.ToString ();
 
               }
               else {
-                log.DebugFormat ("GetPreviousMachiningProgramComment: cncvariable not in machineCncVariable");
+                if (log.IsDebugEnabled) {
+                  log.Debug ("GetPreviousMachiningProgramComment: cncvariable not in machineCncVariable");
+                }
                 nbTries++;
                 previousDateTime = cncVariable.DateTimeRange.Lower.Value.AddSeconds (-1);
               }
             }
             else {
-              log.DebugFormat ("GetPreviousMachiningProgramComment: no cncvariable with program comment");
+              if (log.IsDebugEnabled) {
+                log.Debug ("GetPreviousMachiningProgramComment: no cncvariable with program comment");
+              }
               break;
             }
           }
           if (null == programComment) {
-            log.DebugFormat ("GetPreviousMachiningProgramComment: no cncvariable with same program comment found");
+            if (log.IsDebugEnabled) {
+              log.Debug ("GetPreviousMachiningProgramComment: no cncvariable with same program comment found");
+            }
           }
           transaction.Commit ();
         }
@@ -746,7 +765,9 @@ namespace Pulse.PluginImplementation.Analysis
           // get or create component
           IComponent component = ModelDAOHelper.DAOFactory.ComponentDAO.FindByNameAndProject (componentName, project);
           if (null == component) {
-            log.DebugFormat ($"GetOrCreateOperation: create component {componentName}");
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOrCreateOperation: create component {componentName}");
+            }
             component = ModelDAOHelper.ModelFactory.CreateComponentFromName (project, componentName, componentType);
             ModelDAOHelper.DAOFactory.ComponentDAO.MakePersistent (component);
           }
@@ -823,7 +844,9 @@ namespace Pulse.PluginImplementation.Analysis
           //if (null == latestOperation || !latestOperation.Operation.Code.Equals (operationCode)) {
           if (null == latestOperation || (checkCode && !(null != latestOperation.Code && latestOperation.Code.Equals (operationCode)))) {
             // create a new operation
-            log.DebugFormat ("GetOrCreateOperation: create operation {0}", operationName);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOrCreateOperation: create operation {operationName}");
+            }
             var operationType = ModelDAOHelper.DAOFactory.OperationTypeDAO
               .FindById (1); // undefined
             simpleOperation = ModelDAOHelper.ModelFactory.CreateSimpleOperation (operationType);
@@ -843,7 +866,9 @@ namespace Pulse.PluginImplementation.Analysis
           }
           else {
             // operation already exists
-            log.DebugFormat ("GetOrCreateOperation: existing operation {0}", operationName);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetOrCreateOperation: existing operation {operationName}");
+            }
             operation = latestOperation;
           }
 
@@ -852,7 +877,9 @@ namespace Pulse.PluginImplementation.Analysis
 
           if (null != operation) {
             // create a new operation in machineCncVariable
-            log.DebugFormat ("GetOrCreateOperation: create a new operation in machineCncVariable");
+            if (log.IsDebugEnabled) {
+              log.Debug ("GetOrCreateOperation: create a new operation in machineCncVariable");
+            }
             var machineCncVariable1 = ModelDAOHelper.ModelFactory
             .CreateMachineCncVariable (operationNameVariable, operationName);
             machineCncVariable1.MachineFilter = machineFilter;
@@ -860,7 +887,9 @@ namespace Pulse.PluginImplementation.Analysis
             machineCncVariable1.Component = component;
             ModelDAOHelper.DAOFactory.MachineCncVariableDAO.MakePersistent (machineCncVariable1);
 
-            log.DebugFormat ("GetOrCreateOperation: create a program comment in machineCncVariable");
+            if (log.IsDebugEnabled) {
+              log.Debug ("GetOrCreateOperation: create a program comment in machineCncVariable");
+            }
             var machineCncVariable3 = ModelDAOHelper.ModelFactory
               .CreateMachineCncVariable (programCommentVariable, programComment);
             machineCncVariable3.MachineFilter = machineFilter;
@@ -891,7 +920,9 @@ namespace Pulse.PluginImplementation.Analysis
       int sequenceStringCount = 0;
       ISequence newSequence = null;
 
-      log.DebugFormat ("CreateSequencesFromProgramFile: op={0}, folder={1}, file={2}", operation.Name, programFolder, programFileName);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CreateSequencesFromProgramFile: op={operation.Name}, folder={programFolder}, file={programFileName}");
+      }
       string fullPath = null;
       try {
         fullPath = Path.Combine (programFolder, programFileName);
@@ -903,7 +934,9 @@ namespace Pulse.PluginImplementation.Analysis
               var match = sequenceRegex.Match (line);
               if (match.Success) {
                 if (match.Groups["sequenceName"].Success) {
-                  log.DebugFormat ("CreateSequencesFromProgramFile: matching line={0}", line);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"CreateSequencesFromProgramFile: matching line={line}");
+                  }
                   string sequenceName = match.Groups["sequenceName"].Value.Trim ();
                   sequenceStringList.Add (sequenceName);
                 }
@@ -915,8 +948,9 @@ namespace Pulse.PluginImplementation.Analysis
           if (sequenceStringCount > 0) {
             for (int i = sequenceStringCount - 1; i > 1; i--) {
               if (sequenceStringList[i].StartsWith ("M") && sequenceStringList[i - 1].StartsWith ("M")) {
-                log.DebugFormat ("CreateSequencesFromProgramFile: remove {0} at {1}, because {2} at {3}",
-                  sequenceStringList[i], i, sequenceStringList[i - 1], i - 1);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"CreateSequencesFromProgramFile: remove {sequenceStringList[i]} at {i}, because {sequenceStringList[i - 1]} at {i - 1}");
+                }
                 sequenceStringList.RemoveAt (i);
               }
               else {
@@ -927,7 +961,9 @@ namespace Pulse.PluginImplementation.Analysis
           }
           // create actual sequences from list
           for (int i = 0; i < sequenceStringList.Count; i++) {
-            log.DebugFormat ("CreateSequencesFromProgramFile: order={0}, sequence={1}", sequenceCount, sequenceStringList[i]);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"CreateSequencesFromProgramFile: order={sequenceCount}, sequence={sequenceStringList[i]}");
+            }
             newSequence = CreateNewSequenceAtEnd (operation, sequenceStringList[i], dateTime);
             if (null != newSequence) {
               // add sequence in program sequence list
@@ -944,9 +980,11 @@ namespace Pulse.PluginImplementation.Analysis
         throw;
       }
       catch (Exception e) {
-        log.ErrorFormat ("CreateSequencesFromProgramFile: failed to read file: {0}, {1}", fullPath, e);
+        log.Error ($"CreateSequencesFromProgramFile: failed to read file: {fullPath}, {e}");
       }
-      log.DebugFormat ("CreateSequencesFromProgramFile: found {0} sequences", sequenceCount);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CreateSequencesFromProgramFile: found {sequenceCount} sequences");
+      }
       return sequenceList;
     }
 
@@ -977,7 +1015,7 @@ namespace Pulse.PluginImplementation.Analysis
       log.Debug ($"CreateNewSequenceAtEnd: operation={operation.Name}, name={sequenceName}, step={operationStep}, path={pathNumber}");
       // do not create sequence if operation is locked
       if (operation.Lock) {
-        log.ErrorFormat ("CreateNewSequenceAtEnd: operation {0} locked, give up", operation.Name);
+        log.Error ($"CreateNewSequenceAtEnd: operation {operation.Name} locked, give up");
         return null;
       }
 
@@ -1008,7 +1046,9 @@ namespace Pulse.PluginImplementation.Analysis
 
       // do not create new sequence if same kind
       if (sequenceKind != m_previousSequenceKind || sequenceKind == SequenceKind.Machining) {
-        log.DebugFormat ("CreateNewSequenceAtEnd: sequencekind={0}, tool={1}", sequenceKind.ToString (), toolNumber);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateNewSequenceAtEnd: sequencekind={sequenceKind.ToString ()}, tool={toolNumber}");
+        }
         using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (IDAOTransaction transaction = session.BeginTransaction ("CncVariablesDetectionAnalysis.CreateNewSequenceAtEnd")) {
             // int order = (null == operation.Sequences) ? 1 : operation.Sequences.Count + 1;
@@ -1039,7 +1079,9 @@ namespace Pulse.PluginImplementation.Analysis
         m_previousSequenceKind = sequenceKind;
       }
       else {
-        log.DebugFormat ("CreateNewSequenceAtEnd: same sequencekind, ignore it");  // TODO
+        if (log.IsDebugEnabled) {
+          log.Debug ("CreateNewSequenceAtEnd: same sequencekind, ignore it");
+        }  // TODO
       }
       return sequence;
     }
@@ -1055,11 +1097,12 @@ namespace Pulse.PluginImplementation.Analysis
       ISequence sequence = null;
       string toolNumber = null;
       SequenceKind sequenceKind = SequenceKind.Machining;
-      log.DebugFormat ("CreateNewSequenceAtBegin: operation={0}, name={1}",
-        operation.Name, sequenceName);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CreateNewSequenceAtBegin: operation={operation.Name}, name={sequenceName}");
+      }
       // do not create sequence if operation is locked
       if (operation.Lock) {
-        log.ErrorFormat ("CreateNewSequenceAtBegin: operation {0} locked, give up", operation.Name);
+        log.Error ($"CreateNewSequenceAtBegin: operation {operation.Name} locked, give up");
         return null;
       }
 
@@ -1084,7 +1127,9 @@ namespace Pulse.PluginImplementation.Analysis
         }
       }
 
-      log.DebugFormat ("CreateNewSequenceAtBegin: sequencekind={0}, tool={1}", sequenceKind.ToString (), toolNumber);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CreateNewSequenceAtBegin: sequencekind={sequenceKind.ToString ()}, tool={toolNumber}");
+      }
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         using (IDAOTransaction transaction = session.BeginTransaction ("CncVariablesDetectionAnalysis.CreateNewSequenceAtBegin")) {
           // shift existing sequences orders
@@ -1122,11 +1167,12 @@ namespace Pulse.PluginImplementation.Analysis
     {
       ISequence sequence = null;
       string sequenceName = null;
-      log.DebugFormat ("CreateNewSequenceAtBegin: operation={0}, name={1}",
-        operation.Name, sequenceName);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CreateNewSequenceAtBegin: operation={operation.Name}, name={sequenceName}");
+      }
       // do not create sequence if operation is locked
       if (operation.Lock) {
-        log.ErrorFormat ("CreateNewSequenceAtBegin: operation {0} locked, give up", operation.Name);
+        log.Error ($"CreateNewSequenceAtBegin: operation {operation.Name} locked, give up");
         return null;
       }
       string sequencePrefix = null;
@@ -1189,7 +1235,9 @@ namespace Pulse.PluginImplementation.Analysis
       bool revisionTagFound = false;
       bool revisionNameMatches = false;
 
-      log.DebugFormat ("CheckRevisionNameInProgramFile: folder={0}, file={1}, revision={2}", programFolder, programFileName, revisionDate);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CheckRevisionNameInProgramFile: folder={programFolder}, file={programFileName}, revision={revisionDate}");
+      }
       string fullPath = null;
       try {
         fullPath = Path.Combine (programFolder, programFileName);
@@ -1205,7 +1253,7 @@ namespace Pulse.PluginImplementation.Analysis
                   var match = revisionDateFormatRegex.Match (line.Trim ());
                   string dateInFile = null;
                   if (!match.Success) {
-                    log.WarnFormat ("CheckRevisionNameInProgramFile: no match with regex, invalid revision date format {0}", line);
+                    log.Warn ($"CheckRevisionNameInProgramFile: no match with regex, invalid revision date format {line}");
                   }
                   else {
                     if (match.Groups["date"].Success) {
@@ -1214,13 +1262,14 @@ namespace Pulse.PluginImplementation.Analysis
                       DateTime runningRevisionDate = Convert.ToDateTime (revisionDate);
                       DateTime fileRevisionDate = Convert.ToDateTime (dateInFile);
                       if (0 == DateTime.Compare (runningRevisionDate, fileRevisionDate)) {
-                        log.DebugFormat ("CheckRevisionNameInProgramFile: found revision={0} as {1} in line {2}",
-                          revisionDate, dateInFile, line);
+                        if (log.IsDebugEnabled) {
+                          log.Debug ($"CheckRevisionNameInProgramFile: found revision={revisionDate} as {dateInFile} in line {line}");
+                        }
                         revisionNameMatches = true;
                       }
                     }
                     else {
-                      log.WarnFormat ("CheckRevisionNameInProgramFile: no match with regex, invalid revision date {0}", line);
+                      log.Warn ($"CheckRevisionNameInProgramFile: no match with regex, invalid revision date {line}");
                     }
                   }
                   break;
@@ -1242,10 +1291,12 @@ namespace Pulse.PluginImplementation.Analysis
         throw;
       }
       catch (Exception e) {
-        log.ErrorFormat ("CheckRevisionNameInProgramFile: failed to read file: {0}, {1}", fullPath, e);
+        log.Error ($"CheckRevisionNameInProgramFile: failed to read file: {fullPath}, {e}");
       }
       if (!revisionTagFound) {
-        log.DebugFormat ("CheckRevisionNameInProgramFile: no revision tag found");
+        if (log.IsDebugEnabled) {
+          log.Debug ("CheckRevisionNameInProgramFile: no revision tag found");
+        }
       }
       return revisionNameMatches;
     }

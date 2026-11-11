@@ -18,13 +18,10 @@ namespace WizardInitialConfiguration
   /// </summary>
   public partial class DisplayCell : UserControl
   {
-    #region Members
     string[] m_properties;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DisplayCell).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Set or get the pattern
     /// </summary>
@@ -32,7 +29,6 @@ namespace WizardInitialConfiguration
       get { return textBox.Text; }
       set { textBox.Text = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -48,7 +44,6 @@ namespace WizardInitialConfiguration
     }
     #endregion // Constructors
 
-    #region Methods
     public bool IsValid()
     {
       // Note: there may be some valid patterns that are not listed in m_properties
@@ -60,6 +55,5 @@ namespace WizardInitialConfiguration
       
       return ok;
     }
-    #endregion // Methods
   }
 }

@@ -26,9 +26,6 @@ namespace Lemoine.Analysis
     static readonly string MAX_ANALYSIS_TIME_RANGE_KEY = "Analysis.DayTemplateAnalysis.MaxAnalysisTimeRange";
     static readonly TimeSpan MAX_ANALYSIS_TIME_RANGE_DEFAULT = TimeSpan.FromDays (3);
 
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (DayTemplateAnalysis).FullName);
 
     #region Getters

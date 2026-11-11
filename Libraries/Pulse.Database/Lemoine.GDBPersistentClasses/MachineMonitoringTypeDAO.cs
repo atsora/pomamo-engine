@@ -55,9 +55,7 @@ namespace Lemoine.GDBPersistentClasses
       
       try {
         if (null == FindById (machineMonitoringType.Id)) { // the config does not exist => create it
-          log.InfoFormat ("InsertDefaultValue: " +
-                          "add id={0} translationKey={1}",
-                          machineMonitoringType.Id, machineMonitoringType.TranslationKey);
+          log.Info ($"InsertDefaultValue: add id={machineMonitoringType.Id} translationKey={machineMonitoringType.TranslationKey}");
           // Use a raw SQL Command, else the Id is resetted
           using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand())
           {
@@ -69,11 +67,7 @@ VALUES ({0}, '{1}')",
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("InsertDefaultValue: " +
-                         "inserting new machine monitoring type {0} " +
-                         "failed with {1}",
-                         machineMonitoringType,
-                         ex);
+        log.Error ($"InsertDefaultValue: inserting new machine monitoring type {machineMonitoringType} failed with {ex}");
       }
     }
     #endregion // DefaultValues

@@ -127,13 +127,10 @@ namespace Lemoine.Settings
     }
     #endregion // Options
     
-    #region Members
     bool m_itemOptionParsed = false;
     string m_itemOptionId = null;
     string m_itemOptionSubId = null;
-    #endregion // Members
     
-    #region Methods
     void ParseItemOption()
     {
       if (!String.IsNullOrEmpty(Item)) {
@@ -157,6 +154,5 @@ namespace Lemoine.Settings
         }
       }
     }
-    #endregion // Methods
   }
 }

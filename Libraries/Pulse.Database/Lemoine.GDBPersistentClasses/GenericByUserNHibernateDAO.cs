@@ -70,7 +70,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: run a request to get the entity id={0} type={1}", id, typeof (T));
+        log.Debug ($"FindById: run a request to get the entity id={id} type={typeof (T)}");
       }
       var entity = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<T> ()
@@ -78,9 +78,7 @@ namespace Lemoine.GDBPersistentClasses
         .Add (Restrictions.Eq ("UserId", userId))
         .UniqueResult<I> ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: " +
-                        "the entity id={0} type={1} was queried",
-                        id, typeof (T));
+        log.Debug ($"FindById: the entity id={id} type={typeof (T)} was queried");
       }
       return entity;
     }

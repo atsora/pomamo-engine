@@ -26,7 +26,6 @@ namespace Lemoine.CncEngine
     readonly Pomamo.CncModule.ICncModule m_cncModule;
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1);
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="Pomamo.CncModule.ICncModule"/>
     /// </summary>
@@ -57,7 +56,6 @@ namespace Lemoine.CncEngine
     /// In case this is true, skip the instructions after the start (get/set/finish)
     /// </summary>
     public bool SkipInstructions { get; set; } = false;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -262,7 +260,7 @@ namespace Lemoine.CncEngine
       }
       catch (Exception ex) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Finish: Finish method of {m_cncModule} failed", ex);
+          log.Debug ($"Finish: Finish method of {m_cncModule} failed", ex);
         }
         throw;
       }

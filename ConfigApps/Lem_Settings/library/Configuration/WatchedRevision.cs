@@ -16,7 +16,6 @@ namespace Lemoine.Settings
   /// </summary>
   public class WatchedRevision
   {
-    #region Members
     // Modifications whose status might change
     readonly IList<IModification> m_watchedModifications = new List<IModification>();
     
@@ -29,11 +28,9 @@ namespace Lemoine.Settings
     
     // List of all modification ids in this revision
     readonly IList<long> m_modificationsIds = new List<long>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof(WatchedRevision).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// True if the revision is in progress
     /// In that case, it might block an item and data will possibly be updated later
@@ -131,7 +128,6 @@ namespace Lemoine.Settings
     /// Can be empty but not null
     /// </summary>
     public IList<int> MachineIds { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -150,15 +146,13 @@ namespace Lemoine.Settings
         ItemId = split[1].Substring(0, idx);
         ItemSubId = split[1].Substring(idx + 1);
       } catch (Exception e) {
-        log.ErrorFormat("WatchedRevision - couldn't find the item id and subid in '{0}': {1}",
-                        m_revision.Comment, e);
+        log.Error ($"WatchedRevision - couldn't find the item id and subid in '{m_revision.Comment}': {e}");
         ItemId = "";
         ItemSubId = "";
       }
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Scan modifications directly related to the revision
     /// First step before calling successively the function Update()
@@ -180,13 +174,11 @@ namespace Lemoine.Settings
                 var machine = ModelDAOHelper.DAOFactory.MachineDAO.FindById(machineTmp.Id);
                 if (machine == null) {
                   // The modification is ignored because the machine doesn't exist anymore
-                  log.WarnFormat("WatchedRevision - Found revision #{0} related to a deleted machine #{1}",
-                                 m_revision.Id, machineTmp.Id);
+                  log.Warn ($"WatchedRevision - Found revision #{m_revision.Id} related to a deleted machine #{machineTmp.Id}");
                   modifValid = false;
                 } else if (machine.MonitoringType.Id == (int)MachineMonitoringTypeId.Obsolete) {
                   // The modification is ignored because the machine is obsolete
-                  log.WarnFormat("WatchedRevision - Found revision #{0} related to the obsolete machine #{1}",
-                                 m_revision.Id, machine.Name);
+                  log.Warn ($"WatchedRevision - Found revision #{m_revision.Id} related to the obsolete machine #{machine.Name}");
                   modifValid = false;
                 } else if (!MachineIds.Contains(machineTmp.Id)) {
                   // Add the machine to the list
@@ -307,6 +299,5 @@ namespace Lemoine.Settings
       
       return firstId;
     }
-    #endregion // Methods
   }
 }

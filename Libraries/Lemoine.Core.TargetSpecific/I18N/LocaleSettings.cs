@@ -30,7 +30,6 @@ namespace Lemoine.I18N.TargetSpecific
     {
     }
 
-    #region Methods
     /// <summary>
     /// Get the language that is set in the registry.
     /// 
@@ -193,6 +192,5 @@ namespace Lemoine.I18N.TargetSpecific
       return result64 || result32;
 #endif // NETSTANDARD
     }
-    #endregion
   }
 }

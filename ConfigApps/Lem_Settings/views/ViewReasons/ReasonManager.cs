@@ -14,18 +14,13 @@ namespace ViewReasons
   /// </summary>
   public class ReasonManager
   {
-    #region Members
     readonly List<ReasonsByMOS> m_reasons = new List<ReasonsByMOS>();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Get the number of reason groups
     /// </summary>
     public int Count { get { return m_reasons.Count; } }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Load all reasons for a particular machine mode
     /// </summary>
@@ -110,6 +105,5 @@ namespace ViewReasons
     {
       return m_reasons;
     }
-    #endregion // Methods
   }
 }

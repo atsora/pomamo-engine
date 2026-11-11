@@ -81,8 +81,7 @@ namespace Lemoine.Plugin.CycleCsv
       log = LogManager.GetLogger (typeof (OperationCycleDetectionExtension).FullName + "." + machine.Id);
 
       if (!LoadConfiguration (out m_configuration)) {
-        log.ErrorFormat ("Initialize: " +
-                         "the configuration is wrong, skip this instance");
+        log.Error ("Initialize: the configuration is wrong, skip this instance");
         return false;
       }
 
@@ -183,16 +182,14 @@ namespace Lemoine.Plugin.CycleCsv
             }
           }
           if (!reasonSlots.Any ()) {
-            log.WarnFormat ("GetValues: no reason slots in range {0}",
-              cycleRange);
+            log.Warn ($"GetValues: no reason slots in range {cycleRange}");
           }
           else {
             var t = reasonSlots.First ().DateTimeRange.Upper;
             var reasonSlotsUpper = reasonSlots.Max (s => (Bound<DateTime>)s.DateTimeRange.Upper); // Because UpperBound<T> did not implement IComparable<UpperBound<T>>
             Debug.Assert (reasonSlotsUpper.HasValue);
             if (Bound.Compare<DateTime> (reasonSlotsUpper, cycleRange.Upper.Value.AddSeconds (-10)) <= 0) { // Ok to loose 10s
-              log.WarnFormat ("GetValues: missing period {0}-{1} in reason slots",
-                reasonSlotsUpper, m_operationCycle.End);
+              log.Warn ($"GetValues: missing period {reasonSlotsUpper}-{m_operationCycle.End} in reason slots");
             }
             var runningDurationSeconds = reasonSlots
           .Where (s => s.MachineMode.Running.HasValue && s.MachineMode.Running.Value)
@@ -227,16 +224,16 @@ namespace Lemoine.Plugin.CycleCsv
     void AddValue (string header, string v)
     {
       if (string.IsNullOrEmpty (header)) {
-        log.ErrorFormat ("AddValue: header {0} is null or empty", header);
+        log.Error ($"AddValue: header {header} is null or empty");
       }
       else {
         if (null == v) {
-          log.FatalFormat ("AddValue: null v is unexpected");
+          log.Fatal ("AddValue: null v is unexpected");
           Debug.Assert (false);
         }
         else {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("AddValue: {0}={1}", header, v);
+            log.Debug ($"AddValue: {header}={v}");
           }
           m_header.Add (header);
           m_values.Add (v);

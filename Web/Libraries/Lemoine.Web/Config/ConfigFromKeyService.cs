@@ -18,9 +18,6 @@ namespace Lemoine.Web.Config
   {
     static readonly ILog log = LogManager.GetLogger(typeof (ConfigFromKeyService).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -31,7 +28,6 @@ namespace Lemoine.Web.Config
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -42,6 +38,5 @@ namespace Lemoine.Web.Config
       response.Value = Lemoine.Info.ConfigSet.Get<object> (request.Key);
       return response;
     }
-    #endregion // Methods
   }
 }

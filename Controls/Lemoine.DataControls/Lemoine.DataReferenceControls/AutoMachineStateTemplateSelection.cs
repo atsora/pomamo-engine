@@ -15,13 +15,7 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public class AutoMachineStateTemplateSelection : GenericSelection<IAutoMachineStateTemplate>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (AutoMachineStateTemplateSelection).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -32,7 +26,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Prepare data for GenericSelection
     /// </summary>
@@ -54,6 +47,5 @@ namespace Lemoine.DataReferenceControls
       
       return AutoMachineStateTemplates;
     }
-    #endregion // Methods
   }
 }

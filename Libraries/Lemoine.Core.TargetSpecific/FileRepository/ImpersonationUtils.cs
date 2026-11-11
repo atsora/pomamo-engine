@@ -313,23 +313,19 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
             return Impersonate (token);
           }
           else {
-            log.ErrorFormat ("ImpersonateCurrentUser: " +
-                             "GetPrimaryToken for explorer.exe returned an empty token");
+            log.Error ("ImpersonateCurrentUser: GetPrimaryToken for explorer.exe returned an empty token");
             throw new Exception ("No primary token");
           }
         }
         else {
           if (log.IsInfoEnabled) {
-            log.InfoFormat ("ImpersonateCurrentUser: " +
-                            "explorer.exe not found, it may be normal on a server where no desktop session is opened");
+            log.Info ("ImpersonateCurrentUser: explorer.exe not found, it may be normal on a server where no desktop session is opened");
           }
           return new DummyDisposable ();
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ImpersonateCurrentUser: " +
-                         "exception {0} raised",
-                         ex);
+        log.Error ($"ImpersonateCurrentUser: exception {ex} raised");
         return new DummyDisposable ();
       }
 #else

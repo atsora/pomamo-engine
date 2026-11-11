@@ -17,13 +17,7 @@ namespace Lemoine.Info.ConfigReader
   /// </summary>
   public class EnvironmentRawStringConfigReader : IStringConfigReader
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (EnvironmentRawStringConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -33,9 +27,6 @@ namespace Lemoine.Info.ConfigReader
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IStringConfigReader implementation
     /// <summary>
@@ -67,9 +58,6 @@ namespace Lemoine.Info.ConfigReader
     , IGenericConfigReader
   {
     static readonly ILog log = LogManager.GetLogger (typeof (EnvironmentRawConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

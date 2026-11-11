@@ -25,9 +25,6 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
   {
     readonly ILog log = LogManager.GetLogger (typeof (DefaultReasonUndefined).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -36,9 +33,6 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IReasonExtension implementation
     /// <summary>
@@ -144,14 +138,12 @@ namespace Lemoine.Plugin.ReasonDefaultManagement
         && ((int)ReasonId.Undefined == reasonSlot.Reason.Id)
         && (0 <= reasonSlot.ReasonScore)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("TryResetReason: the reason is already 'undefined' in reasonslot id {0}",
-                           reasonSlot.Id);
+          log.Debug ($"TryResetReason: the reason is already 'undefined' in reasonslot id {reasonSlot.Id}");
         }
       }
       else {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("TryResetReason: try to set undefined to reasonSlot id {0}",
-            reasonSlot.Id);
+          log.Debug ($"TryResetReason: try to set undefined to reasonSlot id {reasonSlot.Id}");
         }
         IReason undefined = ModelDAOHelper.DAOFactory.ReasonDAO.FindById ((int)ReasonId.Undefined);
         var oldSlot = (ISlot)reasonSlot.Clone ();

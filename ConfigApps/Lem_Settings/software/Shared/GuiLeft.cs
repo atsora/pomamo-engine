@@ -14,19 +14,15 @@ namespace Lem_Settings
   /// </summary>
   public partial class GuiLeft : UserControl
   {
-    #region Members
     // For each item, view mode or not
     readonly IDictionary<IItem, bool> m_baseItems = new Dictionary<IItem, bool>();
     IItem m_currentItem;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Editors are enabled in the list?
     /// (default: true)
     /// </summary>
     public bool EditorsEnabled { get; set; }
-    #endregion
     
     #region Constructors
     /// <summary>
@@ -39,7 +35,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the current item
     /// </summary>
@@ -102,6 +97,5 @@ namespace Lem_Settings
         (m_currentItem is IConfigurator && m_currentItem.Context.ViewMode &&
          (m_currentItem.Flags & LemSettingsGlobal.ItemFlag.VIEW_MODE_ALLOWED) != 0);
     }
-    #endregion // Methods
   }
 }

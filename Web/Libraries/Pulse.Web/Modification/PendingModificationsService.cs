@@ -38,7 +38,6 @@ namespace Pulse.Web.Modification
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -52,15 +51,13 @@ namespace Pulse.Web.Modification
       }
       
       if ( (0 == revisionId) && (0 == request.ModificationId)) { // Error
-        log.ErrorFormat ("Get: " +
-                         "no revision or modification ID set");
+        log.Error ("Get: no revision or modification ID set");
         return new ErrorDTO ("No revision or modification id set",
                              ErrorStatus.WrongRequestParameter);
       }
       
       if ( (0 < revisionId) && (0 < request.ModificationId)) {
-        log.ErrorFormat ("Get: " +
-                         "both modification and revision IDs are set");
+        log.Error ("Get: both modification and revision IDs are set");
         return new ErrorDTO ("Both modification and revision IDs are set",
                              ErrorStatus.WrongRequestParameter);
       }
@@ -71,9 +68,7 @@ namespace Pulse.Web.Modification
         if (0 < revisionId) {
           IRevision revision = ModelDAOHelper.DAOFactory.RevisionDAO.FindById(revisionId);
           if (null == revision) {
-            log.ErrorFormat ("Get: " +
-                             "Revision with {0} does not exist",
-                             revisionId);
+            log.Error ($"Get: Revision with {revisionId} does not exist");
             return new ErrorDTO ("No revision with id " + revisionId,
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -149,6 +144,5 @@ namespace Pulse.Web.Modification
       log.Fatal ($"GetNumberOfRemainingModifications: no modification with Id {modificationId}");
       throw new ArgumentException ("Invalid modification Id", "modificationId");
     }
-    #endregion // Methods
   }
 }

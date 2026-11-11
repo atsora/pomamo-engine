@@ -49,7 +49,6 @@ namespace Lemoine.BaseControls
       Sun = 64
     };
 
-    #region Getters / Setters
     /// <summary>
     /// Days selected in the week
     /// </summary>
@@ -138,7 +137,6 @@ namespace Lemoine.BaseControls
         return val;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -159,7 +157,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Format the days: "Monday, Wednesday, Sunday" for instance
     /// </summary>
@@ -197,6 +194,5 @@ namespace Lemoine.BaseControls
 
       return String.Join(", ", stringList.ToArray());
     }
-    #endregion // Methods
   }
 }

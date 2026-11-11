@@ -18,15 +18,10 @@ namespace Lemoine.Collections
     : ISharedValue<T>
     where T: struct
   {
-    #region Members
     readonly string m_name;
     readonly SharedMemory.BufferReadWrite m_buffer;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger(typeof (SharedMemoryValue<T>).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

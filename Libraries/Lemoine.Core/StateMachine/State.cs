@@ -84,7 +84,7 @@ namespace Lemoine.Core.StateMachine
       TimeSpan timeSpent = DateTime.UtcNow.Subtract (this.Context.StateMachineStartDateTime);
       if (this.Context.MaxTime < timeSpent) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ($"TestMaxTime: the time spent in MakeAnalysis is already {timeSpent} (more than {this.Context.MaxTime}) => exit");
+          log.Warn ($"TestMaxTime: the time spent in MakeAnalysis is already {timeSpent} (more than {this.Context.MaxTime}) => exit");
         }
         return false;
       }

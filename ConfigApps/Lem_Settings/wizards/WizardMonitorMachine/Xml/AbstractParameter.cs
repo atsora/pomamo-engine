@@ -181,7 +181,6 @@ namespace WizardMonitorMachine
       Hidden = false;
     }
 
-    #region Methods
     /// <summary>
     /// Is ParamX
     /// </summary>
@@ -401,7 +400,6 @@ namespace WizardMonitorMachine
     protected abstract void SetValue (Control specializedControl, string value);
     protected abstract string ValidateInput (Control specializedControl);
     protected abstract string GetWarning (Control specializedControl);
-#endregion // Methods
 
     #region Event reactions
     void OnCheckboxChecked (Object sender, EventArgs e)

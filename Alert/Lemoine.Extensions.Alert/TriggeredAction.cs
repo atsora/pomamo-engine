@@ -14,14 +14,11 @@ namespace Lemoine.Extensions.Alert
   [Serializable]
   public class TriggeredAction
   {
-    #region Members
     ITrigger m_trigger;
     IList<IAction> m_actions = new List<IAction> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (TriggeredAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated trigger
     /// </summary>
@@ -39,7 +36,6 @@ namespace Lemoine.Extensions.Alert
       get { return m_actions; }
       set { m_actions = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -18,15 +18,12 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class DisclosurePanel : UserControl
   {
-    #region Members
     bool m_open;
     String m_title;
     Control m_content;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DisclosurePanel).FullName);
 
-    #region Getters / Setters
     /// <summary>
     ///   State of DisclosurePanel
     /// </summary>
@@ -87,8 +84,6 @@ namespace Lemoine.BaseControls
         contentPanel.Height = value;
       }
     }
-    
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -104,7 +99,6 @@ namespace Lemoine.BaseControls
 
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// 
     /// </summary>
@@ -163,7 +157,6 @@ namespace Lemoine.BaseControls
     {
       e.Control.Dock = DockStyle.Top;
     }
-    #endregion // Methods
     
     
   }

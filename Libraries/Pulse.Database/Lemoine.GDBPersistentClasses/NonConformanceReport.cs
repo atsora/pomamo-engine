@@ -25,14 +25,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class NonConformanceReport: MachineModification, INonConformanceReport
   {
-    #region Members
     IDeliverablePiece m_deliverablePiece;
     IIntermediateWorkPiece m_intermediateWorkPiece;
     INonConformanceReason m_nonConformanceReason;
     bool? m_fixable;
     DateTime? m_operationDateTime;
     string m_nonConformanceDetails;
-    #endregion // Members
 
     #region constructor
     /// <summary>
@@ -55,7 +53,6 @@ namespace Lemoine.GDBPersistentClasses
     #endregion // constructor
 
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -77,8 +74,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("IntermediateWorkPiece.set: " +
-                           "null value");
+          log.Error ("IntermediateWorkPiece.set: null value");
           throw new ArgumentNullException ("NonConformanceReport.IntermediateWorkPiece");
         }
         m_intermediateWorkPiece = value;
@@ -176,10 +172,8 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.m_operationDateTime; }
       set { this.m_operationDateTime = value; }
     }
-    #endregion // Getters / Setters
     
     
-    #region Methods
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -219,7 +213,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         else {
           string message = string.Format ("MakeAnalysis: No operation cycle detected");
-          log.ErrorFormat ("MakeAnalysis: {0} ",message);
+          log.Error ($"MakeAnalysis: {message} ");
           AddAnalysisLog (LogLevel.ERROR, message);
           MarkAsError ();
           return;
@@ -227,7 +221,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         string message = string.Format ("MakeAnalysis: there is no monitored machine with id {0} ",this.Machine.Id);
-        log.ErrorFormat ("MakeAnalysis: {0} ",message);
+        log.Error ($"MakeAnalysis: {message} ");
         AddAnalysisLog (LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -244,10 +238,9 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

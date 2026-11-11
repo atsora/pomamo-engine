@@ -22,9 +22,7 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class SimpleOperation: DataWithPatternName, ISimpleOperation, IEquatable<ISimpleOperation>
   {
-    #region Members
     IIntermediateWorkPiece m_intermediateWorkPiece;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (SimpleOperation).FullName);
 
@@ -60,7 +58,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Id
     /// </summary>
@@ -401,7 +398,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ICollection<IComponentIntermediateWorkPiece> ComponentIntermediateWorkPieces {
       get { return m_intermediateWorkPiece.ComponentIntermediateWorkPieces; }
     }
-    #endregion // Getters / Setters
     
     #region Add methods
     /// <summary>
@@ -423,7 +419,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
     
-    #region Methods
     /// <summary>
     /// Check if the simple operation is undefined
     /// 
@@ -467,7 +462,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       return string.IsNullOrEmpty (v) ? default (DateTime?) : DateTime.Parse (v);
     }
-    #endregion // Methods
 
     /// <summary>
     /// Indicates whether the current object

@@ -48,8 +48,7 @@ namespace Pulse.Web.Cache
     public override async Task<object> Get (ClearDomainRequestDTO request)
     {
       if (string.IsNullOrEmpty (request.Domain)) {
-        log.ErrorFormat ("GetWithoutCache: " +
-                         "empty domain");
+        log.Error ("GetWithoutCache: empty domain");
         return new ErrorDTO ("empty domain", ErrorStatus.WrongRequestParameter);
       }
 

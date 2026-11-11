@@ -556,7 +556,7 @@ namespace Lemoine.CncEngine
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ($"LoadModuleRef: module with ref {refAttribute} successfully appended");
+        log.Debug ($"LoadModuleRef: module with ref {refAttribute} successfully appended");
       }
     }
 
@@ -565,22 +565,14 @@ namespace Lemoine.CncEngine
       if (moduleElement.HasAttribute ("if")) {
         string condition = moduleElement.GetAttribute ("if");
         if (condition.Equals ("False", StringComparison.InvariantCultureIgnoreCase)) {
-          log.InfoFormat ("IsModuleElementActive: " +
-                          "if condition {0} is False " +
-                          "=> do not load {1}",
-                          condition,
-                          moduleElement.GetAttribute ("type"));
+          log.Info ($"IsModuleElementActive: if condition {condition} is False => do not load {moduleElement.GetAttribute ("type")}");
           return false;
         }
       }
       if (moduleElement.HasAttribute ("ifnot")) {
         string condition = moduleElement.GetAttribute ("ifnot");
         if (condition.Equals ("True", StringComparison.InvariantCultureIgnoreCase)) {
-          log.InfoFormat ("IsModuleElementActive: " +
-                          "ifnot condition {0} is True " +
-                          "=> do not load {1}",
-                          condition,
-                          moduleElement.GetAttribute ("type"));
+          log.Info ($"IsModuleElementActive: ifnot condition {condition} is True => do not load {moduleElement.GetAttribute ("type")}");
           return false;
         }
       }
@@ -637,15 +629,14 @@ namespace Lemoine.CncEngine
         PropertyInfo propertyInfo =
           module.GetType ().GetProperty ("License");
         if (null == propertyInfo) { // No license property
-          log.DebugFormat ("IsLicenseOk: no license is required for {0}", module);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsLicenseOk: no license is required for {module}");
+          }
           return true;
         }
         else { // null != propertyInfo
           if (CncLicenseManager.GetLicense ()) {
-            log.InfoFormat ("IsLicenseOk: " +
-                            "a license has been successfully acquired " +
-                            "for {0}",
-                            module);
+            log.Info ($"IsLicenseOk: a license has been successfully acquired for {module}");
             return true;
           }
           else {
@@ -693,10 +684,7 @@ namespace Lemoine.CncEngine
         else if (propertyInfo.PropertyType.Equals (typeof (long))) {
           long longValue = 0;
           if (false == long.TryParse (value, out longValue)) {
-            log.WarnFormat ("SetProperty: " +
-                            "could not convert property {0}={1} " +
-                            "into a long",
-                            name, value);
+            log.Warn ($"SetProperty: could not convert property {name}={value} into a long");
           }
           else {
             propertyInfo.SetValue (module,
@@ -710,10 +698,7 @@ namespace Lemoine.CncEngine
           if (false == double.TryParse (value, NumberStyles.Any,
                                         usCultureInfo,
                                         out doubleValue)) {
-            log.WarnFormat ("SetProperty: " +
-                            "could not convert property {0}={1} " +
-                            "into an double",
-                            name, value);
+            log.Warn ($"SetProperty: could not convert property {name}={value} into an double");
           }
           else {
             propertyInfo.SetValue (module,
@@ -905,8 +890,7 @@ namespace Lemoine.CncEngine
       log.Debug ("Work: run some garbage collection");
       DateTime garbageCollectionStart = DateTime.UtcNow;
       GC.Collect ();
-      log.InfoFormat ("Work: garbage collection completed in {0}",
-        DateTime.UtcNow.Subtract (garbageCollectionStart));
+      log.Info ($"Work: garbage collection completed in {DateTime.UtcNow.Subtract (garbageCollectionStart)}");
       m_lastGarbageCollection = DateTime.UtcNow;
     }
 
@@ -1083,9 +1067,9 @@ namespace Lemoine.CncEngine
     {
       if (moduleElement.HasAttribute ("starterror")) {
         string starterror = moduleElement.GetAttribute ("starterror");
-        log.DebugFormat ("RecordStartError: " +
-                         "set true to starterror property {0} because of an exception",
-                         starterror);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"RecordStartError: set true to starterror property {starterror} because of an exception");
+        }
         data[starterror] = true;
       }
     }
@@ -1112,10 +1096,7 @@ namespace Lemoine.CncEngine
       Debug.Assert (null != data);
 
       if (!CheckIfCondition (instructionElement, data)) {
-        log.InfoFormat ("ProcessInstructionElement: " +
-                        "if/ifnot condition is not checked " +
-                        "=> do not run instruction element {0}",
-                        instructionElement);
+        log.Info ($"ProcessInstructionElement: if/ifnot condition is not checked => do not run instruction element {instructionElement}");
         return;
       }
 
@@ -1131,8 +1112,7 @@ namespace Lemoine.CncEngine
         ProcessSet (cncModuleExecutor, instructionElement, data);
       }
       else {
-        log.FatalFormat ("ProcessInstructionElement: invalid instruction element {0} with name {1} => check the configuration file",
-          instructionElement, elementName);
+        log.Fatal ($"ProcessInstructionElement: invalid instruction element {instructionElement} with name {elementName} => check the configuration file");
       }
     }
 
@@ -1156,20 +1136,16 @@ namespace Lemoine.CncEngine
       if ((!overwrite.Equals ("true", StringComparison.InvariantCultureIgnoreCase))
           && (!overwrite.Equals ("1"))
           && data.ContainsKey (dataItem)) {
-        log.DebugFormat ("ProcessGet: " +
-                         "element {0} is already known " +
-                         "in {1} " +
-                         "=> skip the get directive",
-                         dataItem,
-                         cncModuleExecutor);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ProcessGet: element {dataItem} is already known in {cncModuleExecutor} => skip the get directive");
+        }
         return;
       }
 
       string method = instructionElement.GetAttribute ("method");
       if (0 < method.Length) { // If there is an attribute method, use it
         if (!ProcessGetMethod (cncModuleExecutor, instructionElement, method, data)) {
-          log.FatalFormat ("ProcessGet: no method {0} in module {1} element {2}",
-            method, cncModuleExecutor, instructionElement);
+          log.Fatal ($"ProcessGet: no method {method} in module {cncModuleExecutor} element {instructionElement}");
         }
         return;
       }
@@ -1177,8 +1153,7 @@ namespace Lemoine.CncEngine
       string property = instructionElement.GetAttribute ("property");
       if (0 < property.Length) { // If there is an attribute property, use it
         if (!ProcessGetProperty (cncModuleExecutor, instructionElement, property, data)) {
-          log.FatalFormat ("ProcessGet: no property {0} in module {1} element {2}",
-            property, cncModuleExecutor, instructionElement);
+          log.Fatal ($"ProcessGet: no property {property} in module {cncModuleExecutor} element {instructionElement}");
         }
         return;
       }
@@ -1190,8 +1165,7 @@ namespace Lemoine.CncEngine
       if (ProcessGetProperty (cncModuleExecutor, instructionElement, dataItem, data)) {
         return;
       }
-      log.FatalFormat ("ProcessGet: no method or attribute found for {0} in module {1} element {2} => error in the configuration file",
-        dataItem, cncModuleExecutor, instructionElement);
+      log.Fatal ($"ProcessGet: no method or attribute found for {dataItem} in module {cncModuleExecutor} element {instructionElement} => error in the configuration file");
     }
 
     /// <summary>
@@ -1427,10 +1401,7 @@ namespace Lemoine.CncEngine
       if (!CheckIfCondition (element, data, out attribute)) {
         if (log.IsInfoEnabled) {
           string condition = element.GetAttribute (attribute);
-          log.InfoFormat ("CheckIfCondition: " +
-                          "{0} condition {1} is not checked " +
-                          "do not load {2}",
-                          attribute, condition, element);
+          log.Info ($"CheckIfCondition: {attribute} condition {condition} is not checked do not load {element}");
         }
         return false;
       }
@@ -1458,7 +1429,7 @@ namespace Lemoine.CncEngine
         string condition = element.GetAttribute ("if");
         if (string.IsNullOrEmpty (condition)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckIfCondition: if condition {0} is empty, return false", condition);
+            log.Debug ($"CheckIfCondition: if condition {condition} is empty, return false");
           }
           attribute = "if";
           return false;
@@ -1467,7 +1438,7 @@ namespace Lemoine.CncEngine
         if (b.HasValue) {
           if (b.Value) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckIfCondition: if condition {0} is {1}, continue", condition, b);
+              log.Debug ($"CheckIfCondition: if condition {condition} is {b}, continue");
             }
           }
           else { // !b.Value
@@ -1477,7 +1448,7 @@ namespace Lemoine.CncEngine
         }
         else { // !b.HasValue
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckIfCondition: if condition {0} could not be evaluated as a boolean, return false", condition);
+            log.Debug ($"CheckIfCondition: if condition {condition} could not be evaluated as a boolean, return false");
           }
           attribute = "if";
           return false;
@@ -1487,7 +1458,7 @@ namespace Lemoine.CncEngine
         string condition = element.GetAttribute ("iforunknown");
         if (string.IsNullOrEmpty (condition)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckIfCondition: iforunknown condition {0} is empty, return false", condition);
+            log.Debug ($"CheckIfCondition: iforunknown condition {condition} is empty, return false");
           }
           attribute = "if";
           return false;
@@ -1496,7 +1467,7 @@ namespace Lemoine.CncEngine
         if (b.HasValue) {
           if (b.Value) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckIfCondition: iforunknown condition {0} is {1}, continue", condition, b);
+              log.Debug ($"CheckIfCondition: iforunknown condition {condition} is {b}, continue");
             }
           }
           else { // !b.Value
@@ -1506,7 +1477,7 @@ namespace Lemoine.CncEngine
         }
         else { // !b.HasValue
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckIfCondition: iforunknown condition {0} could not be evaluated as a boolean, continue", condition);
+            log.Debug ($"CheckIfCondition: iforunknown condition {condition} could not be evaluated as a boolean, continue");
           }
         }
       }
@@ -1514,7 +1485,7 @@ namespace Lemoine.CncEngine
         string condition = element.GetAttribute ("ifnot");
         if (string.IsNullOrEmpty (condition)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckIfCondition: ifnot condition {0} is empty, return false", condition);
+            log.Debug ($"CheckIfCondition: ifnot condition {condition} is empty, return false");
           }
           attribute = "ifnot";
           return false;
@@ -1527,14 +1498,14 @@ namespace Lemoine.CncEngine
           }
           else { // !b.Value
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckIfCondition: ifnot condition {0} is {1}, continue", condition, b);
+              log.Debug ($"CheckIfCondition: ifnot condition {condition} is {b}, continue");
             }
           }
         }
         else { // !b.HasValue
           attribute = "ifnot";
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckIfCondition: ifnot condition {0} could not be evaluated as a boolean", condition);
+            log.Debug ($"CheckIfCondition: ifnot condition {condition} could not be evaluated as a boolean");
           }
           return false;
         }
@@ -1549,13 +1520,13 @@ namespace Lemoine.CncEngine
           }
           else { // !b.Value
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckIfCondition: ifnotorunknown condition {0} is {1}, continue", condition, b);
+              log.Debug ($"CheckIfCondition: ifnotorunknown condition {condition} is {b}, continue");
             }
           }
         }
         else { // !b.HasValue
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckIfCondition: ifnotorunknown condition {0} is unknown or not valid, continue", condition);
+            log.Debug ($"CheckIfCondition: ifnotorunknown condition {condition} is unknown or not valid, continue");
           }
         }
       }
@@ -1565,7 +1536,7 @@ namespace Lemoine.CncEngine
         if (b.HasValue) {
           if (b.Value) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckIfCondition: ifandnotunknown condition {0} is {1}, continue", condition, b);
+              log.Debug ($"CheckIfCondition: ifandnotunknown condition {condition} is {b}, continue");
             }
           }
           else { // !b.Value
@@ -1641,7 +1612,7 @@ namespace Lemoine.CncEngine
         try {
           var b = (bool)ConvertData (v, typeof (bool));
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckBoolCondition: {0} value is {1} after conversion", condition, b);
+            log.Debug ($"CheckBoolCondition: {condition} value is {b} after conversion");
           }
           return b;
         }

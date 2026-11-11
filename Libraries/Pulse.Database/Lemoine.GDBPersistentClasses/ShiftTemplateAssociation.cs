@@ -20,10 +20,8 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ShiftTemplateAssociation: PeriodAssociation, IShiftTemplateAssociation
   {
-    #region Members
     IShiftTemplate m_ShiftTemplate;
     bool m_force = false;
-    #endregion // Members
     
     #region Constructors
     /// <summary>
@@ -61,7 +59,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -83,8 +80,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("ShiftTemplate.set: " +
-                           "null value");
+          log.Error ("ShiftTemplate.set: null value");
           throw new ArgumentNullException ("ShiftTemplateAssociation.ShiftTemplate");
         }
         m_ShiftTemplate = value;
@@ -110,7 +106,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_force; }
       set { m_force = value; }
     }
-    #endregion // Getters / Setters
     
     #region PeriodAssociation implementation
     /// <summary>
@@ -184,9 +179,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }

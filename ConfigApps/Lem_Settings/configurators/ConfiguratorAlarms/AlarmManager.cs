@@ -17,20 +17,16 @@ namespace ConfiguratorAlarms
   /// </summary>
   public class AlarmManager
   {
-    #region Members
     readonly IList<Alarm> m_listAlarms;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (AlarmManager).FullName);
     internal static readonly string SOFTWARE_NAME = "LemSettings - Email alert configurator";
     internal static readonly string OLD_SOFTWARE_NAME = "AlertConfigGUI";
     
-    #region Getters / Setters
     /// <summary>
     /// List of all emails
     /// </summary>
     public List<EmailWithName> ListEmails { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -43,7 +39,6 @@ namespace ConfiguratorAlarms
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Reload all data from the database
     /// </summary>
@@ -253,9 +248,7 @@ namespace ConfiguratorAlarms
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("Save alarm: " +
-                         "got exception {0}",
-                         ex);
+        log.Error ($"Save alarm: got exception {ex}");
         MessageBox.Show (@"Add alarm failed with the following error:
 " + ex,
                          "Add alarm error",
@@ -300,6 +293,5 @@ namespace ConfiguratorAlarms
       // Save
       ModelDAOHelper.DAOFactory.EmailConfigDAO.MakePersistent(emailConfig);
     }
-    #endregion // Methods
   }
 }

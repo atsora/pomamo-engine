@@ -18,7 +18,6 @@ namespace ConfiguratorAlarmFocus
     internal const string CURRENT_FOCUS = "current_focus";
     internal const string DATE_RANGE = "date_range";
 
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -83,7 +82,6 @@ namespace ConfiguratorAlarmFocus
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

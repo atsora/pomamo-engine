@@ -69,7 +69,7 @@ namespace Pulse.PluginImplementation.OperationDetectionStatus
             .Select (x => x.Value);
           if (!dateTimes.Any ()) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetOperationDetectionDateTime: no machine module with a date/time");
+              log.Debug ("GetOperationDetectionDateTime: no machine module with a date/time");
             }
             return null;
           }
@@ -85,12 +85,12 @@ namespace Pulse.PluginImplementation.OperationDetectionStatus
       var analysisStatus = ModelDAOHelper.DAOFactory.MachineModuleAnalysisStatusDAO
         .FindById (machineModule.Id);
       if (null == analysisStatus) {
-        log.ErrorFormat ("GetOperationDetectionDateTime: no analysis status for machine module id {0}", machineModule.Id);
+        log.Error ($"GetOperationDetectionDateTime: no analysis status for machine module id {machineModule.Id}");
         return null;
       }
       if (0 == analysisStatus.LastMachineModuleDetectionId) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetOperationDetectionDateTime: no machine module detection has been processed yet (LastMachineModuleDetectionId = 0) => return null");
+          log.Debug ("GetOperationDetectionDateTime: no machine module detection has been processed yet (LastMachineModuleDetectionId = 0) => return null");
         }
         return null;
       }
@@ -98,8 +98,7 @@ namespace Pulse.PluginImplementation.OperationDetectionStatus
         .MachineModuleDetectionDAO
         .FindById (analysisStatus.LastMachineModuleDetectionId, machineModule);
       if (null == lastMachineModuleDetection) {
-        log.ErrorFormat ("GetOperationDetectionDateTime: no machine module detection id {0}",
-          analysisStatus.LastMachineModuleDetectionId);
+        log.Error ($"GetOperationDetectionDateTime: no machine module detection id {analysisStatus.LastMachineModuleDetectionId}");
         return null;
       }
       return lastMachineModuleDetection.DateTime;
@@ -124,7 +123,7 @@ namespace Pulse.PluginImplementation.OperationDetectionStatus
         }
       }
       if (null == m_monitoredMachine) {
-        log.ErrorFormat ("Initialize: no monitored machine with id {0}", machine.Id);
+        log.Error ($"Initialize: no monitored machine with id {machine.Id}");
         return false;
       }
 

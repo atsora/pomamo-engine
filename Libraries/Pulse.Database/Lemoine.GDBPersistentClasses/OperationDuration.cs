@@ -24,16 +24,13 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OperationDuration : BaseData, IOperationDuration, IEquatable<IOperationDuration>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     IOperation m_operation;
     /* TODO: for later once the table exists
     DateTime m_dateTime = DateTime.UtcNow;
     */
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationDuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -297,8 +294,6 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
-
-    #endregion // Getters / Setters
 
     #region Contructors
     /// <summary>

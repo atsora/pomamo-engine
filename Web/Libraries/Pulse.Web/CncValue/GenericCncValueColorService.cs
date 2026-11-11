@@ -49,7 +49,6 @@ namespace Pulse.Web.CncValue
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Extract the range from the requestDTO
     /// </summary>
@@ -86,9 +85,7 @@ namespace Pulse.Web.CncValue
       // Time span considering the number of pixels
       Debug.Assert (range.Duration.HasValue);
       if (!range.Duration.HasValue) {
-        log.FatalFormat ("GetCacheTimeOut: " +
-          "no range duration, return {0} for {1}",
-          timeCacheTimeSpan, url);
+        log.Fatal ($"GetCacheTimeOut: no range duration, return {timeCacheTimeSpan} for {url}");
         return timeCacheTimeSpan;
       }
       double rangeSeconds = range.Duration.Value.TotalSeconds;
@@ -96,9 +93,9 @@ namespace Pulse.Web.CncValue
       TimeSpan durationCacheTimeSpan = TimeSpan.FromSeconds (2.0 * secondsPerPixel); // No need to expire the cache if you do not get at least two more pixels
 
       TimeSpan cacheTimeSpan = (timeCacheTimeSpan < durationCacheTimeSpan) ? durationCacheTimeSpan : timeCacheTimeSpan; // Longer duration
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} considering time:{1}, considering duration:{2} for url={3}",
-                       cacheTimeSpan, timeCacheTimeSpan, durationCacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} considering time:{timeCacheTimeSpan}, considering duration:{durationCacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -159,8 +156,7 @@ namespace Pulse.Web.CncValue
             }
             else {
               newDuration = TimeSpan.FromTicks (0);
-              log.WarnFormat ("GeAutoSplit: " +
-                              "new duration is 0"); // should normally not happen really often
+              log.Warn ("GeAutoSplit: new duration is 0"); // should normally not happen really often
               continue;
             }
           }
@@ -260,8 +256,7 @@ namespace Pulse.Web.CncValue
             }
             else {
               newDuration = TimeSpan.FromTicks (0);
-              log.WarnFormat ("GeAutoSplit: " +
-                              "new duration is 0"); // should normally not happen really often
+              log.Warn ("GeAutoSplit: new duration is 0"); // should normally not happen really often
               continue;
             }
           }
@@ -396,6 +391,5 @@ namespace Pulse.Web.CncValue
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }

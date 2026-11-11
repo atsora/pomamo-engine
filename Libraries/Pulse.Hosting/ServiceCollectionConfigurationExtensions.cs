@@ -363,7 +363,7 @@ namespace Pulse.Hosting
         int lruSize = Lemoine.Info.ConfigSet.LoadAndGet<int> (CACHE_LRU_SIZE_KEY,
                                                               lruCacheSizeDefault);
         if (log.IsInfoEnabled) {
-          log.InfoFormat ($"CreateCacheClient: use a (default) LRU cache of size {lruSize} with clean extension");
+          log.Info ($"CreateCacheClient: use a (default) LRU cache of size {lruSize} with clean extension");
         }
         return new CacheClientWithCleanExtensionCore (new LruCacheClient (lruSize));
       }

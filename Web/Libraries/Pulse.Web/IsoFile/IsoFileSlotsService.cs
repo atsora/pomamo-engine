@@ -42,7 +42,6 @@ namespace Pulse.Web.IsoFile
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -73,9 +72,9 @@ namespace Pulse.Web.IsoFile
       else { // Current or future
         cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
       }
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} for url={1}",
-                       cacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -92,9 +91,7 @@ namespace Pulse.Web.IsoFile
         IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -285,6 +282,5 @@ namespace Pulse.Web.IsoFile
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }

@@ -25,17 +25,12 @@ namespace Lemoine.Business.Operation
   public sealed class CycleDetectionStatus
     : IRequest<DateTime?>
   {
-    #region Members
     /// <summary>
     /// Reference machine
     /// </summary>
     IMachine Machine { get; set; }
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (CycleDetectionStatus).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -55,9 +50,6 @@ namespace Lemoine.Business.Operation
     }
     #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
     #region IRequest implementation
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
@@ -71,7 +63,7 @@ namespace Lemoine.Business.Operation
       var cycleDetectionStatusExtensions = Business.ServiceProvider
         .Get<IEnumerable<ICycleDetectionStatusExtension>> (cycleDetectionStatusRequest);
       if (!cycleDetectionStatusExtensions.Any ()) {
-        log.ErrorFormat ("Get: no cycle detection status extension registered");
+        log.Error ("Get: no cycle detection status extension registered");
         return null;
       }
       foreach (var groupByPriority in cycleDetectionStatusExtensions.GroupBy (ext => ext.CycleDetectionStatusPriority)
@@ -82,20 +74,20 @@ namespace Lemoine.Business.Operation
           .Select (x => x.Value);
         if (!cycleDetectionDateTimes.Any ()) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Get: no extension returned a date/time for priority {0}", groupByPriority.Key);
+            log.Debug ($"Get: no extension returned a date/time for priority {groupByPriority.Key}");
           }
         }
         else {
           var result = cycleDetectionDateTimes.Max ();
           if (log.IsInfoEnabled) {
-            log.InfoFormat ("Get: return {0} from priority {1}", result, groupByPriority.Key);
+            log.Info ($"Get: return {result} from priority {groupByPriority.Key}");
           }
           return result;
         }
       }
 
       if (log.IsWarnEnabled) {
-        log.WarnFormat ("Get: no extension returned a date/time");
+        log.Warn ("Get: no extension returned a date/time");
       }
       return null;
     }

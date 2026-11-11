@@ -408,7 +408,6 @@ namespace LemoineServiceMonitoring
       }
     }
 
-    #region Methods
     async Task StopSelectedServicesAsync (ListView listView)
     {
       var listViewItems = listView.SelectedItems;
@@ -1082,7 +1081,6 @@ namespace LemoineServiceMonitoring
         .Select (x => x.Item2);
       InvokeUpdateButtons (selectedServiceControllers);
     }
-#endregion
 
     async void ButtonStopAllClick (object sender, EventArgs e)
     {

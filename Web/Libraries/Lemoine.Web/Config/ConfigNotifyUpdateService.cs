@@ -39,7 +39,6 @@ namespace Lemoine.Web.Config
       m_cacheClient = cacheClient;
     }
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -73,6 +72,5 @@ namespace Lemoine.Web.Config
 
       return new OkDTO ("");
     }
-    #endregion // Methods
   }
 }

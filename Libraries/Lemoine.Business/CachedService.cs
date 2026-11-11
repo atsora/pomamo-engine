@@ -64,7 +64,6 @@ namespace Lemoine.Business
       m_cacheClient = cacheClient;
     }
 
-    #region Methods
     /// <summary>
     /// Get the result of a request
     /// </summary>
@@ -206,6 +205,5 @@ namespace Lemoine.Business
     }
 
     // Note: using IsDefault() is not necessary any more because the cache contains a CacheValue is just a normal object (nullable)
-    #endregion // Methods
   }
 }

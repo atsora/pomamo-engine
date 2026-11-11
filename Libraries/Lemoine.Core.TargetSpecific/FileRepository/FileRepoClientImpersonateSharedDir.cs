@@ -15,10 +15,8 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
   /// </summary>
   public class FileRepoClientImpersonateSharedDir: IFileRepoClient
   {
-    #region Members
     readonly string m_rootPath = "";
     readonly bool m_local = false;
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof(FileRepoClientImpersonateSharedDir).FullName);
 
@@ -62,9 +60,7 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
             return true;
           }
           else {
-            log.ErrorFormat("Test: " +
-                            "Root directory {0} cannot be found",
-                            m_rootPath);
+            log.Error ($"Test: Root directory {m_rootPath} cannot be found");
             return false;
           }
         }
@@ -93,7 +89,7 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
             filesFull = Directory.GetFiles(dir);
           }
           else {
-            log.ErrorFormat("Directory {0} cannot be found", dir);
+            log.Error ($"Directory {dir} cannot be found");
           }
           
           if (filesFull != null) {
@@ -131,7 +127,7 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
             directoriesFull = Directory.GetDirectories(dir);
           }
           else {
-            log.ErrorFormat("Directory {0} cannot be found", dir);
+            log.Error ($"Directory {dir} cannot be found");
           }
 
           if (directoriesFull != null) {
@@ -143,8 +139,7 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat("ListDirectoriesInDirectory: " +
-                        "got exception {0}", ex);
+        log.Error ($"ListDirectoriesInDirectory: got exception {ex}");
         throw;
       }
       
@@ -179,11 +174,7 @@ namespace Lemoine.Core.TargetSpecific.FileRepository
         throw new MissingFileException (nspace, path, ex);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetFile:" +
-                         "nspace={0} path={1} localPath={2} " +
-                         "got exception {3}",
-                         nspace, path, localPath,
-                         ex);
+        log.Error ($"GetFile:nspace={nspace} path={path} localPath={localPath} got exception {ex}");
         throw;
       }
     }

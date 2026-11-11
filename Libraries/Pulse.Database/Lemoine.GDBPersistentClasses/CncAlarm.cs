@@ -18,18 +18,15 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CncAlarm : GenericMachineModuleRangeSlot, ICncAlarm, IVersionable, Lemoine.Collections.IDataWithId
   {
-    #region Members
     string m_cncInfo = "";
     string m_cncSubInfo = "";
     string m_type = "";
     string m_number = "";
     string m_message;
     IDictionary<string, object> m_properties = new Dictionary<string, object> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncAlarm).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Display name that is retrieved with a display function
     /// </summary>
@@ -210,7 +207,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -287,9 +283,7 @@ namespace Lemoine.GDBPersistentClasses
         return CompareTo (other);
       }
 
-      GetLogger ().ErrorFormat ("CompareTo: " +
-                               "object {0} of invalid type",
-                               obj);
+      GetLogger ().Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a ICncAlarm");
     }
 
@@ -317,10 +311,7 @@ namespace Lemoine.GDBPersistentClasses
         return comparison;
       }
       else {
-        GetLogger ().ErrorFormat ("CompareTo: " +
-                                  "trying to compare cnc alarms " +
-                                  "for different machine modules {0} {1}",
-                                  this, other);
+        GetLogger ().Error ($"CompareTo: trying to compare cnc alarms for different machine modules {this} {other}");
         throw new ArgumentException ("Comparison of cnc alarms from different machine modules");
       }
     }

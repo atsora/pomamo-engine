@@ -35,7 +35,6 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     static readonly string ALTERNATIVE_PLUGINS_DIRECTORIES_KEY = "Extensions.AlternativePluginsDirectories";
     static readonly string ALTERNATIVE_PLUGINS_DIRECTORIES_DEFAULT = "";
 
-    #region Members
     readonly IAssemblyLoader m_assemblyLoader;
 
     bool? m_pluginUserDirectoryActive = null;
@@ -45,12 +44,10 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     int m_synchronizationStatus = 0; // 1: in progress, 2: done
 
     readonly IList<DirectoryInfo> m_pluginDirectories = new List<DirectoryInfo> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (PluginDirectories).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
-    #region Getters / Setters
     /// <summary>
     /// Associated assembly loader
     /// </summary>
@@ -60,7 +57,6 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     /// Optional: synchronization timeout
     /// </summary>
     public TimeSpan? SynchronizationTimeout { get; set; } = null;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -75,7 +71,6 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Logger
     /// </summary>
@@ -316,7 +311,9 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
         }
         return;
       case 1: // In progress, wait for the completion
-        GetLogger ().DebugFormat ("SynchronizePluginUserDirectory: waiting for completion");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("SynchronizePluginUserDirectory: waiting for completion");
+        }
         while (1 == m_synchronizationStatus) { // Still in progress
           checkedThread?.SetActive ();
           System.Threading.Thread.Sleep (100);
@@ -395,6 +392,5 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
       return status == SynchronizationStatus.ALREADY_SYNCHRONIZED ||
         status == SynchronizationStatus.SYNCHRONIZATION_DONE;
     }
-    #endregion // Methods
   }
 }

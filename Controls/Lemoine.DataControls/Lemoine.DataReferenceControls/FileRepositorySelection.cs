@@ -16,14 +16,11 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class FileRepositorySelection : UserControl
   {
-    #region Members
     string m_nspace = "";
     string m_path = "";
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (FileRepositorySelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// FileRepository namespace
     /// </summary>
@@ -96,7 +93,6 @@ namespace Lemoine.DataReferenceControls
         return list;
       }
     }
-    #endregion // Getters / Setters
 
     #region Events
     /// <summary>
@@ -123,7 +119,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -134,7 +129,6 @@ namespace Lemoine.DataReferenceControls
         AfterSelect (this, e);
       }
     }
-    #endregion // Methods
 
     void FileRepositorySelectionLoad (object sender, EventArgs e)
     {

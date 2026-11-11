@@ -33,7 +33,6 @@ namespace Lemoine.Collections
     readonly string VOLATILE_QUEUE_TYPE_KEY = "VolatileQueue";
     readonly string PERSISTENT_QUEUE_TYPE_KEY = "PersistentQueue";
 
-    #region Members
     string m_name;
     Func<string, Mutex> m_createMutex;
     volatile Mutex m_mutex = null;
@@ -49,11 +48,9 @@ namespace Lemoine.Collections
     IChecked m_checkedCaller = null;
 
     Int32 m_fillPersistentQueueRunning = 0;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (CachedQueue<T>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Maximum number of volatile elements
     /// 
@@ -65,15 +62,12 @@ namespace Lemoine.Collections
       set
       {
         if (value < 0) {
-          log.ErrorFormat ("MaxVolatileElements.set: " +
-                           "negative value {0}, a positive value is expected",
-                           value);
+          log.Error ($"MaxVolatileElements.set: negative value {value}, a positive value is expected");
           throw new ArgumentOutOfRangeException ("value", "Not a positive value");
         }
         m_defaultConfigReader.Add (MAX_VOLATILE_ELEMENTS_KEY, value, true);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -218,10 +212,7 @@ namespace Lemoine.Collections
       using (var holder = new MutexHolder (m_mutex)) {
         if (0 < m_offsetPersistentQueue.Count) {
           if (0 == m_volatileQueue.Count) {
-            log.InfoFormat ("Initialize: " +
-                            "The volatile queue is empty while the persistent queue size is {0} " +
-                            "=> adjust the size of the volatile queue",
-                            m_offsetPersistentQueue.Count);
+            log.Info ($"Initialize: The volatile queue is empty while the persistent queue size is {m_offsetPersistentQueue.Count} => adjust the size of the volatile queue");
             m_offsetPersistentQueue.ClearOffset ();
             m_volatileQueue.AddOffset (m_offsetPersistentQueue.Count);
           }
@@ -237,9 +228,7 @@ namespace Lemoine.Collections
             for (int i = 0; i < commonVolatileElements.Count; ++i) {
               if (!object.Equals (commonVolatileElements[i], commonPersistentElements[i + m_volatileQueue.Count])) {
                 // The value differs
-                log.ErrorFormat ("Initialize: " +
-                                 "clear the volatile queue because the persistent queue and the volatile queue " +
-                                 "are not aligned with each other");
+                log.Error ("Initialize: clear the volatile queue because the persistent queue and the volatile queue are not aligned with each other");
                 m_offsetPersistentQueue.ClearOffset ();
                 m_volatileQueue.EmptyForceSize (m_offsetPersistentQueue.Count);
                 break;
@@ -248,20 +237,14 @@ namespace Lemoine.Collections
             // Else this is ok to keep both the volatile and the persistent queues
           }
           else { // The size differs
-            log.ErrorFormat ("Initialize: " +
-                             "the size of the volatile and the persistent queues differs {0} vs {1} " +
-                             "=> this is hard to keep both, clear the volatile queue",
-                             m_volatileQueue.Count, m_offsetPersistentQueue.Count);
+            log.Error ($"Initialize: the size of the volatile and the persistent queues differs {m_volatileQueue.Count} vs {m_offsetPersistentQueue.Count} => this is hard to keep both, clear the volatile queue");
             m_offsetPersistentQueue.ClearOffset ();
             m_volatileQueue.EmptyForceSize (m_offsetPersistentQueue.Count);
           }
         }
         else { // 0 == m_offsetPersistentQueue.Count
           if (0 < m_volatileQueue.Count) {
-            log.InfoFormat ("Initialize: " +
-                            "The persistent queue is empty while the volatile queue size is {0} " +
-                            "=> adjust the size of the persistent queue",
-                            m_volatileQueue.Count);
+            log.Info ($"Initialize: The persistent queue is empty while the volatile queue size is {m_volatileQueue.Count} => adjust the size of the persistent queue");
             m_volatileQueue.ClearOffset ();
             m_offsetPersistentQueue.AddOffset (m_volatileQueue.Count);
           }
@@ -341,8 +324,7 @@ namespace Lemoine.Collections
 
       using (var holder = new MutexHolder (m_mutex)) {
         if (this.Count < 1) { // Empty queue => raise an exception
-          log.ErrorFormat ("Dequeue: " +
-                           "empty queue => throw InvalidOperationException");
+          log.Error ("Dequeue: empty queue => throw InvalidOperationException");
           throw new InvalidOperationException ("Empty queue");
         }
 
@@ -491,10 +473,7 @@ namespace Lemoine.Collections
 
       using (var holder = new MutexHolder (m_mutex)) {
         if (this.Count < n) { // Empty queue => raise an exception
-          log.ErrorFormat ("UnsafeDequeue: " +
-                           "only {0} elements while trying to dequeue {1} elements " +
-                           "=> throw Queue too small",
-                           this.Count, n);
+          log.Error ($"UnsafeDequeue: only {this.Count} elements while trying to dequeue {n} elements => throw Queue too small");
           throw new InvalidOperationException ("Queue too small");
         }
 

@@ -52,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
     const string IN_PROGRESS_PRIORITY_KEY = "Analysis.InProgressPriority";
     static readonly int IN_PROGRESS_PRIORITY_DEFAULT = -1;
 
-    #region Members
     // disable once ConvertToConstant.Local
     long m_id = 0;
     /// <summary>
@@ -101,11 +100,9 @@ namespace Lemoine.GDBPersistentClasses
     Lemoine.Threading.IChecked m_caller = null;
 
     IEnumerable<IModificationExtension> m_extensions = null;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (Modification).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -166,10 +163,7 @@ namespace Lemoine.GDBPersistentClasses
           this.ParentGlobal = (IGlobalModification)value;
         }
         else {
-          log.FatalFormat ("Parent.set: " +
-                           "modification {0} is neither a global nor a machine modification " +
-                           "=> fall",
-                           value);
+          log.Fatal ($"Parent.set: modification {value} is neither a global nor a machine modification => fall");
           Debug.Assert (false);
           this.ParentMachine = null;
           this.ParentGlobal = null;
@@ -323,8 +317,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (value.HasValue && this.AnalysisStatus.Equals (AnalysisStatus.New)) {
-          log.FatalFormat ("AnalysisAppliedDateTime.set: AnalysisAppliedDateTime {0} set on a new modification id={1}. StackTrace={2}",
-            value, this.Id, System.Environment.StackTrace);
+          log.Fatal ($"AnalysisAppliedDateTime.set: AnalysisAppliedDateTime {value} set on a new modification id={this.Id}. StackTrace={System.Environment.StackTrace}");
           Debug.Assert (false);
         }
         m_analysisAppliedDateTime = value;
@@ -467,7 +460,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_caller; }
       set { m_caller = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -492,7 +484,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add an item to a proxy collection:
     /// <item>Try to initialize it first</item>
@@ -640,7 +631,9 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public virtual void RunAnalysis ()
     {
-      log.DebugFormat ("RunAnalysis");
+      if (log.IsDebugEnabled) {
+        log.Debug ("RunAnalysis");
+      }
       m_lastAnalysisBegin = DateTime.UtcNow;
       if (this.AnalysisStatus.Equals (AnalysisStatus.Timeout) && CancelAfterTimeout ()) { // Switch to TimeoutCanceled
         MarkAsTimeoutCanceled ();
@@ -762,7 +755,6 @@ namespace Lemoine.GDBPersistentClasses
     /// while keeping the transient status of the modification
     /// </summary>
     public abstract void Apply ();
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
@@ -1132,9 +1124,7 @@ namespace Lemoine.GDBPersistentClasses
         if (lastDuration.TotalSeconds < stepTimeout.TotalSeconds * threshold) { // If better than 30 % by default
           double rate = (double)ConfigSet.LoadAndGet (INCREASE_STEP_SPAN_RATE_KEY,
                                                        INCREASE_STEP_SPAN_RATE_DEFAULT);
-          log.InfoFormat ("MarkAsInProgress: " +
-                          "increase the step span from {0} with rate {1}",
-                          this.AnalysisStepSpan.Value, rate);
+          log.Info ($"MarkAsInProgress: increase the step span from {this.AnalysisStepSpan.Value} with rate {rate}");
           this.AnalysisStepSpan = TimeSpan.FromSeconds (this.AnalysisStepSpan.Value.TotalSeconds * rate);
           ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (this);
         }
@@ -1217,12 +1207,14 @@ namespace Lemoine.GDBPersistentClasses
     {
       CheckIsAnalysisNotCompleted ();
 
-      log.DebugFormat ("MarkAsStepTimeout");
+      if (log.IsDebugEnabled) {
+        log.Debug ("MarkAsStepTimeout");
+      }
 
       if (object.Equals (AnalysisStatus.StepTimeout, m_analysisStatus)) {
-        log.DebugFormat ("MarkAsStepTimeout: " +
-                         "already in StepTimeout state " +
-                         "=> compute a new step span");
+        if (log.IsDebugEnabled) {
+          log.Debug ("MarkAsStepTimeout: already in StepTimeout state => compute a new step span");
+        }
 
         // This step timeout was not small enough
         TimeSpan? newStepSpan = ComputeNewStepSpan ();
@@ -1230,9 +1222,9 @@ namespace Lemoine.GDBPersistentClasses
           // Check the new value is smaller
           Debug.Assert (!this.AnalysisStepSpan.HasValue || (newStepSpan.Value < this.AnalysisStepSpan.Value));
 
-          log.DebugFormat ("MarkAsStepTimeout: " +
-                           "adjust the analysis step span from {0} to {1}",
-                           this.AnalysisStepSpan, newStepSpan);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MarkAsStepTimeout: adjust the analysis step span from {this.AnalysisStepSpan} to {newStepSpan}");
+          }
           this.AnalysisStepSpan = newStepSpan;
         }
       }
@@ -1282,7 +1274,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (this.AnalysisStatus.Equals (AnalysisStatus.Pending)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MarkAllSubModificationsCompleted: current status is pending, keep this status");
+          log.Debug ("MarkAllSubModificationsCompleted: current status is pending, keep this status");
         }
         return;
       }
@@ -1290,9 +1282,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (AnalysisStatus.PendingSubModifications == this.AnalysisStatus);
       if ((AnalysisStatus.PendingSubModifications != this.AnalysisStatus)
         && (AnalysisStatus.New != this.AnalysisStatus)) {
-        log.FatalFormat ("MarkAllSubModificationsCompleted: " +
-                         "bad current analysis status {0} for modification id={1}",
-                         this.AnalysisStatus, this.Id);
+        log.Fatal ($"MarkAllSubModificationsCompleted: bad current analysis status {this.AnalysisStatus} for modification id={this.Id}");
         throw new InvalidOperationException ();
       }
 

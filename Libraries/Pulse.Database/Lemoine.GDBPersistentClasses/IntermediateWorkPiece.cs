@@ -23,7 +23,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class IntermediateWorkPiece : DataWithDisplayFunction, IIntermediateWorkPiece, IMergeable<IIntermediateWorkPiece>, IEquatable<IIntermediateWorkPiece>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -35,11 +34,9 @@ namespace Lemoine.GDBPersistentClasses
     int m_operationQuantity = 1;
     ICollection<IOperation> m_possibleNextOperations = new InitialNullIdSet<IOperation, int> ();
     ICollection<IComponentIntermediateWorkPiece> m_componentIntermediateWorkPieces = new List<IComponentIntermediateWorkPiece> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (IntermediateWorkPiece).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -198,7 +195,6 @@ namespace Lemoine.GDBPersistentClasses
         return m_componentIntermediateWorkPieces;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -222,7 +218,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Check if an intermediate work piece is undefined
     /// 
@@ -236,7 +231,6 @@ namespace Lemoine.GDBPersistentClasses
         && ((this.Code == null)
             || (0 == this.Code.Length));
     }
-    #endregion // Methods
 
     #region Add methods
     /// <summary>
@@ -276,7 +270,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
 
-    #region Methods
     private class MergeComponentIntermediateWorkPiece
     {
       IIntermediateWorkPiece a_t;
@@ -315,26 +308,16 @@ namespace Lemoine.GDBPersistentClasses
                 code = otherComponentIntermediateWorkPiece.Code;
               }
               else if (!otherComponentIntermediateWorkPiece.Code.Equals (code)) { // The code differs
-                log.WarnFormat ("Merge: " +
-                                "Component Code differs between this {0} and other {1}",
-                                code, otherComponentIntermediateWorkPiece.Code);
+                log.Warn ($"Merge: Component Code differs between this {code} and other {otherComponentIntermediateWorkPiece.Code}");
                 if (a_conflictResolution.Equals (ConflictResolution.Keep)) {
-                  log.InfoFormat ("Merge: " +
-                                  "Conflict resolution, keep the existing code {0}",
-                                  code);
+                  log.Info ($"Merge: Conflict resolution, keep the existing code {code}");
                 }
                 else if (a_conflictResolution.Equals (ConflictResolution.Overwrite)) {
-                  log.InfoFormat ("Merge: " +
-                                  "Conflict resolution, overwrite the existing code {0} with {1}",
-                                  code, otherComponentIntermediateWorkPiece.Code);
+                  log.Info ($"Merge: Conflict resolution, overwrite the existing code {code} with {otherComponentIntermediateWorkPiece.Code}");
                   code = otherComponentIntermediateWorkPiece.Code;
                 }
                 else if (a_conflictResolution.Equals (ConflictResolution.Exception)) {
-                  log.ErrorFormat ("Merge: " +
-                                   "Conflict resolution, " +
-                                   "component code differs betwen this {0} and other {1} " +
-                                   "=> raise ConflictException",
-                                   code, otherComponentIntermediateWorkPiece.Code);
+                  log.Error ($"Merge: Conflict resolution, component code differs betwen this {code} and other {otherComponentIntermediateWorkPiece.Code} => raise ConflictException");
                   throw new ConflictException (otherComponentIntermediateWorkPiece.Code, code, "ComponentIntermediateWorkPiece.Code");
                 }
               }
@@ -343,32 +326,22 @@ namespace Lemoine.GDBPersistentClasses
             int? order = componentIntermediateWorkPiece.Order;
             if (otherComponentIntermediateWorkPiece.Order.HasValue) {
               if (!order.HasValue) {
-                log.DebugFormat ("Merge: " +
-                                 "take the Component Order {0} of other (order of this is null)",
-                                 otherComponentIntermediateWorkPiece.Order.Value);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Merge: take the Component Order {otherComponentIntermediateWorkPiece.Order.Value} of other (order of this is null)");
+                }
                 order = otherComponentIntermediateWorkPiece.Order;
               }
               else if (!otherComponentIntermediateWorkPiece.Order.Value.Equals (order.Value)) { // The order differs
-                log.WarnFormat ("Merge: " +
-                                "Component Order differs between this {0} and other {1}",
-                                order, otherComponentIntermediateWorkPiece.Order);
+                log.Warn ($"Merge: Component Order differs between this {order} and other {otherComponentIntermediateWorkPiece.Order}");
                 if (a_conflictResolution.Equals (ConflictResolution.Keep)) {
-                  log.InfoFormat ("Merge: " +
-                                  "Conflict resolution, keep the existing order {0}",
-                                  order);
+                  log.Info ($"Merge: Conflict resolution, keep the existing order {order}");
                 }
                 else if (a_conflictResolution.Equals (ConflictResolution.Overwrite)) {
-                  log.InfoFormat ("Merge: " +
-                                  "Conflict resolution, overwrite the existing order {0} with {1}",
-                                  order, otherComponentIntermediateWorkPiece.Order);
+                  log.Info ($"Merge: Conflict resolution, overwrite the existing order {order} with {otherComponentIntermediateWorkPiece.Order}");
                   order = otherComponentIntermediateWorkPiece.Order;
                 }
                 else if (a_conflictResolution.Equals (ConflictResolution.Exception)) {
-                  log.ErrorFormat ("Merge: " +
-                                   "Conflict resolution, " +
-                                   "component order differs betwen this {0} and other {1} " +
-                                   "=> raise ConflictException",
-                                   order, otherComponentIntermediateWorkPiece.Order);
+                  log.Error ($"Merge: Conflict resolution, component order differs betwen this {order} and other {otherComponentIntermediateWorkPiece.Order} => raise ConflictException");
                   throw new ConflictException (otherComponentIntermediateWorkPiece.Order, order, "ComponentIntermediateWorkPiece.Order");
                 }
               }
@@ -425,9 +398,9 @@ namespace Lemoine.GDBPersistentClasses
               foreach (IWorkOrderLine workOrderLine in workOrderLines) {
                 foreach (IWorkOrderLineQuantity quantity in workOrderLine.IntermediateWorkPieceQuantities.Values) {
                   if (object.Equals (quantity.IntermediateWorkPiece, other)) {
-                    log.DebugFormat ("Merge: " +
-                                     "in WorkOrderLine, move the quantity {0} from {1} to {2}",
-                                     quantity.Quantity, other, this);
+                    if (log.IsDebugEnabled) {
+                      log.Debug ($"Merge: in WorkOrderLine, move the quantity {quantity.Quantity} from {other} to {this}");
+                    }
                     workOrderLine.AddIntermediateWorkPieceQuantity (this,
                                                                     quantity.Quantity);
                     workOrderLine.SetIntermediateWorkPieceQuantity (other,
@@ -455,7 +428,6 @@ namespace Lemoine.GDBPersistentClasses
          new Modifier<IComponentIntermediateWorkPiece> (mergeComponentIntermediateWorkPiece.MergeDelegate));
       // TODO: Restrictions following DataStructureOption
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

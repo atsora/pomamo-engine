@@ -43,8 +43,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                               new UtcDateTimeRange (day, day.AddDays (1)));
         Assert.That (facts, Has.Count.EqualTo (1));
         foreach (IFact fact in facts) {
-          log.DebugFormat ("TestFactProperties: read fact ({0}) begin={1}",
-                           fact.Machine.Id, fact.Begin);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"TestFactProperties: read fact ({fact.Machine.Id}) begin={fact.Begin}");
+          }
           Assert.That (fact.Begin.Kind, Is.EqualTo (DateTimeKind.Utc));
         }
       }
@@ -71,8 +72,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
                               new UtcDateTimeRange (from, to));
         Assert.That (facts, Has.Count.EqualTo (4));
         foreach (IFact fact in facts) {
-          log.DebugFormat ("TestFactProperties: read fact ({0}) begin={1}",
-                           fact.Machine.Id, fact.Begin);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"TestFactProperties: read fact ({fact.Machine.Id}) begin={fact.Begin}");
+          }
           Assert.That (fact.Begin.Kind, Is.EqualTo (DateTimeKind.Utc));
         }
         
@@ -84,8 +86,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
           .FindAllInUtcRange (machine, new UtcDateTimeRange (from, to));
         Assert.That (facts, Is.Not.Empty);
         foreach (IFact fact in facts) {
-          log.DebugFormat ("TestFactProperties: read fact ({0}) begin={1}",
-                           fact.Machine.Id, fact.Begin);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"TestFactProperties: read fact ({fact.Machine.Id}) begin={fact.Begin}");
+          }
           Assert.That (fact.Begin.Kind, Is.EqualTo (DateTimeKind.Utc));
         }
       }

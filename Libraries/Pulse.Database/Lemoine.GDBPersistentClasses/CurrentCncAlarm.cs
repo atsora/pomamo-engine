@@ -17,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CurrentCncAlarm: ICurrentCncAlarm, IVersionable, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_cncInfo = "";
@@ -28,11 +27,9 @@ namespace Lemoine.GDBPersistentClasses
     DateTime m_dateTime = DateTime.UtcNow;
     string m_message;
     IDictionary<string, object> m_properties = new Dictionary<string, object>();
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof(CurrentCncAlarm).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Slot Id
     /// </summary>
@@ -58,8 +55,7 @@ namespace Lemoine.GDBPersistentClasses
       set {
         switch (value.Kind) {
           case DateTimeKind.Unspecified:
-            log.WarnFormat ("DateTime.set: " +
-                            "unspecified DateTimeKind => suppose it is a universal time");
+            log.Warn ("DateTime.set: unspecified DateTimeKind => suppose it is a universal time");
             m_dateTime = new DateTime (value.Ticks, DateTimeKind.Utc);
             break;
           case DateTimeKind.Utc:
@@ -247,7 +243,6 @@ namespace Lemoine.GDBPersistentClasses
         return this.Severity == null ? 1000 : this.Severity.Priority;
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -302,7 +297,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Unproxy all the properties
     /// </summary>
@@ -312,6 +306,5 @@ namespace Lemoine.GDBPersistentClasses
         NHibernateHelper.Unproxy<ICncAlarmSeverity>(ref m_severity);
       }
     }
-    #endregion // Methods
   }
 }

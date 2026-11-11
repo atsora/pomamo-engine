@@ -19,7 +19,6 @@ namespace Lemoine.I18N
   /// </summary>
   public class TextFileCatalog: ICatalogWithPush
   {
-    #region Members
     char[] m_separators = new char[] { ':', '=' };
     string m_localePrefix = ".";
     string m_extension = ".txt";
@@ -29,11 +28,9 @@ namespace Lemoine.I18N
     
     bool m_initialized = false;
     readonly CachedCatalog m_cache = new CachedCatalog (new DummyCatalog ());
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (TextFileCatalog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Accepted separators between the key and the value
     /// 
@@ -83,7 +80,6 @@ namespace Lemoine.I18N
       get { return m_alternativeDirectories; }
       set { m_alternativeDirectories = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -97,9 +93,6 @@ namespace Lemoine.I18N
       m_directory = directory;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region ICatalogWithPush implementation
     void Initialize ()
@@ -171,9 +164,7 @@ namespace Lemoine.I18N
       foreach (var line in lines) {
         string[] keyTranslation = line.Split (m_separators, 2);
         if (keyTranslation.Length < 2) {
-          log.ErrorFormat ("LoadFromFile: " +
-                           "line {0} does not contain any separator",
-                           line);
+          log.Error ($"LoadFromFile: line {line} does not contain any separator");
         }
         else {
           m_cache.PushTranslation (keyTranslation[0], keyTranslation[1], cultureInfo, false);
@@ -219,7 +210,7 @@ namespace Lemoine.I18N
     {
       if (null != GetTranslation (key, cultureInfo)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("PushTranslation: key already exists");
+          log.Debug ("PushTranslation: key already exists");
         }
         return false;
       }

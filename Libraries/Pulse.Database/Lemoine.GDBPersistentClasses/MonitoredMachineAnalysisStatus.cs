@@ -20,13 +20,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MonitoredMachineAnalysisStatus: IMonitoredMachineAnalysisStatus
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMonitoredMachine m_monitoredMachine;
     DateTime m_activityAnalysisDateTime;
     int m_activityAnalysisCount;
-    #endregion // Members
 
     static readonly ILog staticLog = LogManager.GetLogger (typeof (MonitoredMachineAnalysisStatus).FullName);
     ILog log = LogManager.GetLogger(typeof (MonitoredMachineAnalysisStatus).FullName);
@@ -48,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// ID of the reference monitored machine
     /// </summary>
@@ -98,7 +95,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_activityAnalysisCount; }
       set { m_activityAnalysisCount = value; }
     }
-
-    #endregion // Getters / Setters
   }
 }

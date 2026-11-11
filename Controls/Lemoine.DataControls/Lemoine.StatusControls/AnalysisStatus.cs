@@ -33,14 +33,11 @@ namespace Lemoine.StatusControls
       }
     }
 
-    #region Members
     Timer m_refreshTimer = new Timer ();
     int m_refreshPeriod = 1000; // in ms
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (AnalysisStatus).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// refresh timer
     /// </summary>
@@ -57,7 +54,6 @@ namespace Lemoine.StatusControls
       get { return m_refreshPeriod; }
       set { m_refreshPeriod = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -72,7 +68,6 @@ namespace Lemoine.StatusControls
     }
     #endregion // Constructors
 
-    #region Methods
     private void refreshAnalysisStatus ()
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
@@ -112,7 +107,6 @@ namespace Lemoine.StatusControls
         return " " + PulseCatalog.GetString ("Modification");
       }
     }
-    #endregion // Methods
 
 
     void RefreshBtnClick (object sender, EventArgs e)

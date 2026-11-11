@@ -42,10 +42,9 @@ namespace Lemoine.Business.Operation
       }
 
       if (null == component.Project) {
-        log.DebugFormat ("TryToGuessWorkOrderFromComponent: " +
-                         "null project for component {0} " +
-                         "=> return null",
-                         component);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"TryToGuessWorkOrderFromComponent: null project for component {component} => return null");
+        }
         return null;
       }
 
@@ -55,16 +54,15 @@ namespace Lemoine.Business.Operation
         component.Project.WorkOrders;
       if (1 == workOrders.Count) {
         IWorkOrder workOrder = workOrders.First ();
-        log.DebugFormat ("TryToGuessWorkOrderFromComponent: " +
-                         "get WorkOrder {0} from Component {1}" +
-                         "because only 1 work order is associated to the component",
-                         workOrder, component);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"TryToGuessWorkOrderFromComponent: get WorkOrder {workOrder} from Component {component}because only 1 work order is associated to the component");
+        }
         return workOrder;
       }
 
-      log.DebugFormat ("TryToGuessWorkOrderFromComponent: " +
-                       "no work order could be determined from component {0}",
-                       component);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"TryToGuessWorkOrderFromComponent: no work order could be determined from component {component}");
+      }
       return null;
     }
 
@@ -88,10 +86,9 @@ namespace Lemoine.Business.Operation
       }
 
       if (null == component.Project) {
-        log.DebugFormat ("GuessUniqueWorkOrderFromComponent: " +
-                         "null project for component {0} " +
-                         "=> return null",
-                         component);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GuessUniqueWorkOrderFromComponent: null project for component {component} => return null");
+        }
         return null;
       }
 
@@ -102,22 +99,18 @@ namespace Lemoine.Business.Operation
       if (workOrders.Count > 0) {
         System.Diagnostics.Debug.Assert (1 == workOrders.Count);
         if (workOrders.Count > 1) {
-          log.WarnFormat ("GuessUniqueWorkOrderFromComponent: " +
-                          "there are more than one workOrder " +
-                          "that is associated to component {0} " +
-                          "although the data structure does not allow this",
-                          component);
+          log.Warn ($"GuessUniqueWorkOrderFromComponent: there are more than one workOrder that is associated to component {component} although the data structure does not allow this");
         }
         IWorkOrder workOrder = workOrders.FirstOrDefault ();
-        log.DebugFormat ("GuessUniqueWorkOrderFromComponent: " +
-                         "get WorkOrder {0} from Component {1}",
-                         workOrder, component);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GuessUniqueWorkOrderFromComponent: get WorkOrder {workOrder} from Component {component}");
+        }
         return workOrder;
       }
 
-      log.DebugFormat ("GuessUniqueWorkOrderFromComponent: " +
-                       "no work order could be determined from component {0}",
-                       component);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GuessUniqueWorkOrderFromComponent: no work order could be determined from component {component}");
+      }
       return null;
     }
 
@@ -154,9 +147,9 @@ namespace Lemoine.Business.Operation
         }
       }
 
-      log.DebugFormat ("TryToGuessWorkOrderFromOperation: " +
-                       "no work order could be determined from operation {0}",
-                       operation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"TryToGuessWorkOrderFromOperation: no work order could be determined from operation {operation}");
+      }
       return null;
     }
 
@@ -188,11 +181,7 @@ namespace Lemoine.Business.Operation
       if (intermediateWorkPieces.Count > 0) {
         Debug.Assert (1 == intermediateWorkPieces.Count);
         if (intermediateWorkPieces.Count > 1) {
-          log.WarnFormat ("GuessUniqueWorkOrderFromOperation: " +
-                          "there are more than one intermediate work piece " +
-                          "that is associated to operation {0} " +
-                          "although the data structure does not allow this",
-                          operation);
+          log.Warn ($"GuessUniqueWorkOrderFromOperation: there are more than one intermediate work piece that is associated to operation {operation} although the data structure does not allow this");
         }
         // 2. Try to get the component
         IIntermediateWorkPiece intermediateWorkPiece = intermediateWorkPieces.FirstOrDefault ();
@@ -201,11 +190,7 @@ namespace Lemoine.Business.Operation
         if (componentIntermediateWorkPieces.Count > 0) {
           Debug.Assert (1 == componentIntermediateWorkPieces.Count);
           if (componentIntermediateWorkPieces.Count > 1) {
-            log.WarnFormat ("GuessUniqueWorkOrderFromOperation: " +
-                            "there are more than one component " +
-                            "that is associated to operation {0} " +
-                            "although the data structure does not allow this",
-                            operation);
+            log.Warn ($"GuessUniqueWorkOrderFromOperation: there are more than one component that is associated to operation {operation} although the data structure does not allow this");
           }
           IComponent component = componentIntermediateWorkPieces.First ().Component;
           IProject project = component.Project;
@@ -216,25 +201,21 @@ namespace Lemoine.Business.Operation
             if (workOrders.Count > 0) {
               Debug.Assert (1 == workOrders.Count);
               if (workOrders.Count > 1) {
-                log.WarnFormat ("GuessUniqueWorkOrderFromOperation: " +
-                                "there are more than one workOrder " +
-                                "that is associated to operation {0} " +
-                                "although the data structure does not allow this",
-                                operation);
+                log.Warn ($"GuessUniqueWorkOrderFromOperation: there are more than one workOrder that is associated to operation {operation} although the data structure does not allow this");
               }
               IWorkOrder workOrder = workOrders.FirstOrDefault ();
-              log.DebugFormat ("GuessUniqueWorkOrderFromOperation: " +
-                               "get WorkOrder {0} from operation {1}",
-                               workOrder, operation);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GuessUniqueWorkOrderFromOperation: get WorkOrder {workOrder} from operation {operation}");
+              }
               return workOrder;
             }
           }
         }
       }
 
-      log.DebugFormat ("GuessUniqueWorkOrderFromOperation: " +
-                       "no work order could be determined from operation {0}",
-                       operation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GuessUniqueWorkOrderFromOperation: no work order could be determined from operation {operation}");
+      }
       return null;
     }
 
@@ -265,17 +246,16 @@ namespace Lemoine.Business.Operation
           intermediateWorkPiece.ComponentIntermediateWorkPieces;
         if (1 == componentIntermediateWorkPieces.Count) {
           IComponent component = componentIntermediateWorkPieces.First ().Component;
-          log.DebugFormat ("TryToGuessComponentFromOperation: " +
-                           "get Component {0} from operation {1} " +
-                           "because only 1 component is associated to the operation",
-                           component, operation);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"TryToGuessComponentFromOperation: get Component {component} from operation {operation} because only 1 component is associated to the operation");
+          }
           return component;
         }
       }
 
-      log.DebugFormat ("TryToGuessComponentFromOperation: " +
-                       "no component could be determined from operation {0}",
-                       operation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"TryToGuessComponentFromOperation: no component could be determined from operation {operation}");
+      }
       return null;
     }
 
@@ -367,21 +347,16 @@ namespace Lemoine.Business.Operation
 
       foreach (IComponentIntermediateWorkPiece componentIntermediateWorkPiece in component.ComponentIntermediateWorkPieces) {
         if (operation.IntermediateWorkPieces.Contains (componentIntermediateWorkPiece.IntermediateWorkPiece)) {
-          log.DebugFormat ("IsComponentCompatibleWithOperation: " +
-                           "common intermediate work piece {0} found " +
-                           "for component {1} and operation {2} " +
-                           "=> return true",
-                           componentIntermediateWorkPiece.IntermediateWorkPiece,
-                           component, operation);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsComponentCompatibleWithOperation: common intermediate work piece {componentIntermediateWorkPiece.IntermediateWorkPiece} found for component {component} and operation {operation} => return true");
+          }
           return true;
         }
       }
 
-      log.DebugFormat ("IsComponentCompatibleWithOperation: " +
-                       "no common intermediate work piece found " +
-                       "for component {0} and operation {1} " +
-                       "=> return false",
-                       component, operation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"IsComponentCompatibleWithOperation: no common intermediate work piece found for component {component} and operation {operation} => return false");
+      }
       return false;
     }
 
@@ -408,16 +383,16 @@ namespace Lemoine.Business.Operation
         ICollection<IComponentIntermediateWorkPiece> componentIntermediateWorkPieces =
           intermediateWorkPiece.ComponentIntermediateWorkPieces;
         foreach (IComponentIntermediateWorkPiece componentIntermediateWorkPiece in intermediateWorkPiece.ComponentIntermediateWorkPieces) {
-          log.DebugFormat ("GetPossibleComponentsFromOperation: " +
-                           "get possible Component {0} from operation {1}",
-                           componentIntermediateWorkPiece.Component, operation);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetPossibleComponentsFromOperation: get possible Component {componentIntermediateWorkPiece.Component} from operation {operation}");
+          }
           result.Add (componentIntermediateWorkPiece.Component);
         }
       }
 
-      log.DebugFormat ("GetPossibleComponentsFromOperation: " +
-                       "{0} possible components were found for operation {1}",
-                       result.Count, operation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetPossibleComponentsFromOperation: {result.Count} possible components were found for operation {operation}");
+      }
       return result;
     }
 
@@ -502,21 +477,16 @@ namespace Lemoine.Business.Operation
       // nb: if (workOrder.Projects.Contains(component.Project)) { ... } does not work
       foreach (IProject project in workOrder.Projects) {
         if (project.Equals (component.Project)) {
-          log.DebugFormat ("IsWorkOrderCompatibleWithComponent: " +
-                           "common project {0} found " +
-                           "for workOrder {1} and component {2} " +
-                           "=> return true",
-                           component.Project,
-                           workOrder, component);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsWorkOrderCompatibleWithComponent: common project {component.Project} found for workOrder {workOrder} and component {component} => return true");
+          }
           return true;
         }
       }
 
-      log.DebugFormat ("IsWorkOrderCompatibleWithComponent: " +
-                       "no common project found " +
-                       "for workOrder {0} and component {1} " +
-                       "=> return false",
-                       workOrder, component);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"IsWorkOrderCompatibleWithComponent: no common project found for workOrder {workOrder} and component {component} => return false");
+      }
       return false;
     }
 
@@ -568,23 +538,18 @@ namespace Lemoine.Business.Operation
         foreach (IComponent component in project.Components) {
           foreach (IComponentIntermediateWorkPiece componentIntermediateWorkPiece in component.ComponentIntermediateWorkPieces) {
             if (operation.IntermediateWorkPieces.Contains (componentIntermediateWorkPiece.IntermediateWorkPiece)) {
-              log.DebugFormat ("IsComponentCompatibleWithOperation: " +
-                               "common intermediate work piece {0} component {1} found " +
-                               "for workOrder {2} and operation {3} " +
-                               "=> return true",
-                               componentIntermediateWorkPiece.IntermediateWorkPiece, component,
-                               workOrder, operation);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"IsComponentCompatibleWithOperation: common intermediate work piece {componentIntermediateWorkPiece.IntermediateWorkPiece} component {component} found for workOrder {workOrder} and operation {operation} => return true");
+              }
               return true;
             }
           }
         }
       }
 
-      log.DebugFormat ("IsWorkOrderCompatibleWithOperation: " +
-                       "no common project/component found " +
-                       "for workOrder {0} and operation {1} " +
-                       "=> return false",
-                       workOrder, operation);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"IsWorkOrderCompatibleWithOperation: no common project/component found for workOrder {workOrder} and operation {operation} => return false");
+      }
       return false;
     }
 
@@ -621,9 +586,7 @@ namespace Lemoine.Business.Operation
         }
       }
 
-      log.InfoFormat ("IsLineCompatibleWithComponent: " +
-                      "component and line are not compatible " +
-                      "=> return false");
+      log.Info ("IsLineCompatibleWithComponent: component and line are not compatible => return false");
       return false;
     }
 
@@ -757,8 +720,7 @@ namespace Lemoine.Business.Operation
 
       Debug.Assert (null != component);
       if ((null != manufacturingOrder.Operation) && IsComponentCompatibleWithOperation (component, manufacturingOrder.Operation)) {
-        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineComponent: " +
-                        "component and manufacturing order.operation are not compatible => return false");
+        log.Info ("IsManufacturingOrderCompatibleWithMachineComponent: component and manufacturing order.operation are not compatible => return false");
         return false;
       }
 
@@ -796,27 +758,22 @@ namespace Lemoine.Business.Operation
       }
 
       if ((null != manufacturingOrder.Machine) && (machine.Id != manufacturingOrder.Machine.Id)) {
-        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
-                        "machine and manufacturing order are not compatible => return false");
+        log.Info ("IsManufacturingOrderCompatibleWithMachineWorkOrder: machine and manufacturing order are not compatible => return false");
         return false;
       }
 
       if ((null != manufacturingOrder.WorkOrder) && (null != workOrder) && (((IDataWithId)manufacturingOrder.WorkOrder).Id != ((IDataWithId)workOrder).Id)) {
-        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
-                        "manufacturing order references another work order => return false");
+        log.Info ("IsManufacturingOrderCompatibleWithMachineWorkOrder: manufacturing order references another work order => return false");
         return false;
       }
 
       Debug.Assert (null != workOrder);
       if ((null != manufacturingOrder.Operation) && IsWorkOrderCompatibleWithOperation (workOrder, manufacturingOrder.Operation)) {
-        log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
-                        "work order and manufacturing order are not compatible => return false");
+        log.Info ("IsManufacturingOrderCompatibleWithMachineWorkOrder: work order and manufacturing order are not compatible => return false");
         return false;
       }
 
-      log.InfoFormat ("IsManufacturingOrderCompatibleWithMachineWorkOrder: " +
-                      "work order and manufacturing order are compatible " +
-                      "=> return true");
+      log.Info ("IsManufacturingOrderCompatibleWithMachineWorkOrder: work order and manufacturing order are compatible => return true");
       return true;
     }
 

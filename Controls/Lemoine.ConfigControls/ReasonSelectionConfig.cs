@@ -28,7 +28,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IReason>
     , IConfigControlObserver<IMachineFilter>
   {
-    #region Members
     SortableBindingList<ReasonSelectionWrapper> m_reasonSelectionWrappers
       = new SortableBindingList<ReasonSelectionWrapper>();
 
@@ -36,7 +35,6 @@ namespace Lemoine.ConfigControls
       new HashSet<DataGridViewRow> ();
     IList<IReasonSelection> m_deleteList =
       new List<IReasonSelection> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonSelectionConfig).FullName);
 
@@ -125,8 +123,7 @@ namespace Lemoine.ConfigControls
       
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("LoadDataGridView: " +
-                         "no DAO factory is defined");
+        log.Error ("LoadDataGridView: no DAO factory is defined");
         return;
       }
       
@@ -224,8 +221,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("CommitChanges: " +
-                         "no DAO factory is defined");
+        log.Error ("CommitChanges: no DAO factory is defined");
         return;
       }
       

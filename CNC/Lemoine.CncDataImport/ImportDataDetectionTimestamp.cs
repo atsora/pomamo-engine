@@ -53,10 +53,7 @@ namespace Lemoine.CncDataImport
     public bool IsMergeable (ExchangeData data, ExchangeData otherData)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("IsDataCompatible: " +
-                         "DetectionTimeStamp several times now={0} previously={1} " +
-                         "=> compatible",
-                         data, otherData);
+        log.Debug ($"IsDataCompatible: DetectionTimeStamp several times now={data} previously={otherData} => compatible");
       }
       return true;
     }

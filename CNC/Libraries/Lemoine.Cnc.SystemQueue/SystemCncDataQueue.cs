@@ -37,7 +37,6 @@ namespace Lemoine.Cnc.SystemQueue
     static readonly string RECEIVE_ONLY_KEY = "ReceiveOnly";
     static readonly bool RECEIVE_ONLY_DEFAULT = false;
     
-    #region Members
     bool m_initialized = false;
     IGenericConfigReader m_configReader = null;
     readonly MemoryConfigReader m_defaultConfigReader = new MemoryConfigReader ();
@@ -47,9 +46,7 @@ namespace Lemoine.Cnc.SystemQueue
     string m_queueName = null;
     IChecked m_checkedCaller = null;
     bool m_disposed = false;
-    #endregion // Members
     
-    #region Getters / setters
     /// <summary>
     /// <see cref="ICncDataQueue" />
     /// </summary>
@@ -58,9 +55,7 @@ namespace Lemoine.Cnc.SystemQueue
       set
       {
         if (value < 0) {
-          log.ErrorFormat ("MachineId.set: " +
-                           "negative value {0}, a positive value is expected",
-                           value);
+          log.Error ($"MachineId.set: negative value {value}, a positive value is expected");
           throw new ArgumentOutOfRangeException("value", "Not a positive value");
         }
         m_defaultConfigReader.Add (MACHINE_ID_KEY, value, true);
@@ -75,9 +70,7 @@ namespace Lemoine.Cnc.SystemQueue
       set
       {
         if (value < 0) {
-          log.ErrorFormat ("MachineModuleId.set: " +
-                           "negative value {0}, a positive value is expected",
-                           value);
+          log.Error ($"MachineModuleId.set: negative value {value}, a positive value is expected");
           throw new ArgumentOutOfRangeException("value", "Not a positive value");
         }
         m_defaultConfigReader.Add (MACHINE_MODULE_ID_KEY, value, true);
@@ -113,7 +106,6 @@ namespace Lemoine.Cnc.SystemQueue
         return (null == m_name)?null:"SystemQueue" + m_name;
       }
     }
-    #endregion // Getters / setters
 
     /// <summary>
     /// Constructor
@@ -140,7 +132,6 @@ namespace Lemoine.Cnc.SystemQueue
     }
     #endregion
     
-    #region Methods
     /// <summary>
     /// Initialize the queue based on configurations
     /// </summary>
@@ -244,9 +235,7 @@ namespace Lemoine.Cnc.SystemQueue
       } catch(System.Messaging.MessageQueueException ex) {
         if (ex.MessageQueueErrorCode == System.Messaging.MessageQueueErrorCode.IOTimeout) {
           
-          log.InfoFormat("Peek: " +
-                         "the queue is empty " +
-                         "=> throw InvalidOperationException");
+          log.Info ("Peek: the queue is empty => throw InvalidOperationException");
           throw new InvalidOperationException();
         } else {
           throw;
@@ -271,17 +260,14 @@ namespace Lemoine.Cnc.SystemQueue
           datas.Add(data);
           nbRead++;
         }
-        log.DebugFormat("Peek: " +
-                        "return {0} elements from the {1} asked elements",
-                        datas.Count,
-                        nbElements);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Peek: return {datas.Count} elements from the {nbElements} asked elements");
+        }
       }
       catch(System.Messaging.MessageQueueException ex) {
         if (ex.MessageQueueErrorCode == System.Messaging.MessageQueueErrorCode.IOTimeout) {
           
-          log.InfoFormat("Peek: " +
-                         "the queue is empty " +
-                         "=> throw InvalidOperationException");
+          log.Info ("Peek: the queue is empty => throw InvalidOperationException");
           throw new InvalidOperationException();
         }
         else {
@@ -305,17 +291,11 @@ namespace Lemoine.Cnc.SystemQueue
           // at least one message in queue
           return (ExchangeData) m_queue.Receive().Body; // synchronous call
         } else {
-          log.InfoFormat("Dequeue: " +
-                         "the queue is empty " +
-                         "=> throw InvalidOperationException");
+          log.Info ("Dequeue: the queue is empty => throw InvalidOperationException");
           throw new InvalidOperationException();
         }
       } catch(System.Messaging.MessageQueueException ex) {
-        log.ErrorFormat ("Dequeue: " +
-                         "Queue {0} raised an exception " +
-                         "{1}",
-                         m_queueName,
-                         ex);
+        log.Error ($"Dequeue: Queue {m_queueName} raised an exception {ex}");
         throw;
       }
     }
@@ -332,11 +312,7 @@ namespace Lemoine.Cnc.SystemQueue
         m_queue.Send(data);
       }
       catch (System.Messaging.MessageQueueException ex) {
-        log.ErrorFormat("Enqueue: " +
-                        "Send on {0} failed " +
-                        "{1}",
-                        m_queueName,
-                        ex);
+        log.Error ($"Enqueue: Send on {m_queueName} failed {ex}");
         throw;
       }
     }
@@ -357,17 +333,11 @@ namespace Lemoine.Cnc.SystemQueue
           nbDequeued++;
         }
         if (nbDequeued < n) {
-          log.ErrorFormat("UnsafeDequeue: " +
-                          "Only managed to dequeue {0} elements out of {1}",
-                          nbDequeued, n);
+          log.Error ($"UnsafeDequeue: Only managed to dequeue {nbDequeued} elements out of {n}");
         }
         return;
       } catch(System.Messaging.MessageQueueException ex) {
-        log.ErrorFormat ("Dequeue: " +
-                         "Queue {0} raised an exception " +
-                         "{1}",
-                         m_queueName,
-                         ex);
+        log.Error ($"Dequeue: Queue {m_queueName} raised an exception {ex}");
         throw;
       }
     }
@@ -407,7 +377,6 @@ namespace Lemoine.Cnc.SystemQueue
         System.Messaging.MessageQueue.Delete(m_queueName);
       }
     }
-    #endregion // Methods
 
     #region IDisposable
     /// <summary>

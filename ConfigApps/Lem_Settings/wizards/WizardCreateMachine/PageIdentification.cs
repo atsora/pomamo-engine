@@ -15,7 +15,6 @@ namespace WizardCreateMachine
   /// </summary>
   internal partial class PageIdentification : GenericWizardPage, IWizardPage
   { 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -26,7 +25,6 @@ namespace WizardCreateMachine
     /// </summary>
     public string Help => "This page allows you to identify the machine, " +
           "by specifying a name, an optional code and optional tags, separated by a comma (for example: line1, 5-axis).";
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

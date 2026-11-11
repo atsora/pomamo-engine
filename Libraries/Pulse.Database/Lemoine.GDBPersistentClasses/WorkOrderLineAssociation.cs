@@ -23,14 +23,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class WorkOrderLineAssociation: LineAssociation, IWorkOrderLineAssociation
   {
-    #region Members
     IWorkOrder m_workOrder;
     DateTime m_deadline;
     int m_quantity = 0;
     IDictionary<int, IWorkOrderLineAssociationQuantity> m_intermediateWorkPieceQuantities = new Dictionary<int, IWorkOrderLineAssociationQuantity> ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -72,10 +69,7 @@ namespace Lemoine.GDBPersistentClasses
       
       set {
         if (string.IsNullOrEmpty (value)) {
-          log.WarnFormat ("LocalDeadline.set: " +
-                          "null or empty value {0} " +
-                          "=> do not update the deadline",
-                          value);
+          log.Warn ($"LocalDeadline.set: null or empty value {value} => do not update the deadline");
         }
         else {
           IFormatProvider provider = CultureInfo.InvariantCulture;
@@ -138,7 +132,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IDictionary<int, IWorkOrderLineAssociationQuantity> IntermediateWorkPieceQuantities {
       get { return m_intermediateWorkPieceQuantities; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -175,7 +168,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -187,10 +179,7 @@ namespace Lemoine.GDBPersistentClasses
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "{0} " +
-                         "=> finish in error",
-                         message);
+        log.Error ($"MakeAnalysis: {message} => finish in error");
         AddAnalysisLog(LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -201,9 +190,9 @@ namespace Lemoine.GDBPersistentClasses
         IWorkOrderLine next = ModelDAOHelper.DAOFactory.WorkOrderLineDAO
           .FindFirstAfter (this.Line, this.Deadline);
         if (null != next) {
-          log.DebugFormat ("ProcessAssociation: " +
-                           "adjust end to {0}",
-                           next.BeginDateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessAssociation: adjust end to {next.BeginDateTime}");
+          }
           Debug.Assert (next.BeginDateTime.HasValue);
           this.End = next.BeginDateTime.Value;
         }
@@ -216,9 +205,9 @@ namespace Lemoine.GDBPersistentClasses
       if (null != this.WorkOrder) {
         foreach (IComponent component in this.Line.Components) {
           if (!Lemoine.Business.Operation.OperationRelations.IsWorkOrderCompatibleWithComponent (this.WorkOrder, component)) {
-            log.DebugFormat ("ProcessAssociation: " +
-                             "associate work order {0} with {1}",
-                             this.WorkOrder, component);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ProcessAssociation: associate work order {this.WorkOrder} with {component}");
+            }
             component.Project.AddWorkOrder (this.WorkOrder);
           }
         }
@@ -234,9 +223,9 @@ namespace Lemoine.GDBPersistentClasses
           .FindAllByLine (this.Line);
         foreach (ILineMachine lineMachine in lineMachines) {
           if (lineMachine.LineMachineStatus.Equals (LineMachineStatus.Dedicated)) {
-            log.DebugFormat ("ProcessAssociation: " +
-                             "associate {0} to machine {1}",
-                             this.WorkOrder, lineMachine.Machine);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ProcessAssociation: associate {this.WorkOrder} to machine {lineMachine.Machine}");
+            }
             IWorkOrderMachineAssociation association = ModelDAOHelper.ModelFactory
               .CreateWorkOrderMachineAssociation (lineMachine.Machine, this.WorkOrder, this.Range);
             association.Line = this.Line;
@@ -259,7 +248,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 
@@ -294,9 +283,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -364,6 +351,5 @@ namespace Lemoine.GDBPersistentClasses
         this.IntermediateWorkPieceQuantities [((Lemoine.Collections.IDataWithId)intermediateWorkPiece).Id] = workOrderQuantity;
       }
     }
-    #endregion // Methods
   }
 }

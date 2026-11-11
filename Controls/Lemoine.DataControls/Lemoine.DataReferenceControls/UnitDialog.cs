@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (UnitDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null Unit a valid value ?
     /// </summary>
@@ -62,7 +61,6 @@ namespace Lemoine.DataReferenceControls
         this.unitSelection1.SelectedUnits = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -81,9 +79,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("UnitDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

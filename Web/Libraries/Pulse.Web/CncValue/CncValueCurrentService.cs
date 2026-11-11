@@ -33,7 +33,6 @@ namespace Pulse.Web.CncValue
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -52,9 +51,7 @@ namespace Pulse.Web.CncValue
           var machineModule = ModelDAOHelper.DAOFactory.MachineModuleDAO
             .FindByIdWithMonitoredMachine (request.MachineModuleId);
           if (null == machineModule) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown machine module with ID {0}",
-                             request.MachineModuleId);
+            log.Error ($"GetWithoutCache: unknown machine module with ID {request.MachineModuleId}");
             return new ErrorDTO ("No machine module with the specified ID",
               ErrorStatus.WrongRequestParameter);
           }
@@ -62,16 +59,14 @@ namespace Pulse.Web.CncValue
           machineModules = machineModuleList;
           machine = machineModule.MonitoredMachine;
           if (null == machine) {
-            log.ErrorFormat ("GetWithoutCache: no monitored machine is associated to machine module {0}", machineModule.Id);
+            log.Error ($"GetWithoutCache: no monitored machine is associated to machine module {machineModule.Id}");
             return new ErrorDTO ("Machine module not associated to any monitored machine", ErrorStatus.WrongRequestParameter);
           }
         }
         if (0 < request.MachineId) {
           if (machineModules.Any ()) {
             if (request.MachineId != machineModules.First ().MonitoredMachine.Id) {
-              log.ErrorFormat ("GetWithoutCache: " +
-                               "specified machineId {0} and machineModuleId {1} are not compatible with each other",
-                               request.MachineId, request.MachineModuleId);
+              log.Error ($"GetWithoutCache: specified machineId {request.MachineId} and machineModuleId {request.MachineModuleId} are not compatible with each other");
               return new ErrorDTO ("Incompatible specified MachineId and MachineModuleId",
                 ErrorStatus.WrongRequestParameter);
             }
@@ -80,18 +75,14 @@ namespace Pulse.Web.CncValue
             machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
               .FindByIdWithMainMachineModulePerformanceFieldUnit (request.MachineId);
             if (null == machine) {
-              log.ErrorFormat ("GetWithoutCache: " +
-                               "unknown monitored machine with ID {0}",
-                               request.MachineId);
+              log.Error ($"GetWithoutCache: unknown monitored machine with ID {request.MachineId}");
               return new ErrorDTO ("No monitored machine with the specified ID",
                                    ErrorStatus.WrongRequestParameter);
             }
           }
         }
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "no valid machine or machine module was set in request. machineId={0} machineModuleId={1}",
-                           request.MachineId, request.MachineModuleId);
+          log.Error ($"GetWithoutCache: no valid machine or machine module was set in request. machineId={request.MachineId} machineModuleId={request.MachineModuleId}");
           return new ErrorDTO ("No monitored machine or machine module set in the request",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -116,7 +107,7 @@ namespace Pulse.Web.CncValue
         }
         else { // Performance field of the main machine module
           if (null == machine.MainMachineModule) {
-            log.ErrorFormat ("GetWithoutCache: no main machine module for machine id {0}", machine.Id);
+            log.Error ($"GetWithoutCache: no main machine module for machine id {machine.Id}");
             return new ErrorDTO ("No main machine module for the specified machine",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -124,7 +115,7 @@ namespace Pulse.Web.CncValue
           machineModuleList.Add (machine.MainMachineModule);
           machineModules = machineModuleList;
           if (null == performanceField) {
-            log.InfoFormat ("GetWithoutCache: no performance field for machine id {0}", machine.Id);
+            log.Info ($"GetWithoutCache: no performance field for machine id {machine.Id}");
             return new ErrorDTO ("No performance field for the specified machine",
               ErrorStatus.NotApplicable);
           }
@@ -198,6 +189,5 @@ namespace Pulse.Web.CncValue
 
       return (null != field) && (null != performanceField) && field.Id.Equals (performanceField.Id);
     }
-    #endregion // Methods
   }
 }

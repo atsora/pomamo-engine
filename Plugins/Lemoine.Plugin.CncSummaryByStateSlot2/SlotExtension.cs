@@ -207,11 +207,7 @@ WHERE t.machineid={0} AND t.machinemoduleid={1}
           command.ExecuteNonQuery();
         }
         catch (Exception ex) {
-          log.ErrorFormat ("Remove: " +
-                           "request error in SQL query {0} \n" +
-                           "Exception: {1}",
-                           command.CommandText,
-                           ex);
+          log.Error ($"Remove: request error in SQL query {command.CommandText} \nException: {ex}");
           throw;
         }
       }

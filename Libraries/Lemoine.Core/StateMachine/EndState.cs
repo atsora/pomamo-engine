@@ -23,7 +23,6 @@ namespace Lemoine.Core.StateMachine
 
     TContext m_context;
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IState{TContext}"/>
     /// </summary>
@@ -67,7 +66,6 @@ namespace Lemoine.Core.StateMachine
         throw new InvalidOperationException ();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

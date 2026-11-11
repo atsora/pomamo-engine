@@ -15,9 +15,6 @@ namespace Lemoine.GDBUtils
   {
     static readonly ILog log = LogManager.GetLogger(typeof (TransientAnalysisException).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -36,8 +33,5 @@ namespace Lemoine.GDBUtils
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

@@ -77,7 +77,7 @@ namespace Lemoine.Plugin.SameMachineMode
         .Intersects (new UtcDateTimeRange (dateTime)));
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Get: dateTime={0} limit={1} hint={2} => No data", dateTime, limit, hint);
+          log.Debug ($"Get: dateTime={dateTime} limit={limit} hint={hint} => No data");
         }
         return this.CreateNoData ();
       }
@@ -145,7 +145,7 @@ namespace Lemoine.Plugin.SameMachineMode
           if (0 == machineModeId) { // No fact in range
             if (range.Upper.HasValue && IsFactAfter (range.Upper.Value)) {
               if (log.IsWarnEnabled) {
-                log.WarnFormat ("Get: first fact after limit {0} (initial gap) => NoData", limit);
+                log.Warn ($"Get: first fact after limit {limit} (initial gap) => NoData");
               }
               return this.CreateNoData ();
             }
@@ -201,7 +201,7 @@ namespace Lemoine.Plugin.SameMachineMode
     {
       if (IsFactAfter (dateTime)) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetInitialGap: initial gap in fact at {0} => NotApplicable", dateTime);
+          log.Warn ($"GetInitialGap: initial gap in fact at {dateTime} => NotApplicable");
         }
         return this.CreateNotApplicable ();
       }

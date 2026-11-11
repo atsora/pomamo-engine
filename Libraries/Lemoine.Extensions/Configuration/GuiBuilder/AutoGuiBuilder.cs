@@ -73,10 +73,8 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder
   public class AutoGuiBuilder<T>
     where T : Lemoine.Extensions.Configuration.IConfiguration, new()
   {
-    #region Members
     IPluginConfig m_pluginConfig;
     readonly IList<ConfigGuiItem<T>> m_items = new List<ConfigGuiItem<T>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (AutoGuiBuilder<T>).FullName);
 
@@ -245,9 +243,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder
     where T : Lemoine.Extensions.Configuration.IConfiguration, new()
     where TConfiguration : Lemoine.Extensions.Configuration.IConfiguration, new()
   {
-    #region Members
     readonly ConfigurationLoader<TConfiguration> m_configurationLoader;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (AutoGuiBuilderWithConfigurationLoader<T, TConfiguration>).FullName);
 

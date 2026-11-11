@@ -32,7 +32,7 @@ namespace Lemoine.Plugin.AutoMachineStateTemplateConfig
 
       var configurations = LoadConfigurations ();
       if (!configurations.Any ()) {
-        log.ErrorFormat ("Initialize: no valid configuration, skip this instance");
+        log.Error ("Initialize: no valid configuration, skip this instance");
         return false;
       }
 

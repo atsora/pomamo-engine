@@ -27,14 +27,11 @@ namespace Lemoine.GDBPersistentClasses
       return log;
     }
     
-    #region Members
     /// <summary>
     /// Associated line
     /// </summary>
     protected ILine m_line;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the Line
     /// </summary>
@@ -48,7 +45,6 @@ namespace Lemoine.GDBPersistentClasses
                                                   value.Id));
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -88,15 +84,13 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != line);
       if (null == line) {
-        log.FatalFormat ("GenericLineSlot: " +
-                         "line can't be null");
+        log.Fatal ("GenericLineSlot: line can't be null");
         throw new ArgumentNullException ("line");
       }
       this.m_line = line;
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="Object.GetHashCode" />
     /// </summary>
@@ -128,6 +122,5 @@ namespace Lemoine.GDBPersistentClasses
       return Bound.Equals<DateTime> (this.BeginDateTime, other.BeginDateTime)
         && object.Equals(this.Line, other.Line);
     }
-    #endregion // Methods
   }
 }

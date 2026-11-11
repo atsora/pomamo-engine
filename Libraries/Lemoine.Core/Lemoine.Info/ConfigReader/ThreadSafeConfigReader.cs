@@ -18,9 +18,6 @@ namespace Lemoine.Info.ConfigReader
 
     readonly IGenericConfigReader m_configReader;
     readonly object m_lock = new object ();
-    
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

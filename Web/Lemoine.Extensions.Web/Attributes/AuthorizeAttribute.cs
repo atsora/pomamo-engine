@@ -18,12 +18,10 @@ namespace Lemoine.Extensions.Web.Attributes
   {
     readonly ILog log = LogManager.GetLogger (typeof (AuthorizeAttribute).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Gets or sets the policy to apply to authorize an access to the resource
     /// </summary>
     public string Policy { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

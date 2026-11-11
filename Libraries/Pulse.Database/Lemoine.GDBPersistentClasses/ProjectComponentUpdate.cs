@@ -32,11 +32,9 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ProjectComponentUpdate: GlobalModification, IProjectComponentUpdate
   {
-    #region Members
     IComponent m_component;
     IProject m_oldProject;
     IProject m_newProject;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProjectComponentUpdate).FullName);
     
@@ -62,7 +60,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -84,8 +81,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("Component.set: " +
-                           "null value");
+          log.Error ("Component.set: null value");
           throw new ArgumentNullException ("ProjectComponentUpdate.Component");
         }
         m_component = value;
@@ -140,9 +136,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.NewProject as Project; }
       set { this.NewProject = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     bool GetDataStructureOption (DataStructureConfigKey key)
     {
       return Lemoine.Info.ConfigSet
@@ -210,10 +204,9 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }    
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

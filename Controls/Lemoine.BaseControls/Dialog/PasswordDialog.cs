@@ -14,19 +14,14 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class PasswordDialog : OKCancelDialog
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (PasswordDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Password
     /// </summary>
     public string Password {
       get { return passwordTextBox.Text; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -15,7 +15,6 @@ namespace WizardReorderOperation
   /// </summary>
   internal partial class Page1 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -42,7 +41,6 @@ namespace WizardReorderOperation
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

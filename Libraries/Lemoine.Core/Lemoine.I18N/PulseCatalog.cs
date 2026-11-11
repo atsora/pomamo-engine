@@ -18,14 +18,11 @@ namespace Lemoine.I18N
   /// </summary>
   public sealed class PulseCatalog
   {
-    #region Members
     ICatalog m_implementation = null;
     CultureInfo m_cultureInfo;
-    #endregion
 
     private static readonly ILog log = LogManager.GetLogger(typeof (PulseCatalog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Implementation
     /// </summary>
@@ -42,7 +39,6 @@ namespace Lemoine.I18N
       get { return Instance.m_cultureInfo; }
       set { Instance.m_cultureInfo = value; }
     }
-    #endregion
     
     #region Constructors
     /// <summary>
@@ -54,7 +50,6 @@ namespace Lemoine.I18N
     }
     #endregion
     
-    #region Methods
     /// <summary>
     /// Returns a native language translation of the text passed as the parameter.
     /// </summary>
@@ -113,9 +108,9 @@ namespace Lemoine.I18N
         try {
           var translation = Instance.m_implementation.GetString (s, cultureInfo);
           if (null == translation) {
-            log.DebugFormat ("GetString: " +
-                             "no translation found for {0}, return the default value {1}",
-                             s, d);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetString: no translation found for {s}, return the default value {d}");
+            }
             return d;
           }
           else {
@@ -128,7 +123,6 @@ namespace Lemoine.I18N
         }
       }
     }
-    #endregion
 
     #region Instance
     static PulseCatalog Instance

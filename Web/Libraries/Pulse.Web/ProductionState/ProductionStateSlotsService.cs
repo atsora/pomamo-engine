@@ -37,7 +37,6 @@ namespace Pulse.Web.ProductionState
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -153,6 +152,5 @@ namespace Pulse.Web.ProductionState
         }
       }
     }
-    #endregion // Methods
   }
 }

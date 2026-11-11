@@ -259,8 +259,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       {
         Debug.Assert (0 <= value);
         if (value < 0) {
-          log.ErrorFormat ("Counted: " +
-                           "new counted value {0} is negative !", value);
+          log.Error ($"Counted: new counted value {value} is negative !");
         }
         m_counted = value;
       }
@@ -276,8 +275,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       set
       {
         if (value < 0) {
-          log.WarnFormat ("Corrected: " +
-                          "new corrected value {0} is negative", value);
+          log.Warn ($"Corrected: new corrected value {value} is negative");
         }
         m_corrected = value;
       }

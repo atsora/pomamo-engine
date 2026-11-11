@@ -96,14 +96,9 @@ namespace Lemoine.Plugin.DefaultAccumulators
     /// </summary>
     static readonly string AUTO_SHIFT_MACHINE_ASSOCIATION_PRIORITY = "Analysis.ShiftByMachineAccumulator.AutoPriority";
 
-    #region Members
     readonly IMachine m_machine;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (ShiftByMachineAccumulatorByMachine).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -118,7 +113,6 @@ namespace Lemoine.Plugin.DefaultAccumulators
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add an observation state slot period
     /// </summary>
@@ -166,17 +160,13 @@ namespace Lemoine.Plugin.DefaultAccumulators
       IOperationSlotSplit operationSlotSplit = ModelDAOHelper.DAOFactory.OperationSlotSplitDAO
         .FindById (m_machine.Id);
       if (null == operationSlotSplit) {
-        log.WarnFormat ("Store: " +
-                        "operationSlotSplit did not exist for machine {0} " +
-                        "=> return",
-                        m_machine.Id);
+        log.Warn ($"Store: operationSlotSplit did not exist for machine {m_machine.Id} => return");
         return;
       }
       if (Bound.Compare<DateTime> (operationSlotSplit.End, globalRange.Lower) <= 0) {
-        log.DebugFormat ("Store: " +
-                         "global range {0} after operationSlotSplit.End {1} " +
-                         "=> nothing to do",
-                         globalRange, operationSlotSplit.End);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Store: global range {globalRange} after operationSlotSplit.End {operationSlotSplit.End} => nothing to do");
+        }
         return;
       }
 
@@ -199,6 +189,5 @@ namespace Lemoine.Plugin.DefaultAccumulators
         (new ShiftMachineAssociationDAO ()).MakePersistent (association);
       }
     }
-    #endregion // Methods
   }
 }

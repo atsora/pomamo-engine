@@ -46,7 +46,9 @@ namespace Lemoine.Collections
     public static string ToListString<T> (this IEnumerable<T> t, bool withType)
     {
       if (!t.Any ()) {
-        log.DebugFormat ("ToListString: empty IEnumerable => return an empty string");
+        if (log.IsDebugEnabled) {
+          log.Debug ("ToListString: empty IEnumerable => return an empty string");
+        }
         return "";
       }
 
@@ -57,12 +59,14 @@ namespace Lemoine.Collections
 
       foreach (var separator in SEPARATORS) {
         if (!t.Any (i => i.ToString ().Contains (separator))) { // Separator is ok
-          log.DebugFormat ("ToListString: separator {0} is used", separator);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ToListString: separator {separator} is used");
+          }
           return prefix + separator.ToString () + string.Join (separator.ToString (), t.Select (i => i.ToString ()).ToArray ());
         }
       }
 
-      log.ErrorFormat ("ToListString: none of the separator is ok, they are all used => throw an exception");
+      log.Error ("ToListString: none of the separator is ok, they are all used => throw an exception");
       throw new Exception ("ToListString: no valid separator");
     }
 
@@ -177,7 +181,9 @@ namespace Lemoine.Collections
     public static string ToDictionaryString<TKey, TValue> (this IDictionary<TKey, TValue> t, bool withType)
     {
       if (!t.Any ()) {
-        log.DebugFormat ("ToDictionaryString: empty IEnumerable => return an empty string");
+        if (log.IsDebugEnabled) {
+          log.Debug ("ToDictionaryString: empty IEnumerable => return an empty string");
+        }
         return "";
       }
 
@@ -189,11 +195,15 @@ namespace Lemoine.Collections
       foreach (var itemSeparator in DICTIONARY_ITEM_SEPARATORS) {
         if (!t.Keys.Any (i => i.ToString ().Contains (itemSeparator))
           && !t.Values.Any (i => i.ToString ().Contains (itemSeparator))) { // Separator is ok
-          log.DebugFormat ("ToDictionaryString: item separator {0} is used", itemSeparator);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ToDictionaryString: item separator {itemSeparator} is used");
+          }
           foreach (var keyValueSeparator in KEY_VALUE_SEPARATORS) {
             if (!t.Keys.Any (i => i.ToString ().Contains (keyValueSeparator))
               && !t.Values.Any (i => i.ToString ().Contains (keyValueSeparator))) { // Separator is ok
-              log.DebugFormat ("ToDictionaryString: key value separator {0} is used", keyValueSeparator);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"ToDictionaryString: key value separator {keyValueSeparator} is used");
+              }
               return prefix + keyValueSeparator.ToString () + itemSeparator.ToString ()
                 + string.Join (itemSeparator.ToString (), t.Select (i => i.Key.ToString () + keyValueSeparator + i.Value.ToString ()).ToArray ());
             }
@@ -201,7 +211,7 @@ namespace Lemoine.Collections
         }
       }
 
-      log.ErrorFormat ("ToDictionaryString: none of the separator is ok, they are all used => throw an exception");
+      log.Error ("ToDictionaryString: none of the separator is ok, they are all used => throw an exception");
       throw new Exception ("ToDictionaryString: no valid separator");
     }
 
@@ -218,7 +228,7 @@ namespace Lemoine.Collections
         return new Dictionary<string, string> ();
       }
       else if (1 == s.Length) {
-        log.ErrorFormat ("ParseDictionaryString: invalid string {0}, there is only a single separator", s);
+        log.Error ($"ParseDictionaryString: invalid string {s}, there is only a single separator");
         throw new ArgumentException ("missing separator", "s");
       }
       else {
@@ -310,7 +320,7 @@ namespace Lemoine.Collections
     {
       var match = WITH_TYPE_REGEX.Match (s);
       if (!match.Success) {
-        log.ErrorFormat ("ParseListString: no match with regex, invalid string {0}", s);
+        log.Error ($"ParseListString: no match with regex, invalid string {s}");
         throw new ArgumentException ("Invalid ListString");
       }
       else if (match.Groups["ListType"].Success) {
@@ -328,11 +338,11 @@ namespace Lemoine.Collections
         return ParseDictionaryString (dictionaryString, keyType, valueType);
       }
       else if (match.Groups["NoTyped1"].Success) {
-        log.InfoFormat ("ParseAuto: no type with <> in {0}", s);
+        log.Info ($"ParseAuto: no type with <> in {s}");
         return ParseListString (match.Groups["NoTyped1"].Value);
       }
       else {
-        log.InfoFormat ("ParseAuto: no type in {0}", s);
+        log.Info ($"ParseAuto: no type in {s}");
         return ParseListString (s);
       }
     }

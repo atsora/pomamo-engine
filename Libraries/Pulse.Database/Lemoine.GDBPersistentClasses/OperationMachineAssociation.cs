@@ -49,16 +49,13 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     static readonly TimeSpan BY_PERIOD_MIN_DURATION_DEFAULT = TimeSpan.FromHours  (8);
 
-    #region Members
     IOperation m_operation;
     IWorkOrder m_workOrder = null;
     ILine m_line = null;
     IManufacturingOrder m_manufacturingOrder = null;
     IComponent m_component = null;
     bool m_partOfDetectionAnalysis;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -130,7 +127,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_component; }
       set { m_component = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -167,9 +163,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert ((null == mainModification) || (false == partOfDetectionAnalysis));
       if ((null != mainModification) && partOfDetectionAnalysis) {
-        log.FatalFormat ("OperationMachineAssociation: " +
-                         "incompatible arguments mainModification={0} and partOfDetectionAnalysis={1}",
-                         mainModification, partOfDetectionAnalysis);
+        log.Fatal ($"OperationMachineAssociation: incompatible arguments mainModification={mainModification} and partOfDetectionAnalysis={partOfDetectionAnalysis}");
       }
       m_partOfDetectionAnalysis = partOfDetectionAnalysis;
     }
@@ -199,15 +193,12 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert ((null == mainModification) || (false == partOfDetectionAnalysis));
       if ((null != mainModification) && partOfDetectionAnalysis) {
-        log.FatalFormat ("OperationMachineAssociation: " +
-                         "incompatible arguments mainModification={0} and partOfDetectionAnalysis={1}",
-                         mainModification, partOfDetectionAnalysis);
+        log.Fatal ($"OperationMachineAssociation: incompatible arguments mainModification={mainModification} and partOfDetectionAnalysis={partOfDetectionAnalysis}");
       }
       m_partOfDetectionAnalysis = partOfDetectionAnalysis;
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Add an analysis log for this modification
     /// </summary>
@@ -217,9 +208,9 @@ namespace Lemoine.GDBPersistentClasses
                                             string message)
     {
       if (m_partOfDetectionAnalysis) {
-        log.DebugFormat ("AddAnalysisLog: " +
-                         "add a detection analysis log with the message {0} and level {1}",
-                         message, level);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddAnalysisLog: add a detection analysis log with the message {message} and level {level}");
+        }
         IDetectionAnalysisLog detectionAnalysisLog = ModelDAOHelper.ModelFactory
           .CreateDetectionAnalysisLog (level, message, this.Machine);
         ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
@@ -264,9 +255,7 @@ namespace Lemoine.GDBPersistentClasses
       // Note: the OperationSlot is processed by the OperationShiftMachineAssociation
 
       System.Diagnostics.Debug.Assert (false);
-      log.FatalFormat ("MergeData: " +
-                       "trying to merge the association with a not supported slot {0}",
-                       typeof (TSlot));
+      log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
       throw new ArgumentException ("Not supported machine slot");
     }
     
@@ -334,8 +323,7 @@ namespace Lemoine.GDBPersistentClasses
         else {
           string message = string.Format ("no operation slot found for {0} at {1}",
                                           this.Machine, this.Begin);
-          log.ErrorFormat ("MakeAnalysis: {0}",
-                           message);
+          log.Error ($"MakeAnalysis: {message}");
           AddAnalysisLog (LogLevel.ERROR,
                           message);
           MarkAsError ();
@@ -404,8 +392,9 @@ namespace Lemoine.GDBPersistentClasses
         }
         
         if (!associationCreated) {
-          log.DebugFormat ("MakeAnalysis: " +
-                           "no change was required");
+          if (log.IsDebugEnabled) {
+            log.Debug ("MakeAnalysis: no change was required");
+          }
         }
         MarkAsCompleted ("", null);
       }
@@ -526,15 +515,15 @@ namespace Lemoine.GDBPersistentClasses
         IList<ILineMachine> lineMachines = ModelDAOHelper.DAOFactory.LineMachineDAO
           .FindAllByMachineOperation (this.Machine, this.Operation);
         if (1 < lineMachines.Count) {
-          log.DebugFormat ("Analyze: " +
-                           "more than one line is defined for operation {0}",
-                           this.Operation);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Analyze: more than one line is defined for operation {this.Operation}");
+          }
         }
         else if (1 == lineMachines.Count) {
           foreach (ILineMachine lineMachine in lineMachines) {
-            log.DebugFormat ("Analyze: " +
-                             "get one line id={1} for operation {0}",
-                             this.Operation, lineMachine.Line.Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Analyze: get one line id={lineMachine.Line.Id} for operation {this.Operation}");
+            }
             m_line = lineMachine.Line;
           }
         }
@@ -547,16 +536,16 @@ namespace Lemoine.GDBPersistentClasses
         ICollection<IComponent> components = m_line.Components;
         foreach (IComponent component in components) {
           if (Lemoine.Business.Operation.OperationRelations.IsComponentCompatibleWithOperation (component, this.Operation)) {
-            log.DebugFormat ("Analyze: " +
-                             "component {0} from line is compatible with the operation {1}",
-                             component, this.Operation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Analyze: component {component} from line is compatible with the operation {this.Operation}");
+            }
             if (null == m_component) { // First component found
               m_component = component;
             }
             else { // Second one
-              log.DebugFormat ("Analyze: " +
-                               "a second compatible component {0} was found from line {1} " +
-                               "=> reset the found component");
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Analyze: a second compatible component {component} was found from line {m_line} => reset the found component");
+              }
               m_component = null;
               break;
             }
@@ -649,34 +638,28 @@ and autoSequence.Sequence.Operation<>:operation")
           IWorkOrderLine workOrderLine = workOrderLines [0];
           Debug.Assert (null != workOrderLine.WorkOrder);
           if (workOrderLine.DateTimeRange.ContainsRange (this.Range)) { // On the whole period
-            log.DebugFormat ("Analyze: " +
-                             "got work order id={0} from line id={1}",
-                             ((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id, m_line.Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Analyze: got work order id={((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id} from line id={m_line.Id}");
+            }
             if (Lemoine.Business.Operation.OperationRelations.IsWorkOrderCompatibleWithOperation (workOrderLine.WorkOrder, this.Operation)) {
               m_workOrder = workOrderLine.WorkOrder;
             }
             else {
-              log.WarnFormat ("Analyze: " +
-                              "got work order id={0} from line id={1} " +
-                              "but it is not compatible with operation={2}",
-                              ((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id, m_line.Id, this.Operation);
+              log.Warn ($"Analyze: got work order id={((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id} from line id={m_line.Id} but it is not compatible with operation={this.Operation}");
             }
           }
         }
         if ( (null == m_workOrder) && (1 <= workOrderLines.Count)) { // Split by date
-          log.DebugFormat ("Analyze: " +
-                           "more than one work order may correspond to line {0} in period {1}",
-                           m_line.Id, this.Range);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Analyze: more than one work order may correspond to line {m_line.Id} in period {this.Range}");
+          }
           Bound<DateTime> begin = this.Begin;
           IList<IOperationSlot> preFetchedOperationSlots = null;
           foreach (IWorkOrderLine workOrderLine in workOrderLines) {
             Debug.Assert (null != workOrderLine.WorkOrder);
             SetActive ();
             if (!Lemoine.Business.Operation.OperationRelations.IsWorkOrderCompatibleWithOperation (workOrderLine.WorkOrder, this.Operation)) {
-              log.WarnFormat ("Analyze: " +
-                              "got work order id={0} from line id={1} " +
-                              "but it is not compatible with operation={2}",
-                              ((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id, m_line.Id, this.Operation);
+              log.Warn ($"Analyze: got work order id={((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id} from line id={m_line.Id} but it is not compatible with operation={this.Operation}");
               continue;
             }
             if (Bound.Compare<DateTime> (begin, workOrderLine.BeginDateTime) < 0) {
@@ -981,7 +964,6 @@ and autoSequence.Sequence.Operation<>:operation")
         (new DaySlotDAO ()).ProcessInRange (System.Threading.CancellationToken.None, range, this);
       }
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

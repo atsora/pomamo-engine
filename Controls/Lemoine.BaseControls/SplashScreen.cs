@@ -80,7 +80,6 @@ namespace Lemoine.BaseControls
   {
     static readonly ILog log = LogManager.GetLogger (typeof (SplashScreen).FullName);
 
-    #region Members
     readonly IGuiInitializer m_guiInitializer;
     readonly CancellationToken m_cancellationToken;
     SplashScreenOptions m_options;
@@ -89,7 +88,6 @@ namespace Lemoine.BaseControls
     int m_workingWorkers = 0;
     readonly bool m_loginRequired = false;
     readonly bool m_rememberActive = false;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -152,7 +150,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     void worker1_DoWork (object sender, DoWorkEventArgs e)
     {
       m_guiInitializer.InitializeGui (m_cancellationToken);
@@ -197,7 +194,6 @@ namespace Lemoine.BaseControls
         }
       }
     }
-    #endregion // Methods
 
     #region Event reactions
     void ButtonGoClick (object sender, EventArgs e)

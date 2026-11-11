@@ -22,7 +22,6 @@ namespace ConfiguratorSlots
     internal const string PERIOD_END = "period_end";
     internal const string PERIOD_HAS_END = "period_has_end";
     
-    #region Getters / Setters
     /// <summary>
     /// Name of the icon, coming from a resx associated to the item
     /// </summary>
@@ -32,7 +31,6 @@ namespace ConfiguratorSlots
     /// Flags that characterize the item
     /// </summary>
     public override LemSettingsGlobal.ItemFlag ItemFlags { get { return LemSettingsGlobal.ItemFlag.VIEW_MODE_ALLOWED; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

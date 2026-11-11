@@ -15,7 +15,6 @@ namespace ConfiguratorGoals
   {
     static readonly ILog log = LogManager.GetLogger(typeof (TreeElement).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Company
     /// </summary>
@@ -53,7 +52,6 @@ namespace ConfiguratorGoals
         return str;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -70,7 +68,6 @@ namespace ConfiguratorGoals
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Compare two TreeElement
     /// </summary>
@@ -85,6 +82,5 @@ namespace ConfiguratorGoals
 
       return StrOrder.CompareTo(other.StrOrder);
     }
-    #endregion // Methods
   }
 }

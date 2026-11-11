@@ -16,7 +16,6 @@ namespace WizardAddReason
   /// </summary>
   public partial class ReasonCell : UserControl
   {
-    #region Getters / Setters
     /// <summary>
     /// Get / set the checked state
     /// </summary>
@@ -45,7 +44,6 @@ namespace WizardAddReason
     /// Get the reason
     /// </summary>
     public IReason Reason { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

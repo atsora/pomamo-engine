@@ -17,13 +17,10 @@ namespace ConfiguratorSlots
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     IPartPage1 m_part = null;
     bool m_viewMode = false;
     bool m_askForRefresh = false;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -46,7 +43,6 @@ namespace ConfiguratorSlots
         return txt;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -15,7 +15,6 @@ namespace Lemoine.Plugin.GroupLateProduction
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category name
     /// </summary>
@@ -45,7 +44,6 @@ namespace Lemoine.Plugin.GroupLateProduction
     {
       get; set;
     } = 10.0;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -16,7 +16,6 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageDisconnectMachine : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -30,7 +29,6 @@ namespace WizardMonitorMachine
         return "Select a monitored machine that will be flagged as obsolete.";
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

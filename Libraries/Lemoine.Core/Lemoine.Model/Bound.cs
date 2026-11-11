@@ -38,13 +38,10 @@ namespace Lemoine.Model
   public struct Bound<T>: IBound<T>, IComparable<Bound<T>>, IComparable, IEquatable<Bound<T>>
     where T: struct, IComparable<T>, IComparable, IEquatable<T>
   {
-    #region Members
     [NonSerialized]
     readonly T? m_boundValue;
     readonly BoundType m_boundType;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Internal nullable value
     /// </summary>
@@ -80,7 +77,6 @@ namespace Lemoine.Model
     public BoundType BoundType {
       get { return m_boundType; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -209,7 +205,6 @@ namespace Lemoine.Model
     }
     #endregion // IEquatable implementation
     
-    #region Methods
     /// <summary>
     /// To string
     /// </summary>
@@ -564,6 +559,5 @@ namespace Lemoine.Model
       }
       return result;
     }
-    #endregion // Methods
   }
 }

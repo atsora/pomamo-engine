@@ -16,12 +16,9 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class TransparentLabel : LinkLabel
   {
-    #region Members
     int m_opacity;
     Color m_transparentBackColor;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Opacity of the background
     /// </summary>
@@ -56,7 +53,6 @@ namespace Lemoine.BaseControls
       get { return Color.Transparent; }
       set { base.BackColor = Color.Transparent; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors / Destructors
     /// <summary>

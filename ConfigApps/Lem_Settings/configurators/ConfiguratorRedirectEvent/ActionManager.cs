@@ -15,10 +15,8 @@ namespace ConfiguratorRedirectEvent
   /// </summary>
   public class ActionManager
   {
-    #region Members
     readonly IList<Action> m_actions = new List<Action>();
     readonly bool m_advancedAllowed = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ActionManager).FullName);
     static readonly string ALERT_CONFIG_DIRECTORY_KEY = "Alert.ConfigDirectory";
@@ -37,7 +35,6 @@ namespace ConfiguratorRedirectEvent
     }
     #endregion // Constructors
 
-    #region Methods
     public static bool IsAdminRightRequired()
     {
       string path = Lemoine.Info.ConfigSet.Get<string> (ALERT_CONFIG_DIRECTORY_KEY);
@@ -145,6 +142,5 @@ namespace ConfiguratorRedirectEvent
       
       return actionTypes;
     }
-#endregion // Methods
   }
 }

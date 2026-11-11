@@ -52,7 +52,7 @@ namespace Lemoine.Plugin.CycleIsProduction
         var suffix = "NextProductionEnd";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }
@@ -129,13 +129,13 @@ namespace Lemoine.Plugin.CycleIsProduction
             .FindAt (this.Machine, dateTime);
           if (null == cycle) { // No cycle at dateTime
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: no cycle at {0}", dateTime);
+              log.Debug ($"Get: no cycle at {dateTime}");
             }
             var cycleDetectionDateTime = GetCycleDetectionDateTime ();
             if (cycleDetectionDateTime.HasValue) {
               if (Bound.Compare<DateTime> (dateTime, cycleDetectionDateTime.Value) < 0) {
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: no active cycle (and then no production) at {0} => return NotApplicable", dateTime);
+                  log.Warn ($"Get: no active cycle (and then no production) at {dateTime} => return NotApplicable");
                 }
                 return this.CreateNotApplicable ();
               }
@@ -154,7 +154,7 @@ namespace Lemoine.Plugin.CycleIsProduction
                      false);
               if (!extendCycle) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: cycle at {0} is already a full cycle and extend full cycle option is off => return its end {1}", dateTime, cycle.End.Value);
+                  log.Debug ($"Get: cycle at {dateTime} is already a full cycle and extend full cycle option is off => return its end {cycle.End.Value}");
                 }
                 return this.CreateFinal (cycle.End.Value);
               }
@@ -165,13 +165,13 @@ namespace Lemoine.Plugin.CycleIsProduction
             if (null != nextCycle) {
               if (!cycle.End.HasValue) {
                 if (log.IsErrorEnabled) {
-                  log.ErrorFormat ("Get: cycle at {0} has no end although there is a cycle after it => no data", dateTime);
+                  log.Error ($"Get: cycle at {dateTime} has no end although there is a cycle after it => no data");
                 }
                 return this.CreateNoData ();
               }
               else if (cycle.Full) { // && cycle.End.HasValue
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: full cycle at {0} with a next cycle => final", dateTime);
+                  log.Debug ($"Get: full cycle at {dateTime} with a next cycle => final");
                 }
                 return this.CreateFinal (cycle.End.Value);
               }
@@ -179,7 +179,7 @@ namespace Lemoine.Plugin.CycleIsProduction
                 var operationDetectionDateTime = GetOperationDetectionDateTime ();
                 if (operationDetectionDateTime.HasValue && nextCycle.DateTime <= operationDetectionDateTime.Value) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("Get: not a full cycle found at {0} with no future possible merge => NoData", dateTime);
+                    log.Debug ($"Get: not a full cycle found at {dateTime} with no future possible merge => NoData");
                   }
                   return this.CreateNoData ();
                 }
@@ -187,8 +187,7 @@ namespace Lemoine.Plugin.CycleIsProduction
                   var newHint = new UtcDateTimeRange (nextCycle.DateTime);
                   newHint = new UtcDateTimeRange (hint.Intersects (newHint));
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("Get: operation detection date/time {0} before next cycle date/time {1} => with new hint {2}",
-                      operationDetectionDateTime, nextCycle.DateTime, newHint);
+                    log.Debug ($"Get: operation detection date/time {operationDetectionDateTime} before next cycle date/time {nextCycle.DateTime} => with new hint {newHint}");
                   }
                   return this.CreateWithHint (newHint);
                 }
@@ -196,7 +195,7 @@ namespace Lemoine.Plugin.CycleIsProduction
             }
             else { // null == nextCycle
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: cycle at {0} is still active", dateTime);
+                log.Debug ($"Get: cycle at {dateTime} is still active");
               }
               return this.CreateWithHint (hint);
             }

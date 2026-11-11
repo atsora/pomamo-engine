@@ -99,7 +99,7 @@ namespace Lemoine.FileRepository
     public static bool SynchronizeFile (this IFileRepoClient fileRepoClient, string distantDirectory, string distantFileName, string localPath)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("SynchronizeFile: {0}/{1} => {2}", distantDirectory, distantFileName, localPath);
+        log.Debug ($"SynchronizeFile: {distantDirectory}/{distantFileName} => {localPath}");
       }
 
       using (var synchronizerFile = new SynchronizerFile ()) {

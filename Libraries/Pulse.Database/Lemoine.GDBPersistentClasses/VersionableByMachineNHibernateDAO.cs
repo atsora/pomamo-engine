@@ -27,11 +27,8 @@ namespace Lemoine.GDBPersistentClasses
   {
     readonly ILog log = LogManager.GetLogger (typeof (VersionableByMachineNHibernateDAO<T, I, ID>).FullName);
 
-    #region Members
     readonly string m_machineProperty;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Machine property (usually Machine)
     /// </summary>
@@ -39,7 +36,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_machineProperty; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor
@@ -100,7 +96,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: run a request to get the entity id={0} type={1}", id, typeof (T));
+        log.Debug ($"FindById: run a request to get the entity id={id} type={typeof (T)}");
       }
       var entity = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<T> ()
@@ -108,9 +104,7 @@ namespace Lemoine.GDBPersistentClasses
         .Add (GetMachineCriterion (machineId))
         .UniqueResult<I> ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindById: " +
-                        "the entity id={0} type={1} was queried",
-                        id, typeof (T));
+        log.Debug ($"FindById: the entity id={id} type={typeof (T)} was queried");
       }
       return entity;
     }
@@ -144,7 +138,7 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindByIdAsync: run a request to get the entity id={0} type={1}", id, typeof (T));
+        log.Debug ($"FindByIdAsync: run a request to get the entity id={id} type={typeof (T)}");
       }
       var criteria = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<T> ()
@@ -152,9 +146,7 @@ namespace Lemoine.GDBPersistentClasses
         .Add (GetMachineCriterion (machineId));
       var entity = await criteria.UniqueResultAsync<I> ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("FindByIdAsync: " +
-                        "the entity id={0} type={1} was queried",
-                        id, typeof (T));
+        log.Debug ($"FindByIdAsync: the entity id={id} type={typeof (T)} was queried");
       }
       return entity;
     }

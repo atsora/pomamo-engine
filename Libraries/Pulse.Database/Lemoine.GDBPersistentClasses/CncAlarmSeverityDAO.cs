@@ -89,7 +89,9 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="cncType"></param>
     void UpdateDefaultValues (string cncType)
     {
-      log.DebugFormat ("CncAlarmSeverityDAO: updating default values for cnc '{0}'", cncType);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CncAlarmSeverityDAO: updating default values for cnc '{cncType}'");
+      }
 
       CncAlarmSeverity severity;
       switch (cncType) {
@@ -297,7 +299,7 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (severity);
         break;
       default:
-        log.WarnFormat ("Couldn't update default values for cnc '{0}'", cncType);
+        log.Warn ($"Couldn't update default values for cnc '{cncType}'");
         break;
       }
     }

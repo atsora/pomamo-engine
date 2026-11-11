@@ -23,7 +23,6 @@ namespace Lemoine.ConfigControls
     : UserControl
     , IConfigControlObservable<IEventLevel>
   {
-    #region Members
     BindingList<IDataGridViewEventLevel> m_eventlevels = new BindingList<IDataGridViewEventLevel>();
     
     ISet<DataGridViewRow> m_updateSet =
@@ -33,7 +32,6 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IEventLevel>> m_observers =
       new HashSet<IConfigControlObserver<IEventLevel>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventLevelConfig).FullName);
 
@@ -79,8 +77,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("EventLevelConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("EventLevelConfigLoad: no DAO factory is defined");
         return;
       }
       

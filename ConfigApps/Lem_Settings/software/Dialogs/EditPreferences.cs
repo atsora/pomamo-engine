@@ -13,9 +13,6 @@ namespace Lem_Settings
   /// </summary>
   public partial class EditPreferences : Form
   {
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -30,7 +27,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     void InitGUI()
     {
       comboPerfUnit.Items.Add("parts per hour");
@@ -76,7 +72,6 @@ namespace Lem_Settings
           break;
       }
     }
-    #endregion // Methods
     
     #region Event reactions
     void ButtonCancelClick(object sender, EventArgs e)

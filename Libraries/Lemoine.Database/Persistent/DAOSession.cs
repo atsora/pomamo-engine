@@ -831,8 +831,7 @@ WHERE table_type='LOCAL TEMPORARY'
           if (log.IsInfoEnabled) {
             log.Info ($"RollbackTransaction: (implicit) the transaction is already not active any more. This is probably ok because usually the implicit rollback occur with an exception and there was already a automatic rollback in database at {System.Environment.StackTrace}");
           }
-          transactionLog.InfoFormat ("Rollback - (implicit) inactive transaction - duration={0}",
-                                     transactionDuration);
+          transactionLog.Info ($"Rollback - (implicit) inactive transaction - duration={transactionDuration}");
         }
         else {
           log.Fatal ($"RollbackTransaction: try to rollback a transaction while it is not active any more. Has it already been rolled back and no exception raised ? => do not try to roll it back once again at {System.Environment.StackTrace}");

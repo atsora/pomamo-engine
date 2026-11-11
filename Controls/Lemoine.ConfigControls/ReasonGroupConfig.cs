@@ -22,7 +22,6 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class ReasonGroupConfig : UserControl, IConfigControlObservable<IReasonGroup>
   {
-    #region Members
     SortableBindingList<IReasonGroup> m_reasonGroups
       = new SortableBindingList<IReasonGroup>();
 
@@ -33,7 +32,6 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IReasonGroup> > m_observers =
       new HashSet<IConfigControlObserver<IReasonGroup> > ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonGroupConfig).FullName);
 
@@ -80,8 +78,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat("ReasonGroupConfigLoad: " +
-                        "no DAO factory is defined");
+        log.Error ("ReasonGroupConfigLoad: no DAO factory is defined");
         return;
       }
       

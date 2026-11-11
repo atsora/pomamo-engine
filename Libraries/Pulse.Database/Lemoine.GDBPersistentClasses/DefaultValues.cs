@@ -27,19 +27,16 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string MAX_NUMBER_EXCEPTIONS_KEY = "DefaultValues.MaxNumberExceptions";
     static readonly int MAX_NUMBER_EXCEPTIONS_DEFAULT = 10;
 
-    #region Members
     int m_numberOfInsertDefaultValuesException = 0;
     ISessionFactory m_sessionFactory;
     string m_shortConnectionString;
     bool m_checkCache = true;
     string m_cacheFilePath = CACHE_FILE;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (DefaultValues).FullName);
 
     static readonly string CACHE_FILE = "GDBDefaultValuesCache";
 
-    #region Getters / Setters
     /// <summary>
     /// Try to use the file CACHE_FILE to make the process faster
     /// Default is true.
@@ -49,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_checkCache; }
       set { m_checkCache = value; }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -90,7 +86,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Insert the default values if they have not been set before
     /// 
@@ -109,15 +104,13 @@ namespace Lemoine.GDBPersistentClasses
           }
           if (InsertDefaultValues ()) {
             if (writeCacheFile && (null != m_shortConnectionString)) {
-              log.InfoFormat ("ConnectAndInsertDefaultValues: " +
-                              "success, write the result it in {0}",
-                              this.m_cacheFilePath);
+              log.Info ($"ConnectAndInsertDefaultValues: success, write the result it in {this.m_cacheFilePath}");
               File.WriteAllText (this.m_cacheFilePath, m_shortConnectionString);
             }
             return true;
           }
           else {
-            log.InfoFormat ("ConnectAndInsertDefaultValues: not completed");
+            log.Info ("ConnectAndInsertDefaultValues: not completed");
             return false;
           }
         }
@@ -126,13 +119,11 @@ namespace Lemoine.GDBPersistentClasses
           var maxNumberOfInsertDefaultValuesExceptions = Lemoine.Info.ConfigSet
             .LoadAndGet<int> (MAX_NUMBER_EXCEPTIONS_KEY, MAX_NUMBER_EXCEPTIONS_DEFAULT);
           if (++m_numberOfInsertDefaultValuesException <= maxNumberOfInsertDefaultValuesExceptions) {
-            log.InfoFormat ("ConnectAndInsertDefaultValues: attempt {0} VS {1} => try again",
-              m_numberOfInsertDefaultValuesException, maxNumberOfInsertDefaultValuesExceptions);
+            log.Info ($"ConnectAndInsertDefaultValues: attempt {m_numberOfInsertDefaultValuesException} VS {maxNumberOfInsertDefaultValuesExceptions} => try again");
             return false;
           }
           else {
-            log.FatalFormat ("ConnectAndInsertDefaultValues: attempt {0} VS {1} => stop",
-              m_numberOfInsertDefaultValuesException, maxNumberOfInsertDefaultValuesExceptions);
+            log.Fatal ($"ConnectAndInsertDefaultValues: attempt {m_numberOfInsertDefaultValuesException} VS {maxNumberOfInsertDefaultValuesExceptions} => stop");
             return true;
           }
         }
@@ -158,9 +149,7 @@ namespace Lemoine.GDBPersistentClasses
           }
           if (await InsertDefaultValuesAsync ()) {
             if (writeCacheFile && (null != m_shortConnectionString)) {
-              log.InfoFormat ("ConnectAndInsertDefaultValues: " +
-                              "success, write the result it in {0}",
-                              this.m_cacheFilePath);
+              log.Info ($"ConnectAndInsertDefaultValues: success, write the result it in {this.m_cacheFilePath}");
               // Note: File.WriteAllTextAsync is not available in .NET Standard, only in .NET Core
 #if NETCOREAPP
               await File.WriteAllTextAsync (this.m_cacheFilePath, m_shortConnectionString);
@@ -173,7 +162,7 @@ namespace Lemoine.GDBPersistentClasses
             return true;
           }
           else {
-            log.InfoFormat ("ConnectAndInsertDefaultValues: not completed");
+            log.Info ("ConnectAndInsertDefaultValues: not completed");
             return false;
           }
         }
@@ -182,13 +171,11 @@ namespace Lemoine.GDBPersistentClasses
           var maxNumberOfInsertDefaultValuesExceptions = Lemoine.Info.ConfigSet
             .LoadAndGet<int> (MAX_NUMBER_EXCEPTIONS_KEY, MAX_NUMBER_EXCEPTIONS_DEFAULT);
           if (++m_numberOfInsertDefaultValuesException <= maxNumberOfInsertDefaultValuesExceptions) {
-            log.InfoFormat ("ConnectAndInsertDefaultValues: attempt {0} VS {1} => try again",
-              m_numberOfInsertDefaultValuesException, maxNumberOfInsertDefaultValuesExceptions);
+            log.Info ($"ConnectAndInsertDefaultValues: attempt {m_numberOfInsertDefaultValuesException} VS {maxNumberOfInsertDefaultValuesExceptions} => try again");
             return false;
           }
           else {
-            log.FatalFormat ("ConnectAndInsertDefaultValues: attempt {0} VS {1} => stop",
-              m_numberOfInsertDefaultValuesException, maxNumberOfInsertDefaultValuesExceptions);
+            log.Fatal ($"ConnectAndInsertDefaultValues: attempt {m_numberOfInsertDefaultValuesException} VS {maxNumberOfInsertDefaultValuesExceptions} => stop");
             return true;
           }
         }
@@ -242,21 +229,21 @@ namespace Lemoine.GDBPersistentClasses
           (new ReasonSelectionDAO ()).InsertDefaultValues (); // Must be after MachineModeDefaultReasonDAO...
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 540 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 540 is not completed");
           completed = false;
         }
         if (migrations.Contains (1005)) {
           (new ProductionStateDAO ()).InsertDefaultValues ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 1005 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 1005 is not completed");
           completed = false;
         }
         if (migrations.Contains (30)) {
           (new FieldDAO ()).InsertDefaultValues ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 30 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 30 is not completed");
           completed = false;
         }
         (new FieldLegendDAO ()).InsertDefaultValues ();
@@ -267,7 +254,7 @@ namespace Lemoine.GDBPersistentClasses
           (new ApplicationStateDAO ()).InsertDefaultValues ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 128 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 128 is not completed");
           completed = false;
         }
         if (migrations.Contains (516)) {
@@ -277,7 +264,7 @@ namespace Lemoine.GDBPersistentClasses
           ModelDAOHelper.DAOFactory.FlushData ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 516 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 516 is not completed");
           completed = false;
         }
       }
@@ -306,7 +293,7 @@ namespace Lemoine.GDBPersistentClasses
         // TODO: All InsertDefaultValues async
 
         if (!(new DisplayDAO ()).InsertDefaultValues (migrations)) { // Do Display before Config because Config is using indirectly some Display settings
-          log.InfoFormat ("InsertDefaultValues: false will be returned because InsertDefaultValues of DisplayDAO returned false");
+          log.Info ("InsertDefaultValues: false will be returned because InsertDefaultValues of DisplayDAO returned false");
           completed = false;
         }
         if (!(new ConfigDAO ()).InsertDefaultValues (migrations)) {
@@ -318,7 +305,7 @@ namespace Lemoine.GDBPersistentClasses
           (new GoalTypeDAO ()).InsertDefaultValues ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 267 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 267 is not completed");
           completed = false;
         }
         (new MachineMonitoringTypeDAO ()).InsertDefaultValues ();
@@ -332,21 +319,21 @@ namespace Lemoine.GDBPersistentClasses
           (new ReasonSelectionDAO ()).InsertDefaultValues (); // Must be after MachineModeDefaultReasonDAO...
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 540 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 540 is not completed");
           completed = false;
         }
         if (migrations.Contains (1005)) {
           (new ProductionStateDAO ()).InsertDefaultValues ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 1005 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 1005 is not completed");
           completed = false;
         }
         if (migrations.Contains (30)) {
           (new FieldDAO ()).InsertDefaultValues ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 30 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 30 is not completed");
           completed = false;
         }
         (new FieldLegendDAO ()).InsertDefaultValues ();
@@ -357,7 +344,7 @@ namespace Lemoine.GDBPersistentClasses
           (new ApplicationStateDAO ()).InsertDefaultValues ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 128 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 128 is not completed");
           completed = false;
         }
         if (migrations.Contains (516)) {
@@ -367,7 +354,7 @@ namespace Lemoine.GDBPersistentClasses
           ModelDAOHelper.DAOFactory.FlushData ();
         }
         else {
-          log.InfoFormat ("InsertDefaultValues: false will be returned because the migration 516 is not completed");
+          log.Info ("InsertDefaultValues: false will be returned because the migration 516 is not completed");
           completed = false;
         }
       }
@@ -390,24 +377,23 @@ namespace Lemoine.GDBPersistentClasses
 
       if (false == File.Exists (this.m_cacheFilePath)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: {0} does not exist => return true", m_cacheFilePath);
+          log.Debug ($"IsRequired: {m_cacheFilePath} does not exist => return true");
         }
         return true;
       }
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("IsRequired: {0} exists, check it", m_cacheFilePath);
+        log.Debug ($"IsRequired: {m_cacheFilePath} exists, check it");
       }
 
       Assembly ass;
       try {
         ass = Assembly.GetCallingAssembly ();
         if (ass.Location == null) {
-          log.ErrorFormat ("IsRequired: " +
-                           "unable to get the location of the calling assembly");
+          log.Error ("IsRequired: unable to get the location of the calling assembly");
           return true;
         }
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: calling assembly is {0}", ass.Location);
+          log.Debug ($"IsRequired: calling assembly is {ass.Location}");
         }
       }
       catch (Exception ex) {
@@ -419,13 +405,11 @@ namespace Lemoine.GDBPersistentClasses
         FileInfo configInfo = new FileInfo (this.m_cacheFilePath);
         FileInfo assInfo = new FileInfo (ass.Location);
         if (configInfo.LastWriteTime < assInfo.LastWriteTime) {
-          log.InfoFormat ("IsRequired: " +
-                          "cache file is too old");
+          log.Info ("IsRequired: cache file is too old");
           return true;
         }
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: cache file {0} is recent enough {1} VS {2}",
-            m_cacheFilePath, configInfo.LastWriteTime, assInfo.LastWriteTime);
+          log.Debug ($"IsRequired: cache file {m_cacheFilePath} is recent enough {configInfo.LastWriteTime} VS {assInfo.LastWriteTime}");
         }
       }
       catch (Exception ex) {
@@ -438,13 +422,13 @@ namespace Lemoine.GDBPersistentClasses
         fileContent = File.ReadAllText (m_cacheFilePath);
         var result = !string.Equals (fileContent, m_shortConnectionString, StringComparison.InvariantCultureIgnoreCase);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: final result is {0}", result);
+          log.Debug ($"IsRequired: final result is {result}");
         }
         return result;
       }
       catch (Exception ex) {
         log.Fatal ("IsRequired: exception while checking the file content", ex);
-        log.FatalFormat ("IsRequired: fileContent={0} VS connectionString={1}", fileContent, m_shortConnectionString);
+        log.Fatal ($"IsRequired: fileContent={fileContent} VS connectionString={m_shortConnectionString}");
         return true;
       }
     }
@@ -465,24 +449,23 @@ namespace Lemoine.GDBPersistentClasses
 
       if (false == File.Exists (this.m_cacheFilePath)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: {0} does not exist => return true", m_cacheFilePath);
+          log.Debug ($"IsRequired: {m_cacheFilePath} does not exist => return true");
         }
         return true;
       }
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("IsRequired: {0} exists, check it", m_cacheFilePath);
+        log.Debug ($"IsRequired: {m_cacheFilePath} exists, check it");
       }
 
       Assembly ass;
       try {
         ass = Assembly.GetCallingAssembly ();
         if (ass.Location == null) {
-          log.ErrorFormat ("IsRequired: " +
-                           "unable to get the location of the calling assembly");
+          log.Error ("IsRequired: unable to get the location of the calling assembly");
           return true;
         }
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: calling assembly is {0}", ass.Location);
+          log.Debug ($"IsRequired: calling assembly is {ass.Location}");
         }
       }
       catch (Exception ex) {
@@ -494,13 +477,11 @@ namespace Lemoine.GDBPersistentClasses
         FileInfo configInfo = new FileInfo (this.m_cacheFilePath);
         FileInfo assInfo = new FileInfo (ass.Location);
         if (configInfo.LastWriteTime < assInfo.LastWriteTime) {
-          log.InfoFormat ("IsRequired: " +
-                          "cache file is too old");
+          log.Info ("IsRequired: cache file is too old");
           return true;
         }
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: cache file {0} is recent enough {1} VS {2}",
-            m_cacheFilePath, configInfo.LastWriteTime, assInfo.LastWriteTime);
+          log.Debug ($"IsRequired: cache file {m_cacheFilePath} is recent enough {configInfo.LastWriteTime} VS {assInfo.LastWriteTime}");
         }
       }
       catch (Exception ex) {
@@ -520,13 +501,13 @@ namespace Lemoine.GDBPersistentClasses
 #endif // NETCOREAPP
         var result = !string.Equals (fileContent, m_shortConnectionString, StringComparison.InvariantCultureIgnoreCase);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsRequired: final result is {0}", result);
+          log.Debug ($"IsRequired: final result is {result}");
         }
         return result;
       }
       catch (Exception ex) {
         log.Fatal ("IsRequired: exception while checking the file content", ex);
-        log.FatalFormat ("IsRequired: fileContent={0} VS connectionString={1}", fileContent, m_shortConnectionString);
+        log.Fatal ($"IsRequired: fileContent={fileContent} VS connectionString={m_shortConnectionString}");
         return true;
       }
     }
@@ -540,6 +521,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       m_cacheFilePath = System.IO.Path.Combine (PulseInfo.LocalConfigurationDirectory, CACHE_FILE);
     }
-#endregion
   }
 }

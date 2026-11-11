@@ -80,7 +80,7 @@ namespace Lemoine.GDBUtils
           .CreateNoCacheNoExtensions (m_assembly);
         nhibernateConfigManager.Configure (connectionString);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("NHibernate successfully configured");
+          log.Debug ("NHibernate successfully configured");
         }
         var configuration = nhibernateConfigManager.Configuration;
 
@@ -202,9 +202,7 @@ namespace Lemoine.GDBUtils
       catch (Exception ex) {
         log.Error ("Database migration error", ex);
         if (null != migrator) {
-          log.InfoFormat ("Database migration progress: {0}/{1}",
-            migrator.GetLatestAppliedMigration (log),
-            migrator.GetLastMigrationNumber (log));
+          log.Info ($"Database migration progress: {migrator.GetLatestAppliedMigration (log)}/{migrator.GetLastMigrationNumber (log)}");
         }
         return false;
       }

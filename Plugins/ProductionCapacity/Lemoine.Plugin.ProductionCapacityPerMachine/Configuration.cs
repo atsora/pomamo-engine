@@ -16,8 +16,6 @@ namespace Lemoine.Plugin.ProductionCapacityPerMachine
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
-
     [PluginConf ("Double", "Score", Description = "Score to give to this extension", Multiple = false, Optional = true)]
     [DefaultValue (100.0)]
     public double Score { get; set; }
@@ -41,7 +39,6 @@ namespace Lemoine.Plugin.ProductionCapacityPerMachine
     {
       get; set;
     } = new List<int> ();
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

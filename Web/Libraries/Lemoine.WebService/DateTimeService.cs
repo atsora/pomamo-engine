@@ -24,8 +24,6 @@ namespace Lemoine.WebService
   {
     static readonly ILog log = LogManager.GetLogger(typeof (DateTimeService).FullName);
     
-    #region Methods
-    
     /// <summary>
     /// Response to GET request for GetRangeAround
     /// </summary>
@@ -63,7 +61,6 @@ namespace Lemoine.WebService
                                                  base.Request,
                                                  request);
     }
-    #endregion // Methods
   }
 }
 #endif // NSERVICEKIT

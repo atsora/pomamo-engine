@@ -67,23 +67,21 @@ namespace Lemoine.Business.DynamicTimes
       if (null != this.CacheData) {
         if (!this.CacheData.Value.Hint.Overlaps (m_limit)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Get: cache data hint {0} does not include limit {1} => no data",
-              this.CacheData.Value.Hint, m_limit);
+            log.Debug ($"Get: cache data hint {this.CacheData.Value.Hint} does not include limit {m_limit} => no data");
           }
           return DynamicTimeResponse.CreateNoData (this.CacheData.Value.ImplementationType);
         }
         var hint = new UtcDateTimeRange (m_hint.Intersects (this.CacheData.Value.Hint));
         if (hint.IsEmpty ()) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Get: enriched hint from {0} and cache {1} is empty",
-              m_hint, this.CacheData.Value.Hint);
+            log.Debug ($"Get: enriched hint from {m_hint} and cache {this.CacheData.Value.Hint} is empty");
           }
           return DynamicTimeResponse.CreateNoData (this.CacheData.Value.ImplementationType);
         }
         var response = m_extension.Get (m_dateTime, hint, m_limit);
         if (response.NoData) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Get: no data returned for hint {0}", hint);
+            log.Debug ($"Get: no data returned for hint {hint}");
           }
           return DynamicTimeResponse.CreateWithHint (this.CacheData.Value.ImplementationType, hint);
         }

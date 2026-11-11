@@ -255,9 +255,7 @@ namespace Lemoine.CncDataImport
             // Check the gap and possibly clear the cache for this alarm
             if (startDatetime.Subtract (cachedCncAlarm.DateTimeRange.Upper.Value) > MaxAlarmGap) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("ImportCncAlarm: there is a gap {0}-{1}, discontinue the CncAlarm {2}",
-                                 cachedCncAlarm.DateTimeRange.Upper.Value, startDatetime,
-                                 cachedCncAlarm);
+                log.Debug ($"ImportCncAlarm: there is a gap {cachedCncAlarm.DateTimeRange.Upper.Value}-{startDatetime}, discontinue the CncAlarm {cachedCncAlarm}");
               }
               m_cache.ResetCncAlarm (alarmKey);
             }

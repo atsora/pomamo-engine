@@ -16,7 +16,6 @@ namespace WizardChangeProductionQuantities
   /// </summary>
   internal partial class Page0 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -39,7 +38,6 @@ namespace WizardChangeProductionQuantities
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

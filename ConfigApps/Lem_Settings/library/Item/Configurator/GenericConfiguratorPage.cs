@@ -69,13 +69,11 @@ namespace Lemoine.Settings
     }
     #endregion // Events
     
-    #region Getters / Setters
     /// <summary>
     /// List of classes which are allowed to be edited externally, may be null
     /// An update will trigger a call to Initialize()
     /// </summary>
     public virtual IList<Type> EditableTypes { get { return null; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -31,12 +31,10 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
     IMachineMode m_oldMachineModeFilter; // Not null
     IMachineMode m_newMachineModeFilter = null;
 
-    #region Getters / Setters
     /// <summary>
     /// New machine mode filter (for the unit tests)
     /// </summary>
     public IMachineMode NewMachineModeFilter { get { return m_newMachineModeFilter; } }
-    #endregion // Getters / Setters
 
     #region IActivityAnalysisExtension implementation
     /// <summary>
@@ -47,8 +45,7 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
     {
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.WarnFormat ("Initialize: " +
-                        "the configuration is not valid");
+        log.Warn ("Initialize: the configuration is not valid");
         return false;
       }
 
@@ -60,9 +57,7 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
           m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
             .FindById (machineFilterId);
           if (null == m_machineFilter) {
-            log.ErrorFormat ("Initialize: " +
-                             "machine filter id {0} does not exist",
-                             machineFilterId);
+            log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
             return false;
           }
         }
@@ -72,9 +67,7 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
         m_oldMachineModeFilter = ModelDAOHelper.DAOFactory.MachineModeDAO
           .FindById (oldMachineModeId);
         if (null == m_oldMachineModeFilter) {
-          log.ErrorFormat ("Initialize: " +
-                           "oldMachineModeFilter {0} could not be loaded",
-                           oldMachineModeId);
+          log.Error ($"Initialize: oldMachineModeFilter {oldMachineModeId} could not be loaded");
           return false;
         }
 
@@ -83,9 +76,7 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
           m_newMachineModeFilter = ModelDAOHelper.DAOFactory.MachineModeDAO
             .FindById (newMachineModeId);
           if (null == m_newMachineModeFilter) {
-            log.ErrorFormat ("Initialize: " +
-                             "newMachineModeFilter {0} could not be loaded",
-                             newMachineModeId);
+            log.Error ($"Initialize: newMachineModeFilter {newMachineModeId} could not be loaded");
             return false;
           }
         }
@@ -141,14 +132,14 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
                                                  IShift shift)
     {
       if (null == m_currentMachineMode) {
-        log.DebugFormat ("AfterProcessNewActivityPeriod: " +
-                         "m_previousMachineMode null");
+        if (log.IsDebugEnabled) {
+          log.Debug ("AfterProcessNewActivityPeriod: m_previousMachineMode null");
+        }
         return;
       }
 
       if (null == m_oldMachineModeFilter) {
-        log.FatalFormat ("AfterProcessNewActivityPeriod: " +
-                         "m_oldMachineModeFilter is null");
+        log.Fatal ("AfterProcessNewActivityPeriod: m_oldMachineModeFilter is null");
         Debug.Assert (null != m_oldMachineModeFilter);
         return;
       }
@@ -197,8 +188,9 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
 
       // - Check there is no gap
       if (Bound.Compare<DateTime> (m_currentReasonSlotEnd, activityRange.Lower) < 0) {
-        log.DebugFormat ("AfterProcessNewActivityPeriod: " +
-                         "gap => return");
+        if (log.IsDebugEnabled) {
+          log.Debug ("AfterProcessNewActivityPeriod: gap => return");
+        }
         return;
       }
 
@@ -233,17 +225,16 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
         }
       }
       if (null == previousMachineMode) {
-        log.WarnFormat ("AfterProcessNewActivityPeriod: " +
-                        "no previous machine mode");
+        log.Warn ("AfterProcessNewActivityPeriod: no previous machine mode");
         return;
       }
 
       // - Check the period is not too long
       TimeSpan duration = periodEnd.Subtract (periodBegin);
       if (m_maxDuration < duration) {
-        log.DebugFormat ("AfterProcessNewActivityPeriod: " +
-                         "the acquisition error period is too long: {0}",
-                         duration);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AfterProcessNewActivityPeriod: the acquisition error period is too long: {duration}");
+        }
         return;
       }
 
@@ -254,9 +245,9 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
         .FindById (previousMachineMode.Id);
       IMachineMode commonAncestor = attachedMachineMode.GetCommonAncestor (attachedPreviousMachineMode);
       if (null == commonAncestor) {
-        log.DebugFormat ("AfterProcessNewActivityPeriod: " +
-                         "no common ancestor between {0} and {1}",
-                         machineMode, previousMachineMode);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AfterProcessNewActivityPeriod: no common ancestor between {machineMode} and {previousMachineMode}");
+        }
         return;
       }
       else { // Override acquisition error by ancestor

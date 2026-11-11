@@ -31,7 +31,6 @@ namespace Lemoine.Extensions.ExtensionsProvider
     static readonly string CHECK_INTERFACES_KEY = "Extensions.CheckInterfaces";
     static readonly bool CHECK_INTERFACES_DEFAULT = false;
 
-    #region Members
     readonly IDatabaseConnectionStatus m_databaseConnectionStatus;
     readonly IPluginFilter m_pluginFilter;
     readonly IPluginsLoader m_pluginsLoader;
@@ -43,12 +42,10 @@ namespace Lemoine.Extensions.ExtensionsProvider
     volatile bool m_active = false;
     volatile bool m_pluginUserDirectoryActive = false;
     volatile bool m_loaded = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ExtensionsProvider).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
-    #region Getters / Setters
     /// <summary>
     /// Have the extensions been loaded ?
     /// </summary>
@@ -69,7 +66,6 @@ namespace Lemoine.Extensions.ExtensionsProvider
         return m_pluginsLoader.GetLoadErrorPlugins ();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -102,7 +98,6 @@ namespace Lemoine.Extensions.ExtensionsProvider
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Are the extensions active ?
     /// </summary>
@@ -279,17 +274,18 @@ namespace Lemoine.Extensions.ExtensionsProvider
         return extensions;
       }
 
-      pluginStatusLog.DebugFormat ("Extensions of type {0} requested without the database connection",
-        typeof (T));
+      if (pluginStatusLog.IsDebugEnabled) {
+        pluginStatusLog.Debug ($"Extensions of type {typeof (T)} requested without the database connection");
+      }
 
       var plugins = GetAllNHibernateExtensionPlugins (checkedThread);
       foreach (var plugin in plugins.Distinct ()) {
         var activeExtensionTypes = plugin.ActiveExtensionTypes
           .Where (type => typeof (T).IsAssignableFrom (type));
         foreach (var activeExtensionType in activeExtensionTypes) {
-          log.DebugFormat ("GetNHibernateExtensions: " +
-                           "add extension of type {0} for plugin {1}",
-                           activeExtensionType, plugin);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetNHibernateExtensions: add extension of type {activeExtensionType} for plugin {plugin}");
+          }
           var extension = Activator.CreateInstance (activeExtensionType);
           extensions.Add ((T)extension);
         }
@@ -355,7 +351,9 @@ namespace Lemoine.Extensions.ExtensionsProvider
       bool samePluginUserDirectoryActiveOption =
         m_nhibernateExtensionsPluginUserDirectoryActive == m_pluginUserDirectoryActive;
       if (m_pluginsLoader.Loaded && samePluginUserDirectoryActiveOption) {
-        pluginStatusLog.DebugFormat ("The plugins were already loaded with the database connection, return them");
+        if (pluginStatusLog.IsDebugEnabled) {
+          pluginStatusLog.Debug ("The plugins were already loaded with the database connection, return them");
+        }
         return m_pluginsLoader.GetActivePlugins ();
       }
 
@@ -378,6 +376,5 @@ namespace Lemoine.Extensions.ExtensionsProvider
       return m_pluginsLoader.GetActivePlugins ()
           .FirstOrDefault (plugin => identifyingName.Equals (plugin.IdentifyingName));
     }
-    #endregion // Methods
   }
 }

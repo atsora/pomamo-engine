@@ -222,15 +222,10 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       public int AdjustedQuantity;
     }
 
-    #region Members
     IDictionary<IntermediateWorkPieceByMachineSummaryKey, IntermediateWorkPieceByMachineSummaryValue> m_intermediateWorkPieceByMachineSummaryAccumulator =
       new Dictionary<IntermediateWorkPieceByMachineSummaryKey, IntermediateWorkPieceByMachineSummaryValue> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (IntermediateWorkPieceByMachineSummaryAccumulator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -310,7 +305,6 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     }
     #endregion // IOperationSlotAccumulator
 
-    #region Methods
     /// <summary>
     /// Save the data in the database and reset the internal values
     /// </summary>
@@ -345,9 +339,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
           }
           summary.Corrected += offset;
           if (summary.IsEmpty ()) {
-            log.InfoFormat ("Store: " +
-                            "{0} is empty, delete it",
-                            summary);
+            log.Info ($"Store: {summary} is empty, delete it");
             new IntermediateWorkPieceByMachineSummaryDAO ()
               .MakeTransient (summary);
           }
@@ -359,6 +351,5 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       }
       m_intermediateWorkPieceByMachineSummaryAccumulator.Clear ();
     }
-    #endregion // Methods
   }
 }

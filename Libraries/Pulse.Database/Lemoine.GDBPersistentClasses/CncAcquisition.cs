@@ -24,7 +24,6 @@ namespace Lemoine.GDBPersistentClasses
     static readonly TimeSpan DEFAULT_NOT_RESPONDING_TIMEOUT = TimeSpan.FromMinutes (2);
     static readonly TimeSpan DEFAULT_SLEEP_BEFORE_RESTART = TimeSpan.FromSeconds (10);
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name = null;
@@ -39,11 +38,9 @@ namespace Lemoine.GDBPersistentClasses
     ICollection<IMachineModule> m_machineModules = new InitialNullIdSet<IMachineModule, int> ();
     IComputer m_computer;
     bool m_staThread = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncAcquisition).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -304,7 +301,6 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     [XmlIgnore]
     public virtual string SelectionText => $"{this.Id}: {this.Name}";
-    #endregion // Getters / Setters
 
     #region Add methods
     /// <summary>
@@ -317,7 +313,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
 
-    #region Methods
     /// <summary>
     /// Add a machine module in the member directly
     /// 
@@ -339,7 +334,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       RemoveFromProxyCollection<IMachineModule> (m_machineModules, machineModule);
     }
-    #endregion // Methods    
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

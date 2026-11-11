@@ -19,12 +19,7 @@ namespace Lemoine.DataReferenceControls
   public partial class CadModelDialog : OKCancelDialog, IValueDialog<ICadModel>
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CadModelDialog).FullName);
-
-    #region members
-
-    #endregion
     
-    #region Getters / Setters
     /// <summary>
     /// Is a null CadModel a valid value ?
     /// </summary>
@@ -65,7 +60,6 @@ namespace Lemoine.DataReferenceControls
         cadModelSelection1.SelectedCadModels = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -81,9 +75,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("CadModelDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

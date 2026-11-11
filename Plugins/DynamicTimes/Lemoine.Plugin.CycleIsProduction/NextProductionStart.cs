@@ -52,7 +52,7 @@ namespace Lemoine.Plugin.CycleIsProduction
         var suffix = "NextProductionStart";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }
@@ -103,7 +103,7 @@ namespace Lemoine.Plugin.CycleIsProduction
         if (!cycleDetectionDateTime.HasValue
           || Bound.Compare<DateTime> (cycleDetectionDateTime.Value, dateTime) <= 0) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("IsApplicableAt: cycle detection date/time {0} before date/time {1} => pending", cycleDetectionDateTime, dateTime);
+            log.Debug ($"IsApplicableAt: cycle detection date/time {cycleDetectionDateTime} before date/time {dateTime} => pending");
           }
           // This is not possible to know if there will be a cycle at date/time
           // and to know if it will be NotApplicable or not
@@ -132,7 +132,7 @@ namespace Lemoine.Plugin.CycleIsProduction
         if (!cycleDetectionDateTime.HasValue
           || Bound.Compare<DateTime> (cycleDetectionDateTime.Value, dateTime) <= 0) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Get: cycle detection date/time {0} before date/time {1} => pending", cycleDetectionDateTime, dateTime);
+            log.Debug ($"Get: cycle detection date/time {cycleDetectionDateTime} before date/time {dateTime} => pending");
           }
           // This is not possible to know if there will be a cycle at date/time
           // and to know if it will be NotApplicable or not
@@ -144,7 +144,7 @@ namespace Lemoine.Plugin.CycleIsProduction
             .FindAt (this.Machine, dateTime);
           if (null != cycleAt) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: cycle at {0} => not applicable", dateTime);
+              log.Debug ($"Get: cycle at {dateTime} => not applicable");
             }
             return this.CreateNotApplicable ();
           }
@@ -165,7 +165,7 @@ namespace Lemoine.Plugin.CycleIsProduction
             }
             else {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: cycle detection date/time {0} after date/time {1} and no cycle at {1} => Hint", cycleDetectionDateTime, dateTime);
+                log.Debug ($"Get: cycle detection date/time {cycleDetectionDateTime} after date/time {dateTime} and no cycle at {dateTime} => Hint");
               }
               return this.CreateWithHint (new UtcDateTimeRange (cycleDetectionDateTime.Value));
             }

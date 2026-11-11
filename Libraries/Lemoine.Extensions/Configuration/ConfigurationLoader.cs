@@ -70,9 +70,9 @@ namespace Lemoine.Extensions.Configuration
     public virtual string GetProperties (TConfiguration configuration)
     {
       string s = JsonConvert.SerializeObject (configuration, m_jsonSettings);
-      log.DebugFormat ("GetConfiguration: " +
-                       "configuration is {0}",
-                       s);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetConfiguration: configuration is {s}");
+      }
       return s;
     }
   }

@@ -27,10 +27,8 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class DayTemplateChange: PeriodAssociation, IDayTemplateChange
   {
-    #region Members
     IDayTemplate m_dayTemplate;
     bool m_force;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -50,8 +48,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != dayTemplate);
       if (null == dayTemplate) {
-        log.FatalFormat ("DayTemplateChange: " +
-                         "null dayTemplate");
+        log.Fatal ("DayTemplateChange: null dayTemplate");
         throw new ArgumentNullException ("dayTemplate");
       }
       
@@ -59,7 +56,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -102,7 +98,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_force; }
       set { m_force = value; }
     }
-    #endregion // Getters / Setters
 
     #region Modification implementation
     /// <summary>
@@ -178,9 +173,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported slot");
       }
     }
@@ -196,10 +189,7 @@ namespace Lemoine.GDBPersistentClasses
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "{0} " +
-                         "=> finish in error",
-                         message);
+        log.Error ($"MakeAnalysis: {message} => finish in error");
         AddAnalysisLog(LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -306,7 +296,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 

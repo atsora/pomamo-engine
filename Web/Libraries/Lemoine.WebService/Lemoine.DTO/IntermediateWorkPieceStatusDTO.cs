@@ -13,7 +13,6 @@ namespace Lemoine.DTO
   /// </summary>
   public class IntermediateWorkPieceStatusDTO
   {
-    #region Members
     /// <summary>
     /// Operation id
     /// </summary>
@@ -43,8 +42,6 @@ namespace Lemoine.DTO
     /// Global production completed for during current shift
     /// </summary>
     public int ShiftCompleted { get; set; }
-
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (IntermediateWorkPieceStatusDTO).FullName);
 

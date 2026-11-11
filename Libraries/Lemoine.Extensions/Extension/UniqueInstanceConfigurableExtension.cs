@@ -23,12 +23,9 @@ namespace Lemoine.Extensions
   {
     static readonly ILog log = LogManager.GetLogger (typeof (UniqueInstanceConfigurableExtension<TConfiguration>).FullName);
 
-    #region Members
     IConfigurationLoader<TConfiguration> m_configurationLoader;
     readonly IList<IPluginInstance> m_instances = new List<IPluginInstance> ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Configuration context
     /// </summary>
@@ -36,7 +33,6 @@ namespace Lemoine.Extensions
     {
       get { return m_instances; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

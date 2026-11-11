@@ -65,7 +65,6 @@ namespace WizardInitialConfiguration
     internal const int WARN_LEVEL = 401;
     internal const int ERR_LEVEL = 301;
 
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -139,7 +138,6 @@ namespace WizardInitialConfiguration
         return pages;
       }
     }
-    #endregion // Getters / Setters
     
     #region Wizard methods
     /// <summary>

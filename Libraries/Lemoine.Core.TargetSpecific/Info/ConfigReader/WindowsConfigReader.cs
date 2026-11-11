@@ -17,9 +17,6 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   {
     static readonly ILog log = LogManager.GetLogger (typeof (WindowsStringConfigReader).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -69,9 +66,6 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     , IGenericConfigReader
   {
     static readonly ILog log = LogManager.GetLogger (typeof (WindowsConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

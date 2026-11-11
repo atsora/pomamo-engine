@@ -17,11 +17,8 @@ namespace ConfiguratorAlarmFocus
   /// </summary>
   internal partial class PagePattern : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     CncAlarmSeverityPatternRules m_patternRules = new CncAlarmSeverityPatternRules ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -46,7 +43,6 @@ namespace ConfiguratorAlarmFocus
     {
       get { return LemSettingsGlobal.PageFlag.WITH_VALIDATION; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

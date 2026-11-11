@@ -19,18 +19,14 @@ namespace Lemoine.Core.Cache
   /// </summary>
   public sealed class CacheClientWithExpiresAtData : ICacheClientWithCleanExtension
   {
-    #region Members
     readonly ICacheClientWithCleanExtension m_cacheClient;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CacheClientWithExpiresAtData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Flush the memory on Dispose
     /// </summary>
     public bool FlushOnDispose { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

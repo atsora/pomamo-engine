@@ -14,7 +14,6 @@ namespace WizardMonitorMachine
   /// </summary>
   static public class Util
   {
-    #region Methods
     /// <summary>
     /// Try to ping
     /// </summary>
@@ -133,6 +132,5 @@ namespace WizardMonitorMachine
       } catch (Exception) {}
       throw new Exception("unknown host");
     }
-    #endregion // Methods
   }
 }

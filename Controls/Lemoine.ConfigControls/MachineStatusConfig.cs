@@ -27,14 +27,12 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IShift>
     , IConfigControlObserver<IReason>
   {
-    #region Members
     SortableBindingList<IMachineStatus> m_machineStatuss = new SortableBindingList<IMachineStatus>();
     
     ISet<DataGridViewRow> m_updateSet =
       new HashSet<DataGridViewRow> ();
     IList<IMachineStatus> m_deleteList =
       new List<IMachineStatus> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStatusConfig).FullName);
 
@@ -116,8 +114,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("MachineStatusConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("MachineStatusConfigLoad: no DAO factory is defined");
         return;
       }
       

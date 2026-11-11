@@ -39,7 +39,6 @@ namespace Pulse.Web.Operation
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -60,9 +59,7 @@ namespace Pulse.Web.Operation
           machine = ModelDAOHelper.DAOFactory.MachineDAO
             .FindById (machineId);
           if (null == machine) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown machine with ID {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
             return new ErrorDTO ("No machine with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -75,9 +72,7 @@ namespace Pulse.Web.Operation
         
         UtcDateTimeRange range;
         if (string.IsNullOrEmpty (request.Range)) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown range {0}",
-                           request.Range);
+          log.Error ($"GetWithoutCache: unknown range {request.Range}");
           return new ErrorDTO ("No specified range",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -85,8 +80,7 @@ namespace Pulse.Web.Operation
           range = new UtcDateTimeRange (request.Range);
         }
         if (range.IsEmpty ()) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "empty range");
+          log.Error ("GetWithoutCache: empty range");
           return new ErrorDTO ("Empty range",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -112,7 +106,9 @@ namespace Pulse.Web.Operation
                 applicableRange = new UtcDateTimeRange (range.Lower, firstEffectiveOperationSlot.DateTimeRange.Lower.Value);
               }
               else { // Lower = -oo
-                log.DebugFormat ("GetWithoutCache: effective operation slots from -oo");
+                if (log.IsDebugEnabled) {
+                  log.Debug ("GetWithoutCache: effective operation slots from -oo");
+                }
                 response.IsMissingWorkInformation = false;
                 return response;
               }
@@ -122,7 +118,9 @@ namespace Pulse.Web.Operation
             }
             
             if (applicableRange.IsEmpty ()) {
-              log.DebugFormat ("GetWithoutCache: empty applicable range");
+              if (log.IsDebugEnabled) {
+                log.Debug ("GetWithoutCache: empty applicable range");
+              }
               response.IsMissingWorkInformation = false;
               return response;
             }
@@ -169,13 +167,17 @@ namespace Pulse.Web.Operation
     {
       if (!operationFromCnc
           && (null == operationSlot.Operation)) {
-        log.DebugFormat ("IsMissingInformation: the operation must be manually set (not from cnc)");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMissingInformation: the operation must be manually set (not from cnc)");
+        }
         return true;
       }
       
       if ((operationSlot.WorkOrder == null)
           || (operationSlot.Component == null)) {
-        log.DebugFormat ("IsMissingInformation: Missing work order or component");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMissingInformation: Missing work order or component");
+        }
         return true;
       }
       
@@ -183,6 +185,5 @@ namespace Pulse.Web.Operation
       
       return false;
     }
-    #endregion // Methods
   }
 }

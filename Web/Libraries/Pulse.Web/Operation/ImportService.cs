@@ -39,7 +39,6 @@ namespace Pulse.Web.Operation
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request
     /// </summary>
@@ -48,7 +47,7 @@ namespace Pulse.Web.Operation
     public override object GetSync (ImportRequestDTO request)
     {
       if (string.IsNullOrEmpty (request.DateTime)) {
-        log.ErrorFormat ("Get: unknown date/time");
+        log.Error ("Get: unknown date/time");
         return new ErrorDTO ("unknown date/time",
           ErrorStatus.WrongRequestParameter);
       }
@@ -58,8 +57,7 @@ namespace Pulse.Web.Operation
                               DateTimeStyles.AssumeUniversal
                               | DateTimeStyles.AdjustToUniversal,
                               out dateTime)) {
-        log.ErrorFormat ("Get: invalid date/time {0}",
-          request.DateTime);
+        log.Error ($"Get: invalid date/time {request.DateTime}");
         return new ErrorDTO ("invalid date/time", ErrorStatus.WrongRequestParameter);
       }
 
@@ -68,9 +66,7 @@ namespace Pulse.Web.Operation
         var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("Get: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
+          log.Error ($"Get: unknown monitored machine with ID {machineId}");
           return new ErrorDTO ("No monitored machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -79,16 +75,13 @@ namespace Pulse.Web.Operation
           var operationCycle = ModelDAOHelper.DAOFactory.OperationCycleDAO
             .FindAt (machine, dateTime);
           if (null == operationCycle) {
-            log.ErrorFormat ("Get: " +
-              "no operation cycle at {0}",
-              dateTime);
+            log.Error ($"Get: no operation cycle at {dateTime}");
             transaction.Commit ();
             return new ErrorDTO ("No operation cycle at the specified date/time",
               ErrorStatus.NotApplicable);
           }
           if (!operationCycle.End.HasValue || !operationCycle.Begin.HasValue) {
-            log.ErrorFormat ("Get: " +
-              "the operation cycle has no bounded range");
+            log.Error ("Get: the operation cycle has no bounded range");
             transaction.Commit ();
             return new ErrorDTO ("No bounded range for the operation cycle",
               ErrorStatus.NotApplicable);
@@ -100,7 +93,7 @@ namespace Pulse.Web.Operation
             machine);
           if ((null == operationSlot)
             || (null == operationSlot.Operation)) {
-            log.ErrorFormat ("Get: no detected operation for the selected operation cycle");
+            log.Error ("Get: no detected operation for the selected operation cycle");
             transaction.Commit ();
             return new ErrorDTO ("No operation at the specified date/time",
               ErrorStatus.NotApplicable);
@@ -114,13 +107,12 @@ namespace Pulse.Web.Operation
               var previousBetweenCycle = ModelDAOHelper.DAOFactory.BetweenCyclesDAO
                 .FindWithNextCycle (operationCycle);
               if (null == previousBetweenCycle) {
-                log.ErrorFormat ("Get: no between cycles before operation cycle {0} at {1}", operationCycle.Id, request.DateTime);
+                log.Error ($"Get: no between cycles before operation cycle {operationCycle.Id} at {request.DateTime}");
               }
               else { // null != previousBetweenCycle
                 var loadingDuration = previousBetweenCycle.End.Subtract (previousBetweenCycle.Begin);
                 if (log.IsInfoEnabled) {
-                  log.InfoFormat ("Get: set operation loading duration {0} to operation {1}",
-                    loadingDuration, operation);
+                  log.Info ($"Get: set operation loading duration {loadingDuration} to operation {operation}");
                 }
                 operation.LoadingDuration = loadingDuration;
                 ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation);
@@ -131,8 +123,7 @@ namespace Pulse.Web.Operation
           if (request.MachiningDuration) {
             if (request.Override || !operation.MachiningDuration.HasValue) {
               Debug.Assert (operationCycleRange.Duration.HasValue);
-              log.InfoFormat ("Get: set operation machining time {0} to operation {1}",
-                operationCycleRange.Duration.Value, operation);
+              log.Info ($"Get: set operation machining time {operationCycleRange.Duration.Value} to operation {operation}");
               operation.MachiningDuration = operationCycleRange.Duration.Value;
               ModelDAOHelper.DAOFactory.OperationDAO.MakePersistent (operation);
             }
@@ -143,7 +134,7 @@ namespace Pulse.Web.Operation
             toolNumberField = ModelDAOHelper.DAOFactory.FieldDAO
               .FindByCode ("ToolNumber");
             if (null == toolNumberField) {
-              log.FatalFormat ("Get: no field ToolNumber");
+              log.Fatal ("Get: no field ToolNumber");
               transaction.Rollback ();
               return new ErrorDTO ("no field ToolNumber", ErrorStatus.UnexpectedError);
             }
@@ -160,20 +151,19 @@ namespace Pulse.Web.Operation
                   && (request.Override || !sequence.EstimatedTime.HasValue)) {
                   var sequenceRange = new UtcDateTimeRange (sequenceSlot.DateTimeRange.Intersects (operationCycleRange));
                   if (sequenceRange.IsEmpty ()) {
-                    log.ErrorFormat ("Get: sequence range is empty after the intersection with operaitonCycleRange");
+                    log.Error ("Get: sequence range is empty after the intersection with operaitonCycleRange");
                   }
                   else { // !sequenceRange.IsEmpty ()
                     Debug.Assert (sequenceRange.Duration.HasValue); // Because of the intersection with operationCycleRange
                     var sequenceDuration = sequenceRange.Duration.Value;
-                    log.InfoFormat ("Get: set sequence time {0} to sequence {1}",
-                      sequenceDuration, sequence);
+                    log.Info ($"Get: set sequence time {sequenceDuration} to sequence {sequence}");
                     sequence.EstimatedTime = sequenceDuration;
                     if (request.SequenceToSequence && sequenceSlot.NextBegin.HasValue) {
                       Debug.Assert (sequenceSlot.BeginDateTime.HasValue);
                       sequenceRange = new UtcDateTimeRange (new UtcDateTimeRange (sequenceSlot.BeginDateTime, sequenceSlot.NextBegin.Value)
                         .Intersects (operationCycleRange));
                       if (sequenceRange.IsEmpty ()) {
-                        log.ErrorFormat ("Get: begin to next begin range is empty");
+                        log.Error ("Get: begin to next begin range is empty");
                       }
                       else { // !sequenceRange.IsEmpty
                         Debug.Assert (sequenceRange.Duration.HasValue);
@@ -213,8 +203,7 @@ namespace Pulse.Web.Operation
                       .OrderByDescending (v => v.DateTimeRange.Duration)
                       .First ()
                       .String.Trim ();
-                    log.InfoFormat ("Get: set tool number {0} to sequence {1}",
-                      toolNumber, sequence);
+                    log.Info ($"Get: set tool number {toolNumber} to sequence {sequence}");
                     sequence.ToolNumber = toolNumber;
                     ModelDAOHelper.DAOFactory.SequenceDAO.MakePersistent (sequence);
                   }
@@ -229,6 +218,5 @@ namespace Pulse.Web.Operation
 
       return new OkDTO ("Operation import successful");
     }
-    #endregion // Methods
   }
 }

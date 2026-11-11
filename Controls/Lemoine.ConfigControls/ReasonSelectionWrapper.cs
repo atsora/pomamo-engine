@@ -23,7 +23,6 @@ namespace Lemoine.ConfigControls
       this.reasonSelections = new List<IReasonSelection>();
     }
     
-    #region Members
     //Not with m_ convention for Binding reason
     public String Id { get; set; }
     public IReason Reason { get; set; }
@@ -35,7 +34,6 @@ namespace Lemoine.ConfigControls
     
     public Color BackColor {get; set;}
     public Color FontColor {get; set;}
-    #endregion
     
     #region Functions
     /// <summary>

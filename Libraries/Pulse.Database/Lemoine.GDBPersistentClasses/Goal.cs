@@ -16,7 +16,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Goal: IGoal, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IGoalType m_type = null;
@@ -28,7 +27,6 @@ namespace Lemoine.GDBPersistentClasses
     IMachineSubCategory m_machineSubCategory = null;
     ICell m_cell = null;
     IMachine m_machine = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Goal).FullName);
 
@@ -54,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// ID
     /// </summary>
@@ -153,6 +150,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_machine; }
       set { m_machine = value; }
     }
-    #endregion // Getters / Setters
   }
 }

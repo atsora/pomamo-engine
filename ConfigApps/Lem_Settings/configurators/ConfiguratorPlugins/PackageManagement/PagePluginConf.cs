@@ -26,13 +26,10 @@ namespace ConfiguratorPlugins
   {
     ILog log = LogManager.GetLogger (typeof (PagePluginConf).FullName);
 
-    #region Members
     IPluginConfigurationControl m_configurationControl = null;
     string m_pluginName = "";
     IPackagePluginAssociation m_association;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -71,7 +68,6 @@ namespace ConfiguratorPlugins
         return LemSettingsGlobal.PageFlag.WITH_VALIDATION;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -152,9 +148,7 @@ namespace ConfiguratorPlugins
               m_configurationControl.LoadProperties (instance.InstanceParameters);
             }
             catch (Exception ex) {
-              log.ErrorFormat ("LoadPageFromData: " +
-                               "exception while loading the properties: {0}",
-                               ex);
+              log.Error ($"LoadPageFromData: exception while loading the properties: {ex}");
             }
           }
         }

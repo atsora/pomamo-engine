@@ -14,8 +14,6 @@ namespace Lemoine.Plugin.ReserveCapacityAlert
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
-
     /// <summary>
     /// Report name
     /// </summary>
@@ -29,7 +27,6 @@ namespace Lemoine.Plugin.ReserveCapacityAlert
     [PluginConf ("Int", "Threshold", Description = "Threshold for alert sending", Optional = false, Multiple = false)]
     [DefaultValue (0)]
     public int Threshold {  get; set; } = 0;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

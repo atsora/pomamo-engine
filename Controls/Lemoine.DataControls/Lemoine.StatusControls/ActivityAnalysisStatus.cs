@@ -15,17 +15,13 @@ namespace Lemoine.StatusControls
   /// </summary>
   public partial class ActivityAnalysisStatus : UserControl
   {
-    #region Members
     Timer m_refreshTimer = new Timer();
     int m_refreshPeriod = 1000; // in ms
     IMonitoredMachine m_currentMonitoredMachine = null;
     DateTime m_initialDateTime;
     int m_initialCount;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ActivityAnalysisStatus).FullName);
-
-    #region Getters / Setters
     
     /// <summary>
     /// refresh timer
@@ -66,8 +62,6 @@ namespace Lemoine.StatusControls
       get { return m_initialCount; }
       set { m_initialCount = value; }
     }
-    
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -84,7 +78,6 @@ namespace Lemoine.StatusControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// refresh the analysis status
     /// </summary>
@@ -163,7 +156,6 @@ namespace Lemoine.StatusControls
       
       
     }
-    #endregion // Methods
     
     void RefreshBtnClick(object sender, EventArgs e)
     {

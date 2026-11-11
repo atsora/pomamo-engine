@@ -18,14 +18,11 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   internal sealed class DisplayHelper
   {
-    #region Members
     IDictionary<string, IDictionary<string, string>> m_tableDisplayPattern =
       new Dictionary<string, IDictionary<string, string>> (StringComparer.InvariantCultureIgnoreCase);
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (DisplayHelper).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Map Table -> Display pattern
     /// </summary>
@@ -33,9 +30,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return Instance.m_tableDisplayPattern; }
       set { Instance.m_tableDisplayPattern = value; }
     }
-    #endregion
     
-    #region Methods
     /// <summary>
     /// Get the pattern for the specified table and variant
     /// </summary>
@@ -56,7 +51,6 @@ namespace Lemoine.GDBPersistentClasses
         return tableDictionary.TryGetValue (variant ?? "", out pattern);
       }
     }
-    #endregion // Methods
 
     #region Constructors
     /// <summary>
@@ -66,8 +60,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("MachineCategoryConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("MachineCategoryConfigLoad: no DAO factory is defined");
         return;
       }
       

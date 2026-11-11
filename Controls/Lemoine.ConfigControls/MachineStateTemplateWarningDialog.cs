@@ -16,12 +16,8 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class MachineStateTemplateWarningDialog : OKCancelMessageDialog
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateWarningDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Set the Title of the Dialog
     /// </summary>
@@ -29,7 +25,6 @@ namespace Lemoine.ConfigControls
       get{ return this.Title; }
       set{ this.SetDialogTitle(value);}
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -46,7 +41,6 @@ namespace Lemoine.ConfigControls
 
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Used to set a Prefix on the Dialog\'s Title
     /// </summary>
@@ -54,6 +48,5 @@ namespace Lemoine.ConfigControls
     private void SetDialogTitle(String newDialogTitle){
       this.Text = PulseCatalog.GetString("MachineStateTemplateDataIntegrityDialogWarningTitlePrefix")+newDialogTitle;
     }
-    #endregion // Methods
   }
 }

@@ -26,7 +26,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IMachine>
     , IConfigControlObserver<IMachineFilter>
   {
-    #region Members
     SortableBindingList<IEmailConfig> m_emailConfigs = new SortableBindingList<IEmailConfig>();
     
     ISet<DataGridViewRow> m_updateSet =
@@ -35,7 +34,6 @@ namespace Lemoine.ConfigControls
       new List<IEmailConfig> ();
     
     String m_priorityString = PulseCatalog.GetString("Priority");
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EmailConfigConfig).FullName);
 
@@ -128,8 +126,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("EmailConfigConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("EmailConfigConfigLoad: no DAO factory is defined");
         return;
       }
       

@@ -99,7 +99,6 @@ namespace Lemoine.Analysis
       "Analysis.Activity.AutoSequences.MinTime";
     static readonly TimeSpan MIN_TIME_AUTO_SEQUENCE_ANALYSIS_DEFAULT = TimeSpan.FromSeconds (10);
 
-    #region Members
     readonly IMonitoredMachine m_monitoredMachine;
     IMonitoredMachineAnalysisStatus m_monitoredMachineAnalysisStatus = null;
 
@@ -112,11 +111,9 @@ namespace Lemoine.Analysis
 
     IStateMachine<IMonitoredMachineActivityAnalysis> m_stateMachine;
     IList<IFact> m_facts;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (MonitoredMachineActivityAnalysis).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated monitored machine
     /// </summary>
@@ -131,7 +128,6 @@ namespace Lemoine.Analysis
     /// <see cref="IMonitoredMachineActivityAnalysis"/>
     /// </summary>
     public IList<IFact> Facts => m_facts;
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor
@@ -183,7 +179,6 @@ namespace Lemoine.Analysis
       m_detectionAnalysis = detectionAnalysis;
     }
 
-    #region Methods
     IEnumerable<Lemoine.Extensions.Analysis.IActivityAnalysisExtension> GetActivityAnalysisExtensions ()
     {
       return m_analysisExtensions.OfType<Lemoine.Extensions.Analysis.IActivityAnalysisExtension> ();
@@ -210,7 +205,7 @@ namespace Lemoine.Analysis
 
         if (IsPauseRequested ()) {
           if (log.IsInfoEnabled) {
-            log.InfoFormat ($"Initialize: interrupt the initialization after the initialization of MachineActivityAnalysis because the modification analysis Id {GetPauseTriggeringModificationId ()} is run on the same monitored machine");
+            log.Info ($"Initialize: interrupt the initialization after the initialization of MachineActivityAnalysis because the modification analysis Id {GetPauseTriggeringModificationId ()} is run on the same monitored machine");
           }
           return false;
         }
@@ -247,10 +242,7 @@ namespace Lemoine.Analysis
           }
           Debug.Assert (null != m_monitoredMachineAnalysisStatus);
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("MakeActivityAnalysis: " +
-                             "machine module status {0} loaded " +
-                             "for monitored machine {1}",
-                             m_monitoredMachineAnalysisStatus, m_monitoredMachine.Id);
+            log.Debug ($"MakeActivityAnalysis: machine module status {m_monitoredMachineAnalysisStatus} loaded for monitored machine {m_monitoredMachine.Id}");
           }
 
           SetActive ();
@@ -637,10 +629,7 @@ namespace Lemoine.Analysis
 
       Debug.Assert (m_monitoredMachineAnalysisStatus.ActivityAnalysisDateTime < facts[facts.Count - 1].End);
       if (facts[facts.Count - 1].End <= m_monitoredMachineAnalysisStatus.ActivityAnalysisDateTime) {
-        log.FatalFormat ("ProcessActivities: " +
-                         "last fact {0} before ActivityAnalysisDateTime {1}, " +
-                         "this should not happen because of the pre-condition",
-                         facts[facts.Count - 1], m_monitoredMachineAnalysisStatus.ActivityAnalysisDateTime);
+        log.Fatal ($"ProcessActivities: last fact {facts[facts.Count - 1]} before ActivityAnalysisDateTime {m_monitoredMachineAnalysisStatus.ActivityAnalysisDateTime}, this should not happen because of the pre-condition");
         return;
       }
 
@@ -1091,8 +1080,6 @@ namespace Lemoine.Analysis
       }
     }
     #endregion // ManageActivities part
-
-    #endregion // Methods
 
     #region Implementation of IContext
     /// <summary>

@@ -17,12 +17,10 @@ namespace WizardMonitorMachine
   /// </summary>
   public class CncParameterFile: AbstractParameter
   {
-    #region Members
     string m_directoryPath;
     string m_subDirectoryName;
     string m_filter;
     bool m_fallbackMode;
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (CncParameterUrl).FullName);
 
@@ -33,7 +31,6 @@ namespace WizardMonitorMachine
     public CncParameterFile(XmlNode node) : base(node) {}
     #endregion // Constructors
 
-    #region Methods
     protected override bool Parse(XmlAttributeCollection attributes)
     {
       bool ok = true;
@@ -58,7 +55,7 @@ namespace WizardMonitorMachine
         try {
           Directory.CreateDirectory(fullDirectory);
         } catch (Exception e) {
-          log.ErrorFormat("Cannot create directory {0} as specified in parameter 'SubDirectory': {1}", fullDirectory, e);
+          log.Error ($"Cannot create directory {fullDirectory} as specified in parameter 'SubDirectory': {e}");
           ok = false;
         }
       }
@@ -67,7 +64,7 @@ namespace WizardMonitorMachine
       try {
         var filePaths = Directory.GetFiles(fullDirectory, "*.*", SearchOption.TopDirectoryOnly);
       } catch (Exception e) {
-        log.ErrorFormat("Cannot read the content of directory {0}: {1}", fullDirectory, e);
+        log.Error ($"Cannot read the content of directory {fullDirectory}: {e}");
         ok = false;
       }
       
@@ -119,6 +116,5 @@ namespace WizardMonitorMachine
     {
       return "";
     }
-    #endregion // Methods
   }
 }

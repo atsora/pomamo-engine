@@ -54,7 +54,7 @@ namespace Lem_CncDataConsole
           LogManager.AddLog4netDefaultConfigurationFile (logFileSuffix);
 
           if (opt.MachineModuleId == int.MinValue) {
-            log.ErrorFormat ("Main: no machine module Id was set");
+            log.Error ("Main: no machine module Id was set");
             System.Console.Error.WriteLine ("No machine module was set");
             Environment.Exit (1);
           }

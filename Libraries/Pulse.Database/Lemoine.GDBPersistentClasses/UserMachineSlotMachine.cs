@@ -20,11 +20,9 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class UserMachineSlotMachine: IUserMachineSlotMachine, ISerializableModel, IDataWithId
   {
-    #region Members
     int m_id = 0;
     IMachine m_machine;
     IMachineStateTemplate m_machineStateTemplate;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (UserMachineSlotMachine).FullName);
 
@@ -51,7 +49,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Id
     /// </summary>
@@ -76,7 +73,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IMachineStateTemplate MachineStateTemplate {
       get { return m_machineStateTemplate; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

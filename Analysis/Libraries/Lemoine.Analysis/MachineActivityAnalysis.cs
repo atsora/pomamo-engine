@@ -108,7 +108,6 @@ namespace Lemoine.Analysis
     static readonly string RESTRICTED_TRANSACTION_LEVEL_KEY = "Analysis.Activity.RestrictedTransactionLevel";
     static readonly string RESTRICTED_TRANSLATION_LEVEL_DEFAULT = ""; // Default one
 
-    #region Members
     bool m_initialized = false;
     bool m_threadExecution = true;
     readonly IMachine m_machine;
@@ -125,11 +124,9 @@ namespace Lemoine.Analysis
 
     IStateMachine<IMachineActivityAnalysis> m_stateMachine;
     IList<Exception> m_stateExceptions;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (MachineActivityAnalysis).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Run the analysis in a thread (default, for debugging purpose, you can turn this to false)
     /// </summary>
@@ -174,7 +171,6 @@ namespace Lemoine.Analysis
     /// <see cref="IStateMachineAnalysis"/>
     /// </summary>
     public IEnumerable<Exception> StateExceptions => m_stateExceptions;
-    #endregion // Getters / Setters
 
     #region IStateMachineAnalysis implementation
     /// <summary>
@@ -229,7 +225,6 @@ namespace Lemoine.Analysis
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Check if an exception requires to exit
     /// </summary>
@@ -254,26 +249,19 @@ namespace Lemoine.Analysis
       long initialValue = Interlocked.CompareExchange (ref m_pause, modificationId, (long)0);
       if (0 == initialValue) {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("RequestPause: " +
-                          "the pause has been correctly set to modificationId {0}",
-                          modificationId);
+          log.Info ($"RequestPause: the pause has been correctly set to modificationId {modificationId}");
         }
         return true;
       }
       else if (modificationId == initialValue) {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("RequestPause: " +
-                          "the pause is already hold by modificationId {0}",
-                          modificationId);
+          log.Info ($"RequestPause: the pause is already hold by modificationId {modificationId}");
         }
         return true;
       }
       else {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("RequestPause: " +
-                          "the pause is already set by modificationId {0}, " +
-                          "exit without updating m_pause",
-                          initialValue);
+          log.Info ($"RequestPause: the pause is already set by modificationId {initialValue}, exit without updating m_pause");
         }
         return false;
       }
@@ -287,16 +275,11 @@ namespace Lemoine.Analysis
     {
       if (modificationId == Interlocked.CompareExchange (ref m_pause, 0, modificationId)) {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("ReleasePause: " +
-                          "the pause has been released for modificationId {0}",
-                          modificationId);
+          log.Info ($"ReleasePause: the pause has been released for modificationId {modificationId}");
         }
       }
       else {
-        log.ErrorFormat ("ReleasePause: " +
-                         "trying to release a pause with the wrong modificationId {0} " +
-                         "=> this should not happen",
-                         modificationId);
+        log.Error ($"ReleasePause: trying to release a pause with the wrong modificationId {modificationId} => this should not happen");
         throw new InvalidOperationException ("ReleasePause");
       }
     }
@@ -319,18 +302,12 @@ namespace Lemoine.Analysis
     {
       long pauseValue = Interlocked.CompareExchange (ref m_pause, 0, 0);
       if (0 != pauseValue) {
-        log.InfoFormat ("IsPauseRequested: " +
-                        "the value is {0} " +
-                        "=> a pause was requested",
-                        pauseValue);
+        log.Info ($"IsPauseRequested: the value is {pauseValue} => a pause was requested");
         return true;
       }
       else {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsPauseRequested: " +
-                           "pause value was {0}. " +
-                           "No pause was requested",
-                           pauseValue);
+          log.Debug ($"IsPauseRequested: pause value was {pauseValue}. No pause was requested");
         }
         return false;
       }
@@ -728,7 +705,6 @@ namespace Lemoine.Analysis
       return m_extensions
         .Select (ext => new SingleMachineAnalysisExtensionState<T> (ext));
     }
-    #endregion // Methods
 
     #region Implementation of IContext
     /// <summary>

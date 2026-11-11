@@ -21,9 +21,7 @@ namespace Lemoine.GDBPersistentClasses
     , IUserSlot
     , ICloneable
   {
-    #region Members
     IShift m_shift;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (UserSlot).FullName);
 
@@ -46,7 +44,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// (optional) Reference to the Shift
     /// </summary>
@@ -54,9 +51,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_shift; }
       set { m_shift = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// IComparable implementation
     /// <see cref="IComparable.CompareTo" />
@@ -71,17 +66,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.BeginDateTime.CompareTo (other.BeginDateTime);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare user slots " +
-                           "for different users {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare user slots for different users {this} {other}");
           throw new ArgumentException ("Comparison of UserSlot from different users");
         }
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a UserSlot");
     }
 
@@ -96,10 +86,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare user slots " +
-                       "for different users {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare user slots for different users {this} {other}");
       throw new ArgumentException ("Comparison of UserSlot from different users");
     }
     
@@ -189,7 +176,6 @@ namespace Lemoine.GDBPersistentClasses
       return NHibernateHelper.EqualsNullable (this.User, other.User, (a, b) => a.Id == b.Id)
         && NHibernateHelper.EqualsNullable (this.Shift, other.Shift, (a, b) => a.Id == b.Id);
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Object.ToString()" />

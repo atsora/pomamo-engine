@@ -17,14 +17,9 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
   /// </summary>
   internal sealed class OperationDetectionNotifier
   {
-    #region Members
     IList<IOperationDetectionListener> m_listeners = new List<IOperationDetectionListener> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationDetectionNotifier).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -35,7 +30,6 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a listener
     /// </summary>
@@ -61,7 +55,6 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
         }
       }
     }
-    #endregion // Methods
 
     #region Instance
     static OperationDetectionNotifier Instance

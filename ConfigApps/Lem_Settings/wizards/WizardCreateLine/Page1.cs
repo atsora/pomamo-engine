@@ -18,13 +18,10 @@ namespace WizardCreateLine
   /// </summary>
   internal partial class Page1 : GenericWizardPage, IWizardPage
   {
-    #region Members
     string m_lineName = "";
     string m_lineCode = "";
     IList<StructPart> m_parts = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -50,7 +47,6 @@ namespace WizardCreateLine
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

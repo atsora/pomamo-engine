@@ -70,9 +70,7 @@ namespace Lemoine.GDBPersistentClasses
       try {
         IProductionState existingProductionState = FindById (productionState.Id);
         if (null == existingProductionState) { // the config does not exist => create it
-          log.InfoFormat ("InsertDefaultValue: " +
-                          "add id={0} translationKey={1}",
-                          productionState.Id, productionState.TranslationKey);
+          log.Info ($"InsertDefaultValue: add id={productionState.Id} translationKey={productionState.TranslationKey}");
           // Use a raw SQL Command, else the Id is reset
           using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand ()) {
             command.CommandText = $@"INSERT INTO ProductionState (productionstateid, productionstatetranslationkey, productionstatecolor)

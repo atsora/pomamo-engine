@@ -19,7 +19,6 @@ namespace WizardDeleteProduction
     internal const string LINE = "line";
     internal const string WOLS = "wols";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -90,7 +89,6 @@ namespace WizardDeleteProduction
         return pages; 
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

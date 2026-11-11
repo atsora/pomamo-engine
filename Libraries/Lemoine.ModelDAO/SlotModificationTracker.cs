@@ -17,16 +17,13 @@ namespace Lemoine.Model
   public class SlotModificationTracker<T> : IDisposable
     where T : class, ISlot
   {
-    #region Members
     readonly int m_initialLevel = 0;
     readonly bool m_active = false;
     readonly T m_oldSlot;
     readonly T m_slot;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (SlotModificationTracker<T>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Old slot
     /// </summary>
@@ -34,7 +31,6 @@ namespace Lemoine.Model
     {
       get { return m_oldSlot; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

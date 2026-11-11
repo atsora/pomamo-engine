@@ -34,9 +34,7 @@ namespace Lemoine.WebService
 
     readonly ILog log = LogManager.GetLogger (typeof (GenericCachedService<InputDTO>).FullName);
 
-    #region Getters / Setters
     CacheTimeOut DefaultCacheTimeOut { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -49,7 +47,6 @@ namespace Lemoine.WebService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get without cache
     /// </summary>
@@ -129,9 +126,7 @@ namespace Lemoine.WebService
       
       for (int attempt = 0; attempt < MAX_ATTEMPT; attempt++) {
         if (log.IsInfoEnabled) {
-        log.InfoFormat ("GetRequestAnswer: " +
-                        "request={0} attempt={1}",
-                        request, attempt);
+        log.Info ($"GetRequestAnswer: request={request} attempt={attempt}");
         }
         try {
           return GetWithoutCache (request);
@@ -189,16 +184,15 @@ namespace Lemoine.WebService
           }
         }
         finally {
-          log.DebugFormat ("GetRequestAnswer: " +
-                           "request={0} is completed",
-                           request);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetRequestAnswer: request={request} is completed");
+          }
         }
       }
       
       Debug.Assert (null != lastException);
       if (null == lastException) {
-        log.FatalFormat ("GetRequestAnswer: " +
-                         "unexpected lastException value (should not be null)");
+        log.Fatal ("GetRequestAnswer: unexpected lastException value (should not be null)");
         throw new InvalidOperationException ("Unexpected lastException value");
       }
       else if((lastException is ObjectDisposedException) || (lastException is InvalidOperationException)){
@@ -206,9 +200,7 @@ namespace Lemoine.WebService
       }
       else {
         Debug.Assert (! (lastException is OutOfMemoryException));
-        log.ErrorFormat ("GetRequestAnswer: " +
-                         "second time the exception {0} happens",
-                         lastException);
+        log.Error ($"GetRequestAnswer: second time the exception {lastException} happens");
         throw new Exception ("Second exception", lastException);
       }
     }
@@ -220,9 +212,7 @@ namespace Lemoine.WebService
     /// <param name="ex"></param>
     void Exit (string message, Exception ex)
     {
-      log.FatalFormat ("Exit: " +
-                       "exit with message {0} was requested",
-                       message);
+      log.Fatal ($"Exit: exit with message {message} was requested");
       Lemoine.Core.Environment.LogAndForceExit (ex, log);
     }
 
@@ -232,8 +222,7 @@ namespace Lemoine.WebService
     /// <param name="ex"></param>
     void Exit (Exception ex)
     {
-      log.FatalFormat ("Exit: " +
-                       "exit was requested");
+      log.Fatal ("Exit: exit was requested");
       Lemoine.Core.Environment.LogAndForceExit (ex, log);
     }
 
@@ -281,10 +270,7 @@ namespace Lemoine.WebService
 
             if (null != cacheKey) {
               if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: " +
-                                 "use the cache key={1} " +
-                               "fixed URL={0}",
-                               url, cacheKey);
+              log.Debug ($"Get: use the cache key={cacheKey} fixed URL={url}");
               }
               string cacheAction = GetCacheAction (rawUrl);
               if (cacheAction.Equals ("no", StringComparison.InvariantCultureIgnoreCase)
@@ -292,9 +278,7 @@ namespace Lemoine.WebService
                 logRequest.NoCache = true;
                 // Clear the cache
                 if (!cacheClient.Remove (cacheKey)) {
-                  log.ErrorFormat ("Get: " +
-                                   "Removing key {0} from cache failed",
-                                   cacheKey);
+                  log.Error ($"Get: Removing key {cacheKey} from cache failed");
                 }
                 if (cacheAction.Equals ("clear", StringComparison.InvariantCultureIgnoreCase)) {
                   logRequest.ClearOnly = true;
@@ -344,6 +328,5 @@ namespace Lemoine.WebService
       return "";
     }
 #endif // NSERVICEKIT
-    #endregion // Methods
   }
 }

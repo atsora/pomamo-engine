@@ -33,7 +33,6 @@ namespace Pulse.Web.WebDataAccess
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -48,9 +47,7 @@ namespace Pulse.Web.WebDataAccess
           IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
             .FindById (request.MachineId);
           if (null == machine) {
-            log.ErrorFormat ("Get: " +
-                             "Machine with {0} does not exist",
-                             request.MachineId);
+            log.Error ($"Get: Machine with {request.MachineId} does not exist");
             transaction.Commit ();
             return new ErrorDTO ("No machine with id " + request.MachineId,
                                  ErrorStatus.WrongRequestParameter);
@@ -62,9 +59,7 @@ namespace Pulse.Web.WebDataAccess
             IComponent component = ModelDAOHelper.DAOFactory.ComponentDAO
               .FindById (request.ComponentId.Value);
             if (null == component) {
-              log.ErrorFormat ("Get: " +
-                               "No reason with ID {0}",
-                               request.ComponentId.Value);
+              log.Error ($"Get: No reason with ID {request.ComponentId.Value}");
               transaction.Commit ();
               return new ErrorDTO ("No work order with id " + request.ComponentId.Value,
                                    ErrorStatus.WrongRequestParameter);
@@ -90,9 +85,7 @@ namespace Pulse.Web.WebDataAccess
               IRevision revision = ModelDAOHelper.DAOFactory.RevisionDAO
                 .FindById (request.RevisionId.Value);
               if (null == revision) {
-                log.WarnFormat ("Get: " +
-                                "No revision with ID {0}",
-                                request.RevisionId.Value);
+                log.Warn ($"Get: No revision with ID {request.RevisionId.Value}");
               }
               else {
                 componentMachineAssociation.Revision = revision;
@@ -110,6 +103,5 @@ namespace Pulse.Web.WebDataAccess
       Debug.Assert (null != componentMachineAssociation);
       return new SaveModificationResponseDTO (componentMachineAssociation);
     }
-    #endregion // Methods
   }
 }

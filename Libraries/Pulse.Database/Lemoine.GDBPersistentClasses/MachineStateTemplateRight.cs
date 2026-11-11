@@ -19,13 +19,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineStateTemplateRight: Right, IMachineStateTemplateRight, IDataGridViewMachineStateTemplateRight, IVersionable
   {
-    #region Members
     IMachineStateTemplate m_machineStateTemplate;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateRight).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machine state template
     /// 
@@ -36,7 +33,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return this.m_machineStateTemplate; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

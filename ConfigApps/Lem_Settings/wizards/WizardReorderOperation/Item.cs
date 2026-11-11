@@ -17,7 +17,6 @@ namespace WizardReorderOperation
     internal const string PART = "part";
     internal const string ORDER = "order";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -90,7 +89,6 @@ namespace WizardReorderOperation
         return pages; 
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

@@ -16,12 +16,9 @@ namespace ConfiguratorAlarms
   /// </summary>
   internal partial class Page1bis : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     Alarm m_currentAlert = null;
     bool m_initializing = true;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -33,7 +30,6 @@ namespace ConfiguratorAlarms
     public string Help { get { return "First choose an email and all alerts linked to it will be displayed.\n\n" +
           "Each alert can be edited or deleted with the corresponding button.\n\n" +
           "You can also create a new alert."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

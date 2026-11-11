@@ -22,12 +22,9 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonGroupSelection).FullName);
     
-    #region Members
     IList<IReasonGroup> m_reasonGroups = null;
     IReasonGroup m_reasonGroup = null;
-    #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -112,7 +109,6 @@ namespace Lemoine.DataReferenceControls
         this.m_reasonGroup = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -139,7 +135,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -177,18 +172,18 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void ReasonGroupSelectionLoad(object sender, EventArgs e)
     {
-      log.DebugFormat ("ReasonGroupSelectionLoad /B");
+      if (log.IsDebugEnabled) {
+        log.Debug ("ReasonGroupSelectionLoad /B");
+      }
       
       IList<IReasonGroup> reasonGroups;
 
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat("ReasonGroupConfigLoad: " +
-                        "no DAO factory is defined");
+        log.Error ("ReasonGroupConfigLoad: no DAO factory is defined");
         return;
       }
       

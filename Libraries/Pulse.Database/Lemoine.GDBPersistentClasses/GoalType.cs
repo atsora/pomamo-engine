@@ -15,11 +15,9 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class GoalType: DataWithTranslation, IVersionable, IGoalType
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IUnit m_unit = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (GoalType).FullName);
 
@@ -56,7 +54,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -89,6 +86,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_unit; }
       set { m_unit = value; }
     }
-    #endregion // Getters / Setters
   }
 }

@@ -15,9 +15,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class InterruptedAnalysis: Exception
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (InterruptedAnalysis).FullName);
 
     #region Constructors
@@ -29,8 +26,5 @@ namespace Lemoine.GDBPersistentClasses
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

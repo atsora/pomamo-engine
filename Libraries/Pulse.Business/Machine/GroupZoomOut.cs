@@ -40,14 +40,9 @@ namespace Lemoine.Business.Machine
   public sealed class GroupZoomOut
     : IRequest<GroupZoomOutResponse>
   {
-    #region Members
     readonly string m_childGroupId;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GroupZoomOut).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -61,9 +56,6 @@ namespace Lemoine.Business.Machine
       m_childGroupId = childGroupId;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -86,7 +78,7 @@ namespace Lemoine.Business.Machine
       }
 
       if (log.IsWarnEnabled) {
-        log.WarnFormat ("Get: no zoom out implementation for group {0}", m_childGroupId);
+        log.Warn ($"Get: no zoom out implementation for group {m_childGroupId}");
       }
       var r = new GroupZoomOutResponse ();
       r.Parent = null;

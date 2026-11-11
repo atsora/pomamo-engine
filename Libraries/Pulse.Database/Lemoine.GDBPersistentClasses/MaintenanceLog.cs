@@ -18,13 +18,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MaintenanceLog : Log, IMaintenanceLog
   {
-    #region Members
     string m_state; // do not use here the enum, just because any new state string may come from a SQL script
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MaintenanceLog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated state
     /// </summary>
@@ -37,7 +34,6 @@ namespace Lemoine.GDBPersistentClasses
         // only XML serialization is supported: do nothing
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor

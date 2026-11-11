@@ -30,13 +30,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ComponentMachineAssociation: MachineAssociation, IComponentMachineAssociation
   {
-    #region Members
     IComponent m_component;
     IWorkOrder m_workOrder = null;
     ILine m_line = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -82,7 +79,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_line; }
       set { m_line = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -125,7 +121,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="PeriodAssociation.ConvertToSlot" />
     /// </summary>
@@ -139,9 +134,7 @@ namespace Lemoine.GDBPersistentClasses
       // Note: OperationSlot is processed by ComponentShiftMachineAssociation
 
       System.Diagnostics.Debug.Assert (false);
-      log.FatalFormat ("ConvertToSlot: " +
-                       "Slot of type {0} is not implemented",
-                       typeof (TSlot));
+      log.Fatal ($"ConvertToSlot: Slot of type {typeof (TSlot)} is not implemented");
       throw new NotImplementedException ("Slot type not implemented");
     }
 
@@ -163,9 +156,7 @@ namespace Lemoine.GDBPersistentClasses
       // Note: the OperationSlot is processed by the ComponentShiftMachineAssociation
 
       System.Diagnostics.Debug.Assert (false);
-      log.FatalFormat ("MergeData: " +
-                       "trying to merge the association with a not supported slot {0}",
-                       typeof (TSlot));
+      log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
       throw new ArgumentException ("Not supported machine slot");
     }
 
@@ -180,10 +171,7 @@ namespace Lemoine.GDBPersistentClasses
       if (Bound.Compare<DateTime> (this.End, this.Begin) < 0) { // Empty period: error
         string message = string.Format ("End={0} before Begin={1}",
                                         this.End, this.Begin);
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "{0} " +
-                         "=> finish in error",
-                         message);
+        log.Error ($"MakeAnalysis: {message} => finish in error");
         AddAnalysisLog(LogLevel.ERROR, message);
         MarkAsError ();
         return;
@@ -233,8 +221,7 @@ namespace Lemoine.GDBPersistentClasses
         else {
           string message = string.Format ("no operation slot found for {0} at {1}",
                                           this.Machine, this.Begin);
-          log.ErrorFormat ("MakeAnalysis: {0}",
-                           message);
+          log.Error ($"MakeAnalysis: {message}");
           AddAnalysisLog (LogLevel.ERROR,
                           message);
           MarkAsError ();
@@ -271,8 +258,7 @@ namespace Lemoine.GDBPersistentClasses
       if (this.Option.HasValue
           && this.Option.Value.HasFlag (AssociationOption.AssociateToSlotOption)) {
         Debug.Assert (false);
-        log.FatalFormat ("Apply: " +
-                         "the option AssociateToSlot is not implemented");
+        log.Fatal ("Apply: the option AssociateToSlot is not implemented");
         throw new NotImplementedException ();
       }
       
@@ -301,15 +287,15 @@ namespace Lemoine.GDBPersistentClasses
         IList<ILine> lines = ModelDAOHelper.DAOFactory.LineDAO
           .FindAllByComponent (this.Component);
         if (1 < lines.Count) {
-          log.DebugFormat ("Analyze: " +
-                           "more than one line is defined for component {0}",
-                           this.Component);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Analyze: more than one line is defined for component {this.Component}");
+          }
         }
         else if (1 == lines.Count) {
           foreach (ILine line in lines) {
-            log.DebugFormat ("Analyze: " +
-                             "get one line id={1} for component {0}",
-                             this.Component, line.Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Analyze: get one line id={line.Id} for component {this.Component}");
+            }
             m_line = line;
           }
         }
@@ -339,42 +325,36 @@ namespace Lemoine.GDBPersistentClasses
           Debug.Assert (null != workOrderLine.WorkOrder);
           if ( (Bound.Compare<DateTime> (workOrderLine.BeginDateTime, this.Begin) <= 0)
               && (NullableDateTime.Compare (this.End, workOrderLine.EndDateTime) <= 0)) { // On the whole period
-            log.DebugFormat ("Analyze: " +
-                             "got work order id={0} from line id={1}",
-                             ((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id, m_line.Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"Analyze: got work order id={((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id} from line id={m_line.Id}");
+            }
             if (Lemoine.Business.Operation.OperationRelations.IsWorkOrderCompatibleWithComponent (workOrderLine.WorkOrder, this.Component)) {
               m_workOrder = workOrderLine.WorkOrder;
             }
             else {
-              log.WarnFormat ("Analyze: " +
-                              "got work order id={0} from line id={1} " +
-                              "but it is not compatible with component={2}",
-                              ((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id, m_line.Id, this.Component);
+              log.Warn ($"Analyze: got work order id={((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id} from line id={m_line.Id} but it is not compatible with component={this.Component}");
             }
           }
         }
         if ( (null == m_workOrder) && (1 <= workOrderLines.Count)) { // Split by date
-          log.DebugFormat ("Analyze: " +
-                           "more than one work order may correspond to line {0} in period {1}-{2}",
-                           m_line.Id, this.Begin, this.End);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Analyze: more than one work order may correspond to line {m_line.Id} in period {this.Begin}-{this.End}");
+          }
           LowerBound<DateTime> begin = this.Begin;
           IList<IOperationSlot> preFetchedOperationSlots = null;
           foreach (IWorkOrderLine workOrderLine in workOrderLines) {
             Debug.Assert (null != workOrderLine.WorkOrder);
             SetActive ();
             if (!Lemoine.Business.Operation.OperationRelations.IsWorkOrderCompatibleWithComponent (workOrderLine.WorkOrder, this.Component)) {
-              log.WarnFormat ("Analyze: " +
-                              "got work order id={0} from line id={1} " +
-                              "but it is not compatible with component={2}",
-                              ((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id, m_line.Id, this.Component);
+              log.Warn ($"Analyze: got work order id={((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id} from line id={m_line.Id} but it is not compatible with component={this.Component}");
               continue;
             }
             {
               UtcDateTimeRange range = new UtcDateTimeRange (begin, workOrderLine.BeginDateTime.Value);
               if (!range.IsEmpty ()) {
-                log.DebugFormat ("Analyze: " +
-                                 "no work order for line {0} in period {1}-{2}",
-                                 m_line.Id, begin, workOrderLine.BeginDateTime);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Analyze: no work order for line {m_line.Id} in period {begin}-{workOrderLine.BeginDateTime}");
+                }
                 Debug.Assert (workOrderLine.BeginDateTime.HasValue);
                 ComponentMachineAssociation association = new ComponentMachineAssociation (this.Machine,
                                                                                            range,
@@ -392,9 +372,9 @@ namespace Lemoine.GDBPersistentClasses
               UtcDateTimeRange range = new UtcDateTimeRange (begin, end);
               Debug.Assert (!range.IsEmpty ());
 
-              log.DebugFormat ("Analyze: " +
-                               "work order {0} for line {1} in period {2}",
-                               ((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id, m_line.Id, range);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Analyze: work order {((Lemoine.Collections.IDataWithId)workOrderLine.WorkOrder).Id} for line {m_line.Id} in period {range}");
+              }
               ComponentMachineAssociation association = new ComponentMachineAssociation (this.Machine,
                                                                                          range,
                                                                                          this.MainModification);
@@ -414,9 +394,9 @@ namespace Lemoine.GDBPersistentClasses
           {
             UtcDateTimeRange range = new UtcDateTimeRange (begin, this.End);
             if (!range.IsEmpty ()) {
-              log.DebugFormat ("Analyze: " +
-                               "no work order for line {0} in period {1}-{2}",
-                               m_line.Id, begin, this.End);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Analyze: no work order for line {m_line.Id} in period {begin}-{this.End}");
+              }
               ComponentMachineAssociation association = new ComponentMachineAssociation (this.Machine,
                                                                                          range,
                                                                                          this.MainModification);
@@ -451,23 +431,24 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (AnalysisConfigHelper.OperationSlotSplitOption.IsActive ()) {
         // - Get a split range that is limited to machineStatus.OperationSlotSplitEnd
-        log.DebugFormat ("InsertCorrespondingSlots: " +
-                         "one of the split option is active " +
-                         "=> determine a splitRange");
+        if (log.IsDebugEnabled) {
+          log.Debug ("InsertCorrespondingSlots: one of the split option is active => determine a splitRange");
+        }
         UtcDateTimeRange splitRange = this.Range;
         IOperationSlotSplit operationSlotSplit = ModelDAOHelper.DAOFactory.OperationSlotSplitDAO
           .FindById (this.Machine.Id);
         if ( (null != operationSlotSplit)
             && (Bound.Compare<DateTime> (operationSlotSplit.End, splitRange.Upper) < 0)) {
-          log.DebugFormat ("InsertCorrespondingSlots: " +
-                           "restrict the split range to {0}",
-                           operationSlotSplit.End);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"InsertCorrespondingSlots: restrict the split range to {operationSlotSplit.End}");
+          }
           splitRange = new UtcDateTimeRange (splitRange.Lower, operationSlotSplit.End);
         }
 
         // - Split the operation slot by day and/or shift
-        log.DebugFormat ("InsertCorrespondingSlots: " +
-                         "Split operation option");
+        if (log.IsDebugEnabled) {
+          log.Debug ("InsertCorrespondingSlots: Split operation option");
+        }
         Bound<DateTime> begin = this.Begin;
         if (!splitRange.IsEmpty ()) {
           Debug.Assert (splitRange.Lower.Equals (this.Begin));
@@ -502,10 +483,7 @@ namespace Lemoine.GDBPersistentClasses
               Debug.Assert (slot.BeginDateTime.HasValue);
               UtcDateTimeRange range = new UtcDateTimeRange ((LowerBound<DateTime>)begin, slot.BeginDateTime.Value);
               Debug.Assert (!range.IsEmpty ());
-              log.FatalFormat ("InsertCorrespondingSlots: " +
-                               "there should be no gap in slots any more " +
-                               "but process no data gap component={0} period={1}",
-                               this.Component, range);
+              log.Fatal ($"InsertCorrespondingSlots: there should be no gap in slots any more but process no data gap component={this.Component} period={range}");
               ComponentShiftMachineAssociation noShiftAssociation = new ComponentShiftMachineAssociation (this.Machine,
                                                                                                           range,
                                                                                                           this.MainModification);
@@ -521,14 +499,12 @@ namespace Lemoine.GDBPersistentClasses
             UtcDateTimeRange intersection = new UtcDateTimeRange (this.Range.Intersects (slot.DateTimeRange));
             if (intersection.IsEmpty ()) {
               Debug.Assert (false);
-              log.FatalFormat ("InsertCorrespondingSlots: " +
-                               "empty intersection of {0} with {1}",
-                               this, slot);
+              log.Fatal ($"InsertCorrespondingSlots: empty intersection of {this} with {slot}");
             }
             else { // !intersection.IsEmpty ()
-              log.DebugFormat ("InsertCorrespondingSlots: " +
-                               "process component={0} shift={1} period={2}",
-                               this.Component, slot.Shift, intersection);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"InsertCorrespondingSlots: process component={this.Component} shift={slot.Shift} period={intersection}");
+              }
               ComponentShiftMachineAssociation association = new ComponentShiftMachineAssociation (this.Machine,
                                                                                                    intersection,
                                                                                                    this.MainModification);
@@ -556,10 +532,7 @@ namespace Lemoine.GDBPersistentClasses
           Debug.Assert (!range.IsEmpty ());
           if (splitRange.ContainsRange (this.Range)) {
             Debug.Assert (false);
-            log.FatalFormat ("InsertCorrespondingSlots: " +
-                             "there should be no gap in shift slots any more " +
-                             "but process a last no shift data gap component={0} period={1}-{2}",
-                             this.Component, begin, this.End);
+            log.Fatal ($"InsertCorrespondingSlots: there should be no gap in shift slots any more but process a last no shift data gap component={this.Component} period={begin}-{this.End}");
           }
           ComponentShiftMachineAssociation association = new ComponentShiftMachineAssociation (this.Machine,
                                                                                                range,
@@ -656,7 +629,6 @@ namespace Lemoine.GDBPersistentClasses
         (new DaySlotDAO ()).ProcessInRange (CancellationToken.None, range, this);
       }
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

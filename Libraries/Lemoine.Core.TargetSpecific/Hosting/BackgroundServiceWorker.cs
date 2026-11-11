@@ -29,7 +29,6 @@ namespace Lemoine.Core.Hosting
 
     static readonly TimeSpan SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (10);
 
-    #region Members
     bool m_disposed = false;
     readonly CancellationTokenSource m_cancelTokenSource = new CancellationTokenSource ();
     DateTime m_startDateTime; // To be accessed from here only
@@ -37,9 +36,7 @@ namespace Lemoine.Core.Hosting
     DateTime m_lastExecution = DateTime.UtcNow;
     volatile bool m_pause = true;
     bool m_activeStackTrace = Lemoine.Info.ConfigSet.LoadAndGet (ACTIVE_STACK_TRACE_KEY, ACTIVE_STACK_TRACE_DEFAULT);
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Start date/time of the thread
     /// </summary>
@@ -83,7 +80,6 @@ namespace Lemoine.Core.Hosting
       get; set;
     }
      = SLEEP_TIME_DEFAULT;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

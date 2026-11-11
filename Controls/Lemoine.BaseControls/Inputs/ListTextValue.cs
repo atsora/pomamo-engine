@@ -44,7 +44,6 @@ namespace Lemoine.BaseControls.List
     public event Action<string, object> ItemDoubleClicked;
     #endregion // Events
     
-    #region Getters / Setters
     /// <summary>
     /// Enable or disable the multiselection
     /// </summary>
@@ -242,7 +241,6 @@ namespace Lemoine.BaseControls.List
     [DefaultValue(false)]
     [Description("If \"Sorted\" is true, the items will be sorted in the reverse order.")]
     public bool ReverseOrder { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -254,7 +252,6 @@ namespace Lemoine.BaseControls.List
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add an element in the list
     /// </summary>
@@ -559,7 +556,6 @@ namespace Lemoine.BaseControls.List
 
       return "";
     }
-    #endregion // Methods
     
     #region Event reactions
     void ListBoxSelectedIndexChanged(object sender, EventArgs e)

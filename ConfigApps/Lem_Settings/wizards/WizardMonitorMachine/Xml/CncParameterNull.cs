@@ -23,7 +23,6 @@ namespace WizardMonitorMachine
     public CncParameterNull(XmlNode node) : base(node) {}
     #endregion // Constructors
 
-    #region Methods
     protected override bool Parse(XmlAttributeCollection attributes)
     {
       return true;
@@ -53,6 +52,5 @@ namespace WizardMonitorMachine
     {
       return "";
     }
-    #endregion // Methods
   }
 }

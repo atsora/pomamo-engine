@@ -38,7 +38,6 @@ namespace Pulse.Web.CncValue
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="GenericCncValueColorService{TRequestDTO}"/>
     /// </summary>
@@ -116,6 +115,5 @@ namespace Pulse.Web.CncValue
         return GetResponse (machineModule, field, range, request.SkipDetails);
       }
     }
-    #endregion // Methods
   }
 }

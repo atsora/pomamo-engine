@@ -19,7 +19,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineStatus: IMachineStatus
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMonitoredMachine m_monitoredMachine;
@@ -38,7 +37,6 @@ namespace Lemoine.GDBPersistentClasses
     UpperBound<DateTime> m_consolidationLimit;
     bool m_manualActivity = false;
     DateTime? m_manualActivityEnd;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (MachineStatus).FullName);
 
@@ -59,7 +57,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// ID of the referenced machine
     /// </summary>
@@ -99,8 +96,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.ErrorFormat ("CncMachineMode.set: " +
-                           "null value");
+          log.Error ("CncMachineMode.set: null value");
           throw new ArgumentNullException ();
         }
         m_cncMachineMode = value;
@@ -118,8 +114,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.ErrorFormat ("MachineMode.set: " +
-                           "null value");
+          log.Error ("MachineMode.set: null value");
           throw new ArgumentNullException ();
         }
         m_machineMode = value;
@@ -148,8 +143,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.ErrorFormat ("MachineObservationState.set: " +
-                           "null value");
+          log.Error ("MachineObservationState.set: null value");
           throw new ArgumentNullException ();
         }
         m_machineObservationState = value;
@@ -175,8 +169,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.ErrorFormat ("Reason.set: " +
-                           "null value");
+          log.Error ("Reason.set: null value");
           throw new ArgumentNullException ();
         }
         m_reason = value;
@@ -263,7 +256,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_manualActivityEnd; }
       set { m_manualActivityEnd = value; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Set the reason of the machine status from the last reason slot

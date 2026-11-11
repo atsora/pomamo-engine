@@ -25,7 +25,6 @@ namespace ConfiguratorAlarms
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Add an email in the list
     /// </summary>
@@ -70,7 +69,6 @@ namespace ConfiguratorAlarms
     {
       textBoxEmail.Clear();
     }
-    #endregion // Methods
     
     #region WidgetReaction
     void ButtonAddClick(object sender, EventArgs e)

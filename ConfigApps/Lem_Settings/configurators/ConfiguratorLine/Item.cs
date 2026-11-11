@@ -37,7 +37,6 @@ namespace ConfiguratorLine
     internal const string DELETE_PART = "delete_part";
     internal const string DELETE_OPERATIONS = "delete_operations";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -114,7 +113,6 @@ namespace ConfiguratorLine
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

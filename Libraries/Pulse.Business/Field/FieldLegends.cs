@@ -22,17 +22,12 @@ namespace Lemoine.Business.Field
   public sealed class FieldLegends
     : IRequest<IEnumerable<IFieldLegend>>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (FieldLegends).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Field (not null)
     /// </summary>
     IField Field { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -46,9 +41,6 @@ namespace Lemoine.Business.Field
       this.Field = field;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

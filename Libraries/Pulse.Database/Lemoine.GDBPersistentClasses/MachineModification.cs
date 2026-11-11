@@ -33,7 +33,6 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude (typeof (ManufacturingOrderMachineAssociation))]
   public abstract class MachineModification : Modification, IMachineModification
   {
-    #region Members
     /// <summary>
     /// Associated machine (not null)
     /// </summary>
@@ -50,14 +49,12 @@ namespace Lemoine.GDBPersistentClasses
     /// Associated machine parent (nullable)
     /// </summary>
     protected IMachineModification m_parentMachine = null;
-    #endregion // Members
 
     /// <summary>
     /// Logger
     /// </summary>
     protected ILog log = LogManager.GetLogger (typeof (MachineModification).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the Machine (machine or outsource)
     /// 
@@ -177,7 +174,6 @@ namespace Lemoine.GDBPersistentClasses
 
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -223,7 +219,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get a logger
     /// </summary>
@@ -262,6 +257,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       return "." + m_machine.Id + "." + this.Id;
     }
-    #endregion // Methods
   }
 }

@@ -103,7 +103,6 @@ namespace Lemoine.BaseControls
     public event Action<int> MenuClicked;
     #endregion // Events
     
-    #region Members
     readonly SpecialLabel m_specialLabel = null;
     readonly SpecialLabel m_secondSpecialLabel = null;
     readonly SpecialPictureBox m_specialPictureBox = new SpecialPictureBox();
@@ -113,9 +112,7 @@ namespace Lemoine.BaseControls
     static IDictionary<object, IList<ClickableCell>> s_mapCells = new Dictionary<object, IList<ClickableCell>>();
     Mode m_displayMode = Mode.SingleTextBelow;
     ContextMenuStrip m_menu = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Background color when the cell is hovered by the mouse
     /// </summary>
@@ -324,7 +321,6 @@ namespace Lemoine.BaseControls
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -369,7 +365,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     static Image ScaleImage(Image image, int maxWidth, int maxHeight)
     {
       var ratioX = (double)maxWidth / image.Width;
@@ -386,7 +381,6 @@ namespace Lemoine.BaseControls
                                              newWidth, newHeight);
       return newImage;
     }
-    #endregion // Methods
     
     #region Event reactions
     void OnMenuClicked(object sender, EventArgs e) {

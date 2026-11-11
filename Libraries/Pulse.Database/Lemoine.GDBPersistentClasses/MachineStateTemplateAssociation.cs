@@ -374,8 +374,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         else {
           System.Diagnostics.Debug.Assert (false);
-          log.FatalFormat ("MergeData: trying to merge the association with a not supported slot {0}",
-                           typeof (TSlot));
+          log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
           throw new ArgumentException ("Not supported machine slot");
         }
       }
@@ -546,7 +545,7 @@ namespace Lemoine.GDBPersistentClasses
           var notProcessedRange = GetNotPocessedRange ();
           if (notProcessedRange.IsEmpty ()) {
             if (log.IsFatalEnabled) {
-              log.FatalFormat ("MakeAnalysis: (unexpected) GetNotPocessedRange returned an empty range => completed");
+              log.Fatal ("MakeAnalysis: (unexpected) GetNotPocessedRange returned an empty range => completed");
             }
             Debug.Assert (false);
             ForceAsDone (""); // To skip the process of the sub-modifications
@@ -562,7 +561,7 @@ namespace Lemoine.GDBPersistentClasses
               .GetDynamicTime (this.DynamicEnd, this.Machine, this.DynamicTimeRange, hint, limit);
           }
           catch (NoDynamicTime) {
-            log.ErrorFormat ("MakeAnalysis: unknown dynamic end {0}", dynamicEnd);
+            log.Error ($"MakeAnalysis: unknown dynamic end {dynamicEnd}");
             SetModificationInError ("Unknown dynamic end");
             return;
           }
@@ -607,7 +606,7 @@ namespace Lemoine.GDBPersistentClasses
           restrictedRange = new UtcDateTimeRange (range.Lower, endHint.Upper);
         }
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysis: consider step {0} restricted={1}", range, restrictedRange);
+          log.Debug ($"MakeAnalysis: consider step {range} restricted={restrictedRange}");
         }
         if (restrictedRange.IsEmpty ()) { // Already completed
           MarkAsCompleted ("");
@@ -794,7 +793,7 @@ namespace Lemoine.GDBPersistentClasses
           .GetDynamicTime (dynamicEnd, this.Machine, this.DynamicTimeRange, new UtcDateTimeRange (notProcessedRange.Lower.Value), limit);
       }
       catch (NoDynamicTime) {
-        log.ErrorFormat ("MakeAnalysisDynamicEndProgressive: unknown dynamic end {0}", dynamicEnd);
+        log.Error ($"MakeAnalysisDynamicEndProgressive: unknown dynamic end {dynamicEnd}");
         SetModificationInError ("Dynamic end " + dynamicEnd + " unknown");
         return;
       }
@@ -817,7 +816,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else if (dynamicEndResponse.NoData) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("MakeAnalysisDynamicEndProgressive: NoData is returned for {0} at {1} => apply from start", dynamicEnd, this.DynamicTimeRange);
+          log.Debug ($"MakeAnalysisDynamicEndProgressive: NoData is returned for {dynamicEnd} at {this.DynamicTimeRange} => apply from start");
         }
         ApplyDynamicEnd (notProcessedRange.Lower.Value);
         return;
@@ -1016,10 +1015,12 @@ namespace Lemoine.GDBPersistentClasses
       UtcDateTimeRange restriction = new UtcDateTimeRange (new LowerBound<DateTime> (null), dynamicApplicableEnd);
       UtcDateTimeRange restrictedRange = new UtcDateTimeRange (range.Intersects (restriction));
       if (restrictedRange.IsEmpty ()) {
-        log.DebugFormat ("ApplyDynamicEnd: restricted range is empty => nothing to do");
+        if (log.IsDebugEnabled) {
+          log.Debug ("ApplyDynamicEnd: restricted range is empty => nothing to do");
+        }
       }
       else {
-        log.InfoFormat ("ApplyDynamicEnd: restrict {0} to {1}", this, dynamicApplicableEnd);
+        log.Info ($"ApplyDynamicEnd: restrict {this} to {dynamicApplicableEnd}");
         ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
           .InsertSub (this, restrictedRange, ApplyDynamicEndSubChange, null);
       }

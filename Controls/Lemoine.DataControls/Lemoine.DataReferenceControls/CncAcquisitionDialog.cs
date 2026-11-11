@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CncAcquisitionDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null CncAcquisition a valid value ?
     /// </summary>
@@ -61,7 +60,6 @@ namespace Lemoine.DataReferenceControls
         this.cncAcquisitionSelection1.SelectedCncAcquisitions = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -80,9 +78,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("CncAcquisitionDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

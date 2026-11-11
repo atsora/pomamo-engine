@@ -16,7 +16,6 @@ namespace ConfiguratorLine
   /// </summary>
   public partial class Page4 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -37,7 +36,6 @@ namespace ConfiguratorLine
           LemSettingsGlobal.PageFlag.WITH_VALIDATION;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

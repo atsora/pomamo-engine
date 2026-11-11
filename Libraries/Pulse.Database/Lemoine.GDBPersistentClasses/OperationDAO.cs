@@ -100,9 +100,9 @@ namespace Lemoine.GDBPersistentClasses
         IList<ILineMachine> lineMachines = ModelDAOHelper.DAOFactory.LineMachineDAO
           .FindAllByOperation (oldOperation);
         foreach (ILineMachine lineMachine in lineMachines) {
-          log.DebugFormat ("Merge: " +
-                           "in LineMachine {0}, replace operation {1} by {2}",
-                           lineMachine, oldOperation, newOperation);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Merge: in LineMachine {lineMachine}, replace operation {oldOperation} by {newOperation}");
+          }
           lineMachine.Operation = newOperation;
         }
         IList<IManufacturingOrder> manufacturingOrders = ModelDAOHelper.DAOFactory.ManufacturingOrderDAO
@@ -244,9 +244,7 @@ namespace Lemoine.GDBPersistentClasses
         var sequencesBefore = sequences
           .Where (seq => (seq.Order < sequence.Order) && object.Equals (seq.Path, sequence.Path));
         if (sequencesBefore.Any(seq => !seq.EstimatedTime.HasValue)) {
-          log.WarnFormat("GetCompletion: " +
-          "there are sequences before {0} for operation {1} that have no estimated time",
-            sequence, operation);
+          log.Warn ($"GetCompletion: there are sequences before {sequence} for operation {operation} that have no estimated time");
         }
         TimeSpan elapsedTime = sequencesBefore
           .Where (seq => seq.EstimatedTime.HasValue)

@@ -38,14 +38,14 @@ namespace Lemoine.Plugin.DynamicTimesCycle
     {
       if (!IsCycleApplicable ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsApplicable: cycle is not applicable");
+          log.Debug ("IsApplicable: cycle is not applicable");
         }
         return false;
       }
 
       if (!IsOperationApplicable ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsApplicable: operation is not applicable");
+          log.Debug ("IsApplicable: operation is not applicable");
         }
         return false;
       }
@@ -128,7 +128,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
             .ExistsInRange (this.Machine, range);
           if (!exists) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("IsOperationApplicable: no operation slot in {0}", range);
+              log.Debug ($"IsOperationApplicable: no operation slot in {range}");
             }
             return false;
           }
@@ -136,13 +136,13 @@ namespace Lemoine.Plugin.DynamicTimesCycle
             .GetLastOperationNotNull (this.Machine);
           if (null == lastOperationNotNull) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("IsOperationApplicable: no operation slot with operation not null");
+              log.Debug ("IsOperationApplicable: no operation slot with operation not null");
             }
             return false;
           }
           if (Bound.Compare<DateTime> (lastOperationNotNull.DateTimeRange.Upper, lower) < 0) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("IsOperationApplicable: last operation not null before {0}", lower);
+              log.Debug ($"IsOperationApplicable: last operation not null before {lower}");
             }
             return false;
           }
@@ -171,21 +171,21 @@ namespace Lemoine.Plugin.DynamicTimesCycle
             .GetFirstStrictlyAfter (this.Machine, dateTime);
           if (null == nextCycle) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: no cycle after {0} => pending", dateTime);
+              log.Debug ($"Get: no cycle after {dateTime} => pending");
             }
             return this.CreatePending ();
           }
         }
         if (!nextCycle.Begin.HasValue) {
           if (log.IsWarnEnabled) {
-            log.WarnFormat ("Get: nextCycle {0} has no start => cancel", nextCycle.Id);
+            log.Warn ($"Get: nextCycle {nextCycle.Id} has no start => cancel");
           }
           return this.CreateNotApplicable ();
         }
         if (nextCycle.HasRealBegin ()) {
           if (nextCycle.Begin.Value.Equals (dateTime)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: nextCycle real start {0} is dateTime", dateTime);
+              log.Debug ($"Get: nextCycle real start {dateTime} is dateTime");
             }
             return this.CreateFinal (dateTime);
           }
@@ -197,7 +197,7 @@ namespace Lemoine.Plugin.DynamicTimesCycle
           }
           if (!limit.ContainsElement (nextCycle.Begin.Value)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: next cycle after limit {0} => no data", limit);
+              log.Debug ($"Get: next cycle after limit {limit} => no data");
             }
             return this.CreateNoData ();
           }
@@ -208,28 +208,28 @@ namespace Lemoine.Plugin.DynamicTimesCycle
           .Get<DateTime?> (new OperationDetectionStatus (this.Machine));
         if (!operationDetectionDateTime.HasValue) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Get: no operation detection date/time => pending");
+            log.Debug ("Get: no operation detection date/time => pending");
           }
           return this.CreatePending ();
         }
         if (nextCycle.HasRealBegin ()) {
           if (operationDetectionDateTime.Value <= nextCycle.Begin.Value) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: operation detection date/time {0} before next cycle begin {1} => pending", operationDetectionDateTime, nextCycle.Begin);
+              log.Debug ($"Get: operation detection date/time {operationDetectionDateTime} before next cycle begin {nextCycle.Begin} => pending");
             }
             return this.CreatePending ();
           }
         }
         else { // Estimated start
           if (!nextCycle.HasRealEnd ()) {
-            log.FatalFormat ("Get: nextCycle {0} with an estimated start and an estimated end", nextCycle.Id);
+            log.Fatal ($"Get: nextCycle {nextCycle.Id} with an estimated start and an estimated end");
             Debug.Assert (false);
             return this.CreateNotApplicable ();
           }
           Debug.Assert (nextCycle.End.HasValue);
           if (operationDetectionDateTime.Value <= nextCycle.End.Value) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: operation detection date/time {0} before next cycle end {1} (estimated start) => pending", operationDetectionDateTime, nextCycle.End);
+              log.Debug ($"Get: operation detection date/time {operationDetectionDateTime} before next cycle end {nextCycle.End} (estimated start) => pending");
             }
             // Because of a possible merge later
             return this.CreatePending ();
@@ -238,13 +238,13 @@ namespace Lemoine.Plugin.DynamicTimesCycle
           if (nextCycle.Begin.Value.Equals (dateTime)) {
             Debug.Assert (!nextCycle.HasRealBegin ());
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: nextCycle estimated start {0} is dateTime", dateTime);
+              log.Debug ($"Get: nextCycle estimated start {dateTime} is dateTime");
             }
             return this.CreateFinal (dateTime);
           }
           if (!limit.ContainsElement (nextCycle.Begin.Value)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: next cycle after limit {0} => no data", limit);
+              log.Debug ($"Get: next cycle after limit {limit} => no data");
             }
             return this.CreateNoData ();
           }
@@ -263,13 +263,13 @@ namespace Lemoine.Plugin.DynamicTimesCycle
             .Count ();
           if (1 == operationCounts) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: one operation in range {0} => return {1}", range, nextCycle.Begin);
+              log.Debug ($"Get: one operation in range {range} => return {nextCycle.Begin}");
             }
             return this.CreateFinal (nextCycle.Begin.Value);
           }
           else {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: {0} operations in range {1} => cancel", operationCounts, range);
+              log.Debug ($"Get: {operationCounts} operations in range {range} => cancel");
             }
             return this.CreateNotApplicable ();
           }

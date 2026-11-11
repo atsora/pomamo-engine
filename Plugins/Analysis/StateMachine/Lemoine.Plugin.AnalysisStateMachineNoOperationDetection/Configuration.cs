@@ -23,7 +23,6 @@ namespace Lemoine.Plugin.AnalysisStateMachineNoOperationDetection
     static readonly TimeSpan VERY_LOW_PRIORITY_FREQUENCY_DEFAULT = TimeSpan.FromMinutes (5);
     static readonly int AUTO_PRIORITY_DEFAULT = 50;
 
-    #region Getters / Setters
     [PluginConf ("DoubleAsNumericUpDown", "ConfigPriority. Default is 30.0", Description = "Config priority", Parameters = "99999.99")]
     [DefaultValue (30.0)]
     public double ConfigPriority
@@ -114,7 +113,6 @@ namespace Lemoine.Plugin.AnalysisStateMachineNoOperationDetection
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -20,9 +20,6 @@ namespace Lemoine.FileRepository
   {
     static readonly ILog log = LogManager.GetLogger (typeof (FileRepoPath).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     /// <summary>
     /// Combine file repo paths
     /// </summary>

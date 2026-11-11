@@ -24,7 +24,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Field: DataWithDisplayFunction, IDataWithTranslation, IField, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name; // Can't be empty but can be null
@@ -41,7 +40,6 @@ namespace Lemoine.GDBPersistentClasses
     double? m_limitDeviation = null;
     bool m_custom = true;
     bool m_active = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Field).FullName);
 
@@ -72,7 +70,6 @@ namespace Lemoine.GDBPersistentClasses
       m_custom = false;
     }
     
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -282,9 +279,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return string.Format ("{0}: {1}",
                                   this.Id, this.Code); }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// <see cref="Object.ToString()" />
     /// </summary>
@@ -298,7 +293,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[Field {this.Id}]";
       }
     }
-    #endregion
     
     #region Lemoine.Model.ISerializableModel implementation
     /// <summary>

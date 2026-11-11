@@ -20,15 +20,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class MachineCategorySelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     IList<IMachineCategory> m_MachineCategories = null;
     IMachineCategory m_machineCategory = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineCategorySelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -113,7 +110,6 @@ namespace Lemoine.DataReferenceControls
         this.m_machineCategory = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -140,7 +136,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -151,7 +146,6 @@ namespace Lemoine.DataReferenceControls
         AfterSelect (this, e);
       }
     }
-    #endregion // Methods
     
     void MachineCategorySelectionLoad(object sender, EventArgs e)
     {

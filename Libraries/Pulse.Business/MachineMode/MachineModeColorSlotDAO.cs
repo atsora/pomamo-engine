@@ -84,16 +84,12 @@ namespace Lemoine.Business.MachineMode
     {
       if (left.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!left.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "left range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: left range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       if (right.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!right.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "right range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: right range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       
@@ -169,9 +165,7 @@ namespace Lemoine.Business.MachineMode
         else { // null != leftReasonSlot
           if (leftReasonSlot.IsEmpty ()){
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendLeft: " +
-                             "empty left reason slot {0}",
-                             leftReasonSlot);
+            log.Error ($"ExtendLeft: empty left reason slot {leftReasonSlot}");
             return slot;
           }
           IMachineModeColorSlot leftMachineModeColorSlot = new MachineModeColorSlot (leftReasonSlot);
@@ -209,9 +203,7 @@ namespace Lemoine.Business.MachineMode
         else { // null != rightReasonSlot
           if (rightReasonSlot.IsEmpty ()){
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRight: " +
-                             "empty right reason slot {0}",
-                             rightReasonSlot);
+            log.Error ($"ExtendRight: empty right reason slot {rightReasonSlot}");
             return slot;
           }
           IMachineModeColorSlot rightMachineModeColorSlot = new MachineModeColorSlot (rightReasonSlot);

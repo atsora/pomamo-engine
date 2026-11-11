@@ -14,14 +14,9 @@ namespace Lemoine.ReportDatabaseMigrator
   /// </summary>
   public class ReportDatabaseMigrator
   {
-    #region Members
     readonly ConnectionParameters m_connection;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReportDatabaseMigrator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -45,7 +40,6 @@ namespace Lemoine.ReportDatabaseMigrator
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Execute a SQL query
     /// </summary>
@@ -67,6 +61,5 @@ namespace Lemoine.ReportDatabaseMigrator
         throw;
       }
     }
-    #endregion // Methods
   }
 }

@@ -17,7 +17,6 @@ namespace WizardEventToolLife
   /// </summary>
   internal partial class Page0 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -30,7 +29,6 @@ namespace WizardEventToolLife
           " - by only adding new tool life events (and possibly overwriting existing ones),\n\n" +
           " - by clearing all existing tool life events and then adding new ones,\n\n" +
           " - or by just clearing everything."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -54,7 +54,6 @@ namespace Lemoine.Threading
     static readonly string TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_KEY = "ThreadClass.TemporaryWithDelayException.Sleep";
     static readonly TimeSpan TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (2);
 
-    #region Members
     bool m_disposed = false;
     CancellationTokenSource m_exitRequestedSource = new CancellationTokenSource ();
     CancellationTokenSource m_cancelSource = new CancellationTokenSource ();
@@ -74,11 +73,9 @@ namespace Lemoine.Threading
     ApartmentState m_apartmentState = ApartmentState.Unknown;
     readonly bool m_activeStackTrace = Lemoine.Info.ConfigSet.LoadAndGet (ACTIVE_STACK_TRACE_KEY, ACTIVE_STACK_TRACE_DEFAULT);
     volatile bool m_exitRequested = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ThreadClass).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// When the main thread method ends in exception, should the application be stopped ?
     /// </summary>
@@ -225,9 +222,7 @@ namespace Lemoine.Threading
     /// CancellationToken which is associated to an 'Exit requested request'
     /// </summary>
     CancellationToken ExitRequestedToken => m_exitRequestedSource?.Token ?? CancellationToken.None;
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Reset the start date/time
     /// </summary>
@@ -1269,7 +1264,6 @@ namespace Lemoine.Threading
       GetLogger ().Error ("DoNothing");
       cancellationToken.WaitHandle.WaitOne ();
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

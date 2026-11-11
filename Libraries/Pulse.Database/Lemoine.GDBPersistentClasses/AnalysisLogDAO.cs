@@ -30,10 +30,7 @@ namespace Lemoine.GDBPersistentClasses
                      string message)
     {
       if (modification.IsMainModificationTransient ()) {
-        log.ErrorFormat ("Add: " +
-                         "level={0} message={1}, " +
-                         "no main modification or transient modification, give up",
-                         level, message);
+        log.Error ($"Add: level={level} message={message}, no main modification or transient modification, give up");
         return;
       }
       else {
@@ -48,9 +45,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         else {
           Debug.Assert (false);
-          log.FatalFormat ("Add: " +
-                           "not supported/implemented sub-type for {0}",
-                           mainModification);
+          log.Fatal ($"Add: not supported/implemented sub-type for {mainModification}");
         }
       }
     }

@@ -14,7 +14,6 @@ namespace ConfiguratorSlots.UserMachine
   /// </summary>
   public class UserMachinePage1 : IPartPage1
   {
-    #region Getters / Setters
     /// <summary>
     /// Part of the help describing the content of the timeline
     /// </summary>
@@ -30,7 +29,6 @@ namespace ConfiguratorSlots.UserMachine
     /// graphics, no filters will be necessary (no page 2)
     /// </summary>
     public string ElementsName { get { return "users"; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -39,7 +37,6 @@ namespace ConfiguratorSlots.UserMachine
     public UserMachinePage1() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a timeline in the timelines, knowing the item id
     /// This method is within a session
@@ -54,6 +51,5 @@ namespace ConfiguratorSlots.UserMachine
         timelines.AddTimeline(user.Display, new UserMachineBarData(user));
       }
     }
-    #endregion // Methods
   }
 }

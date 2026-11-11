@@ -19,7 +19,6 @@ namespace Lemoine.Plugin.AlertConfigFile
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Directory
     /// </summary>
@@ -38,7 +37,6 @@ namespace Lemoine.Plugin.AlertConfigFile
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

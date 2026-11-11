@@ -16,12 +16,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OperationSlotSplit: IOperationSlotSplit
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
     DateTime m_end = DateTime.UtcNow;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (OperationSlotSplit).FullName);
 
@@ -42,7 +40,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// ID of the referenced machine
     /// </summary>
@@ -78,6 +75,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_end; }
       set { m_end = value; }
     }
-    #endregion // Getters / Setters
   }
 }

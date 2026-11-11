@@ -12,7 +12,6 @@ namespace ConfiguratorAlarms
   /// </summary>
   public class EmailWithName : IComparable
   {
-    #region Getters / Setters
     /// <summary>
     /// Email aaa@bbb.ccc
     /// </summary>
@@ -29,7 +28,6 @@ namespace ConfiguratorAlarms
     public bool HasName {
       get { return !String.IsNullOrEmpty(Name); }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -53,7 +51,6 @@ namespace ConfiguratorAlarms
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Short description of the email (return the email OR the name if present)
     /// </summary>
@@ -168,6 +165,5 @@ namespace ConfiguratorAlarms
       Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.\w+)+)$");
       return regex.Match(Email).Success;
     }
-    #endregion // Methods
   }
 }

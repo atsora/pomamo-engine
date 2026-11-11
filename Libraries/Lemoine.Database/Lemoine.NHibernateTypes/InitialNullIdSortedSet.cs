@@ -21,19 +21,11 @@ namespace Lemoine.NHibernateTypes
     NHibernate.UserTypes.IUserCollectionType
     where T : IComparable
   {
-    #region Members
-    #endregion // Members
-
     readonly ILog log = LogManager.GetLogger(typeof (InitialNullIdSortedSetType<T, ID>).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
 
     #endregion // Constructors
-
-    #region Methods
 
     /// <summary>
     /// instantiate an InitialNullIdSortedSet with an anticipated size
@@ -128,6 +120,5 @@ namespace Lemoine.NHibernateTypes
       }
       return result;
     }
-    #endregion // Methods
   }
 }

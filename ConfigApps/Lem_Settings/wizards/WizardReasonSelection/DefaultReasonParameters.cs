@@ -12,7 +12,6 @@ namespace WizardReasonSelection
   /// </summary>
   public class DefaultReasonParameters
   {
-    #region Getters / Setters
     /// <summary>
     /// True if the user has to overwrite a default reason
     /// </summary>
@@ -32,7 +31,6 @@ namespace WizardReasonSelection
     /// Maximum time a default can be applied
     /// </summary>
     public TimeSpan? MaxTime { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

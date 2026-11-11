@@ -18,9 +18,7 @@ namespace Lemoine.WebMiddleware.Assemblies
   {
     readonly ILog log = LogManager.GetLogger (typeof (ServiceAssembliesFromList).FullName);
 
-    #region Getters / Setters
     readonly IEnumerable<Assembly> m_assemblies;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

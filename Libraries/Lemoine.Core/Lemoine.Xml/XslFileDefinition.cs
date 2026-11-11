@@ -18,13 +18,10 @@ namespace Lemoine.Xml
   [Serializable]
   public sealed class XslFileDefinition: XslDefinition
   {
-    #region Members
     string m_xslFile;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (XslFileDefinition).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Path to the XSL file
     /// </summary>
@@ -38,14 +35,11 @@ namespace Lemoine.Xml
           m_xslt.Load (m_xslFile);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("XslFile: " +
-                           "exception {0}",
-                           ex);
+          log.Error ($"XslFile: exception {ex}");
           throw;
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -64,8 +58,5 @@ namespace Lemoine.Xml
       this.XslFile = xslFile;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

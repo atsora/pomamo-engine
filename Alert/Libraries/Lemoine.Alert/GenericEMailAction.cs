@@ -27,7 +27,6 @@ namespace Lemoine.Alert
     static readonly string DEFAULT_SENDER = "user@domain";
     static readonly int SMTP_SEND_MAX_ATTEMPTS = 3;
 
-    #region Members
     [NonSerialized]
     string m_to = "";
     [NonSerialized]
@@ -36,11 +35,9 @@ namespace Lemoine.Alert
     string m_bcc = "";
     [NonSerialized]
     Regex m_configRegex = new Regex (@"{config\.([^}]+)}");
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GenericEMailAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Default list of recipients
     /// </summary>
@@ -98,7 +95,6 @@ namespace Lemoine.Alert
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -110,7 +106,6 @@ namespace Lemoine.Alert
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implementation of <see cref="IAction.Execute" />
     /// </summary>
@@ -356,9 +351,9 @@ namespace Lemoine.Alert
       // - WeekDay
       DateTime day = dateTime.ToLocalTime ().Date;
       if (!this.WeekDays.HasFlagDayOfWeek (day.DayOfWeek)) {
-        log.DebugFormat ("CheckActivePeriod: " +
-                         "for dateTime={0}, dayOfWeek={1} does not match config",
-                         dateTime, day.DayOfWeek);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CheckActivePeriod: for dateTime={dateTime}, dayOfWeek={day.DayOfWeek} does not match config");
+        }
         return false;
       }
 
@@ -366,24 +361,21 @@ namespace Lemoine.Alert
       if (false == this.TimePeriod.IsFullDay ()) {
         DateTime timePeriodBegin = day.Add (this.TimePeriod.Begin).ToUniversalTime ();
         if (dateTime < timePeriodBegin) {
-          log.DebugFormat ("CheckActivityPeriod: " +
-                           "for dateTime={0} localDateTime={1} time is before {2} " +
-                           "=> config does not match",
-                           dateTime, dateTime.ToLocalTime (), this.TimePeriod.Begin);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CheckActivityPeriod: for dateTime={dateTime} localDateTime={dateTime.ToLocalTime ()} time is before {this.TimePeriod.Begin} => config does not match");
+          }
           return false;
         }
         DateTime timePeriodEnd = day.Add (this.TimePeriod.EndOffset).ToUniversalTime ();
         if (timePeriodEnd < dateTime) {
-          log.DebugFormat ("CheckActivityPeriod: " +
-                           "for dateTime={0} localDateTime={1} time is after {2} " +
-                           "=> config does not match",
-                           dateTime, dateTime.ToLocalTime (), this.TimePeriod.End);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CheckActivityPeriod: for dateTime={dateTime} localDateTime={dateTime.ToLocalTime ()} time is after {this.TimePeriod.End} => config does not match");
+          }
           return false;
         }
       }
 
       return true;
     }
-#endregion // Methods
   }
 }

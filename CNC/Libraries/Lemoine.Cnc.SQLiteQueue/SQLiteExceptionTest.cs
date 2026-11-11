@@ -321,9 +321,7 @@ namespace Lemoine.Cnc.SQLiteQueue
     {
       if (exceptionType.IsInstanceOfType (ex)) {
         if ((logger != null) && logger.IsErrorEnabled) {
-          logger.ErrorFormat ("IsOfExceptionType: " +
-                              "{0} exception detected",
-                              exceptionType);
+          logger.Error ($"IsOfExceptionType: {exceptionType} exception detected");
         }
         return true;
       }

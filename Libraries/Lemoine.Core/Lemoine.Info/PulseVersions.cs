@@ -18,7 +18,6 @@ namespace Lemoine.Info
   {
     static readonly ILog log = LogManager.GetLogger (typeof (PulseVersions).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Get the pulse versions of the different software
     /// </summary>
@@ -58,6 +57,5 @@ namespace Lemoine.Info
         }
       }
     }
-    #endregion // Getters / Setters
   }
 }

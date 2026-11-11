@@ -19,13 +19,10 @@ namespace ViewLinePlanning
   /// </summary>
   internal partial class Page1 : GenericViewPage, IViewPage
   {
-    #region Members
     ILine m_lineDoubleClicked;
     DateTime m_currentDate;
     DistinctBrushes m_brushes;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -36,7 +33,6 @@ namespace ViewLinePlanning
     /// </summary>
     public string Help { get { return "Double-clicking on a day opens the details for a day.\n\n" +
           "Double-clicking on a line in a day shows the details of this line."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

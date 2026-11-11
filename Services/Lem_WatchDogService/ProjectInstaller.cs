@@ -18,10 +18,8 @@ namespace Lem_WatchDogService
   [RunInstaller(true)]
   public class ProjectInstaller : Installer
   {
-#region Members
     readonly ServiceProcessInstaller m_serviceProcessInstaller;
     readonly ServiceInstaller m_serviceInstaller;
-#endregion // Members
 
 #region Constructors
     /// <summary>

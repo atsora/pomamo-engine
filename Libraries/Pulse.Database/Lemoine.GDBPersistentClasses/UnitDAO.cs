@@ -64,8 +64,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       try {
         if (null == FindById (unit.Id)) { // the config does not exist => create it
-          log.InfoFormat ("InsertDefaultValue: add id={0} translationKey={1}",
-                          unit.Id, unit.TranslationKey);
+          log.Info ($"InsertDefaultValue: add id={unit.Id} translationKey={unit.TranslationKey}");
           // Use a raw SQL Command, else the Id is resetted
           using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand())
           {
@@ -76,7 +75,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("InsertDefaultValue: inserting new role {0} failed with {1}", unit, ex);
+        log.Error ($"InsertDefaultValue: inserting new role {unit} failed with {ex}");
       }
     }
     
@@ -94,7 +93,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ResetSequence: resetting the sequence failed with {0}", ex);
+        log.Error ($"ResetSequence: resetting the sequence failed with {ex}");
       }
     }
     #endregion // DefaultValues

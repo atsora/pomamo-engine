@@ -20,11 +20,6 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(SerialNumberMachineStamp))]
   public abstract class MachineStamp: MachineModification
   {
-    #region Members
-    #endregion // Members
-    
-    #region Getters / Setters
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

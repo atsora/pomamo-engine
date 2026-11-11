@@ -21,7 +21,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class BetweenCycles : IBetweenCycles, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -30,11 +29,9 @@ namespace Lemoine.GDBPersistentClasses
     IOperationCycle m_previousCycle;
     IOperationCycle m_nextCycle;
     double? m_offsetDuration = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (BetweenCycles).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// BetweenCycles Id
     /// </summary>
@@ -125,7 +122,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -178,15 +174,14 @@ namespace Lemoine.GDBPersistentClasses
         .Get (new Lemoine.Business.Extension.GlobalExtensions<IBetweenCyclesOffsetDurationExtension> ());
       if (extensions.Any ()) {
         if (1 < extensions.Count () && log.IsWarnEnabled) {
-          log.WarnFormat ("UpdateOffsetDuration: {0} extensions define an offset duration",
-            extensions.Count ());
+          log.Warn ($"UpdateOffsetDuration: {extensions.Count ()} extensions define an offset duration");
         }
         var extension = extensions
           .OrderByDescending (x => x.Priority)
           .First ();
         var offsetDuration = extension.ComputeOffsetDuration (this);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("UpdateOffsetDuration: {0}", offsetDuration);
+          log.Debug ($"UpdateOffsetDuration: {offsetDuration}");
         }
         this.OffsetDuration = offsetDuration;
         return;

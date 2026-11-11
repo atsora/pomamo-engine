@@ -35,7 +35,6 @@ namespace Lemoine.Web.Info
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -45,7 +44,6 @@ namespace Lemoine.Web.Info
     {
       return new TestResponseDTO ();
     }
-    #endregion // Methods
   }
 
   /// <summary>
@@ -66,7 +64,6 @@ namespace Lemoine.Web.Info
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -76,6 +73,5 @@ namespace Lemoine.Web.Info
     {
       return new TestResponseDTO ();
     }
-    #endregion // Methods
   }
 }

@@ -53,14 +53,12 @@ namespace Lemoine.Settings
     }
     #endregion // Events
 
-    #region Getters / Setters
     /// <summary>
     /// Characterization of the page (see the documentation of the PageFlags)
     /// </summary>
     public virtual LemSettingsGlobal.PageFlag Flags {
       get { return LemSettingsGlobal.PageFlag.NONE; }
     }
-    #endregion // Getters / Setters
     
     #region Default methods
     /// <summary>

@@ -28,13 +28,10 @@ namespace Lemoine.BaseControls
     public Action<DateTime?, DateTime?> SelectedPeriodChanged;
     #endregion // Events
     
-    #region Members
     IList<Bar> m_bars = new List<Bar>();
     bool m_dateInitialized = false;
     bool m_noBorders = false;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Left limit of the timelines
     /// </summary>
@@ -80,7 +77,6 @@ namespace Lemoine.BaseControls
         m_noBorders = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -94,7 +90,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Clear all timelines
     /// </summary>
@@ -222,7 +217,6 @@ namespace Lemoine.BaseControls
 
       timeAxis.SetPeriod(StartDateTime, endDateTime);
     }
-    #endregion // Methods
     
     #region Event reactions
     void ButtonLeftClick(object sender, EventArgs e)

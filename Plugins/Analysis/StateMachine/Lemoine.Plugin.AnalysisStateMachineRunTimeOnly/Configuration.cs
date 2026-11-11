@@ -22,7 +22,6 @@ namespace Lemoine.Plugin.AnalysisStateMachineRunTimeOnly
     static readonly TimeSpan LOW_PRIORITY_FREQUENCY_DEFAULT = TimeSpan.FromMinutes (2);
     static readonly TimeSpan VERY_LOW_PRIORITY_FREQUENCY_DEFAULT = TimeSpan.FromMinutes (5);
 
-    #region Getters / Setters
     [PluginConf ("DoubleAsNumericUpDown", "StateMachinePriority. Default is 20.0", Description = "State machine priority", Parameters = "99999.99")]
     [DefaultValue (20.0)]
     public double StateMachinePriority
@@ -64,7 +63,6 @@ namespace Lemoine.Plugin.AnalysisStateMachineRunTimeOnly
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

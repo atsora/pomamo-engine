@@ -25,9 +25,6 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
     static readonly string DEFAULT_DSNNAME = "DsnName";
 #endif // !NETSTANDARD
 
-#region Getters / Setters
-#endregion // Getters / Setters
-
 #region Constructors
     /// <summary>
     /// Constructor
@@ -86,10 +83,7 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
             var username = (string)odbcKey.GetValue ("Username");
             var password = (string)odbcKey.GetValue ("Password");
             if (log.IsInfoEnabled) {
-              log.InfoFormat ("Get: " +
-                              "The connection parameters taken from the registry are " +
-                              "server={0} port={1} database={2} user={3} password={4}",
-                              server, port, database, username, password);
+              log.Info ($"Get: The connection parameters taken from the registry are server={server} port={port} database={database} user={username} password={password}");
             }
             return $"{username}:{password}@{server}:{port}/{database}";
           }

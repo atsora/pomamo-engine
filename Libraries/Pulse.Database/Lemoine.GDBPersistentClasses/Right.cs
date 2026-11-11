@@ -20,16 +20,13 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(MachineStateTemplateRight))]
   public abstract class Right: IRight, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IRole m_role;
     RightAccessPrivilege m_accessPrivilege = RightAccessPrivilege.Granted;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Right).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Right Id
     /// </summary>
@@ -71,7 +68,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_accessPrivilege; }
       set { m_accessPrivilege = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

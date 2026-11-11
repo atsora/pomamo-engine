@@ -113,7 +113,7 @@ namespace Lem_SynchronizationService
               var fileName = configurationFile + Lemoine.Info.ConfigSet.LoadAndGet<string> (TEST_DATA_SUFFIX_KEY, TEST_DATA_SUFFIX_DEFAULT);
               dataOutputPath = System.IO.Path.Combine (directory, fileName);
             }
-            log.InfoFormat ("InitializeThreads: Test data with file path {0}", dataOutputPath);
+            log.Info ($"InitializeThreads: Test data with file path {dataOutputPath}");
             doc.Save (dataOutputPath);
 
             string synchroOutputPath;
@@ -122,7 +122,7 @@ namespace Lem_SynchronizationService
               var fileName = configurationFile + Lemoine.Info.ConfigSet.LoadAndGet<string> (TEST_SYNCHRO_SUFFIX_KEY, TEST_SYNCHRO_SUFFIX_DEFAULT);
               synchroOutputPath = System.IO.Path.Combine (directory, fileName);
             }
-            log.InfoFormat ("InitializeThreads: Test synchro with file path {0}", dataOutputPath);
+            log.Info ($"InitializeThreads: Test synchro with file path {dataOutputPath}");
             Repository xmlrep = new Repository ();
             xmlrep.MainFactory = factory;
             xmlrep.CopyBuilder = new XMLBuilder (synchroOutputPath);

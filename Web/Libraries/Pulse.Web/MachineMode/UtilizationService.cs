@@ -48,7 +48,6 @@ namespace Pulse.Web.MachineMode
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -79,9 +78,9 @@ namespace Pulse.Web.MachineMode
       else { // Current or future
         cacheTimeSpan = CacheTimeOut.CurrentLong.GetTimeSpan ();
       }
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} for url={1}",
-                       cacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -98,9 +97,7 @@ namespace Pulse.Web.MachineMode
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -115,16 +112,16 @@ namespace Pulse.Web.MachineMode
             dayRange = ServiceProvider.Get (new Lemoine.Business.Time.DayRangeFromRange (range));
             var rangeFromDays = ServiceProvider.Get (new Lemoine.Business.Time.RangeFromDayRange (dayRange));
             if (!rangeFromDays.Equals (range)) { // Conversion is no ok: consider range
-              log.DebugFormat ("GetWithoutCache: " +
-                               "consider range {0}",
-                               range);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetWithoutCache: consider range {range}");
+              }
               TimeSpan useSummaryMinDuration = Lemoine.Info.ConfigSet
                 .LoadAndGet<TimeSpan> (USE_SUMMARY_MIN_DURATION_KEY,
                                        USE_SUMMARY_MIN_DURATION_DEFAULT);
               if (range.Duration.HasValue && (useSummaryMinDuration <= range.Duration.Value)) {
-                log.DebugFormat ("GetWithoutCache: " +
-                                 "use summary because duration {0} is longer than {1}",
-                                 range.Duration.Value, useSummaryMinDuration);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetWithoutCache: use summary because duration {range.Duration.Value} is longer than {useSummaryMinDuration}");
+                }
                 return GetByDay (machine, dayRange);
               }
               else {
@@ -196,8 +193,7 @@ namespace Pulse.Web.MachineMode
       RunTotalTime? runTotalTime = ModelDAOHelper.DAOFactory.MachineActivitySummaryDAO
         .GetRunTotalTime (machine, dayRange);
       if (!runTotalTime.HasValue) {
-        log.WarnFormat ("GetByDayWithSlot: " +
-                        "no RunTotalTime was returned");
+        log.Warn ("GetByDayWithSlot: no RunTotalTime was returned");
         response.MotionDuration = 0;
         response.NotRunningDuration = 0;
         response.TotalDuration = 0;
@@ -267,6 +263,5 @@ namespace Pulse.Web.MachineMode
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }

@@ -18,16 +18,13 @@ namespace WizardMonitorMachine
   /// </summary>
   public partial class FileSelector : UserControl
   {
-    #region Members
     readonly string m_directoryPath = "";
     readonly string m_subDirectoryName = "";
     readonly string m_filter = "";
     readonly bool m_isNotLctr = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (FileSelector).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Selected value (name of the file without the path)
     /// </summary>
@@ -44,7 +41,6 @@ namespace WizardMonitorMachine
     /// Cnc acquisition id
     /// </summary>
     public int CncAcquisitionId { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -69,7 +65,7 @@ namespace WizardMonitorMachine
             m_isNotLctr = !localComputer.IsLctr;
           }
           else {
-            log.WarnFormat("FileSelector: the local computer could not be found in the computer table");
+            log.Warn ("FileSelector: the local computer could not be found in the computer table");
           }
         }
       }
@@ -87,7 +83,6 @@ namespace WizardMonitorMachine
     }
     #endregion // Constructors
     
-    #region Methods
     void ReloadCombobox(string selectedValue)
     {
       // Clear all items
@@ -127,7 +122,6 @@ namespace WizardMonitorMachine
       toolTip.SetToolTip(control, text);
       toolTip.AutoPopDelay = 32000;
     }
-    #endregion // Methods
 
     #region Event reactions
     void ButtonDeleteMouseClick(object sender, MouseEventArgs e)
@@ -174,8 +168,7 @@ namespace WizardMonitorMachine
         } catch (Exception ex) {
           MessageBoxCentered.Show("Couldn't delete the file '" + fileName + "'. You can try to run LemSettings with admin rights.",
                                   "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          log.ErrorFormat("LemSettings.WizardMonitorMachine - couldn't delete the file '{0}': {1}",
-                          filePath, ex);
+          log.Error ($"LemSettings.WizardMonitorMachine - couldn't delete the file '{filePath}': {ex}");
         }
       }
     }
@@ -209,8 +202,7 @@ namespace WizardMonitorMachine
       } catch (Exception ex) {
         MessageBoxCentered.Show("Couldn't create the file '" + fileName + "' on your desktop.",
                                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        log.ErrorFormat("LemSettings.WizardMonitorMachine - couldn't create the file '{0}' on the desktop: {1}",
-                        fileName, ex);
+        log.Error ($"LemSettings.WizardMonitorMachine - couldn't create the file '{fileName}' on the desktop: {ex}");
       }
     }
     
@@ -254,8 +246,7 @@ namespace WizardMonitorMachine
             } catch (Exception e) {
               MessageBoxCentered.Show("Couldn't replace the file '" + fileName + "'. You can try to run LemSettings with admin rights.",
                                       "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              log.ErrorFormat("LemSettings.WizardMonitorMachine - couldn't replace the file '{0}' : {1}",
-                              filePath, e);
+              log.Error ($"LemSettings.WizardMonitorMachine - couldn't replace the file '{filePath}' : {e}");
               ReloadCombobox(Path.Combine(m_subDirectoryName, fileName));
               return;
             }
@@ -271,8 +262,7 @@ namespace WizardMonitorMachine
         } catch (Exception e) {
           MessageBoxCentered.Show("Couldn't copy the file '" + fileName + "'. You can try to run LemSettings with admin rights.",
                                   "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          log.ErrorFormat("LemSettings.WizardMonitorMachine - couldn't copy the file '{0}' : {1}",
-                          filePath, e);
+          log.Error ($"LemSettings.WizardMonitorMachine - couldn't copy the file '{filePath}' : {e}");
         }
         
         // Reload the combobox and select it

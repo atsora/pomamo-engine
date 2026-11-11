@@ -65,7 +65,6 @@ namespace Lemoine.Cnc.DataRepository
       }
     }
 
-    #region Members
     readonly IExtensionsLoader m_extensionsLoader;
     readonly int m_cncAcquisitionId;
     ICncAcquisition m_cncAcquisition = null;
@@ -73,12 +72,10 @@ namespace Lemoine.Cnc.DataRepository
     IEnumerable<IQueueConfigurationFullExtension> m_queueConfigurationFullExtensions = null;
     bool m_local = false;
     readonly Lemoine.Threading.IChecked m_checkedThread = null;
-    #endregion
 
     ILog log = LogManager.GetLogger (typeof (CncFileRepoFactory).FullName);
     static readonly string FILE_REPOSITORY_NAMESPACE = "cncconfigs";
 
-    #region Getters/Setters
     /// <summary>
     /// Use local files instead of file repository
     /// </summary>
@@ -87,7 +84,6 @@ namespace Lemoine.Cnc.DataRepository
       get { return m_local; }
       set { m_local = value; }
     }
-    #endregion // Getters/Setters
 
     #region Constructors
     /// <summary>
@@ -151,7 +147,6 @@ namespace Lemoine.Cnc.DataRepository
     }
     #endregion
 
-    #region Methods
     void SetActive ()
     {
       if (null != m_checkedThread) {
@@ -217,7 +212,7 @@ namespace Lemoine.Cnc.DataRepository
     void InsertXmlTemplate (XmlDocument xmlDocument, XmlElement includeElement, Dictionary<string, string> configParameters, string xmlTemplatePath, CancellationToken cancellationToken)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("InsertXmlTemplate: about to add sub config template");
+        log.Debug ("InsertXmlTemplate: about to add sub config template");
       }
       CncFileRepoFactory subRepoFactory = new CncFileRepoFactory (m_extensionsLoader,
         m_cncAcquisition, xmlTemplatePath, m_checkedThread);
@@ -251,7 +246,7 @@ namespace Lemoine.Cnc.DataRepository
     void InsertXmlString (XmlDocument xmlDocument, XmlElement includeElement, string xmlContent, CancellationToken cancellationToken)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("InsertXmlString: about to add xml string");
+        log.Debug ("InsertXmlString: about to add xml string");
       }
 
       var insertedXmlDoc = new XmlDocument ();
@@ -360,8 +355,7 @@ namespace Lemoine.Cnc.DataRepository
       IEnumerable<ICncFileRepoExtension> cncFileRepoExtensions = GetCncFileRepoExtensions ();
       IEnumerable<IQueueConfigurationFullExtension> queueConfigurationFullExtensions = GetQueueConfigurationFullExtensions ();
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetData: {0} extensions CncFileRepo, {1} extensions QueueConfigurationFull",
-          cncFileRepoExtensions.Count (), queueConfigurationFullExtensions.Count ());
+        log.Debug ($"GetData: {cncFileRepoExtensions.Count ()} extensions CncFileRepo, {queueConfigurationFullExtensions.Count ()} extensions QueueConfigurationFull");
       }
 
       ProcessIncludeElements (xmlDocument, keyParams, cancellationToken);
@@ -771,7 +765,7 @@ namespace Lemoine.Cnc.DataRepository
         }
       }
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetCncVariableKeys: {0} keys", keys.Distinct ().Count ());
+        log.Debug ($"GetCncVariableKeys: {keys.Distinct ().Count ()} keys");
       }
       return keys.Distinct ();
     }
@@ -809,7 +803,7 @@ namespace Lemoine.Cnc.DataRepository
         string distantDirectory = extension.GetDistantDirectory (machine.Id, machineModule.Id);
         string distantFileName = extension.GetDistantFileName (machine.Id, machineModule.Id);
         if ((null != distantDirectory) && !string.IsNullOrEmpty (distantFileName)) {
-          log.InfoFormat ("GetQueueConfiguration: loading distant file {0}/{1}", distantDirectory, distantFileName);
+          log.Info ($"GetQueueConfiguration: loading distant file {distantDirectory}/{distantFileName}");
           var baseDirectory = Lemoine.Info.PulseInfo.LocalConfigurationDirectory;
           baseDirectory = System.IO.Path.Combine (baseDirectory, localSubDirectory);
           string localDirectory = System.IO.Path.Combine (baseDirectory, distantDirectory);
@@ -1196,7 +1190,5 @@ namespace Lemoine.Cnc.DataRepository
       }
       return localPath;
     }
-
-    #endregion
   }
 }

@@ -55,7 +55,7 @@ namespace Lemoine.FileRepository
     {
       if (string.IsNullOrEmpty (pfrDataDirectory)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsPfrdataDirectoryValid: empty or null");
+          log.Debug ("IsPfrdataDirectoryValid: empty or null");
         }
         return false;
       }

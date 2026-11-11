@@ -15,13 +15,10 @@ namespace WizardInitialConfiguration
   /// </summary>
   internal partial class Page1 : GenericWizardPage, IWizardPage
   {
-    #region Members
     Image m_infoImage = null;
     Image m_warnImage = null;
     IList<ToolTip> m_toolTips = new List<ToolTip>();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -34,7 +31,6 @@ namespace WizardInitialConfiguration
           "Each box checked will increase the degrees of freedom but will also higher the complexity to set up the system.\n\n" +
           "Checking checkboxes is always safe, but please take care when unchecking them. This may result in a corrupted database.\n\n" +
           "For your convenience, predefined sets of options can be loaded."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

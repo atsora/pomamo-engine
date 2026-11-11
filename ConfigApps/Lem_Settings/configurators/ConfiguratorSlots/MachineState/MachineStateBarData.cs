@@ -15,9 +15,7 @@ namespace ConfiguratorSlots.MachineState
   /// </summary>
   public class MachineStateBarData: IBarObjectFactory
   {
-    #region Members
     readonly IMachine m_machine;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -30,7 +28,6 @@ namespace ConfiguratorSlots.MachineState
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create all BarObjects included in a period
     /// </summary>
@@ -69,6 +66,5 @@ namespace ConfiguratorSlots.MachineState
       
       return barObjects;
     }
-    #endregion // Methods
   }
 }

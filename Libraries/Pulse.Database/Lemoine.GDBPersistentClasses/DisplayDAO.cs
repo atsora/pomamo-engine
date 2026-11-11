@@ -379,15 +379,13 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (!"".Equals (display.Variant));
       if ("".Equals (display.Variant)) {
-        log.ErrorFormat ("InsertDefaultValue: display with a variant which is an empty string, reset it to null");
+        log.Error ("InsertDefaultValue: display with a variant which is an empty string, reset it to null");
         display.Variant = null;
       }
 
       var existing = FindWithTableVariant (display.Table, display.Variant);
       if (null == existing) { // the display does not exist => create it
-        log.InfoFormat ("InsertDefaultValue: " +
-                        "add table={0} pattern={1} variant={2}",
-                        display.Table, display.Pattern, display.Variant);
+        log.Info ($"InsertDefaultValue: add table={display.Table} pattern={display.Pattern} variant={display.Variant}");
         MakePersistent (display);
       }
       else { // null != existing
@@ -401,17 +399,13 @@ namespace Lemoine.GDBPersistentClasses
               || string.IsNullOrEmpty (oldPattern.Trim ())) { // Empty pattern, check its default value
             var resetEmptyDisplayPattern = Lemoine.Info.ConfigSet.LoadAndGet<bool> (RESET_EMPTY_DISPLAY_PATTERN_KEY, RESET_EMPTY_DISPLAY_PATTERN_DEFAULT);
             if (resetEmptyDisplayPattern) {
-              log.WarnFormat ("InsertDefaultValue: " +
-                              "empty pattern for table={0} variant={2} " +
-                              "=> update it to {1}",
-                             display.Table, display.Pattern, display.Variant);
+              log.Warn ($"InsertDefaultValue: empty pattern for table={display.Table} variant={display.Variant} => update it to {display.Pattern}");
               MakeTransient (existing);
               ModelDAOHelper.DAOFactory.FlushData ();
               MakePersistent (display);
             }
             else {
-              log.WarnFormat ("InsertDefaultValue: empty pattern for table={0} variant={1} but leave it unchanged",
-                display.Table, display.Variant);
+              log.Warn ($"InsertDefaultValue: empty pattern for table={display.Table} variant={display.Variant} but leave it unchanged");
             }
           }
         }
@@ -522,10 +516,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IDisplay display = FindWithTable (table);
       if (null == display) {
-        log.ErrorFormat ("GetPattern: " +
-                         "no pattern for table {0} " +
-                         "=> return an empty string",
-                         table);
+        log.Error ($"GetPattern: no pattern for table {table} => return an empty string");
         return "";
       }
       else {
@@ -546,10 +537,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IDisplay display = FindWithTableVariantWithDefault (table, variant);
       if (null == display) {
-        log.ErrorFormat ("GetPattern: " +
-                         "no pattern for table {0} and variant {1}" +
-                         "=> return an empty string",
-                         table, variant);
+        log.Error ($"GetPattern: no pattern for table {table} and variant {variant}=> return an empty string");
         return "";
       }
       else {

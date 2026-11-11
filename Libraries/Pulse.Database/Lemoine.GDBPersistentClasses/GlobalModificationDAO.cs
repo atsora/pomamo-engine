@@ -90,9 +90,9 @@ namespace Lemoine.GDBPersistentClasses
           inProgressModification = beforeModifications[0];
         }
         else {
-          log.DebugFormat ("GetNumberOfRemainingModifications: " +
-                           "return {0} directly, there is no in progress modification",
-                           numberOfRemainingModifications);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetNumberOfRemainingModifications: return {numberOfRemainingModifications} directly, there is no in progress modification");
+          }
           return numberOfRemainingModifications;
         }
       }
@@ -101,10 +101,9 @@ namespace Lemoine.GDBPersistentClasses
         numberOfRemainingModifications = 1.0;
       }
       else { // Not New and not InProgress => completed
-        log.DebugFormat ("GetNumberOfRemainingModifications: " +
-                         "modification with status {0} is completed " +
-                         "=> return 0",
-                         modification.AnalysisStatus);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetNumberOfRemainingModifications: modification with status {modification.AnalysisStatus} is completed => return 0");
+        }
         return 0.0;
       }
 
@@ -116,10 +115,9 @@ namespace Lemoine.GDBPersistentClasses
       double completion = ModelDAOHelper.DAOFactory.ModificationDAO
         .GetCompletion (inProgressModification);
       numberOfRemainingModifications -= completion;
-      log.DebugFormat ("GetNumberOfRemainingModifications: " +
-                       "{0} completion is {1} " +
-                       "global result is {2}",
-                       inProgressModification, completion, numberOfRemainingModifications);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetNumberOfRemainingModifications: {inProgressModification} completion is {completion} global result is {numberOfRemainingModifications}");
+      }
       return numberOfRemainingModifications;
     }
 
@@ -253,9 +251,9 @@ namespace Lemoine.GDBPersistentClasses
     public IEnumerable<IGlobalModification> GetNotCompletedSubGlobalModifications (IGlobalModification modification)
     {
       if (!modification.AnalysisSubGlobalModifications) {
-        log.DebugFormat ("GetNotCompletedSubGlobalModifications: " +
-                         "No sub-global modifications " +
-                         "=> return an empty list");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetNotCompletedSubGlobalModifications: No sub-global modifications => return an empty list");
+        }
         return new List<IGlobalModification> ();
       }
 
@@ -278,9 +276,9 @@ namespace Lemoine.GDBPersistentClasses
     public IEnumerable<IMachineModification> GetNotCompletedSubMachineModifications (IGlobalModification modification)
     {
       if (!modification.AnalysisSubMachineModifications) {
-        log.DebugFormat ("GetNotCompletedSubMachineModifications: " +
-                         "No sub-machine modifications " +
-                         "=> return an empty list");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetNotCompletedSubMachineModifications: No sub-machine modifications => return an empty list");
+        }
         return new List<IMachineModification> ();
       }
 
@@ -306,8 +304,9 @@ namespace Lemoine.GDBPersistentClasses
     public bool HasNotCompletedSubMachineModifications (IGlobalModification modification)
     {
       if (!modification.AnalysisSubMachineModifications) {
-        log.DebugFormat ("HasNotCompletedSubMachineModifications: " +
-                         "No sub-machine modifications");
+        if (log.IsDebugEnabled) {
+          log.Debug ("HasNotCompletedSubMachineModifications: No sub-machine modifications");
+        }
         return false;
       }
 
@@ -370,9 +369,9 @@ namespace Lemoine.GDBPersistentClasses
     public IEnumerable<IGlobalModification> GetAllSubGlobalModifications (IGlobalModification modification)
     {
       if (!modification.AnalysisSubGlobalModifications) {
-        log.DebugFormat ("GetAllSubGlobalModifications: " +
-                         "No sub-global modifications " +
-                         "=> return an empty list");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetAllSubGlobalModifications: No sub-global modifications => return an empty list");
+        }
         return new List<IGlobalModification> ();
       }
 
@@ -390,9 +389,9 @@ namespace Lemoine.GDBPersistentClasses
     public IEnumerable<IMachineModification> GetAllSubMachineModifications (IGlobalModification modification)
     {
       if (!modification.AnalysisSubMachineModifications) {
-        log.DebugFormat ("GetAllSubMachineModifications: " +
-                         "No sub-machine modifications " +
-                         "=> return an empty list");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetAllSubMachineModifications: No sub-machine modifications => return an empty list");
+        }
         return new List<IMachineModification> ();
       }
 

@@ -26,7 +26,6 @@ namespace Lemoine.GDBPersistentClasses
 
     static readonly ILog log = LogManager.GetLogger(typeof (Role).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -97,9 +96,9 @@ namespace Lemoine.GDBPersistentClasses
           string.Format ("{0}: {1}",
                          this.Id,
                          this.NameOrTranslation);
-        log.DebugFormat ("SelectionText: " +
-                         "selection text is {0}",
-                         selectionText);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SelectionText: selection text is {selectionText}");
+        }
         return selectionText;
       }
     }
@@ -124,7 +123,6 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     protected override string GetTranslatedDisplay (string sqlDisplay) =>
       DisplayTranslation.GetNameOrTranslationDisplay (this, () => this.NameOrTranslation, sqlDisplay);
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

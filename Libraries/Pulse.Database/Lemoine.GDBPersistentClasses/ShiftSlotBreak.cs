@@ -17,14 +17,11 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class ShiftSlotBreak: IShiftSlotBreak
   {
-    #region Members
     int m_id = 0;
     UtcDateTimeRange m_range;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftSlotBreak).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// ShiftSlotBreak Id
     /// </summary>
@@ -40,7 +37,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_range; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

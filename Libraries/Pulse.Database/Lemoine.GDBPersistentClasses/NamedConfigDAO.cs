@@ -85,19 +85,17 @@ namespace Lemoine.GDBPersistentClasses
     {
       INamedConfig config = GetConfig (name, key);
       if (null == config) { // The configuration does not exist => create a new one
-        log.DebugFormat ("SetConfig: " +
-                         "create a new configuration for name={0} key={1}",
-                         name, key);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SetConfig: create a new configuration for name={name} key={key}");
+        }
         config = ModelDAOHelper.ModelFactory.CreateNamedConfig (name, key);
         config.Value = v;
         MakePersistent (config);
       }
       else { // The configuration already exists => update it
-        log.DebugFormat ("SetConfig: " +
-                         "the configuration already exists for name={0} key={1}, " +
-                         "=> update value from {2} to {3}",
-                         name, key,
-                         config.Value, v);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SetConfig: the configuration already exists for name={name} key={key}, => update value from {config.Value} to {v}");
+        }
         config.Value = v;
         MakePersistent (config);
       }

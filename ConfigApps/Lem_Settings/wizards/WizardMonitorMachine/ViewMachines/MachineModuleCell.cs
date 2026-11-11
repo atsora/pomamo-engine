@@ -21,21 +21,17 @@ namespace WizardMonitorMachine
   /// </summary>
   public partial class MachineModuleCell : UserControl
   {
-    #region Members
     readonly ContextMenuStrip m_menu = new ContextMenuStrip ();
     CncDocument m_cncDoc = null;
     readonly IList<string> m_errors = new List<string> ();
     string m_fullXmlPath = "";
     string m_logErrorName = "";
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Errors linked to the machine module
     /// If no errors: empty
     /// </summary>
     public string Errors { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -162,7 +158,6 @@ namespace WizardMonitorMachine
     }
     #endregion // Event reactions
 
-    #region Methods
     void DisplayErrors ()
     {
       if (m_errors.Count != 0) {
@@ -425,6 +420,5 @@ namespace WizardMonitorMachine
 
       return "";
     }
-    #endregion // Methods
   }
 }

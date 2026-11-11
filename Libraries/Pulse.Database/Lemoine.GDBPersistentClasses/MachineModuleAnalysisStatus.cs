@@ -21,13 +21,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineModuleAnalysisStatus: IMachineModuleAnalysisStatus
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineModule m_machineModule;
     int m_lastMachineModuleDetectionId = 0;
     DateTime m_autoSequenceAnalysisDateTime = DateTime.UtcNow;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (MachineModuleAnalysisStatus).FullName);
 
@@ -48,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// ID of the reference machine module
     /// </summary>
@@ -94,6 +91,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_autoSequenceAnalysisDateTime; }
       set { m_autoSequenceAnalysisDateTime = value; }
     }
-    #endregion // Getters / Setters
   }
 }

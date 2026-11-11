@@ -22,7 +22,6 @@ namespace ConfiguratorSlots.DayTemplate
     public DayTemplateBarData() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create all BarObjects included in a period
     /// </summary>
@@ -57,6 +56,5 @@ namespace ConfiguratorSlots.DayTemplate
       
       return barObjects;
     }
-    #endregion // Methods
   }
 }

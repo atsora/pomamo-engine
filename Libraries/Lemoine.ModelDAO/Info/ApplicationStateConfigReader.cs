@@ -16,17 +16,12 @@ namespace Lemoine.ModelDAO.Info
   /// </summary>
   public class ApplicationStateConfigReader : IGenericConfigReader
   {
-    #region Members
     readonly string m_prefix;
     volatile bool m_activeRequest = false;
     volatile bool m_initialized = false;
     readonly MemoryConfigReader m_storage = new MemoryConfigReader ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ApplicationStateConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -42,7 +37,6 @@ namespace Lemoine.ModelDAO.Info
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize the data reading the config values in database
     /// </summary>
@@ -75,7 +69,6 @@ namespace Lemoine.ModelDAO.Info
         m_initialized = true;
       }
     }
-    #endregion // Methods
 
     #region IGenericConfigReader implementation
     /// <summary>

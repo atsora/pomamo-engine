@@ -43,7 +43,7 @@ namespace Pulse.Web.Machine
     {
       if (string.IsNullOrEmpty (request.GroupId)) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: empty groupId");
+          log.Error ("GetWithoutCache: empty groupId");
         }
         return new ErrorDTO ("Empty group id", ErrorStatus.WrongRequestParameter);
       }

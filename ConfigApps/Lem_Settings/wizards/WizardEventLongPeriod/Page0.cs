@@ -15,7 +15,6 @@ namespace WizardEventLongPeriod
   /// </summary>
   internal partial class Page0 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -27,7 +26,6 @@ namespace WizardEventLongPeriod
     public string Help { get { return "Two ways for editing the long period events are possible:\n\n" +
           " - by only adding new long period events (and possibly overwriting existing ones),\n\n" +
           " - or by clearing all existing long period events and then adding new ones."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

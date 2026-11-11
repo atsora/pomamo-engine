@@ -34,7 +34,6 @@ namespace Pulse.Web.OperationCycle
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -144,7 +143,5 @@ namespace Pulse.Web.OperationCycle
       }
     }
 
-
-    #endregion // Methods
   }
 }

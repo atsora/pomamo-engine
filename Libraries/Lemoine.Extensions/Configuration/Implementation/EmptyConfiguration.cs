@@ -17,9 +17,6 @@ namespace Lemoine.Extensions.Configuration.Implementation
   {
     readonly ILog log = LogManager.GetLogger (typeof (EmptyConfiguration).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

@@ -20,12 +20,10 @@ namespace Lemoine.Business.CncAlarm
   {
     ILog log = LogManager.GetLogger (typeof (CncAlarmRedStackLight).FullName);
 
-    #region Members
     IMonitoredMachine m_machine;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
     TimeSpan? m_duration;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -50,8 +48,7 @@ namespace Lemoine.Business.CncAlarm
       Debug.Assert (null != machine);
 
       if (null == machine) {
-        log.FatalFormat ("CncAlarmRedStackLight: " +
-                         "null machine module value");
+        log.Fatal ("CncAlarmRedStackLight: null machine module value");
         throw new ArgumentNullException ("machine");
       }
       m_machine = machine;
@@ -102,7 +99,6 @@ namespace Lemoine.Business.CncAlarm
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the monitored machine
     /// </summary>
@@ -139,7 +135,6 @@ namespace Lemoine.Business.CncAlarm
     {
       get { return m_duration; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// IMergeable implementation
@@ -173,17 +168,12 @@ namespace Lemoine.Business.CncAlarm
           return this.DateTimeRange.CompareTo (other.DateTimeRange);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare slots " +
-                           "for different machines {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare slots for different machines {this} {other}");
           throw new ArgumentException ("Comparison of slots from different machines");
         }
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
 
@@ -198,10 +188,7 @@ namespace Lemoine.Business.CncAlarm
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare CncAlarmRedStackLight " +
-                       "for different machines {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare CncAlarmRedStackLight for different machines {this} {other}");
       throw new ArgumentException ("Comparison of CncAlarmRedStackLight from different machines");
     }
 

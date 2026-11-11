@@ -33,9 +33,7 @@ namespace Lemoine.Plugin.MaintenanceAction
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("Get: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"Get: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -46,9 +44,7 @@ namespace Lemoine.Plugin.MaintenanceAction
           maintenanceActionType = (MaintenanceActionType)Enum.Parse (typeof (MaintenanceActionType), request.Type);
         }
         catch (Exception) {
-          log.ErrorFormat ("Get: " +
-                           "unknown maintenance action type {0}",
-                           request.Type);
+          log.Error ($"Get: unknown maintenance action type {request.Type}");
           return new ErrorDTO ("Unknown maintenance action type",
                                ErrorStatus.WrongRequestParameter);
         }

@@ -16,12 +16,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class TimePeriodOfDayDialog : OKCancelDialog, IValueDialog<TimePeriodOfDay?>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (TimePeriodOfDayDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return Selected TimePeriodOfDay
     /// </summary>
@@ -69,7 +65,6 @@ namespace Lemoine.DataReferenceControls
         this.timePeriodOfDaySelection.NoSelectionText = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -86,8 +81,6 @@ namespace Lemoine.DataReferenceControls
     }
 
     #endregion // Constructors
-
-    #region Methods
         
     void OkButtonClick(object sender, EventArgs e)
     {
@@ -99,7 +92,6 @@ namespace Lemoine.DataReferenceControls
       timePeriodOfDaySelection.Cancel ();
       this.DialogResult = DialogResult.Cancel;
     }
-    #endregion // Methods
     
     void TimePeriodOfDayDialogLoad(object sender, EventArgs e)
     {

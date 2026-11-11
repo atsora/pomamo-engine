@@ -331,8 +331,7 @@ namespace Lemoine.Business.Reason
                .Reverse ()) {
         if (leftSlot.IsEmpty ()) {
           Debug.Assert (false);
-          log.ErrorFormat ("Merge: empty left reason slot {0}",
-                           leftSlot);
+          log.Error ($"Merge: empty left reason slot {leftSlot}");
           continue;
         }
         var firstSlot = result[0];
@@ -355,8 +354,7 @@ namespace Lemoine.Business.Reason
                .OrderBy (s => s.DateTimeRange)) {
         if (rightSlot.IsEmpty ()) {
           Debug.Assert (false);
-          log.ErrorFormat ("Merge: empty right reason slot {0}",
-                           rightSlot);
+          log.Error ($"Merge: empty right reason slot {rightSlot}");
           continue;
         }
         var lastSlot = result[result.Count - 1];
@@ -419,8 +417,9 @@ namespace Lemoine.Business.Reason
         return slot;
       }
       else if (Bound.Compare<DateTime> (slot.DateTimeRange.Lower.Value, lowerLimit) <= 0) {
-        log.DebugFormat ("ExtendLeft: lower limit {0} reached",
-                         lowerLimit);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ExtendLeft: lower limit {lowerLimit} reached");
+        }
         lowerLimitReached = true;
         return slot;
       }
@@ -434,8 +433,7 @@ namespace Lemoine.Business.Reason
         else { // null != leftReasonSlot
           if (leftReasonSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendLeft: empty left reason slot {0}",
-                             leftReasonSlot);
+            log.Error ($"ExtendLeft: empty left reason slot {leftReasonSlot}");
             lowerLimitReached = false;
             return slot;
           }
@@ -472,8 +470,7 @@ namespace Lemoine.Business.Reason
       }
       else if (Bound.Compare<DateTime> (upperLimit, slot.DateTimeRange.Upper.Value) <= 0) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ExtendRight: upper limit {0} reached",
-                           upperLimit);
+          log.Debug ($"ExtendRight: upper limit {upperLimit} reached");
         }
         upperLimitReached = true;
         return slot;
@@ -488,8 +485,7 @@ namespace Lemoine.Business.Reason
         else { // null != rightReasonSlot
           if (rightReasonSlot.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRight: empty right reason slot {0}",
-                             rightReasonSlot);
+            log.Error ($"ExtendRight: empty right reason slot {rightReasonSlot}");
             upperLimitReached = false;
             return slot;
           }

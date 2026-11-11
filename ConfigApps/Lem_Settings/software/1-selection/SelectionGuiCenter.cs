@@ -79,7 +79,6 @@ namespace Lem_Settings
       buttonOk.Image = EmbeddedImageLoader.Load (typeof (SelectionGuiCenter), "ok");
     }
 
-    #region Methods
     /// <summary>
     /// Initialize references to access foreign objects
     /// </summary>
@@ -495,7 +494,6 @@ namespace Lem_Settings
                                              newWidth, newHeight);
       return newImage;
     }
-    #endregion // Methods
 
     #region Event reactions
     void CellClicked (object sender, EventArgs e)

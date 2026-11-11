@@ -17,7 +17,6 @@ namespace WizardTemplate
   {
     internal static readonly string LINE_NAME = "line_name";
 
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -77,7 +76,6 @@ namespace WizardTemplate
       new Page2 (),
       new Page3 ()
     };
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

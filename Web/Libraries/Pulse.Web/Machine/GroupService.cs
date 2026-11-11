@@ -49,7 +49,6 @@ namespace Pulse.Web.Machine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -108,6 +107,5 @@ namespace Pulse.Web.Machine
       }
       return response;
     }
-    #endregion // Methods
   }
 }

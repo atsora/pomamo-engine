@@ -18,12 +18,10 @@ namespace Lemoine.Settings
   /// </summary>
   public sealed class RevisionManager
   {
-    #region Members
     readonly IList<WatchedRevision> m_watchList = new List<WatchedRevision> ();
     readonly IList<WatchedRevision> m_doneList = new List<WatchedRevision> ();
     bool m_initialized = false;
     long m_lastIdOk = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (RevisionManager).FullName);
 
@@ -47,7 +45,6 @@ namespace Lemoine.Settings
     public static event Action UpdateDone;
     #endregion // Events
 
-    #region Getters / Setters
     /// <summary>
     /// Get the revisions in progress
     /// </summary>
@@ -68,7 +65,6 @@ namespace Lemoine.Settings
         return Instance.m_doneList;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -77,7 +73,6 @@ namespace Lemoine.Settings
     RevisionManager () { }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Scan not completed revisions for the first time
     /// </summary>
@@ -91,11 +86,10 @@ namespace Lemoine.Settings
       // Recall the last ID that have been found as ok
       try {
         m_lastIdOk = long.Parse (IniFilePreferences.Get (IniFilePreferences.Field.LAST_MODIFICATION_ID_OK));
-        log.InfoFormat ("RevisionManager.FirstScanInstance - Last modification ok is {0}", m_lastIdOk);
+        log.Info ($"RevisionManager.FirstScanInstance - Last modification ok is {m_lastIdOk}");
       }
       catch (Exception e) {
-        log.ErrorFormat ("RevisionManager.FirstScanInstance - Couldn't parse LAST_MODIFICATION_ID_OK '{0}': {1}",
-                        IniFilePreferences.Get (IniFilePreferences.Field.LAST_MODIFICATION_ID_OK), e);
+        log.Error ($"RevisionManager.FirstScanInstance - Couldn't parse LAST_MODIFICATION_ID_OK '{IniFilePreferences.Get (IniFilePreferences.Field.LAST_MODIFICATION_ID_OK)}': {e}");
       }
 
       // Find all revisions that have at least one modification not completed
@@ -223,7 +217,6 @@ namespace Lemoine.Settings
         }
       }
     }
-    #endregion // Methods
 
     #region Event reactions
     /// <summary>

@@ -20,14 +20,12 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class ShiftConfig : UserControl
   {
-    #region Members
     SortableBindingList<IShift> m_shifts = new SortableBindingList<IShift>();
     
     ISet<DataGridViewRow> m_updateSet =
       new HashSet<DataGridViewRow> ();
     IList<IShift> m_deleteList =
       new List<IShift> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftConfig).FullName);
 
@@ -61,8 +59,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("ShiftConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("ShiftConfigLoad: no DAO factory is defined");
         return;
       }
       

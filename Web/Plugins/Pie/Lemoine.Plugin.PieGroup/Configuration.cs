@@ -16,7 +16,6 @@ namespace Lemoine.Plugin.PieGroup
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Score
     /// </summary>
@@ -45,7 +44,6 @@ namespace Lemoine.Plugin.PieGroup
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -62,7 +60,7 @@ namespace Lemoine.Plugin.PieGroup
       if (string.IsNullOrEmpty (this.GroupRegex)) {
         var message = "GroupRegex is empty";
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("IsValid: {0}", message);
+          log.Error ($"IsValid: {message}");
         }
         listOfErrors.Add (message);
       }

@@ -20,15 +20,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class MachineFilterSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "SelectionText";
     IList<IMachineFilter> m_machineFilters = null;
     IMachineFilter m_machineFilter = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineFilterSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -118,7 +115,6 @@ namespace Lemoine.DataReferenceControls
         SetSelectedMachineFilter ();
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -145,7 +141,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -191,7 +186,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void MachineFilterSelectionLoad(object sender, EventArgs e)
     {

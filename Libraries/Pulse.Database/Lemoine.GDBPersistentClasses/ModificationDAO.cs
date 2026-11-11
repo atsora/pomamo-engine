@@ -39,9 +39,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         Debug.Assert (false);
-        log.FatalFormat ("MakePersistent: " +
-                         "not supported sub-type for {0}",
-                         modification);
+        log.Fatal ($"MakePersistent: not supported sub-type for {modification}");
         throw new Exception ("Not supported sub-type for the modification");
       }
     }
@@ -62,9 +60,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         Debug.Assert (false);
-        log.FatalFormat ("MakePersistent: " +
-                         "not supported sub-type for {0}",
-                         modification);
+        log.Fatal ($"MakePersistent: not supported sub-type for {modification}");
         throw new Exception ("Not supported sub-type for the modification");
       }
     }
@@ -88,9 +84,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         Debug.Assert (false);
-        log.FatalFormat ("MakePersistent: " +
-                         "not supported sub-type for {0}",
-                         modification);
+        log.Fatal ($"MakePersistent: not supported sub-type for {modification}");
         throw new Exception ("Not supported sub-type for the modification");
       }
     }
@@ -158,8 +152,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      log.FatalFormat ("GetNumberOfRemainingModifications: no modification with Id {0}",
-                       modificationId);
+      log.Fatal ($"GetNumberOfRemainingModifications: no modification with Id {modificationId}");
       throw new ArgumentException ("Invalid modification Id", "modificationId");
     }
 
@@ -181,10 +174,9 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (modification.AnalysisStatus.Equals (AnalysisStatus.Pending)) {
-        log.DebugFormat ("GetCompletion: " +
-                         "pending modification {0} " +
-                         "=> return 1 if there is no sub-modification in progress",
-                         modification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetCompletion: pending modification {modification} => return 1 if there is no sub-modification in progress");
+        }
         int total = 1;
         double completed = 1.0;
         if (modification.AnalysisSubModifications) {
@@ -196,10 +188,9 @@ namespace Lemoine.GDBPersistentClasses
         return completed / total;
       }
       else if (modification.AnalysisStatus.IsNew ()) {
-        log.DebugFormat ("GetCompletion: " +
-                         "new modification {0} " +
-                         "=> return 0",
-                         modification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetCompletion: new modification {modification} => return 0");
+        }
         return 0.0;
       }
       else if (modification.AnalysisStatus.IsInProgress ()) {
@@ -207,9 +198,9 @@ namespace Lemoine.GDBPersistentClasses
             || modification.AnalysisStatus.Equals (AnalysisStatus.StepTimeout)
             || modification.AnalysisStatus.Equals (AnalysisStatus.Timeout)
             || modification.AnalysisStatus.Equals (AnalysisStatus.DatabaseTimeout)) {
-          log.DebugFormat ("GetCompletion: " +
-                           "modification {0} InProgress or StepTimeout " +
-                           "=> return arbitrary value 0.8");
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetCompletion: modification {modification} InProgress or StepTimeout => return arbitrary value 0.8");
+          }
           // This is a little bit too complex here to return a good value for now
           // and compare AppliedDateTime with the right range
           // => return an arbritary value 0.2
@@ -230,26 +221,21 @@ namespace Lemoine.GDBPersistentClasses
             ++total;
             completed += GetCompletion (subModification);
           }
-          log.DebugFormat ("GetCompletion: " +
-                           "{0} sub-modifications with a total completion {1} " +
-                           "=> return {2}",
-                           total, completed, completed / total);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetCompletion: {total} sub-modifications with a total completion {completed} => return {completed / total}");
+          }
           return completed / total;
         }
         else {
           Debug.Assert (false);
-          log.FatalFormat ("GetCompletion: " +
-                           "unexpected analysis status {0} which is InProgress " +
-                           "=> return arbritary 0.2 as a fallback value",
-                           modification.AnalysisStatus);
+          log.Fatal ($"GetCompletion: unexpected analysis status {modification.AnalysisStatus} which is InProgress => return arbritary 0.2 as a fallback value");
           return 0.2;
         }
       }
       else { // Not new or in progress: return 1
-        log.DebugFormat ("GetCompletion: " +
-                         "completed modification {0} " +
-                         "=> return 1",
-                         modification);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetCompletion: completed modification {modification} => return 1");
+        }
         return 1.0;
       }
     }

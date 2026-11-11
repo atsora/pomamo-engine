@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly string DEFAULT_MACHINE_MODE_COLOR = "#808080"; // Grey
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
     bool? m_running;
@@ -32,11 +31,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_color = DEFAULT_MACHINE_MODE_COLOR;
     MachineModeCategoryId m_machineModeCategory = MachineModeCategoryId.Inactive;
     IMachineMode m_parent = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineMode).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// MachineMode ID
     /// </summary>
@@ -171,7 +168,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return string.Format ("{0}: {1}{2}",
                                   this.Id, this.Name, this.TranslationKey); }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -256,7 +252,6 @@ namespace Lemoine.GDBPersistentClasses
       return null;
     }
 
-    #region Methods
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
@@ -267,7 +262,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       return this.Equals ((object) other);
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

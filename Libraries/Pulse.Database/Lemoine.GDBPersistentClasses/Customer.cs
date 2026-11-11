@@ -18,17 +18,14 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Customer : DataWithDisplayFunction, ICustomer, IMergeable<Customer>, IEquatable<ICustomer>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
     string m_code;
     string m_externalCode;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Customer).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -87,7 +84,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_externalCode; }
       set { m_externalCode = value; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Check if the customer is undefined

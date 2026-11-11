@@ -14,14 +14,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Config : IConfig
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_key;
     string m_description;
     object m_value;
     bool m_active;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Config).FullName);
 
@@ -56,7 +54,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Config Id
     /// </summary>
@@ -109,6 +106,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.m_active; }
       set { this.m_active = value; }
     }
-    #endregion // Getters / Setters
   }
 }

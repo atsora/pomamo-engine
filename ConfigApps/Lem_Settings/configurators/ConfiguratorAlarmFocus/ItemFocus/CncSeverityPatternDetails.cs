@@ -28,9 +28,7 @@ namespace ConfiguratorAlarmFocus
     public event Action<ICncAlarmSeverityPattern> DeletePatternClicked;
     #endregion // Events
 
-    #region Members
     readonly ICncAlarmSeverityPattern m_pattern = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncSeverityPatternDetails).FullName);
 

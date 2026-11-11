@@ -74,7 +74,7 @@ namespace Lemoine.Plugin.GroupSequential
               .ToList ();
             if (allMachines.Any (x => null == x)) {
               if (log.IsErrorEnabled) {
-                log.ErrorFormat ("Groups: one machine does not exist");
+                log.Error ("Groups: one machine does not exist");
               }
               allMachines = allMachines
                 .Where (x => null != x);

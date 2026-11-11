@@ -19,16 +19,13 @@ namespace Lem_CncGUI
   /// </summary>
   internal partial class ConfigParamDialog : Form
   {
-    #region Members
     IMachineModule m_machineModule1 = null;
     IMachineModule m_machineModule2 = null;
     IMachineModule m_machineModule3 = null;
     IMachineModule m_machineModule4 = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ConfigParamDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Created Cnc Acquisition
     /// </summary>
@@ -93,7 +90,6 @@ namespace Lem_CncGUI
         return cncAcquisition;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

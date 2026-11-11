@@ -15,11 +15,8 @@ namespace ConfiguratorJobComponentName
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     ItemData m_itemData = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -32,7 +29,6 @@ namespace ConfiguratorJobComponentName
           "When you click on a component, the corresponding isofiles are listed to the right. " +
           "It is then possible to rename the component and the associated job in the lower part " +
           "of the interface. Click on \"Rename\" each time you want to save the new names."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

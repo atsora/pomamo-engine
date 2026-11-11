@@ -21,7 +21,6 @@ namespace Lemoine.Business.MachineMode
   {
     readonly ILog log = LogManager.GetLogger (typeof (IsDescendantOrSelfOf).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Ancestor machine mode to test
     /// </summary>
@@ -31,7 +30,6 @@ namespace Lemoine.Business.MachineMode
     /// Possible descendant to test
     /// </summary>
     int DescendantId { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

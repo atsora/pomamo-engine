@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.ActiveEventLastPart
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category name
     /// </summary>
@@ -63,7 +62,6 @@ namespace Lemoine.Plugin.ActiveEventLastPart
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

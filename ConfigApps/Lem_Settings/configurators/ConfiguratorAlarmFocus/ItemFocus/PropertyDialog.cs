@@ -12,7 +12,6 @@ namespace ConfiguratorAlarmFocus
   /// </summary>
   public partial class PropertyDialog : OKCancelDialog
   {
-    #region Getters / Setters
     /// <summary>
     /// Property
     /// </summary>
@@ -30,7 +29,6 @@ namespace ConfiguratorAlarmFocus
       get { return textValue.Text; }
       set { textValue.Text = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

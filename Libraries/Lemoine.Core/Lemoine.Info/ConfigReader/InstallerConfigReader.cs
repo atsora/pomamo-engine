@@ -26,9 +26,6 @@ namespace Lemoine.Info.ConfigReader
 
     readonly IGenericConfigReader m_registryConfigReader = new RegistryConfigReader (lazy: true);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

@@ -21,16 +21,13 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Service: Updater, IService
   {
-    #region Members
     string m_name;
     string m_program;
     bool m_lemoine = true;
     IComputer m_computer;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (Service).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -80,8 +77,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("Computer.set: " +
-                           "null value");
+          log.Error ("Computer.set: null value");
           throw new ArgumentNullException ("Service.Computer");
         }
         m_computer = value;
@@ -96,7 +92,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Computer as Computer; }
       set { this.Computer = value; }
     }
-    #endregion // Getters / Setters
         
     /// <summary>
     /// Unproxy the entity for XML serialization

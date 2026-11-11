@@ -21,17 +21,14 @@ namespace Lemoine.Alert
   [Serializable]
   public class XslLogAction: IAction
   {
-    #region Members
     [NonSerialized]
     string m_category;
     ILog m_logger;
     XslDefinition m_xslLevel;
     XslDefinition m_xslMessage;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (XslLogAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category of the log
     /// </summary>
@@ -65,7 +62,6 @@ namespace Lemoine.Alert
       get { return m_xslMessage; }
       set { m_xslMessage = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -76,7 +72,6 @@ namespace Lemoine.Alert
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implementation of <see cref="IAction.Execute" />
     /// </summary>
@@ -85,9 +80,9 @@ namespace Lemoine.Alert
     {
       string message = GetMessage (data);
       var level = GetLevel (data);
-      log.DebugFormat ("Execute:" +
-                       "log message {0} with level {1}",
-                       message, level);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"Execute:log message {message} with level {level}");
+      }
       
       if (level.Equals (Lemoine.Core.Log.Level.Debug)) {
         m_logger.Debug (message);
@@ -133,9 +128,7 @@ namespace Lemoine.Alert
         return Lemoine.Core.Log.Level.Fatal;
       }
       else {
-        log.ErrorFormat ("GetLevel: " +
-                         "unrecognized level {0}",
-                         levelString);
+        log.Error ($"GetLevel: unrecognized level {levelString}");
         throw new InvalidOperationException ("Unknown level");
       }
     }
@@ -152,6 +145,5 @@ namespace Lemoine.Alert
       m_xslMessage.Xslt.Transform (xpd.CreateNavigator (), null, stringWriter);
       return stringWriter.ToString ();
     }
-    #endregion // Methods
   }
 }

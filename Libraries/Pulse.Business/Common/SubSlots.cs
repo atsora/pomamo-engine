@@ -17,11 +17,9 @@ namespace Lemoine.Business.Common
   {
     ILog log = LogManager.GetLogger(typeof (MachineModeSubSlot).FullName);
     
-    #region Members
     IMachineMode m_machineMode;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
     
     #region Constructors
     /// <summary>
@@ -42,8 +40,7 @@ namespace Lemoine.Business.Common
     {
       Debug.Assert (null != machineMode);
       if (null == machineMode) {
-        log.FatalFormat ("MachineModeSubSlot: " +
-                         "null value");
+        log.Fatal ("MachineModeSubSlot: null value");
         throw new ArgumentNullException ();
       }
       m_machineMode = machineMode;
@@ -52,7 +49,6 @@ namespace Lemoine.Business.Common
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine mode
     /// </summary>
@@ -85,7 +81,6 @@ namespace Lemoine.Business.Common
     public virtual TimeSpan? Duration {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
     
     #region IMergeableItem implementation
     /// <summary>
@@ -135,9 +130,7 @@ namespace Lemoine.Business.Common
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
     
@@ -231,11 +224,9 @@ namespace Lemoine.Business.Common
   {
     ILog log = LogManager.GetLogger(typeof (MachineObservationStateSubSlot).FullName);
     
-    #region Members
     IMachineObservationState m_machineObservationState;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
     
     #region Constructors
     /// <summary>
@@ -256,8 +247,7 @@ namespace Lemoine.Business.Common
     {
       Debug.Assert (null != machineObservationState);
       if (null == machineObservationState) {
-        log.FatalFormat ("MachineObservationStateSubSlot: " +
-                         "null value");
+        log.Fatal ("MachineObservationStateSubSlot: null value");
         throw new ArgumentNullException ();
       }
       m_machineObservationState = machineObservationState;
@@ -266,7 +256,6 @@ namespace Lemoine.Business.Common
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine mode
     /// </summary>
@@ -299,7 +288,6 @@ namespace Lemoine.Business.Common
     public virtual TimeSpan? Duration {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
     
     #region IMergeableItem implementation
     /// <summary>
@@ -349,9 +337,7 @@ namespace Lemoine.Business.Common
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
     
@@ -445,13 +431,11 @@ namespace Lemoine.Business.Common
   {
     ILog log = LogManager.GetLogger(typeof (ReasonSubSlot).FullName);
     
-    #region Members
     IReason m_reason;
     string m_reasonDetails;
     bool m_defaultReason;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
     
     #region Constructors
     /// <summary>
@@ -476,8 +460,7 @@ namespace Lemoine.Business.Common
     {
       Debug.Assert (null != reason);
       if (null == reason) {
-        log.FatalFormat ("MachineModeReason: " +
-                         "null value");
+        log.Fatal ("MachineModeReason: null value");
         throw new ArgumentNullException ();
       }
       m_reason = reason;
@@ -488,7 +471,6 @@ namespace Lemoine.Business.Common
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the reason
     /// </summary>
@@ -535,7 +517,6 @@ namespace Lemoine.Business.Common
     public virtual TimeSpan? Duration {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
     
     #region IMergeableItem implementation
     /// <summary>
@@ -589,9 +570,7 @@ namespace Lemoine.Business.Common
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
     

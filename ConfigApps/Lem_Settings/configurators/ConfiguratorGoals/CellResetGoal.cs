@@ -14,7 +14,6 @@ namespace ConfiguratorGoals
   /// </summary>
   public partial class CellResetGoal : UserControl
   {
-    #region Getters / Setters
     /// <summary>
     /// Company
     /// </summary>
@@ -26,7 +25,6 @@ namespace ConfiguratorGoals
     public double Value {
       get { return (double)numericUpDown.Value; }
     }
-    #endregion // Getters / Setters
     
     static readonly ILog log = LogManager.GetLogger(typeof (CellResetGoal).FullName);
 

@@ -17,16 +17,11 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
   public class PendingModificationAnalysisExtension: Lemoine.Extensions.MultipleInstanceConfigurableExtension<Configuration>
     , Lemoine.Extensions.Analysis.IPendingModificationAnalysisExtension
   {
-    #region Members
     bool m_initializedConfiguration = false;
     bool m_active = false;
     Configuration m_configuration = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (PendingModificationAnalysisExtension).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region IPendingModificationAnalysisExtension implementation
     public void Initialize (IMachine machine)
@@ -50,23 +45,22 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
     {
       Debug.Assert (null != modification);
 
-      log.DebugFormat ("AfterMakeAnalysis: id={0} type={1} completed={2} analysisStatus={3}",
-        ((Lemoine.Collections.IDataWithId<long>)modification).Id,
-        modification.GetType (),
-        completed,
-        modification.AnalysisStatus);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"AfterMakeAnalysis: id={((Lemoine.Collections.IDataWithId<long>)modification).Id} type={modification.GetType ()} completed={completed} analysisStatus={modification.AnalysisStatus}");
+      }
 
       if (completed && (modification is IMachineStateTemplateAssociation) && (null == modification.Parent)) {
         if (modification.AnalysisStatus.IsCompletedSuccessfully ()) {
           GenerateEvent (modification);
         }
         else if (modification.AnalysisStatus.IsInProgress ()) {
-          log.DebugFormat ("AfterMakeAnalysis: modification with a Pending sub-modification");
+          if (log.IsDebugEnabled) {
+            log.Debug ("AfterMakeAnalysis: modification with a Pending sub-modification");
+          }
           // This is managed later, with NotifyAllSubModificationsCompleted
         }
         else {
-          log.WarnFormat ("AfterMakeAnalysis: modification id={0} ended in error",
-                          ((Lemoine.Collections.IDataWithId<long>)modification).Id);
+          log.Warn ($"AfterMakeAnalysis: modification id={((Lemoine.Collections.IDataWithId<long>)modification).Id} ended in error");
         }
       }
     }
@@ -77,7 +71,9 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
 
       if ( (modification is IMachineStateTemplateAssociation) && (null == modification.Parent)) {
         Debug.Assert (modification.AnalysisStatus.IsCompletedSuccessfully ());
-        log.DebugFormat ("NotifyAllSubModificationsCompleted: modification with sub-modifications just flagged as completed");
+        if (log.IsDebugEnabled) {
+          log.Debug ("NotifyAllSubModificationsCompleted: modification with sub-modifications just flagged as completed");
+        }
         GenerateEvent (modification); // Probably a sub-modification is Pending, for example LinkOperation
       }
     }
@@ -89,15 +85,17 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
 
       InitializeConfiguration (machine); // In case of PendingGlobalMachineModification, make it lazy
 
-      log.DebugFormat ("GenerateEvent: active={0}",
-        m_active);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GenerateEvent: active={m_active}");
+      }
 
       if (m_active) {
         var machineStateTemplate = machineStateTemplateAssociation.MachineStateTemplate;
         if ((0 < m_configuration.NewMachineStateTemplateId)
             && (m_configuration.NewMachineStateTemplateId != machineStateTemplate.Id)) {
-          log.DebugFormat ("GenerateEvent: " +
-                           "the machine state template does not match the configuration, skip it");
+          if (log.IsDebugEnabled) {
+            log.Debug ("GenerateEvent: the machine state template does not match the configuration, skip it");
+          }
           return;
         }
 
@@ -105,11 +103,12 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
           using (var transaction = session.BeginTransaction ("Plugin.MachineStateTemplateChangeEvent.CreateEvent")) {
             IEventLevel level = ModelDAOHelper.DAOFactory.EventLevelDAO.FindById (m_configuration.EventLevelId);
             if (null == level) {
-              log.ErrorFormat ("GenerateEvent: " +
-                               "level with id {0} is not defined");
+              log.Error ($"GenerateEvent: level with id {m_configuration.EventLevelId} is not defined");
               return;
             }
-            log.DebugFormat ("GenerateEvent: create the event");
+            if (log.IsDebugEnabled) {
+              log.Debug ("GenerateEvent: create the event");
+            }
             var ev = new EventMachineStateTemplateChange (level, modification.DateTime, machine, machineStateTemplate,
                                                           machineStateTemplateAssociation.Range);
             (new EventMachineStateTemplateChangeDAO ()).MakePersistent (ev);
@@ -126,7 +125,6 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
     }
     #endregion // IPendingModificationAnalysisExtension implementation
 
-    #region Methods
     void InitializeConfiguration (IMachine machine)
     {
       Debug.Assert (null != machine);
@@ -136,8 +134,7 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
       }
 
       if (!LoadConfiguration (out m_configuration)) {
-        log.WarnFormat ("InitializeConfiguration: " +
-                        "the configuration is not valid, skip this instance");
+        log.Warn ("InitializeConfiguration: the configuration is not valid, skip this instance");
         m_active = false;
         m_initializedConfiguration = true;
         m_configuration = null;
@@ -153,9 +150,7 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
             machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
               .FindById (machineFilterId);
             if (null == machineFilter) {
-              log.ErrorFormat ("Initialize: " +
-                               "machine filter id {0} does not exist",
-                               machineFilterId);
+              log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
               m_active = false;
               m_initializedConfiguration = true;
               return;
@@ -168,6 +163,5 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
       m_initializedConfiguration = true;
       return;
     }
-    #endregion // Methods
   }
 }

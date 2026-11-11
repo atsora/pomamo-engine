@@ -22,17 +22,12 @@ namespace Lemoine.Business.Machine
   public sealed class MachineFromId
     : IRequest<IMachine>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (MachineFromId).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Machine Id
     /// </summary>
     int MachineId { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -47,9 +42,6 @@ namespace Lemoine.Business.Machine
     }
     #endregion // Constructors
 
-    #region Methods
-    #endregion // Methods
-
     #region IRequest implementation
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
@@ -57,9 +49,9 @@ namespace Lemoine.Business.Machine
     /// <returns>Group or null if not found</returns>
     public IMachine Get ()
     {
-      log.DebugFormat ("Get: " +
-                       "machine id {0}",
-                       this.MachineId);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"Get: machine id {this.MachineId}");
+      }
 
       using (var session = ModelDAO.ModelDAOHelper.DAOFactory.OpenSession ()) {
         return ModelDAO.ModelDAOHelper.DAOFactory.MachineDAO

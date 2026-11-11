@@ -22,7 +22,6 @@ namespace ViewLinePlanning
     internal const string TIMELINE_START = "timeline_start";
     internal const string TIMELINE_END = "timeline_end";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -97,7 +96,6 @@ namespace ViewLinePlanning
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region View methods
     /// <summary>

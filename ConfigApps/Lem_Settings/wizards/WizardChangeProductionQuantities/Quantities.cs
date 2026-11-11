@@ -17,16 +17,13 @@ namespace WizardChangeProductionQuantities
   /// </summary>
   public class Quantities
   {
-    #region Members
     readonly IList<WolData> m_wolDatas = new List<WolData>();
     bool m_extentIssue = false;
     IDictionary<int, NullableDictionary<IShift, IDictionary<IComponentIntermediateWorkPiece, int>>> m_modifs =
       new Dictionary<int, NullableDictionary<IShift, IDictionary<IComponentIntermediateWorkPiece, int>>>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Quantities).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// True if all shifts are displayed
     /// </summary>
@@ -54,7 +51,6 @@ namespace WizardChangeProductionQuantities
     /// a name is associated to an id
     /// </summary>
     public IDictionary<IComponentIntermediateWorkPiece, string> ComponentIntermediateWorkPieces { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -66,7 +62,6 @@ namespace WizardChangeProductionQuantities
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize the data
     /// </summary>
@@ -586,6 +581,5 @@ namespace WizardChangeProductionQuantities
       
       return strRet;
     }
-    #endregion // Methods
   }
 }

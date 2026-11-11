@@ -12,7 +12,6 @@ namespace ConfiguratorSlots.ShiftTemplate
   /// </summary>
   internal class ShiftTemplatePage1 : IPartPage1
   {
-    #region Getters / Setters
     /// <summary>
     /// Part of the help describing the content of the timeline
     /// </summary>
@@ -28,7 +27,6 @@ namespace ConfiguratorSlots.ShiftTemplate
     /// graphics, no filters will be necessary (no page 2)
     /// </summary>
     public string ElementsName { get { return null; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -37,7 +35,6 @@ namespace ConfiguratorSlots.ShiftTemplate
     public ShiftTemplatePage1() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a timeline in the timelines, knowing the item
     /// This method is within a session
@@ -48,6 +45,5 @@ namespace ConfiguratorSlots.ShiftTemplate
     {
       timelines.AddTimeline("", new ShiftTemplateBarData());
     }
-    #endregion // Methods
   }
 }

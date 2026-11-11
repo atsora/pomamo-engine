@@ -16,7 +16,6 @@ namespace ConfiguratorSlots.ShiftTemplate
   /// </summary>
   internal partial class ShiftTemplatePage3 : UserControl, IPartPage3
   {
-    #region Getters / Setters
     /// <summary>
     /// Name of the category of element, plural with uppercase for the first letter
     /// Ex: "Machines"
@@ -44,7 +43,6 @@ namespace ConfiguratorSlots.ShiftTemplate
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -56,7 +54,6 @@ namespace ConfiguratorSlots.ShiftTemplate
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialization of the page, happening before the first load
     /// This method is called again if the database has been updated
@@ -148,6 +145,5 @@ namespace ConfiguratorSlots.ShiftTemplate
     {
       return null;
     }
-    #endregion // Methods
   }
 }

@@ -33,7 +33,6 @@ namespace Pulse.Web.CncAlarm
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -52,16 +51,13 @@ namespace Pulse.Web.CncAlarm
         else { // Current or future
           cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
         }
-        log.DebugFormat ("GetCacheTimeOut: " +
-                         "cacheTimeSpan is {0} for url={1}",
-                         cacheTimeSpan, url);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
+        }
         return cacheTimeSpan;
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetCacheTimeOut: " +
-                         "exception {0} " +
-                         "=> fallback: {1}",
-                         ex, CacheTimeOut.PastLong);
+        log.Error ($"GetCacheTimeOut: exception {ex} => fallback: {CacheTimeOut.PastLong}");
         return CacheTimeOut.PastLong.GetTimeSpan ();
       }
     }
@@ -83,18 +79,14 @@ namespace Pulse.Web.CncAlarm
         IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindByIdWithMachineModules (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}");
           return new ErrorDTO ("No monitored machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
         
         var mainMachineModule = machine.MainMachineModule;
         if (null == mainMachineModule) {
-          log.InfoFormat ("GetWithoutCache: " +
-                          "no main machine module for monitored machine with ID {0}",
-                          machineId);
+          log.Info ($"GetWithoutCache: no main machine module for monitored machine with ID {machineId}");
         }
         
         IEnumerable<IMachineModule> machineModules = machine.MachineModules
@@ -112,7 +104,7 @@ namespace Pulse.Web.CncAlarm
               response.ByMachineModule.Add (byMachineModule);
               foreach (var (cncAlarm, severity) in cncAlarms.OrderBy (a => a.Severity?.Priority ?? 1000)) { // 1000: same as CncAlarm.Priority
                 if (null == severity) {
-                  log.WarnFormat ("GetWithoutCache: no severity defined for cnc alarm at {0} on machine module id {1}", at, machineModule.Id);
+                  log.Warn ($"GetWithoutCache: no severity defined for cnc alarm at {at} on machine module id {machineModule.Id}");
                   if (request.KeepFocusOnly) { // Skip it
                     continue;
                   }
@@ -179,6 +171,5 @@ namespace Pulse.Web.CncAlarm
       
       return (null != mainMachineModule) && machineModule.Id.Equals (mainMachineModule.Id);
     }
-    #endregion // Methods
   }
 }

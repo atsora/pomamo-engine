@@ -16,15 +16,10 @@ namespace Lem_LoopingService
   public sealed class LoopingService
     : Lemoine.Threading.IThreadService, IDisposable
   {
-    #region Members
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     bool m_disposed = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (LoopingService).FullName);
-    
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -35,7 +30,6 @@ namespace Lem_LoopingService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="IThreadService"/>
     /// </summary>
@@ -65,7 +59,6 @@ namespace Lem_LoopingService
     {
       m_cancellationTokenSource?.Cancel ();
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

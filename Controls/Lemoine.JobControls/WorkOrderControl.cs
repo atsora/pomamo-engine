@@ -38,18 +38,13 @@ namespace Lemoine.JobControls
     };
 
 
-    #region Members
     IWorkOrder m_workOrder;
     DisplayMode m_displayMode;
     TreeNode m_node;
     IWorkOrderStatus[] m_workOrderStatusArray;
     ITreeViewObservable m_observable;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (WorkOrderControl).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -253,8 +248,6 @@ namespace Lemoine.JobControls
 
     #endregion
 
-    #region Methods
-
     /// <summary>
     /// Use informations in WorkOrder to fill text in box
     /// </summary>
@@ -379,8 +372,6 @@ namespace Lemoine.JobControls
       }
       return valid;
     }
-
-    #endregion // Methods
 
     void DocumentLinkBtnClick (object sender, EventArgs e)
     {

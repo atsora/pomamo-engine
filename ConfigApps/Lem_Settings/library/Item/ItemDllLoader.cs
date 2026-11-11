@@ -17,14 +17,11 @@ namespace Lemoine.Settings
   {
     static readonly ILog log = LogManager.GetLogger (typeof (ItemDllLoader).FullName);
 
-    #region Members
     IItemDll m_itemDll = null;
     readonly List<IItem> m_items = new List<IItem> ();
     readonly string m_dllPath = "";
     readonly ItemContext m_context;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Return true if the dll is valid
     /// If false, this dll should be ignored
@@ -45,7 +42,7 @@ namespace Lemoine.Settings
           return m_itemDll.GetType ().Namespace;
         }
         else {
-          log.ErrorFormat ("ID: item is not valid => return an empty string");
+          log.Error ("ID: item is not valid => return an empty string");
           return "";
         }
       }
@@ -55,7 +52,6 @@ namespace Lemoine.Settings
     /// Return the list of items created by this dll
     /// </summary>
     public IList<IItem> Items { get { return m_items; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -71,7 +67,6 @@ namespace Lemoine.Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a configuration to the dll
     /// </summary>
@@ -166,40 +161,31 @@ namespace Lemoine.Settings
       if ((item.Flags & LemSettingsGlobal.ItemFlag.ONLY_ADMIN_AND_SUPER_ADMIN) != 0 &&
           m_context.UserCategory != LemSettingsGlobal.UserCategory.ADMINISTRATOR &&
           m_context.UserCategory != LemSettingsGlobal.UserCategory.SUPER_ADMIN) {
-        log.InfoFormat ("IsItemDisplayed: " +
-                        "{0} not displayed because the current user is not an admin",
-                        item.Title);
+        log.Info ($"IsItemDisplayed: {item.Title} not displayed because the current user is not an admin");
         return false;
       }
 
       // Flag ONLY_SUPER_ADMIN
       if ((item.Flags & LemSettingsGlobal.ItemFlag.ONLY_SUPER_ADMIN) != 0 &&
           m_context.UserCategory != LemSettingsGlobal.UserCategory.SUPER_ADMIN) {
-        log.InfoFormat ("IsItemDisplayed: " +
-                        "{0} not displayed because the current user is not a super admin",
-                        item.Title);
+        log.Info ($"IsItemDisplayed: {item.Title} not displayed because the current user is not a super admin");
         return false;
       }
 
       // Flag ONLY_LCTR
       if ((item.Flags & LemSettingsGlobal.ItemFlag.ONLY_LCTR) != 0 && !m_context.IsLctr) {
-        log.WarnFormat ("IsItemDisplayed: " +
-                        "{0} not displayed because the current computer is not lctr",
-                        item.Title);
+        log.Warn ($"IsItemDisplayed: {item.Title} not displayed because the current computer is not lctr");
         return false;
       }
 
       // Flag ONLY_LPOST
       if ((item.Flags & LemSettingsGlobal.ItemFlag.ONLY_LPOST) != 0 && !m_context.IsLpost) {
-        log.InfoFormat ("IsItemDisplayed: " +
-                        "{0} not displayed because the current computer is not an lpost",
-                        item.Title);
+        log.Info ($"IsItemDisplayed: {item.Title} not displayed because the current computer is not an lpost");
         return false;
       }
 
       return true;
     }
-    #endregion // Methods
 
     #region Equatable implementation
     /// <summary>

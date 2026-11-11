@@ -29,7 +29,6 @@ namespace Lemoine.Alert.GDBListeners
   [Serializable]
   public class ActivityDelayData
   {
-    #region Members
     string m_name;
     MonitoredMachine m_machine;
     ActivityDelayDirection m_direction;
@@ -39,11 +38,9 @@ namespace Lemoine.Alert.GDBListeners
     DateTime m_timeStamp;
     bool m_flapping = false;
     bool m_beginFlapping = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ActivityDelayData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the listener
     /// </summary>
@@ -145,7 +142,6 @@ namespace Lemoine.Alert.GDBListeners
       get { return m_beginFlapping; }
       set { m_beginFlapping = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -179,8 +175,5 @@ namespace Lemoine.Alert.GDBListeners
       m_beginFlapping = beginFlapping;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

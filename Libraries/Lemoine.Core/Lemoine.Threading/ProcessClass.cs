@@ -17,18 +17,15 @@ namespace Lemoine.Threading
   /// </summary>
   public abstract class ProcessClass: ILoggedProcessClass, IChecked, ILogged
   {
-    #region Members
     DateTime m_startDateTime = DateTime.UtcNow;
     TimeSpan? m_timeout = null;
     TimeSpan? m_notRespondingTimeout = null;
     TimeSpan? m_sleepBeforeRestart = null;
     bool m_useStampFile = true;
     int m_parentProcessId = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProcessClass).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Time after which the thread kills itself.
     /// 
@@ -72,12 +69,10 @@ namespace Lemoine.Threading
       get { return m_parentProcessId; }
       set { m_parentProcessId = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the stamp file to use to check a process
     /// </summary>
@@ -190,6 +185,5 @@ namespace Lemoine.Threading
     /// </summary>
     /// <returns></returns>
     public abstract ILog GetLogger ();
-    #endregion // Methods
   }
 }

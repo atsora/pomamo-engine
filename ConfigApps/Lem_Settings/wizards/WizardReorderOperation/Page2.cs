@@ -15,11 +15,8 @@ namespace WizardReorderOperation
   /// </summary>
   internal partial class Page2 : GenericWizardPage, IWizardPage
   {
-    #region Members
     Order m_order = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -30,7 +27,6 @@ namespace WizardReorderOperation
     /// </summary>
     public string Help { get { return "The different operations of the chosen part are listed. " +
           "You can reorder them with the arrows."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

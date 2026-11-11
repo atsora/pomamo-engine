@@ -45,9 +45,6 @@ namespace Lemoine.DataRepository
 
     static readonly ILog log = LogManager.GetLogger (typeof (ListFactory<T>).FullName);
 
-    #region Getters / Setters
-    #endregion
-
     #region Constructors
     /// <summary>
     /// Constructor from a fixed list
@@ -69,7 +66,6 @@ namespace Lemoine.DataRepository
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Specialized method to build the DOMDocument
     /// </summary>
@@ -146,6 +142,5 @@ namespace Lemoine.DataRepository
       // Do nothing special for the moment
       return;
     }
-    #endregion
   }
 }

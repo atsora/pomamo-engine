@@ -15,14 +15,11 @@ namespace Lemoine.Info
   /// </summary>
   public sealed class ProgramInfo
   {
-    #region Members
     readonly Assembly m_assembly = Assembly.GetEntryAssembly ();
     string m_alternativeProgramName = null;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProgramInfo).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Executing assembly
     /// </summary>
@@ -39,13 +36,11 @@ namespace Lemoine.Info
     {
       get {
         if (null != Instance.m_alternativeProgramName) {
-          log.InfoFormat ("Name.get: return the alternative program name {0}",
-            Instance.m_alternativeProgramName);
+          log.Info ($"Name.get: return the alternative program name {Instance.m_alternativeProgramName}");
           return Instance.m_alternativeProgramName;
         }
         else if (Assembly == null) {
-          log.WarnFormat ("Could not get the name " +
-                          "because the entry assembly is null assembly");
+          log.Warn ("Could not get the name because the entry assembly is null assembly");
           return null;
         }
         else {
@@ -54,7 +49,7 @@ namespace Lemoine.Info
         }
       }
       set {
-        log.InfoFormat ("Name.set: set an alternative program name {0}", value);
+        log.Info ($"Name.set: set an alternative program name {value}");
         Instance.m_alternativeProgramName = value;
       }
     }
@@ -67,8 +62,7 @@ namespace Lemoine.Info
     {
       get {
         if (Assembly == null) {
-          log.WarnFormat ("Could not get the version " +
-                          "because the entry assembly is null assembly");
+          log.Warn ("Could not get the version because the entry assembly is null assembly");
           return null;
         }
         else {
@@ -86,8 +80,7 @@ namespace Lemoine.Info
     {
       get {
         if (Assembly == null) {
-          log.WarnFormat ("Could not get the company " +
-                          "because the entry assembly is null assembly");
+          log.Warn ("Could not get the company because the entry assembly is null assembly");
           return null;
         }
         else {
@@ -107,8 +100,7 @@ namespace Lemoine.Info
     {
       get {
         if (Assembly == null) {
-          log.WarnFormat ("AbsolutePath: Could not get the absolute path " +
-                          "because the entry assembly is null");
+          log.Warn ("AbsolutePath: Could not get the absolute path because the entry assembly is null");
           return null;
         }
         else {
@@ -157,7 +149,6 @@ namespace Lemoine.Info
     {
       return Process.GetCurrentProcess ().WorkingSet64;
     }
-    #endregion
 
     #region Constructors
     /// <summary>

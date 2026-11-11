@@ -47,7 +47,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     void ColorXmlText()
     {
       // Attributes in red
@@ -184,6 +183,5 @@ namespace Lemoine.BaseControls
       // Remove selection
       richTextBox.Select(0, 0);
     }
-    #endregion // Methods
   }
 }

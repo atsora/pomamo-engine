@@ -15,17 +15,14 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class NullableTimeSpanPicker : UserControl
   {
-    #region Members
     /// <summary>
     /// Event raised in case of a value change of the textbox
     /// </summary>
     public event EventHandler ValueChanged;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (NullableTimeSpanPicker).FullName);
 
 
-    #region Getters / Setters
     /// <summary>
     /// value as timespan
     /// </summary>
@@ -84,7 +81,6 @@ namespace Lemoine.BaseControls
       }
 
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -16,14 +16,11 @@ namespace Lemoine.Xml
   [Serializable]
   public sealed class XslTemplateDefinition: XslDefinition
   {
-    #region Members
     string m_xslTemplate;
     string m_xslFull;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (XslTemplateDefinition).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Full XSL without the header (begin with xsl:template)
     /// 
@@ -42,9 +39,7 @@ namespace Lemoine.Xml
           m_xslt.Load (XmlReader.Create (new StringReader (m_xslFull)));
         }
         catch (Exception ex) {
-          log.ErrorFormat ("XslTemplate: " +
-                           "exception {0}",
-                           ex);
+          log.Error ($"XslTemplate: exception {ex}");
           throw;
         }
       }
@@ -57,7 +52,6 @@ namespace Lemoine.Xml
     public string XslFull {
       get { return m_xslFull; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -76,8 +70,5 @@ namespace Lemoine.Xml
       this.XslTemplate = xslTemplate;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

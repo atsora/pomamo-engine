@@ -20,7 +20,6 @@ namespace WizardReasonSelection
     internal const string DEFAULT_REASONS = "default_reasons";
     internal const string SELECTABLE_REASONS = "selectable_reasons";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -106,7 +105,6 @@ namespace WizardReasonSelection
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

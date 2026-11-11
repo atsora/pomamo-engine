@@ -16,13 +16,10 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class ReasonReasonGroupDialog : OKCancelDialog, IValueDialog<IReason>
   {
-    #region Members
     bool m_canSelectReasonGroup = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonReasonGroupDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null reason or reason group a valid value ?
     /// </summary>
@@ -103,7 +100,6 @@ namespace Lemoine.DataReferenceControls
       get { return SelectedReasonReasonGroup as IReason; }
       set { SelectedReasonReasonGroup = value;}
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

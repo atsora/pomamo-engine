@@ -42,8 +42,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
         // ID = 10 does not exist
         machine = session.Get <Machine> (10);
-        log.DebugFormat ("GetMachine: Got machine {0} for ID=10",
-                         machine);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetMachine: Got machine {machine} for ID=10");
+        }
         Assert.That (machine, Is.EqualTo (null));
       }
     }
@@ -192,8 +193,9 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
 
         // ID = 10 does not exist
         machine = session.Get <MonitoredMachine> (10);
-        log.DebugFormat ("GetMonitoredMachine: Got machine {0} for ID=10",
-                         machine);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetMonitoredMachine: Got machine {machine} for ID=10");
+        }
         Assert.That (machine, Is.EqualTo (null));
       }
     }

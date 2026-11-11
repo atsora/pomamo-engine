@@ -73,16 +73,12 @@ namespace Lemoine.Model
       
       if (left.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!left.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "left range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: left range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       if (right.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!right.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "right range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: right range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       

@@ -18,13 +18,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class GlobalModificationLog : Log, IGlobalModificationLog
   {
-    #region Members
     IGlobalModification m_modification;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GlobalModificationLog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the modification
     /// </summary>
@@ -43,7 +40,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Modification as GlobalModification; }
       set { m_modification = value; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor

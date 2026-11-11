@@ -120,7 +120,6 @@ namespace Lemoine.JobControls
 
     #endregion
 
-    #region Members
     /// <summary>
     /// List of control which are impacted by change of treeview;
     /// Main change is node selection
@@ -206,9 +205,7 @@ namespace Lemoine.JobControls
 
     bool m_removeNonActiveFieldsFromImportExport = true;
     bool m_initializing = true;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// For Excel export/import: properties of sequence to export/import
     /// </summary>
@@ -235,7 +232,6 @@ namespace Lemoine.JobControls
       get { return m_removeNonActiveFieldsFromImportExport; }
       set { m_removeNonActiveFieldsFromImportExport = value; }
     }
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationTreeView).FullName);
 
@@ -331,7 +327,6 @@ namespace Lemoine.JobControls
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Get wrapped treeview
     /// </summary>
@@ -467,7 +462,6 @@ namespace Lemoine.JobControls
       get { return m_allowExcelImportExport; }
       set { m_allowExcelImportExport = value; }
     }
-    #endregion
 
     #region inherited methods
     /// <summary>
@@ -633,7 +627,6 @@ namespace Lemoine.JobControls
     }
     #endregion // inherited methods
 
-    #region Methods
     /// <summary>
     /// Build hierachy of our treeview by initializing treeLevels variable.
     /// We also initialize contextMenuStrip associated with each kind of node.
@@ -1162,8 +1155,6 @@ namespace Lemoine.JobControls
         }
       }
     }
-
-    #endregion
 
 
     #region TreeView DragNDrop Methods

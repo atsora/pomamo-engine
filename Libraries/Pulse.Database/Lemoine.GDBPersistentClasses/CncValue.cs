@@ -18,7 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CncValue : ICncValue
   {
-    #region Members
     long m_id = 0;
     int m_version = 0;
     IMachineModule m_machineModule;
@@ -30,12 +29,10 @@ namespace Lemoine.GDBPersistentClasses
     double? m_double = null;
     double? m_deviation = null;
     bool m_stopped = false;
-    #endregion // Members
 
     static readonly ILog staticLog = LogManager.GetLogger (typeof (CncValue).FullName);
     ILog log = LogManager.GetLogger (typeof (CncValue).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// CncValue Id
     /// </summary>
@@ -63,7 +60,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_machineModule; }
       protected set {
         if (null == value) {
-          log.FatalFormat ("MachineModule can't be null");
+          log.Fatal ("MachineModule can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null MachineModule in CncValue");
         }
@@ -95,7 +92,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_field; }
       protected set {
         if (null == value) {
-          log.FatalFormat ("Field can't be null");
+          log.Fatal ("Field can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Field in CncValue");
         }
@@ -174,8 +171,7 @@ namespace Lemoine.GDBPersistentClasses
       set {
         switch (value.Kind) {
         case DateTimeKind.Unspecified:
-          log.WarnFormat ("End.set: " +
-                          "unspecified DateTimeKind => suppose it is a universal time");
+          log.Warn ("End.set: unspecified DateTimeKind => suppose it is a universal time");
           m_end = new DateTime (value.Ticks, DateTimeKind.Utc);
           break;
         case DateTimeKind.Utc:
@@ -312,9 +308,7 @@ namespace Lemoine.GDBPersistentClasses
         case FieldType.Double:
           return this.Double;
         default:
-          log.ErrorFormat ("Value.get: " +
-                           "unknown field type {0}",
-                           this.Field.Type);
+          log.Error ($"Value.get: unknown field type {this.Field.Type}");
           throw new Exception ("Unknown field type");
         }
       }
@@ -338,9 +332,7 @@ namespace Lemoine.GDBPersistentClasses
           }
         }
         catch (Exception ex) {
-          log.ErrorFormat ("Value.set: " +
-                           "error {0} value {1}",
-                           ex, value);
+          log.Error ($"Value.set: error {ex} value {value}");
           throw new InvalidCastException ("The value could not be converted to the right type", ex);
         }
       }
@@ -365,7 +357,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_stopped; }
       set { m_stopped = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -396,9 +387,7 @@ namespace Lemoine.GDBPersistentClasses
 
       switch (beginDateTime.Kind) {
       case DateTimeKind.Unspecified:
-        log.WarnFormat ("CncValue: " +
-                        "unspecified DateTimeKind for beginDateTime argument " +
-                        "=> suppose it is a universal time");
+        log.Warn ("CncValue: unspecified DateTimeKind for beginDateTime argument => suppose it is a universal time");
         m_begin = new DateTime (beginDateTime.Ticks, DateTimeKind.Utc);
         break;
       case DateTimeKind.Utc:

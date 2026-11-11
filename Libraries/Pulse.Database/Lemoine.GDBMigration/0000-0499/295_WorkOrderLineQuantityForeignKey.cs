@@ -28,8 +28,9 @@ namespace Lemoine.GDBMigration
                                      Migrator.Framework.ForeignKeyConstraint.Cascade);
       }
       catch (Exception) {
-        log.DebugFormat ("Up: " +
-                         "the foreign key is already defined");
+        if (log.IsDebugEnabled) {
+          log.Debug ("Up: the foreign key is already defined");
+        }
       }
     }
     

@@ -47,8 +47,7 @@ namespace Lemoine.Core
 
       try {
         ILog localLogger = logger ?? log;
-        localLogger.FatalFormat ("Exit: exit was requested by {0}",
-                                 System.Environment.StackTrace);
+        localLogger.Fatal ($"Exit: exit was requested by {System.Environment.StackTrace}");
       }
       catch (Exception) { }
 

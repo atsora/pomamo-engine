@@ -19,11 +19,8 @@ namespace ConfiguratorAlarms
   /// </summary>
   public partial class Page2 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     AlarmManager m_alarmManager = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -48,7 +45,6 @@ namespace ConfiguratorAlarms
         LemSettingsGlobal.PageFlag.WITH_VALIDATION;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

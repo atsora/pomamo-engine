@@ -18,10 +18,8 @@ namespace Lemoine.Alert.GDBListeners
   [Serializable]
   public class CncAlarmListener : IListener
   {
-    #region Members
     readonly IList<CncAlarmMachineModuleListener> m_machineModuleListeners = new List<CncAlarmMachineModuleListener>();
     int m_machineModuleListenerIndex = 0;
-    #endregion // Members
     
     #region Constructor
     /// <summary>
@@ -44,7 +42,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion Constructor
     
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// Returns null when there is no data anymore to return
@@ -76,6 +73,5 @@ namespace Lemoine.Alert.GDBListeners
       // Go to the next index
       return GetData();
     }
-    #endregion // Methods
   }
 }

@@ -25,14 +25,12 @@ namespace Lemoine.ConfigControls
   IConfigControlObserver<IMachineObservationState>,
   IConfigControlObserver<IMachineFilter>
   {
-    #region Members
     BindingList<IEventToolLifeConfig> m_eventToolLifeConfigs = new BindingList<IEventToolLifeConfig>();
     ISet<DataGridViewRow> m_updateSet = new HashSet<DataGridViewRow> ();
     IList<IEventToolLifeConfig> m_deleteList = new List<IEventToolLifeConfig> ();
     
     readonly ISet<IConfigControlObserver<IEventToolLifeConfig>> m_observers =
       new HashSet<IConfigControlObserver<IEventToolLifeConfig>> ();
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (EventToolLifeConfigConfig).FullName);
 
@@ -85,8 +83,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("EventToolLifeConfigConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("EventToolLifeConfigConfigLoad: no DAO factory is defined");
         return;
       }
       

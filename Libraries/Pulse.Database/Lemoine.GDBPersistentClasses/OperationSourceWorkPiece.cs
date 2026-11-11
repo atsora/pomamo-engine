@@ -22,14 +22,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OperationSourceWorkPiece: IOperationSourceWorkPiece
   {
-    #region Members
     IOperation m_operation = null;
     int m_version = 1;
     int m_id = 0;
     IIntermediateWorkPiece m_intermediateWorkPiece = null;
     int m_quantity = 1;
     int m_quantityDenominator = 1;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OperationSourceWorkPiece).FullName);
 
@@ -54,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the Operation
     /// </summary>
@@ -118,7 +115,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return this.m_version; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// <see cref="Object.GetHashCode" />

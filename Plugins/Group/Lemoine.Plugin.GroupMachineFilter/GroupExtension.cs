@@ -39,7 +39,7 @@ namespace Lemoine.Plugin.GroupMachineFilter
             .FindById (m_configuration.MachineFilterId);
           if (null == m_machineFilter) {
             if (log.IsErrorEnabled) {
-              log.ErrorFormat ("Initialize: machine filter id {0} does not exist", m_configuration.MachineFilterId);
+              log.Error ($"Initialize: machine filter id {m_configuration.MachineFilterId} does not exist");
             }
             return false;
           }

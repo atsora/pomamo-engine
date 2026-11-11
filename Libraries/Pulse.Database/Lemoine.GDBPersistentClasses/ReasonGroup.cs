@@ -28,7 +28,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly string DEFAULT_COLOR = "#FFFF00";
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name; // Can't be empty but can be null
@@ -40,11 +39,9 @@ namespace Lemoine.GDBPersistentClasses
     ICollection<IReason> m_reasons = new InitialNullIdSet<IReason, int> ();
     int? m_displayPriority;
     string m_longDisplay; // Computed by PostgreSQL
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonGroup).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -204,9 +201,9 @@ namespace Lemoine.GDBPersistentClasses
                          this.Id,
                          (null == this.Name)?"":this.Name,
                          (null == this.TranslationKey)?"":this.TranslationKey);
-        log.DebugFormat ("SelectionText: " +
-                         "selection text is {0}",
-                         selectionText);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SelectionText: selection text is {selectionText}");
+        }
         return selectionText;
       }
     }
@@ -220,7 +217,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_displayPriority; }
       set { m_displayPriority = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -241,7 +237,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a reason in the member directly
     /// 
@@ -263,7 +258,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       RemoveFromProxyCollection<IReason> (m_reasons, reason);
     }
-    #endregion // Methods
     
     #region Equals and GetHashCode implementation
     /// <summary>

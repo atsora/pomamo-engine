@@ -18,9 +18,6 @@ namespace Pulse.Web.Time
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CurrentTimeService).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -30,7 +27,6 @@ namespace Pulse.Web.Time
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get
     /// </summary>
@@ -43,6 +39,5 @@ namespace Pulse.Web.Time
       response.Local = ConvertDTO.DateTimeLocalToIsoStringMs (utcNow.ToLocalTime ());
       return response;
     }
-    #endregion // Methods
   }
 }

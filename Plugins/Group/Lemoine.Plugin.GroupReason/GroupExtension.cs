@@ -38,8 +38,7 @@ namespace Lemoine.Plugin.GroupReason
               .FindById (reasonId);
             if (null == reason) {
               if (log.IsErrorEnabled) {
-                log.ErrorFormat ("Initialize: reason with id {0} does not exist",
-                  reasonId);
+                log.Error ($"Initialize: reason with id {reasonId} does not exist");
               }
             }
             else {
@@ -53,7 +52,7 @@ namespace Lemoine.Plugin.GroupReason
 
         if (!m_reasons.Any ()) {
           if (log.IsErrorEnabled) {
-            log.ErrorFormat ("Initialize: no valid reason selected, return false");
+            log.Error ("Initialize: no valid reason selected, return false");
           }
           return false;
         }

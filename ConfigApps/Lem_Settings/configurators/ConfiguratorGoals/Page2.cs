@@ -12,11 +12,8 @@ namespace ConfiguratorGoals
   /// </summary>
   public partial class Page2 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     bool m_byDepartment = false;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -32,7 +29,6 @@ namespace ConfiguratorGoals
           " - by company, department, cell and machine,\n" +
           " - by company, category, subcategory, machine.\n\n" +
           "Choose the option that suits you best."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

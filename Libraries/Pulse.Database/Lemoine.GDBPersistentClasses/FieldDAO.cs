@@ -538,9 +538,7 @@ namespace Lemoine.GDBPersistentClasses
     private void InsertDefaultValue (IField field)
     {
       if (null == FindById (field.Id)) { // the config does not exist => create it
-        log.InfoFormat ("InsertDefaultValue: " +
-                        "add id={0} Code={1}",
-                        field.Id, field.Code);
+        log.Info ($"InsertDefaultValue: add id={field.Id} Code={field.Code}");
         // Use a raw SQL Command, else the Id is resetted
         using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand())
         {

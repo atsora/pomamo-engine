@@ -40,9 +40,6 @@ namespace Lemoine.DataRepository
 
     static readonly ILog log = LogManager.GetLogger (typeof (PulseResolver).FullName);
 
-    #region Getters / Setters
-    #endregion
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -52,7 +49,6 @@ namespace Lemoine.DataRepository
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Override GetEntity to resolve:
     /// <item>PULSE_OLD_ODBC_NAMESPACE http://odbc.pulse.com</item>
@@ -72,14 +68,14 @@ namespace Lemoine.DataRepository
                                       string role,
                                       Type ofObjectToReturn)
     {
-      log.DebugFormat ("GetEntity aboluteUri={0}",
-                       absoluteUri.ToString ());
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetEntity aboluteUri={absoluteUri.ToString ()}");
+      }
 
       if (absoluteUri.AbsoluteUri.Equals (PULSE_OLD_ODBC_NAMESPACE)) {
-        log.DebugFormat ("GetEntity absoluteUri={0}: " +
-                         "substitute http://odbc.pulse.com " +
-                         "with odbcpulse.xsd",
-                         absoluteUri);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetEntity absoluteUri={absoluteUri}: substitute http://odbc.pulse.com with odbcpulse.xsd");
+        }
         Uri odbcPulseUri = ResolveUri (new Uri (""), "odbcpulse.xsd");
         return base.GetEntity (odbcPulseUri,
                                role,
@@ -87,10 +83,9 @@ namespace Lemoine.DataRepository
       }
 
       if (absoluteUri.AbsoluteUri.Equals (PULSE_ODBC_NAMESPACE)) {
-        log.DebugFormat ("GetEntity absoluteUri={0}: " +
-                         "substitute urn:pulse.lemoinetechnologies.com:synchro:odbc" +
-                         "with odbcsynchro.xsd",
-                         absoluteUri);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetEntity absoluteUri={absoluteUri}: substitute urn:pulse.lemoinetechnologies.com:synchro:odbcwith odbcsynchro.xsd");
+        }
         Uri odbcPulseUri = ResolveUri (new Uri (""), "odbcsynchro.xsd");
         return base.GetEntity (odbcPulseUri,
                                role,
@@ -98,10 +93,9 @@ namespace Lemoine.DataRepository
       }
 
       if (absoluteUri.AbsoluteUri.Equals (PULSE_GDB_NAMESPACE)) {
-        log.DebugFormat ("GetEntity absoluteUri={0}: " +
-                         "substitute urn:pulse.lemoinetechnologies.com:synchro:gdb " +
-                         "with gdbsynchro.xsd",
-                         absoluteUri);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetEntity absoluteUri={absoluteUri}: substitute urn:pulse.lemoinetechnologies.com:synchro:gdb with gdbsynchro.xsd");
+        }
         Uri gdbPulseUri = ResolveUri (new Uri (""), "gdbsynchro.xsd");
         return base.GetEntity (gdbPulseUri,
                                role,
@@ -109,10 +103,9 @@ namespace Lemoine.DataRepository
       }
 
       if (absoluteUri.AbsoluteUri.Equals (PULSE_ODBCGDBCONFIG_NAMESPACE)) {
-        log.DebugFormat ("GetEntity absoluteUri={0}: " +
-                         "substitute urn:pulse.lemoinetechnologies.com:synchro:odbcgdbconfig " +
-                         "with synchroodbcgdbconfig.xsd",
-                         absoluteUri);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetEntity absoluteUri={absoluteUri}: substitute urn:pulse.lemoinetechnologies.com:synchro:odbcgdbconfig with synchroodbcgdbconfig.xsd");
+        }
         Uri gdbPulseUri = ResolveUri (new Uri (""), "synchroodbcgdbconfig.xsd");
         return base.GetEntity (gdbPulseUri,
                                role,
@@ -148,8 +141,9 @@ namespace Lemoine.DataRepository
     public override Uri ResolveUri (Uri baseUri,
                                     string relativeUri)
     {
-      log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1} /B",
-                       baseUri, relativeUri);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri} /B");
+      }
 
       // Try the different possible base paths
       Uri result = null;
@@ -157,17 +151,12 @@ namespace Lemoine.DataRepository
       result = base.ResolveUri (baseUri, relativeUri);
       if (result != null) {
         if (result.IsFile && !File.Exists (result.LocalPath)) {
-          log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                           "resulted URI is {2} with base default path " +
-                           "but the file does not exist, " +
-                           "try another baseUri",
-                           baseUri, relativeUri, result);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: resulted URI is {result} with base default path but the file does not exist, try another baseUri");
+          }
         }
         else {
-          log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                          "consider base path is the default one, " +
-                          "result is {2}",
-                          baseUri, relativeUri, result);
+          log.Info ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: consider base path is the default one, result is {result}");
           return result;
         }
       }
@@ -177,17 +166,12 @@ namespace Lemoine.DataRepository
                                 relativeUri);
       if (result != null) {
         if (result.IsFile && !File.Exists (result.LocalPath)) {
-          log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                           "resulted URI is {2} with current directory " +
-                           "but the file does not exist, " +
-                           "try another baseUri",
-                           baseUri, relativeUri, result);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: resulted URI is {result} with current directory but the file does not exist, try another baseUri");
+          }
         }
         else {
-          log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                          "consider base path is the current directory {2}, " +
-                          "result is {3}",
-                          baseUri, relativeUri, testBaseUri, result);
+          log.Info ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: consider base path is the current directory {testBaseUri}, result is {result}");
           return result;
         }
       }
@@ -198,17 +182,12 @@ namespace Lemoine.DataRepository
                                   relativeUri);
         if (result != null) {
           if (result.IsFile && !File.Exists (result.LocalPath)) {
-            log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                             "resulted URI is {2} with current directory " +
-                             "but the file does not exist, " +
-                             "try another baseUri",
-                             baseUri, relativeUri, result);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: resulted URI is {result} with current directory but the file does not exist, try another baseUri");
+            }
           }
           else {
-            log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                            "consider base path is the current directory {2}, " +
-                            "result is {3}",
-                            baseUri, relativeUri, testBaseUri, result);
+            log.Info ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: consider base path is the current directory {testBaseUri}, result is {result}");
             return result;
           }
         }
@@ -222,9 +201,7 @@ namespace Lemoine.DataRepository
       // 4. "Application path"
       string programPath = ProgramInfo.AbsoluteDirectory;
       if (null == programPath) {
-        log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                        "could not get the program path",
-                        baseUri, relativeUri);
+        log.Info ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: could not get the program path");
       }
       else {
         testBaseUri = new Uri (programPath);
@@ -232,18 +209,12 @@ namespace Lemoine.DataRepository
                                   relativeUri);
         if (result != null) {
           if (result.IsFile && !File.Exists (result.LocalPath)) {
-            log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                             "resulted URI is {2} with application path " +
-                             "but the file does not exist, " +
-                             "try another baseUri",
-                             baseUri, relativeUri, result);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: resulted URI is {result} with application path but the file does not exist, try another baseUri");
+            }
           }
           else {
-            log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                            "consider base path is " +
-                            "the application path {2}, " +
-                            "result is {3}",
-                            baseUri, relativeUri, testBaseUri, result);
+            log.Info ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: consider base path is the application path {testBaseUri}, result is {result}");
             return result;
           }
         }
@@ -254,29 +225,19 @@ namespace Lemoine.DataRepository
                                 relativeUri);
       if (result != null) {
         if (result.IsFile && !File.Exists (result.LocalPath)) {
-          log.DebugFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                           "resulted URI is {2} with assembly path " +
-                           "but the file does not exist, " +
-                           "try another baseUri",
-                           baseUri, relativeUri, result);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: resulted URI is {result} with assembly path but the file does not exist, try another baseUri");
+          }
         }
         else {
-          log.InfoFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                          "consider base path is " +
-                          "the assembly path {2}, " +
-                          "result is {3}",
-                          baseUri, relativeUri, testBaseUri, result);
+          log.Info ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: consider base path is the assembly path {testBaseUri}, result is {result}");
           return result;
         }
       }
       // 6. Fallback to the default method
       result = base.ResolveUri (baseUri, relativeUri);
-      log.WarnFormat ("ResolveUri baseUri={0} relativeUri={1}: " +
-                      "no valid URI was found, use the default one {2}",
-                      baseUri, relativeUri,
-                      result);
+      log.Warn ($"ResolveUri baseUri={baseUri} relativeUri={relativeUri}: no valid URI was found, use the default one {result}");
       return result;
     }
-    #endregion
   }
 }

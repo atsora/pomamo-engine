@@ -71,8 +71,7 @@ namespace Pulse.Web.Operation
         var machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (request.MachineId);
         if (null == machine) {
           if (log.IsErrorEnabled) {
-            log.ErrorFormat ("GetWithoutCache: machine with id {0} is not a monitored machine",
-              request.MachineId);
+            log.Error ($"GetWithoutCache: machine with id {request.MachineId} is not a monitored machine");
           }
           return new ErrorDTO ("Invalid machine", ErrorStatus.WrongRequestParameter);
         }
@@ -212,8 +211,7 @@ namespace Pulse.Web.Operation
 
         if (null == group) {
           if (log.IsErrorEnabled) {
-            log.ErrorFormat ("GetWithoutCache: group with id {0} is not valid",
-              request.GroupId);
+            log.Error ($"GetWithoutCache: group with id {request.GroupId} is not valid");
           }
           return new ErrorDTO ("Invalid group", ErrorStatus.WrongRequestParameter);
         }
@@ -350,7 +348,7 @@ namespace Pulse.Web.Operation
             responseDto.Running = currentMachineMode.MachineMode.Running;
           }
           else {
-            log.WarnFormat ("GetWithoutCache: current machine mode at {0} is too old", currentMachineMode.DateTime);
+            log.Warn ($"GetWithoutCache: current machine mode at {currentMachineMode.DateTime} is too old");
           }
         }
       }

@@ -22,7 +22,6 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class DayTemplateConfig : UserControl, IConfigControlObservable<IDayTemplate>
   {
-    #region Members
     SortableBindingList<IDayTemplate> m_dayTemplates = new SortableBindingList<IDayTemplate>();
     
     BindingList<IDayTemplateItem> m_dayTemplateItems = null;
@@ -33,11 +32,9 @@ namespace Lemoine.ConfigControls
     IDictionary<int,IList<IDayTemplateItem>> m_itemDeleteList = new Dictionary<int,IList<IDayTemplateItem>>();
     
     ISet<IConfigControlObserver<IDayTemplate>> m_observers = new HashSet<IConfigControlObserver<IDayTemplate>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DayTemplateConfig).FullName);
 
-    #region Getters / Setters
     IDayTemplate SelectedDayTemplate {
       get {
         if (dayTemplateDataGridView.SelectedRows.Count == 1) {
@@ -57,7 +54,6 @@ namespace Lemoine.ConfigControls
         return null;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -115,8 +111,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("DayTemplateConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("DayTemplateConfigLoad: no DAO factory is defined");
         return;
       }
       

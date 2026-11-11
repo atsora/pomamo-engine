@@ -19,15 +19,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class EventLevelSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "SelectionText";
     IList<IEventLevel> m_eventLevels = null;
     IEventLevel m_eventLevel = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventLevelSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -109,7 +106,6 @@ namespace Lemoine.DataReferenceControls
         this.m_eventLevel = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Event
     /// <summary>
@@ -136,7 +132,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -217,6 +212,5 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
   }
 }

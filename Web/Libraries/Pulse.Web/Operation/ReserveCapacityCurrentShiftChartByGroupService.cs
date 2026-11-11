@@ -40,7 +40,6 @@ namespace Pulse.Web.Operation
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -56,7 +55,7 @@ namespace Pulse.Web.Operation
           groups = await GetGroupsAsync (request.ParentGroupId);
         }
         catch (InvalidOperationException) {
-          log.FatalFormat ("Get: unexpected business response");
+          log.Fatal ("Get: unexpected business response");
           return new ErrorDTO ("Unexpected response", ErrorStatus.UnexpectedError);
         }
       }
@@ -133,7 +132,7 @@ namespace Pulse.Web.Operation
       var businessResponse = await Lemoine.Business.ServiceProvider
         .GetAsync (businessRequest);
       if (null == businessResponse) {
-        log.FatalFormat ("GetWithoutCache: unexpected null business response");
+        log.Fatal ("GetWithoutCache: unexpected null business response");
         throw new InvalidOperationException ("Unexpected response");
       }
       return await Task.WhenAll (businessResponse.Children
@@ -147,6 +146,5 @@ namespace Pulse.Web.Operation
         .GetAsync (businessRequest);
       return (group, reserveCapacityCurrentShift);
     }
-    #endregion // Methods
   }
 }

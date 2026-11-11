@@ -17,8 +17,6 @@ namespace Lemoine.WebService
   public class OperationService : Service
   {
 
-    #region Methods
-
     #region GetOperationCycleDeliverablePieceWithWorkInformation
     /// <summary>
     /// Response to GET request for GetOperationCycleDeliverablePiece
@@ -32,8 +30,6 @@ namespace Lemoine.WebService
                                                    request);
     }    
     #endregion //GetOperationCycleDeliverablePieceWithWorkInformation
-    
-    #endregion // Methods
     
     
   }

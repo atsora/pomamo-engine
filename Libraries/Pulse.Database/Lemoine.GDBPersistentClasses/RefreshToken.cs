@@ -21,12 +21,10 @@ namespace Lemoine.GDBPersistentClasses
     , IComparable, IComparable<IRefreshToken>
     , IEquatable<IRefreshToken>
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IUser m_user;
     DateTime m_creation = DateTime.UtcNow;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (RefreshToken).FullName);
 

@@ -16,7 +16,6 @@ namespace ConfiguratorPlugins
   /// </summary>
   internal class ItemPlugin : GenericItem, IConfigurator
   {
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -94,7 +93,6 @@ namespace ConfiguratorPlugins
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

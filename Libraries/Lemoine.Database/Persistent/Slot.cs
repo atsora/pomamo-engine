@@ -32,11 +32,9 @@ namespace Lemoine.Database.Persistent
       return log;
     }
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
     Lemoine.Threading.IChecked m_caller = null;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -55,7 +53,6 @@ namespace Lemoine.Database.Persistent
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Modification tracker level
     /// </summary>
@@ -218,7 +215,6 @@ namespace Lemoine.Database.Persistent
       // disable once ValueParameterNotUsed
       set { }
     }
-    #endregion // Getters / Setters
 
     #region IChecked implementation
     /// <summary>
@@ -280,7 +276,6 @@ namespace Lemoine.Database.Persistent
     public abstract bool ReferenceDataEquals (ISlot obj);
     #endregion // IMergeble implementation
 
-    #region Methods
     /// <summary>
     /// Merge two slots for the same period when ReferenceDataEquals returns true
     /// </summary>
@@ -321,10 +316,7 @@ namespace Lemoine.Database.Persistent
     public virtual ISlot Clone (UtcDateTimeRange newRange)
     {
       if (newRange.IsEmpty ()) {
-        log.ErrorFormat ("Clone: " +
-                         "empty newRange. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"Clone: empty newRange. StackTrace: {System.Environment.StackTrace}");
       }
       
       var newSlot = (Slot) Clone ();
@@ -442,6 +434,5 @@ namespace Lemoine.Database.Persistent
       Debug.Assert (this.EndDateTime.Value.Equals (nextSlot.BeginDateTime.Value));
       this.EndDateTime = nextSlot.EndDateTime;
     }
-    #endregion // Methods
   }
 }

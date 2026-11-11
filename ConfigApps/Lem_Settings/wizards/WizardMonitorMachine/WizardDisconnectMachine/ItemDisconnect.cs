@@ -18,7 +18,6 @@ namespace WizardMonitorMachine
   {
     internal const string MACHINE = "machine";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -92,7 +91,6 @@ namespace WizardMonitorMachine
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

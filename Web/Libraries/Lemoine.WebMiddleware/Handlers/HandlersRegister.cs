@@ -20,9 +20,6 @@ namespace Lemoine.WebMiddleware.Handlers
 
     readonly IHandlersResolver m_handlersResolver;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

@@ -16,11 +16,9 @@ namespace Lemoine.Info.ConfigReader
   /// </summary>
   public sealed class UpdatingConfigReader : IGenericConfigReader, IPersistentConfigWriter
   {
-    #region Members
     IGenericConfigReader m_configReader;
     IPersistentConfigWriter m_configWriter;
     readonly object m_configReaderLock = new object ();
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (UpdatingConfigReader).FullName);
 
@@ -44,7 +42,6 @@ namespace Lemoine.Info.ConfigReader
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a config reader
     /// </summary>
@@ -68,7 +65,6 @@ namespace Lemoine.Info.ConfigReader
         m_configWriter = configWriter;
       }
     }
-    #endregion // Methods
 
     #region IGenericConfigReader implementation
     /// <summary>

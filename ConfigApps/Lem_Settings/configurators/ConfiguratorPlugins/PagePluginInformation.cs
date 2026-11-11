@@ -23,7 +23,6 @@ namespace ConfiguratorPlugins
   {
     ILog log = LogManager.GetLogger<PagePluginInformation> ();
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -53,7 +52,6 @@ namespace ConfiguratorPlugins
         return LemSettingsGlobal.PageFlag.NONE;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

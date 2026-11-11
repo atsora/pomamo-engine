@@ -91,26 +91,26 @@ namespace Lemoine.Extensions.AutoReason
 
       if (this.ReasonScore < 0.0) {
         string message = string.Format ("invalid reason score {0}: negative", this.ReasonScore);
-        log.ErrorFormat ("IsValid: {0}", message);
+        log.Error ($"IsValid: {message}");
         errorList.Add (message);
       }
       if (this.ManualScore.HasValue && this.ManualScore.Value < 0.0) {
         string message = string.Format ("invalid manual score {0}: negative", this.ReasonScore);
-        log.ErrorFormat ("IsValid: {0}", message);
+        log.Error ($"IsValid: {message}");
         errorList.Add (message);
       }
 
       if (!string.IsNullOrEmpty (this.DefaultReasonTranslationKey)
         && string.IsNullOrEmpty (this.DefaultReasonTranslationValue)) {
         string message = string.Format ("a default reason translation key {0} is set while no translation value is set", this.DefaultReasonTranslationKey);
-        log.ErrorFormat ("IsValid: {0}", message);
+        log.Error ($"IsValid: {message}");
         errorList.Add (message);
       }
 
       if (string.IsNullOrEmpty (this.DefaultReasonTranslationKey)
         && !string.IsNullOrEmpty (this.DefaultReasonTranslationValue)) {
         string message = string.Format ("a default reason translation value {0} is set while no translation key is set", this.DefaultReasonTranslationValue);
-        log.ErrorFormat ("IsValid: {0}", message);
+        log.Error ($"IsValid: {message}");
         errorList.Add (message);
       }
 
@@ -119,7 +119,7 @@ namespace Lemoine.Extensions.AutoReason
           if (0 != this.ReasonId) { // Else consider the default reason
             if (this.ReasonId <= 0) {
               string message = string.Format ("invalid reason id {0}: not strictly positive", this.ReasonId);
-              log.ErrorFormat ("IsValid: {0}", message);
+              log.Error ($"IsValid: {message}");
               errorList.Add (message);
             }
             else {
@@ -127,7 +127,7 @@ namespace Lemoine.Extensions.AutoReason
                 .FindById (this.ReasonId);
               if (null == reason) {
                 string message = string.Format ("invalid reason id {0}: unknown reason", this.ReasonId);
-                log.ErrorFormat ("IsValid: {0}", message);
+                log.Error ($"IsValid: {message}");
                 errorList.Add (message);
               }
             }

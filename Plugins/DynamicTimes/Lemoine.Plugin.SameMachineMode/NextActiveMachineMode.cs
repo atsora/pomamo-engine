@@ -100,7 +100,7 @@ namespace Lemoine.Plugin.SameMachineMode
             if (0 == machineModeId) {
               if (!fact.DateTimeRange.ContainsElement (dateTime)) {
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: no fact at {0} (initial gap) => NotApplicable", dateTime);
+                  log.Warn ($"Get: no fact at {dateTime} (initial gap) => NotApplicable");
                 }
                 return this.CreateNotApplicable ();
               }
@@ -121,8 +121,7 @@ namespace Lemoine.Plugin.SameMachineMode
                 && fact.CncMachineMode.Running.Value) {
                 if (machineModeChange) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("Get: machine mode change at {0} with an active machine mode {1}",
-                      fact.Begin, fact.CncMachineMode.Id);
+                    log.Debug ($"Get: machine mode change at {fact.Begin} with an active machine mode {fact.CncMachineMode.Id}");
                   }
                   return this.CreateFinal (fact.Begin);
                 }
@@ -132,8 +131,7 @@ namespace Lemoine.Plugin.SameMachineMode
                     .FindOverlapsRangeAscending (this.Machine, beforeHintRange, step);
                   if (factsBefore.Any (f => f.CncMachineMode.Id != machineModeId)) {
                     if (log.IsDebugEnabled) {
-                      log.DebugFormat ("Get: machine mode change before hint {0}",
-                        range.Lower);
+                      log.Debug ($"Get: machine mode change before hint {range.Lower}");
                     }
                     return this.CreateFinal (fact.Begin);
                   }
@@ -146,7 +144,7 @@ namespace Lemoine.Plugin.SameMachineMode
           if (0 == machineModeId) { // No fact in range
             if (range.Upper.HasValue && IsFactAfter (range.Upper.Value)) {
               if (log.IsWarnEnabled) {
-                log.WarnFormat ("Get: first fact after limit {0} (initial gap) => NoData", limit);
+                log.Warn ($"Get: first fact after limit {limit} (initial gap) => NoData");
               }
               return this.CreateNoData ();
             }

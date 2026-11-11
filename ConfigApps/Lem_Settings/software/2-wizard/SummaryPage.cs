@@ -16,11 +16,8 @@ namespace Lem_Settings
   /// </summary>
   public partial class SummaryPage : GenericWizardPage, IWizardPage
   {
-    #region Members
     string m_log = "";
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -43,7 +40,6 @@ namespace Lem_Settings
     /// Return the summary formated for the logs
     /// </summary>
     public string Log { get { return m_log; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -55,7 +51,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Refresh the summary contained in the page
     /// </summary>
@@ -161,6 +156,5 @@ namespace Lem_Settings
     /// </summary>
     /// <returns></returns>
     public IList<string> GetSummary (ItemData data) { return null; }
-    #endregion // Methods
   }
 }

@@ -19,9 +19,6 @@ namespace Lemoine.Core.StateMachine
   {
     readonly ILog log = LogManager.GetLogger (typeof (CheckMaxTime<TContext>).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

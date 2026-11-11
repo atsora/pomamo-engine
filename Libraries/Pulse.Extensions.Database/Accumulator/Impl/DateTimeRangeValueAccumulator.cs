@@ -39,19 +39,16 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
   public abstract class DateTimeRangeValueAccumulator<T, U> : Accumulator, IAccumulator
   {
 
-    #region Members
     IList<DateTimeRangeValue<U>> m_dateTimeRangeValues = new List<DateTimeRangeValue<U>> ();
     readonly Func<T, U> m_insert;
     readonly Func<U, T, U> m_add;
     readonly Func<T, U> m_delete;
     readonly Func<U, T, U> m_remove;
     readonly Func<U, bool> m_purge;
-    #endregion // Members
 
     // disable once StaticFieldInGenericType
     static readonly ILog log = LogManager.GetLogger (typeof (DateTimeRangeValueAccumulator<T, U>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Accumulator values
     /// </summary>
@@ -76,7 +73,6 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -101,7 +97,6 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a value in the accumulator
     /// </summary>
@@ -193,7 +188,6 @@ namespace Pulse.Extensions.Database.Accumulator.Impl
     {
       m_dateTimeRangeValues = m_dateTimeRangeValues.Where (t => !m_purge (t.Value)).ToList ();
     }
-    #endregion // Methods
   }
 
   /// <summary>

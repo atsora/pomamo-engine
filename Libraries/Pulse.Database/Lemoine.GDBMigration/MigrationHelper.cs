@@ -21,12 +21,10 @@ namespace Lemoine.GDBMigration
   /// </summary>
   public class MigrationHelper: IMigrationHelper
   {
-    #region Members
     string m_connectionString;
     bool m_checkCache = true;
     Migrator.Migrator m_migrator = null; // To acess it, use the property Migrator instead
     string m_cacheFilePath = CACHE_FILE;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (MigrationHelper).FullName);
 
@@ -42,7 +40,6 @@ namespace Lemoine.GDBMigration
     static readonly string NPGSQL_COMMAND_TIMEOUT_KEY_KEY = "Database.Npgsql.CommandTimeout.Key";
     static readonly string NPGSQL_COMMAND_TIMEOUT_KEY_DEFAULT = "Command Timeout";
 
-    #region Getters / Setters
     /// <summary>
     /// Connection string during the migration
     /// </summary>
@@ -100,7 +97,6 @@ namespace Lemoine.GDBMigration
         return m_migrator;
       }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -149,7 +145,6 @@ namespace Lemoine.GDBMigration
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Migrate to the given version
     /// 
@@ -196,15 +191,13 @@ namespace Lemoine.GDBMigration
       
       Assembly ass = Assembly.GetCallingAssembly();
       if (ass.Location == null) {
-        log.ErrorFormat ("MigrateFromCache: " +
-                         "unable to get the location of the calling assembly");
+        log.Error ("MigrateFromCache: unable to get the location of the calling assembly");
         return true;
       }
       FileInfo configInfo = new FileInfo(this.m_cacheFilePath);
       FileInfo assInfo = new FileInfo(ass.Location);
       if (configInfo.LastWriteTime < assInfo.LastWriteTime) {
-        log.InfoFormat ("MigrateFromCache: " +
-                        "cache file is too old");
+        log.Info ("MigrateFromCache: cache file is too old");
         return true;
       }
       
@@ -220,6 +213,5 @@ namespace Lemoine.GDBMigration
     {
       m_cacheFilePath = Path.Combine (PulseInfo.LocalConfigurationDirectory, CACHE_FILE);
     }
-    #endregion
   }
 }

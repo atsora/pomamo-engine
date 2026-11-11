@@ -18,11 +18,8 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageMachine : GenericWizardPage, IWizardPage
   {
-    #region Members
     bool m_modification = false;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -37,7 +34,6 @@ namespace WizardMonitorMachine
         return "Select an existing machine whose acquisition will be parametered.";
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

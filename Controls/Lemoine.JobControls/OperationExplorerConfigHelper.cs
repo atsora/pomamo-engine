@@ -15,13 +15,9 @@ namespace Lemoine.JobControls
   /// </summary>
   internal class OperationExplorerConfigHelper
   {
-    #region Members
     static readonly bool DEFAULT_PART_AT_THE_TOP = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationExplorerConfigHelper).FullName);
-
-    #region Getters / Setters
 
     /// <summary>
     /// Must part appear at the top of the tree (instead of workorder or job) ?
@@ -38,7 +34,6 @@ namespace Lemoine.JobControls
                              DEFAULT_PART_AT_THE_TOP);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -48,9 +43,6 @@ namespace Lemoine.JobControls
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region Instance
     static OperationExplorerConfigHelper Instance

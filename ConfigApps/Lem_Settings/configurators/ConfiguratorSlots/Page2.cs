@@ -15,11 +15,8 @@ namespace ConfiguratorSlots
   /// </summary>
   public partial class Page2 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     IPartPage2 m_part = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Characterization of the page (see the documentation of the PageFlags)
     /// </summary>
@@ -48,7 +45,6 @@ namespace ConfiguratorSlots
     /// Some help regarding the page
     /// </summary>
     public string Help { get { return m_part.Help; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

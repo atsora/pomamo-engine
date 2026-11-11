@@ -42,7 +42,6 @@ namespace Lemoine.Web.Cache
 #endif // NSERVICEKIT
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -54,6 +53,5 @@ namespace Lemoine.Web.Cache
       
       return new OkDTO ("");
     }
-#endregion // Methods
   }
 }

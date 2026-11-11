@@ -14,12 +14,10 @@ namespace Lem_Settings.Gui.Shared_controls
   /// </summary>
   public partial class CentralHeader : UserControl
   {
-    #region Getters / Setters
     /// <summary>
     /// True is the header contains an item
     /// </summary>
     public bool HasMessage { get; set; }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -31,7 +29,6 @@ namespace Lem_Settings.Gui.Shared_controls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the text and the style
     /// Update the value "HasMessage"
@@ -75,6 +72,5 @@ namespace Lem_Settings.Gui.Shared_controls
       int d = (a < 0.5) ? 0 : 255;
       return  Color.FromArgb(d, d, d);
     }
-    #endregion // Methods
   }
 }

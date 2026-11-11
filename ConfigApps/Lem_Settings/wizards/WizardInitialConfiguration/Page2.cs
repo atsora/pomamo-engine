@@ -15,11 +15,8 @@ namespace WizardInitialConfiguration
   /// </summary>
   internal partial class Page2 : GenericWizardPage, IWizardPage
   {
-    #region Members
     IDictionary<string, DisplayCell> m_cells = new Dictionary<string, DisplayCell>();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -32,7 +29,6 @@ namespace WizardInitialConfiguration
           "in the reports and interfaces.\n\n" +
           "Each pattern is made of at least one field from the related item, included in \"<%\" and \"%>\". " +
           "For instance for the company:\n<%Code%>:<%Name%>"; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

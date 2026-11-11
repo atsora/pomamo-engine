@@ -22,10 +22,8 @@ namespace Lem_AspService.Services
   {
     readonly ILog log = LogManager.GetLogger (typeof (DefaultServiceAssemblies).FullName);
 
-    #region Getters / Setters
     readonly IEnumerable<Assembly> m_assemblies;
     readonly IExtensionsLoader? m_extensionsLoader;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

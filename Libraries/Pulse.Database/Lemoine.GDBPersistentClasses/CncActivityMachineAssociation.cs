@@ -26,12 +26,10 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class CncActivityMachineAssociation : MachineAssociation, ICloneable
   {
-    #region Members
     IMachineMode m_machineMode;
     IMachineStateTemplate m_machineStateTemplate;
     IMachineObservationState m_machineObservationState;
     IShift m_shift;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -61,7 +59,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -168,7 +165,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region ICloneable implementation
     /// <summary>
@@ -223,15 +219,12 @@ namespace Lemoine.GDBPersistentClasses
       if (oldSlot is IReasonSlot) {
         // This should not happen !
         Debug.Assert (false);
-        log.FatalFormat ("MergeDataWithOldSlot: " +
-                         "unexpected ReasonSlot");
+        log.Fatal ("MergeDataWithOldSlot: unexpected ReasonSlot");
         throw new ArgumentException ("CncActivity should not overlap an existing ReasonSlot");
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeDataWithOldSlot: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeDataWithOldSlot: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -246,7 +239,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void MakeAnalysis ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("MakeAnalysis: not valid");
+      log.Fatal ("MakeAnalysis: not valid");
       throw new NotImplementedException ("ActivityReasonMachineAssociation.MakeAnalysis");
     }
 
@@ -261,9 +254,7 @@ namespace Lemoine.GDBPersistentClasses
         ModelDAOHelper.DAOFactory.MachineStatusDAO
         .FindById (this.Machine.Id);
       if (false == ProcessAssociation (machineStatus)) {
-        log.ErrorFormat ("MakeAnalysis: " +
-                         "only partially applied because the observation state slots may have changed " +
-                         "because of the auto machine state template process");
+        log.Error ("MakeAnalysis: only partially applied because the observation state slots may have changed because of the auto machine state template process");
         throw new Exception ("Partially applied");
       }
     }
@@ -438,8 +429,9 @@ namespace Lemoine.GDBPersistentClasses
                           DateTime begin,
                           DateTime end)
     {
-      log.DebugFormat ("AddNoDataPeriod {0}-{1}",
-                       begin, end);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"AddNoDataPeriod {begin}-{end}");
+      }
 
       IMachineMode noDataMachineMode =
         ModelDAOHelper.DAOFactory.MachineModeDAO
@@ -455,10 +447,9 @@ namespace Lemoine.GDBPersistentClasses
       foreach (IObservationStateSlot noDataObservationStateSlot in noDataObservationStateSlots) {
         SetActive ();
         if (null == noDataObservationStateSlot.MachineObservationState) {
-          log.DebugFormat ("AddNoDataPeriod {0}-{1}: " +
-                           "Process template between {2} and {3}",
-                           begin, end,
-                           noDataObservationStateSlot.BeginDateTime, end);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"AddNoDataPeriod {begin}-{end}: Process template between {noDataObservationStateSlot.BeginDateTime} and {end}");
+          }
           // Note: this should happen very rarely
           // - Process the template between noDataObservationStateSlot.BeginDateTime and end
           // TODO: cancellationToken
@@ -466,8 +457,7 @@ namespace Lemoine.GDBPersistentClasses
               .ProcessTemplate (CancellationToken.None, new UtcDateTimeRange (noDataObservationStateSlot.BeginDateTime, end),
                                 null, true, null, null)) {
             Debug.Assert (false); // This should not happen because maxAnalysisDateTime parameter is null
-            log.FatalFormat ("AddNoDataPeriod: " +
-                             "ProcessTemplate interrupted although maxAnalysisDateTime is not set");
+            log.Fatal ("AddNoDataPeriod: ProcessTemplate interrupted although maxAnalysisDateTime is not set");
             throw new Lemoine.GDBPersistentClasses.InterruptedAnalysis ("AddNoDataPeriod");
           }
           oneMachineStateTemplateProcessed = true;
@@ -487,11 +477,7 @@ namespace Lemoine.GDBPersistentClasses
         SetActive ();
         Debug.Assert (null != noDataObservationStateSlot.MachineObservationState);
         if (null == noDataObservationStateSlot.MachineObservationState) {
-          log.ErrorFormat ("AddNoDataPeriod {0}-{1}: " +
-                           "null machine observation state in slot {2}, " +
-                           "may be because the transaction was not serializable",
-                           begin, end,
-                           noDataObservationStateSlot);
+          log.Error ($"AddNoDataPeriod {begin}-{end}: null machine observation state in slot {noDataObservationStateSlot}, may be because the transaction was not serializable");
           throw new Lemoine.GDBUtils.TransientAnalysisException ("AddNoDataPeriod: null machine observation state in slot");
         }
         UtcDateTimeRange range;
@@ -511,17 +497,16 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (association.End.HasValue);
         Debug.Assert (Bound.Compare<DateTime> (association.Begin, association.End.Value) < 0);
         if (false == association.ProcessAssociation (machineStatus)) {
-          log.FatalFormat ("AddNoDataPeriod: " +
-                           "Machine mode NoData should be not configured with an AutoMachineStateTemplate " +
-                           "so true should be always returned");
+          log.Fatal ("AddNoDataPeriod: Machine mode NoData should be not configured with an AutoMachineStateTemplate so true should be always returned");
           Debug.Assert (false);
           throw new Exception ("Unexpected behavior");
         }
       }
       SetActive ();
 
-      log.DebugFormat ("AddNoDataPeriod {0}-{1} ok",
-                       begin, end);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"AddNoDataPeriod {begin}-{end} ok");
+      }
     }
 
     UpperBound<DateTime> GetManualActivityLimit (IMachineStatus machineStatus)

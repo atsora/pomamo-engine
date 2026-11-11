@@ -79,9 +79,7 @@ namespace Pulse.Web.MachineStateTemplate
           currentMachineStateTemplate = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
             .FindById (currentMachineStateTemplateId);
           if (null == currentMachineStateTemplate) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown machine state template with ID {0}",
-                             currentMachineStateTemplateId);
+            log.Error ($"GetWithoutCache: unknown machine state template with ID {currentMachineStateTemplateId}");
             return new ErrorDTO ("No machine state template with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -93,9 +91,7 @@ namespace Pulse.Web.MachineStateTemplate
           role = ModelDAOHelper.DAOFactory.RoleDAO
             .FindById (roleId);
           if (null == role) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown role with ID {0}",
-                             roleId);
+            log.Error ($"GetWithoutCache: unknown role with ID {roleId}");
             return new ErrorDTO ("No role with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }

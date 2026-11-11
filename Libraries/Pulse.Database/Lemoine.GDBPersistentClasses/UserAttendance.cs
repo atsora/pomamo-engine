@@ -26,12 +26,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class UserAttendance: GlobalModification, IUserAttendance
   {
-    #region Members
     IUser m_user;
     IShift m_shift;
     DateTime? m_begin;
     DateTime? m_end;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (UserAttendance).FullName);
 
@@ -52,7 +50,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -74,8 +71,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("User.set: " +
-                           "null value");
+          log.Error ("User.set: null value");
           throw new ArgumentNullException ("UserAttendance.User");
         }
         m_user = value;
@@ -240,7 +236,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// Make the analysis
@@ -286,7 +281,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 
@@ -309,8 +304,7 @@ namespace Lemoine.GDBPersistentClasses
           string message =
             string.Format ("slot {0} removed because after check-out time {0}",
                            existingUserSlot, this.End.Value);
-          log.WarnFormat ("UpdateUserSlotCheckOut: {0}",
-                          message);
+          log.Warn ($"UpdateUserSlotCheckOut: {message}");
           AddAnalysisLog (LogLevel.WARN,
                           message);
           ModelDAOHelper.DAOFactory.UserSlotDAO
@@ -327,8 +321,7 @@ namespace Lemoine.GDBPersistentClasses
         string message = string.Format ("check-out without any running slot" +
                                         "at {0} for user {1}",
                                         this.End.Value, this.User);
-        log.WarnFormat ("UpdateUserSlotCheckOut: {0}",
-                        message);
+        log.Warn ($"UpdateUserSlotCheckOut: {message}");
         AddAnalysisLog (LogLevel.WARN,
                         message);
       }
@@ -368,9 +361,9 @@ namespace Lemoine.GDBPersistentClasses
           if (Bound.Compare<DateTime> (begin.Value, userShiftSlot.BeginDateTime) < 0) {
             Debug.Assert (userShiftSlot.BeginDateTime.HasValue);
             // No shift in [begin, userShiftSlot.BeginDateTime[
-            log.DebugFormat ("UpdateUserSlotPeriod: " +
-                             "User={0} and No shift between {1} and {2}",
-                             this.User, begin, userShiftSlot.BeginDateTime);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"UpdateUserSlotPeriod: User={this.User} and No shift between {begin} and {userShiftSlot.BeginDateTime}");
+            }
             UserShiftAttendance userShiftAttendance =
               new UserShiftAttendance (this.User, new UtcDateTimeRange (begin.Value, userShiftSlot.BeginDateTime.Value), this.MainModification);
             userShiftAttendance.Apply ();
@@ -379,10 +372,9 @@ namespace Lemoine.GDBPersistentClasses
             begin = userShiftSlot.BeginDateTime;
             UpperBound<DateTime> end = UpperBound.GetMinimum<DateTime> (new UpperBound<DateTime> (this.End),
                                                                         userShiftSlot.EndDateTime);
-            log.DebugFormat ("UpdateUserSlotPeriod: " +
-                             "User={0} and shift={1} between {2} and {3}",
-                             this.User, userShiftSlot.Shift,
-                             begin, end);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"UpdateUserSlotPeriod: User={this.User} and shift={userShiftSlot.Shift} between {begin} and {end}");
+            }
             UserShiftAttendance userShiftAttendance =
               new UserShiftAttendance (this.User, new UtcDateTimeRange (begin.Value, end), this.MainModification);
             userShiftAttendance.Shift = userShiftSlot.Shift;
@@ -393,9 +385,9 @@ namespace Lemoine.GDBPersistentClasses
         if (Bound.Compare<DateTime> (begin, (UpperBound<DateTime>) this.End) < 0) {
           // No shift in [begin, this.End[
           Debug.Assert (begin.HasValue);
-          log.DebugFormat ("UpdateUserSlotPeriod: " +
-                           "User={0} and No shift between {1} and {2}",
-                           this.User, begin, this.End);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"UpdateUserSlotPeriod: User={this.User} and No shift between {begin} and {this.End}");
+          }
           UserShiftAttendance userShiftAttendance =
             new UserShiftAttendance (this.User, new UtcDateTimeRange (begin.Value, new UpperBound<DateTime>(this.End)), this.MainModification);
           userShiftAttendance.Apply ();
@@ -426,9 +418,7 @@ namespace Lemoine.GDBPersistentClasses
         // if the MachineStateTemplate should be updated to a new value
         Debug.Assert (null != impactedSlot.MachineStateTemplate); // Because of the request above
         if (null == impactedSlot.MachineStateTemplate) {
-          log.FatalFormat ("UpdateSiteAttendance: " +
-                           "null machine state template in slot {0}",
-                           impactedSlot);
+          log.Fatal ($"UpdateSiteAttendance: null machine state template in slot {impactedSlot}");
           return;
         }
         IMachineStateTemplate newMachineStateTemplate =
@@ -498,11 +488,9 @@ namespace Lemoine.GDBPersistentClasses
           association.Shift = shift;
           association.Parent = this.MainModification ?? this;
           association.Priority = this.StatusPriority;
-          log.DebugFormat ("UpdateMachineObservationStates: " +
-                           "create the association machine={0} machineStateTemplate={1} " +
-                           "begin={2} end={3}",
-                           association.Machine, association.MachineStateTemplate,
-                           association.Begin, association.End);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"UpdateMachineObservationStates: create the association machine={association.Machine} machineStateTemplate={association.MachineStateTemplate} begin={association.Begin} end={association.End}");
+          }
           ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
         }
       }

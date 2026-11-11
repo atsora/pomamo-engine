@@ -18,16 +18,13 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class ShiftTemplateSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     private System.Windows.Forms.Button m_okButton = null;
     IList<IShiftTemplate> m_shiftTemplates = null;
     IShiftTemplate m_shiftTemplate = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ShiftTemplateSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -118,7 +115,6 @@ namespace Lemoine.DataReferenceControls
         this.m_okButton = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Events
     /// <summary>
@@ -139,7 +135,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -177,7 +172,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void ShiftTemplateSelectionLoad(object sender, EventArgs e)
     {

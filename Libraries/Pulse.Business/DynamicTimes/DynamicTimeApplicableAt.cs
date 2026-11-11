@@ -22,15 +22,10 @@ namespace Lemoine.Business.DynamicTimes
     static readonly string DEFAULT_TIMEOUT_KEY = "Business.DynamicTimeApplicableAt.DefaultTimeout";
     static readonly TimeSpan DEFAULT_TIMEOUT_DEFAULT = CacheTimeOut.CurrentLong.GetTimeSpan ();
 
-    #region Members
     readonly IDynamicTimeExtension m_extension;
     readonly DateTime m_dateTime;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DynamicTimeApplicable).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -44,9 +39,6 @@ namespace Lemoine.Business.DynamicTimes
       m_dateTime = dateTime;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

@@ -12,12 +12,8 @@ namespace WizardCreateProduction
   /// </summary>
   public class ItemDataListShift
   {
-    #region Members
     IList<ItemDataShift> m_shifts = new List<ItemDataShift>();
     IList<ItemDataShift> m_shiftsTmp = null;
-    #endregion // Members
-
-    #region Getters / Setters
     
     /// <summary>
     /// Get ShiftSlot
@@ -55,7 +51,6 @@ namespace WizardCreateProduction
     /// Just a way to store a value
     /// </summary>
     public int ConflictNumberWithRecurrences { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -67,7 +62,6 @@ namespace WizardCreateProduction
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the different shift after having taken into account the recurrence
     /// </summary>
@@ -285,6 +279,5 @@ namespace WizardCreateProduction
 
       return text;
     }
-    #endregion // Methods
   }
 }

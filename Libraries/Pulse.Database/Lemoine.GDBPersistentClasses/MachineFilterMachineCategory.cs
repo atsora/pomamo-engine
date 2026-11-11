@@ -17,13 +17,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineFilterMachineCategory: MachineFilterItem, IMachineFilterMachineCategory
   {
-    #region Members
     IMachineCategory m_machineCategory;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineFilterMachineCategory).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated MachineCategory (not null)
     /// </summary>
@@ -34,14 +31,13 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.FatalFormat ("MachineCategory.set: null value");
+          log.Fatal ("MachineCategory.set: null value");
           throw new ArgumentNullException ("MachineCategory.set");
         }
         
         m_machineCategory = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

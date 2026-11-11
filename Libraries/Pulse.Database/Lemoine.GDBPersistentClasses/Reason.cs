@@ -30,7 +30,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly string DEFAULT_COLOR = "#FFFF00";
     
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name; // Can't be empty but can be null
@@ -47,11 +46,9 @@ namespace Lemoine.GDBPersistentClasses
     int? m_displayPriority;
     IProductionState m_productionState = null;
     string m_longDisplay; // Computed by PostgreSQL
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Reason).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -283,7 +280,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_productionState; }
       set { m_productionState = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -316,7 +312,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors    #endregion // Constructors
     
-    #region Members
     /// <summary>
     ///   Indicates whether the current object
     ///   is equal to another object of the same type
@@ -387,7 +382,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[Reason {this.Id}]";
       }
     }
-    #endregion // Members
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

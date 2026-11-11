@@ -24,13 +24,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class WorkOrderProject: BaseData, IWorkOrderProject
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IWorkOrder m_workOrder;
     IProject m_project;
     int m_quantity = 1;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (WorkOrderProject).FullName);
 
@@ -54,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -134,6 +131,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_quantity; }
       set { m_quantity = value; }
     }
-    #endregion
   }
 }

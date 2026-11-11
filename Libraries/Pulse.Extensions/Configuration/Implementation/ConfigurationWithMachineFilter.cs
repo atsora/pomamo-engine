@@ -50,18 +50,14 @@ namespace Pulse.Extensions.Configuration.Implementation
           if (0 != this.MachineFilterId) {
             if (null == ModelDAOHelper.DAOFactory.MachineFilterDAO
                 .FindById (this.MachineFilterId)) {
-              log.ErrorFormat ("IsValid: " +
-                               "MachineFilter {0} does not exist",
-                               this.MachineFilterId);
+              log.Error ($"IsValid: MachineFilter {this.MachineFilterId} does not exist");
               errorList.Add ("MachineFilter with ID "
                           + this.MachineFilterId
                           + " does not exist");
             }
           }
           else if (IsMachineFilterRequired ()) {
-            log.ErrorFormat ("IsValid: " +
-                             "MachineFilter was not set",
-                             this.MachineFilterId);
+            log.Error ($"IsValid: MachineFilter was not set, MachineFilterId={this.MachineFilterId}");
             errorList.Add ("MachineFilter not set");
           }
         }
@@ -94,9 +90,7 @@ namespace Pulse.Extensions.Configuration.Implementation
             var machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
               .FindById (machineFilterId);
             if (null == machineFilter) {
-              log.ErrorFormat ("CheckMachineFilter: " +
-                               "machine filter id {0} does not exist",
-                               machineFilterId);
+              log.Error ($"CheckMachineFilter: machine filter id {machineFilterId} does not exist");
               return false;
             }
             else {

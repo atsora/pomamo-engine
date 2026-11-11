@@ -29,7 +29,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IMachineCategory>
     , IConfigControlObserver<IMachineSubCategory>
   {
-    #region Members
     SortableBindingList<IMachineFilter> m_machineFilters =
       new SortableBindingList<IMachineFilter> ();
 
@@ -44,9 +43,7 @@ namespace Lemoine.ConfigControls
 
     ISet<IConfigControlObserver<IMachineFilter>> m_observers =
       new HashSet<IConfigControlObserver<IMachineFilter>> ();
-    #endregion // Members
 
-    #region Getter / Setter
     IMachineFilter SelectedMachineFilter
     {
       get
@@ -70,7 +67,6 @@ namespace Lemoine.ConfigControls
         return null;
       }
     }
-    #endregion Getter / Setter
 
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachineFilterConfig).FullName);
@@ -116,8 +112,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("MachineFilterConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("MachineFilterConfigLoad: no DAO factory is defined");
         return;
       }
 

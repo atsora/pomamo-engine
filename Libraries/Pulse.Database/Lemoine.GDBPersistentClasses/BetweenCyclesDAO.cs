@@ -41,9 +41,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (0 == entity.Id);
 
       if (0 != entity.Id) {
-        log.FatalFormat ("MakePersistent: " +
-                         "Id {0} is already known",
-                         entity.Id);
+        log.Fatal ($"MakePersistent: Id {entity.Id} is already known");
         throw new NotSupportedException ("SaveOnly element with an Id");
       }
       
@@ -53,17 +51,11 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (0 != entity.PreviousCycle.Id);
       Debug.Assert (0 != entity.NextCycle.Id);
       if (0 == entity.PreviousCycle.Id) { // Fallback, make it persistent
-        log.FatalFormat ("MakePersistent: " +
-                         "transient associated PreviousCycle " +
-                         "=> make PreviousCycle {0} persistent first",
-                         entity.PreviousCycle);
+        log.Fatal ($"MakePersistent: transient associated PreviousCycle => make PreviousCycle {entity.PreviousCycle} persistent first");
         ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistent (entity.PreviousCycle);
       }
       if (0 == entity.NextCycle.Id) { // Fallback, make it persistent
-        log.FatalFormat ("MakePersistent: " +
-                         "transient associated NextCycle " +
-                         "=> make NextCycle {0} persistent first",
-                         entity.NextCycle);
+        log.Fatal ($"MakePersistent: transient associated NextCycle => make NextCycle {entity.NextCycle} persistent first");
         ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistent (entity.NextCycle);
       }
       
@@ -83,9 +75,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (0 == entity.Id);
 
       if (0 != entity.Id) {
-        log.FatalFormat ("MakePersistent: " +
-                         "Id {0} is already known",
-                         entity.Id);
+        log.Fatal ($"MakePersistent: Id {entity.Id} is already known");
         throw new NotSupportedException ("SaveOnly element with an Id");
       }
 
@@ -95,17 +85,11 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (0 != entity.PreviousCycle.Id);
       Debug.Assert (0 != entity.NextCycle.Id);
       if (0 == entity.PreviousCycle.Id) { // Fallback, make it persistent
-        log.FatalFormat ("MakePersistent: " +
-                         "transient associated PreviousCycle " +
-                         "=> make PreviousCycle {0} persistent first",
-                         entity.PreviousCycle);
+        log.Fatal ($"MakePersistent: transient associated PreviousCycle => make PreviousCycle {entity.PreviousCycle} persistent first");
         await ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistentAsync (entity.PreviousCycle);
       }
       if (0 == entity.NextCycle.Id) { // Fallback, make it persistent
-        log.FatalFormat ("MakePersistent: " +
-                         "transient associated NextCycle " +
-                         "=> make NextCycle {0} persistent first",
-                         entity.NextCycle);
+        log.Fatal ($"MakePersistent: transient associated NextCycle => make NextCycle {entity.NextCycle} persistent first");
         await ModelDAOHelper.DAOFactory.OperationCycleDAO.MakePersistentAsync (entity.NextCycle);
       }
 
@@ -124,9 +108,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (0 != entity.Id);
 
       if (0 == entity.Id) {
-        log.FatalFormat ("UpdateOffsetDuration: " +
-                         "update the offset duration of an unsaved entity " +
-                         "=> fallback");
+        log.Fatal ("UpdateOffsetDuration: update the offset duration of an unsaved entity => fallback");
         BetweenCycles betweenCycles = (BetweenCycles) entity;
         betweenCycles.UpdateOffsetDuration ();
         NHibernateHelper.GetCurrentSession ().SaveOrUpdate (betweenCycles);

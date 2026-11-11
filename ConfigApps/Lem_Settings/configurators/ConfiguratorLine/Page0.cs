@@ -18,7 +18,6 @@ namespace ConfiguratorLine
   /// </summary>
   public partial class Page0 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -40,7 +39,6 @@ namespace ConfiguratorLine
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

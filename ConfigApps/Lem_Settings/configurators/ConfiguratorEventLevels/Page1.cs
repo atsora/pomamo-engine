@@ -18,11 +18,8 @@ namespace ConfiguratorEventLevel
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     bool m_toDelete = false;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -51,7 +48,6 @@ namespace ConfiguratorEventLevel
     IEventLevel CurrentEventLevel {
       get { return listEventLevels.SelectedValue as IEventLevel; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

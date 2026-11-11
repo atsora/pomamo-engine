@@ -20,7 +20,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (ComputerDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null Computer a valid value ?
     /// </summary>
@@ -65,7 +64,6 @@ namespace Lemoine.DataReferenceControls
         this.computerSelection1.SelectedComputers = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -84,9 +82,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("ComputerDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

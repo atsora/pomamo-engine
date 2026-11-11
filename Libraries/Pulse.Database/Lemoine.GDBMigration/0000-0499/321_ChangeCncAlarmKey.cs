@@ -46,7 +46,7 @@ namespace Lemoine.GDBMigration
                                TableName.CNC_ALARM + "type",
                                TableName.CNC_ALARM + "number");
       } catch (Exception e) {
-        log.ErrorFormat("Couldn't add the no overlap constraint: {0}", e);
+        log.Error ($"Couldn't add the no overlap constraint: {e}");
       }
     }
   }

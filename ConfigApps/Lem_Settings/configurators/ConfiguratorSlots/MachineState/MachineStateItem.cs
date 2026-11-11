@@ -21,7 +21,6 @@ namespace ConfiguratorSlots.MachineState
     internal const string HAS_SHIFT = "has_shift";
     internal const string FORCE_REBUILD = "force_rebuild";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -90,9 +89,7 @@ namespace ConfiguratorSlots.MachineState
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     protected override void InitializeData(ItemData data, ItemData otherData)
     {
       data.CurrentPageName = "";
@@ -126,6 +123,5 @@ namespace ConfiguratorSlots.MachineState
       data.InitValue(HAS_SHIFT, typeof(bool), false, true);
       data.InitValue(FORCE_REBUILD, typeof(bool), false, true);
     }
-    #endregion // Methods
   }
 }

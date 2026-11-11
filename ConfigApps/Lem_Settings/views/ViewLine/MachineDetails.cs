@@ -24,7 +24,6 @@ namespace ViewLine
     }
     #endregion // Constructors
 
-    #region Methods
     public void Init(ILineMachine lineMachine)
     {
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession()) {
@@ -43,6 +42,5 @@ namespace ViewLine
         }
       }
     }
-    #endregion // Methods
   }
 }

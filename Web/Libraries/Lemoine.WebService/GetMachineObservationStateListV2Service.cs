@@ -30,7 +30,6 @@ namespace Lemoine.WebService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request for GetMachineObservationStateListV2 (no cache)
     /// </summary>
@@ -78,6 +77,5 @@ namespace Lemoine.WebService
         return MachineObservationStateSlotListV2DTO;
       }
     }
-    #endregion // Methods
   }
 }

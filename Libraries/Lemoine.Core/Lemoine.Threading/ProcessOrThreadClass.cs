@@ -20,7 +20,6 @@ namespace Lemoine.Threading
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProcessOrThreadClass).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Use a stamp file to check a process
     /// </summary>
@@ -38,9 +37,7 @@ namespace Lemoine.Threading
       get { return m_parentProcessId; }
       set { m_parentProcessId = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Get the stamp file to use to check a process
     /// </summary>
@@ -116,6 +113,5 @@ namespace Lemoine.Threading
         throw new AbortException ("Timeout was reached in SetActive.");
       }
     }
-    #endregion // Methods
   }
 }

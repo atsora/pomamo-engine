@@ -216,7 +216,7 @@ namespace Lemoine.GDBMigration
         Database.RemoveTable (table);
       }
       else {
-        log.WarnFormat ("RemoveTable: {0} did not exist", table);
+        log.Warn ($"RemoveTable: {table} did not exist");
       }
     }
     #endregion // Methods from Migrator.Framework.ITransformationProvider

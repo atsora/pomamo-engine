@@ -84,8 +84,9 @@ namespace Lemoine.Core.Cache
     {
       string key = "Web.Cache." + cacheTimeOut.ToString ();
       TimeSpan timeSpan = ConfigSet.LoadAndGet<TimeSpan> (key, GetDefaultTimeSpan (cacheTimeOut));
-      log.DebugFormat ("GetTimeSpan: timeSpan for {0} is {1}",
-                       cacheTimeOut, timeSpan);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetTimeSpan: timeSpan for {cacheTimeOut} is {timeSpan}");
+      }
       return timeSpan;
     }
 
@@ -113,10 +114,7 @@ namespace Lemoine.Core.Cache
       case CacheTimeOut.Permanent:
         return DEFAULT_PERMANENT_TIMEOUT;
       default:
-        log.FatalFormat ("GetDefaultTimeSpan: " +
-                         "unexpected CacheTimeOut {0} " +
-                         "=> return 0s",
-                         cacheTimeOut);
+        log.Fatal ($"GetDefaultTimeSpan: unexpected CacheTimeOut {cacheTimeOut} => return 0s");
         return TimeSpan.FromSeconds (0);
       }
     }

@@ -22,12 +22,9 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (TranslationKeySelection).FullName);
     
-    #region Members
     String m_selectedTranslationKey = null;
     ICatalog m_catalog = new CachedCatalog (new Lemoine.ModelDAO.i18n.ModelDAOCatalog ());
-    #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null TranslationKey a valid value ?
     /// </summary>
@@ -71,7 +68,6 @@ namespace Lemoine.DataReferenceControls
         this.m_selectedTranslationKey = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -88,7 +84,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     private void SetSelectedTranslationKey(){
       if(!String.IsNullOrEmpty(this.m_selectedTranslationKey)){
         foreach(DataGridViewRow row in this.dataGridView.Rows){
@@ -99,14 +94,12 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void TranslationKeySelectionLoad(object sender, EventArgs e)
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("MachineConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("MachineConfigLoad: no DAO factory is defined");
         return;
       }
       
@@ -166,10 +159,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public class TranslationDisplay
   {
-    #region Members
     readonly string m_key;
     readonly ICatalog m_catalog;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (TranslationDisplay).FullName);
 

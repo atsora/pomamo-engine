@@ -35,7 +35,6 @@ namespace Lem_Settings
       VIEW
     }
 
-    #region Members
     readonly GuiLeft1 m_left1 = new GuiLeft1 ();
     readonly GuiLeft m_left23 = new GuiLeft ();
     readonly GuiRight1 m_right1 = new GuiRight1 ();
@@ -52,9 +51,7 @@ namespace Lem_Settings
     System.Windows.Forms.Timer m_timer = new System.Windows.Forms.Timer ();
     bool m_noConfirmationOnClose = false;
     IItem m_currentItem = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// If set to false, the software continue to run after an unhandled exception is raised
     /// This is used when configurators or wizards validate the changes.
@@ -62,7 +59,6 @@ namespace Lem_Settings
     /// Otherwise this is true
     /// </summary>
     static public bool QuitIfException { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -125,7 +121,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize the form
     /// </summary>
@@ -141,7 +136,7 @@ namespace Lem_Settings
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Settings.ShowDialog.Computer")) {
           var localComputer = ModelDAOHelper.DAOFactory.ComputerDAO.GetLocal ();
           if (null == localComputer) {
-            log.WarnFormat ("ShowDialog: the local computer could not be found in the computer table");
+            log.Warn ("ShowDialog: the local computer could not be found in the computer table");
           }
           else { // null != localComputer
             ContextManager.IsLctr |= localComputer.IsLctr;
@@ -252,7 +247,6 @@ namespace Lem_Settings
 
       return path;
     }
-    #endregion // Methods
 
     #region Event reaction
     void OnItemsChanged ()
@@ -505,7 +499,7 @@ namespace Lem_Settings
                                              int.Parse (split[2]), int.Parse (split[3]));
         }
         catch (Exception ex) {
-          log.ErrorFormat ("MainForm - couldn't restore the position {0}: {1}", rect, ex);
+          log.Error ($"MainForm - couldn't restore the position {rect}: {ex}");
         }
       }
 
@@ -516,7 +510,7 @@ namespace Lem_Settings
           this.WindowState = (FormWindowState)Enum.Parse (typeof (FormWindowState), state);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("MainForm - couldn't restore the state {0}: {1}", state, ex);
+          log.Error ($"MainForm - couldn't restore the state {state}: {ex}");
         }
       }
     }
@@ -599,7 +593,7 @@ namespace Lem_Settings
     public void UnhandledThreadExceptionHandler (object sender, ThreadExceptionEventArgs e)
     {
       Debug.Assert (null != e.Exception);
-      log.ErrorFormat ("UnhandledThreadExceptionHandler: {0} StackTrace: {1}", e.Exception, e.Exception.StackTrace);
+      log.Error ($"UnhandledThreadExceptionHandler: {e.Exception} StackTrace: {e.Exception.StackTrace}");
 
       if (ExceptionTest.IsStale (e.Exception, log) ||
           ExceptionTest.IsTemporary (e.Exception, log) ||

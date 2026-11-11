@@ -92,10 +92,7 @@ namespace Lemoine.GDBPersistentClasses
           // Make it simple for the moment. Reject any merge if a WorkOrderLine was set
           // See later if something better can be imagined
           if (0 < otherWorkOrderLines.Count) {
-            log.ErrorFormat ("Merge: " +
-                             "could not merge the work order {0} into {1} " +
-                             "because a work order line exists for {0}",
-                             oldWorkOrder, newWorkOrder);
+            log.Error ($"Merge: could not merge the work order {oldWorkOrder} into {newWorkOrder} because a work order line exists for {oldWorkOrder}");
             throw new ConflictException (oldWorkOrder, newWorkOrder, "WorkOrderLine");
           }
         }

@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.PieCycleProgress
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Score
     /// </summary>
@@ -26,7 +25,6 @@ namespace Lemoine.Plugin.PieCycleProgress
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
       #region Constructors
       /// <summary>

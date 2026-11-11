@@ -16,16 +16,13 @@ namespace ConfiguratorMachineCategories
   /// </summary>
   public abstract class ItemCommon: GenericItem
   {
-    #region Members
     string m_elementNamePlural;
     Type m_type;
-    #endregion // Members
 
     internal const string ELEMENTS = "elements";
     internal const string POSITION = "position";
     static readonly ILog log = LogManager.GetLogger(typeof (ItemCommon).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -95,7 +92,6 @@ namespace ConfiguratorMachineCategories
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

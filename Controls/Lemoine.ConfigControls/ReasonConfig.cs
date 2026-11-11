@@ -108,8 +108,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("ReasonConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("ReasonConfigLoad: no DAO factory is defined");
         return;
       }
       

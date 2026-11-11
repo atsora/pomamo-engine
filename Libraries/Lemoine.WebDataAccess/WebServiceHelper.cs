@@ -20,13 +20,10 @@ namespace Lemoine.WebDataAccess
   /// </summary>
   internal sealed class WebServiceHelper
   {
-    #region Members
     Lemoine.WebDataAccess.Query m_query;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (WebServiceHelper).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// URL of the web service
     /// </summary>
@@ -45,7 +42,6 @@ namespace Lemoine.WebDataAccess
         Instance.m_query = new Lemoine.WebDataAccess.Query (value);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -56,7 +52,6 @@ namespace Lemoine.WebDataAccess
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return a unique result
     /// </summary>
@@ -138,7 +133,6 @@ namespace Lemoine.WebDataAccess
     {
       await Instance.m_query.ExecuteAsync (requestUrl);
     }
-    #endregion // Methods
 
     #region Instance
     static WebServiceHelper Instance

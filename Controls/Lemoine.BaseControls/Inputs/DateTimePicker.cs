@@ -17,9 +17,7 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class DateTimePicker : System.Windows.Forms.DateTimePicker
   {
-    #region Members
     bool m_withSeconds;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -36,7 +34,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Override of "Format", that does nothing
     /// </summary>
@@ -71,7 +68,6 @@ namespace Lemoine.BaseControls
         ? CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern
         : CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
     }
-    #endregion // Getters / Setters
 
     #region Event reactions
     void OnMouseWheel (object sender, MouseEventArgs e)

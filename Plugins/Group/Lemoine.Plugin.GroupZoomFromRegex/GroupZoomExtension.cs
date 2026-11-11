@@ -47,7 +47,7 @@ namespace Lemoine.Plugin.GroupZoomFromRegex
         .SelectMany (ext => ext.Groups);
       if (!m_groups.Any ()) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("Initialize: no group is defined");
+          log.Warn ("Initialize: no group is defined");
         }
         return false;
       }

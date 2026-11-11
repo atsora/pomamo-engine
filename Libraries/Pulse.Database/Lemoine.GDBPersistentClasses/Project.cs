@@ -209,9 +209,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void RemoveWorkOrder (IWorkOrder workOrder)
     {
       if (!this.WorkOrders.Contains (workOrder)) {
-        log.WarnFormat ("RemoveWorkOrder: " +
-                        "WorkOrder {0} is not in {1}",
-                        workOrder, this);
+        log.Warn ($"RemoveWorkOrder: WorkOrder {workOrder} is not in {this}");
       }
       else {
         WorkOrders.Remove (workOrder);
@@ -240,7 +238,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
     
-    #region Methods
     /// <summary>
     /// Check if the project is undefined
     /// 
@@ -268,7 +265,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[Project {this.Id}]";
       }
     }
-    #endregion // Methods
     
     #region IMergeable implementation
     /// <summary>
@@ -286,10 +282,7 @@ namespace Lemoine.GDBPersistentClasses
           // - Name
           if ( (null != otherComponent.Name)
               && (otherComponent.Name.Equals (component.Name))) {
-            log.InfoFormat ("Merge: " +
-                            "Rename component {0} from project other {1} " +
-                            "because the used name already exists in project {2}",
-                            otherComponent, other, this);
+            log.Info ($"Merge: Rename component {otherComponent} from project other {other} because the used name already exists in project {this}");
             for (int i = 1; true; i++) {
               string newName = string.Format ("{0} ({1})",
                                               otherComponent.Name, i);
@@ -317,10 +310,7 @@ namespace Lemoine.GDBPersistentClasses
           // - Code
           if ( (null != otherComponent.Code)
               && (otherComponent.Code.Equals (component.Code))) {
-            log.InfoFormat ("Merge: " +
-                            "Recode component {0} from project other {1} " +
-                            "because the used code already exists in project {2}",
-                            otherComponent, other, this);
+            log.Info ($"Merge: Recode component {otherComponent} from project other {other} because the used code already exists in project {this}");
             for (int i = 1; true; i++) {
               string newCode = string.Format ("{0} ({1})",
                                               otherComponent.Code, i);

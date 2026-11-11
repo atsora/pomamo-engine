@@ -14,11 +14,9 @@ namespace ViewLinePlanning
   /// </summary>
   public partial class CalendarMarker : UserControl
   {
-    #region Members
     Brush m_brush;
     readonly ILine m_line;
     ToolTip m_toolTip = null;
-    #endregion // Members
 
     #region Events
     public event Action<ILine> MarkerDoubleClicked;
@@ -58,13 +56,11 @@ namespace ViewLinePlanning
     }
     #endregion // Constructors
 
-    #region Methods
     protected override void OnPaint(PaintEventArgs e)
     {
       base.OnPaint(e);
       e.Graphics.FillRectangle(m_brush, e.ClipRectangle);
     }
-    #endregion // Methods
     
     #region Event reactions
     void CalendarMarkerMouseEnter(object sender, EventArgs e)

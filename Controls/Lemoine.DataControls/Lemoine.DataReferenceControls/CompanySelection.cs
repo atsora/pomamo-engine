@@ -22,13 +22,10 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CompanySelection).FullName);
     
-    #region Members
     string m_displayedProperty = "SelectionText";
     IList<ICompany> m_companies = null;
     ICompany m_company = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -113,7 +110,6 @@ namespace Lemoine.DataReferenceControls
         this.m_company = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -140,7 +136,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -178,7 +173,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void CompanySelectionLoad(object sender, EventArgs e)
     {

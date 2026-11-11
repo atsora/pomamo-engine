@@ -17,9 +17,6 @@ namespace Lemoine.Threading
   {
     readonly ILog log = LogManager.GetLogger (typeof (AbortException).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

@@ -50,7 +50,7 @@ namespace Lemoine.Plugin.CncValueTime
         var suffix = "AfterStart";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }
@@ -92,7 +92,7 @@ namespace Lemoine.Plugin.CncValueTime
         .Intersects (new UtcDateTimeRange (dateTime)));
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Get: dateTime={0} limit={1} hint={2} => No data", dateTime, limit, hint);
+          log.Debug ($"Get: dateTime={dateTime} limit={limit} hint={hint} => No data");
         }
         return this.CreateNoData ();
       }

@@ -278,17 +278,12 @@ namespace Lemoine.Business.Reason
           return this.DateTimeRange.CompareTo (other.DateTimeRange);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare slots " +
-                           "for different machines {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare slots for different machines {this} {other}");
           throw new ArgumentException ("Comparison of slots from different machines");
         }
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
 
@@ -303,10 +298,7 @@ namespace Lemoine.Business.Reason
         return this.DateTimeRange.CompareTo (other.DateTimeRange);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare ReasonSelectionSlots " +
-                       "for different machines {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare ReasonSelectionSlots for different machines {this} {other}");
       throw new ArgumentException ("Comparison of ReasonSelectionSlots from different machines");
     }
 

@@ -16,7 +16,6 @@ namespace ConfiguratorLine
   {
     static readonly ILog log = LogManager.GetLogger(typeof (MachineData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Displayed string for a machine
     /// </summary>
@@ -31,7 +30,6 @@ namespace ConfiguratorLine
     /// Machine
     /// </summary>
     public IMachine Machine { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -68,7 +66,6 @@ namespace ConfiguratorLine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Text to show in log
     /// </summary>
@@ -77,6 +74,5 @@ namespace ConfiguratorLine
     {
       return string.Format("Machine = {0}, dedicated={1}]", Machine, Dedicated);
     }
-    #endregion // Methods
   }
 }

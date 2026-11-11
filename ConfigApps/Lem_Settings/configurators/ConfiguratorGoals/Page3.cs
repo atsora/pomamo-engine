@@ -19,14 +19,11 @@ namespace ConfiguratorGoals
   /// </summary>
   public partial class Page3 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     GoalManager m_goals = null;
     bool m_byDepartments = false;
     bool m_preparation = true;
     IMachineObservationState m_currentMOS = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -59,7 +56,6 @@ namespace ConfiguratorGoals
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

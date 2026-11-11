@@ -13,7 +13,6 @@ namespace WizardInitialConfiguration
   /// </summary>
   internal partial class Page3 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -25,7 +24,6 @@ namespace WizardInitialConfiguration
     public string Help { get { return "Select the events you want to " +
           "activate in the system. The events will be stored in the database and " +
           "reports will list them. It is also possible to link them with emails."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

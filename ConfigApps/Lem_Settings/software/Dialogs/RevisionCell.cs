@@ -23,13 +23,10 @@ namespace Lem_Settings
     public event Action<WatchedRevision> DetailsClicked;
     #endregion // Events
     
-    #region Members
     readonly WatchedRevision m_watchedRevision = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (RevisionCell).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Id of the revision displayed by the cell
     /// </summary>
@@ -44,7 +41,6 @@ namespace Lem_Settings
     /// Item subid that created the revision
     /// </summary>
     public string ItemSubId { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -118,7 +114,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Update data displayed in the cell
     /// </summary>
@@ -162,7 +157,6 @@ namespace Lem_Settings
         this.Height = 100;
       }
     }
-    #endregion // Methods
     
     #region Event reactions
     void ButtonDetailsClick(object sender, EventArgs e)

@@ -16,7 +16,6 @@ namespace Lemoine.Plugin.GroupSequential
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category name
     /// </summary>
@@ -109,7 +108,6 @@ namespace Lemoine.Plugin.GroupSequential
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

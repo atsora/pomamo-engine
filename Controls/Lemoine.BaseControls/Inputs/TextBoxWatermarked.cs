@@ -15,16 +15,13 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class TextBoxWatermarked : TextBox
   {
-    #region Members
     string m_waterMarkText = "Default Watermark...";
     Color m_waterMarkColor;
     Color m_waterMarkActiveColor;
     Panel m_waterMarkContainer;
     Font m_waterMarkFont;
     SolidBrush m_waterMarkBrush;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Text displayed in the watermark
     /// </summary>
@@ -83,7 +80,6 @@ namespace Lemoine.BaseControls
         this.Invalidate();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -95,7 +91,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     void Initialize()
     {
       // Sets some default values to the watermark properties
@@ -133,7 +128,6 @@ namespace Lemoine.BaseControls
         this.Controls.Add(m_waterMarkContainer); // adds the control
       }
     }
-    #endregion // Methods
     
     #region Event reactions
     void waterMarkContainer_Click(object sender, EventArgs e)

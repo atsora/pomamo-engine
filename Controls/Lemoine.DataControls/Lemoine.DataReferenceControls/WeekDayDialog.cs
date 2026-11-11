@@ -17,7 +17,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (WeekDayDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return selected value(s)
     /// </summary>
@@ -41,7 +40,6 @@ namespace Lemoine.DataReferenceControls
         throw new NotImplementedException();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

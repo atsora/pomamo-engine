@@ -16,7 +16,6 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class TimeAxis : UserControl
   {
-    #region Members
     DateTime m_startDateTime;
     DateTime m_endDateTime;
     bool m_initialized = false;
@@ -27,7 +26,6 @@ namespace Lemoine.BaseControls
     bool m_withSecond = false;
     bool m_withYear = false;
     int m_subDivisions = 0;
-    #endregion // Members
 
     static Brush s_backBrush = new SolidBrush(SystemColors.Control);
     static Brush s_foreBrush = new SolidBrush(Color.Black);
@@ -55,7 +53,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the period of the axis
     /// </summary>
@@ -303,8 +300,6 @@ namespace Lemoine.BaseControls
         m_ticks.Add(m_ticks[m_ticks.Count - 1].AddSeconds(shift));
       }
     }
-    
-    #endregion // Methods
     
     #region Event reactions
     void TimeAxisSizeChanged(object sender, EventArgs e)

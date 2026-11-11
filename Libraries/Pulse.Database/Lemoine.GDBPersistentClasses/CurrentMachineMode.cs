@@ -19,19 +19,16 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CurrentMachineMode : ICurrentMachineMode, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMonitoredMachine m_monitoredMachine;
     DateTime m_dateTime = DateTime.UtcNow;
     DateTime m_change = DateTime.UtcNow;
     IMachineMode m_machineMode;
-    #endregion
 
     static readonly ILog staticLog = LogManager.GetLogger (typeof (CurrentMachineMode).FullName);
     ILog log = LogManager.GetLogger (typeof (CurrentMachineMode).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Fact Id
     /// </summary>
@@ -71,8 +68,7 @@ namespace Lemoine.GDBPersistentClasses
       set {
         switch (value.Kind) {
         case DateTimeKind.Unspecified:
-          log.WarnFormat ("DateTime.set: " +
-                          "unspecified DateTimeKind => suppose it is a universal time");
+          log.Warn ("DateTime.set: unspecified DateTimeKind => suppose it is a universal time");
           m_dateTime = new DateTime (value.Ticks, DateTimeKind.Utc);
           break;
         case DateTimeKind.Utc:
@@ -96,8 +92,7 @@ namespace Lemoine.GDBPersistentClasses
       set {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("MachineMode.set: " +
-                           "null value");
+          log.Error ("MachineMode.set: null value");
           throw new ArgumentNullException ("Null fact machine mode");
         }
 
@@ -123,8 +118,7 @@ namespace Lemoine.GDBPersistentClasses
       protected internal set {
         switch (value.Kind) {
         case DateTimeKind.Unspecified:
-          log.WarnFormat ("Change.set: " +
-                          "unspecified DateTimeKind => suppose it is a universal time");
+          log.Warn ("Change.set: unspecified DateTimeKind => suppose it is a universal time");
           m_change = new DateTime (value.Ticks, DateTimeKind.Utc);
           break;
         case DateTimeKind.Utc:
@@ -138,7 +132,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

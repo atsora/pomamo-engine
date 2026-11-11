@@ -13,14 +13,11 @@ namespace Lemoine.Extensions.Interfaces
   /// </summary>
   public interface IPluginConfigurationControl
   {
-    #region Getters / Setters
     /// <summary>
     /// Help text for the configuration
     /// </summary>
     string Help { get; }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Initialize the interface
     /// </summary>
@@ -43,6 +40,5 @@ namespace Lemoine.Extensions.Interfaces
     /// </summary>
     /// <returns></returns>
     IList<string> GetErrors ();
-    #endregion // Methods
   }
 }

@@ -19,12 +19,8 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class WeekDayControl : UserControl
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (WeekDayControl).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// List of selected (checked) days of week
     /// </summary>
@@ -62,7 +58,6 @@ namespace Lemoine.BaseControls
         return days;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -86,10 +81,6 @@ namespace Lemoine.BaseControls
     }
 
     #endregion // Constructors
-
-    #region Methods
-
-    #endregion // Methods
     
   }
 }

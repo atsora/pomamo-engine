@@ -20,7 +20,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class WorkOrderShiftMachineAssociation: MachineAssociation
   {
-    #region Members
     IWorkOrder m_workOrder;
     ILine m_line = null;
     IManufacturingOrder m_manufacturingOrder = null;
@@ -30,9 +29,7 @@ namespace Lemoine.GDBPersistentClasses
     IOperation m_operation = null;
     DateTime? m_day = null;
     IShift m_shift;
-    #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -112,7 +109,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_operation; }
       set { m_operation = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -129,7 +125,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="PeriodAssociation.ConvertToSlot" />
     /// </summary>
@@ -189,10 +184,7 @@ namespace Lemoine.GDBPersistentClasses
         
         if (!object.Equals (newOperationSlot.Day, this.Day)) {
           if (newOperationSlot.Day.HasValue && this.Day.HasValue) { // Log it only if a real value changed
-            log.WarnFormat ("MergeDataWithOldSlot: " +
-                            "in WorkOrderShiftMachineAssociation, the day is requested to be changed " +
-                            "from {0} to {1}",
-                            newOperationSlot.Day, this.Day);
+            log.Warn ($"MergeDataWithOldSlot: in WorkOrderShiftMachineAssociation, the day is requested to be changed from {newOperationSlot.Day} to {this.Day}");
             AddAnalysisLog (LogLevel.WARN,
                             string.Format ("WorkOrderShiftMachineAssociation: " +
                                            "day change not valid"));
@@ -201,10 +193,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         if (!object.Equals (newOperationSlot.Shift, this.Shift)) {
           if ((null != newOperationSlot.Shift) && (null != this.Shift)) { // Log it only if a read value changed
-            log.WarnFormat ("MergeDataWithOldSlot: " +
-                            "in WorkOrderShiftMachineAssociation, the shift is requested to be changed " +
-                            "from {0} to {1}",
-                            newOperationSlot.Shift, this.Shift);
+            log.Warn ($"MergeDataWithOldSlot: in WorkOrderShiftMachineAssociation, the shift is requested to be changed from {newOperationSlot.Shift} to {this.Shift}");
             AddAnalysisLog (LogLevel.WARN,
                             string.Format ("WorkOrderShiftMachineAssociation: " +
                                            "shift change not valid"));
@@ -256,9 +245,7 @@ namespace Lemoine.GDBPersistentClasses
               Debug.Assert (null != this.WorkOrder);
               if (null == oldOperationSlot.Component) {
                 Debug.Assert (GetDataStructureOption (DataStructureConfigKey.WorkOrderFromComponentOnly));
-                log.WarnFormat ("MergeDataWithOldSlot: " +
-                                "why is WorkOrderMachineAssociation used " +
-                                "while data structure option WorkOrderFromComponentOnly is set ?");
+                log.Warn ("MergeDataWithOldSlot: why is WorkOrderMachineAssociation used while data structure option WorkOrderFromComponentOnly is set ?");
               }
               else { // null != oldOperationSlot.Component
                 Debug.Assert (null != oldOperationSlot.Component);
@@ -300,9 +287,7 @@ namespace Lemoine.GDBPersistentClasses
             if (!this.Auto) {
               Debug.Assert (GetDataStructureOption (DataStructureConfigKey.WorkOrderFromComponentOnly));
               Debug.Assert (GetDataStructureOption (DataStructureConfigKey.ComponentFromOperationOnly));
-              log.WarnFormat ("MergeDataWithOldSlot: " +
-                              "why is WorkOrderMachineAssociation used " +
-                              "while data structure option WorkOrderFromComponentOnly is set ?");
+              log.Warn ("MergeDataWithOldSlot: why is WorkOrderMachineAssociation used while data structure option WorkOrderFromComponentOnly is set ?");
               AddAnalysisLog (LogLevel.WARN,
                               "WorkOrderMachineAssociation used " +
                               "while data structure option WorkOrderFromComponentOnly " +
@@ -325,9 +310,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -373,7 +356,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Insert<OperationSlot, IOperationSlot, OperationSlotDAO> (operationSlotDAO,
                                                                     preFetchedOperationSlots);
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

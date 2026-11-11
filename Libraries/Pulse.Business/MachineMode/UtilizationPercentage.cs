@@ -26,17 +26,12 @@ namespace Lemoine.Business.MachineMode
     static readonly string CACHE_TIMEOUT_KEY = "Business.MachineMode.UtilizationPercentage.CacheTimeOut";
     static readonly TimeSpan CACHE_TIMEOUT_DEFAULT = TimeSpan.FromHours (3);
 
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (UtilizationPercentage).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Machine (not null)
     /// </summary>
     IMachine Machine { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -50,9 +45,6 @@ namespace Lemoine.Business.MachineMode
       this.Machine = machine;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -77,7 +69,7 @@ namespace Lemoine.Business.MachineMode
             return runningSeconds / totalSeconds;
           }
           else {
-            log.ErrorFormat ("Get: no data in the last three months, return 100%");
+            log.Error ("Get: no data in the last three months, return 100%");
             return 1.0;
           }
         }

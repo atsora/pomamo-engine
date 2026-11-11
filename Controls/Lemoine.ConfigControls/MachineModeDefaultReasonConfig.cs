@@ -28,16 +28,13 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IReason>
     , IConfigControlObserver<IMachineFilter>
   {
-    #region Members
     ISet<DataGridViewRow> m_updateSet = new HashSet<DataGridViewRow> ();
     IList<IMachineModeDefaultReason> m_deleteList = new List<IMachineModeDefaultReason> ();
     IList<MachineModeDefaultReasonWrapper> m_machineModeDefaultReasonWrappers = new List<MachineModeDefaultReasonWrapper> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineModeDefaultReasonConfig).FullName);
     static readonly string DISPLAYED_PROPERTY = "SelectionText";
     
-    #region Getters / Setters
     IList<IMachineMode> MachineModes {
       get
       {
@@ -63,7 +60,6 @@ namespace Lemoine.ConfigControls
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -123,7 +119,7 @@ namespace Lemoine.ConfigControls
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory)
       {
-        log.ErrorFormat ("ReasonConfigLoad: no DAO factory is defined");
+        log.Error ("ReasonConfigLoad: no DAO factory is defined");
         return;
       }
       

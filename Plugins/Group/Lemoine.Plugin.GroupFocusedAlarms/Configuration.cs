@@ -15,7 +15,6 @@ namespace Lemoine.Plugin.GroupFocusedAlarms
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category name
     /// </summary>
@@ -57,7 +56,6 @@ namespace Lemoine.Plugin.GroupFocusedAlarms
     {
       get; set;
     } = TimeSpan.FromMinutes (2);
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

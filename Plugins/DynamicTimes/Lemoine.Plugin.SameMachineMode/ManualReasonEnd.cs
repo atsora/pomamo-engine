@@ -68,7 +68,7 @@ namespace Lemoine.Plugin.SameMachineMode
         .Intersects (new UtcDateTimeRange (dateTime)));
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Get: dateTime={0} limit={1} hint={2} => No data", dateTime, limit, hint);
+          log.Debug ($"Get: dateTime={dateTime} limit={limit} hint={hint} => No data");
         }
         return this.CreateNoData ();
       }
@@ -103,7 +103,7 @@ namespace Lemoine.Plugin.SameMachineMode
             if (0 == machineModeId) {
               if (!fact.DateTimeRange.ContainsElement (dateTime)) {
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: no fact at {0} (initial gap) => NotApplicable", dateTime);
+                  log.Warn ($"Get: no fact at {dateTime} (initial gap) => NotApplicable");
                 }
                 return this.CreateNotApplicable ();
               }
@@ -113,7 +113,7 @@ namespace Lemoine.Plugin.SameMachineMode
               Debug.Assert (0 != machineModeId);
               if (lastFactEnd < fact.Begin) { // Gap
                 if (log.IsWarnEnabled) {
-                  log.WarnFormat ("Get: gap {0}-{1} => approximative final", lastFactEnd, fact.Begin);
+                  log.Warn ($"Get: gap {lastFactEnd}-{fact.Begin} => approximative final");
                 }
                 return this.CreateFinal (lastFactEnd);
               }
@@ -123,7 +123,7 @@ namespace Lemoine.Plugin.SameMachineMode
                 }
                 if (fact.CncMachineMode.Id != machineModeId) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("Get: machine mode change at {0}", fact.Begin);
+                    log.Debug ($"Get: machine mode change at {fact.Begin}");
                   }
                   return this.CreateFinal (lastFactEnd);
                 }
@@ -136,7 +136,7 @@ namespace Lemoine.Plugin.SameMachineMode
           if (0 == machineModeId) { // No fact in range
             if (range.Upper.HasValue && IsFactAfter (range.Upper.Value)) {
               if (log.IsWarnEnabled) {
-                log.WarnFormat ("Get: first fact after limit {0} (initial gap) => NoData", limit);
+                log.Warn ($"Get: first fact after limit {limit} (initial gap) => NoData");
               }
               return this.CreateNoData ();
             }
@@ -192,7 +192,7 @@ namespace Lemoine.Plugin.SameMachineMode
     {
       if (IsFactAfter (dateTime)) {
         if (log.IsWarnEnabled) {
-          log.WarnFormat ("GetInitialGap: initial gap in fact at {0} => NotApplicable", dateTime);
+          log.Warn ($"GetInitialGap: initial gap in fact at {dateTime} => NotApplicable");
         }
         return this.CreateNotApplicable ();
       }

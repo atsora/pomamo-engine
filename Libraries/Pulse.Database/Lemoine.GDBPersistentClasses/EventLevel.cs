@@ -16,11 +16,9 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventLevel: DataWithTranslation, IEventLevel, IDataGridViewEventLevel
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     int m_priority;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventLevel).FullName);
 
@@ -54,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// EventLevel Id
     /// </summary>
@@ -99,8 +96,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return string.Format ("{0}: {1}{2} ({3})",
                                   this.Id, this.Name, this.TranslationKey, this.Priority); }
     }
-    
-    #endregion // Getters / Setters
     
     #region Equals and GetHashCode implementation
     /// <summary>

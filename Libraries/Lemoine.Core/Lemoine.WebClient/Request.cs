@@ -24,7 +24,6 @@ namespace Lemoine.WebClient
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Notify a configuration update
     /// </summary>
@@ -59,6 +58,5 @@ namespace Lemoine.WebClient
 
       return true;
     }
-    #endregion // Methods
   }
 }

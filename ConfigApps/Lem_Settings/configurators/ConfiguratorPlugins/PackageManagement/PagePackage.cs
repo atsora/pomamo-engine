@@ -40,7 +40,6 @@ namespace ConfiguratorPlugins
     readonly IDictionary<IPackage, PackageCell> m_packageCells = new Dictionary<IPackage, PackageCell> ();
     readonly IList<CheckBox> m_tagButtons = new List<CheckBox> ();
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -91,7 +90,6 @@ namespace ConfiguratorPlugins
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

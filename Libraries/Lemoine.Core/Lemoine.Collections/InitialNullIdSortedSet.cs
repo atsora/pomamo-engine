@@ -23,19 +23,14 @@ namespace Lemoine.Collections
     , ISet<T>
     where T : IComparable /* , Lemoine.Collections.IDataWithId<ID> */
   {
-    #region Members
     System.Collections.Generic.IDictionary<T, object> ZeroIdList = new System.Collections.Generic.SortedList<T, object> ();
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (InitialNullIdSortedSet<T, ID>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// return number of elements in set
     /// </summary>
     public new int Count { get { return ZeroIdList.Count + base.Count; } }
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -45,8 +40,6 @@ namespace Lemoine.Collections
     {
     }
     #endregion // Constructors
-
-    #region Methods
 
     private void RehashZeroID ()
     {
@@ -272,5 +265,4 @@ namespace Lemoine.Collections
       }
     }
   }
-  #endregion // Methods
 }

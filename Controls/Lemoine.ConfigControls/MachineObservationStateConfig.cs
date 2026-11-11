@@ -25,7 +25,6 @@ namespace Lemoine.ConfigControls
     : UserControl
     , IConfigControlObservable<IMachineObservationState>
   {
-    #region Members
     SortableBindingList<IMachineObservationState> m_machineObservationStates
       = new SortableBindingList<IMachineObservationState>();
     
@@ -36,7 +35,6 @@ namespace Lemoine.ConfigControls
 
     ISet<IConfigControlObserver<IMachineObservationState> > m_observers =
       new HashSet<IConfigControlObserver<IMachineObservationState> > ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineObservationStateConfig).FullName);
 
@@ -102,8 +100,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("MachineObservationStateConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("MachineObservationStateConfigLoad: no DAO factory is defined");
         return;
       }
       

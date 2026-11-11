@@ -50,9 +50,7 @@ namespace Lem_RestartService
 
           bool restartWatchingService = StopWatchingService ();
           foreach (string serviceName in opt.ServiceNames) {
-            log.InfoFormat ("Main: " +
-                            "about to restart {0}",
-                            serviceName);
+            log.Info ($"Main: about to restart {serviceName}");
             RestartService (serviceName);
           }
           if (restartWatchingService) {
@@ -79,10 +77,7 @@ namespace Lem_RestartService
             System.Threading.Thread.Sleep(600);
             sc.Refresh();
             if (STOP_TIMEOUT < DateTime.UtcNow.Subtract (stopTime)) {
-              log.WarnFormat ("RestartService: " +
-                              "the service could not be stopped before after {0} " +
-                              "=> give up, and try to kill it instead",
-                              STOP_TIMEOUT);
+              log.Warn ($"RestartService: the service could not be stopped before after {STOP_TIMEOUT} => give up, and try to kill it instead");
               break;
             }
           }
@@ -173,15 +168,13 @@ namespace Lem_RestartService
             log.Error ($"StopWatchingService: exception in GetServicePID", ex);
           }
           if (0 == pid) {
-            log.DebugFormat ("StopWatchingService: " +
-                             "no process for {0}",
-                             controlSC.ServiceName);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StopWatchingService: no process for {controlSC.ServiceName}");
+            }
           }
           else {
             if (!KillProcess (pid)) {
-              log.ErrorFormat ("StopWatchingService: " +
-                               "Process {0} could not be stopped",
-                               pid);
+              log.Error ($"StopWatchingService: Process {pid} could not be stopped");
             }
             Thread.Sleep (TimeSpan.FromSeconds (1));
           }
@@ -199,10 +192,7 @@ namespace Lem_RestartService
       ServiceController controlSC = new ServiceController ("Lem_Control");
       try {
         if (controlSC.Status != ServiceControllerStatus.Stopped) {
-          log.ErrorFormat ("StartWatchingService: " +
-                           "the status {0} is not stopped, " +
-                           "=> do not start the watching service",
-                           controlSC.Status);
+          log.Error ($"StartWatchingService: the status {controlSC.Status} is not stopped, => do not start the watching service");
           return;
         }
         else { // Status == Stopped
@@ -375,13 +365,11 @@ namespace Lem_RestartService
           }
           else { // 0 < processes.Length
             if (1 < processes.Length) {
-              log.WarnFormat ("GetServicePID: " +
-                              "there are {0} processes for {1}",
-                              processes.Length, exe);
+              log.Warn ($"GetServicePID: there are {processes.Length} processes for {exe}");
             }
-            log.DebugFormat ("GetServicePID: " +
-                             "first PID is {0} for service {1}",
-                             processes [0].Id, serviceName);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetServicePID: first PID is {processes [0].Id} for service {serviceName}");
+            }
             return processes [0].Id;
           }
         }

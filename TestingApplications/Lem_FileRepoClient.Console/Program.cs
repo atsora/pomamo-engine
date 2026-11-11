@@ -87,13 +87,13 @@ namespace Lem_FileRepoClient.Console
       else { // Default: pfr data dir for the analysis service
         var pfrDataDir = Lemoine.Info.PulseInfo.PfrDataDir;
         if (string.IsNullOrEmpty (pfrDataDir)) {
-          log.FatalFormat ("InitializeFileRepoClient: unexpected invalid pfr data dir {0}", pfrDataDir);
+          log.Fatal ($"InitializeFileRepoClient: unexpected invalid pfr data dir {pfrDataDir}");
           Lemoine.FileRepository.FileRepoClient.Implementation =
             new Lemoine.FileRepository.FileRepoClientDummy ();
         }
         else {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("InitializeFileRepoClient: consider pfr data dir {0}", pfrDataDir);
+            log.Debug ($"InitializeFileRepoClient: consider pfr data dir {pfrDataDir}");
           }
           Lemoine.FileRepository.FileRepoClient.Implementation =
             new Lemoine.FileRepository.FileRepoClientDirectory (pfrDataDir);
@@ -103,7 +103,7 @@ namespace Lem_FileRepoClient.Console
       // It may be successful later, and ForceSynchronization will manage the case
       // when lctr is available later
       if (!Lemoine.FileRepository.FileRepoClient.Implementation.Test ()) {
-        log.ErrorFormat ("InitializeFileRepoClient: active file repository implementation is not valid right now but it may be ok later");
+        log.Error ("InitializeFileRepoClient: active file repository implementation is not valid right now but it may be ok later");
       }
     }
 

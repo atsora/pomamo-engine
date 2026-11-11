@@ -14,7 +14,6 @@ namespace Lemoine.Info
   {
     static readonly ILog log = LogManager.GetLogger (typeof (AssemblyInfo).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Calling assembly
     /// </summary>
@@ -80,7 +79,6 @@ namespace Lemoine.Info
         }
       }
     }
-    #endregion
 
     /// <summary>
     /// Private constructor (singleton class !)

@@ -27,7 +27,6 @@ namespace Lemoine.Web.Cache
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -51,6 +50,5 @@ namespace Lemoine.Web.Cache
 
       return new OkDTO ("Memory collect requested");
     }
-    #endregion // Methods
   }
 }

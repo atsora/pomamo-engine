@@ -113,9 +113,7 @@ SELECT SETVAL('{0}_{1}_seq', CASE WHEN (SELECT maxid FROM maxid) < {2} THEN {2} 
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ResetSequence: " +
-                         "resetting the sequence failed with {0}",
-                         ex);
+        log.Error ($"ResetSequence: resetting the sequence failed with {ex}");
       }
     }
     #endregion // DefaultValues

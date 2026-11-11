@@ -21,7 +21,6 @@ namespace Lemoine.GDBPersistentClasses
     , IMachineCategory, IVersionable
     , IComparable, IDisplayPriorityCodeNameComparerItem
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -29,11 +28,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_externalCode;
     int? m_displayPriority = null;
     ICollection<IMachine> m_machines = new InitialNullIdSet<IMachine, int> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineCategory).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -116,7 +113,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ICollection<IMachine> Machines {
       get { return m_machines; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     ///   Indicates whether the current object

@@ -21,11 +21,8 @@ namespace Lemoine.Plugin.IdleTimePerPeriod2
   /// </summary>
   public class Plugin: PluginNoConfig, IPluginDll, IFlaggedPlugin
   {
-    #region Members
     TransformationProviderExt m_database = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -66,11 +63,9 @@ namespace Lemoine.Plugin.IdleTimePerPeriod2
         return m_database;
       }
     }
-    #endregion // Getters / Setters
 
     static readonly ILog log = LogManager.GetLogger(typeof (Plugin).FullName);
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -161,6 +156,5 @@ ALTER COLUMN otheridleseconds DROP DEFAULT;
       // Table "values"
       Database.RemoveTable("plugins.idletimeperperiod2_values");
     }
-    #endregion // Methods
   }
 }

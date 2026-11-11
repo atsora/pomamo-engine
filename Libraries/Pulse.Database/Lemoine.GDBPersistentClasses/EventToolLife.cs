@@ -18,7 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public partial class EventToolLife: EventUnion, IEventToolLife
   {
-    #region Members
     IMachineModule m_machineModule;
     IMachineObservationState m_machineObservationState;
     IEventToolLifeConfig m_config;
@@ -32,7 +31,6 @@ namespace Lemoine.GDBPersistentClasses
     double? m_oldValue = null, m_newValue = null;
     double? m_oldWarning = null, m_newWarning = null;
     double? m_oldLimit = null, m_newLimit = null;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (EventToolLife).FullName);
 
@@ -59,7 +57,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructor
     
-    #region Getters / Setters
     /// <summary>
     /// Machine module that is associated to the event
     /// </summary>
@@ -269,9 +266,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_config; }
       set { m_config = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>
     /// </summary>
@@ -343,6 +338,5 @@ namespace Lemoine.GDBPersistentClasses
         return $"[EventToolLife {this.Id}]";
       }
     }
-    #endregion // Methods
   }
 }

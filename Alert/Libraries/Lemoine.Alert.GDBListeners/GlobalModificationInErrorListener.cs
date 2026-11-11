@@ -29,16 +29,11 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string FREQUENCY_KEY = "Alert.Listener.GlobalModificationInError.Frequency";
     static readonly TimeSpan FREQUENCY_DEFAULT = TimeSpan.FromMinutes (3); // Check it only every 3 minutes by default
 
-    #region Members
     IApplicationState m_modificationInErrorListenerState = null;
     IList<IGlobalModification> m_fetched = new List<IGlobalModification> ();
     DateTime m_lastFetch = DateTime.MinValue;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GlobalModificationInErrorListener).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -49,7 +44,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -74,8 +68,9 @@ namespace Lemoine.Alert.GDBListeners
       }
 
       if (0 == m_fetched.Count) { // No data any more to process
-        log.DebugFormat ("GetData: " +
-                         "no data");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetData: no data");
+        }
         return null;
       }
       else { // 0 < m_fetched.Count
@@ -130,7 +125,5 @@ namespace Lemoine.Alert.GDBListeners
       }
     }
 
-
-    #endregion // Methods
   }
 }

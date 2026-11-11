@@ -27,9 +27,6 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     static readonly string SYNC_PLUGINS_DIRECTORY_APPLICATION_NAME_KEY = "Extensions.SyncNHibernatePluginsDirectoryWithApplicationName";
     static readonly bool SYNC_PLUGINS_DIRECTORY_APPLICATION_NAME_DEFAULT = true;
 
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (NHibernatePluginDirectories).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
@@ -44,7 +41,6 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="Directories"/>
     /// </summary>
@@ -102,6 +98,5 @@ namespace Lemoine.Extensions.Plugin.PluginDirectories
         return false;
       }
     }
-    #endregion // Methods
   }
 }

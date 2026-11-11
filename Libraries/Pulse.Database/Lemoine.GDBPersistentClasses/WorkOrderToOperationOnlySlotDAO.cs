@@ -84,16 +84,12 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (left.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!left.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "left range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: left range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       if (right.DateTimeRange.IsEmpty ()) {
         Debug.Assert (!right.DateTimeRange.IsEmpty ());
-        log.ErrorFormat ("IsMergeable: " +
-                         "right range is empty, which is unexpected " +
-                         "=> return true because it can be dismissed");
+        log.Error ("IsMergeable: right range is empty, which is unexpected => return true because it can be dismissed");
         return true;
       }
       
@@ -217,9 +213,7 @@ namespace Lemoine.GDBPersistentClasses
         else { // null != leftOperationSlot
           if (leftOperationSlot.IsEmpty ()){
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendLeft: " +
-                             "empty left reason slot {0}",
-                             leftOperationSlot);
+            log.Error ($"ExtendLeft: empty left reason slot {leftOperationSlot}");
             return slot;
           }
           IWorkOrderToOperationOnlySlot leftWorkOrderToOperationOnlySlot = new WorkOrderToOperationOnlySlot (leftOperationSlot);
@@ -257,9 +251,7 @@ namespace Lemoine.GDBPersistentClasses
         else { // null != rightOperationSlot
           if (rightOperationSlot.IsEmpty ()){
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRight: " +
-                             "empty right reason slot {0}",
-                             rightOperationSlot);
+            log.Error ($"ExtendRight: empty right reason slot {rightOperationSlot}");
             return slot;
           }
           IWorkOrderToOperationOnlySlot rightWorkOrderToOperationOnlySlot = new WorkOrderToOperationOnlySlot (rightOperationSlot);

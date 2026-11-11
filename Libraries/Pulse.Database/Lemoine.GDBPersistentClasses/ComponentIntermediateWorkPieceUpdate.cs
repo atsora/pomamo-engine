@@ -29,11 +29,9 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ComponentIntermediateWorkPieceUpdate: GlobalModification, IComponentIntermediateWorkPieceUpdate
   {
-    #region Members
     IComponent m_component;
     IIntermediateWorkPiece m_intermediateWorkPiece;
     ComponentIntermediateWorkPieceUpdateModificationType m_typeOfModification;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (IComponentIntermediateWorkPieceUpdate).FullName);
 
@@ -59,7 +57,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -81,8 +78,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("Component.set: " +
-                           "null value");
+          log.Error ("Component.set: null value");
           throw new ArgumentNullException ("ComponentIntermediateWorkPieceUpdate.Component");
         }
         m_component = value;
@@ -110,8 +106,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("IntermediateWorkPiece.set: " +
-                           "null value");
+          log.Error ("IntermediateWorkPiece.set: null value");
           throw new ArgumentNullException ("ComponentIntermediateWorkPieceUpdate.IntermediateWorkPiece");
         }
         m_intermediateWorkPiece = value;
@@ -134,9 +129,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_typeOfModification; }
       set { m_typeOfModification = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     bool GetDataStructureOption (DataStructureConfigKey key)
     {
       return Lemoine.Info.ConfigSet
@@ -241,10 +234,9 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

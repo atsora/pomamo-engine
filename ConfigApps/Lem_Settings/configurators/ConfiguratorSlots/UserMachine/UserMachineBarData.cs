@@ -16,9 +16,7 @@ namespace ConfiguratorSlots.UserMachine
   /// </summary>
   public class UserMachineBarData: IBarObjectFactory
   {
-    #region Members
     readonly IUser m_user;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -31,7 +29,6 @@ namespace ConfiguratorSlots.UserMachine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create all BarObjects included in a period
     /// </summary>
@@ -86,6 +83,5 @@ namespace ConfiguratorSlots.UserMachine
       
       return barObjects;
     }
-    #endregion // Methods
   }
 }

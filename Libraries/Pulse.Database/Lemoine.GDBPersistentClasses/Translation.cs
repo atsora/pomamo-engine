@@ -24,13 +24,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Translation: BaseData, ITranslation
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_locale;
     string m_translationKey;
     string m_translationValue;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (Translation).FullName);
 
@@ -54,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// ID
     /// </summary>
@@ -110,7 +107,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_translationValue; }
       set { m_translationValue = value; }
     }
-    #endregion
     
     /// <summary>
     /// <see cref="Object.GetHashCode" />
@@ -153,10 +149,8 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class TranslationDisplay
   {
-    #region Members
     string m_key;
     static readonly ICatalog m_catalog = new CachedCatalog (new Lemoine.ModelDAO.i18n.ModelDAOCatalog ());
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (TranslationDisplay).FullName);
 

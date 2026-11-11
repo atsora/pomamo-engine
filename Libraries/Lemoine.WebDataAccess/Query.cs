@@ -19,13 +19,7 @@ namespace Lemoine.WebDataAccess
   /// </summary>
   public class Query: Lemoine.WebClient.Query
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (Query).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -45,7 +39,6 @@ namespace Lemoine.WebDataAccess
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Save a new object
     /// </summary>
@@ -69,9 +62,7 @@ namespace Lemoine.WebDataAccess
       }
       
       if (json.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {
-        log.ErrorFormat ("Save: " +
-                         "Save request failed with {0}",
-                         json);
+        log.Error ($"Save: Save request failed with {json}");
         throw new Exception ("Save error");
       }
       
@@ -103,9 +94,7 @@ namespace Lemoine.WebDataAccess
       }
 
       if (json.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {
-        log.ErrorFormat ("Save: " +
-                         "Save request failed with {0}",
-                         json);
+        log.Error ($"Save: Save request failed with {json}");
         throw new Exception ("Save error");
       }
 
@@ -114,6 +103,5 @@ namespace Lemoine.WebDataAccess
       Debug.Assert (0 != result.Id);
       return result.Id;
     }
-    #endregion // Methods
   }
 }

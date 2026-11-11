@@ -26,7 +26,6 @@ namespace Lemoine.Settings
 
     static readonly ILog log = LogManager.GetLogger (typeof (ItemManager).FullName);
 
-    #region Members
     List<IItem> m_items = new List<IItem> ();
     readonly DirectoryInfo m_itemInstallDir = null;
     readonly DirectoryInfo m_itemUserDir = new DirectoryInfo (Path.Combine (
@@ -35,7 +34,6 @@ namespace Lemoine.Settings
     bool m_itemAlternativeDirValid;
     Dictionary<Type, IList<IItem>> m_interactionsReadOnly = new Dictionary<Type, IList<IItem>> ();
     Dictionary<Type, IList<IItem>> m_interactions = new Dictionary<Type, IList<IItem>> ();
-    #endregion // Members
 
     #region Event
     /// <summary>
@@ -88,7 +86,6 @@ namespace Lemoine.Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Refresh all items based on local files
     /// </summary>
@@ -543,7 +540,6 @@ namespace Lemoine.Settings
     {
       throw new NotImplementedException ();
     }
-    #endregion // Methods
 
     #region Instance
     static ItemManager Instance { get { return Nested.instance; } }

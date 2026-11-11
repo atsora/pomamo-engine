@@ -14,14 +14,9 @@ namespace Lemoine.Collections
   /// </summary>
   internal interface ISharedValue<T>
   {
-    #region Getters / Setters
     /// <summary>
     /// Associated value
     /// </summary>
     T Value { get; set; }
-    #endregion // Getters / Setters
-
-    #region Methods
-    #endregion // Methods
   }
 }

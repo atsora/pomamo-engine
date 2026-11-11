@@ -54,7 +54,6 @@ namespace Pulse.Web.Operation
     }
     #endregion // Constructors
 
-    #region Methods
     IEnumerable<IProgressExtension> GetExtensions (IMonitoredMachine machine)
     {
       Debug.Assert (null != machine);
@@ -100,15 +99,13 @@ namespace Pulse.Web.Operation
 
       if (null == group) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: group with id {0} is not valid",
-            request.GroupId);
+          log.Error ($"GetWithoutCache: group with id {request.GroupId} is not valid");
         }
         return new ErrorDTO ("Invalid group", ErrorStatus.WrongRequestParameter);
       }
       if (!group.SingleMachine) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: group with id {0} is not supported (multi-machines)",
-            request.GroupId);
+          log.Error ($"GetWithoutCache: group with id {request.GroupId} is not supported (multi-machines)");
         }
         return new ErrorDTO ("Not supported group (multi-machines)", ErrorStatus.WrongRequestParameter);
       }
@@ -123,9 +120,7 @@ namespace Pulse.Web.Operation
         IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (machineId);
         if (null == monitoredMachine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}");
           return new ErrorDTO ("No monitored machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -138,7 +133,7 @@ namespace Pulse.Web.Operation
           .Get (cycleProgressRequest);
         if (cycleProgressResponse.Flags.HasFlag (CycleProgressResponseFlags.NotApplicable)) {
           if (log.IsInfoEnabled) {
-            log.InfoFormat ("GetByMachine: not applicable for machine {0}", machineId);
+            log.Info ($"GetByMachine: not applicable for machine {machineId}");
           }
           return new ErrorDTO ("Not applicable (no cycle is detected on this machine)", ErrorStatus.NotApplicable);
         }
@@ -236,7 +231,7 @@ namespace Pulse.Web.Operation
               responseDTO.Running = currentMachineMode.MachineMode.Running;
             }
             else {
-              log.WarnFormat ("GetWithoutCache: current machine mode at {0} is too old", currentMachineMode.DateTime);
+              log.Warn ($"GetWithoutCache: current machine mode at {currentMachineMode.DateTime} is too old");
             }
           }
         }
@@ -394,6 +389,5 @@ namespace Pulse.Web.Operation
       }
       return UpdateIfResponseDateTimeBefore (parsedResponseDateTime, ref dateTime);
     }
-    #endregion // Methods
   }
 }

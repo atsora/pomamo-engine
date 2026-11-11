@@ -23,13 +23,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class SerialNumberModification : MachineStamp, ISerialNumberModification
   {
-    #region Members
     string m_serialNumber;
     DateTime m_beginOrEndDateTime;
     bool m_isBegin;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -63,7 +60,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_isBegin; }
       set { m_isBegin = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -201,7 +197,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
     

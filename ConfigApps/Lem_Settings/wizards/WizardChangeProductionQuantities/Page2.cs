@@ -17,15 +17,12 @@ namespace WizardChangeProductionQuantities
   /// </summary>
   internal partial class Page2 : GenericWizardPage, IWizardPage
   {
-    #region Members
     Quantities m_quantities = null;
     bool m_preparation = true;
     IList<int> m_copyRow = new List<int>();
     IList<int> m_copyColumn = new List<int>();
     ILine m_line = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -44,7 +41,6 @@ namespace WizardChangeProductionQuantities
     IList<IComponentIntermediateWorkPiece> Ciwps { get; set; }
     IList<int> DayNumbers { get; set; }
     IList<IShift> Shifts { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

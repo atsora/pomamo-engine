@@ -27,15 +27,10 @@ namespace Lemoine.Extensions.Web.Services
   {
     readonly ILog log = LogManager.GetLogger (typeof (GenericSyncCachedService<InputDTO>).FullName);
 
-    #region Members
-    #endregion // Members
-
-    #region Getters / Setters
     /// <summary>
     /// Default cache time/out
     /// </summary>
     public CacheTimeOut DefaultCacheTimeOut { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -48,7 +43,6 @@ namespace Lemoine.Extensions.Web.Services
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get without cache for NServiceKit
     /// </summary>
@@ -102,6 +96,5 @@ namespace Lemoine.Extensions.Web.Services
     {
       return this.DefaultCacheTimeOut.GetTimeSpan ();
     }
-    #endregion // Methods
   }
 }

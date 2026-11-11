@@ -66,8 +66,7 @@ namespace Lemoine.WebDataAccess
     public Lemoine.Model.ITranslation MakePersistent(Lemoine.Model.ITranslation entity)
     {
       // Do nothing for the moment
-      log.ErrorFormat ("MakePersistent: " +
-                       "the translation data is not stored in database");
+      log.Error ("MakePersistent: the translation data is not stored in database");
       return entity;
     }
     public void MakeTransient(Lemoine.Model.ITranslation entity)

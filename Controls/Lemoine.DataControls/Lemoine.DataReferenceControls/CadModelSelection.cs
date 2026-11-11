@@ -19,15 +19,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class CadModelSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     IList<ICadModel> m_cadModels = null;
     ICadModel m_cadModel = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (CadModelSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -114,7 +111,6 @@ namespace Lemoine.DataReferenceControls
         this.m_cadModel = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -141,7 +137,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -179,7 +174,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void CadModelSelectionLoad(object sender, EventArgs e)
     {

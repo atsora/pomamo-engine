@@ -26,9 +26,6 @@ namespace Lemoine.Core.StateMachine
 
     DateTime m_lastCall = DateTime.MinValue;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

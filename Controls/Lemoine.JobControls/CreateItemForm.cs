@@ -33,7 +33,6 @@ namespace Lemoine.JobControls
       BIND = 2
     };
 
-    #region Members
     WorkOrderControl workOrderControl;
     ProjectControl projectControl;
     ComponentControl componentControl;
@@ -46,12 +45,8 @@ namespace Lemoine.JobControls
     Type m_controlType;
     GoalType m_goal;
     OperationTreeView m_operationTreeView;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (CreateItemForm).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     
@@ -70,8 +65,6 @@ namespace Lemoine.JobControls
     }
 
     #endregion // Constructors
-
-    #region Methods
     
     void CreateItemFormLoad(object sender, EventArgs e)
     {
@@ -211,8 +204,7 @@ namespace Lemoine.JobControls
             }
             
             if (operation.Paths.Count > 1) {
-              log.WarnFormat("Operation {0} with more than one path in single path mode",
-                             operation.ToString());
+              log.Warn ($"Operation {operation.ToString()} with more than one path in single path mode");
             }
             
             IEnumerator<IPath> pathEnumerator = operation.Paths.GetEnumerator();
@@ -246,8 +238,6 @@ namespace Lemoine.JobControls
     public GoalType Goal {
       get { return m_goal;}
     }
-
-    #endregion // Methods
 
 
   }

@@ -483,9 +483,7 @@ namespace Lemoine.Business.Operation
         Debug.Assert (null != operationCycle); // See above
         int cycleQuantity = operationCycle.Quantity ?? nbPiecesByCycle;
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetPartsOfFirstCycleOutOfOperationSlot: " +
-                           "cycleQuantity={0} machining completion={1}",
-                           cycleQuantity, cycleProgress.MachiningCompletion);
+          log.Debug ($"GetPartsOfFirstCycleOutOfOperationSlot: cycleQuantity={cycleQuantity} machining completion={cycleProgress.MachiningCompletion}");
         }
         return cycleProgress.MachiningCompletion.Value * cycleQuantity;
       }

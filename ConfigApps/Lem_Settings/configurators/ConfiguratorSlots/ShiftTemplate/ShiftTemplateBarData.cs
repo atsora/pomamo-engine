@@ -22,7 +22,6 @@ namespace ConfiguratorSlots.ShiftTemplate
     public ShiftTemplateBarData() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create all BarObjects included in a period
     /// </summary>
@@ -59,6 +58,5 @@ namespace ConfiguratorSlots.ShiftTemplate
       
       return barObjects;
     }
-    #endregion // Methods
   }
 }

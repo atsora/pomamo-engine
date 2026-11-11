@@ -34,12 +34,9 @@ namespace Lemoine.Analysis
     readonly string NB_ATTEMPT_SERIALIZATION_FAILURE_KEY = "Analysis.Activity.NbAttemptSerializationFailure";
     readonly int NB_ATTEMPT_SERIALIZATION_FAILURE_DEFAULT = 2;
 
-    #region Members
     readonly IChecked m_checkedThread = null;
     TransactionLevel m_restrictedTransactionLevel = TransactionLevel.Serializable;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Max number of slots to process by iteration
     /// </summary>
@@ -49,7 +46,6 @@ namespace Lemoine.Analysis
     /// Max analysis time range to process when all the templates are processed
     /// </summary>
     protected abstract TimeSpan MaxAnalysisTimeRange { get; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -122,19 +118,23 @@ namespace Lemoine.Analysis
                                                                                   NB_ATTEMPT_SERIALIZATION_FAILURE_DEFAULT);
       for (int attempt = 0; attempt < nbAttemptSerializationFailure; attempt++) { // Limit the number of attempts in case of serializable failure
         SetActive ();
-        GetLogger ().DebugFormat ("Run: attempt={0}", attempt);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"Run: attempt={attempt}");
+        }
         try {
           // Present first
           while (true) {
-            GetLogger ().DebugFormat ("Run: new iteration of RunInRange");
+            if (GetLogger ().IsDebugEnabled) {
+              GetLogger ().Debug ("Run: new iteration of RunInRange");
+            }
             if (cancellationToken.IsCancellationRequested) {
               GetLogger ().Warn ($"Run: cancellation requested, exit");
               return false;
             }
             if (RunInRange (cancellationToken, new UtcDateTimeRange (presentUtcBegin, until), this.MaxSlotsByIteration, maxAnalysisDateTime) < this.MaxSlotsByIteration) {
-              GetLogger ().DebugFormat ("Run: " +
-                                        "all the present slots until {0} were processed, exit the first loop",
-                                        until);
+              if (GetLogger ().IsDebugEnabled) {
+                GetLogger ().Debug ($"Run: all the present slots until {until} were processed, exit the first loop");
+              }
               break;
             }
             SetActive ();
@@ -156,12 +156,14 @@ namespace Lemoine.Analysis
 
           // All slots then
           while (true) {
-            GetLogger ().DebugFormat ("Run: new iteration of RunAll");
+            if (GetLogger ().IsDebugEnabled) {
+              GetLogger ().Debug ("Run: new iteration of RunAll");
+            }
             if (RunAll (cancellationToken, new UtcDateTimeRange (AnalysisConfigHelper.MinTemplateProcessDateTime, until),
                         this.MaxSlotsByIteration, this.MaxAnalysisTimeRange, maxAnalysisDateTime)) {
-              GetLogger ().DebugFormat ("Run: " +
-                                        "all the slots until {0} were processed, exit",
-                                        until);
+              if (GetLogger ().IsDebugEnabled) {
+                GetLogger ().Debug ($"Run: all the slots until {until} were processed, exit");
+              }
               return true;
             }
             SetActive ();
@@ -242,15 +244,11 @@ namespace Lemoine.Analysis
                                                                          m_restrictedTransactionLevel)) {
             var slot = ReloadSlot (impactedSlot);
             if (null == slot) {
-              GetLogger ().ErrorFormat ("RunInRange: " +
-                                        "ReloadSlot returned null (slot was deleted since) " +
-                                        "=> return MaxInt to reload the impacted slots");
+              GetLogger ().Error ("RunInRange: ReloadSlot returned null (slot was deleted since) => return MaxInt to reload the impacted slots");
               return int.MaxValue;
             }
             if (false == ProcessTemplateForSlot (cancellationToken, slot, range, maxAnalysisDateTime)) {
-              GetLogger ().WarnFormat ("RunInRange: " +
-                                       "ProcessTemplateForSlot is interrupt because maxAnalysisDateTime {0} was reached",
-                                       maxAnalysisDateTime);
+              GetLogger ().Warn ($"RunInRange: ProcessTemplateForSlot is interrupt because maxAnalysisDateTime {maxAnalysisDateTime} was reached");
               transaction.Commit ();
               throw new Lemoine.GDBPersistentClasses.InterruptedAnalysis ("TemplateAnalysis");
             }
@@ -259,9 +257,7 @@ namespace Lemoine.Analysis
           ++count; // one more slot was completed
           SetActive ();
           if (maxAnalysisDateTime <= DateTime.UtcNow) {
-            GetLogger ().WarnFormat ("RunInRange: " +
-                                     "interrupt the analysis because now is after {0} after procesing slot {1}",
-                                     maxAnalysisDateTime, impactedSlot);
+            GetLogger ().Warn ($"RunInRange: interrupt the analysis because now is after {maxAnalysisDateTime} after procesing slot {impactedSlot}");
             throw new Lemoine.GDBPersistentClasses.InterruptedAnalysis ("TemplateAnalysis");
           }
         } // foreach
@@ -289,7 +285,9 @@ namespace Lemoine.Analysis
           impactedSlots = GetNotProcessedTemplate (applicableRange, limit);
         }
 
-        GetLogger ().DebugFormat ("RunAll: got {0} slots VS limit={1}", impactedSlots.Count (), limit);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"RunAll: got {impactedSlots.Count ()} slots VS limit={limit}");
+        }
 
         if (cancellationToken.IsCancellationRequested) {
           GetLogger ().Warn ("RunAll: cancellation requested");
@@ -301,7 +299,9 @@ namespace Lemoine.Analysis
         foreach (I impactedSlot in impactedSlots) {
           SetActive ();
           ++count;
-          GetLogger ().DebugFormat ("RunAll: analyze slot #{0}", count);
+          if (GetLogger ().IsDebugEnabled) {
+            GetLogger ().Debug ($"RunAll: analyze slot #{count}");
+          }
 
           if (cancellationToken.IsCancellationRequested) {
             GetLogger ().Warn ("RunAll: cancellation requested");
@@ -312,9 +312,7 @@ namespace Lemoine.Analysis
                                                                          m_restrictedTransactionLevel)) {
             var slot = ReloadSlot (impactedSlot);
             if (null == slot) {
-              GetLogger ().ErrorFormat ("RunAll: " +
-                                        "slot is null after reload " +
-                                        "=> return false to get again the list of impacted slots");
+              GetLogger ().Error ("RunAll: slot is null after reload => return false to get again the list of impacted slots");
               transaction.Commit ();
               return false;
             }
@@ -325,19 +323,12 @@ namespace Lemoine.Analysis
                   && slot.DateTimeRange.Lower.Value.Add (maxAnalysisTimeRange) < correctedRange.Upper.Value) {
                 correctedRange = new UtcDateTimeRange (applicableRange.Lower,
                                                        slot.DateTimeRange.Lower.Value.Add (maxAnalysisTimeRange));
-                GetLogger ().InfoFormat ("RunAll: " +
-                                         "process only until {0} instead of {1} " +
-                                         "because of the max analysis time range {2}",
-                                         correctedRange.Upper, applicableRange.Upper, maxAnalysisTimeRange);
+                GetLogger ().Info ($"RunAll: process only until {correctedRange.Upper} instead of {applicableRange.Upper} because of the max analysis time range {maxAnalysisTimeRange}");
               }
             }
 
             if (!correctedRange.Overlaps (slot.DateTimeRange)) {
-              GetLogger ().WarnFormat ("RunAll: " +
-                                       "slot is after the corrected end process date/time {0} " +
-                                       "because of the max analysis time range of {1} " +
-                                       "=> exit returning false",
-                                       correctedRange.Upper, maxAnalysisTimeRange);
+              GetLogger ().Warn ($"RunAll: slot is after the corrected end process date/time {correctedRange.Upper} because of the max analysis time range of {maxAnalysisTimeRange} => exit returning false");
               transaction.Commit ();
               return false;
             }
@@ -346,18 +337,12 @@ namespace Lemoine.Analysis
               && (correctedRange.Upper < slot.DateTimeRange.Upper);
             SetActive ();
             if (false == ProcessTemplateForSlot (cancellationToken, slot, correctedRange, maxAnalysisDateTime)) {
-              GetLogger ().WarnFormat ("RunAll: " +
-                                       "ProcessTemplate was interrupted because maxAnalysisDateTime {0} was reached",
-                                       maxAnalysisDateTime);
+              GetLogger ().Warn ($"RunAll: ProcessTemplate was interrupted because maxAnalysisDateTime {maxAnalysisDateTime} was reached");
               transaction.Commit ();
               throw new Lemoine.GDBPersistentClasses.InterruptedAnalysis ("TemplateAnalysis");
             }
             if (partiallyApplied) {
-              GetLogger ().WarnFormat ("RunAll: " +
-                                       "interrupt the process after processing {0} until {1} " +
-                                       "because of the max analysis time range {2} " +
-                                       "=> exit returning false",
-                                       slot, correctedRange.Upper, maxAnalysisTimeRange);
+              GetLogger ().Warn ($"RunAll: interrupt the process after processing {slot} until {correctedRange.Upper} because of the max analysis time range {maxAnalysisTimeRange} => exit returning false");
               ModelDAOHelper.DAOFactory.Flush (); // For the unit tests
               transaction.Commit ();
               return false;
@@ -365,9 +350,7 @@ namespace Lemoine.Analysis
 
             SetActive ();
             if (maxAnalysisDateTime <= DateTime.UtcNow) {
-              GetLogger ().WarnFormat ("RunAll: " +
-                                       "interrupt the analysis because now is after {0} after procesing slot {1}",
-                                       maxAnalysisDateTime, slot);
+              GetLogger ().Warn ($"RunAll: interrupt the analysis because now is after {maxAnalysisDateTime} after procesing slot {slot}");
               transaction.Commit ();
               throw new Lemoine.GDBPersistentClasses.InterruptedAnalysis ("TemplateAnalysis");
             }

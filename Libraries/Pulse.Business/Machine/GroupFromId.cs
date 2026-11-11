@@ -42,7 +42,7 @@ namespace Lemoine.Business.Machine
       var group = new CombinedGroup (groupId);
       if (null == group.Groups) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("CreateCombinedGroup: combined group with id {0} is not valid => return null");
+          log.Error ($"CreateCombinedGroup: combined group with id {groupId} is not valid => return null");
         }
         return null;
       }

@@ -21,9 +21,7 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class DisplayableTreeView : UserControl
   {
-    #region Members
     List<string[]> m_orderProperties = new List<string[]>();
-    #endregion // Members
     
     #region Events
     /// <summary>
@@ -32,7 +30,6 @@ namespace Lemoine.DataReferenceControls
     public event Action SelectionChanged;
     #endregion // Events
 
-    #region Getters / Setters
     /// <summary>
     /// Enable or disable multi selection
     /// After this change the tree has to be repopulated
@@ -111,7 +108,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -127,7 +123,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a possible way to order elements in the tree
     /// </summary>
@@ -219,7 +214,6 @@ namespace Lemoine.DataReferenceControls
     {
       treeView.AddDetermineColorFunction(lambda);
     }
-    #endregion // Methods
     
     #region Event reactions
     void ComboBoxSelectedIndexChanged(object sender, EventArgs e)

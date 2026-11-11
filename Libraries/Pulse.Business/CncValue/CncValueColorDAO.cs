@@ -218,9 +218,7 @@ namespace Lemoine.Business.CncValue
         else { // null != leftReasonSlot
           if (leftCncValue.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendLeft: " +
-                             "empty left reason slot {0}",
-                             leftCncValue);
+            log.Error ($"ExtendLeft: empty left reason slot {leftCncValue}");
             return slot;
           }
           ICncValueColor leftCncValueColor = CreateCncValueColor (field, leftCncValue);
@@ -258,9 +256,7 @@ namespace Lemoine.Business.CncValue
         else { // null != rightCncValue
           if (rightCncValue.IsEmpty ()) {
             Debug.Assert (false);
-            log.ErrorFormat ("ExtendRight: " +
-                             "empty right reason slot {0}",
-                             rightCncValue);
+            log.Error ($"ExtendRight: empty right reason slot {rightCncValue}");
             return slot;
           }
           ICncValueColor rightCncValueColor = CreateCncValueColor (field, rightCncValue);

@@ -22,12 +22,9 @@ namespace ConfiguratorPlugins
   {
     ILog log = LogManager.GetLogger (typeof (PagePluginAction));
 
-    #region Members
     IPluginCustomActionControl m_customActionControl = null;
     string m_pluginName = "";
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -64,7 +61,6 @@ namespace ConfiguratorPlugins
         return LemSettingsGlobal.PageFlag.WITH_VALIDATION;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

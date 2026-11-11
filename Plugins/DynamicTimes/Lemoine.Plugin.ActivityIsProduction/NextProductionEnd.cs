@@ -124,7 +124,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
           }
           else {
             if (IsFactAfter (dateTime)) {
-              log.WarnFormat ("IsApplicableAt: no fact at {0}", dateTime);
+              log.Warn ($"IsApplicableAt: no fact at {dateTime}");
               return DynamicTimeApplicableStatus.NoAtDateTime;
             }
             else {
@@ -276,7 +276,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
                 else { // Gap between range.Lower and nextFact
                   if (range.Lower.Value == dateTime) { // Initial gap
                     if (log.IsWarnEnabled) {
-                      log.WarnFormat ("Get: initial gap {0}-{1} => return NotApplicable", dateTime, nextFact.Begin);
+                      log.Warn ($"Get: initial gap {dateTime}-{nextFact.Begin} => return NotApplicable");
                     }
                     return this.CreateNotApplicable ();
                   }
@@ -308,7 +308,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
           && (Bound.Compare<DateTime> (current.Value, fact.DateTimeRange.Lower) < 0)) {
           // Gap
           if (log.IsInfoEnabled) {
-            log.InfoFormat ("Get: gap {0}-{1}", current, fact.DateTimeRange.Lower);
+            log.Info ($"Get: gap {current}-{fact.DateTimeRange.Lower}");
           }
           var gapFact = ModelDAOHelper.ModelFactory
             .CreateFact (this.MonitoredMachine, current.Value, fact.Begin, m_noData);

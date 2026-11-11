@@ -20,19 +20,11 @@ namespace Lemoine.NHibernateTypes
   public class InitialNullIdSetType<T, ID> :
     NHibernate.UserTypes.IUserCollectionType
   {
-    #region Members
-    #endregion // Members
-
     readonly ILog log = LogManager.GetLogger(typeof (InitialNullIdSetType<T, ID>).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
 
     #endregion // Constructors
-
-    #region Methods
 
     /// <summary>
     /// instantiate an InitialNullIdSet with an anticipated size
@@ -127,6 +119,5 @@ namespace Lemoine.NHibernateTypes
       }
       return result;
     }
-    #endregion // Methods
   }
 }

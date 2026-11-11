@@ -42,8 +42,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
     {
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.WarnFormat ("Initialize: " +
-                        "the configuration is not valid");
+        log.Warn ("Initialize: the configuration is not valid");
         return false;
       }
 
@@ -55,9 +54,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
           m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
             .FindById (machineFilterId);
           if (null == m_machineFilter) {
-            log.ErrorFormat ("Initialize: " +
-                             "machine filter id {0} does not exist",
-                             machineFilterId);
+            log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
             return false;
           }
         }
@@ -67,9 +64,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
         m_oldMachineMode = ModelDAOHelper.DAOFactory.MachineModeDAO
           .FindById (oldMachineModeId);
         if (null == m_oldMachineMode) {
-          log.ErrorFormat ("Initialize: " +
-                           "oldMachineModeFilter {0} could not be loaded",
-                           oldMachineModeId);
+          log.Error ($"Initialize: oldMachineModeFilter {oldMachineModeId} could not be loaded");
           return false;
         }
         {
@@ -83,9 +78,7 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
         m_newMachineMode = ModelDAOHelper.DAOFactory.MachineModeDAO
           .FindById (newMachineModeId);
         if (null == m_newMachineMode) {
-          log.ErrorFormat ("Initialize: " +
-                           "newMachineModeFilter {0} could not be loaded",
-                           newMachineModeId);
+          log.Error ($"Initialize: newMachineModeFilter {newMachineModeId} could not be loaded");
           return false;
         }
 
@@ -140,14 +133,14 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
                                                  IShift shift)
     {
       if (null == m_currentMachineMode) {
-        log.DebugFormat ("AfterProcessNewActivityPeriod: " +
-                         "m_currentMachineMode null");
+        if (log.IsDebugEnabled) {
+          log.Debug ("AfterProcessNewActivityPeriod: m_currentMachineMode null");
+        }
         return;
       }
 
       if (null == m_oldMachineMode) {
-        log.FatalFormat ("AfterProcessNewActivityPeriod: " +
-                         "m_oldMachineModeFilter is null");
+        log.Fatal ("AfterProcessNewActivityPeriod: m_oldMachineModeFilter is null");
         Debug.Assert (null != m_oldMachineMode);
         return;
       }
@@ -202,9 +195,9 @@ namespace Lemoine.Plugin.ShortPeriodSwitcher
       // - Check the period is not too long
       TimeSpan duration = periodEnd.Subtract (periodBegin);
       if (m_maxDuration < duration) {
-        log.DebugFormat ("AfterProcessNewActivityPeriod: " +
-                         "the period is too long: {0}",
-                         duration);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AfterProcessNewActivityPeriod: the period is too long: {duration}");
+        }
         return;
       }
 

@@ -23,9 +23,7 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Part: DataWithPatternName, IPart, IEquatable<IPart>
   {
-    #region Members
     IComponent m_component;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Part).FullName);
 
@@ -61,7 +59,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Id
     /// </summary>
@@ -321,7 +318,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual ICollection<IStamp> Stamps {
       get { return m_component.Stamps; }
     }
-    #endregion // Getters / Setters
     
     #region Add methods
     /// <summary>
@@ -362,7 +358,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
     
-    #region Methods
     /// <summary>
     /// Check if the part is undefined
     /// 
@@ -376,7 +371,6 @@ namespace Lemoine.GDBPersistentClasses
         && ( (this.Code == null)
             || (0 == this.Code.Length));
     }
-    #endregion // Methods
 
     /// <summary>
     ///   Indicates whether the current object

@@ -64,16 +64,10 @@ namespace Lemoine.GDBPersistentClasses
               defaultReason.Score = DEFAULT_OFF_SCORE;
               defaultReason.Auto = true;
               if (null == reasonOff) {
-                log.WarnFormat ("InsertDefaultValues: " +
-                                "please add manually a default reason for machine mode Off {0} " +
-                                "because no reasonOff Id=6 exists",
-                                machineMode);
+                log.Warn ($"InsertDefaultValues: please add manually a default reason for machine mode Off {machineMode} because no reasonOff Id=6 exists");
               }
               else {
-                log.InfoFormat ("InsertDefaultValues: " +
-                                "about to add a new MachineModeDefaultReason Off for " +
-                                "machineMode={0} machineObservationState={1}",
-                                machineMode, machineObservationState);
+                log.Info ($"InsertDefaultValues: about to add a new MachineModeDefaultReason Off for machineMode={machineMode} machineObservationState={machineObservationState}");
                 ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
               }
             }
@@ -100,17 +94,10 @@ namespace Lemoine.GDBPersistentClasses
               defaultReason.Reason = reasonUndefined;
               defaultReason.Score = DEFAULT_INACTIVE_SCORE;
               if (null == reasonUndefined) {
-                log.WarnFormat ("InsertDefaultValues: " +
-                                "please add manually a default reason for machine mode {0} " +
-                                "because no reasonUndefined Id=1 exists",
-                                machineMode);
+                log.Warn ($"InsertDefaultValues: please add manually a default reason for machine mode {machineMode} because no reasonUndefined Id=1 exists");
               }
               else {
-                log.WarnFormat ("InsertDefaultValues: " +
-                                "please set manually a default reason for " +
-                                "machineMode={0} machineObservationState={1} " +
-                                "=> for the moment the undefined reason is set",
-                                machineMode, machineObservationState);
+                log.Warn ($"InsertDefaultValues: please set manually a default reason for machineMode={machineMode} machineObservationState={machineObservationState} => for the moment the undefined reason is set");
                 ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
               }
             }
@@ -121,16 +108,10 @@ namespace Lemoine.GDBPersistentClasses
               defaultReason.Reason = reasonUnknown;
               defaultReason.Score = DEFAULT_UNKNOWN_SCORE;
               if (null == reasonUnknown) {
-                log.WarnFormat ("InsertDefaultValues: " +
-                                "please add manually a default reason for machine mode {0} " +
-                                "because no reasonUnknown Id=7 exists",
-                                machineMode);
+                log.Warn ($"InsertDefaultValues: please add manually a default reason for machine mode {machineMode} because no reasonUnknown Id=7 exists");
               }
               else {
-                log.InfoFormat ("InsertDefaultValues: " +
-                                "about to add a new MachineModeDefaultReason Unknown for " +
-                                "machineMode={0} machineObservationState={1}",
-                                machineMode, machineObservationState);
+                log.Info ($"InsertDefaultValues: about to add a new MachineModeDefaultReason Unknown for machineMode={machineMode} machineObservationState={machineObservationState}");
                 ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
               }
             }
@@ -140,17 +121,10 @@ namespace Lemoine.GDBPersistentClasses
               defaultReason.Reason = reasonUndefined;
               defaultReason.Score = DEFAULT_SCORE;
               if (null == reasonUndefined) {
-                log.WarnFormat ("InsertDefaultValues: " +
-                                "please add manually a default reason for machine mode {0} " +
-                                "because no reasonUndefined Id=1 exists",
-                                machineMode);
+                log.Warn ($"InsertDefaultValues: please add manually a default reason for machine mode {machineMode} because no reasonUndefined Id=1 exists");
               }
               else {
-                log.WarnFormat ("InsertDefaultValues: " +
-                                "please set manually a default reason for " +
-                                "machineMode={0} machineObservationState={1} " +
-                                "=> for the moment the undefined reason is set",
-                                machineMode, machineObservationState);
+                log.Warn ($"InsertDefaultValues: please set manually a default reason for machineMode={machineMode} machineObservationState={machineObservationState} => for the moment the undefined reason is set");
                 ModelDAOHelper.DAOFactory.MachineModeDefaultReasonDAO.MakePersistent (defaultReason);
               }
 
@@ -328,9 +302,9 @@ namespace Lemoine.GDBPersistentClasses
           return list;
         }
         else { // Else try with the parent
-          log.DebugFormat ("FindWith: " +
-                           "try with the parent {0}",
-                           attachedMachineMode.Parent.Id);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"FindWith: try with the parent {attachedMachineMode.Parent.Id}");
+          }
           return FindWith (attachedMachineMode.Parent,
                            machineObservationState);
         }
@@ -400,9 +374,9 @@ namespace Lemoine.GDBPersistentClasses
           return filteredDefaultReasons;
         }
         else { // Else try with the parent
-          log.DebugFormat ("FindWith: " +
-                           "try with the parent {0}",
-                           attachedMachineMode.Parent.Id);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"FindWith: try with the parent {attachedMachineMode.Parent.Id}");
+          }
           return FindWith (machine,
                            attachedMachineMode.Parent,
                            machineObservationState);
@@ -441,9 +415,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      log.ErrorFormat ("FindWith: " +
-                       "no default reason matches machine {0} machineMode {1} machineObservationState {2}",
-                       machine, machineMode, machineObservationState);
+      log.Error ($"FindWith: no default reason matches machine {machine} machineMode {machineMode} machineObservationState {machineObservationState}");
       return null;
     }
   }

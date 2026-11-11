@@ -17,7 +17,6 @@ namespace WizardCreateMachine
   /// </summary>
   internal partial class PageCategory : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -39,7 +38,6 @@ namespace WizardCreateMachine
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

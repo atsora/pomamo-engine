@@ -43,7 +43,6 @@ namespace Lemoine.Analysis
     static readonly string MAX_CONSTRAINT_INTEGRITY_VIOLATION_ATTEMPT_KEY = "Analysis.Modification.MaxConstraintIntegrityViolationAttempt";
     static readonly int MAX_CONSTRAINT_INTEGRITY_VIOLATION_ATTEMPT_DEFAULT = 5;
 
-    #region Members
     volatile bool m_timeoutInterruption = false;
     readonly IModification m_modification;
     readonly IActivityAnalysis m_activityAnalysis = null;
@@ -56,11 +55,9 @@ namespace Lemoine.Analysis
     TransactionLevel m_restrictedTransactionLevel = TransactionLevel.Serializable;
     volatile int m_analysisConnectionId = -1;
     readonly IMachine m_machine;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (ModificationAnalysis).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Timeout interruption
     /// </summary>
@@ -132,7 +129,6 @@ namespace Lemoine.Analysis
         return m_statusPriority;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -206,7 +202,6 @@ namespace Lemoine.Analysis
       return log;
     }
 
-    #region Methods
     IEnumerable<ILockTableToPartition> CreateLockedTables (IDAOSession session, IMachine machine)
     {
       Debug.Assert (null != machine);
@@ -244,7 +239,7 @@ namespace Lemoine.Analysis
       IList<IMachine> impactedMachines = null;
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("Run: start");
+        log.Debug ("Run: start");
       }
 
       try {
@@ -802,6 +797,5 @@ namespace Lemoine.Analysis
         return;
       }
     }
-    #endregion // Methods
   }
 }

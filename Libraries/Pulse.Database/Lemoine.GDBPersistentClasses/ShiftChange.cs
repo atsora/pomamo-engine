@@ -20,10 +20,8 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class ShiftChange: PeriodAssociation
   {
-    #region Members
     DateTime m_day;
     IShift m_shift;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -53,7 +51,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -75,7 +72,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IShift Shift {
       get { return m_shift; }
     }
-    #endregion // Getters / Setters
 
     #region Modification implementation
     /// <summary>
@@ -132,9 +128,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported slot");
       }
     }
@@ -147,7 +141,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void MakeAnalysis ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("MakeAnalysis: not valid");
+      log.Fatal ("MakeAnalysis: not valid");
       throw new NotImplementedException ("DayChange.MakeAnalysis");
     }
     

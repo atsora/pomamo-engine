@@ -18,7 +18,6 @@ namespace ConfiguratorLine
   {
     static readonly ILog log = LogManager.GetLogger(typeof (OperationData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Displayed string of an operation
     /// </summary>
@@ -30,7 +29,6 @@ namespace ConfiguratorLine
     public IOperation Operation { get; private set; }
     
     public IList<MachineData> Machines { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -47,7 +45,6 @@ namespace ConfiguratorLine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Update the display value of a simple operation
     /// </summary>
@@ -209,6 +206,5 @@ namespace ConfiguratorLine
 
       return text;
     }
-    #endregion // Methods
   }
 }

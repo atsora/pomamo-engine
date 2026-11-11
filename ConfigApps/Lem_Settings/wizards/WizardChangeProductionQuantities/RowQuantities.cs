@@ -14,7 +14,6 @@ namespace WizardChangeProductionQuantities
   /// </summary>
   public class RowQuantities
   {
-    #region Getters / Setters
     /// <summary>
     /// Shift
     /// </summary>
@@ -60,7 +59,6 @@ namespace WizardChangeProductionQuantities
         return true;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -83,7 +81,6 @@ namespace WizardChangeProductionQuantities
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Set all values as modified
     /// </summary>
@@ -96,6 +93,5 @@ namespace WizardChangeProductionQuantities
         }
       }
     }
-    #endregion // Methods
   }
 }

@@ -68,8 +68,7 @@ namespace Lemoine.GDBPersistentClasses
         fieldLegends = fieldLegends.Where (l => string.Equals (fieldLegend.StringValue, l.StringValue));
       }
       if (!fieldLegends.Any ()) { // No existing configuration
-        log.InfoFormat ("InsertDefaultValue: " +
-                        "add field legend");
+        log.Info ("InsertDefaultValue: add field legend");
         ModelDAOHelper.DAOFactory.FieldLegendDAO.MakePersistent (fieldLegend);
       }
     }

@@ -26,7 +26,6 @@ namespace WizardCreateStampingConfig
 
     ILog log = LogManager.GetLogger<Item> ();
 
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -100,7 +99,6 @@ namespace WizardCreateStampingConfig
       new Page2 (),
       new Page3 ()
     };
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

@@ -30,12 +30,8 @@ namespace Lemoine.Business.MachineMode
     static readonly string CACHE_TIMEOUT_CURRENT_KEY = "Business.MachineMode.RunningDuration.CacheTimeOut.Current";
     static readonly TimeSpan CACHE_TIMEOUT_CURRENT_DEFAULT = CacheTimeOut.CurrentShort.GetTimeSpan ();
 
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (RunningDuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Machine (not null)
     /// </summary>
@@ -45,7 +41,6 @@ namespace Lemoine.Business.MachineMode
     /// Range (not empty)
     /// </summary>
     UtcDateTimeRange Range { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -62,9 +57,6 @@ namespace Lemoine.Business.MachineMode
       this.Range = range;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -132,9 +124,9 @@ namespace Lemoine.Business.MachineMode
         cacheTimeSpan = Lemoine.Info.ConfigSet.LoadAndGet<TimeSpan> (CACHE_TIMEOUT_CURRENT_KEY,
           CACHE_TIMEOUT_CURRENT_DEFAULT);
       }
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0}",
-                       cacheTimeSpan);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan}");
+      }
       return cacheTimeSpan;
     }
     #endregion // IRequest implementation

@@ -53,7 +53,7 @@ namespace Lemoine.Plugin.PieGroup
       var regex = new Regex ("^" + m_configuration.GroupRegex + "$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
       if (!regex.IsMatch (group.Id)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Initialize: group id {0} does not match regex {1}", group.Id, m_configuration.GroupRegex);
+          log.Debug ($"Initialize: group id {group.Id} does not match regex {m_configuration.GroupRegex}");
         }
         return false;
       }

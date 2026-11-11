@@ -13,12 +13,9 @@ namespace ViewReasons
   /// </summary>
   public class ReasonsByMOS: IComparable
   {
-    #region Members
     int m_hashCode = 0;
     bool m_hashCodeComputed = false;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// One or several MOS sharing the same reasons
     /// </summary>
@@ -28,7 +25,6 @@ namespace ViewReasons
     /// Get the reasons associated to one or several MOS
     /// </summary>
     public List<OrderedReason> Reasons { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     public ReasonsByMOS()
@@ -38,7 +34,6 @@ namespace ViewReasons
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// HashCode override
     /// </summary>
@@ -134,6 +129,5 @@ namespace ViewReasons
 
       return "";
     }
-    #endregion // Methods
   }
 }

@@ -28,13 +28,11 @@ namespace Lemoine.Alert.GDBListeners
     static readonly int FETCH_MAX_ITEMS_DEFAULT = 100;
     static readonly int MARGIN_SECONDS = 3;
 
-    #region Members
     readonly IField m_field;
     readonly IMachineModule m_machineModule;
     IApplicationState m_cncAlarmMachineModuleListenerState = null;
     List<SerializableTuple<CncValue, List<CncAlarm>>> m_fetched = new List<SerializableTuple<CncValue, List<CncAlarm>>> ();
     XmlSerializer m_xmlSerializer;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (CncAlarmStackLightMachineModuleListener).FullName);
 
@@ -65,7 +63,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// Returns null when there is no data anymore to return
@@ -128,7 +125,9 @@ namespace Lemoine.Alert.GDBListeners
 
       // If no data anymore to process
       if (m_fetched.Count == 0) {
-        log.DebugFormat ("GetData: no data");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetData: no data");
+        }
         if (lastTime.HasValue) {
           // Update the datetime so that we can go on
           using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
@@ -211,6 +210,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-    #endregion // Methods
   }
 }

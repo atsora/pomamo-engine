@@ -16,12 +16,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ProductionAnalysisStatus: IProductionAnalysisStatus
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
     DateTime m_analysisDateTime = DateTime.UtcNow;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (ProductionAnalysisStatus).FullName);
 
@@ -42,7 +40,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// ID of the referenced machine
     /// </summary>
@@ -78,6 +75,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_analysisDateTime; }
       set { m_analysisDateTime = value; }
     }
-    #endregion // Getters / Setters
   }
 }

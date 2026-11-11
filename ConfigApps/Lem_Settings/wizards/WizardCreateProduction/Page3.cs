@@ -17,13 +17,10 @@ namespace WizardCreateProduction
   /// </summary>
   internal partial class Page3 : GenericWizardPage, IWizardPage
   {
-    #region Members
     IList<int> m_copyRow = new List<int>();
     IList<int> m_copyColumn = new List<int>();
     readonly IList<int> m_shiftIds = new List<int>();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -39,7 +36,6 @@ namespace WizardCreateProduction
           "the configuration."; } }
     
     bool UpdateSumEnabled { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -66,7 +66,7 @@ namespace Lemoine.Business.Operation
         .Get (goodCycleExtensionsRequest);
       if (!goodCycleExtensions.Any ()) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("Get: no good cycle extension was registered");
+          log.Error ("Get: no good cycle extension was registered");
         }
         return GoodCycleExtensionResponse.KO;
       }
@@ -98,7 +98,7 @@ namespace Lemoine.Business.Operation
         .GetAsync (goodCycleExtensionsRequest);
       if (!goodCycleExtensions.Any ()) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetAsync: no good cycle extension was registered");
+          log.Error ("GetAsync: no good cycle extension was registered");
         }
         return GoodCycleExtensionResponse.KO;
       }

@@ -18,7 +18,6 @@ namespace ConfiguratorSlots.UserMachine
     internal const string MACHINES = "machines";
     internal const string MACHINE_STATE_TEMPLATES = "machine_state_templates";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -89,9 +88,7 @@ namespace ConfiguratorSlots.UserMachine
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     protected override void InitializeData(ItemData data, ItemData otherData)
     {
       data.CurrentPageName = "";
@@ -108,6 +105,5 @@ namespace ConfiguratorSlots.UserMachine
       data.InitValue(MACHINES, typeof(IList<IMachine>), new List<IMachine>(), true);
       data.InitValue(MACHINE_STATE_TEMPLATES, typeof(IList<IMachineStateTemplate>), new List<IMachineStateTemplate>(), true);
     }
-    #endregion // Methods
   }
 }

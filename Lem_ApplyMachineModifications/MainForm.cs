@@ -98,29 +98,23 @@ namespace Lem_ApplyMachineModifications
       string usage = "";
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         if (0 == m_options.ModificationDescriptions.Count ()) {
-          log.DebugFormat ("Main: " +
-                           "no modification description " +
-                           "=> nothing to do");
+          if (log.IsDebugEnabled) {
+            log.Debug ("Main: no modification description => nothing to do");
+          }
           return;
         }
 
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (m_options.MachineId);
         if (null == machine) {
-          log.ErrorFormat ("Main: " +
-                           "machine {0} is not valid",
-                           m_options.MachineId);
+          log.Error ($"Main: machine {m_options.MachineId} is not valid");
           RaiseArgumentError (usage,
                               Lemoine.I18N.PulseCatalog.GetString ("InvalidMachine"));
         }
 
-        log.InfoFormat ("Main: " +
-                        "options are MachineId={0} UpdaterId={1}",
-                        m_options.MachineId, m_options.UpdaterId);
+        log.Info ($"Main: options are MachineId={m_options.MachineId} UpdaterId={m_options.UpdaterId}");
         foreach (var description in m_options.ModificationDescriptions) {
-          log.InfoFormat ("Main: " +
-                          "description={0}",
-                          description);
+          log.Info ($"Main: description={description}");
         }
 
         using (IDAOTransaction transaction = session.BeginTransaction ("Lem_ApplyMachineModifications")) {
@@ -144,8 +138,7 @@ namespace Lem_ApplyMachineModifications
             }
             string[] descriptionItems = modificationDescription.Split (new char[] { ';' }, 4);
             if (descriptionItems.Length < 3) {
-              log.ErrorFormat ("Main: " +
-                               "invalid modification description, not 3 elements");
+              log.Error ("Main: invalid modification description, not 3 elements");
               RaiseArgumentError (usage,
                                   "invalid modification description " + modificationDescription);
               return;
@@ -173,9 +166,7 @@ namespace Lem_ApplyMachineModifications
                     .FindByCode (descriptionItems[2]);
                 }
                 if (null == reason) {
-                  log.ErrorFormat ("Main: " +
-                                   "reason {0} is not valid",
-                                   descriptionItems[2]);
+                  log.Error ($"Main: reason {descriptionItems[2]} is not valid");
                   var dialog = new Lemoine.BaseControls.UsageDialog (usage,
                                                                      Lemoine.I18N.PulseCatalog.GetString ("InvalidReason"));
                   dialog.ShowDialog ();
@@ -208,9 +199,7 @@ namespace Lem_ApplyMachineModifications
                   .FindById (machineStateTemplateId);
               }
               if (null == machineStateTemplate) {
-                log.ErrorFormat ("Main: " +
-                                 "machine state template Id {0} is not valid",
-                                 descriptionItems[2]);
+                log.Error ($"Main: machine state template Id {descriptionItems[2]} is not valid");
                 var dialog = new Lemoine.BaseControls.UsageDialog (usage,
                                                                    Lemoine.I18N.PulseCatalog.GetString ("InvalidMachineStateTemplate"));
                 dialog.ShowDialog ();
@@ -227,9 +216,7 @@ namespace Lem_ApplyMachineModifications
                     .FindById (shiftId);
                 }
                 if (null == shift) {
-                  log.ErrorFormat ("Main: " +
-                                   "shift Id {0} is not valid",
-                                   descriptionItems[3]);
+                  log.Error ($"Main: shift Id {descriptionItems[3]} is not valid");
                   var dialog = new Lemoine.BaseControls.UsageDialog (usage,
                                                                      Lemoine.I18N.PulseCatalog.GetString ("InvalidShift"));
                   dialog.ShowDialog ();
@@ -257,9 +244,7 @@ namespace Lem_ApplyMachineModifications
                   .FindById (manufacturingOrderId);
               }
               if (null == manufacturingOrder) {
-                log.ErrorFormat ("Main: " +
-                                 "task Id {0} is not valid",
-                                 descriptionItems[2]);
+                log.Error ($"Main: task Id {descriptionItems[2]} is not valid");
                 var dialog = new Lemoine.BaseControls.UsageDialog (usage,
                                                                    Lemoine.I18N.PulseCatalog.GetString ("InvalidTask"));
                 dialog.ShowDialog ();

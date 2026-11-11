@@ -19,9 +19,6 @@ namespace Lemoine.FileRepository
 
     static readonly string MESSAGE = "Missing file in FileRepository";
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -32,7 +29,7 @@ namespace Lemoine.FileRepository
       : base (MESSAGE)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("MissingFileException: {0}/{1}", nspace, path);
+        log.Debug ($"MissingFileException: {nspace}/{path}");
       }
       this.Data["NSpace"] = nspace;
       this.Data["Path"] = path;
@@ -48,7 +45,7 @@ namespace Lemoine.FileRepository
       : base (MESSAGE, innerException)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("MissingFileException: {0}/{1}, inner={2}", nspace, path, innerException);
+        log.Debug ($"MissingFileException: {nspace}/{path}, inner={innerException}");
       }
       this.Data["NSpace"] = nspace;
       this.Data["Path"] = path;

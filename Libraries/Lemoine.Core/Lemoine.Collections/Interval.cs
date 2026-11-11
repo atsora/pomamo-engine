@@ -24,8 +24,6 @@ namespace Lemoine.Collections
     }
     #endregion // Constructors
 
-    #region Methods
-
     /// <summary>
     /// CompareTo: (a,b) LT (c,d) iff a LT c OR ((a == c) AND b LT d)
     /// </summary>
@@ -34,6 +32,5 @@ namespace Lemoine.Collections
       int cmpFirst = this.Item1.CompareTo(otherInterval.Item1);
       return (cmpFirst == 0) ? this.Item2.CompareTo(otherInterval.Item2) : cmpFirst;
     }
-    #endregion // Methods
   }
 }

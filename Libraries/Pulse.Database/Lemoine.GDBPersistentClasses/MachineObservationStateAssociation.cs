@@ -53,7 +53,6 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     static readonly bool RESET_NOT_COMPATIBLE_MANUAL_REASON_DEFAULT = false;
 
-    #region Members
     IMachineObservationState m_machineObservationState;
     IUser m_user;
     IShift m_shift;
@@ -61,7 +60,6 @@ namespace Lemoine.GDBPersistentClasses
     bool m_partOfDetectionAnalysis = false;
 
     IEnumerable<IReasonExtension> m_reasonExtensions;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -109,15 +107,12 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert ((null == mainModification) || (false == partOfDetectionAnalysis));
       if ((null != mainModification) && partOfDetectionAnalysis) {
-        log.FatalFormat ("MachineObservationStateAssociation: " +
-                         "incompatible arguments mainModification={0} and partOfDetectionAnalysis={1}",
-                         mainModification, partOfDetectionAnalysis);
+        log.Fatal ($"MachineObservationStateAssociation: incompatible arguments mainModification={mainModification} and partOfDetectionAnalysis={partOfDetectionAnalysis}");
       }
       m_partOfDetectionAnalysis = partOfDetectionAnalysis;
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -141,8 +136,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("MachineObservationState.set: " +
-                           "null value");
+          log.Error ("MachineObservationState.set: null value");
           throw new ArgumentNullException ("value");
         }
         m_machineObservationState = value;
@@ -223,7 +217,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_partOfDetectionAnalysis; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Get the ResetReasonExtensions and load them if needed
@@ -233,8 +226,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (null == m_reasonExtensions) { // Initialization
         if (!Lemoine.Extensions.ExtensionManager.IsActive ()) {
-          log.WarnFormat ("GetReasonExtensions: " +
-                          "the extensions are not active");
+          log.Warn ("GetReasonExtensions: the extensions are not active");
         }
 
         IMonitoredMachine monitoredMachine;
@@ -265,9 +257,9 @@ namespace Lemoine.GDBPersistentClasses
                                             string message)
     {
       if (m_partOfDetectionAnalysis) {
-        log.DebugFormat ("AddAnalysisLog: " +
-                         "add a detection analysis log with the message {0} and level {1}",
-                         message, level);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddAnalysisLog: add a detection analysis log with the message {message} and level {level}");
+        }
         IDetectionAnalysisLog detectionAnalysisLog = ModelDAOHelper.ModelFactory
           .CreateDetectionAnalysisLog (level, message, this.Machine);
         ModelDAOHelper.DAOFactory.DetectionAnalysisLogDAO
@@ -366,9 +358,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported machine slot");
       }
     }
@@ -401,15 +391,12 @@ namespace Lemoine.GDBPersistentClasses
         IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindById (this.Machine.Id);
         if (null == monitoredMachine) {
-          log.WarnFormat ("MakeAnalysis: " +
-                          "no monitored machine with ID {0} " +
-                          "=> do not process any LinkOperation",
-                          this.Machine.Id);
+          log.Warn ($"MakeAnalysis: no monitored machine with ID {this.Machine.Id} => do not process any LinkOperation");
         }
         else {
-          log.DebugFormat ("MakeAnalysis: " +
-                           "create link operation {0}",
-                           this.MachineObservationState.LinkOperationDirection);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MakeAnalysis: create link operation {this.MachineObservationState.LinkOperationDirection}");
+          }
           ILinkOperation linkOperation = ModelDAOHelper.ModelFactory
             .CreateLinkOperation (monitoredMachine, this.MachineObservationState.LinkOperationDirection,
                                   this.Range);
@@ -490,8 +477,9 @@ namespace Lemoine.GDBPersistentClasses
         }
 
         if (!associationCreated) {
-          log.DebugFormat ("MakeAnalysis: " +
-                           "no change was required");
+          if (log.IsDebugEnabled) {
+            log.Debug ("MakeAnalysis: no change was required");
+          }
         }
         MarkAsCompleted ("Cache/ClearDomainByMachine/MachineObservationStateAssociation/" + this.Machine.Id + "?Broadcast=true",
                          null);
@@ -584,8 +572,7 @@ namespace Lemoine.GDBPersistentClasses
           if (null == machineStatus) {
             string message = string.Format ("no MachineStatus found for {0}",
                                             this.Machine);
-            log.WarnFormat ("MakeAnalysis: {0}",
-                            message);
+            log.Warn ($"MakeAnalysis: {message}");
             AddAnalysisLog (LogLevel.WARN,
                             message);
           }
@@ -644,9 +631,9 @@ namespace Lemoine.GDBPersistentClasses
         if ((null != leftReasonSlot)
             && (Bound.Compare<DateTime> (leftReasonSlot.BeginDateTime, this.Begin) < 0)) {
           Debug.Assert (Bound.Compare<DateTime> (this.Begin, leftReasonSlot.EndDateTime) < 0);
-          log.DebugFormat ("UpdateReasonSlots: " +
-                           "left reason slot {0}-{1}",
-                           leftReasonSlot.BeginDateTime, leftReasonSlot.EndDateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"UpdateReasonSlots: left reason slot {leftReasonSlot.BeginDateTime}-{leftReasonSlot.EndDateTime}");
+          }
           middlePeriodBegin = (LowerBound<DateTime>)leftReasonSlot.EndDateTime; // adjust the middle period
           MachineObservationStateAssociation leftAssociation =
             (MachineObservationStateAssociation)this.MemberwiseClone ();
@@ -669,9 +656,9 @@ namespace Lemoine.GDBPersistentClasses
         if ((null != rightReasonSlot)
             && (Bound.Compare<DateTime> (rightReasonSlot.BeginDateTime, this.End.Value) < 0)) {
           Debug.Assert (NullableDateTime.Compare (this.End, rightReasonSlot.EndDateTime) < 0);
-          log.DebugFormat ("UpdateReasonSlots: " +
-                           "right reason slot {0}-{1}",
-                           rightReasonSlot.BeginDateTime, rightReasonSlot.EndDateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"UpdateReasonSlots: right reason slot {rightReasonSlot.BeginDateTime}-{rightReasonSlot.EndDateTime}");
+          }
           middlePeriodEnd = (UpperBound<DateTime>)rightReasonSlot.BeginDateTime; // adjust the middle period
           MachineObservationStateAssociation rightAssociation =
             (MachineObservationStateAssociation)this.MemberwiseClone ();
@@ -685,9 +672,9 @@ namespace Lemoine.GDBPersistentClasses
       {
         UtcDateTimeRange middlePeriod = new UtcDateTimeRange (middlePeriodBegin, middlePeriodEnd);
         if (!middlePeriod.IsEmpty ()) {
-          log.DebugFormat ("UpdateReasonSlots: " +
-                           "middle period {0}",
-                           middlePeriod);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"UpdateReasonSlots: middle period {middlePeriod}");
+          }
           // Get all the reason slots in this period, ordered by:
           // - machine mode
           // - machine observation state
@@ -713,10 +700,9 @@ namespace Lemoine.GDBPersistentClasses
                   && object.Equals (reasonSlot.Shift, this.Shift))
                 || (Bound.Compare<DateTime> (middlePeriodEnd, reasonSlot.BeginDateTime) <= 0)
                 || (Bound.Compare<DateTime> (reasonSlot.EndDateTime, middlePeriodBegin) <= 0)) {
-              log.DebugFormat ("UpdateReasonSlots: " +
-                               "skip reason slot {0} because it does not need to be changed " +
-                               "or because it is not in the date/time range",
-                               reasonSlot);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"UpdateReasonSlots: skip reason slot {reasonSlot} because it does not need to be changed or because it is not in the date/time range");
+              }
             }
             else {
               Debug.Assert (Bound.Compare<DateTime> (middlePeriodBegin, reasonSlot.BeginDateTime) <= 0);
@@ -724,9 +710,9 @@ namespace Lemoine.GDBPersistentClasses
               // Note: else they were in the left or right limits and their machine observation and shift
               //       have already been updated
 
-              log.DebugFormat ("UpdateReasonSlots: " +
-                               "update the machine observation state or shift of reason slot {0}",
-                               reasonSlot);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"UpdateReasonSlots: update the machine observation state or shift of reason slot {reasonSlot}");
+              }
 
               using (var modificationTracker = new SlotModificationTracker<IReasonSlot> (reasonSlot)) {
 
@@ -864,8 +850,7 @@ namespace Lemoine.GDBPersistentClasses
           string.Format ("The existing reason {0} is not compatible " +
                          "with the new MachineObservationState {1} and MachineMode {2}",
                          reason, machineObservationState, machineMode);
-        log.WarnFormat ("CheckReasonCompatible: {0}",
-                        message);
+        log.Warn ($"CheckReasonCompatible: {message}");
         AddAnalysisLog (LogLevel.WARN, message);
         return false;
       }

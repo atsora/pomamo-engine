@@ -114,11 +114,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindOverlapsRangeWithEagerFetch: " +
-                           "empty range " +
-                           "=> return an empty list. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Debug ($"FindOverlapsRangeWithEagerFetch: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         }
         return new List<IOperationSlot> ();
       }
@@ -184,7 +180,7 @@ namespace Lemoine.GDBPersistentClasses
             .Add (new FunctionExpression ("DateTimeRange", "upper_inf"))
             .UniqueResult<IOperationSlot> ();
         default:
-          log.FatalFormat ("Unexpected BoundType");
+          log.Fatal ("Unexpected BoundType");
           throw new InvalidOperationException ("Invalid BoundType");
         }
       }
@@ -409,11 +405,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindAllInRangeWith: " +
-                           "empty range " +
-                           "=> return an empty list. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Debug ($"FindAllInRangeWith: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         }
         return new List<IOperationSlot> ();
       }
@@ -595,17 +587,18 @@ namespace Lemoine.GDBPersistentClasses
       IList<IOperationSlot> slots = FindOverlapsRange (machine, new UtcDateTimeRange (begin, end));
       foreach (IOperationSlot slot in slots) {
         if (currentDateTime.HasValue && (Bound.Compare<DateTime> (currentDateTime, slot.BeginDateTime) < 0)) { // Gap
-          log.DebugFormat ("ExistsDifferentWorkOrderComponentOperationBetween: " +
-                           "gap in operation slots => return true");
+          if (log.IsDebugEnabled) {
+            log.Debug ("ExistsDifferentWorkOrderComponentOperationBetween: gap in operation slots => return true");
+          }
           return true;
         }
         currentDateTime = slot.EndDateTime;
         if (!object.Equals (slot.Operation, operation)
             || !object.Equals (slot.Component, component)
             || !object.Equals (slot.WorkOrder, workOrder)) {
-          log.DebugFormat ("ExistsDifferentWorkOrderComponentOperationBetween: " +
-                           "operation or component or work order differs in slot {0}",
-                           slot);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ExistsDifferentWorkOrderComponentOperationBetween: operation or component or work order differs in slot {slot}");
+          }
           return true;
         }
       }
@@ -630,8 +623,9 @@ namespace Lemoine.GDBPersistentClasses
 
       bool existsDifferentOperation = ExistsDifferentOperationBetween (machine, range, operation);
       if (existsDifferentOperation) {
-        log.DebugFormat ("IsContinuousOperationInRange: " +
-                         "there is a different operation => return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsContinuousOperationInRange: there is a different operation => return false");
+        }
         return false;
       }
       if (null != operation) { // Check it is continous
@@ -642,8 +636,9 @@ namespace Lemoine.GDBPersistentClasses
         Bound<DateTime> currentBound = range.Lower;
         foreach (var slot in slots) {
           if (!slot.DateTimeRange.ContainsElement (currentBound)) {
-            log.DebugFormat ("IsContinousOperationInRange: " +
-                             "discontinuation");
+            if (log.IsDebugEnabled) {
+              log.Debug ("IsContinousOperationInRange: discontinuation");
+            }
             return false;
           }
           currentBound = slot.DateTimeRange.Upper;
@@ -916,9 +911,7 @@ namespace Lemoine.GDBPersistentClasses
               .FindAt (dateTime);
             if ((null == shiftSlot) || !shiftSlot.Day.HasValue || (null == shiftSlot.Shift)
                 || !object.Equals (shiftSlot.Shift, shift) || !object.Equals (shiftSlot.Day, day)) {
-              log.WarnFormat ("GetEffectiveCurrentShift: " +
-                              "current shift slot does not match retrieved shift and day, processing delay ? " +
-                              "machineid={0} dateTime={1}", machine.Id, dateTime);
+              log.Warn ($"GetEffectiveCurrentShift: current shift slot does not match retrieved shift and day, processing delay ? machineid={machine.Id} dateTime={dateTime}");
               virtualOperationSlot = null;
               return new List<IOperationSlot> ();
             }
@@ -929,9 +922,7 @@ namespace Lemoine.GDBPersistentClasses
               .FindAt (machine, dateTime);
             if ((null == observationStateSlot) || (null == observationStateSlot.Shift)
                 || !object.Equals (observationStateSlot.Shift, shift)) {
-              log.WarnFormat ("GetEffectiveCurrentShift: " +
-                              "operation shift does not match observation state slot shift, processing delay ? " +
-                              "machineid={0} dateTime={1}", machine.Id, dateTime);
+              log.Warn ($"GetEffectiveCurrentShift: operation shift does not match observation state slot shift, processing delay ? machineid={machine.Id} dateTime={dateTime}");
               virtualOperationSlot = null;
               return new List<IOperationSlot> ();
             }
@@ -939,10 +930,7 @@ namespace Lemoine.GDBPersistentClasses
             Debug.Assert (day.HasValue);
             IDaySlot daySlot = ModelDAOHelper.DAOFactory.DaySlotDAO.FindProcessedByDay (day.Value);
             if (!daySlot.DateTimeRange.ContainsElement (dateTime)) {
-              log.WarnFormat ("GetEffectiveCurrentShift: " +
-                              "day {0} is not the current day, processing delay ?" +
-                              "=> return an empty list, machineid={1} dateTime={2}",
-                              day.Value, machine.Id, dateTime);
+              log.Warn ($"GetEffectiveCurrentShift: day {day.Value} is not the current day, processing delay ?=> return an empty list, machineid={machine.Id} dateTime={dateTime}");
               virtualOperationSlot = null;
               return new List<IOperationSlot> ();
             }
@@ -999,16 +987,16 @@ namespace Lemoine.GDBPersistentClasses
       IOperation operation = null;
       IList<IOperationSlot> effectiveSlots = new List<IOperationSlot> ();
 
-      log.DebugFormat ("GetEffective: " +
-                       "after={0} onlyLast={1} restructSingleShift={2} dateTime={3}",
-                       after, onlyLast, restrictSingleShift, dateTime);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetEffective: after={after} onlyLast={onlyLast} restructSingleShift={restrictSingleShift} dateTime={dateTime}");
+      }
 
       UtcDateTimeRange range = new UtcDateTimeRange (after, dateTime);
       bool first = true;
       foreach (var operationSlot in FindOverlapsRangeDescending (machine, range, TimeSpan.FromDays (1))) {
-        log.DebugFormat ("GetEffective: " +
-                         "check the validity of operation slot id={0}",
-                         operationSlot.Id);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetEffective: check the validity of operation slot id={operationSlot.Id}");
+        }
         // - day/shift
         if (restrictSingleShift) {
           if (first) {
@@ -1032,8 +1020,9 @@ namespace Lemoine.GDBPersistentClasses
           workOrder = operationSlot.WorkOrder;
           component = operationSlot.Component;
           operation = operationSlot.Operation;
-          log.DebugFormat ("GetEffective: " +
-                           "one manufcaturing order is defined, include this operation slot");
+          if (log.IsDebugEnabled) {
+            log.Debug ("GetEffective: one manufcaturing order is defined, include this operation slot");
+          }
           effectiveSlots.Insert (0, operationSlot);
           if (onlyLast) {
             log.Debug ("GetEffective: " +
@@ -1056,14 +1045,14 @@ namespace Lemoine.GDBPersistentClasses
           // Can this operation be considered as valid ?
           if (operationSlot.DateTimeRange.Upper.HasValue
               && IsUnidentifiedOperationAfter (machine, operationSlot.DateTimeRange.Upper.Value)) {
-            log.DebugFormat ("GetEffective: " +
-                             "IsUnidentifiedOperationAfter after={0} returned true",
-                             operationSlot.DateTimeRange.Upper.Value);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetEffective: IsUnidentifiedOperationAfter after={operationSlot.DateTimeRange.Upper.Value} returned true");
+            }
             break;
           }
-          log.DebugFormat ("GetEffective: " +
-                           "new operation detected {0}, reset the stored values",
-                           ((IDataWithId<int>)operationSlot.Operation).Id);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetEffective: new operation detected {((IDataWithId<int>)operationSlot.Operation).Id}, reset the stored values");
+          }
           component = null;
           workOrder = null;
           line = null;
@@ -1108,9 +1097,9 @@ namespace Lemoine.GDBPersistentClasses
             break; // Another line => stop here
           }
         }
-        log.DebugFormat ("GetEffective: " +
-                         "consider the operation slot id={0}",
-                         operationSlot.Id);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetEffective: consider the operation slot id={operationSlot.Id}");
+        }
         effectiveSlots.Insert (0, operationSlot);
         if (onlyLast && (null != operation)) { // (null != manufacturing order) is already processed
           log.Debug ("GetEffective: " +
@@ -1122,9 +1111,9 @@ namespace Lemoine.GDBPersistentClasses
       if (effectiveSlots.Any ()) {
         UtcDateTimeRange effectiveRange = new UtcDateTimeRange (effectiveSlots.First ().DateTimeRange.Lower,
                                                                 effectiveSlots.Last ().DateTimeRange.Upper);
-        log.DebugFormat ("GetEffective: " +
-                         "virtual operation slot has range {0}",
-                         effectiveRange);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetEffective: virtual operation slot has range {effectiveRange}");
+        }
         virtualOperationSlot = ModelDAOHelper.ModelFactory.CreateOperationSlot (machine,
                                                                                 operation,
                                                                                 component,
@@ -1136,8 +1125,9 @@ namespace Lemoine.GDBPersistentClasses
                                                                                 effectiveRange);
       }
       else {
-        log.DebugFormat ("GetEffective: " +
-                         "no effective slot => virtualOperationSlot is null");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetEffective: no effective slot => virtualOperationSlot is null");
+        }
         virtualOperationSlot = null;
       }
 
@@ -1154,16 +1144,18 @@ namespace Lemoine.GDBPersistentClasses
       UtcDateTimeRange range = new UtcDateTimeRange (after.Add (currentOperationSlotMargin),
                                                      DateTime.UtcNow);
       if (range.IsEmpty ()) {
-        log.DebugFormat ("IsUnidentifiedOperationAfter: " +
-                         "return false because the range is empty");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsUnidentifiedOperationAfter: return false because the range is empty");
+        }
         return false;
       }
 
       IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
         .FindById (machine.Id);
       if (null == monitoredMachine) {
-        log.DebugFormat ("IsUnidenfiedOperationAfter: " +
-                         "return false because the machine is not monitored");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsUnidenfiedOperationAfter: return false because the machine is not monitored");
+        }
         return false;
       }
 
@@ -1212,11 +1204,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("FindOverlapsRangeWithWorkOrder: " +
-                           "empty range " +
-                           "=> return an empty list. " +
-                           "StackTrace: {0}",
-                           System.Environment.StackTrace);
+          log.Debug ($"FindOverlapsRangeWithWorkOrder: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         }
         return new List<IOperationSlot> ();
       }

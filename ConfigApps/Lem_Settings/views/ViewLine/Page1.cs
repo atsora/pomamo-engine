@@ -18,13 +18,10 @@ namespace ViewLine
   /// </summary>
   internal partial class Page1 : GenericViewPage, IViewPage
   {
-    #region Members
     readonly LineDetails m_lineDetails = new LineDetails();
     readonly OperationDetails m_operationDetails = new OperationDetails();
     readonly MachineDetails m_machineDetails = new MachineDetails();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -38,7 +35,6 @@ namespace ViewLine
           "The second level represents the operations associated to the lines. " +
           "The third level lists all machines involved in an operation.\n\n" +
           "Clicking on an element displays its details."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

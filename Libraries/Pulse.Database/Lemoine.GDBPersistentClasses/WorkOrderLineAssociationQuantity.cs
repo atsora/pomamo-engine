@@ -16,16 +16,13 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class WorkOrderLineAssociationQuantity: IVersionable, IWorkOrderLineAssociationQuantity
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IIntermediateWorkPiece m_intermediateWorkPiece = null;
     int m_quantity = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (WorkOrderLineAssociationQuantity).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// ID
     /// </summary>
@@ -54,7 +51,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat("IntermediateWorkPiece cannot be null");
+          log.Fatal ("IntermediateWorkPiece cannot be null");
           throw new ArgumentNullException("IntermediateWorkPiece");
         }
         m_intermediateWorkPiece = value;
@@ -70,7 +67,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_quantity; }
       set { m_quantity = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -89,8 +85,5 @@ namespace Lemoine.GDBPersistentClasses
       IntermediateWorkPiece = intermediateWorkPiece;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

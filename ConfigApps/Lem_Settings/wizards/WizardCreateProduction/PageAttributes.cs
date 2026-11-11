@@ -15,7 +15,6 @@ namespace WizardCreateProduction
   /// </summary>
   internal partial class PageAttributes : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -27,7 +26,6 @@ namespace WizardCreateProduction
     public string Help { get { return "Here you can specify the global target and the name of a production. " +
           "If several productions are created, they will all have the same target.\n\n" +
           "The name can be made of a pattern, as explained."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

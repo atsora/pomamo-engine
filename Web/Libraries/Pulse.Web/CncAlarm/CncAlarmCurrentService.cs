@@ -33,7 +33,6 @@ namespace Pulse.Web.CncAlarm
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -49,18 +48,14 @@ namespace Pulse.Web.CncAlarm
         IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindByIdWithMachineModules(machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}");
           return new ErrorDTO ("No monitored machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
         
         var mainMachineModule = machine.MainMachineModule;
         if (null == mainMachineModule) {
-          log.InfoFormat ("GetWithoutCache: " +
-                          "no main machine module for monitored machine with ID {0}",
-                          machineId);
+          log.Info ($"GetWithoutCache: no main machine module for monitored machine with ID {machineId}");
         }
         
         IEnumerable<IMachineModule> machineModules = machine.MachineModules
@@ -78,7 +73,7 @@ namespace Pulse.Web.CncAlarm
               response.ByMachineModule.Add (byMachineModule);
               foreach (var (cncAlarm, severity) in cncAlarms.OrderBy (a => a.Severity?.Priority ?? 1000)) { // 1000: same as CurrentCncAlarm.Priority
                 if (null == severity) {
-                  log.WarnFormat ("GetWithoutCache: null severity for current cnc alarm on machine module id {0}", machineModule.Id);
+                  log.Warn ($"GetWithoutCache: null severity for current cnc alarm on machine module id {machineModule.Id}");
                   if (request.KeepFocusOnly) { // Skip it
                     continue;
                   }
@@ -144,6 +139,5 @@ namespace Pulse.Web.CncAlarm
 
       return (null != mainMachineModule) && machineModule.Id.Equals (mainMachineModule.Id);
     }
-    #endregion // Methods
   }
 }

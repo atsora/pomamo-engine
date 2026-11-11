@@ -16,12 +16,10 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class CustomTreeView : UserControl
   {
-    #region Members
     TreeViewTriState m_multiTreeView = new TreeViewTriState ();
     TreeViewWithBuilder m_singleTreeView = new TreeViewWithBuilder ();
     bool m_multiEnabled = false;
     readonly Pen PEN = new Pen (SystemColors.ControlDark);
-    #endregion // Members
 
     #region Events
     /// <summary>
@@ -30,7 +28,6 @@ namespace Lemoine.BaseControls
     public event Action SelectionChanged;
     #endregion // Events
 
-    #region Getters / Setters
     /// <summary>
     /// Enable or disable multi selection
     /// After this change the tree has to be repopulated
@@ -166,7 +163,6 @@ namespace Lemoine.BaseControls
       get { return CurrentTreeView.ExpandedNodes; }
       set { CurrentTreeView.ExpandedNodes = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -194,7 +190,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the builder
     /// Must be set before adding any element
@@ -255,7 +250,6 @@ namespace Lemoine.BaseControls
       m_multiTreeView.ColorFunction = lambda;
       m_singleTreeView.ColorFunction = lambda;
     }
-    #endregion // Methods
 
     #region Event reactions
     void OnSelectionChanged ()

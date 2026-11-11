@@ -19,16 +19,11 @@ namespace Lemoine.Info.ConfigReader
   /// </summary>
   public class ExternalAssemblyConfigReader : IGenericConfigReader
   {
-    #region Members
     readonly string m_assemblyName;
     readonly string m_typeFullName;
     readonly IGenericConfigReader m_configReader;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ExternalAssemblyConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

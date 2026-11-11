@@ -14,15 +14,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public abstract class MachineFilterItem: IMachineFilterItem, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_order = 0;
     MachineFilterRule m_rule;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineFilterItem).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// MachineFilterItem Id
     /// </summary>
@@ -49,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.m_rule; }
       set { this.m_rule = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

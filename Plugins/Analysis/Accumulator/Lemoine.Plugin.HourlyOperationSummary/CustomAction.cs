@@ -24,7 +24,6 @@ namespace Lemoine.Plugin.HourlyOperationSummary
   {
     readonly ILog log = LogManager.GetLogger (typeof (CustomAction).FullName);
 
-    #region Getters / Setters
     public string Help => "Select a period in which data will be computed, then validate. This operation may take time.";
 
     /// <summary>
@@ -32,7 +31,6 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     /// </summary>
     [PluginConf ("UtcDateTimeRange", "Period", Optional = false)]
     public UtcDateTimeRange Range { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

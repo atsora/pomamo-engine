@@ -16,7 +16,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventLongPeriodConfig: IEventLongPeriodConfig
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMonitoredMachine m_monitoredMachine;
@@ -24,7 +23,6 @@ namespace Lemoine.GDBPersistentClasses
     IMachineObservationState m_machineObservationState;
     TimeSpan m_triggerDuration;
     IEventLevel m_level;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (EventLongPeriodConfig).FullName);
 
@@ -47,7 +45,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// EventLongPeriodConfig Id
     /// </summary>
@@ -122,7 +119,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.FatalFormat ("EventLevel can't be null");
+          log.Fatal ("EventLevel can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Level in EventLongPeriodConfig");
         }
@@ -131,6 +128,5 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
   }
 }

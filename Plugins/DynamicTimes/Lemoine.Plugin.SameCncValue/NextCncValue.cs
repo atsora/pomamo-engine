@@ -137,7 +137,7 @@ namespace Lemoine.Plugin.SameCncValue
               Debug.Assert (lastCncValueEnd.Equals (cncValue.Begin));
               if (!object.Equals (cncValue.Value, v)) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: value change at {0}", cncValue.Begin);
+                  log.Debug ($"Get: value change at {cncValue.Begin}");
                 }
                 return this.CreateFinal (lastCncValueEnd);
               }

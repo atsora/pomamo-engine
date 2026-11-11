@@ -34,7 +34,6 @@ namespace Lemoine.StatusControls
     public event Action TimeOut;
     #endregion // Events
 
-    #region Getters / Setters
     /// <summary>
     /// Timeout duration in seconds
     /// By default 0: no timeout
@@ -60,7 +59,6 @@ namespace Lemoine.StatusControls
     /// BackgroundWorker for measuring analysis progress
     /// </summary>
     BackgroundWorker BackgroundWorker { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -75,7 +73,6 @@ namespace Lemoine.StatusControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Launch analysis progress tracking
     /// </summary>
@@ -230,6 +227,5 @@ namespace Lemoine.StatusControls
 
       Dispose ();
     }
-    #endregion // Methods
   }
 }

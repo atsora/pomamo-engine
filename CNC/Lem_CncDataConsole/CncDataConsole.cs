@@ -23,7 +23,6 @@ namespace Lem_CncDataConsole
   /// </summary>
   public class CncDataConsole : IConsoleRunner<Options>
   {
-    #region Members
     readonly IApplicationInitializer m_applicationInitializer;
     int m_machineModuleId;
     bool m_useStampFile = true;
@@ -36,7 +35,6 @@ namespace Lem_CncDataConsole
     TimeSpan? m_whicheverNbOfDataProcessAfter = null;
     int? m_minNumberOfDataToProcess = null;
     TimeSpan? m_visitMachineModesEvery = null;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (CncDataConsole).FullName);
 
@@ -52,7 +50,6 @@ namespace Lem_CncDataConsole
     }
     #endregion // Constructors
 
-    #region Methods
     internal void ParseOptions (Options options)
     {
       if (-1 != options.SleepTimeMs) {
@@ -103,9 +100,7 @@ namespace Lem_CncDataConsole
       if (null != options.VisitMachineModesEvery) {
         try {
           m_visitMachineModesEvery = TimeSpan.Parse (options.VisitMachineModesEvery);
-          log.InfoFormat ("ParseOptions: " +
-                          "VisitMachineModesEvery is {0}",
-                          m_visitMachineModesEvery);
+          log.Info ($"ParseOptions: VisitMachineModesEvery is {m_visitMachineModesEvery}");
         }
         catch (Exception ex) {
           log.Error ($"ParseOptions: parsing VisitMachineModesEvery {options.VisitMachineModesEvery} failed", ex);
@@ -161,7 +156,6 @@ namespace Lem_CncDataConsole
       import.ParentProcessId = m_parentProcessId;
       import.RunDirectly (cancellationToken);
     }
-    #endregion // Methods
 
     #region IConsoleRunner
     public void SetOptions (Options options)

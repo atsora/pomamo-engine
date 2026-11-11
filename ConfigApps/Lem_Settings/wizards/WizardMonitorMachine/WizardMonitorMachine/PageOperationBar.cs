@@ -13,7 +13,6 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageOperationBar : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -23,7 +22,6 @@ namespace WizardMonitorMachine
     /// Some help regarding the page
     /// </summary>
     public string Help { get { return "Check the box if you want the machine operations are visible in the operation bar."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

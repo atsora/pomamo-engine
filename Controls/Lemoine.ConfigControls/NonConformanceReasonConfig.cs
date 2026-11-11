@@ -24,7 +24,6 @@ namespace Lemoine.ConfigControls
     : UserControl
     , IConfigControlObservable<INonConformanceReason>
   {
-    #region Members
     SortableBindingList<INonConformanceReason> m_nonConformanceReasons = 
       new SortableBindingList<INonConformanceReason>();
     
@@ -35,7 +34,6 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<INonConformanceReason> > m_observers = 
       new HashSet<IConfigControlObserver<INonConformanceReason>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (NonConformanceReasonConfig).FullName);
 
@@ -70,8 +68,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("NonConformanceReasonConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("NonConformanceReasonConfigLoad: no DAO factory is defined");
         return;
       }
       

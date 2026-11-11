@@ -16,12 +16,9 @@ namespace ConfiguratorSlots.UserMachine
   /// </summary>
   public partial class DialogMachineStateTemplate : Form
   {
-    #region Members
     IMachine m_machine = null;
     IMachineStateTemplate m_mst = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Get / set the machine
     /// </summary>
@@ -37,7 +34,6 @@ namespace ConfiguratorSlots.UserMachine
       get { return m_mst; }
       set { listMachineStateTemplates.SelectedValue = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -14,7 +14,6 @@ namespace Lemoine.Plugin.ComingEventOperationEnd
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Category name
     /// </summary>
@@ -33,7 +32,6 @@ namespace Lemoine.Plugin.ComingEventOperationEnd
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

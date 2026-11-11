@@ -16,12 +16,9 @@ namespace WizardCreateProduction
   /// </summary>
   internal partial class Page1 : GenericWizardPage, IWizardPage
   {
-    #region Members
     LineBarData m_barData = new LineBarData();
     bool m_noRefresh;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -47,7 +44,6 @@ namespace WizardCreateProduction
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.EventListener
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     // TODO: Add here parameters, for example:
     /* 
     /// <summary>
@@ -29,7 +28,6 @@ namespace Lemoine.Plugin.EventListener
       get; set;
     } = "DefaultParameter";
     */
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

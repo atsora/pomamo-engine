@@ -24,12 +24,10 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string FETCH_MAX_ITEMS_KEY = "alert.listener.alarm.fetch.max";
     static readonly int FETCH_MAX_ITEMS_DEFAULT = 100;
 
-    #region Members
     readonly IMachineModule m_machineModule;
     IApplicationState m_cncAlarmMachineModuleListenerState = null;
     IList<ICncAlarm> m_fetched = new List<ICncAlarm>();
     XmlSerializer m_xmlSerializer;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof(CncAlarmMachineModuleListener).FullName);
 
@@ -55,7 +53,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// Returns null when there is no data anymore to return
@@ -76,7 +73,9 @@ namespace Lemoine.Alert.GDBListeners
 
       // If no data anymore to process
       if (m_fetched.Count == 0) {
-        log.DebugFormat("GetData: no data");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetData: no data");
+        }
         return null;
       }
       
@@ -131,6 +130,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-    #endregion // Methods
   }
 }

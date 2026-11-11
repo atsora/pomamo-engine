@@ -21,7 +21,6 @@ namespace Lemoine.Plugin.MaintenanceAction
   [Serializable]
   public class MaintenanceAction: IDataWithId, IDataWithVersion, Lemoine.Model.IPartitionedByMachine
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -31,11 +30,9 @@ namespace Lemoine.Plugin.MaintenanceAction
     MaintenanceActionStatus m_status = MaintenanceActionStatus.Open;
     DateTime m_creationDateTime = DateTime.UtcNow;
     DateTime m_modifiedDateTime = DateTime.UtcNow;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MaintenanceAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Config Id
     /// </summary>
@@ -147,7 +144,6 @@ namespace Lemoine.Plugin.MaintenanceAction
     public virtual TimeSpan? StandardTotalFrequency {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

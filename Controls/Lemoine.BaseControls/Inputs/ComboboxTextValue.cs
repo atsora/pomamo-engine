@@ -42,7 +42,6 @@ namespace Lemoine.BaseControls
     new public event Action<string> TextChanged;
     #endregion // Events
     
-    #region Getters / Setters
     /// <summary>
     /// Get the text of the current item or select the item having a specific text
     /// </summary>
@@ -162,7 +161,6 @@ namespace Lemoine.BaseControls
       get { return comboBox.ForeColor; }
       set { comboBox.ForeColor = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -174,7 +172,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add an element in the combobox
     /// </summary>
@@ -419,7 +416,6 @@ namespace Lemoine.BaseControls
 
       return null;
     }
-    #endregion // Methods
     
     #region Event reactions
     void ComboBoxSelectedIndexChanged(object sender, EventArgs e)

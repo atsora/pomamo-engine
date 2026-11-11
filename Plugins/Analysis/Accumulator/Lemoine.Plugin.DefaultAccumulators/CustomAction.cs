@@ -21,12 +21,8 @@ namespace Lemoine.Plugin.DefaultAccumulators
     : Lemoine.Extensions.Configuration.IConfiguration
     , Lemoine.Extensions.CustomAction.ICustomAction
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (CustomAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Help text for the configuration
     /// </summary>
@@ -67,7 +63,6 @@ namespace Lemoine.Plugin.DefaultAccumulators
     /// </summary>
     [PluginConf ("Bool", "Production rate summary", Optional = false)]
     public bool ProductionRateSummary { get; set; } = true;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -78,7 +73,6 @@ namespace Lemoine.Plugin.DefaultAccumulators
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -317,7 +311,6 @@ namespace Lemoine.Plugin.DefaultAccumulators
         ComputeProductionRateSummary (machine, day, daySlot, remainingAttempt - 1);
       }
     }
-    #endregion // Methods
   }
 
 }

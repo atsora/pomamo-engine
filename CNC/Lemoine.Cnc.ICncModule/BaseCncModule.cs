@@ -13,19 +13,16 @@ namespace Lemoine.Cnc
   /// </summary>
   public abstract class BaseCncModule: IChecked // Note: no ICncModule to not make it a IDisposable class
   {
-    #region Members
     readonly string m_name;
     int m_cncAcquisitionId;
     string m_cncAcquisitionName = "";
     IChecked m_dataHandler;
-    #endregion // Members
 
     /// <summary>
     /// Logger
     /// </summary>
     protected ILog log = LogManager.GetLogger(typeof (BaseCncModule).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Cnc Acquisition ID
     /// </summary>
@@ -45,7 +42,6 @@ namespace Lemoine.Cnc
       get { return m_cncAcquisitionName; }
       set { m_cncAcquisitionName = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -59,7 +55,6 @@ namespace Lemoine.Cnc
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implements <see cref="ICncModule" />
     /// </summary>
@@ -107,6 +102,5 @@ namespace Lemoine.Cnc
     {
       return $"CNC module {this.GetType ().FullName}.{this.CncAcquisitionId} [{this.CncAcquisitionName ?? ""}]";
     }
-    #endregion // Methods
   }
 }

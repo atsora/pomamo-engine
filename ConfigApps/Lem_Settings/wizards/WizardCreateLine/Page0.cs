@@ -16,7 +16,6 @@ namespace WizardCreateLine
   /// </summary>
   internal partial class Page0 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -27,7 +26,6 @@ namespace WizardCreateLine
     /// </summary>
     public string Help { get { return "Fill here the name and the code of the line.\n\nOnly the name is mandatory. " +
           "If a code is set, it has to be different from all other codes previously set."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

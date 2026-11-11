@@ -19,15 +19,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class RoleSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     IList<IRole> m_roles = null;
     IRole m_role = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (RoleSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -120,7 +117,6 @@ namespace Lemoine.DataReferenceControls
         this.m_role = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Events
     /// <summary>
@@ -147,7 +143,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -187,7 +182,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
 
     void RoleSelectionLoad (object sender, EventArgs e)
     {

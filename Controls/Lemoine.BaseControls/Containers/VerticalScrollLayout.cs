@@ -33,7 +33,6 @@ namespace Lemoine.BaseControls
     public event Action<bool> ScrollbarVisibilityChanged;
     #endregion // Events
 
-    #region Getters / Setters
     /// <summary>
     /// If activated, the controls will be placed within a flow layout instead of a table
     /// </summary>
@@ -214,7 +213,6 @@ namespace Lemoine.BaseControls
     {
       get { return baseLayout.ColumnStyles[1].Width > 0; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -235,7 +233,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Clear and dispose all controls from the layout
     /// </summary>
@@ -338,7 +335,6 @@ namespace Lemoine.BaseControls
         table.Location = new Point (0, -vScroll.Value);
       }
     }
-    #endregion // Methods
 
     #region Event reactions
     void VerticalScrollLayoutSizeChanged (object sender, EventArgs e)

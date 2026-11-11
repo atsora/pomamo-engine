@@ -20,12 +20,10 @@ namespace Pulse.Web.WebDataAccess.CommonResponseDTO
   [Api("Return the ID of the saved object")]
   public class SaveResponseDTO
   {
-    #region Getters / Setters
     /// <summary>
     /// Id of the created object
     /// </summary>
     public long Id { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

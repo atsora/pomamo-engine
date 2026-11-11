@@ -19,7 +19,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (MonitoredMachineDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null MonitoredMachine a valid value ?
     /// </summary>
@@ -61,7 +60,6 @@ namespace Lemoine.DataReferenceControls
         this.monitoredMachineSelection1.SelectedMonitoredMachines = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -80,9 +78,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("MonitoredMachineDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

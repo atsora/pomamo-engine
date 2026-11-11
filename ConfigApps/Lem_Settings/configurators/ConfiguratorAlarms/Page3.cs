@@ -20,11 +20,9 @@ namespace ConfiguratorAlarms
 //  public partial class Page3 : GenericConfiguratorPage, IConfiguratorPage
   public partial class Page3 : UserControl, IConfiguratorPage
   {
-    #region Members
     AlarmManager m_alarmManager = null;
     Alarm m_currentAlert;
     static readonly ILog log = LogManager.GetLogger (typeof (Page3).FullName);
-    #endregion // Members
 
     public event Action<IRevision> DataChangedEvent;
     protected void EmitDataChangedEvent (IRevision revision)
@@ -78,7 +76,6 @@ namespace ConfiguratorAlarms
     }
 
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -107,7 +104,6 @@ namespace ConfiguratorAlarms
         return LemSettingsGlobal.PageFlag.WITH_VALIDATION;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

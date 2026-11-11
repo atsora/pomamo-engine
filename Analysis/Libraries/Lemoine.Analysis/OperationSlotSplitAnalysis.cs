@@ -32,16 +32,11 @@ namespace Lemoine.Analysis
     /// </summary>
     static readonly string SHIFT_ASSOCIATION_PRIORITY_KEY = "Analysis.OperationSlotSplit.ShiftAssociation.Priority";
 
-    #region Members
     readonly IMachine m_machine;
     readonly TransactionLevel m_restrictedTransactionLevel;
     readonly Lemoine.Threading.IChecked m_caller;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (OperationSlotSplitAnalysis).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

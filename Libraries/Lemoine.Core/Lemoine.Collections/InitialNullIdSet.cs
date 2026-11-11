@@ -25,20 +25,15 @@ namespace Lemoine.Collections
    * that some of our to be persisted classes do not extend IDataWithID
    * despite having an Id property */
   {
-    #region Members
     System.Collections.Generic.IList<T> ZeroIdList = new System.Collections.Generic.List<T> ();
     // ISet<T> NonZeroIDSet = new HashSet<T>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (InitialNullIdSet<T, ID>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// return number of elements in set
     /// </summary>
     public new int Count { get { return ZeroIdList.Count + base.Count; } }
-
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -48,8 +43,6 @@ namespace Lemoine.Collections
     {
     }
     #endregion // Constructors
-
-    #region Methods
 
     private void RehashZeroID ()
     {
@@ -229,5 +222,4 @@ namespace Lemoine.Collections
       }
     }
   }
-  #endregion // Methods
 }

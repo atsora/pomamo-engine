@@ -21,12 +21,8 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
     : Pulse.Extensions.Configuration.Implementation.ConfigurationWithMachineFilter
     , Pulse.Extensions.Configuration.IConfigurationWithMachineFilter
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (Configuration).FullName);
 
-    #region Getters / Setters    
     /// <summary>
     /// New machine state template ID
     /// 
@@ -44,7 +40,6 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
     public int EventLevelId {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -55,7 +50,6 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -74,9 +68,7 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
           if (0 != this.NewMachineStateTemplateId) {
             if (null == ModelDAOHelper.DAOFactory.MachineStateTemplateDAO
                 .FindById (this.NewMachineStateTemplateId)) {
-              log.ErrorFormat ("GetConfigurationErrors: " +
-                               "Production MachineStateTemplateId {0} does not exist",
-                               this.NewMachineStateTemplateId);
+              log.Error ($"GetConfigurationErrors: Production MachineStateTemplateId {this.NewMachineStateTemplateId} does not exist");
               errorList.Add ("MachineStateTemplate with ID " + this.NewMachineStateTemplateId + " does not exist");
             }
           }
@@ -91,6 +83,5 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
     {
       return false;
     }
-    #endregion // Methods
   }
 }

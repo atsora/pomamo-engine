@@ -27,14 +27,11 @@ namespace Lemoine.Settings
       IN_DESCRIPTION = 16
     }
 
-    #region Members
     readonly IDictionary<string, KeywordLocation> m_keywords = new Dictionary<string, KeywordLocation> ();
     readonly IDictionary<string, int> m_keywordsWeight = new Dictionary<string, int> ();
     DateTime m_accessedDate;
     LemSettingsGlobal.ItemFlag m_favoriteFlag = LemSettingsGlobal.ItemFlag.NONE;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// ID related to the dll which created the item
     /// Set by the dll loader
@@ -177,7 +174,6 @@ namespace Lemoine.Settings
         IniFilePreferences.Set (this, ContextManager.UserLogin, "accessed_date", m_accessedDate.ToString ());
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Description of the constructor
@@ -188,7 +184,6 @@ namespace Lemoine.Settings
       SubID = this.GetType ().Name;
     }
 
-    #region Methods
     /// <summary>
     /// Compare two items
     /// (used to sort them alphabetically)
@@ -307,6 +302,5 @@ namespace Lemoine.Settings
     /// <param name="data">Data filled through the wizard</param>
     /// <returns>See the description above, can be null</returns>
     public virtual IDictionary<string, string> GetPossibleNextItems (ItemData data) { return null; }
-    #endregion // Methods
   }
 }

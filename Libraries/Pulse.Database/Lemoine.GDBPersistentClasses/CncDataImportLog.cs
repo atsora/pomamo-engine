@@ -19,14 +19,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CncDataImportLog : Log, ICncDataImportLog
   {
-    #region Members
     IMachine m_machine;
     IMachineModule m_machineModule;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncDataImportLog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Referenced Machine (not null)
     /// </summary>
@@ -70,7 +67,6 @@ namespace Lemoine.GDBPersistentClasses
         // only XML serialization is supported: do nothing
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor

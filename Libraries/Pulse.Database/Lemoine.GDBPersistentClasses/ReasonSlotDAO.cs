@@ -43,10 +43,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (!entity.DateTimeRange.IsEmpty ());
       if (entity.DateTimeRange.IsEmpty ()) {
-        log.FatalFormat ("MakePersistent: " +
-                         "reason slot with an empty date/time range => make it transient. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Fatal ($"MakePersistent: reason slot with an empty date/time range => make it transient. StackTrace: {System.Environment.StackTrace}");
         MakeTransient (entity);
         return entity;
       }
@@ -75,10 +72,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (!entity.DateTimeRange.IsEmpty ());
       if (entity.DateTimeRange.IsEmpty ()) {
-        log.FatalFormat ("MakePersistent: " +
-                         "reason slot with an empty date/time range => make it transient. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Fatal ($"MakePersistent: reason slot with an empty date/time range => make it transient. StackTrace: {System.Environment.StackTrace}");
         await MakeTransientAsync (entity);
         return entity;
       }
@@ -151,7 +145,7 @@ namespace Lemoine.GDBPersistentClasses
             .Fetch (SelectMode.Fetch, "Reason")
             .UniqueResult<IReasonSlot> ();
         default:
-          log.FatalFormat ("Unexpected BoundType");
+          log.Fatal ("Unexpected BoundType");
           throw new InvalidOperationException ("Invalid BoundType");
         }
       }
@@ -269,11 +263,7 @@ namespace Lemoine.GDBPersistentClasses
 
       Debug.Assert (!range.IsEmpty ());
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("FindAllInUtcRangeWithMachineMode: " +
-                         "empty range " +
-                         "=> return an empty list. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"FindAllInUtcRangeWithMachineMode: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         return new List<IReasonSlot> ();
       }
 
@@ -327,11 +317,7 @@ namespace Lemoine.GDBPersistentClasses
 
       Debug.Assert (!range.IsEmpty ());
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("FindAllInUtcRangeWithMachineModeReason: " +
-                         "empty range " +
-                         "=> return an empty list. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"FindAllInUtcRangeWithMachineModeReason: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         return new List<IReasonSlot> ();
       }
 
@@ -359,11 +345,7 @@ namespace Lemoine.GDBPersistentClasses
 
       Debug.Assert (!range.IsEmpty ());
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("FindAllInUtcRangeWithReasonMachineObservationStateMachineMode: " +
-                         "empty range " +
-                         "=> return an empty list. " +
-                         "StackTrace: {0}",
-                         System.Environment.StackTrace);
+        log.Error ($"FindAllInUtcRangeWithReasonMachineObservationStateMachineMode: empty range => return an empty list. StackTrace: {System.Environment.StackTrace}");
         return new List<IReasonSlot> ();
       }
 
@@ -623,12 +605,12 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != machine);
 
       if (range.IsEmpty ()) {
-        log.ErrorFormat ("FindFirstStrictlyRightDifferentProductionState: empty range");
+        log.Error ("FindFirstStrictlyRightDifferentProductionState: empty range");
         return null;
       }
 
       if (!range.Upper.HasValue) {
-        log.ErrorFormat ("FindFirstStrictlyRightDifferentProductionState: no upper value, there is no possible slot to return");
+        log.Error ("FindFirstStrictlyRightDifferentProductionState: no upper value, there is no possible slot to return");
         return null;
       }
 

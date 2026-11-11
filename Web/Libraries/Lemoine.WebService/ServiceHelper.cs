@@ -396,9 +396,9 @@ namespace Lemoine.WebService
     {
       if (string.IsNullOrEmpty (urlDay)) {
         DateTime today = ModelDAOHelper.DAOFactory.TimeConfigDAO.GetToday();
-        log.DebugFormat ("GetDayWithOldFormat: " +
-                         "empty string {0} => return today {1}",
-                         urlDay, today);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetDayWithOldFormat: empty string {urlDay} => return today {today}");
+        }
         Debug.Assert (DateTimeKind.Unspecified == today.Kind);
         return today;
       }
@@ -420,9 +420,9 @@ namespace Lemoine.WebService
     {
       if (string.IsNullOrEmpty (urlDay)) {
         DateTime today = ModelDAOHelper.DAOFactory.TimeConfigDAO.GetToday();
-        log.DebugFormat ("GetDay: " +
-                         "empty string {0} => return today {1}",
-                         urlDay, today);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetDay: empty string {urlDay} => return today {today}");
+        }
         return today;
       }
       

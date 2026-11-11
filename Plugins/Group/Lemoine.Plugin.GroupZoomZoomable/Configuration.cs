@@ -16,7 +16,6 @@ namespace Lemoine.Plugin.GroupZoomZoomable
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// 
     /// </summary>
@@ -25,7 +24,6 @@ namespace Lemoine.Plugin.GroupZoomZoomable
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

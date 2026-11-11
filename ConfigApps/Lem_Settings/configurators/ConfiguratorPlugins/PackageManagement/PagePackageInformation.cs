@@ -26,15 +26,12 @@ namespace ConfiguratorPlugins
   {
     readonly ILog log = LogManager.GetLogger<PagePackageInformation> ();
 
-    #region Members
     IPluginDll m_currentPlugin = null;
     IPackagePluginAssociation m_association = null;
     bool m_viewMode = false;
     int m_customAction = -1;
     string m_packageName = "";
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -92,7 +89,6 @@ namespace ConfiguratorPlugins
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

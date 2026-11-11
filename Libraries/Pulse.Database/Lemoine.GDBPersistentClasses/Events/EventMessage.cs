@@ -18,9 +18,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventMessage: EventGeneric, IEventMessage
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (EventMessage).FullName);
 
     #region Constructors
@@ -41,7 +38,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Associated message
     /// </summary>
@@ -49,6 +45,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.Data["message"].ToString (); }
       set { this.Data["message"] = value; }
     }
-    #endregion // Getters / Setters
   }
 }

@@ -38,17 +38,13 @@ namespace Lemoine.Plugin.MaintenanceAction
           maintenanceAction = dao.FindById (request.Id);
         }
         if (null == maintenanceAction) {
-          log.ErrorFormat ("Get: " +
-                           "unknown maintenance action with ID {0}",
-                           request.Id);
+          log.Error ($"Get: unknown maintenance action with ID {request.Id}");
           return new ErrorDTO ("No maintenance action with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
 
         if (maintenanceAction.Version != request.Version) {
-          log.ErrorFormat ("Get: " +
-                           "version does not match for maintenance action ID {0}",
-                           request.Id);
+          log.Error ($"Get: version does not match for maintenance action ID {request.Id}");
           return new ErrorDTO ("Stale maintenance action",
                                ErrorStatus.Stale);
         }

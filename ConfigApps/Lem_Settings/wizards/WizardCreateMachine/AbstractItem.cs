@@ -31,7 +31,6 @@ namespace WizardCreateMachine
     internal const string MACHINE = "machine";
     internal const string MODIFICATION = "modification";
     
-    #region Getters / Setters
     /// <summary>
     /// List of keywords, allowing an easy search of the item
     /// Plural form is better
@@ -67,7 +66,6 @@ namespace WizardCreateMachine
         return dic;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

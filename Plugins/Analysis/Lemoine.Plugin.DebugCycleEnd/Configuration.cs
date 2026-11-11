@@ -16,7 +16,6 @@ namespace Lemoine.Plugin.DebugCycleEnd
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     // TODO: Add here parameters, for example:
     /* 
     /// <summary>
@@ -27,7 +26,6 @@ namespace Lemoine.Plugin.DebugCycleEnd
       get; set;
     }
     */
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

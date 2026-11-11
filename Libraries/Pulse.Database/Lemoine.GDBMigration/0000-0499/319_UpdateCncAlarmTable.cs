@@ -60,7 +60,7 @@ namespace Lemoine.GDBMigration
       try {
         RemoveNoOverlapConstraint(TableName.CNC_ALARM);
       } catch (Exception e) {
-        log.ErrorFormat("Couldn't remove the no overlap constraint: {0}", e);
+        log.Error ($"Couldn't remove the no overlap constraint: {e}");
       }
     }
   }

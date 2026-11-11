@@ -55,7 +55,6 @@ namespace Lemoine.Plugin.CycleCountSummary
       }
     }
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -150,6 +149,5 @@ GRANT SELECT ON TABLE public.cyclecountsummary TO PUBLIC;
     {
       Database.RemoveTable (CYCLE_COUNT_SUMMARY);
     }
-    #endregion // Methods
   }
 }

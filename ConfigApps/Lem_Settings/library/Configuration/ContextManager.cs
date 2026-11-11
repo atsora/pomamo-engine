@@ -12,15 +12,12 @@ namespace Lemoine.Settings
   /// </summary>
   public sealed class ContextManager
   {
-    #region Members
     string m_userLogin;
     LemSettingsGlobal.UserCategory m_userCategory;
     Options m_options = new Options();
     bool m_isLctr = false;
     bool m_isLpost = false;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// User login
     /// </summary>
@@ -78,7 +75,6 @@ namespace Lemoine.Settings
       get { return Instance.m_isLpost; }
       set { Instance.m_isLpost = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -91,7 +87,6 @@ namespace Lemoine.Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get a context to be passed to an item
     /// </summary>
@@ -107,7 +102,6 @@ namespace Lemoine.Settings
       
       return context;
     }
-    #endregion // Methods
     
     #region Instance
     static ContextManager Instance { get { return Nested.instance; } }

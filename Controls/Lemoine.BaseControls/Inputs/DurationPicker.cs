@@ -28,17 +28,14 @@ namespace Lemoine.BaseControls
     };
     #endregion Enums
 
-    #region Members
     TextBox m_textBox = null; // convenient handle
     SelectionType m_currentSelectionType = SelectionType.Invalid;
     bool m_startEditBlockFlag = true;
     ToolTip m_toolTip = new ToolTip ();
     bool m_withMs = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DurationPicker).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Value as timespan
     /// </summary>
@@ -84,7 +81,6 @@ namespace Lemoine.BaseControls
           "Format: {DDD}d {HH}:{mm}:{ss}\n'{DDD}' is optional");
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -114,7 +110,6 @@ namespace Lemoine.BaseControls
 
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Format content of textbox
     /// </summary>
@@ -313,7 +308,6 @@ namespace Lemoine.BaseControls
 
       return length;
     }
-    #endregion // Methods
 
     #region Event reactions
     void OnMouseDown (object sender, MouseEventArgs e)

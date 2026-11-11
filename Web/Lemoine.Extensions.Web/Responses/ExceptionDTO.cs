@@ -18,7 +18,6 @@ namespace Lemoine.Extensions.Web.Responses
   {
     readonly ILog log = LogManager.GetLogger (typeof (ExceptionDTO).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the exception
     /// </summary>
@@ -38,7 +37,6 @@ namespace Lemoine.Extensions.Web.Responses
     /// Inner exception if any
     /// </summary>
     public ExceptionDTO InnerException { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

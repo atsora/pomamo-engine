@@ -25,7 +25,6 @@ namespace ViewLine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Display the details of an operation
     /// </summary>
@@ -59,6 +58,5 @@ namespace ViewLine
         }
       }
     }
-    #endregion // Methods
   }
 }

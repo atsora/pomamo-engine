@@ -19,15 +19,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class ToolSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     IList<ITool> m_tools = null;
     ITool m_tool = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ToolSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -112,7 +109,6 @@ namespace Lemoine.DataReferenceControls
         this.m_tool = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -139,7 +135,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -177,7 +172,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void ToolSelectionLoad(object sender, EventArgs e)
     {

@@ -75,7 +75,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
             t = TimeSpan.Parse (s);
           }
           catch (Exception) {
-            log.ErrorFormat ("SetTimeSpanPropertyFromString: could not parse {0}", s);
+            log.Error ($"SetTimeSpanPropertyFromString: could not parse {s}");
             throw;
           }
           SetProperty (propertyInfo, configuration, (TimeSpan?)t);
@@ -87,7 +87,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
           t = TimeSpan.Parse (s);
         }
         catch (Exception) {
-          log.ErrorFormat ("SetTimeSpanPropertyFromString: could not parse {0}", s);
+          log.Error ($"SetTimeSpanPropertyFromString: could not parse {s}");
           throw;
         }
         SetProperty (propertyInfo, configuration, t);

@@ -23,13 +23,10 @@ namespace ConfiguratorPlugins
   /// </summary>
   internal partial class PagePluginList : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     IPluginDll m_currentPlugin = null;
     IPackagePluginAssociation m_association = null;
     bool m_viewMode = false;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -80,7 +77,6 @@ namespace ConfiguratorPlugins
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

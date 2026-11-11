@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Component : DataWithDisplayFunction, IComponent, IMergeable<Component>, IEquatable<IComponent>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -37,11 +36,9 @@ namespace Lemoine.GDBPersistentClasses
       new List<IComponentIntermediateWorkPiece> ();
     ICollection<IStamp> m_stamps = new InitialNullIdSet<IStamp, int> ();
     ICollection<IDoc> m_docs = new InitialNullIdSet<IDoc, int> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Component).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -251,7 +248,6 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     [XmlIgnore]
     public virtual ICollection<IDoc> Docs => m_docs;
-    #endregion // Getters / Setters
 
     #region Contructors
     /// <summary>
@@ -307,9 +303,9 @@ namespace Lemoine.GDBPersistentClasses
 
       foreach (IComponentIntermediateWorkPiece componentIntermediateWorkPiece in ComponentIntermediateWorkPieces) {
         if (componentIntermediateWorkPiece.IntermediateWorkPiece.Equals (intermediateWorkPiece)) {
-          log.DebugFormat ("AddIntermediateWorkPiece: " +
-                           "{0} is already part of {1}",
-                           intermediateWorkPiece, this);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"AddIntermediateWorkPiece: {intermediateWorkPiece} is already part of {this}");
+          }
           return componentIntermediateWorkPiece;
         }
       }
@@ -341,9 +337,9 @@ namespace Lemoine.GDBPersistentClasses
       foreach (IComponentIntermediateWorkPiece componentIntermediateWorkPiece in ComponentIntermediateWorkPieces) {
         if (componentIntermediateWorkPiece.IntermediateWorkPiece.Equals (intermediateWorkPiece)
             && componentIntermediateWorkPiece.Code.Equals (code)) {
-          log.DebugFormat ("AddIntermediateWorkPiece: " +
-                           "{0} is already part of {1}",
-                           intermediateWorkPiece, this);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"AddIntermediateWorkPiece: {intermediateWorkPiece} is already part of {this}");
+          }
           return componentIntermediateWorkPiece;
         }
       }
@@ -376,9 +372,9 @@ namespace Lemoine.GDBPersistentClasses
       foreach (IComponentIntermediateWorkPiece componentIntermediateWorkPiece in ComponentIntermediateWorkPieces) {
         if (componentIntermediateWorkPiece.IntermediateWorkPiece.Equals (intermediateWorkPiece)
             && componentIntermediateWorkPiece.Order.Equals (order)) {
-          log.DebugFormat ("AddIntermediateWorkPiece: " +
-                           "{0} is already part of {1}",
-                           intermediateWorkPiece, this);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"AddIntermediateWorkPiece: {intermediateWorkPiece} is already part of {this}");
+          }
           return componentIntermediateWorkPiece;
         }
       }
@@ -474,7 +470,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // IMergeable implementation
 
-    #region Methods
     /// <summary>
     /// Add a stamp in the member directly
     /// 
@@ -496,7 +491,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       RemoveFromProxyCollection<IStamp> (m_stamps, stamp);
     }
-    #endregion // Methods
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

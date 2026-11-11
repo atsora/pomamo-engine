@@ -17,18 +17,15 @@ namespace Lem_MachineStateTemplateGUI
   /// </summary>
   public partial class MachineStateTemplateProgressForm : Form
   {
-    #region Members
     IList<IMachine> m_selectedMachines;
     IMachineStateTemplate m_selectedMachineStateTemplate;
     DateTime m_selectedBeginDate;
     DateTime? m_selectedEndDate;
     IShift m_selectedShift;
     bool m_force = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateProgressForm).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// MachineSelection (machines, departments and companies)
     /// </summary>
@@ -77,8 +74,6 @@ namespace Lem_MachineStateTemplateGUI
       get { return m_force; }
       set { m_force = value; }
     }
-    
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -93,7 +88,6 @@ namespace Lem_MachineStateTemplateGUI
 
     #endregion // Constructors
 
-    #region Methods
     void MachineObservationStateProgressFormLoad(object sender, EventArgs e)
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
@@ -134,7 +128,5 @@ namespace Lem_MachineStateTemplateGUI
     {
       this.Dispose();
     }
-    
-    #endregion // Methods
   }
 }

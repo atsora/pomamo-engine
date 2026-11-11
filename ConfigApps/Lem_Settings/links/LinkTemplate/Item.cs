@@ -13,7 +13,6 @@ namespace LinkTemplate
   /// </summary>
   internal class Item : GenericItem, ILink
   {
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -82,6 +81,5 @@ namespace LinkTemplate
         return "www.google.com";
       }
     }
-    #endregion // Getters / Setters
   }
 }

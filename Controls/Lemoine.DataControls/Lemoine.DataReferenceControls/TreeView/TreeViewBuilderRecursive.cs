@@ -54,7 +54,6 @@ namespace Lemoine.DataReferenceControls
       }
     }
 
-    #region Getters / Setters
     /// <summary>
     /// Property used for the recursion (parent object)
     /// must be the same
@@ -65,9 +64,7 @@ namespace Lemoine.DataReferenceControls
     /// Property used to display an element
     /// </summary>
     public string DisplayProperty { get; set; }
-    #endregion // Getters / Setters
 
-    #region Methods
     /// <summary>
     /// Build the tree, dispose and sort all elements
     /// </summary>
@@ -128,6 +125,5 @@ namespace Lemoine.DataReferenceControls
       
       return txt;
     }
-    #endregion // Methods
   }
 }

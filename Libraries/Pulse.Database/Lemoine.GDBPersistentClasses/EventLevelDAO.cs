@@ -58,9 +58,7 @@ namespace Lemoine.GDBPersistentClasses
       
       try {
         if (null == FindById (eventLevel.Id)) { // the config does not exist => create it
-          log.InfoFormat ("InsertDefaultValue: " +
-                          "add id={0} translationKey={1}",
-                          eventLevel.Id, eventLevel.TranslationKey);
+          log.Info ($"InsertDefaultValue: add id={eventLevel.Id} translationKey={eventLevel.TranslationKey}");
           // Use a raw SQL Command, else the Id is resetted
           using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand())
           {
@@ -74,11 +72,7 @@ VALUES ({0}, {1}, '{2}')",
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("InsertDefaultValue: " +
-                         "inserting new event level {0} " +
-                         "failed with {1}",
-                         eventLevel,
-                         ex);
+        log.Error ($"InsertDefaultValue: inserting new event level {eventLevel} failed with {ex}");
       }
     }
     #endregion // DefaultValues

@@ -29,7 +29,6 @@ namespace Lemoine.Alert.GDBListeners
   [Serializable]
   public class GlobalModificationDelayData
   {
-    #region Members
     GlobalModification m_modification;
     GlobalModificationDelayDirection m_direction;
     string m_message;
@@ -38,11 +37,9 @@ namespace Lemoine.Alert.GDBListeners
     DateTime m_timeStamp;
     bool m_flapping = false;
     bool m_beginFlapping = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (GlobalModificationDelayData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated modification
     /// </summary>
@@ -123,7 +120,6 @@ namespace Lemoine.Alert.GDBListeners
       get { return m_beginFlapping; }
       set { m_beginFlapping = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -155,8 +151,5 @@ namespace Lemoine.Alert.GDBListeners
       m_beginFlapping = beginFlapping;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

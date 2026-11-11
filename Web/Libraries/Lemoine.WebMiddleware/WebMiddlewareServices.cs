@@ -169,7 +169,7 @@ namespace Lemoine.WebMiddleware
         int lruSize = Lemoine.Info.ConfigSet.LoadAndGet<int> (LRU_SIZE_KEY,
                                                               LRU_SIZE_DEFAULT);
         if (log.IsInfoEnabled) {
-          log.InfoFormat ($"InitializeCache: use a (default) LRU cache of size {lruSize} with clean extension");
+          log.Info ($"InitializeCache: use a (default) LRU cache of size {lruSize} with clean extension");
         }
         return new CacheClientWithExpiresAtData (new CacheClientWithCleanExtensionCore (new LruCacheClient (lruSize)));
       }

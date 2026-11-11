@@ -48,8 +48,7 @@ namespace Lemoine.GDBMigration
                                ColumnName.MACHINE_MODULE_ID,
                                TableName.TOOL_POSITION + "toolid");
       } catch (Exception e) {
-        log.ErrorFormat("Couldn't remove unique constraint on {0}: {1}",
-                        TableName.TOOL_POSITION, e);
+        log.Error ($"Couldn't remove unique constraint on {TableName.TOOL_POSITION}: {e}");
       }
       
       // Remove the column "toolid"

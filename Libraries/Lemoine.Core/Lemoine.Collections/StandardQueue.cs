@@ -14,20 +14,16 @@ namespace Lemoine.Collections
   /// </summary>
   public sealed class StandardQueue<T>: IQueue<T>, IEnumerable<T>, IEnumerable
   {
-    #region Members
     readonly Queue<T> m_implementation = new Queue<T> ();
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger(typeof (StandardQueue<T>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Gets the number of elements contained in the Queue. 
     /// </summary>
     public int Count {
       get { return m_implementation.Count; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

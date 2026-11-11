@@ -12,7 +12,6 @@ namespace WizardCreateLine
   /// </summary>
   public class StructMachine
   {
-    #region Members
     public string m_name = "";
     public int? m_bestPerformance = null;
     public int m_bestPerformanceUnit = 0;
@@ -20,7 +19,6 @@ namespace WizardCreateLine
     public int m_expectedPerformanceUnit = 0;
     public bool m_dedicated = true;
     public IMachine m_machine = null;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -35,7 +33,6 @@ namespace WizardCreateLine
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Textual description of the data
     /// </summary>
@@ -51,7 +48,5 @@ namespace WizardCreateLine
       
       return text;
     }
-
-    #endregion
   }
 }

@@ -52,7 +52,6 @@ namespace Lemoine.Database.Persistent
     readonly string m_applicationName;
     Configuration m_configuration = null;
 
-    #region Getters / Setters
     /// <summary>
     /// Is the cache valid ?
     /// </summary>
@@ -68,7 +67,6 @@ namespace Lemoine.Database.Persistent
     {
       get { return m_configuration; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -373,9 +371,7 @@ namespace Lemoine.Database.Persistent
       { // Calling assembly
         Assembly ass = Assembly.GetCallingAssembly ();
         if (false == CheckAssemblyTime (ass, configInfoTimeUtc)) {
-          log.InfoFormat ("IsConfigurationFileValid: " +
-                          "config file is not ok compared to {0}",
-                          ass.FullName);
+          log.Info ($"IsConfigurationFileValid: config file is not ok compared to {ass.FullName}");
           return false;
         }
       }
@@ -389,9 +385,7 @@ namespace Lemoine.Database.Persistent
       foreach (var extension in extensions) {
         var ass = extension.GetType ().Assembly;
         if (false == CheckAssemblyTime (ass, configInfoTimeUtc)) {
-          log.InfoFormat ("IsConfigurationFileValid: " +
-                          "config file is not ok compared to {0}",
-                          ass.FullName);
+          log.Info ($"IsConfigurationFileValid: config file is not ok compared to {ass.FullName}");
           return false;
         }
       }
@@ -400,9 +394,7 @@ namespace Lemoine.Database.Persistent
       try {
         string cacheExtensionsString = File.ReadAllText (extensionsCachePath);
         if (!string.Equals (extensionsString, cacheExtensionsString)) {
-          log.InfoFormat ("IsConfigurationFileValid: " +
-                          "extensions strings differ {0} VS {1}",
-                          extensionsString, cacheExtensionsString);
+          log.Info ($"IsConfigurationFileValid: extensions strings differ {extensionsString} VS {cacheExtensionsString}");
           return false;
         }
       }
@@ -425,16 +417,16 @@ namespace Lemoine.Database.Persistent
       string extensionsCachePath = GetExtensionsCachePath ();
 
       if (!File.Exists (configCachePath)) {
-        log.DebugFormat ("IsConfigurationFileValid: " +
-                         "the file {0} does not exist",
-                         configCachePath);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsConfigurationFileValid: the file {configCachePath} does not exist");
+        }
         return false;
       }
 
       if (!File.Exists (extensionsCachePath)) {
-        log.DebugFormat ("IsConfigurationFileValid: " +
-                         "the file {0} does not exist",
-                         extensionsCachePath);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsConfigurationFileValid: the file {extensionsCachePath} does not exist");
+        }
         return false;
       }
 
@@ -443,17 +435,13 @@ namespace Lemoine.Database.Persistent
       { // Calling assembly
         Assembly ass = Assembly.GetCallingAssembly ();
         if (false == CheckAssemblyTime (ass, configInfoTimeUtc)) {
-          log.InfoFormat ("IsConfigurationFileValid: " +
-                          "config file is not ok compared to {0}",
-                          ass.FullName);
+          log.Info ($"IsConfigurationFileValid: config file is not ok compared to {ass.FullName}");
           return false;
         }
       }
       foreach (var assembly in assemblies) {
         if (false == CheckAssemblyTime (assembly, configInfoTimeUtc)) {
-          log.InfoFormat ("IsConfigurationFileValid: " +
-                          "config file is not ok compared to {0}",
-                          assembly.FullName);
+          log.Info ($"IsConfigurationFileValid: config file is not ok compared to {assembly.FullName}");
           return false;
         }
       }
@@ -461,9 +449,7 @@ namespace Lemoine.Database.Persistent
       foreach (var extension in extensions) {
         var ass = extension.GetType ().Assembly;
         if (false == CheckAssemblyTime (ass, configInfoTimeUtc)) {
-          log.InfoFormat ("IsConfigurationFileValid: " +
-                          "config file is not ok compared to {0}",
-                          ass.FullName);
+          log.Info ($"IsConfigurationFileValid: config file is not ok compared to {ass.FullName}");
           return false;
         }
       }
@@ -479,9 +465,7 @@ namespace Lemoine.Database.Persistent
         }
 #endif
         if (!string.Equals (extensionsString, cacheExtensionsString)) {
-          log.InfoFormat ("IsConfigurationFileValid: " +
-                          "extensions strings differ {0} VS {1}",
-                          extensionsString, cacheExtensionsString);
+          log.Info ($"IsConfigurationFileValid: extensions strings differ {extensionsString} VS {cacheExtensionsString}");
           return false;
         }
       }
@@ -509,14 +493,12 @@ namespace Lemoine.Database.Persistent
     {
       Debug.Assert (null != ass);
       if (ass.Location == null) {
-        log.ErrorFormat ("CheckAssemblyTime: " +
-                         "unable to get the location of the assembly");
+        log.Error ("CheckAssemblyTime: unable to get the location of the assembly");
         return false;
       }
       FileInfo assInfo = new FileInfo (ass.Location);
       if (dateTime < assInfo.LastWriteTimeUtc) {
-        log.InfoFormat ("CheckAssemblyTime: " +
-                        "configuration cache file is too old");
+        log.Info ("CheckAssemblyTime: configuration cache file is too old");
         return false;
       }
       return true;

@@ -33,7 +33,7 @@ namespace Lemoine.Plugin.LongPeriodEventConfig
 
       var configurations = LoadConfigurations ();
       if (!configurations.Any ()) {
-        log.ErrorFormat ("Initialize: no valid configuration, skip this instance");
+        log.Error ("Initialize: no valid configuration, skip this instance");
         return false;
       }
       m_priority = configurations.Min (c => c.Priority);
@@ -59,7 +59,7 @@ namespace Lemoine.Plugin.LongPeriodEventConfig
       // configs matching the machine, machine observation state and machine mode
       if (!configs.Any ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ProcessAssociation: skip it since there is no related config");
+          log.Debug ("ProcessAssociation: skip it since there is no related config");
         }
         return true;
       }
@@ -174,9 +174,7 @@ namespace Lemoine.Plugin.LongPeriodEventConfig
                 } // Else same machine mode, extend...
               }
               if (Bound.Compare<DateTime> (extendedBegin, reasonSlot.BeginDateTime) <= 0) {
-                log.FatalFormat ("ProcessAssociation: " +
-                                 "reasonSlot before {0} has a begin date/time {1} that is not before it",
-                                 extendedBegin, reasonSlot.BeginDateTime);
+                log.Fatal ($"ProcessAssociation: reasonSlot before {extendedBegin} has a begin date/time {reasonSlot.BeginDateTime} that is not before it");
                 throw new InvalidOperationException ();
               }
               extendedBegin = reasonSlot.BeginDateTime.Value; // reasonSlotBeginDateTime < extendedBegin

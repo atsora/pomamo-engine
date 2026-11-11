@@ -17,15 +17,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable, XmlInclude(typeof(User)), XmlInclude(typeof(Service))]
   public abstract class Updater: DataWithDisplayFunction, IUpdater
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     ICollection<IRevision> m_revisions = new List<IRevision> ();
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (Updater).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Updater ID
     /// </summary>
@@ -54,9 +51,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_revisions; }
       internal protected set { m_revisions = value; }
     }
-    #endregion
     
-    #region Methods
     /// <summary>
     /// Cast Updater to the underlying class
     /// </summary>
@@ -65,7 +60,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       return this as T;
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

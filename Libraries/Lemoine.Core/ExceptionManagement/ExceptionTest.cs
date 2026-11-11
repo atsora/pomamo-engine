@@ -18,13 +18,10 @@ namespace Lemoine.Core.ExceptionManagement
   /// </summary>
   public sealed class ExceptionTest
   {
-    #region Members
     readonly IList<IExceptionTest> m_tests = new List<IExceptionTest> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ExceptionTest).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// List of tests
     /// </summary>
@@ -37,7 +34,6 @@ namespace Lemoine.Core.ExceptionManagement
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -49,7 +45,6 @@ namespace Lemoine.Core.ExceptionManagement
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a test
     /// </summary>
@@ -554,7 +549,6 @@ namespace Lemoine.Core.ExceptionManagement
 
       return false;
     }
-    #endregion // Methods
 
     #region Instance
     static ExceptionTest Instance

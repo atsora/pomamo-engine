@@ -28,13 +28,10 @@ namespace Lemoine.Alert.GDBListeners
   {
     static readonly string APPLICATION_STATE_KEY_PREFIX = "alert.listener.reasonslot.";   // .module.reason
 
-    #region Members
     int m_reasonId;
     IDictionary<TimeSpan, string> m_thresholds;
     readonly IMachineModule m_machineModule;
     IApplicationState m_reasonSlotMachineModuleListenerState = null;
-
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (ReasonSlotMachineModuleListener).FullName);
 
@@ -57,7 +54,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -168,7 +164,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-
-    #endregion // Methods
   }
 }

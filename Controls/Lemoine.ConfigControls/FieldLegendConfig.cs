@@ -26,18 +26,15 @@ namespace Lemoine.ConfigControls
     : UserControl
     , IConfigControlObserver<IField>
   {
-    #region Members
     SortableBindingList<IFieldLegend> m_fieldLegends = new SortableBindingList<IFieldLegend>();
     
     ISet<DataGridViewRow> m_updateSet =
       new HashSet<DataGridViewRow> ();
     IList<IFieldLegend> m_deleteList =
       new List<IFieldLegend> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (FieldLegendConfig).FullName);
     
-    #region Getters / Setters
     IField Field {
       get
       {
@@ -50,7 +47,6 @@ namespace Lemoine.ConfigControls
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -90,8 +86,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("FieldLegendConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("FieldLegendConfigLoad: no DAO factory is defined");
         dataGridView.Visible = true;
         return;
       }

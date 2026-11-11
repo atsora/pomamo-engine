@@ -28,7 +28,6 @@ namespace Lemoine.Web.Cache
       m_cacheClient = cacheClient;
     }
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -55,6 +54,5 @@ namespace Lemoine.Web.Cache
       m_cacheClient.FlushAll ();
       GC.Collect ();
     }
-#endregion // Methods
   }
 }

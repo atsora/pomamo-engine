@@ -38,13 +38,13 @@ namespace Lemoine.Extensions.Plugin
 
         const string prefix = "Lemoine.Plugin.";
         if (!className.StartsWith (prefix, StringComparison.InvariantCultureIgnoreCase)) {
-          log.ErrorFormat ("IdentifyingName: plugin class name {0} does not start with Lemoine.Plugin.", className);
+          log.Error ($"IdentifyingName: plugin class name {className} does not start with Lemoine.Plugin.");
           return null;
         }
 
         const string suffix = ".Plugin";
         if (!className.EndsWith (suffix, StringComparison.InvariantCultureIgnoreCase)) {
-          log.ErrorFormat ("IdentifyingName: plugin class name {0} does not end with .Plugin", className);
+          log.Error ($"IdentifyingName: plugin class name {className} does not end with .Plugin");
           return null;
         }
         var identifiyingName = className.Substring (prefix.Length, className.Length - prefix.Length - suffix.Length);

@@ -24,13 +24,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class SequenceDuration : BaseData, ISequenceDuration, IEquatable<ISequenceDuration>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     ISequenceOperationModel m_sequenceOperationModel;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SequenceDuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -92,7 +89,6 @@ namespace Lemoine.GDBPersistentClasses
         this.EstimatedDuration = ConvertToTimeSpan (value);
       }
     }
-    #endregion // Getters / Setters
 
     #region Contructors
     /// <summary>

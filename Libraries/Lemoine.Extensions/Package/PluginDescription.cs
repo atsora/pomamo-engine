@@ -14,12 +14,8 @@ namespace Lemoine.Extensions.Package
   /// </summary>
   public class PluginDescription
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (PluginDescription).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, name of the assembly without Lemoine.Plugin and without .dll
     /// 
@@ -31,7 +27,6 @@ namespace Lemoine.Extensions.Package
     /// Configurations / Instances
     /// </summary>
     public IList<PluginInstance> Instances { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -41,8 +36,5 @@ namespace Lemoine.Extensions.Package
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

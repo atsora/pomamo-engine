@@ -54,8 +54,7 @@ namespace Lemoine.GDBPersistentClasses
       public ChangeTracker (OperationCycle operationCycle)
       {
         if (!ModelDAOHelper.DAOFactory.IsInitialized (operationCycle)) {
-          log.ErrorFormat ("ChangeTracker: operationCycle is not initialized. StackTrace={0}",
-            System.Environment.StackTrace);
+          log.Error ($"ChangeTracker: operationCycle is not initialized. StackTrace={System.Environment.StackTrace}");
         }
 
         Debug.Assert (null != operationCycle);
@@ -126,7 +125,6 @@ namespace Lemoine.GDBPersistentClasses
 
     static readonly ILog log = LogManager.GetLogger (typeof (OperationCycle).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// OperationCycle Id
     /// </summary>
@@ -160,8 +158,7 @@ namespace Lemoine.GDBPersistentClasses
       set {
         if (!object.Equals (m_begin, value)) {
           if (value.HasValue && End.HasValue && (value.Value.CompareTo (End.Value) > 0)) {
-            log.ErrorFormat ("Cycle begin set to {0} > cycle end {1}",
-                            value.Value, End.Value);
+            log.Error ($"Cycle begin set to {value.Value} > cycle end {End.Value}");
           }
           else {
             m_begin = value;
@@ -181,8 +178,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set {
         if (!object.Equals (m_end, value)) {
           if (value.HasValue && Begin.HasValue && (value.Value.CompareTo (Begin.Value) < 0)) {
-            log.ErrorFormat ("Cycle end set to {0} < cycle begin {1}",
-                            value.Value, Begin.Value);
+            log.Error ($"Cycle end set to {value.Value} < cycle begin {Begin.Value}");
           }
           else {
             using (ChangeTracker changeTracker = new ChangeTracker (this)) {
@@ -315,7 +311,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region IChecked implementation
     /// <summary>
@@ -377,7 +372,6 @@ namespace Lemoine.GDBPersistentClasses
     {
     }
 
-    #region Members
     /// <summary>
     /// Has the operation cycle a real begin (defined and not estimated) ?
     /// </summary>
@@ -480,8 +474,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (null != operationSlot);
 
       if (this.Machine.Id != operationSlot.Machine.Id) {
-        log.ErrorFormat ("IsCompatibleWithOperationSlot: " +
-                         "not the same machine");
+        log.Error ("IsCompatibleWithOperationSlot: not the same machine");
         return OperationSlotCompatibility.None;
       }
 
@@ -574,8 +567,7 @@ namespace Lemoine.GDBPersistentClasses
           }
         }
         else { // Nor real begin, nor real end
-          log.FatalFormat ("IsCompatibleWithOperationSlot: " +
-                           "no real date/time in operation cycle");
+          log.Fatal ("IsCompatibleWithOperationSlot: no real date/time in operation cycle");
           Debug.Assert (false);
           return OperationSlotCompatibility.None;
         }
@@ -606,8 +598,7 @@ namespace Lemoine.GDBPersistentClasses
           || !this.End.HasValue
           || !this.End.Value.Equals (dateTime)) {
         if (Begin.HasValue && (dateTime.CompareTo (Begin.Value) < 0)) {
-          log.ErrorFormat ("SetRealEnd: Cycle end set to {0} < cycle begin {1}",
-                          dateTime, Begin.Value);
+          log.Error ($"SetRealEnd: Cycle end set to {dateTime} < cycle begin {Begin.Value}");
           return;
         }
 
@@ -628,9 +619,7 @@ namespace Lemoine.GDBPersistentClasses
       if (!this.Status.HasFlag (OperationCycleStatus.EndEstimated)
           || !object.Equals (m_end, dateTime)) {
         if (Begin.HasValue && dateTime.HasValue && (dateTime.Value.CompareTo (Begin.Value) < 0)) {
-          log.ErrorFormat ("SetEstimatedEnd:" +
-                          "Cycle end set to {0} < cycle begin {1}",
-                          dateTime, Begin.Value);
+          log.Error ($"SetEstimatedEnd:Cycle end set to {dateTime} < cycle begin {Begin.Value}");
           return;
         }
 
@@ -650,7 +639,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Begin = dateTime; // The offset duration is re-computed there
       this.Status = this.Status.Add (OperationCycleStatus.BeginEstimated);
     }
-    #endregion // Members
 
     #region ICloneable interface
     /// <summary>
@@ -668,7 +656,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // ICloneable
 
-    #region Methods
     /// <summary>
     /// <see cref="Object.ToString" />
     /// </summary>
@@ -739,6 +726,5 @@ namespace Lemoine.GDBPersistentClasses
         return base.GetHashCode ();
       }
     }
-    #endregion // Methods
   }
 }

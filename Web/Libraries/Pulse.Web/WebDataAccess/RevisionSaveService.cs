@@ -31,7 +31,6 @@ namespace Pulse.Web.WebDataAccess
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -62,9 +61,7 @@ namespace Pulse.Web.WebDataAccess
             IUpdater user = ModelDAOHelper.DAOFactory.UserDAO
               .FindById (request.UserId.Value);
             if (null == user) {
-              log.WarnFormat ("Get: " +
-                              "user with ID {0} does not exist",
-                              request.UserId.Value);
+              log.Warn ($"Get: user with ID {request.UserId.Value} does not exist");
             }
             else {
               revision.Updater = user;
@@ -74,9 +71,7 @@ namespace Pulse.Web.WebDataAccess
             IUpdater service = ModelDAOHelper.DAOFactory.ServiceDAO
               .FindById (request.ServiceId.Value);
             if (null == service) {
-              log.WarnFormat ("Get: " +
-                              "service with ID {0} does not exist",
-                              request.ServiceId.Value);
+              log.Warn ($"Get: service with ID {request.ServiceId.Value} does not exist");
             }
             else {
               revision.Updater = service;
@@ -93,6 +88,5 @@ namespace Pulse.Web.WebDataAccess
       Debug.Assert (null != revision);
       return new SaveResponseDTO (revision.Id);
     }
-    #endregion // Methods
   }
 }

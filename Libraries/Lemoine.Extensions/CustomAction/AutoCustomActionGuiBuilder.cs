@@ -30,7 +30,6 @@ namespace Lemoine.Extensions.CustomAction
 
     readonly IList<IPluginInstance> m_associations = new List<IPluginInstance> ();
 
-    #region Getters / Setters
     /// <summary>
     /// Configuration context
     /// </summary>
@@ -55,7 +54,6 @@ namespace Lemoine.Extensions.CustomAction
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -106,17 +104,14 @@ namespace Lemoine.Extensions.CustomAction
           configuration = this.ConfigurationLoader.LoadConfiguration (parameters);
           IEnumerable<string> errors;
           if (!configuration.IsValid (out errors)) {
-            log.WarnFormat ("LoadConfiguration: " +
-                            "the configuration is not valid, skip this instance");
+            log.Warn ("LoadConfiguration: the configuration is not valid, skip this instance");
           }
           else {
             configurations.Add (configuration);
           }
         }
         catch (Exception) {
-          log.ErrorFormat ("LoadConfiguration: " +
-                           "parse error for {0}, skip this instance",
-                           parameters);
+          log.Error ($"LoadConfiguration: parse error for {parameters}, skip this instance");
         }
       }
 

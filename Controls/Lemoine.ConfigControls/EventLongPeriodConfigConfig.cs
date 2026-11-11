@@ -27,7 +27,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IMachineMode>
     , IConfigControlObserver<IMonitoredMachine>
   {
-    #region Members
     BindingList<IEventLongPeriodConfig> m_eventLongPeriodConfigs =
       new BindingList<IEventLongPeriodConfig>();
     
@@ -38,11 +37,6 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IEventLongPeriodConfig>> m_observers =
       new HashSet<IConfigControlObserver<IEventLongPeriodConfig>> ();
-    #endregion // Members
-    
-    #region Getter/Setter
-    
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventLongPeriodConfigConfig).FullName);
 
@@ -105,8 +99,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("EventLongPeriodConfigConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("EventLongPeriodConfigConfigLoad: no DAO factory is defined");
         return;
       }
       

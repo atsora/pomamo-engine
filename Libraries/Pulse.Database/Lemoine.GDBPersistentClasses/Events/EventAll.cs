@@ -17,10 +17,8 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class EventAll: IEvent
   {
-    #region Members
     int m_id = 0;
     IEvent m_event;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Event).FullName);
 
@@ -32,7 +30,6 @@ namespace Lemoine.GDBPersistentClasses
     { }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// EventLongPeriod Id
     /// </summary>
@@ -58,7 +55,7 @@ namespace Lemoine.GDBPersistentClasses
       get
       {
         if (null == m_event) {
-          log.FatalFormat ("Level: m_event is null");
+          log.Fatal ("Level: m_event is null");
           Debug.Assert (null != m_event);
           return null;
         }
@@ -75,7 +72,7 @@ namespace Lemoine.GDBPersistentClasses
       get
       {
         if (null == m_event) {
-          log.FatalFormat ("DateTime: m_event is null");
+          log.Fatal ("DateTime: m_event is null");
           Debug.Assert (null != m_event);
           return DateTime.UtcNow;
         }
@@ -84,9 +81,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Unproxy the entity for XML serialization
     /// </summary>
@@ -94,6 +89,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       NHibernateHelper.Unproxy<IEvent> (ref m_event);
     }
-    #endregion // Methods
   }
 }

@@ -26,7 +26,6 @@ namespace WizardAddReason
     internal const string DETAILS_REQUIRED = "details_required";
     internal const string MACHINE_FILTER = "machine_filter";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -100,7 +99,6 @@ namespace WizardAddReason
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

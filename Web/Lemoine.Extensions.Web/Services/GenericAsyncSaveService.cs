@@ -24,7 +24,6 @@ namespace Lemoine.Extensions.Web.Services
   {
     readonly ILog log = LogManager.GetLogger (typeof (GenericSyncSaveService<InputDTO>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Cache client
     /// 
@@ -36,7 +35,6 @@ namespace Lemoine.Extensions.Web.Services
     /// Remote Ip
     /// </summary>
     public string RemoteIp { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -56,7 +54,6 @@ namespace Lemoine.Extensions.Web.Services
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get
     /// </summary>
@@ -92,6 +89,5 @@ namespace Lemoine.Extensions.Web.Services
     {
       this.RemoteIp = remoteIp;
     }
-    #endregion // Methods
   }
 }

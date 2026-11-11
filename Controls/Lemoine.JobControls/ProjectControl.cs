@@ -36,12 +36,10 @@ namespace Lemoine.JobControls
       CREATE = 2
     };
 
-    #region Members
     IProject m_project;
     DisplayMode m_displayMode;
     TreeNode m_node;
     ITreeViewObservable m_observable;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ProjectControl).FullName);
 
@@ -274,7 +272,6 @@ namespace Lemoine.JobControls
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Use informations in Project to fill text in box
     /// </summary>
@@ -425,6 +422,5 @@ namespace Lemoine.JobControls
       }
       return true;
     }
-    #endregion // Methods
   }
 }

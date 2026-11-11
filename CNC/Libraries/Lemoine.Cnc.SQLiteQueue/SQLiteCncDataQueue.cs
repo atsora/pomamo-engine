@@ -66,7 +66,6 @@ namespace Lemoine.Cnc.SQLiteQueue
 
     static readonly int MAX_NB_ATTEMPT = 2;
 
-    #region Members
     bool m_initialized = false;
     IGenericConfigReader m_configReader = null;
     MemoryConfigReader m_defaultConfigReader = new MemoryConfigReader ();
@@ -79,7 +78,6 @@ namespace Lemoine.Cnc.SQLiteQueue
     DateTime m_lastVacuum = DateTime.UtcNow;
     DateTime m_lastDelete = DateTime.UtcNow;
     IChecked m_checkedCaller = null;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (SQLiteCncDataQueue).FullName);
 
@@ -103,9 +101,7 @@ namespace Lemoine.Cnc.SQLiteQueue
       }
       set {
         if (value < 0) {
-          log.ErrorFormat ("MachineId.set: " +
-                           "negative value {0}, a positive value is expected",
-                           value);
+          log.Error ($"MachineId.set: negative value {value}, a positive value is expected");
           throw new ArgumentOutOfRangeException ("value", "Not a positive value");
         }
         m_defaultConfigReader.Add (MACHINE_ID_KEY, value, true);
@@ -132,9 +128,7 @@ namespace Lemoine.Cnc.SQLiteQueue
       }
       set {
         if (value < 0) {
-          log.ErrorFormat ("MachineModuleId.set: " +
-                           "negative value {0}, a positive value is expected",
-                           value);
+          log.Error ($"MachineModuleId.set: negative value {value}, a positive value is expected");
           throw new ArgumentOutOfRangeException ("value", "Not a positive value");
         }
         m_defaultConfigReader.Add (MACHINE_MODULE_ID_KEY, value, true);
@@ -185,7 +179,6 @@ namespace Lemoine.Cnc.SQLiteQueue
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Initialize the queue based on configurations
     /// </summary>
@@ -357,10 +350,7 @@ namespace Lemoine.Cnc.SQLiteQueue
       SetActive ();
 
       if (MAX_NB_ATTEMPT < nbAttempt) {
-        log.FatalFormat ("OpenAndCreate: " +
-                         "the maximum number of connection attempts was reached {0} " +
-                         "=> give up",
-                         MAX_NB_ATTEMPT);
+        log.Fatal ($"OpenAndCreate: the maximum number of connection attempts was reached {MAX_NB_ATTEMPT} => give up");
         throw new SQLiteException ("Database file is corrupted again");
       }
 
@@ -403,14 +393,14 @@ namespace Lemoine.Cnc.SQLiteQueue
       SetActive ();
 
       if (m_checkIntegrity) {
-        log.DebugFormat ("OpenAndCreate: " +
-                        "Checking integrity of SQLite file {0}",
-                        filePath);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"OpenAndCreate: Checking integrity of SQLite file {filePath}");
+        }
         if (!InternalCheckIntegrity ()) {
           try {
-            log.DebugFormat ("OpenAndCreate: " +
-                            "Trying to delete a corrupt database file {0}",
-                            filePath);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"OpenAndCreate: Trying to delete a corrupt database file {filePath}");
+            }
             m_connection.Close ();
             // despite connection close, current process seems to lock file,
             // thus preventing deletion.
@@ -420,9 +410,9 @@ namespace Lemoine.Cnc.SQLiteQueue
             System.GC.WaitForPendingFinalizers ();
             File.Delete (filePath + ".corrupted");
             File.Move (filePath, filePath + ".corrupted");
-            log.DebugFormat ("OpenAndCreate: " +
-                            "Corrupt database file {0} has been successfully deleted",
-                            filePath);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"OpenAndCreate: Corrupt database file {filePath} has been successfully deleted");
+            }
           }
           catch (Exception ex) {
             log.Error ($"OpenAndCreate: SQLite database file {filePath} is corrupt and could not be deleted: Abort", ex);
@@ -441,7 +431,7 @@ namespace Lemoine.Cnc.SQLiteQueue
       }
       else {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ($"OpenAndCreate: NOT checking integrity of SQLite file {filePath}");
+          log.Debug ($"OpenAndCreate: NOT checking integrity of SQLite file {filePath}");
         }
       }
 
@@ -1174,7 +1164,6 @@ LIMIT {1}",
         throw new IOException ("Unable to close file " + m_filePath);
       }
     }
-    #endregion // Methods
   }
 }
 

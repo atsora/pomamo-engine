@@ -15,9 +15,7 @@ namespace ConfiguratorSlots.UserShift
   /// </summary>
   public class UserShiftBarData: IBarObjectFactory
   {
-    #region Members
     readonly IUser m_user;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -30,7 +28,6 @@ namespace ConfiguratorSlots.UserShift
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Create all BarObjects included in a period
     /// </summary>
@@ -68,6 +65,5 @@ namespace ConfiguratorSlots.UserShift
       
       return barObjects;
     }
-    #endregion // Methods
   }
 }

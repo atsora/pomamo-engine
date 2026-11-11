@@ -17,9 +17,6 @@ namespace Lemoine.Web.FileRepo
   {
     readonly ILog log = LogManager.GetLogger (typeof (FileRepoWebException).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

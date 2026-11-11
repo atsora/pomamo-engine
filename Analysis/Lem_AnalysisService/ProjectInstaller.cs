@@ -21,17 +21,13 @@ namespace Lem_AnalysisService
   [RunInstaller(true)]
   public class ProjectInstaller : Installer
   {
-#region Members
     private ServiceProcessInstaller serviceProcessInstaller;
     private ServiceInstaller serviceInstaller;
-#endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProjectInstaller).FullName);
 
-#region Getters / Setters
     // TODO: Generate here with the Alt-Inser command the wanted getters / setters
     // TODO: Do not forget to add the description of the property with ///
-#endregion // Getters / Setters
 
 #region Constructors
     /// <summary>

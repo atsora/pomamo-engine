@@ -24,9 +24,6 @@ namespace Lemoine.WebMiddleware
 
     readonly RequestDelegate m_next;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

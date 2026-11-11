@@ -16,7 +16,6 @@ namespace Lemoine.ConfigControls
   internal class MachineModeDefaultReasonWrapper
   {
     
-    #region Getters / Setters
     public String Id {get; set;}
     public TimeSpan? MaximumDuration {get; set;}
     public IReason Reason {get; set;}
@@ -29,7 +28,6 @@ namespace Lemoine.ConfigControls
     
     public Color BackColor {get; set;}
     public Color FontColor {get; set;}
-    #endregion // Getters / Setters
     
     #region Constructor
     public MachineModeDefaultReasonWrapper()
@@ -48,7 +46,6 @@ namespace Lemoine.ConfigControls
     }
     #endregion // Constructor
     
-    #region Methods
     /// <summary>
     /// Update all object in List if !null &amp; !empty
     /// </summary>
@@ -114,7 +111,6 @@ namespace Lemoine.ConfigControls
       }      
       return null;
     }
-    #endregion // Methods
     
     #region Equals and GetHashCode implementation
     public override bool Equals(object obj)

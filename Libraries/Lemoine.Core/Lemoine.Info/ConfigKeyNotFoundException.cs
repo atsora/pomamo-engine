@@ -19,9 +19,6 @@ namespace Lemoine.Info
 
     readonly string m_key;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

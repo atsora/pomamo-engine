@@ -35,7 +35,6 @@ namespace Lemoine.Database.Persistent
 
     Configuration m_configuration;
 
-    #region Getters / Setters
     /// <summary>
     /// NHibernate configuration
     /// </summary>
@@ -43,7 +42,6 @@ namespace Lemoine.Database.Persistent
     {
       get { return m_configuration; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     NHibernateConfigManager (params Assembly[] assemblies)
@@ -263,9 +261,7 @@ namespace Lemoine.Database.Persistent
       SetConnectionString (connectionString);
       TryConfigure ();
       if (log.IsInfoEnabled) {
-        log.InfoFormat ("Configure: " +
-                        "the connection string is <{0}>",
-                        this.Configuration.GetProperty ("connection.connection_string"));
+        log.Info ($"Configure: the connection string is <{this.Configuration.GetProperty ("connection.connection_string")}>");
       }
     }
 
@@ -278,9 +274,7 @@ namespace Lemoine.Database.Persistent
       SetConnectionString (connectionString);
       await TryConfigureAsync ();
       if (log.IsInfoEnabled) {
-        log.InfoFormat ("Configure: " +
-                        "the connection string is <{0}>",
-                        this.Configuration.GetProperty ("connection.connection_string"));
+        log.Info ($"Configure: the connection string is <{this.Configuration.GetProperty ("connection.connection_string")}>");
       }
     }
 

@@ -23,14 +23,11 @@ namespace Lemoine.GDBPersistentClasses
   {
     readonly ILog log = LogManager.GetLogger (typeof (SlotDAO<TSlot, I>).FullName);
 
-    #region Members
     Lemoine.Threading.IChecked m_caller = null;
     bool m_dayColumn = true;
 
     IEnumerable<Pulse.Extensions.Database.ISlotExtension> m_slotExtensions = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Add a caller to this class to correctly redirect the SetActive calls
     /// </summary>
@@ -48,7 +45,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_dayColumn; }
       set { m_dayColumn = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -190,9 +186,7 @@ namespace Lemoine.GDBPersistentClasses
       // the new association: delete them or cut them
       foreach (I existingSlot in existingSlots) { // Note: they are correctly ordered
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("InsertNewSlots: " +
-                           "modifiying impacted existing slot {0} with association range {1}",
-                           existingSlot, range);
+          log.Debug ($"InsertNewSlots: modifiying impacted existing slot {existingSlot} with association range {range}");
         }
         SetActive ();
         var impactedSlot = (TSlot)existingSlot;
@@ -205,9 +199,7 @@ namespace Lemoine.GDBPersistentClasses
           if (isMergeApplicableWithNext) {
             if (extendedSlot.DateTimeRange.ContainsRange (impactedSlot.DateTimeRange)) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("InsertNewSlots: " +
-                                 "delete slot {0} because the extended slot already contains the impacted slot",
-                                 impactedSlot);
+                log.Debug ($"InsertNewSlots: delete slot {impactedSlot} because the extended slot already contains the impacted slot");
               }
               impactedSlot.HandleRemovedSlot ();
               foreach (var extension in GetExtensions ()) {
@@ -230,9 +222,9 @@ namespace Lemoine.GDBPersistentClasses
             // 2> Association:  xxxxxxxxx
             //    ImpactedSlot:   xxxxx..
             //    => delete
-            log.DebugFormat ("InsertNewSlots: " +
-                             "delete slot {0}",
-                             impactedSlot);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"InsertNewSlots: delete slot {impactedSlot}");
+            }
             impactedSlot.HandleRemovedSlot ();
             foreach (var extension in GetExtensions ()) {
               extension.RemoveSlot (impactedSlot);
@@ -410,7 +402,7 @@ namespace Lemoine.GDBPersistentClasses
                     impactedSlotNewRange = new UtcDateTimeRange (extendedSlot.DateTimeRange.Upper.Value,
                       range.Lower.Value);
                     if (log.IsDebugEnabled) {
-                      log.DebugFormat ("InsertNewSlots: impactedSlotNewRange is {0} because of extendedSlot", impactedSlotNewRange);
+                      log.Debug ($"InsertNewSlots: impactedSlotNewRange is {impactedSlotNewRange} because of extendedSlot");
                     }
                   }
                   UpdateImpactedSlotRange (impactedSlot, impactedSlotNewRange, association);

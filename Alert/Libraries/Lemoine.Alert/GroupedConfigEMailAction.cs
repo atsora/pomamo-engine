@@ -27,7 +27,6 @@ namespace Lemoine.Alert
   [Serializable]
   public class GroupedConfigEMailAction : GenericEMailAction
   {
-    #region Members
     XslDefinition m_dateTime;
     XslDefinition m_name;
     XslDefinition m_dataType;
@@ -43,11 +42,9 @@ namespace Lemoine.Alert
     IList<IEmailConfig> m_matchedEmailConfigs;
 
     IEnumerable<IConfigEMailExtension> m_extensions;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GroupedConfigEMailAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Date/time of the event
     /// 
@@ -153,7 +150,6 @@ namespace Lemoine.Alert
       get { return m_body; }
       set { m_body = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -164,7 +160,6 @@ namespace Lemoine.Alert
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the extensions and load them if needed
     /// </summary>
@@ -257,9 +252,7 @@ namespace Lemoine.Alert
       int levelPriority = 0;
       if (null != levelPriorityString) {
         if (!int.TryParse (levelPriorityString, out levelPriority)) {
-          log.ErrorFormat ("GetMatchedEmailConfigs: " +
-                           "impossible to parse priority {0}",
-                           levelPriorityString);
+          log.Error ($"GetMatchedEmailConfigs: impossible to parse priority {levelPriorityString}");
         }
       }
       string machineName = GetFromXslDefinition (m_machineName, data);
@@ -285,9 +278,7 @@ namespace Lemoine.Alert
           //Debug.Assert (true == emailConfig.Active);
           if ((0 != dateTime.Ticks) && (false == CheckActivePeriod (emailConfig, dateTime))) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetMatchedEmailConfigs: " +
-                             "event time {0} UTC does not match config {1}",
-                             dateTime, emailConfig);
+              log.Debug ($"GetMatchedEmailConfigs: event time {dateTime} UTC does not match config {emailConfig}");
             }
             continue;
           }
@@ -296,26 +287,20 @@ namespace Lemoine.Alert
             // If the name is set in the configuration file, the database record must include this name
             // This is not the same for the other fields where the filter is driven by the database record
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetMatchedEmailConfigs: " +
-                             "name does not match: {0} vs {1}",
-                             name, emailConfig.Name);
+              log.Debug ($"GetMatchedEmailConfigs: name does not match: {name} vs {emailConfig.Name}");
             }
             continue;
           }
           if (!string.IsNullOrEmpty (emailConfig.DataType) && !object.Equals (dataType, emailConfig.DataType)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetMatchedEmailConfigs: " +
-                             "dataType does not match: {0} vs {1}",
-                             dataType, emailConfig.DataType);
+              log.Debug ($"GetMatchedEmailConfigs: dataType does not match: {dataType} vs {emailConfig.DataType}");
             }
             continue;
           }
           if ((null != freeFilter) && !string.IsNullOrEmpty (emailConfig.FreeFilter) && !object.Equals (freeFilter, emailConfig.FreeFilter)) {
             // null != freeFilter => consider an exact free filter match
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetMatchedEmailConfigs: " +
-                             "freeFilter does not match: {0} vs {1}",
-                             freeFilter, emailConfig.FreeFilter);
+              log.Debug ($"GetMatchedEmailConfigs: freeFilter does not match: {freeFilter} vs {emailConfig.FreeFilter}");
             }
             continue;
           }
@@ -327,18 +312,14 @@ namespace Lemoine.Alert
           }
           if (levelPriority > emailConfig.MaxLevelPriority) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetMatchedEmailConfigs: " +
-                             "priority does not match with MaxLevelPriority: {0} vs Max={1}",
-                             levelPriority, emailConfig.MaxLevelPriority);
+              log.Debug ($"GetMatchedEmailConfigs: priority does not match with MaxLevelPriority: {levelPriority} vs Max={emailConfig.MaxLevelPriority}");
             }
             continue;
           }
           if (eventLevels != null && eventLevels.Count > 0) {
             if (emailConfig.EventLevel != null && eventLevels.Count > 0 && !eventLevels.Contains (emailConfig.EventLevel)) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("GetMatchedEmailConfigs: " +
-                               "event level does not match: {0}",
-                               emailConfig.EventLevel);
+                log.Debug ($"GetMatchedEmailConfigs: event level does not match: {emailConfig.EventLevel}");
               }
               continue;
             }
@@ -346,18 +327,14 @@ namespace Lemoine.Alert
 
           if ((null != emailConfig.Machine) && !object.Equals (machine, emailConfig.Machine)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetMatchedEmailConfigs: " +
-                             "machine does not match: {0} vs {1}",
-                             machine, emailConfig.Machine);
+              log.Debug ($"GetMatchedEmailConfigs: machine does not match: {machine} vs {emailConfig.Machine}");
             }
             continue;
           }
           if ((null != emailConfig.MachineFilter) &&
               ((null == machine) || !emailConfig.MachineFilter.IsMatch (machine))) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetMatchedEmailConfigs: " +
-                             "machine {0} does not match machine filter {1}",
-                             machine, emailConfig.MachineFilter);
+              log.Debug ($"GetMatchedEmailConfigs: machine {machine} does not match machine filter {emailConfig.MachineFilter}");
             }
             continue;
           }
@@ -399,9 +376,7 @@ namespace Lemoine.Alert
       DateTime day = dateTime.ToLocalTime ().Date;
       if (!config.WeekDays.HasFlagDayOfWeek (day.DayOfWeek)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("CheckActivePeriod: " +
-                         "for dateTime={0}, dayOfWeek={1} does not match config {2}",
-                         dateTime, day.DayOfWeek, config);
+          log.Debug ($"CheckActivePeriod: for dateTime={dateTime}, dayOfWeek={day.DayOfWeek} does not match config {config}");
         }
         return false;
       }
@@ -411,20 +386,14 @@ namespace Lemoine.Alert
         DateTime timePeriodBegin = day.Add (config.TimePeriod.Begin).ToUniversalTime ();
         if (dateTime < timePeriodBegin) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckActivityPeriod: " +
-                           "for dateTime={0} localDateTime={1} time is before {2} " +
-                           "=> config does not match",
-                           dateTime, dateTime.ToLocalTime (), config.TimePeriod.Begin);
+            log.Debug ($"CheckActivityPeriod: for dateTime={dateTime} localDateTime={dateTime.ToLocalTime ()} time is before {config.TimePeriod.Begin} => config does not match");
           }
           return false;
         }
         DateTime timePeriodEnd = day.Add (config.TimePeriod.EndOffset).ToUniversalTime ();
         if (timePeriodEnd < dateTime) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckActivityPeriod: " +
-                           "for dateTime={0} localDateTime={1} time is after {2} " +
-                           "=> config does not match",
-                           dateTime, dateTime.ToLocalTime (), config.TimePeriod.End);
+            log.Debug ($"CheckActivityPeriod: for dateTime={dateTime} localDateTime={dateTime.ToLocalTime ()} time is after {config.TimePeriod.End} => config does not match");
           }
           return false;
         }
@@ -434,9 +403,7 @@ namespace Lemoine.Alert
       if (config.BeginDateTime.HasValue) {
         if (dateTime < config.BeginDateTime.Value) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckActivityPeriod: " +
-                           "dateTime {0} is before config begin datetime {1}",
-                           dateTime, config.BeginDateTime.Value);
+            log.Debug ($"CheckActivityPeriod: dateTime {dateTime} is before config begin datetime {config.BeginDateTime.Value}");
           }
           return false;
         }
@@ -446,14 +413,10 @@ namespace Lemoine.Alert
       if (config.EndDateTime.HasValue) {
         if (config.EndDateTime.Value <= dateTime) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckActivityPeriod: " +
-                           "dateTime {0} is after config end datetime {1}",
-                           dateTime, config.EndDateTime.Value);
+            log.Debug ($"CheckActivityPeriod: dateTime {dateTime} is after config end datetime {config.EndDateTime.Value}");
           }
           if (true == config.AutoPurge) {
-            log.InfoFormat ("CheckActivityPeriod: " +
-                            "purge {0} because its validity is before event date/time {1}",
-                            config, dateTime);
+            log.Info ($"CheckActivityPeriod: purge {config} because its validity is before event date/time {dateTime}");
             using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) // Same session as the caller
             {
               ModelDAOHelper.DAOFactory.EmailConfigDAO.UpgradeLock (config);
@@ -492,9 +455,7 @@ namespace Lemoine.Alert
 
       if (0 == tos.Count) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetTo: " +
-                         "in the {0} configs that match, none has a recipient",
-                         emailConfigs.Count);
+          log.Debug ($"GetTo: in the {emailConfigs.Count} configs that match, none has a recipient");
         }
         return "";
       }
@@ -557,15 +518,11 @@ namespace Lemoine.Alert
       DateTime dateTime = DateTime.UtcNow;
       if (null == dateTimeString) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetDateTime: " +
-                         "no UtcDateTime XslDefinition => fallback to now {0}",
-                         dateTime);
+          log.Debug ($"GetDateTime: no UtcDateTime XslDefinition => fallback to now {dateTime}");
         }
       }
       else if (false == DateTime.TryParse (dateTimeString, out dateTime)) { // && (null != dateTimeString)
-        log.ErrorFormat ("GetDateTime: " +
-                         "error while parsing date/time {0}",
-                         dateTimeString);
+        log.Error ($"GetDateTime: error while parsing date/time {dateTimeString}");
       }
       else {
         dateTime = DateTime.SpecifyKind (dateTime, DateTimeKind.Utc);
@@ -573,6 +530,5 @@ namespace Lemoine.Alert
 
       return dateTime;
     }
-    #endregion // Methods
   }
 }

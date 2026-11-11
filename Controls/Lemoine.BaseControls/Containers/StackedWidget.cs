@@ -20,7 +20,6 @@ namespace Lemoine.BaseControls
     public StackedWidget() : base() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// cf http://stackoverflow.com/questions/6953487/hide-tab-header-on-c-sharp-tabcontrol
     /// </summary>
@@ -35,6 +34,5 @@ namespace Lemoine.BaseControls
         base.WndProc(ref m);
       }
     }
-    #endregion // Methods
   }
 }

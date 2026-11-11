@@ -22,7 +22,6 @@ namespace Lemoine.FileRepository
 
     readonly IList<IFileRepoClient> m_clients = new List<IFileRepoClient> ();
 
-    #region Getters / Setters
     /// <summary>
     /// Number of clients
     /// </summary>
@@ -30,7 +29,6 @@ namespace Lemoine.FileRepository
     {
       get { return m_clients.Count; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -82,13 +80,13 @@ namespace Lemoine.FileRepository
         if (!string.IsNullOrEmpty (sharedDirectoryPath)) {
           if (sharedDirectoryPath.StartsWith (@"\\")) {
             if (slog.IsDebugEnabled) {
-              slog.DebugFormat ("CreateFromSharedDirectoryWeb: add FileRepoClient with shared network directory {0}", sharedDirectoryPath);
+              slog.Debug ($"CreateFromSharedDirectoryWeb: add FileRepoClient with shared network directory {sharedDirectoryPath}");
             }
             multiClient.Add (new Lemoine.FileRepository.FileRepoClientSharedDir (sharedDirectoryPath));
           }
           else { // !StartsWith (@"\\")
             if (slog.IsDebugEnabled) {
-              slog.DebugFormat ("CreateFromSharedDirectoryWeb: add FileRepoClient with shared (possibly local) directory {0}", sharedDirectoryPath);
+              slog.Debug ($"CreateFromSharedDirectoryWeb: add FileRepoClient with shared (possibly local) directory {sharedDirectoryPath}");
             }
             multiClient.Add (new Lemoine.FileRepository.FileRepoClientDirectory (sharedDirectoryPath));
             multiClient.Add (new Lemoine.FileRepository.FileRepoClientSharedDir (sharedDirectoryPath));
@@ -100,10 +98,7 @@ namespace Lemoine.FileRepository
       if (0 == multiClient.m_clients.Count) {
         if (slog.IsErrorEnabled) {
           slog.Error ("CreateFromSharedDirectoryWeb: FileRepoClientMulti initialized with no client");
-          slog.ErrorFormat ("CreateFromSharedDirectoryWeb: no client set with Pfr={0} shared={1} web={2}",
-            Lemoine.Info.PulseInfo.PfrDataDir,
-            Lemoine.Info.PulseInfo.SharedDirectoryPath,
-            Lemoine.Info.PulseInfo.WebServiceUrl);
+          slog.Error ($"CreateFromSharedDirectoryWeb: no client set with Pfr={Lemoine.Info.PulseInfo.PfrDataDir} shared={Lemoine.Info.PulseInfo.SharedDirectoryPath} web={Lemoine.Info.PulseInfo.WebServiceUrl}");
         }
       }
 
@@ -115,18 +110,22 @@ namespace Lemoine.FileRepository
     {
       if (string.IsNullOrEmpty (pfrDataDirectory)) {
         if (slog.IsDebugEnabled) {
-          slog.DebugFormat ("IsPfrdataDirectoryValid: empty or null");
+          slog.Debug ("IsPfrdataDirectoryValid: empty or null");
         }
         return false;
       }
       if (!Directory.Exists (pfrDataDirectory)) {
-        slog.DebugFormat ("IsPfrdataDirectoryValid: directory {0} does not exist => return false", pfrDataDirectory);
+        if (slog.IsDebugEnabled) {
+          slog.Debug ($"IsPfrdataDirectoryValid: directory {pfrDataDirectory} does not exist => return false");
+        }
         return false;
       }
       else { // Check there is at least one CNC configuration file in it
         var cncConfigsDirectory = Path.Combine (pfrDataDirectory, "cncconfigs");
         if (!Directory.Exists (cncConfigsDirectory)) {
-          slog.DebugFormat ("IsPfrdataDirectoryValid: directory {0} does not exist => return false", cncConfigsDirectory);
+          if (slog.IsDebugEnabled) {
+            slog.Debug ($"IsPfrdataDirectoryValid: directory {cncConfigsDirectory} does not exist => return false");
+          }
           return false;
         }
         else {
@@ -166,18 +165,18 @@ namespace Lemoine.FileRepository
         }
         catch (MissingFileException) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetBinary: MissingFile exception, no need to visit another client");
+            log.Debug ("GetBinary: MissingFile exception, no need to visit another client");
           }
           throw;
         }
         catch (Exception ex) {
           if ((m_clients.Count - 1) == i) {
-            log.ErrorFormat ("GetBinary: error with last client {0}", client);
+            log.Error ($"GetBinary: error with last client {client}");
             log.Error ("GetBinary: error with last client", ex);
             throw;
           }
           else {
-            log.WarnFormat ("GetBinary: error with client #{0} {1}", i, client);
+            log.Warn ($"GetBinary: error with client #{i} {client}");
             log.Warn ("GetBinary: error", ex);
           }
         }
@@ -209,18 +208,18 @@ namespace Lemoine.FileRepository
         }
         catch (MissingFileException) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetFile: MissingFile exception, no need to visit another client");
+            log.Debug ("GetFile: MissingFile exception, no need to visit another client");
           }
           throw;
         }
         catch (Exception ex) {
           if ((m_clients.Count - 1) == i) {
-            log.ErrorFormat ("GetFile: error with last client {0}", client);
+            log.Error ($"GetFile: error with last client {client}");
             log.Error ("GetFile: error with last client", ex);
             throw;
           }
           else {
-            log.WarnFormat ("GetFile: error with client #{0} {1}", i, client);
+            log.Warn ($"GetFile: error with client #{i} {client}");
             log.Warn ("GetFile: error", ex);
           }
         }
@@ -251,18 +250,18 @@ namespace Lemoine.FileRepository
         }
         catch (MissingFileException) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetLastModifiedDate: MissingFile exception, no need to visit another client");
+            log.Debug ("GetLastModifiedDate: MissingFile exception, no need to visit another client");
           }
           throw;
         }
         catch (Exception ex) {
           if ((m_clients.Count - 1) == i) {
-            log.ErrorFormat ("GetLastModifiedDate: error with last client {0}", client);
+            log.Error ($"GetLastModifiedDate: error with last client {client}");
             log.Error ("GetLastModifiedDate: error with last client", ex);
             throw;
           }
           else {
-            log.WarnFormat ("GetLastModifiedDate: error with client #{0} {1}", i, client);
+            log.Warn ($"GetLastModifiedDate: error with client #{i} {client}");
             log.Warn ("GetLastModifiedDate: error", ex);
           }
         }
@@ -299,12 +298,12 @@ namespace Lemoine.FileRepository
         }
         catch (Exception ex) {
           if ((m_clients.Count - 1) == i) {
-            log.ErrorFormat ("GetString: error with last client {0}", client);
+            log.Error ($"GetString: error with last client {client}");
             log.Error ("GetString: error with last client", ex);
             throw;
           }
           else {
-            log.WarnFormat ("GetString: error with client #{0} {1}", i, client);
+            log.Warn ($"GetString: error with client #{i} {client}");
             log.Warn ("GetString: error", ex);
           }
         }
@@ -334,12 +333,12 @@ namespace Lemoine.FileRepository
         }
         catch (Exception ex) {
           if ((m_clients.Count - 1) == i) {
-            log.ErrorFormat ("ListDirectoriesInDirectory: error with last client {0}", client);
+            log.Error ($"ListDirectoriesInDirectory: error with last client {client}");
             log.Error ("ListDirectoriesInDirectory: error with last client", ex);
             throw;
           }
           else {
-            log.WarnFormat ("ListDirectoriesInDirectory: error with client #{0} {1}", i, client);
+            log.Warn ($"ListDirectoriesInDirectory: error with client #{i} {client}");
             log.Warn ("ListDirectoriesInDirectory: error", ex);
           }
         }
@@ -369,12 +368,12 @@ namespace Lemoine.FileRepository
         }
         catch (Exception ex) {
           if ((m_clients.Count - 1) == i) {
-            log.ErrorFormat ("ListFilesInDirectory: error with last client {0}", client);
+            log.Error ($"ListFilesInDirectory: error with last client {client}");
             log.Error ("ListFilesInDirectory: error with last client", ex);
             throw;
           }
           else {
-            log.WarnFormat ("ListFilesInDirectory: error with client #{0} {1}", i, client);
+            log.Warn ($"ListFilesInDirectory: error with client #{i} {client}");
             log.Warn ("ListFilesInDirectory: error", ex);
           }
         }
@@ -405,12 +404,12 @@ namespace Lemoine.FileRepository
         }
         catch (Exception ex) {
           if ((m_clients.Count - 1) == i) {
-            log.ErrorFormat ("Test: error with last client {0}", client);
+            log.Error ($"Test: error with last client {client}");
             log.Error ("Test: error with last client", ex);
             throw;
           }
           else {
-            log.WarnFormat ("Test: error with client #{0} {1}", i, client);
+            log.Warn ($"Test: error with client #{i} {client}");
             log.Warn ("Test: error", ex);
           }
         }

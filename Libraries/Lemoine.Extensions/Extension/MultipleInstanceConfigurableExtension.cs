@@ -21,12 +21,9 @@ namespace Lemoine.Extensions
   {
     static readonly ILog log = LogManager.GetLogger (typeof (MultipleInstanceConfigurableExtension<TConfiguration>).FullName);
 
-    #region Members
     IConfigurationLoader<TConfiguration> m_configurationLoader;
     IPluginInstance m_instance = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Configuration context
     /// </summary>
@@ -34,7 +31,6 @@ namespace Lemoine.Extensions
     {
       get { return m_instance; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -101,7 +97,7 @@ namespace Lemoine.Extensions
       }
 
       if (null == configuration) {
-        log.WarnFormat ("LoadConfiguration: a null configuration was returned => return false");
+        log.Warn ("LoadConfiguration: a null configuration was returned => return false");
         return false;
       }
 

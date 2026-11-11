@@ -35,17 +35,14 @@ namespace Lem_Settings
                     GetWindowLong (window.Handle, GWL_STYLE) & ~WS_DISABLED);
     }
 
-    #region Members
     GuiCenter m_guiCenter = null;
     IDictionary<Type, LemSettingsGlobal.InteractionType> m_mapTypes = null;
     static readonly IList<ExternalWindow> s_editorInstances = new List<ExternalWindow> ();
     static readonly IList<ExternalWindow> s_viewInstances = new List<ExternalWindow> ();
     static bool s_editorOpeningEnabled = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ExternalWindow).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return true if an external window already comprises an editor
     /// </summary>
@@ -70,7 +67,6 @@ namespace Lem_Settings
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Events
     /// <summary>
@@ -128,7 +124,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Show an external window comprising a wizard, configurator or view
     /// </summary>
@@ -276,7 +271,6 @@ namespace Lem_Settings
         this.Text = LemSettingsGlobal.SOFTWARE_TITLE + suffix;
       }
     }
-    #endregion // Methods
 
     #region Event reactions
     void OnItemFinished ()

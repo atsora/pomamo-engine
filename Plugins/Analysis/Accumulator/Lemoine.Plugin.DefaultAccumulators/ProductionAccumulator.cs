@@ -118,14 +118,9 @@ namespace Lemoine.Plugin.DefaultAccumulators
   /// </summary>
   internal class ProductionAccumulatorByMachine : DateTimeRangeValueAccumulator<int, int>
   {
-    #region Members
     readonly IMachine m_machine;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (ProductionAccumulatorByMachine).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -143,7 +138,6 @@ namespace Lemoine.Plugin.DefaultAccumulators
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a production period
     /// </summary>
@@ -223,8 +217,7 @@ namespace Lemoine.Plugin.DefaultAccumulators
               ((OperationSlot)operationSlot).ProductionDuration =
                 operationSlot.ProductionDuration.Value.Add (offset);
               if (operationSlot.ProductionDuration.Value.TotalSeconds < 0) {
-                log.FatalFormat ("Store: about to store a negative production duration {0} in {1} => reconsolidate the operation slot",
-                                 operationSlot.ProductionDuration, operationSlot);
+                log.Fatal ($"Store: about to store a negative production duration {operationSlot.ProductionDuration} in {operationSlot} => reconsolidate the operation slot");
                 Debug.Assert (false);
                 ((OperationSlot)operationSlot).ConsolidateProduction ();
               }
@@ -248,6 +241,5 @@ namespace Lemoine.Plugin.DefaultAccumulators
         log.Debug ($"Store: transaction={transactionName} completed");
       }
     }
-    #endregion // Methods
   }
 }

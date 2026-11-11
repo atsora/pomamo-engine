@@ -64,9 +64,6 @@ namespace Lemoine.WebMiddleware
     readonly ICacheClient m_cacheClient;
     readonly ResponseWriter m_responseWriter;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

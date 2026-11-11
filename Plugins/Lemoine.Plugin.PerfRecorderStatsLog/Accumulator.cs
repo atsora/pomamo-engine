@@ -27,9 +27,6 @@ namespace Lemoine.Plugin.PerfRecorderStatsLog
     TimeSpan m_min;
     TimeSpan m_average;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -82,7 +79,7 @@ namespace Lemoine.Plugin.PerfRecorderStatsLog
     {
       lock (m_lock) {
         if (m_perfLog.IsInfoEnabled) {
-          m_perfLog.InfoFormat ("average={0} min={1} max={2} count={3} period={4}", m_average, m_min, m_max, m_count, period);
+          m_perfLog.Info ($"average={m_average} min={m_min} max={m_max} count={m_count} period={period}");
         }
         Reset ();
       }

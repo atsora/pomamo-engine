@@ -23,16 +23,13 @@ namespace Lemoine.CorbaHelper
     /// </summary>
     static readonly int DEFAULT_TIMEOUT = 5000;
     
-    #region Members
     IiopClientChannel m_channel = null;
     NamingContext m_nameService;
     int m_timeout = DEFAULT_TIMEOUT;
     bool m_initialized = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (CorbaClientConnection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name service
     /// </summary>
@@ -56,7 +53,6 @@ namespace Lemoine.CorbaHelper
       get { return Instance.m_timeout; }
       set { Instance.m_timeout = value; }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -67,7 +63,6 @@ namespace Lemoine.CorbaHelper
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Check the singleton class has been initialized. If not, initialize it.
     /// </summary>
@@ -80,9 +75,7 @@ namespace Lemoine.CorbaHelper
         string [] nameServiceIORElements = (nameServiceIOR != null ? 
           nameServiceIOR.Split ('/') [0].Split (':') : new string[] { });
         if (nameServiceIORElements.Length != 4) {
-          log.ErrorFormat ("CheckInitialization: " +
-                           "name service IOR {0} is invalid",
-                           nameServiceIOR);
+          log.Error ($"CheckInitialization: name service IOR {nameServiceIOR} is invalid");
           throw new Exception ("Invalid name service IOR");
         }
         System.Diagnostics.Debug.Assert (nameServiceIORElements.Length >= 4);
@@ -94,15 +87,12 @@ namespace Lemoine.CorbaHelper
           nameServicePort = Int32.Parse (nameServiceIORElements [3]);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("CheckInitialization: " +
-                           "could not get the port in name service IOR {0} " +
-                           "exception {1}",
-                           nameServiceIOR, ex);
+          log.Error ($"CheckInitialization: could not get the port in name service IOR {nameServiceIOR} exception {ex}");
           throw;
         }
-        log.DebugFormat ("CheckInitialization: " +
-                         "name service host={0} port={1}",
-                         nameServiceHostName, nameServicePort);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CheckInitialization: name service host={nameServiceHostName} port={nameServicePort}");
+        }
         
         // 2. Do the CORBA stuff
         
@@ -116,9 +106,7 @@ namespace Lemoine.CorbaHelper
                                                         nameServicePort);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("CheckInitialization: " +
-                           "CORBA exception {0}",
-                           ex);
+          log.Error ($"CheckInitialization: CORBA exception {ex}");
           throw;
         }
         
@@ -147,16 +135,10 @@ namespace Lemoine.CorbaHelper
         ChannelServices.RegisterChannel (Instance.m_channel, false);
       }
       catch (System.Runtime.Remoting.RemotingException alreadyRegisteredException) {
-        log.InfoFormat ("RegisterChannel: " +
-                        "the channel is already registered " +
-                        "=> consider this is ok " +
-                        "{0}",
-                        alreadyRegisteredException);
+        log.Info ($"RegisterChannel: the channel is already registered => consider this is ok {alreadyRegisteredException}");
       }
       catch (Exception ex) {
-        log.ErrorFormat ("RegisterChannel: " +
-                         "RegisterChannel failed with {0}",
-                         ex);
+        log.Error ($"RegisterChannel: RegisterChannel failed with {ex}");
         Instance.m_channel = null;
         throw;
       }
@@ -172,9 +154,7 @@ namespace Lemoine.CorbaHelper
           ChannelServices.UnregisterChannel (Instance.m_channel);
         }
         catch (Exception ex) {
-          log.InfoFormat ("ResetChannel: " +
-                          "UnregisterChannel failed with exception ex",
-                          ex);
+          log.Info ("ResetChannel: UnregisterChannel failed with exception", ex);
         }
         finally {
           Instance.m_channel = null;
@@ -187,10 +167,7 @@ namespace Lemoine.CorbaHelper
         RegisterChannel ();
       }
       catch (Exception ex) {
-        log.ErrorFormat ("ResetChannel: " +
-                         "RegisterChannel failed with {0} " +
-                         "=> fully disconnect",
-                         ex);
+        log.Error ($"ResetChannel: RegisterChannel failed with {ex} => fully disconnect");
         Instance.m_initialized = false;
       }
     }
@@ -213,10 +190,7 @@ namespace Lemoine.CorbaHelper
         nameSpace = (NamingContext)NameService.resolve (moduleName);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetObject: " +
-                         "resolving the context failed, " +
-                         "{0}",
-                         ex);
+        log.Error ($"GetObject: resolving the context failed, {ex}");
         throw;
       }
       
@@ -227,10 +201,7 @@ namespace Lemoine.CorbaHelper
         return nameSpace.resolve (interfaceName);
       }
       catch (Exception ex) {
-        log.ErrorFormat ("GetObject: " +
-                         "resolving the interface failed, " +
-                         "{0}",
-                         ex);
+        log.Error ($"GetObject: resolving the interface failed, {ex}");
         throw;
       }
     }
@@ -246,7 +217,6 @@ namespace Lemoine.CorbaHelper
       return GetObject (new NameComponent (context, context),
                         new NameComponent (objectReference, objectReference));
     }
-    #endregion
     
     #region Instance
     static CorbaClientConnection Instance

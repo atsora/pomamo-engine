@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(WorkOrderProjectUpdate))]
   public abstract class GlobalModification: Modification, IGlobalModification
   {
-    #region Members
     /// <summary>
     /// Associated revision
     /// 
@@ -41,11 +40,9 @@ namespace Lemoine.GDBPersistentClasses
     /// Nullable
     /// </summary>
     protected IMachineModification m_parentMachine = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (GlobalModification).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated revision
     /// 
@@ -119,7 +116,6 @@ namespace Lemoine.GDBPersistentClasses
 
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

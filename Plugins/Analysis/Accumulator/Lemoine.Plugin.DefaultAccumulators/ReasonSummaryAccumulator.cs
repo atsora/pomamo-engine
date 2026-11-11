@@ -247,10 +247,8 @@ namespace Lemoine.Plugin.DefaultAccumulators
       }
     };
 
-    #region Members
     readonly IDictionary<ReasonSummaryKey, ReasonSummaryValue> m_reasonSummaryAccumulator =
       new Dictionary<ReasonSummaryKey, ReasonSummaryValue> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ReasonSummaryAccumulator).FullName);
 
@@ -263,7 +261,6 @@ namespace Lemoine.Plugin.DefaultAccumulators
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add some new data in the Summary accumulator
     /// </summary>
@@ -379,6 +376,5 @@ namespace Lemoine.Plugin.DefaultAccumulators
       }
       m_reasonSummaryAccumulator.Clear ();
     }
-    #endregion // Methods
   }
 }

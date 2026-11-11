@@ -19,10 +19,8 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class SequenceSlot: GenericMachineModuleSlot, ISequenceSlot, IVersionable
   {
-    #region Members
     ISequence m_sequence;
     DateTime? m_nextBegin = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (SequenceSlot).FullName);
 
@@ -48,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Display name that is retrieved with a display function
     /// </summary>
@@ -72,7 +69,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_nextBegin; }
       set { m_nextBegin = value; }
     }
-    #endregion // Getters / Setters
     
     #region Slot implementation
     /// <summary>
@@ -89,17 +85,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.BeginDateTime.CompareTo (other.BeginDateTime);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare sequence slots " +
-                           "for different machine modules {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare sequence slots for different machine modules {this} {other}");
           throw new ArgumentException ("Comparison of sequence slots from different machine modules");
         }
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not an SequenceSlot");
     }
     
@@ -114,10 +105,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare sequence slots " +
-                       "for different machine modules {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare sequence slots for different machine modules {this} {other}");
       throw new ArgumentException ("Comparison of SequenceSlot from different machine modules");
     }
 

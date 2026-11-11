@@ -34,7 +34,6 @@ namespace Lemoine.StatusControls
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Timeout duration in seconds
     /// By default 0: no timeout
@@ -43,7 +42,6 @@ namespace Lemoine.StatusControls
       get { return progressBar.TimeOutDuration; }
       set { progressBar.TimeOutDuration = value; }
     }
-    #endregion // Getters / Setters
     
     #region Event reactions
     void OnTimeOut()

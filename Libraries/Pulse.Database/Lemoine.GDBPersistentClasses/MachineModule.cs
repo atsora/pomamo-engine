@@ -23,7 +23,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineModule: DataWithDisplayFunction, IMachineModule, IVersionable, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
@@ -42,11 +41,9 @@ namespace Lemoine.GDBPersistentClasses
     SequenceDetectionMethod m_sequenceDetectionMethod = SequenceDetectionMethod.Stamp;
     string m_detectionMethodVariable = "";
     MachineModuleAutoSequenceActivity m_autoSequenceActivity = MachineModuleAutoSequenceActivity.Machine;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineModule).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -161,9 +158,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.WarnFormat ("ConfigPrefix.set: " +
-                          "null argument " +
-                          "=> consider this is an empty string");
+          log.Warn ("ConfigPrefix.set: null argument => consider this is an empty string");
           m_configPrefix = "";
         }
         else {
@@ -326,7 +321,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return string.Format ("{0}: {1}",
                                   this.Id, this.Name); }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

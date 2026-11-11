@@ -59,22 +59,15 @@ namespace Lemoine.Model
           return DateTime.Compare (t1.Value, t2.Value);
         }
         else if (t1.Value.Kind.Equals (DateTimeKind.Unspecified)) {
-          log.WarnFormat ("Compare: " +
-                          "try to compare t1 {0} that unspecified with t2 {1}",
-                          t1, t2);
+          log.Warn ($"Compare: try to compare t1 {t1} that unspecified with t2 {t2}");
           return DateTime.Compare (t1.Value, t2.Value);
         }
         else if (t2.Value.Kind.Equals (DateTimeKind.Unspecified)) {
-          log.WarnFormat ("Compare: " +
-                          "try to compare t2 {0} that unspecified with t1 {1}",
-                          t2, t1);
+          log.Warn ($"Compare: try to compare t2 {t2} that unspecified with t1 {t1}");
           return DateTime.Compare (t1.Value, t2.Value);
         }
         else {
-          log.InfoFormat ("Compare: " +
-                          "compare two date times {0} and {1} of different types, " +
-                          "convert them first to UTC",
-                          t1, t2);
+          log.Info ($"Compare: compare two date times {t1} and {t2} of different types, convert them first to UTC");
           return DateTime.Compare (t1.Value.ToUniversalTime (), t2.Value.ToUniversalTime ());
         }
       }

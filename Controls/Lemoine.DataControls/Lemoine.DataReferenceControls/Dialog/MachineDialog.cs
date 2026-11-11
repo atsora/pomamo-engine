@@ -21,12 +21,9 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (MachineDialog).FullName);
     
-    #region Members
     bool m_isNullable = false;
     IList<IMachine> m_selectedMachines = null;
-    #endregion
     
-    #region Getters / Setters
     /// <summary>
     /// If true, return null instead of a list of 0 machines with the function SelectedValues
     /// </summary>
@@ -90,7 +87,6 @@ namespace Lemoine.DataReferenceControls
         displayableTreeView.SelectedElements = value.Cast<IDisplayable>().ToList();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -107,7 +103,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
     
-    #region Methods
     void LoadMachines()
     {
       IList<IMachine> machines;
@@ -121,7 +116,6 @@ namespace Lemoine.DataReferenceControls
         displayableTreeView.AddElement(machine);
       }
     }
-    #endregion // Methods
 
     #region Event reactions
     void MachineDialogLoad(object sender, EventArgs e)

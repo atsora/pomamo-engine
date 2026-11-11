@@ -30,16 +30,11 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string FREQUENCY_KEY = "Alert.Listener.MachineModificationInError.Frequency";
     static readonly TimeSpan FREQUENCY_DEFAULT = TimeSpan.FromMinutes (3); // Check it only every 3 minutes by default
 
-    #region Members
     IApplicationState m_modificationInErrorListenerState = null;
     IList<IMachineModification> m_fetched = new List<IMachineModification> ();
     DateTime m_lastFetch = DateTime.MinValue;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachineModificationInErrorListener).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -50,7 +45,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -134,7 +128,5 @@ namespace Lemoine.Alert.GDBListeners
       }
     }
 
-
-    #endregion // Methods
   }
 }

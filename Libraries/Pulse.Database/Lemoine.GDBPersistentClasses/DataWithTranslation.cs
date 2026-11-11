@@ -17,12 +17,9 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly ILog log = LogManager.GetLogger(typeof (DataWithTranslation).FullName);
 
-    #region Members
     string m_name; // Can't be empty but can be null
     string m_translationKey; // Can't be empty but can be null
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -91,7 +88,6 @@ namespace Lemoine.GDBPersistentClasses
                                                      this.TranslationKey);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -118,12 +114,10 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns></returns>
     public virtual string GetDisplay (string variant)
     {
-      log.WarnFormat ("GetDisplay: " +
-                      "No variant is supported for DataWithTranslation");
+      log.Warn ("GetDisplay: No variant is supported for DataWithTranslation");
       return this.Display;
     }
 
-    #region Methods
     /// <summary>
     /// Get the display from a name and a translation key fields
     /// 
@@ -139,7 +133,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       if (!string.IsNullOrEmpty (name)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ($"GetTranslationFromNameTranslationKey: name={name} is set, return it");
+          log.Debug ($"GetTranslationFromNameTranslationKey: name={name} is set, return it");
         }
         return name.Trim ();
       }
@@ -151,7 +145,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         else {
           if (log.IsWarnEnabled) {
-            log.WarnFormat ("GetTranslationFromNameTranslationKey: both name and translation key are not set. StackTrace=\n{0}", System.Environment.StackTrace);
+            log.Warn ($"GetTranslationFromNameTranslationKey: both name and translation key are not set. StackTrace=\n{System.Environment.StackTrace}");
           }
         }
         return name;
@@ -160,6 +154,5 @@ namespace Lemoine.GDBPersistentClasses
         return Lemoine.I18N.PulseCatalog.GetString (translationKey); // From text file or database
       }
     }
-    #endregion // Methods
   }
 }

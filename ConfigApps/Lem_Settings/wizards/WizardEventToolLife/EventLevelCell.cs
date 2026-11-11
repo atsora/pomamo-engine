@@ -17,7 +17,6 @@ namespace WizardEventToolLife
   {
     static readonly ILog log = LogManager.GetLogger(typeof (EventLevelCell).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Get / set the event level
     /// </summary>
@@ -38,7 +37,6 @@ namespace WizardEventToolLife
       get { return combobox.SelectedValue as IEventLevel; }
       set { combobox.SelectedValue = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

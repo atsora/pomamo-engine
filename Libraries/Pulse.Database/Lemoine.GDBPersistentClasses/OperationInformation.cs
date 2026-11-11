@@ -22,14 +22,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OperationInformation: GlobalModification, IOperationInformation
   {
-    #region Members
     IOperation m_operation;
     TimeSpan? m_oldMachiningDuration;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (OperationInformation).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -51,8 +48,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("Operation.set: " +
-                           "null value");
+          log.Error ("Operation.set: null value");
           throw new ArgumentNullException ("OperationInformation.Operation");
         }
         m_operation = value;
@@ -96,7 +92,6 @@ namespace Lemoine.GDBPersistentClasses
           : TimeSpan.Parse (value);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -119,7 +114,6 @@ namespace Lemoine.GDBPersistentClasses
 
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -169,7 +163,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
     
@@ -180,6 +174,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       NHibernateHelper.Unproxy<IOperation> (ref m_operation);
     }
-    #endregion // Methods
   }
 }

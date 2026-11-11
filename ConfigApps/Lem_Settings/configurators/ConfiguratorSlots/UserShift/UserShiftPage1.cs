@@ -14,7 +14,6 @@ namespace ConfiguratorSlots.UserShift
   /// </summary>
   public class UserShiftPage1 : IPartPage1
   {
-    #region Getters / Setters
     /// <summary>
     /// Part of the help describing the content of the timeline
     /// </summary>
@@ -30,7 +29,6 @@ namespace ConfiguratorSlots.UserShift
     /// graphics, no filters will be necessary (no page 2)
     /// </summary>
     public string ElementsName { get { return "users"; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -39,7 +37,6 @@ namespace ConfiguratorSlots.UserShift
     public UserShiftPage1() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a timeline in the timelines, knowing the item id
     /// This method is within a session
@@ -54,6 +51,5 @@ namespace ConfiguratorSlots.UserShift
         timelines.AddTimeline(user.Display, new UserShiftBarData(user));
       }
     }
-    #endregion // Methods
   }
 }

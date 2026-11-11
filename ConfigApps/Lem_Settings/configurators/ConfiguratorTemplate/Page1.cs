@@ -14,10 +14,6 @@ namespace ConfiguratorTemplate
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
-    #endregion // Members
-    
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -54,7 +50,6 @@ namespace ConfiguratorTemplate
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

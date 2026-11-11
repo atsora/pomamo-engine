@@ -18,9 +18,7 @@ namespace WizardMonitorMachine
   {
     static readonly ILog log = LogManager.GetLogger(typeof (CncParameterList).FullName);
 
-    #region Getters / Setters
     private IList<string> Values { get; set; }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -29,7 +27,6 @@ namespace WizardMonitorMachine
     public CncParameterList(XmlNode node) : base(node) {}
     #endregion // Constructors
 
-    #region Methods
     protected override bool Parse(XmlAttributeCollection attributes)
     {
       bool ok = true;
@@ -88,6 +85,5 @@ namespace WizardMonitorMachine
       // No warnings
       return "";
     }
-    #endregion // Methods
   }
 }

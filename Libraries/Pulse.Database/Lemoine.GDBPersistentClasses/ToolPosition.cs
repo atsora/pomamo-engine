@@ -18,16 +18,13 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class ToolPosition: IToolPosition
   {
-    #region Members
     int m_id = 0; // Needed by NHibernate
     int m_version = 0; // Needed by NHibernate
     IMachineModule m_machineModule;
     IDictionary<string, object> m_properties = new Dictionary<string, object>();
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (ToolPosition).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Alarm properties
     /// </summary>
@@ -152,7 +149,6 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     [XmlAttribute ("LifeChangedDateTime")]
     public virtual DateTime? LifeChangedDateTime { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -172,7 +168,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// IDisplay implementation
     /// </summary>
@@ -184,8 +179,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.Display;
       }
       else {
-        log.FatalFormat ("GetDisplay: not implemented for variant {0}",
-                         variant);
+        log.Fatal ($"GetDisplay: not implemented for variant {variant}");
         throw new NotImplementedException ("ToolPosition.GetDisplay with variant " + variant);
       }
     }
@@ -275,6 +269,5 @@ namespace Lemoine.GDBPersistentClasses
 
       m_properties[propertyName] = value;
     }
-    #endregion // Methods
   }
 }

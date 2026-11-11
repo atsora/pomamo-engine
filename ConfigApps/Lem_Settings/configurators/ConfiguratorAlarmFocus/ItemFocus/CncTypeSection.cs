@@ -18,9 +18,7 @@ namespace ConfiguratorAlarmFocus
   /// </summary>
   public partial class CncTypeSection : UserControl
   {
-    #region Members
     readonly string m_cncType = "";
-    #endregion // Members
 
     #region Events
     /// <summary>

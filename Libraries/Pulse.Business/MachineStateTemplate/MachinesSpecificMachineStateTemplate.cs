@@ -22,15 +22,12 @@ namespace Lemoine.Business.MachineStateTemplate
   public sealed class MachinesSpecificMachineStateTemplate
     : IRequest<MachinesSpecificMachineStateTemplateResponse>
   {
-    #region Members
     readonly IMachineStateTemplate m_machineStateTemplate;
     readonly bool m_sort = true;
     readonly IEnumerable<IMachine> m_subSetOfMachines = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachinesSpecificMachineStateTemplate).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Machine state template in parameter
     /// 
@@ -48,7 +45,6 @@ namespace Lemoine.Business.MachineStateTemplate
     {
       get { return m_sort; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -88,9 +84,6 @@ namespace Lemoine.Business.MachineStateTemplate
       m_subSetOfMachines = subSetOfMachines;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>

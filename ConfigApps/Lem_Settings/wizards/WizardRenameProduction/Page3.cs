@@ -15,7 +15,6 @@ namespace WizardRenameProduction
   /// </summary>
   internal partial class Page3 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -25,7 +24,6 @@ namespace WizardRenameProduction
     /// Some help regarding the page
     /// </summary>
     public string Help { get { return "Choose the new name of the production period."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

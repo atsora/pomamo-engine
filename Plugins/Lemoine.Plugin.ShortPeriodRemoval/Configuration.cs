@@ -76,9 +76,7 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
           if (0 != this.NewMachineModeId) {
             if (null == ModelDAOHelper.DAOFactory.MachineModeDAO
                 .FindById (this.NewMachineModeId)) {
-              log.ErrorFormat ("GetConfigurationErrors: " +
-                               "NewMachineMode {0} does not exist",
-                               this.NewMachineModeId);
+              log.Error ($"GetConfigurationErrors: NewMachineMode {this.NewMachineModeId} does not exist");
               errorList.Add ("New MachineMode with ID "
                           + this.NewMachineModeId
                           + " does not exist");
@@ -86,9 +84,7 @@ namespace Lemoine.Plugin.ShortPeriodRemoval
           }
           if (null == ModelDAOHelper.DAOFactory.MachineModeDAO
               .FindById (this.OldMachineModeId)) {
-            log.ErrorFormat ("GetConfigurationErrors: " +
-                             "OldMachineMode {0} does not exist",
-                             this.OldMachineModeId);
+            log.Error ($"GetConfigurationErrors: OldMachineMode {this.OldMachineModeId} does not exist");
             errorList.Add ("Old MachineMode with ID "
                         + this.OldMachineModeId
                         + " does not exist");

@@ -17,13 +17,7 @@ namespace Lemoine.FileRepository
   /// </summary>
   public class FileRepoClientWeb : Lemoine.WebClient.Query, IFileRepoClient
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (FileRepoClientWeb).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -65,9 +59,6 @@ namespace Lemoine.FileRepository
     }
 #endif // NETSTANDARD
 #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IFileRepoClient implementation
     /// <summary>

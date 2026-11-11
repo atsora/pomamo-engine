@@ -25,7 +25,6 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
 
     static readonly ILog log = LogManager.GetLogger (typeof (EventAcquisitionDelay).FullName);
 
-    #region Getters / Setters
     [XmlIgnore]
     public virtual UtcDateTimeRange Range => new UtcDateTimeRange (this.SqlRange);
 
@@ -92,7 +91,6 @@ namespace Lemoine.Plugin.AcquisitionDelayEvent
       // disable once ValueParameterNotUsed
       set { }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

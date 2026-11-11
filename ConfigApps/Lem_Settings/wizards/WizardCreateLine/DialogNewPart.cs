@@ -18,14 +18,11 @@ namespace WizardCreateLine
   /// </summary>
   public partial class DialogNewPart : Form
   {
-    #region Members
     string m_lineName = "";
     string m_lineCode = "";
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DialogNewPart).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// True if an existing part has been chosen
     /// </summary>
@@ -45,7 +42,6 @@ namespace WizardCreateLine
     /// Code of the new part
     /// </summary>
     public string PartCode { get { return textPartCode.Text; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -69,7 +65,6 @@ namespace WizardCreateLine
     }
     #endregion // Constructors
 
-    #region Methods
     void FillParts()
     {
       // List of parts (only parts whose operations only provide 1 iwp).
@@ -106,7 +101,6 @@ namespace WizardCreateLine
         comboPart.SelectedIndex = 0;
       }
     }
-    #endregion // Methods
     
     #region Event reactions
     void ButtonOkClick(object sender, EventArgs e)

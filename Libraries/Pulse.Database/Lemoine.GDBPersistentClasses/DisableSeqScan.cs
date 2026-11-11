@@ -62,11 +62,7 @@ namespace Lemoine.GDBPersistentClasses
             command.ExecuteNonQuery();
           }
           catch (Exception ex) {
-            log.ErrorFormat ("Initialize: " +
-                             "request error in SQL query {0} \n" +
-                             "Exception: {1}",
-                             command.CommandText,
-                             ex);
+            log.Error ($"Initialize: request error in SQL query {command.CommandText} \nException: {ex}");
           }
         }
       }
@@ -86,11 +82,7 @@ namespace Lemoine.GDBPersistentClasses
             command.ExecuteNonQuery();
           }
           catch (Exception ex) {
-            log.ErrorFormat ("Dispose: " +
-                             "request error in SQL query {0} \n" +
-                             "Exception: {1}",
-                             command.CommandText,
-                             ex);
+            log.Error ($"Dispose: request error in SQL query {command.CommandText} \nException: {ex}");
           }
         }
       }

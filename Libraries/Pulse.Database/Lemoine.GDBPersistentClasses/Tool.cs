@@ -20,14 +20,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Tool: DataWithDisplayFunction, ITool
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_name;
     string m_code;
     double? m_diameter;
     double? m_radius;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Tool).FullName);
 
@@ -36,7 +34,6 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     public Tool () { }
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -112,10 +109,7 @@ namespace Lemoine.GDBPersistentClasses
             : double.Parse (value, CultureInfo.InvariantCulture);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("DiameterAsString.set: " +
-                           "the specified value {0} could not be converted to a diameter, " +
-                           "{1}",
-                          value, ex);
+          log.Error ($"DiameterAsString.set: the specified value {value} could not be converted to a diameter, {ex}");
           throw new InvalidCastException ("The diameter could not be determined from a string", ex);
         }
       }
@@ -169,7 +163,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

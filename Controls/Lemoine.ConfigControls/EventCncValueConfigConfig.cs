@@ -25,14 +25,12 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IEventLevel>
     , IConfigControlObserver<IField>
   {
-    #region Members
     BindingList<IEventCncValueConfig> m_eventCncValueConfigs = null;
     
     ISet<DataGridViewRow> m_updateSet =
       new HashSet<DataGridViewRow> ();
     IList<IEventCncValueConfig> m_deleteList =
       new List<IEventCncValueConfig> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventCncValueConfigConfig).FullName);
 
@@ -90,8 +88,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("EventCncValueConfigConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("EventCncValueConfigConfigLoad: no DAO factory is defined");
         return;
       }
       

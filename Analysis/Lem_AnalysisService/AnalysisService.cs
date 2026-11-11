@@ -45,7 +45,6 @@ namespace Lem_AnalysisService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="IThreadService"/>
     /// </summary>
@@ -138,7 +137,6 @@ namespace Lem_AnalysisService
       m_checkThreads?.Abort ();
       m_activityAnalysis?.Abort ();
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

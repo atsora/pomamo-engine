@@ -26,17 +26,14 @@ namespace Lemoine.Alert.GDBListeners
   [Serializable]
   public class ReasonSlotListener : IListener
   {
-    #region Members
     int m_reasonId;
     string m_triggerTimes = null;
     IDictionary<TimeSpan, string> m_thresholds = new SortedDictionary<TimeSpan, string> ();
     readonly IList<ReasonSlotMachineModuleListener> m_machineModuleListeners = new List<ReasonSlotMachineModuleListener> ();
     int m_machineModuleListenerIndex = 0;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (ReasonSlotListener).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// reason Id
     /// </summary>
@@ -123,7 +120,6 @@ namespace Lemoine.Alert.GDBListeners
 
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -136,7 +132,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -195,6 +190,5 @@ namespace Lemoine.Alert.GDBListeners
       }
       return true;
     }
-    #endregion // Methods
   }
 }

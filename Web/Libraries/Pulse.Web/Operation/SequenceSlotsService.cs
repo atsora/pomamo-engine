@@ -44,7 +44,6 @@ namespace Pulse.Web.Operation
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -69,9 +68,9 @@ namespace Pulse.Web.Operation
       else { // Current or future
         cacheTimeSpan = CacheTimeOut.CurrentShort.GetTimeSpan ();
       }
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} for url={1}",
-                       cacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -88,18 +87,14 @@ namespace Pulse.Web.Operation
         IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
           .FindByIdWithMainMachineModulePerformanceFieldUnit (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown monitored machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}");
           return new ErrorDTO ("No monitored machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
         
         var mainMachineModule = machine.MainMachineModule;
         if (null == mainMachineModule) {
-          log.InfoFormat ("GetWithoutCache: " +
-                          "no main machine module for monitored machine with ID {0}",
-                          machineId);
+          log.Info ($"GetWithoutCache: no main machine module for monitored machine with ID {machineId}");
         }
         
         IEnumerable<IMachineModule> machineModules = machine.MachineModules
@@ -324,6 +319,5 @@ namespace Pulse.Web.Operation
         return currentShift.DateTimeRange;
       }
     }
-    #endregion // Methods
   }
 }

@@ -409,9 +409,7 @@ namespace Lemoine.GDBPersistentClasses
     private void InsertDefaultValue (IConfig config)
     {
       if (null == GetConfig (config.Key)) { // the config does not exist => create it
-        log.InfoFormat ("InsertDefaultValue: " +
-                        "add key={0} config={1}",
-                        config.Key, config);
+        log.Info ($"InsertDefaultValue: add key={config.Key} config={config}");
         MakePersistent (config);
       }
     }
@@ -454,9 +452,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetCalendarConfig (key);
       if (null == config) {
-        log.ErrorFormat ("GetCalendarConfigValue: " +
-                         "got a null config for {0}, this should not happen",
-                         key);
+        log.Error ($"GetCalendarConfigValue: got a null config for {key}, this should not happen");
         throw new Exception ("GlobalConfig unknown");
       }
       return config.Value;
@@ -483,9 +479,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetAnalysisConfig (key);
       if (null == config) {
-        log.ErrorFormat ("GetAnalysisConfigValue: " +
-                         "got a null config for {0}, this should not happen",
-                         key);
+        log.Error ($"GetAnalysisConfigValue: got a null config for {key}, this should not happen");
         throw new Exception ("AnalysisConfig unknown");
       }
       return config.Value;
@@ -512,9 +506,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetCncConfig (key);
       if (null == config) {
-        log.ErrorFormat ("GetCncConfigValue: " +
-                         "got a null config for {0}, this should not happen",
-                         key);
+        log.Error ($"GetCncConfigValue: got a null config for {key}, this should not happen");
         throw new Exception ("CncConfig unknown");
       }
       return config.Value;
@@ -541,9 +533,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetOperationExplorerConfig (key);
       if (null == config) {
-        log.ErrorFormat ("GetOperationExplorerConfigValue: " +
-                         "got a null config for {0}, this should not happen",
-                         key);
+        log.Error ($"GetOperationExplorerConfigValue: got a null config for {key}, this should not happen");
         throw new Exception ("OperationExplorerConfig unknown");
       }
       return config.Value;
@@ -570,9 +560,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetDbmConfig (key);
       if (null == config) {
-        log.ErrorFormat ("GetDbmConfigValue: " +
-                         "got a null config for {0}, this should not happen",
-                         key);
+        log.Error ($"GetDbmConfigValue: got a null config for {key}, this should not happen");
         throw new Exception ("DbmConfig unknown");
       }
       return config.Value;
@@ -599,9 +587,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetDataStructureConfig (key);
       if (null == config) {
-        log.ErrorFormat ("GetDataStructureConfigValue: " +
-                         "got a null config for {0}, this should not happen",
-                         key);
+        log.Error ($"GetDataStructureConfigValue: got a null config for {key}, this should not happen");
         throw new Exception ("DataStructureConfig unknown");
       }
       return config.Value;
@@ -628,9 +614,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetWebServiceConfig (key);
       if (null == config) {
-        log.ErrorFormat ("GetWebServiceConfigValue: " +
-                         "got a null config for {0}, this should not happen",
-                         key);
+        log.Error ($"GetWebServiceConfigValue: got a null config for {key}, this should not happen");
         throw new Exception ("WebServiceConfig unknown");
       }
       return config.Value;
@@ -646,20 +630,18 @@ namespace Lemoine.GDBPersistentClasses
     {
       IConfig config = GetConfig (key);
       if (null == config) { // The configuration does not exist => create a new one
-        log.DebugFormat ("SetConfig: " +
-                         "create a new configuration for key={0}",
-                         key);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SetConfig: create a new configuration for key={key}");
+        }
         config = ModelDAOHelper.ModelFactory.CreateConfig (key);
         config.Value = v;
         config.Active = activated;
         MakePersistent (config);
       }
       else { // The configuration already exists => update it
-        log.DebugFormat ("SetConfig: " +
-                         "the configuration already exists for key={0}, " +
-                         "=> update value from {1} to {2}",
-                         key,
-                         config.Value, v);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"SetConfig: the configuration already exists for key={key}, => update value from {config.Value} to {v}");
+        }
         config.Value = v;
         config.Active = activated;
         MakePersistent (config);

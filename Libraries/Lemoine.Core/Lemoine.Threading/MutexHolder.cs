@@ -14,15 +14,10 @@ namespace Lemoine.Threading
   /// </summary>
   public class MutexHolder: IDisposable
   {
-    #region Members
     readonly Mutex m_mutex;
     bool m_mutexOwned = false;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger(typeof (MutexHolder).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -45,20 +40,16 @@ namespace Lemoine.Threading
       try {
         m_mutexOwned = mutex.WaitOne (timeout, false);
         if (false == m_mutexOwned) {
-          log.ErrorFormat ("MutexHolder: " +
-                           "mutex was not acquired after {0} ms",
-                           timeout);
+          log.Error ($"MutexHolder: mutex was not acquired after {timeout} ms");
           throw new TimeoutException ("Timeout for acquiring a mutex");
         }
       }
       catch (AbandonedMutexException) {
-        log.WarnFormat ("MutexHolder: " +
-                        "mutex was abandoned");
+        log.Warn ("MutexHolder: mutex was abandoned");
         m_mutexOwned = true;
       }
       if (!m_mutexOwned) {
-        log.FatalFormat ("MutexHolder: " +
-                         "the mutex is not owned");
+        log.Fatal ("MutexHolder: the mutex is not owned");
       }
     }    
     #endregion // Constructors
@@ -73,10 +64,7 @@ namespace Lemoine.Threading
           m_mutex.ReleaseMutex ();
         }
         catch (Exception ex) {
-          log.FatalFormat ("Dispose: " +
-                           "ReleaseMutex failed with: " +
-                           "{0}",
-                           ex);
+          log.Fatal ($"Dispose: ReleaseMutex failed with: {ex}");
         }
       }
     }

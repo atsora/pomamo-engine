@@ -20,7 +20,6 @@ namespace ConfiguratorGoals
     internal const string INITIAL_GOALS = "initial_goals";
     internal const string GOALS_AFTER_RESET = "goals_after_reset";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -92,7 +91,6 @@ namespace ConfiguratorGoals
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

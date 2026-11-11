@@ -137,9 +137,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         System.Diagnostics.Debug.Assert (false);
-        log.FatalFormat ("MergeData: " +
-                         "trying to merge the association with a not supported slot {0}",
-                         typeof (TSlot));
+        log.Fatal ($"MergeData: trying to merge the association with a not supported slot {typeof (TSlot)}");
         throw new ArgumentException ("Not supported slot");
       }
     }
@@ -152,7 +150,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void MakeAnalysis ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("MakeAnalysis: not valid");
+      log.Fatal ("MakeAnalysis: not valid");
       throw new NotImplementedException ("DayChange.MakeAnalysis");
     }
     

@@ -91,38 +91,39 @@ namespace Lemoine.Model
     {
       Debug.Assert (null != computer);
       if (null == computer) {
-        log.ErrorFormat ("IsLocal: " +
-                         "null input computer");
+        log.Error ("IsLocal: null input computer");
         throw new ArgumentNullException ("computer");
       }
 
       var computerNames = Lemoine.Info.ComputerInfo.GetNames ();
       foreach (var computerName in computerNames) {
         if (string.Equals (computerName, computer.Name, StringComparison.InvariantCultureIgnoreCase)) {
-          log.DebugFormat ("IsLocal: " +
-                           "name {0} matches",
-                           computerName);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsLocal: name {computerName} matches");
+          }
           return true;
         }
         if (string.Equals (computerName, computer.Address, StringComparison.InvariantCultureIgnoreCase)) {
-          log.DebugFormat ("IsLocal: address {0} matches", computerName);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"IsLocal: address {computerName} matches");
+          }
           return true;
         }
       }
       var localIpAddresses = Lemoine.Info.ComputerInfo.GetIPAddresses ();
       if (localIpAddresses.Any (x => string.Equals (x, computer.Address, StringComparison.InvariantCultureIgnoreCase))) {
-        log.DebugFormat ("IsLocal: " +
-                         "ip matches computer address {0}",
-                         computer.Address);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsLocal: ip matches computer address {computer.Address}");
+        }
         return true;
       }
       var ipAddresses = Lemoine.Net.NetworkAddress
         .GetIPAddresses (computer.Address)
         .Select (x => x.ToString ().ToLowerInvariant ());
       if (ipAddresses.Intersect (localIpAddresses.Select (x => x.ToLowerInvariant ())).Any ()) {
-        log.DebugFormat ("IsLocal: " +
-                         "ip matches an ip from computer address {0}",
-                         computer.Address);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsLocal: ip matches an ip from computer address {computer.Address}");
+        }
         return true;
       }
       log.Info ("IsLocal: no match, return false");

@@ -55,7 +55,7 @@ namespace Lemoine.Analysis
       m_checkedParent = checkedParent;
 
       if (!Lemoine.Extensions.ExtensionManager.IsActive ()) {
-        log.WarnFormat ("ProcessingReasonSlotsAnalysis: the extensions are not active");
+        log.Warn ("ProcessingReasonSlotsAnalysis: the extensions are not active");
       }
       SetActive ();
       {
@@ -159,7 +159,7 @@ namespace Lemoine.Analysis
         var effectiveMaxLoopNumber = maxLoopNumber ?? Lemoine.Info.ConfigSet.LoadAndGet (MAX_LOOP_NUMBER_KEY, MAX_LOOP_NUMBER_DEFAULT);
         while (!completed && !cancellationToken.IsCancellationRequested) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("RunOnce: step #{0}", i);
+            log.Debug ($"RunOnce: step #{i}");
           }
           completed = MakeAnalysis (cancellationToken, maxDateTime, range);
           ++i;

@@ -26,9 +26,6 @@ namespace Lem_CncCoreService.Asp
     readonly Lemoine.CncEngine.Asp.XmlPostService m_service;
     readonly ResponseWriter m_responseWriter;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

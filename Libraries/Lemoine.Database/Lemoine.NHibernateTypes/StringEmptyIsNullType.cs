@@ -130,9 +130,9 @@ namespace Lemoine.NHibernateTypes
         return null;
       }
       else {
-        log.DebugFormat ("NullSafeGet: " +
-                         "return {0}",
-                         result);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"NullSafeGet: return {result}");
+        }
         return result;
       }
     }

@@ -19,18 +19,15 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineModuleActivity: IMachineModuleActivity, IVersionable, IAutoSequencePeriod
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineModule m_machineModule;
     DateTime m_begin;
     DateTime m_end;
     IMachineMode m_machineMode;
-    #endregion
 
     ILog log = LogManager.GetLogger(typeof (MachineModuleActivity).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Fact Id
     /// </summary>
@@ -71,8 +68,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         switch (value.Kind) {
           case DateTimeKind.Unspecified:
-            log.WarnFormat ("Begin.set: " +
-                            "unspecified DateTimeKind => suppose it is a universal time");
+            log.Warn ("Begin.set: unspecified DateTimeKind => suppose it is a universal time");
             m_begin = new DateTime (value.Ticks, DateTimeKind.Utc);
             break;
           case DateTimeKind.Utc:
@@ -96,8 +92,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         switch (value.Kind) {
           case DateTimeKind.Unspecified:
-            log.WarnFormat ("End.set: " +
-                            "unspecified DateTimeKind => suppose it is a universal time");
+            log.Warn ("End.set: unspecified DateTimeKind => suppose it is a universal time");
             m_end = new DateTime (value.Ticks, DateTimeKind.Utc);
             break;
           case DateTimeKind.Utc:
@@ -135,8 +130,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("CncMachineMode.set: " +
-                           "null value");
+          log.Error ("CncMachineMode.set: null value");
           throw new ArgumentNullException ("Null fact machine mode");
         }
         m_machineMode = value;
@@ -156,7 +150,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual bool AutoSequence {
       get { return MachineMode.AutoSequence; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

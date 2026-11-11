@@ -35,7 +35,7 @@ namespace Lemoine.Business.CncAlarm
 
       var mainMachineModule = machine.MainMachineModule;
       if (null == mainMachineModule) {
-        log.ErrorFormat ("FindOverlapsRange: no main machine module for machine id={0}", machine.Id);
+        log.Error ($"FindOverlapsRange: no main machine module for machine id={machine.Id}");
         return new List<CncAlarmRedStackLight> ();
       }
 
@@ -71,15 +71,15 @@ namespace Lemoine.Business.CncAlarm
     bool IsMergeable (CncAlarmRedStackLight left, CncAlarmRedStackLight right)
     {
       if (left.DateTimeRange.IsEmpty ()) {
-        log.DebugFormat ("IsMergeable: " +
-                         "left range is empty " +
-                         "=> return true because it can be dismissed");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMergeable: left range is empty => return true because it can be dismissed");
+        }
         return true;
       }
       if (right.DateTimeRange.IsEmpty ()) {
-        log.DebugFormat ("IsMergeable: " +
-                         "right range is empty " +
-                         "=> return true because it can be dismissed");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMergeable: right range is empty => return true because it can be dismissed");
+        }
         return true;
       }
 
@@ -87,9 +87,9 @@ namespace Lemoine.Business.CncAlarm
       // If the ranges overlap with each other, they can be just merged
       Debug.Assert (left.ReferenceDataEquals (right));
       if (left.DateTimeRange.Overlaps (right.DateTimeRange)) {
-        log.DebugFormat ("IsMergeable: " +
-                         "ranges overlap with each other " +
-                         "=> return true because there is a single color for the moment");
+        if (log.IsDebugEnabled) {
+          log.Debug ("IsMergeable: ranges overlap with each other => return true because there is a single color for the moment");
+        }
         return true;
       }
 

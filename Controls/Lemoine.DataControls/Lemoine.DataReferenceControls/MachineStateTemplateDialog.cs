@@ -18,14 +18,11 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class MachineStateTemplateDialog : OKCancelDialog, IValueDialog<IMachineStateTemplate>
   {
-    #region Members
     private bool m_nullable;
     private bool m_multiSelet;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null MachineStateTemplate a valid value ?
     /// </summary>
@@ -73,7 +70,6 @@ namespace Lemoine.DataReferenceControls
         this.machineStateTemplateSelection.SelectedMachineStateTemplates = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -86,7 +82,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     private void SetNullable(bool value){
       m_nullable = value;
       if(!value){
@@ -108,7 +103,6 @@ namespace Lemoine.DataReferenceControls
     {
       this.DialogResult = DialogResult.Cancel;
     }
-    #endregion // Methods
     
     void MachineStateTemplateDialogLoad(object sender, EventArgs e)
     {

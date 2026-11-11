@@ -34,7 +34,6 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string DEFAULT_STEP_SPAN_NO_END_KEY = "Analysis.StepSpan.NoEnd";
     static readonly TimeSpan DEFAULT_STEP_SPAN_NO_END_DEFAULT = TimeSpan.FromDays (1);
     
-    #region Members
     protected LowerBound<DateTime> m_begin;
     protected UpperBound<DateTime> m_end;
     bool m_lowerStepSpanPossible = true;
@@ -43,14 +42,12 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     protected AssociationOption? m_associationOption;
     PeriodAssociationInsertImplementation m_insertImplementation;
-    #endregion
 
     /// <summary>
     /// ILog data member
     /// </summary>
     protected ILog log = LogManager.GetLogger(typeof (PeriodAssociation).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// UTC date/time range of the association
     /// </summary>
@@ -146,9 +143,9 @@ namespace Lemoine.GDBPersistentClasses
       
       set {
         if (string.IsNullOrEmpty (value)) {
-          log.DebugFormat ("LocalEnd.set: " +
-                           "null or empty value {0}",
-                           value);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"LocalEnd.set: null or empty value {value}");
+          }
           this.End = new UpperBound<DateTime> (null);
         }
         else {
@@ -210,7 +207,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_associationOption; }
       set { m_associationOption = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -285,7 +281,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Get the logger
     /// </summary>
@@ -413,7 +408,6 @@ namespace Lemoine.GDBPersistentClasses
                                       rightMerge);
       return impactedSlots;
     }
-    #endregion // Methods
     
     #region Step utility methods
     /// <summary>
@@ -438,16 +432,12 @@ namespace Lemoine.GDBPersistentClasses
         TimeSpan minimumStepSpan = this.GetMinimumStepSpan ();
         if (this.AnalysisStepSpan.HasValue && (this.AnalysisStepSpan.Value <= minimumStepSpan)) {
           // Second check here just in case. The call to IsLowerStepSpanPossible is normally sufficient
-          log.DebugFormat ("CheckStepTimeout: " +
-                           "modification step timeout {0} is reached, " +
-                           "but the analysis step span is already less than the minimum {1} " +
-                           "=> do nothing",
-                           AnalysisConfigHelper.ModificationStepTimeout, minimumStepSpan);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CheckStepTimeout: modification step timeout {AnalysisConfigHelper.ModificationStepTimeout} is reached, but the analysis step span is already less than the minimum {minimumStepSpan} => do nothing");
+          }
         }
         else {
-          log.ErrorFormat ("CheckStepTimeout: " +
-                           "elapsed time is {0} while modification step time out is {1}",
-                           DateTime.UtcNow.Subtract (this.LastAnalysisBegin), AnalysisConfigHelper.ModificationStepTimeout);
+          log.Error ($"CheckStepTimeout: elapsed time is {DateTime.UtcNow.Subtract (this.LastAnalysisBegin)} while modification step time out is {AnalysisConfigHelper.ModificationStepTimeout}");
           throw new StepTimeoutException ();
         }
       }
@@ -544,20 +534,21 @@ namespace Lemoine.GDBPersistentClasses
         TimeSpan? newStepSpan = ComputeNewStepSpan (range);
         if (newStepSpan.HasValue
             && (!this.AnalysisStepSpan.HasValue || (newStepSpan < this.AnalysisStepSpan.Value))) {
-          log.DebugFormat ("GetStepRange: " +
-                           "step span is going from {0} to {1}",
-                           this.AnalysisStepSpan, newStepSpan);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetStepRange: step span is going from {this.AnalysisStepSpan} to {newStepSpan}");
+          }
           this.AnalysisStepSpan = newStepSpan.Value;
           ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (this);
         }
         else {
-          log.DebugFormat ("GetStepRange: " +
-                           "no better step span could be computed");
+          if (log.IsDebugEnabled) {
+            log.Debug ("GetStepRange: no better step span could be computed");
+          }
           m_lowerStepSpanPossible = false;
         }
-        log.DebugFormat ("GetStepRange: " +
-                         "the new step span is {0}",
-                         this.AnalysisStepSpan);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetStepRange: the new step span is {this.AnalysisStepSpan}");
+        }
       }
       
       // - Check the minimum step span has not been already reached
@@ -565,9 +556,7 @@ namespace Lemoine.GDBPersistentClasses
       if (m_lowerStepSpanPossible && this.AnalysisStepSpan.HasValue) {
         TimeSpan minimumStepSpan = GetMinimumStepSpan ();
         if (this.AnalysisStepSpan.Value <= minimumStepSpan) {
-          log.InfoFormat ("GetStepRange: " +
-                          "minimum step range {0} reached",
-                          minimumStepSpan);
+          log.Info ($"GetStepRange: minimum step range {minimumStepSpan} reached");
           if (this.AnalysisStepSpan.Value < minimumStepSpan) {
             this.AnalysisStepSpan = minimumStepSpan;
             ModelDAOHelper.DAOFactory.ModificationDAO.MakePersistent (this);
@@ -581,9 +570,9 @@ namespace Lemoine.GDBPersistentClasses
         DateTime stepEnd = range.Lower.Value.Add (this.AnalysisStepSpan.Value);
         if (Bound.Compare<DateTime> (stepEnd, range.Upper) < 0) {
           range = new UtcDateTimeRange (range.Lower, stepEnd);
-          log.DebugFormat ("GetStepRange: " +
-                           "the adjusted end from step is {0}",
-                           stepEnd);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetStepRange: the adjusted end from step is {stepEnd}");
+          }
         }
       }
       
@@ -598,14 +587,15 @@ namespace Lemoine.GDBPersistentClasses
     protected override void MarkAsCompleted (string message, DateTime? effectiveEnd)
     {
       if (effectiveEnd.HasValue && (Bound.Compare<DateTime> (effectiveEnd.Value, this.End) < 0)) { // Partially done... continue later
-        log.DebugFormat ("MakeAsCompleted: " +
-                         "step completed, but the period {0}-{1} still needs to be processed",
-                         effectiveEnd, this.End);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"MakeAsCompleted: step completed, but the period {effectiveEnd}-{this.End} still needs to be processed");
+        }
         base.MarkAsInProgress (effectiveEnd);
       }
       else { // Completed
-        log.DebugFormat ("MakeAsCompleted: " +
-                         "completed !");
+        if (log.IsDebugEnabled) {
+          log.Debug ("MakeAsCompleted: completed !");
+        }
         base.MarkAsCompleted (message);
       }
     }

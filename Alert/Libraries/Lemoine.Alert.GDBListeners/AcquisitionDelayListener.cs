@@ -37,7 +37,6 @@ namespace Lemoine.Alert.GDBListeners
     static readonly int DEFAULT_MARGIN = 20; // in %
     static readonly TimeSpan DEFAULT_FLAPPING_THRESHOLD = TimeSpan.FromSeconds (10);
 
-    #region Members
     string m_name = "";
     IDictionary<TimeSpan, string> m_thresholds = new SortedDictionary<TimeSpan, string> ();
     int m_margin = DEFAULT_MARGIN; // in %
@@ -46,11 +45,9 @@ namespace Lemoine.Alert.GDBListeners
     IList<IMonitoredMachine> m_machines = null;
     IDictionary<IMonitoredMachine, AcquisitionDelayMachineStatus> m_status = new Dictionary<IMonitoredMachine, AcquisitionDelayMachineStatus> ();
     int m_index = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (AcquisitionDelayListener).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the listener
     /// </summary>
@@ -73,16 +70,13 @@ namespace Lemoine.Alert.GDBListeners
       set
       {
         if ( (0 <= value) && (value < 100)) { // Valid value
-          log.DebugFormat ("Margin.set: " +
-                           "set margin={0}",
-                           value);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Margin.set: set margin={value}");
+          }
           m_margin = value;
         }
         else {
-          log.ErrorFormat ("Margin.set: " +
-                           "invalid margin {0}, " +
-                           "keep {1}",
-                           value, m_margin);
+          log.Error ($"Margin.set: invalid margin {value}, keep {m_margin}");
           throw new ArgumentOutOfRangeException ("Margin");
         }
       }
@@ -113,9 +107,9 @@ namespace Lemoine.Alert.GDBListeners
         foreach (KeyValuePair<TimeSpan, string> threshold in m_thresholds) {
           thresholdsString += threshold.Key.ToString () + "=" + threshold.Value;
         }
-        log.DebugFormat ("Thresholds.get: " +
-                         "{0}",
-                         thresholdsString);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Thresholds.get: {thresholdsString}");
+        }
         return thresholdsString;
       }
       set
@@ -129,21 +123,15 @@ namespace Lemoine.Alert.GDBListeners
               m_thresholds.Add (timeSpan, thresholdMessage [0]);
             }
             else {
-              log.ErrorFormat ("Thresholds.set: " +
-                               "invalid TimeSpan {0} in {1}",
-                               thresholdMessage[1],
-                               threshold);
+              log.Error ($"Thresholds.set: invalid TimeSpan {thresholdMessage[1]} in {threshold}");
             }
           }
           else {
-            log.ErrorFormat ("Thresholds.set: " +
-                             "invalid threshold=message key {0}",
-                             threshold);
+            log.Error ($"Thresholds.set: invalid threshold=message key {threshold}");
           }
         }
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Description of the constructor
@@ -152,7 +140,6 @@ namespace Lemoine.Alert.GDBListeners
     {
     }
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// 
@@ -172,9 +159,7 @@ namespace Lemoine.Alert.GDBListeners
           var fact = ModelDAOHelper.DAOFactory.FactDAO
             .GetLast (machine);
           if (null == fact) { // Skip this machine
-            log.WarnFormat ("GetData: " +
-                            "no fact for machine id {0}",
-                            machine);
+            log.Warn ($"GetData: no fact for machine id {machine}");
             continue;
           }
           else { // null != fact
@@ -212,9 +197,9 @@ namespace Lemoine.Alert.GDBListeners
             if (age < previousReachedThresholdMinusMargin) {
               // - If age is before previousReachedThreshold - margin
               //   => the delay is much better => UP
-              log.DebugFormat ("GetData: " +
-                               "the delay is better for machine {0}",
-                               machine);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetData: the delay is better for machine {machine}");
+              }
               return CreateData (machine, ref machineStatus, age, AcquisitionDelayDirection.UP);
             }
             else if (age < previousReachedThreshold) {
@@ -222,24 +207,24 @@ namespace Lemoine.Alert.GDBListeners
               //   This is done to avoid the data is flapping too much
               //   => no category change for the moment,
               //      visit the next machine
-              log.DebugFormat ("GetData: " +
-                               "just a little better for machine {0}",
-                               machine);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetData: just a little better for machine {machine}");
+              }
               continue;
             }
             else {
               // - Get the threshold after previousReachedThreshold
               if (age <= machineStatus.NextThreshold) { // No category change
                 // Visit the next machine
-                log.DebugFormat ("GetData: " +
-                                 "no category change for machine {0}",
-                                 machine);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetData: no category change for machine {machine}");
+                }
                 continue;
               }
               else { // The delay is worse => DOWN
-                log.DebugFormat ("GetData: " +
-                                 "the delay is worse for machine {0}",
-                                 machine);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetData: the delay is worse for machine {machine}");
+                }
                 return CreateData (machine, ref machineStatus, age, AcquisitionDelayDirection.DOWN);
               }
             }
@@ -247,8 +232,9 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
       
-      log.DebugFormat ("GetData: " +
-                       "no data");
+      if (log.IsDebugEnabled) {
+        log.Debug ("GetData: no data");
+      }
       m_index = 0;
       return null;
     }
@@ -271,9 +257,9 @@ namespace Lemoine.Alert.GDBListeners
         thresholdReached = true;
       }
       if (!thresholdReached) {
-        log.DebugFormat ("CreateData: " +
-                         "age {0} is before the first defined threshold " +
-                         "=> use the default values 0:00:00 and OK");
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CreateData: age {age} is before the first defined threshold => use the default values 0:00:00 and OK");
+        }
         Debug.Assert (direction.Equals (AcquisitionDelayDirection.UP));
       }
       bool flapping = false;
@@ -324,6 +310,5 @@ namespace Lemoine.Alert.GDBListeners
         }
       }
     }
-    #endregion // Methods
   }
 }

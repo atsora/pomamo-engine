@@ -32,18 +32,15 @@ namespace Lemoine.Collections
     , INamedCollection
     , IDisposable
   {
-    #region Members
     volatile Mutex m_mutex = null;
     readonly Func<string, Mutex> m_createMutex;
     volatile ISharedValue<int> m_offset = null;
     readonly IExtendedQueue<T> m_queue;
     readonly string m_name;
     IChecked m_checkedCaller = null;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger(typeof (QueueWithOffsetAtEnd<T>).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Current offset
     /// </summary>
@@ -58,7 +55,6 @@ namespace Lemoine.Collections
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -328,10 +324,7 @@ namespace Lemoine.Collections
       using (var holder = new MutexHolder (m_mutex))
       {
         if (m_offset.Value + m_queue.Count < n) {
-          log.ErrorFormat ("UnsafeDequeue: " +
-                           "trying to dequeue {0} elements, while there are only {1} elements: " +
-                           "offset={2} queueSize={3}",
-                           n, this.Count, m_offset, m_queue.Count);
+          log.Error ($"UnsafeDequeue: trying to dequeue {n} elements, while there are only {this.Count} elements: offset={m_offset} queueSize={m_queue.Count}");
           throw new InvalidOperationException ("Queue too small");
         }
         

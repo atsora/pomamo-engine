@@ -20,19 +20,15 @@ namespace Lem_LanguageSelector
   /// </summary>
   public partial class MainForm : Form
   {
-    #region Members
     bool defaultLanguage;
     CultureInfo defaultCultureInfo;
     CultureInfo selectedCultureInfo;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (MainForm).FullName);
 
-    #region Getters / Setters
     public CultureInfo SelectedCultureInfo {
       get { return selectedCultureInfo; }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -88,7 +84,6 @@ namespace Lem_LanguageSelector
     }
     #endregion
 
-    #region Methods
     private void FillAlternativeLanguageComboBox ()
     {
       CultureInfo[] languageList = CultureInfo.GetCultures (CultureTypes.SpecificCultures);
@@ -97,7 +92,6 @@ namespace Lem_LanguageSelector
       alternativeLanguageComboBox.DisplayMember = "DisplayName";
       alternativeLanguageComboBox.ValueMember = "Name";
     }
-    #endregion
     
     void ComputerLanguageCheckBoxCheckedChanged(object sender, EventArgs e)
     {

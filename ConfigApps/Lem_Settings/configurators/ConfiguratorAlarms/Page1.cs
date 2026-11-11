@@ -16,11 +16,8 @@ namespace ConfiguratorAlarms
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     Alarm m_currentAlert = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -33,7 +30,6 @@ namespace ConfiguratorAlarms
           "unless you filter them with the button \"Filter\".\n\n" +
           "Each alert can be edited or deleted with the corresponding button.\n\n" +
           "You can also create a new alert."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

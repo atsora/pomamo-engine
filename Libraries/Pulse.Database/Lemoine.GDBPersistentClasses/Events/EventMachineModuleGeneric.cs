@@ -20,13 +20,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventMachineModuleGeneric: EventGeneric, IEventMachineModule
   {
-    #region Members
     IMachineModule m_machineModule;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventMachineModuleGeneric).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machineModule
     /// </summary>
@@ -47,7 +44,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IMachine Machine {
       get { return this.MonitoredMachine; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -71,7 +67,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Unproxy the entity for XML serialization
     /// </summary>
@@ -81,6 +76,5 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateHelper.Unproxy<IMachineModule> (ref m_machineModule);
       m_machineModule.Unproxy ();
     }
-    #endregion // Methods
   }
 }

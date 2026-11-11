@@ -66,7 +66,6 @@ namespace Lemoine.BaseControls
     public event Action<int> HorizontalMenuClosed;
     #endregion // Events
     
-    #region Members
     const int COLUMN_WIDTH = 100;
     const int ROW_HEIGHT = 18;
     Pen LIGHT_PEN = new Pen(SystemColors.ControlLight);
@@ -78,9 +77,7 @@ namespace Lemoine.BaseControls
     ContextMenuStrip m_horizontalMenu = null;
     
     private const int BUTTON_WIDTH = 19;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Set the height of the horizontal header
     /// </summary>
@@ -246,7 +243,6 @@ namespace Lemoine.BaseControls
           vHeader.ColumnStyles[1].Width + vHeader.ColumnStyles[2].Width;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -273,7 +269,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialize the table with a double vertical header
     /// </summary>
@@ -726,7 +721,6 @@ namespace Lemoine.BaseControls
       vHeader.Location = new Point(0, -vScroll.Value);
       hFooter.Location = new Point(-hScroll.Value, hFooter.Location.Y);
     }
-    #endregion // Methods
     
     #region Event reactions
     private void OnControlChanged(int row, int column)

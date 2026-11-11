@@ -24,19 +24,16 @@ namespace Lemoine.Extensions.Plugin
     const string ASSEMBLY_LOAD_KEY = "Plugin.AssemblyLoad";
     const string ASSEMLBY_LOAD_DEFAULT = ""; // load, from, file, memory, default: load or from or file
 
-    #region Members
     readonly PluginLoadStatus m_status = PluginLoadStatus.Unknown;
     readonly string m_pluginName;
     readonly Assembly m_assembly = null;
     bool m_filterMatch = true;
     IPluginDll m_pluginDll = null;
     readonly IList<IExtension> m_extensions = new List<IExtension> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (PluginDllLoader).FullName);
     static readonly ILog pluginStatusLog = LogManager.GetLogger ("Lemoine.Extensions.PluginStatus");
 
-    #region Getters / Setters
     /// <summary>
     /// Plugin load status
     /// </summary>
@@ -81,7 +78,6 @@ namespace Lemoine.Extensions.Plugin
     {
       get { return m_extensions; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

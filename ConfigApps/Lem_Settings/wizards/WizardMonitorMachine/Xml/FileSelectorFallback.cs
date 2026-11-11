@@ -13,7 +13,6 @@ namespace WizardMonitorMachine
   /// </summary>
   public partial class FileSelectorFallback : UserControl
   {
-    #region Getters / Setters
     /// <summary>
     /// Selected value (name of the file without the path)
     /// </summary>
@@ -21,7 +20,6 @@ namespace WizardMonitorMachine
       get { return textBox.Text; }
       set { textBox.Text = value ?? ""; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

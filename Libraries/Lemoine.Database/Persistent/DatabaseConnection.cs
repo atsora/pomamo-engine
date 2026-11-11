@@ -225,10 +225,7 @@ namespace Lemoine.Database.Persistent
         serverVersionNum = databaseConnection.GetPostgreSQLVersionNum ();
       }
       catch (Exception ex) {
-        log.ErrorFormat ("IsServerVersionGreaterOrEqual: " +
-                         "versionNumber={0} " +
-                         "exception {1}",
-                         versionNumber, ex);
+        log.Error ($"IsServerVersionGreaterOrEqual: versionNumber={versionNumber} exception {ex}");
         throw;
       }
 

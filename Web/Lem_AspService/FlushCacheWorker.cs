@@ -67,7 +67,6 @@ namespace Lem_AspService
 
     readonly ILog log = LogManager.GetLogger<FlushCacheWorker> ();
 
-    #region Members
     readonly IConfigUpdateChecker m_configUpdateChecker = new ConfigUpdateChecker ();
     ICacheClientWithCleanExtension m_cacheClient;
     DateTime m_lastCollect = DateTime.UtcNow;
@@ -76,7 +75,6 @@ namespace Lem_AspService
     TimeSpan m_cacheFlushFrequency = CACHE_FLUSH_FREQUENCY_DEFAULT;
     DateTime m_lastFlush = DateTime.UtcNow;
     TimeSpan m_daySlotCacheClearFrequency = DAY_SLOT_CACHE_CLEAR_FREQUENCY_DEFAULT;
-    #endregion // Members
 
     /// <summary>
     /// Constructor
@@ -256,7 +254,9 @@ namespace Lem_AspService
     void CheckClearDaySlotCache (ref DateTime daySlotCacheClearDateTime)
     {
       if (daySlotCacheClearDateTime <= DateTime.UtcNow) { // Clear the DaySlotCache
-        log.DebugFormat ("CheckClearDaySlotCache: about to clear the day slot cache");
+        if (log.IsDebugEnabled) {
+          log.Debug ("CheckClearDaySlotCache: about to clear the day slot cache");
+        }
         SetActive ();
         ClearDaySlotCache ();
         daySlotCacheClearDateTime = DateTime.UtcNow.Add (m_daySlotCacheClearFrequency);

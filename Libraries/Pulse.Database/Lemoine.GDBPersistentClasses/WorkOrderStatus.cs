@@ -15,14 +15,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class WorkOrderStatus: DataWithTranslation, IWorkOrderStatus
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (WorkOrderStatus).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -49,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return this.m_version; }
     }
-    #endregion
     
     #region IReferenceData implementation
     /// <summary>

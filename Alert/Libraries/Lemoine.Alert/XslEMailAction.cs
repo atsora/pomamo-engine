@@ -18,14 +18,11 @@ namespace Lemoine.Alert
   [Serializable]
   public class XslEMailAction: GenericEMailAction
   {
-    #region Members
     XslDefinition m_subject;
     XslDefinition m_body;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (XslEMailAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Subject of the E-Mail
     /// </summary>
@@ -51,7 +48,6 @@ namespace Lemoine.Alert
     public XslDefinition UtcDateTime {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -64,7 +60,6 @@ namespace Lemoine.Alert
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implements <see cref="GenericEMailAction" />
     /// </summary>
@@ -95,14 +90,12 @@ namespace Lemoine.Alert
       string utcDateTimeString = GetFromXslDefinition (this.UtcDateTime, data);
       DateTime utcDateTime = DateTime.UtcNow;
       if (string.IsNullOrEmpty (utcDateTimeString)) {
-        log.DebugFormat ("GetMatchedEmailConfigs: " +
-                         "no UtcDateTime XslDefinition => fallback to now {0}",
-                         utcDateTime);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetMatchedEmailConfigs: no UtcDateTime XslDefinition => fallback to now {utcDateTime}");
+        }
       }
       else if (false == DateTime.TryParse (utcDateTimeString, out utcDateTime)) { // && (null != dateTimeString)
-        log.ErrorFormat ("GetMatchedEmailConfigs: " +
-                         "error while parsing date/time {0}",
-                         utcDateTimeString);
+        log.Error ($"GetMatchedEmailConfigs: error while parsing date/time {utcDateTimeString}");
       }
       else {
         utcDateTime = DateTime.SpecifyKind (utcDateTime, DateTimeKind.Utc);
@@ -118,6 +111,5 @@ namespace Lemoine.Alert
       xslDefinition.Xslt.Transform (xpd.CreateNavigator (), null, stringWriter);
       return stringWriter.ToString ();
     }
-    #endregion // Methods
   }
 }

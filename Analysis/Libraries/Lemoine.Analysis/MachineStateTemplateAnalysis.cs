@@ -31,13 +31,10 @@ namespace Lemoine.Analysis
     static readonly string MAX_ANALYSIS_TIME_RANGE_KEY = "Analysis.MachineStateTemplateAnalysis.MaxAnalysisTimeRange";
     static readonly TimeSpan MAX_ANALYSIS_TIME_RANGE_DEFAULT = TimeSpan.FromHours (8);
 
-    #region Members
     IMachine m_machine;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (MachineStateTemplateAnalysis).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated machine
     /// </summary>
@@ -83,7 +80,6 @@ namespace Lemoine.Analysis
                                                             MAX_ANALYSIS_TIME_RANGE_DEFAULT);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

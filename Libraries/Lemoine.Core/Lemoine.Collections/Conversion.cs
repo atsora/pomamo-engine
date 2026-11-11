@@ -27,7 +27,7 @@ namespace Lemoine.Collections
     public static KeyValuePair<TKey, TValue> ToKeyValuePair<TKey, TValue> (this Object obj)
     {
       if (null == obj) {
-        log.ErrorFormat ("ToKeyValuePair: obj is null");
+        log.Error ("ToKeyValuePair: obj is null");
         throw new ArgumentNullException ("obj");
       }
 
@@ -39,7 +39,7 @@ namespace Lemoine.Collections
                                              );
       }
 
-      log.ErrorFormat ("ToKeyValuePair: obj is not a KeyValue pair");
+      log.Error ("ToKeyValuePair: obj is not a KeyValue pair");
       var message = string.Format ("obj argument must be of type KeyValuePair<{0},{1}>",
         typeof(TKey).FullName, typeof(TValue).FullName);
       throw new ArgumentException (message);

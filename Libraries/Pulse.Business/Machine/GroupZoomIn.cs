@@ -40,14 +40,9 @@ namespace Lemoine.Business.Machine
   public sealed class GroupZoomIn
     : IRequest<GroupZoomInResponse>
   {
-    #region Members
     readonly string m_parentGroupId;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (GroupZoomIn).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -61,9 +56,6 @@ namespace Lemoine.Business.Machine
       m_parentGroupId = parentGroupId;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region IRequest implementation
     /// <summary>
@@ -86,7 +78,7 @@ namespace Lemoine.Business.Machine
       }
 
       if (log.IsWarnEnabled) {
-        log.WarnFormat ("Get: no zoom in implementation for group {0}", m_parentGroupId);
+        log.Warn ($"Get: no zoom in implementation for group {m_parentGroupId}");
       }
       var r = new GroupZoomInResponse ();
       r.Children = new List<string> ();

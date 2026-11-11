@@ -33,9 +33,6 @@ namespace Lemoine.Core.Extensions.Cache
     volatile int m_batchUpdateLevel = 0;
     readonly ConcurrentBag<string> m_batchUpdatePendingRegexes = new ConcurrentBag<string> ();
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

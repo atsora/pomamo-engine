@@ -35,7 +35,6 @@ namespace Pulse.Web.MachineMode
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -95,6 +94,5 @@ namespace Pulse.Web.MachineMode
         AddMachineMode (response, machineModes, child);
       }
     }
-    #endregion // Methods
   }
 }

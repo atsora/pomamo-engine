@@ -84,7 +84,6 @@ namespace Lem_TestReports
     static readonly string PDF_VIEWER_DEFAULT = @"C:\Program Files\SumatraPDF\SumatraPDF.exe";
 
 
-    #region Members
     readonly HttpClient m_httpClient = new HttpClient ();
     IDictionary<DataGridViewRow, ReportDownloader> m_runningDownloaders =
       new Dictionary<DataGridViewRow, ReportDownloader> ();
@@ -92,11 +91,9 @@ namespace Lem_TestReports
     // use to retrieve previous value of changeViewer_combobox
     int prevIndex_ChangeViewer;
     IDictionary<DataGridViewRow, IList<Parameter>> m_parameterLists = new Dictionary<DataGridViewRow, IList<Parameter>> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MainForm).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Auto-diff ?
     /// </summary>
@@ -158,8 +155,6 @@ namespace Lem_TestReports
       set { urlParametersTextBox.Text = value; }
     }
 
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Description of the constructor
@@ -186,9 +181,6 @@ namespace Lem_TestReports
       }
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
 
     void DataGridView1RowsAdded (object sender, DataGridViewRowsAddedEventArgs e)
@@ -314,9 +306,7 @@ namespace Lem_TestReports
           await downloader.DownloadFileAsync (uri, filename);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("RunClick: " +
-                           "{0}",
-                           ex);
+          log.Error ($"RunClick: {ex}");
           RunSetStatus (row, TestReportStatus.ERROR);
           MessageBox.Show ("Error while downloading the report", "Download error",
                            MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -329,9 +319,7 @@ namespace Lem_TestReports
           RunSetStatus (row, TestReportStatus.DOWNLOAD_OK);
         }
         catch (Exception ex) {
-          log.ErrorFormat ("RunClick: " +
-                           "{0}",
-                           ex);
+          log.Error ($"RunClick: {ex}");
           RunSetStatus (row, TestReportStatus.ERROR);
           MessageBox.Show ("Error while downloading the report", "Download error",
                            MessageBoxButtons.OK, MessageBoxIcon.Error);

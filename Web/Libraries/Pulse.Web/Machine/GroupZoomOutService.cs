@@ -32,7 +32,6 @@ namespace Pulse.Web.Machine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -42,7 +41,7 @@ namespace Pulse.Web.Machine
     {
       if (null == request.GroupId) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: requested group id is null");
+          log.Error ("GetWithoutCache: requested group id is null");
         }
         return new ErrorDTO ("No group id is defined", ErrorStatus.WrongRequestParameter);
       }
@@ -51,18 +50,16 @@ namespace Pulse.Web.Machine
       var businessResponse = Lemoine.Business.ServiceProvider
         .Get (businessRequest);
       if (null == businessResponse) {
-        log.FatalFormat ("GetWithoutCache: unexpected null business response");
+        log.Fatal ("GetWithoutCache: unexpected null business response");
         return new ErrorDTO ("Unexpected null response", ErrorStatus.UnexpectedError);
       }
       var responseDto = new GroupZoomOutResponseDTO ();
       responseDto.Dynamic = businessResponse.Dynamic;
       responseDto.Parent = businessResponse.Parent;
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetWithoutCache: parent of {0}: {1}",
-          request.GroupId, responseDto.Parent);
+        log.Debug ($"GetWithoutCache: parent of {request.GroupId}: {responseDto.Parent}");
       }
       return responseDto;
     }
-    #endregion // Methods
   }
 }

@@ -20,9 +20,6 @@ namespace Lemoine.Core.Performance
 
     IPerfRecorder m_perfRecorder = null;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor (private because singleton)

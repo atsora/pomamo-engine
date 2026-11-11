@@ -23,7 +23,6 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
   [Serializable]
   public class IntermediateWorkPieceSummary : BaseData, IIntermediateWorkPieceSummary, IDataWithId
   {
-    #region Members
     int m_id = 0;
     IIntermediateWorkPiece m_intermediateWorkPiece;
     IComponent m_component = null;
@@ -36,11 +35,9 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
     int m_checked = 0;
     int m_scrapped = 0;
     // Note: if you add some summary values here, do not forget to update the method IsEmpty () accordingly
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (IntermediateWorkPieceSummary).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -209,9 +206,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       {
         Debug.Assert (0 <= value);
         if (value < 0) {
-          log.ErrorFormat ("Counted: " +
-                           "new counted value {0} is negative !",
-                           value);
+          log.Error ($"Counted: new counted value {value} is negative !");
         }
         m_counted = value;
       }
@@ -227,9 +222,7 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       set
       {
         if (value < 0) {
-          log.WarnFormat ("Corrected: " +
-                          "new corrected value {0} is negative !",
-                          value);
+          log.Warn ($"Corrected: new corrected value {value} is negative !");
         }
         m_corrected = value;
       }
@@ -254,7 +247,6 @@ namespace Lemoine.Plugin.IntermediateWorkPieceSummary
       get { return m_scrapped; }
       set { m_scrapped = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

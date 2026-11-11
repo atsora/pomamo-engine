@@ -14,14 +14,11 @@ namespace Lemoine.ConfigControls
   /// </summary>
   public partial class EventCncValueConfigInput : UserControl
   {
-    #region Members
     //See L:123
 //    Evaluator m_evaluator = new Evaluator (new CompilerContext (new CompilerSettings (), new ConsoleReportPrinter ()));
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventCncValueConfigInput).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return Name 
     /// </summary>
@@ -62,7 +59,6 @@ namespace Lemoine.ConfigControls
     /// OkButton from Parent Control to controle data validation
     /// </summary>
     public Button OkButton { get; set;}
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -85,7 +81,6 @@ namespace Lemoine.ConfigControls
 
     #endregion // Constructors
 
-    #region Methods
     void EventCncValueConfigInputLoad(object sender, EventArgs e)
     {
       //See L:123
@@ -135,6 +130,5 @@ namespace Lemoine.ConfigControls
       
       return true;
     }
-    #endregion // Methods
   }
 }

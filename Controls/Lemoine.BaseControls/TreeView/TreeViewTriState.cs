@@ -35,7 +35,6 @@ namespace Lemoine.BaseControls
     };
     #endregion
     
-    #region Members
     bool m_emitCheckboxChangedEnabled = true;
     
     /// <summary>
@@ -43,7 +42,6 @@ namespace Lemoine.BaseControls
     /// Do not set <c>e.Cancel = true</c> in <c>OnBeforeCheck</c> otherwise the Checked state will be lost
     /// </summary>
     int IgnoreClickAction = 0;
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -216,7 +214,6 @@ namespace Lemoine.BaseControls
     }
     #endregion
 
-    #region Methods
     // <summary>
     // Helper function to replace child state with that of the parent
     // </summary>
@@ -361,6 +358,5 @@ namespace Lemoine.BaseControls
         node.Checked = false;
       }
     }
-    #endregion
   }
 }

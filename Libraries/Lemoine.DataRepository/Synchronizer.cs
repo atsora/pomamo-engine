@@ -17,15 +17,12 @@ namespace Lemoine.DataRepository
   /// </summary>
   public sealed class Synchronizer : ThreadClass
   {
-    #region Members
     Repository m_repository;
     TimeSpan m_every;
     TimeSpan m_noDataEvery;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Synchronizer).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated Repository
     /// </summary>
@@ -53,7 +50,6 @@ namespace Lemoine.DataRepository
       get { return m_noDataEvery; }
       set { m_noDataEvery = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -66,7 +62,6 @@ namespace Lemoine.DataRepository
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="ThreadClass"/>
     /// </summary>
@@ -112,6 +107,5 @@ namespace Lemoine.DataRepository
     {
       return log;
     }
-    #endregion // Methods
   }
 }

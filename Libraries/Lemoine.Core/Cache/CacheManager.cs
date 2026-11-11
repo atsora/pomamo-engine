@@ -22,7 +22,6 @@ namespace Lemoine.Core.Cache
     ICacheClient m_cacheClient = null;
     readonly SemaphoreSlim m_semaphore = new SemaphoreSlim (1, 1);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the cache client
     /// </summary>
@@ -36,14 +35,13 @@ namespace Lemoine.Core.Cache
       set
       {
         if (null != Instance.m_cacheClient) {
-          slog.WarnFormat ("CacheClient.set: the cache client was already set, it will be overriden");
+          slog.Warn ("CacheClient.set: the cache client was already set, it will be overriden");
         }
         using (var semaphoreHolder = Lemoine.Threading.SemaphoreSlimHolder.Create (Instance.m_semaphore)) {
           Instance.m_cacheClient = value;
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -53,9 +51,6 @@ namespace Lemoine.Core.Cache
     {
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
 
     #region Instance
     static CacheManager Instance

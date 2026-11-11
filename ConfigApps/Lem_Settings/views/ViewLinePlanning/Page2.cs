@@ -19,12 +19,9 @@ namespace ViewLinePlanning
   /// </summary>
   public partial class Page2 : GenericViewPage, IViewPage
   {
-    #region Members
     ILine m_lineDoubleClicked;
     DateTime m_currentDate;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -36,7 +33,6 @@ namespace ViewLinePlanning
     public string Help { get { return "The list of all lines planned for a particular day is displayed to the left part.\n\n" +
           "By clicking on a line, the different quantities to produce per shift - within a day - is detailed in a tree.\n\n" +
           "Moving to the previous or the next day is possible with the left and right arrows."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

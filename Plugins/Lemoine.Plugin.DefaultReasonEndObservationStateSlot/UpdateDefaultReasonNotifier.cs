@@ -15,14 +15,9 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
   /// </summary>
   internal sealed class UpdateDefaultReasonNotifier
   {
-    #region Members
     IList<IUpdateDefaultReasonListener> m_listeners = new List<IUpdateDefaultReasonListener> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (UpdateDefaultReasonNotifier).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -33,7 +28,6 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a listener
     /// </summary>
@@ -62,7 +56,6 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
       
       return false;
     }
-    #endregion // Methods
 
     #region Instance
     static UpdateDefaultReasonNotifier Instance

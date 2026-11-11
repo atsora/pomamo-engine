@@ -17,9 +17,7 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class DayTemplateSlot: GenericRangeSlot, ISlot, IDayTemplateSlot
   {
-    #region Members
     IDayTemplate m_dayTemplate;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DayTemplateSlot).FullName);
 
@@ -47,7 +45,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors and factory methods
     
-    #region Getters / Setters
     /// <summary>
     /// Reference to the DayTemplate
     /// </summary>
@@ -55,7 +52,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_dayTemplate; }
       set { m_dayTemplate = value; }
     }
-    #endregion // Getters / Setters
     
     #region Slot implementation
     /// <summary>
@@ -80,9 +76,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
       
-      GetLogger ().ErrorFormat ("CompareTo: " +
-                                "object {0} of invalid type",
-                                obj);
+      GetLogger ().Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a DayTemplateSlot");
     }
 

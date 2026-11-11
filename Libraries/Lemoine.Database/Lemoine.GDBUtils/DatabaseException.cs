@@ -52,10 +52,7 @@ namespace Lemoine.GDBUtils
         }
         else { // Not a temporary or connection error
           if ((logger != null) && logger.IsFatalEnabled) {
-            logger.FatalFormat ("RequiresExit: " +
-                              "Transaction exception {0} with inner exception {1} " +
-                              "=> return true",
-                              ex, ex.InnerException);
+            logger.Fatal ($"RequiresExit: Transaction exception {ex} with inner exception {ex.InnerException} => return true");
           }
           return true;
         }
@@ -364,7 +361,7 @@ namespace Lemoine.GDBUtils
         }
         else {
           if ((logger != null) && logger.IsInfoEnabled) {
-            logger.InfoFormat ("IsSerializationFailure: not a serialization_failure PostgresException", postgresException);
+            logger.Info ("IsSerializationFailure: not a serialization_failure PostgresException", postgresException);
           }
         }
       }
@@ -668,7 +665,7 @@ at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
             }
             else {
               if ((logger != null) && logger.IsDebugEnabled) {
-                logger.DebugFormat ("IsDatabaseConnectionError: not a connection error. IOException", ioException);
+                logger.Debug ("IsDatabaseConnectionError: not a connection error. IOException", ioException);
               }
             }
           }
@@ -737,9 +734,7 @@ at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
       if (ex is Npgsql.PostgresException) {
         Npgsql.PostgresException postgresException = ex as Npgsql.PostgresException;
         if (postgresException.SqlState.StartsWith ("53", StringComparison.InvariantCultureIgnoreCase)) {
-          logger?.FatalFormat ("IsDatabaseInsufficientResources: " +
-                               "error code {0} in PostgresException {1}",
-                               postgresException.SqlState, postgresException);
+          logger?.Fatal ($"IsDatabaseInsufficientResources: error code {postgresException.SqlState} in PostgresException", postgresException);
           return true;
         }
       }
@@ -809,9 +804,7 @@ at NHibernate.Impl.SessionImpl.List(CriteriaImpl criteria, IList results)
     {
       if (exceptionType.IsInstanceOfType (ex)) {
         if ((logger != null) && logger.IsErrorEnabled) {
-          logger.ErrorFormat ("IsOfExceptionType: " +
-                              "{0} exception detected",
-                              exceptionType);
+          logger.Error ($"IsOfExceptionType: {exceptionType} exception detected");
         }
         return true;
       }

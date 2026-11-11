@@ -16,11 +16,9 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public sealed class MachineCache
   {
-    #region Members
     IList<IMachine> m_machines = null;
     volatile bool m_active = false;
     object m_activeLock = new object ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachineCache).FullName);
 
@@ -34,7 +32,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Is the cache active ?
     /// </summary>
@@ -59,7 +56,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <returns>active status of the cache before</returns>
     public static bool Deactivate ()
     {
-      log.InfoFormat ("Deactivate");
+      log.Info ("Deactivate");
 
       bool active;
       lock (Instance.m_activeLock) {
@@ -67,8 +64,7 @@ namespace Lemoine.GDBPersistentClasses
         Instance.m_active = false;
         Instance.m_machines = null;
       }
-      log.InfoFormat ("Deactivate: " +
-                      "MachineCache is now deactivated");
+      log.Info ("Deactivate: MachineCache is now deactivated");
       return active;
     }
 
@@ -127,7 +123,6 @@ namespace Lemoine.GDBPersistentClasses
         Instance.m_machines = null;
       }
     }
-    #endregion // Methods
 
     #region Instance
     static MachineCache Instance

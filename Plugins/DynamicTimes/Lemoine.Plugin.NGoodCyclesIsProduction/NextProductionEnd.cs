@@ -61,7 +61,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
         var suffix = "NextProductionEnd";
         if (null == m_configuration) {
           if (!LoadConfiguration (out m_configuration)) {
-            log.ErrorFormat ("Name.get: LoadConfiguration failed");
+            log.Error ("Name.get: LoadConfiguration failed");
             return "";
           }
         }
@@ -157,14 +157,14 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
       var cycleDetectionDateTime = GetCycleDetectionDateTime ();
       if (!cycleDetectionDateTime.HasValue) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetDetectionDateTime: cycle detection date/time is null");
+          log.Debug ("GetDetectionDateTime: cycle detection date/time is null");
         }
         return null;
       }
       var operationDetectionDateTime = GetOperationDetectionDateTime ();
       if (!operationDetectionDateTime.HasValue) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetDetectionDateTime: operation detection date/time is null");
+          log.Debug ("GetDetectionDateTime: operation detection date/time is null");
         }
         return null;
       }
@@ -383,8 +383,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
           if (!Bound.Equals<DateTime> (operationSlot.DateTimeRange.Upper,
             nextOperationSlot.DateTimeRange.Lower)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckOperationChangeAfter: gap {0}-{1} in operation slot",
-                operationSlot.DateTimeRange.Upper, nextOperationSlot.DateTimeRange.Lower);
+              log.Debug ($"CheckOperationChangeAfter: gap {operationSlot.DateTimeRange.Upper}-{nextOperationSlot.DateTimeRange.Lower} in operation slot");
             }
             return operationSlot.DateTimeRange.Upper.Value;
           }
@@ -410,7 +409,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
 
       if ((null == beforeCycle.OperationSlot) || (beforeCycle.OperationSlot.Id != operationSlot.Id)) {
         if (!operationSlot.DateTimeRange.Lower.HasValue) {
-          log.FatalFormat ("CheckOperationChangeBefore: operation cycle {0} is not associated to operation slot {1} although it should be", beforeCycle.Id, operationSlot.Id);
+          log.Fatal ($"CheckOperationChangeBefore: operation cycle {beforeCycle.Id} is not associated to operation slot {operationSlot.Id} although it should be");
           throw new Exception ("Invalid database data operation cycle VS operation slot");
         }
         var previousOperationSlotsRange =
@@ -419,7 +418,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
           .FindOverlapsRange (this.Machine, previousOperationSlotsRange);
         if (!previousOperationSlots.Any ()) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("CheckOperationChangeBefore: no operation slots in range {0} => return false", previousOperationSlotsRange);
+            log.Debug ($"CheckOperationChangeBefore: no operation slots in range {previousOperationSlotsRange} => return false");
           }
           return false;
         }
@@ -427,15 +426,14 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
           if (!Bound.Equals<DateTime> (operationSlot.DateTimeRange.Lower,
             previousOperationSlot.DateTimeRange.Upper)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckOperationChangeBefore: gap {0}-{1} in operation slot",
-                previousOperationSlot.DateTimeRange.Upper, operationSlot.DateTimeRange.Lower);
+              log.Debug ($"CheckOperationChangeBefore: gap {previousOperationSlot.DateTimeRange.Upper}-{operationSlot.DateTimeRange.Lower} in operation slot");
             }
             return false;
           }
           if ((null == previousOperationSlot.Operation)
             || (((IDataWithId)previousOperationSlot.Operation).Id != ((IDataWithId)operation).Id)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("CheckOperationChangeBefore: operation change at {0}", operationSlot.DateTimeRange.Lower);
+              log.Debug ($"CheckOperationChangeBefore: operation change at {operationSlot.DateTimeRange.Lower}");
             }
             return false;
           }
@@ -450,7 +448,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     {
       if (m_configuration.NumberOfGoodCycles <= nbGoodCyclesAfter) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("Stop: {0} good cycles found, stop at {1}", nbGoodCyclesAfter, stopDateTime);
+          log.Debug ($"Stop: {nbGoodCyclesAfter} good cycles found, stop at {stopDateTime}");
         }
         return this.CreateFinal (stopDateTime);
       }
@@ -467,7 +465,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
       foreach (var cycle in cycles) {
         if (false == CheckOperationChangeBefore (cycle, operation, ref operationSlot)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("Stop: operation change at cycle {0}", previousCycle.Id);
+            log.Debug ($"Stop: operation change at cycle {previousCycle.Id}");
           }
           return NotEnoughGoodCycles (nbGoodCycles);
         }
@@ -524,7 +522,7 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
     IDynamicTimeResponse NotEnoughGoodCycles (int nbGoodCycles)
     {
       if (log.IsWarnEnabled) {
-        log.WarnFormat ("NotEnoughGoodCycles: only {0} good cycles detected => Not Applicable", nbGoodCycles);
+        log.Warn ($"NotEnoughGoodCycles: only {nbGoodCycles} good cycles detected => Not Applicable");
       }
       return this.CreateNotApplicable ();
     }

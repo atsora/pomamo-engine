@@ -27,7 +27,6 @@ namespace Lemoine.ConfigControls
     , IConfigControlObserver<IStampingConfigByName>
     , IConfigControlObservable<IMonitoredMachine>
   {
-    #region Members
     SortableBindingList<IDataGridViewMonitoredMachine> m_monitoredMachines = new SortableBindingList<IDataGridViewMonitoredMachine>();
     
     ISet<DataGridViewRow> m_updateSet =
@@ -35,7 +34,6 @@ namespace Lemoine.ConfigControls
     
     ISet<IConfigControlObserver<IMonitoredMachine> > m_observers =
       new HashSet<IConfigControlObserver<IMonitoredMachine> > ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MonitoredMachineConfig).FullName);
 
@@ -220,8 +218,7 @@ namespace Lemoine.ConfigControls
         dialog.Text = PulseCatalog.GetString ("CncAcquisitionComputerSelectionTitleA") + monitoredMachine.Name;
         if (DialogResult.OK != dialog.ShowDialog ()) {
           // Reset the MainCncAcquisition because a computer is required
-          log.WarnFormat ("AddNotNullProperties: " +
-                          "do not add a MainCncAcquisition because a computer is required");
+          log.Warn ("AddNotNullProperties: do not add a MainCncAcquisition because a computer is required");
           monitoredMachine.MainCncAcquisition = null;
         }
         else { // OK

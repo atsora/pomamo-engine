@@ -16,7 +16,6 @@ namespace ConfiguratorSlots.DayTemplate
   /// </summary>
   internal partial class DayTemplatePage3 : UserControl, IPartPage3
   {
-    #region Getters / Setters
     /// <summary>
     /// Name of the category of element, plural with uppercase for the first letter
     /// Ex: "Machines"
@@ -43,7 +42,6 @@ namespace ConfiguratorSlots.DayTemplate
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -55,7 +53,6 @@ namespace ConfiguratorSlots.DayTemplate
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialization of the page, happening before the first load
     /// This method is called again if the database has been updated
@@ -142,6 +139,5 @@ namespace ConfiguratorSlots.DayTemplate
     {
       return null;
     }
-    #endregion // Methods
   }
 }

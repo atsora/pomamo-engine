@@ -163,8 +163,7 @@ namespace Lemoine.NHibernateTypes
               log.Debug ($"TrySanitizeAndSerialize: try to sanitize string {s}");
               var sanitized = Sanitize (s);
               xmlSerializer.Serialize (writer, sanitized);
-              log.WarnFormat ("TrySanitizeAndSerialize: string {0} was successfully sanitized in {1}",
-                s, sanitized);
+              log.Warn ($"TrySanitizeAndSerialize: string {s} was successfully sanitized in {sanitized}");
               return true;
             }
           }

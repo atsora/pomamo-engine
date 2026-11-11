@@ -54,8 +54,7 @@ namespace Lemoine.Plugin.ActivityIsProduction
             return configuration.Manual;
           }
           else { // Not manual and auto unknown ?
-            log.ErrorFormat ("Match: machine mode {0} is not manual and auto is unknown",
-              machineMode);
+            log.Error ($"Match: machine mode {machineMode} is not manual and auto is unknown");
             return configuration.NorManualNorAuto;
           }
         }

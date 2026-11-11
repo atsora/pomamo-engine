@@ -17,7 +17,6 @@ namespace WizardReorderOperation
   /// </summary>
   public class Order
   {
-    #region Members
     IPart m_part = null;
     bool m_noOrder = false;
     bool m_notLinear = false;
@@ -26,16 +25,13 @@ namespace WizardReorderOperation
     bool m_potentialConflict = false;
     bool m_onlySimpleOperation = true;
     readonly IList<IOperation> m_operations = new List<IOperation>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Order).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Retrieve all operations, ordered
     /// </summary>
     public IList<IOperation> Operations { get { return m_operations; } }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -44,7 +40,6 @@ namespace WizardReorderOperation
     public Order() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Load operations of a part
     /// </summary>
@@ -305,6 +300,5 @@ namespace WizardReorderOperation
         }
       }
     }
-    #endregion // Methods
   }
 }

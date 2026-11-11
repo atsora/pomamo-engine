@@ -15,7 +15,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CncAlarmSeverityPattern : ICncAlarmSeverityPattern, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
 
@@ -24,11 +23,9 @@ namespace Lemoine.GDBPersistentClasses
     EditStatus m_status = EditStatus.MANUAL_INPUT;
     CncAlarmSeverityPatternRules m_rules = null;
     ICncAlarmSeverity m_severity = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncAlarmSeverityPattern).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// CncAlarmSeverityPattern Id
     /// </summary>
@@ -167,7 +164,6 @@ namespace Lemoine.GDBPersistentClasses
         return txt;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

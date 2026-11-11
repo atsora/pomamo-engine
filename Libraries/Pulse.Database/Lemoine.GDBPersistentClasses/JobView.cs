@@ -26,7 +26,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class JobView: BaseData
   {
-    #region Members
     int m_projectId = 0;
     int m_workOrderId = 0;
     int m_projectVersion = 0;
@@ -41,11 +40,9 @@ namespace Lemoine.GDBPersistentClasses
     DateTime m_reactivationDateTime = DateTime.UtcNow;
     DateTime? m_archiveDateTime;
     ICollection <IComponent> m_components = new InitialNullIdSet<IComponent, int> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (JobView).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -204,9 +201,7 @@ namespace Lemoine.GDBPersistentClasses
         return m_components;
       }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Check if the job is undefined
     /// 
@@ -234,6 +229,5 @@ namespace Lemoine.GDBPersistentClasses
         return $"[JobView {this.ProjectId}]";
       }
     }
-    #endregion
   }
 }

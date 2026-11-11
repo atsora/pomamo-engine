@@ -16,7 +16,6 @@ namespace Lemoine.Settings
     static char[] SEPARATORS = new char[] {',', ' ', '\n', '\t', ';', '-', '.', '?', '!', '/',
       '\"', '\\', '(', ')', '[', ']', '{', '}', '\'', ':' };
     
-    #region Methods
     /// <summary>
     /// Split a text into words
     /// </summary>
@@ -125,6 +124,5 @@ namespace Lemoine.Settings
       // The score is multiplied by 3 if the word is the beginning of the keyword      
       return ((index == 0) ? 3.0 : 1.0) * score;
     }
-    #endregion // Methods
   }
 }

@@ -65,33 +65,24 @@ namespace Lemoine.CncDataImport
     {
       // Key + Value must be the same
       if (!otherData.Key.Equals (data.Key) || !otherData.Value.Equals (data.Value)) {
-        log.DebugFormat ("IsDataCompatible: " +
-                         "the new MachineMode data {0} does not contain the same key/value than {1} " +
-                         "=> not compatible",
-                         data, otherData);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsDataCompatible: the new MachineMode data {data} does not contain the same key/value than {otherData} => not compatible");
+        }
         return false;
       }
       if (data.DateTime < otherData.DateTime) {
-        log.FatalFormat ("IsDataCompatible: " +
-                         "new data {0} is before the last data {1} " +
-                         "=> this should not happen",
-                         data, otherData);
+        log.Fatal ($"IsDataCompatible: new data {data} is before the last data {otherData} => this should not happen");
         return false;
       }
 
       if (MaxMachineModuleActivityGap < data.DateTime.Subtract (otherData.DateTime)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsDataCompatible: " +
-                           "there is a too big gap between the new data {0} and {1} " +
-                           "=> not compatible",
-                           data, otherData);
+          log.Debug ($"IsDataCompatible: there is a too big gap between the new data {data} and {otherData} => not compatible");
         }
         return false;
       }
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("IsDataCompatible: " +
-                         "MachineMode data {0} is compatible with {1}",
-                         data, otherData);
+        log.Debug ($"IsDataCompatible: MachineMode data {data} is compatible with {otherData}");
       }
       return true;
     }

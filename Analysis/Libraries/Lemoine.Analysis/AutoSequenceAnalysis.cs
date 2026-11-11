@@ -33,15 +33,10 @@ namespace Lemoine.Analysis
     static readonly string NB_ATTEMPT_SERIALIZATION_FAILURE_KEY = "Analysis.Activity.NbAttemptSerializationFailure";
     static readonly int NB_ATTEMPT_SERIALIZATION_FAILURE_DEFAULT = 2;
 
-    #region Members
     readonly MonitoredMachineActivityAnalysis m_machineActivityAnalysis;
     readonly IDictionary<int, AutoSequenceMachineModuleAnalysis> m_byMachineModuleAnalysis = new Dictionary<int, AutoSequenceMachineModuleAnalysis> ();
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (AutoSequenceAnalysis).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -118,8 +113,7 @@ namespace Lemoine.Analysis
         processValidityChecker.ResetStartDateTime (); // To give enough time to each machine module
 
         if (!processValidityChecker.IsValid ()) {
-          log.InfoFormat ("ManageAutoSequencePeriods: " +
-                          "requested to exit by processValidityChecker");
+          log.Info ("ManageAutoSequencePeriods: requested to exit by processValidityChecker");
           return;
         }
 
@@ -165,8 +159,7 @@ namespace Lemoine.Analysis
 
       if (range.IsEmpty ()) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ManageAutoSequencePeriodsByMachineModule: range is empty for machine module id {0} (nothing to process)",
-            machineModule.Id);
+          log.Debug ($"ManageAutoSequencePeriodsByMachineModule: range is empty for machine module id {machineModule.Id} (nothing to process)");
         }
         return;
       }
@@ -216,13 +209,11 @@ namespace Lemoine.Analysis
         bool isAutoSequence = currentAutoSequencePeriods.First ().AutoSequence;
         Debug.Assert (!currentRange.IsEmpty ());
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ManageAutoSequencePeriodsByMachineModule: " +
-                           "process auto-sequence period {0} {1}",
-                           currentRange, isAutoSequence);
+          log.Debug ($"ManageAutoSequencePeriodsByMachineModule: process auto-sequence period {currentRange} {isAutoSequence}");
         }
         if (!ApplyAutoSequencePeriodWithAttempts (machineModuleAnalysis, currentRange, isAutoSequence, matchingAutoSequences, analysisStatus, nbAttemptSerializationFailure, processValidityChecker)) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("ManageAutoSequencePeriodsByMachineModule: ApplyAutoSequencePeriodWithAttempds was interrupted");
+            log.Debug ("ManageAutoSequencePeriodsByMachineModule: ApplyAutoSequencePeriodWithAttempds was interrupted");
           }
           return;
         }

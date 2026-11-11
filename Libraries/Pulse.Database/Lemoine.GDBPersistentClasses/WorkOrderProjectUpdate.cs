@@ -29,13 +29,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class WorkOrderProjectUpdate: GlobalModification, IWorkOrderProjectUpdate
   {
-    #region Members
     IWorkOrder m_workOrder;
     IProject m_project;
     int m_oldQuantity;
     int m_newQuantity;
     WorkOrderProjectUpdateModificationType m_typeOfModification;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (WorkOrderProjectUpdate).FullName);
 
@@ -59,7 +57,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -81,8 +78,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("WorkOrder.set: " +
-                           "null value");
+          log.Error ("WorkOrder.set: null value");
           throw new ArgumentNullException ("WorkOrderProjectUpdate.WorkOrder");
         }
         m_workOrder = value;
@@ -110,8 +106,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.ErrorFormat ("Project.set: " +
-                           "null value");
+          log.Error ("Project.set: null value");
           throw new ArgumentNullException ("WorkOrderProjectUpdate.Project");
         }
         m_project = value;
@@ -151,9 +146,6 @@ namespace Lemoine.GDBPersistentClasses
       set { m_typeOfModification = value; }
     }
 
-    #endregion // Getters / Setters
-
-    #region Methods
     bool GetDataStructureOption (DataStructureConfigKey key)
     {
       return Lemoine.Info.ConfigSet
@@ -236,10 +228,9 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }    
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

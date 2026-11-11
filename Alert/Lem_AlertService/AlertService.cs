@@ -28,13 +28,11 @@ namespace Lem_AlertService
     static readonly string NOT_RESPONDING_TIMEOUT_KEY = "Alert.CheckThreads.Timeout";
     static readonly TimeSpan NOT_RESPONDING_TIMEOUT_DEFAULT = TimeSpan.FromMinutes (5);
 
-    #region Members
     readonly IApplicationInitializer m_applicationInitializer;
     readonly CancellationTokenSource m_cancellationTokenSource = new CancellationTokenSource ();
     bool m_disposed = false;
     AlertEngine m_alertEngine;
     readonly CheckThreadsAndProcesses m_check = new CheckThreadsAndProcesses ();
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (AlertService).FullName);
 
@@ -53,7 +51,6 @@ namespace Lem_AlertService
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="IThreadService"/>
     /// </summary>
@@ -156,7 +153,6 @@ namespace Lem_AlertService
       m_check?.Abort ();
       m_alertEngine?.Abort ();
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

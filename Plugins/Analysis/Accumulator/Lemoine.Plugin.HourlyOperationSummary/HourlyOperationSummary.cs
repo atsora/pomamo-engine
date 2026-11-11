@@ -27,7 +27,6 @@ namespace Lemoine.Plugin.HourlyOperationSummary
   [Serializable]
   public class HourlyOperationSummary : BaseData, IHourlyOperationSummary, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachine m_machine;
@@ -47,11 +46,9 @@ namespace Lemoine.Plugin.HourlyOperationSummary
     int m_adjustedCycles = 0;
     int m_adjustedQuantity = 0;
     // Note: if you add some summary values here, do not forget to update the method IsEmpty () accordingly
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (HourlyOperationSummary).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -322,7 +319,6 @@ namespace Lemoine.Plugin.HourlyOperationSummary
         m_adjustedQuantity = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

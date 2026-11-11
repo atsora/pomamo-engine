@@ -64,7 +64,6 @@ namespace Lemoine.ModelDAO
     object m_newData;
     string m_property;
     
-    #region Getters / Setters
     /// <summary>
     /// Old data
     /// </summary>
@@ -85,7 +84,6 @@ namespace Lemoine.ModelDAO
     public string Property {
       get { return m_property; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// Forbidden constructor

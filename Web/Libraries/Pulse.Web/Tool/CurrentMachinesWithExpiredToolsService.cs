@@ -34,7 +34,6 @@ namespace Pulse.Web.Tool
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -62,6 +61,5 @@ namespace Pulse.Web.Tool
       
       return result;
     }
-    #endregion // Methods
   }
 }

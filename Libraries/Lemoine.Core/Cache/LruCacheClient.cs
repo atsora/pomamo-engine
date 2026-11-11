@@ -34,21 +34,17 @@ namespace Lemoine.Core.Cache
       public DateTime? ExpirationDateTime;
     }
 
-    #region Members
     readonly int m_size;
     LRUDictionary<string, CacheItem> m_lruDictionary;
     volatile int m_batchUpdateLevel = 0;
     readonly ConcurrentBag<string> m_batchUpdatePendingRegexes = new ConcurrentBag<string> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (LruCacheClient).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Flush the memory on Dispose
     /// </summary>
     public bool FlushOnDispose { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

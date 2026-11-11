@@ -21,7 +21,6 @@ namespace Lemoine.Plugin.EventListener
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Plugin).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -50,10 +49,5 @@ namespace Lemoine.Plugin.EventListener
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

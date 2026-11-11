@@ -53,7 +53,6 @@ namespace Pulse.Web.Cache
 #endif // NSERVICEKIT
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -62,15 +61,13 @@ namespace Pulse.Web.Cache
     public override async Task<object> Get (ClearDomainByMachineModuleRequestDTO request)
     {
       if (string.IsNullOrEmpty (request.Domain)) {
-        log.ErrorFormat ("GetWithoutCache: " +
-                         "empty domain");
+        log.Error ("GetWithoutCache: empty domain");
         return new ErrorDTO ("empty domain", ErrorStatus.WrongRequestParameter);
       }
 
 #if NSERVICEKIT
       if (!(this.NServiceKitCacheClient is Lemoine.Core.Cache.ICacheClient)) {
-        log.FatalFormat ("GetWithoutCache: " +
-                         "cache client is not a Lemoine.Core.Cache.ICacheClient");
+        log.Fatal ("GetWithoutCache: cache client is not a Lemoine.Core.Cache.ICacheClient");
         return new ErrorDTO ("Cache client not a Lemoine.Core.Cache.ICacheClient", ErrorStatus.UnexpectedError);
       }
       m_cacheClient = this.NServiceKitCacheClient as Lemoine.Core.Cache.ICacheClient;
@@ -130,7 +127,5 @@ namespace Pulse.Web.Cache
         }
       }
     }
-    
-#endregion // Methods
   }
 }

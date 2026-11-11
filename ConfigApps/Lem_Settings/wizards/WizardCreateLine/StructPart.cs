@@ -17,7 +17,6 @@ namespace WizardCreateLine
   {
     static readonly ILog log = LogManager.GetLogger(typeof (StructPart).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// True if the part already exists
     /// </summary>
@@ -47,7 +46,6 @@ namespace WizardCreateLine
     /// First operation, "null" if none
     /// </summary>
     public IOperation BaseOperation { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -101,7 +99,6 @@ namespace WizardCreateLine
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Textual description
     /// </summary>
@@ -138,6 +135,5 @@ namespace WizardCreateLine
         return "b" + this.ToString();
       }
     }
-    #endregion // Methods
   }
 }

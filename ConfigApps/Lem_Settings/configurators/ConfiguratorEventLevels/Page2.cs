@@ -15,11 +15,8 @@ namespace ConfiguratorEventLevel
   /// </summary>
   internal partial class Page2 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     bool m_viewMode;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -41,7 +38,6 @@ namespace ConfiguratorEventLevel
           LemSettingsGlobal.PageFlag.WITH_VALIDATION;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

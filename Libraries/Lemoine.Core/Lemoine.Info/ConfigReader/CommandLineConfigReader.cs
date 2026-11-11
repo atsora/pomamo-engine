@@ -21,9 +21,6 @@ namespace Lemoine.Info.ConfigReader
 
     readonly IDictionary<string, string> m_dictionary = new ConcurrentDictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor
@@ -97,9 +94,6 @@ namespace Lemoine.Info.ConfigReader
     , IGenericConfigReader
   {
     static readonly ILog log = LogManager.GetLogger (typeof (CommandLineConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

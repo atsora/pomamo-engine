@@ -15,11 +15,8 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageStamping : GenericWizardPage, IWizardPage
   {
-    #region Members
     IDictionary<string, CncDocument> m_xmlData = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -38,7 +35,6 @@ namespace WizardMonitorMachine
 "The old configuration, if any, is displayed on the bottom of the page.";
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

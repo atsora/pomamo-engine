@@ -17,13 +17,10 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineFilterCell: MachineFilterItem, IMachineFilterCell
   {
-    #region Members
     ICell m_cell;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineFilterCell).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated Cell (not null)
     /// </summary>
@@ -34,14 +31,13 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (null == value) {
-          log.FatalFormat ("Cell.set: null value");
+          log.Fatal ("Cell.set: null value");
           throw new ArgumentNullException ("Cell.set");
         }
         
         m_cell = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

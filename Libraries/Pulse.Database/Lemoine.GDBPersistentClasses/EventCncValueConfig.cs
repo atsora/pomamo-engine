@@ -77,13 +77,13 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.FatalFormat ("Name can't be null");
+          log.Fatal ("Name can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Name in EventCncValueConfig");
         }
         else {
           if (string.IsNullOrEmpty (value)) {
-            log.FatalFormat ("Name can't be empty");
+            log.Fatal ("Name can't be empty");
             Debug.Assert (null != value);
             throw new ArgumentException ("empty Name in EventCncValueConfig");
           }
@@ -101,7 +101,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.FatalFormat ("Message can't be null");
+          log.Fatal ("Message can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Message in EventCncValueConfig");
         }
@@ -121,7 +121,7 @@ namespace Lemoine.GDBPersistentClasses
       protected set
       {
         if (null == value) {
-          log.FatalFormat ("Field can't be null");
+          log.Fatal ("Field can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Field in EventCncValueConfig");
         }
@@ -149,7 +149,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.FatalFormat ("Condition can't be null");
+          log.Fatal ("Condition can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Condition in EventCncValueConfig");
         }
@@ -175,7 +175,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.FatalFormat ("EventLevel can't be null");
+          log.Fatal ("EventLevel can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException ("null Level in EventCncValueConfig");
         }

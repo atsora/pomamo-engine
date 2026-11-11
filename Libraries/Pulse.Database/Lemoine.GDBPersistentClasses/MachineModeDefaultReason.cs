@@ -22,7 +22,6 @@ namespace Lemoine.GDBPersistentClasses
   {
     static readonly int DEFAULT_SCORE = 10;
 
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineMode m_machineMode;
@@ -34,7 +33,6 @@ namespace Lemoine.GDBPersistentClasses
     bool m_overwriteRequired = false;
     bool m_auto = false;
     double m_score = DEFAULT_SCORE;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineModeDefaultReason).FullName);
 
@@ -60,7 +58,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// MachineModeDefaultReason ID
     /// </summary>
@@ -124,8 +121,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         if (null == value) {
           Debug.Assert (null != value);
-          log.ErrorFormat ("Reason.set: " +
-                           "a null reason is not allowed");
+          log.Error ("Reason.set: a null reason is not allowed");
           throw new ArgumentNullException ("MachineModeDefaultReason.Reason");
         }
         m_reason = value;
@@ -155,7 +151,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_score;  }
       set { m_score = value; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// Check if this default reason is applicable to the machine
@@ -170,10 +165,9 @@ namespace Lemoine.GDBPersistentClasses
       // Test the includemachinefilter is ok
       if (null != this.IncludeMachineFilter) {
         if (!this.IncludeMachineFilter.IsMatch (machine)) {
-          log.DebugFormat ("MatchMachine: " +
-                           "the machine {0} does not match the include machine filter {1}",
-                           machine,
-                           IncludeMachineFilter);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MatchMachine: the machine {machine} does not match the include machine filter {IncludeMachineFilter}");
+          }
           return false;
         }
       }
@@ -181,10 +175,9 @@ namespace Lemoine.GDBPersistentClasses
       // Test the excludemachinefilter is ok
       if (null != this.ExcludeMachineFilter) {
         if (this.ExcludeMachineFilter.IsMatch (machine)) {
-          log.DebugFormat ("MatchMachine: " +
-                           "the machine {0} matches the exclude machine filter {1}",
-                           machine,
-                           ExcludeMachineFilter);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MatchMachine: the machine {machine} matches the exclude machine filter {ExcludeMachineFilter}");
+          }
           return false;
         }
       }

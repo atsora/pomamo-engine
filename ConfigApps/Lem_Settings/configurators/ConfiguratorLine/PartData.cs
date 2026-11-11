@@ -16,19 +16,15 @@ namespace ConfiguratorLine
   /// </summary>
   public class PartData
   {
-    #region Members
     readonly IDictionary<IPart, string> m_partCodes = new Dictionary<IPart, string>();
     readonly IDictionary<IPart, string> m_partNames = new Dictionary<IPart, string>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (PartData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Number of parts for the line
     /// </summary>
     public int Count { get { return m_partCodes.Count; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -37,7 +33,6 @@ namespace ConfiguratorLine
     public PartData() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Load part names and codes for a line
     /// </summary>
@@ -180,6 +175,5 @@ namespace ConfiguratorLine
       
       return text;
     }
-    #endregion // Methods
   }
 }

@@ -87,9 +87,7 @@ namespace Lemoine.GDBPersistentClasses
       try {
         IReason existingReason = FindById (reason.Id);
         if (null == existingReason) { // the config does not exist => create it
-          log.InfoFormat ("InsertDefaultValue: " +
-                          "add id={0} translationKey={1}",
-                          reason.Id, reason.TranslationKey);
+          log.Info ($"InsertDefaultValue: add id={reason.Id} translationKey={reason.TranslationKey}");
           // Use a raw SQL Command, else the Id is reset
           using (var command = NHibernateHelper.GetCurrentSession ().Connection.CreateCommand())
           {
@@ -103,11 +101,7 @@ VALUES ({0}, '{1}', {2})",
         }
       }
       catch (Exception ex) {
-        log.ErrorFormat ("InsertDefaultValue: " +
-                         "inserting new reason {0} " +
-                         "failed with {1}",
-                         reason,
-                         ex);
+        log.Error ($"InsertDefaultValue: inserting new reason {reason} failed with {ex}");
       }
     }
     #endregion // DefaultValues

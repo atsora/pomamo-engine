@@ -19,10 +19,6 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
   /// </summary>
   public class Plugin: PluginWithConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
-    #region Members
-    #endregion // Members
-    
-    #region Getters / Setters
     /// <summary>
     /// Name of the plugin, displayed to the user
     /// </summary>
@@ -55,7 +51,6 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
     /// May be null
     /// </summary>
     public override IPluginConfigurationControl ConfigurationControl { get { return null; } }    
-    #endregion // Getters / Setters
     
     static readonly ILog log = LogManager.GetLogger(typeof (Plugin).FullName);
 

@@ -28,13 +28,10 @@ namespace Lemoine.BaseControls
     public event Action SelectionChanged;
     #endregion
     
-    #region Members
     TreeViewBuilder m_builder = null;
     bool m_enableSelectionChanged = true;
     readonly NullableDictionary<object, Color> m_itemColors = new NullableDictionary<object, Color>();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Get or set the selected elements
     /// return final and non final nodes (only if NodeIsSelectable) that are selected
@@ -98,7 +95,6 @@ namespace Lemoine.BaseControls
     /// Function to color the elements
     /// </summary>
     public Func<object, Color> ColorFunction { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -114,7 +110,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get builder associated to the treeview
     /// </summary>
@@ -361,6 +356,5 @@ namespace Lemoine.BaseControls
     {
       m_itemColors.Clear();
     }
-    #endregion // Methods
   }
 }

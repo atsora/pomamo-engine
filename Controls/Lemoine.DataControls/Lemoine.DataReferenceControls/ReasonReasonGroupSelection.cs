@@ -20,15 +20,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class ReasonReasonGroupSelection : UserControl
   {
-    #region Members
     string m_reasonDisplayedProperty = "Display";
     string m_reasonGroupDisplayedProperty = "Display";
     IReason m_reason = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonReasonGroupSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null reason or reason group a valid value ?
     /// </summary>
@@ -88,7 +85,6 @@ namespace Lemoine.DataReferenceControls
         this.m_reason = (IReason)value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Events
     /// <summary>

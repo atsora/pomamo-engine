@@ -16,13 +16,10 @@ namespace Lemoine.DataRepository
   /// </summary>
   public class RepositoryValidationHandler
   {
-    #region Members
     bool m_errors = false;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (RepositoryValidationHandler).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Some errors were raised by the parser
     /// </summary>
@@ -30,7 +27,6 @@ namespace Lemoine.DataRepository
     {
       get { return m_errors; }
     }
-    #endregion
 
     /// <summary>
     /// Constructor
@@ -48,13 +44,11 @@ namespace Lemoine.DataRepository
     {
       switch (e.Severity) {
         case XmlSeverityType.Error:
-          log.ErrorFormat ("Error in XML parsing: {0}",
-                           e.ToString ());
+          log.Error ($"Error in XML parsing: {e.ToString ()}");
           m_errors = true;
           break;
         case XmlSeverityType.Warning:
-          log.WarnFormat ("Warning in XML parsing: {0}",
-                          e.ToString ());
+          log.Warn ($"Warning in XML parsing: {e.ToString ()}");
           break;
       }
     }

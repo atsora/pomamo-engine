@@ -23,8 +23,6 @@ namespace Lemoine.WebService
   {
 
     static readonly ILog log = LogManager.GetLogger(typeof (NonConformanceService).FullName);
-
-#region Methods
     
 #region GetNonConformanceReasonList
     /// <summary>
@@ -55,7 +53,5 @@ namespace Lemoine.WebService
 #endregion //SaveNonConformanceReport
 
   }
-    
-#endregion // Methods
 }
 #endif // NSERVICEKIT

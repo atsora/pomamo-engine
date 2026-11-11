@@ -35,13 +35,10 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string MAX_AGE_LAST_OPERATION_SLOT_KEY = "Analysis.LinkOperation.MaxAgeLastOperationSlot";
     static readonly TimeSpan MAX_AGE_LAST_OPERATION_SLOT_DEFAULT = TimeSpan.FromDays (90); // About 3 months
     
-    #region Members
     LowerBound<DateTime> m_begin;
     UpperBound<DateTime> m_end;
     LinkDirection m_direction;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -127,7 +124,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_direction; }
       set { m_direction = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -203,9 +199,7 @@ namespace Lemoine.GDBPersistentClasses
           IMonitoredMachine monitoredMachine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (this.Machine.Id);
           if (null == monitoredMachine) {
-            log.ErrorFormat ("MakeAnalysis: " +
-                             "{0} is not monitored",
-                             this.Machine);
+            log.Error ($"MakeAnalysis: {this.Machine} is not monitored");
             MarkAsError ();
             return;
           }
@@ -222,9 +216,9 @@ namespace Lemoine.GDBPersistentClasses
               .FindFirstFactAfter (monitoredMachine,
                                    fact.End);
             if (null == nextFact) {
-              GetLogger ().DebugFormat ("MakeAnalysis: " +
-                                        "the retrieved fact is the latest " +
-                                        "=> no data management");
+              if (GetLogger ().IsDebugEnabled) {
+                GetLogger ().Debug ("MakeAnalysis: the retrieved fact is the latest => no data management");
+              }
               ProcessNoDataYet ();
               return;
             }
@@ -233,11 +227,7 @@ namespace Lemoine.GDBPersistentClasses
             }
           }
           else {
-            GetLogger ().WarnFormat ("MakeAnalysis: " +
-                                     "no fact exists for LinkOperation " +
-                                     "machine={0} begin={1} " +
-                                     "=> take begin time as fallback",
-                                     this.Machine, this.Begin);
+            GetLogger ().Warn ($"MakeAnalysis: no fact exists for LinkOperation machine={this.Machine} begin={this.Begin} => take begin time as fallback");
             linkOperationDateTime = this.Begin.HasValue
               ? this.Begin.Value
               : new DateTime (1970, 01, 02, 00, 00, 00, DateTimeKind.Utc);
@@ -258,10 +248,7 @@ namespace Lemoine.GDBPersistentClasses
                   < linkOperationDateTime.Subtract (maxAgeLastOperationSlot))) {
             string message = string.Format ("No operation slot {0} before {1}",
                                             maxAgeLastOperationSlot, linkOperationDateTime);
-            GetLogger ().WarnFormat ("MakeAnalysis: " +
-                                     "{0} " +
-                                     "=> give up (probably no operation identification)",
-                                     message);
+            GetLogger ().Warn ($"MakeAnalysis: {message} => give up (probably no operation identification)");
             AddAnalysisLog (LogLevel.WARN, message);
             MarkAsCompleted ("");
             (new LinkOperationDAO ()).MakePersistent (this);
@@ -291,9 +278,7 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
       else {
-        GetLogger ().FatalFormat ("MakeAnalysis: " +
-                                  "link direction {0} is not managed",
-                                  this.Direction);
+        GetLogger ().Fatal ($"MakeAnalysis: link direction {this.Direction} is not managed");
         throw new Exception ("Unmanaged LinkDirection in MakeAnalysis");
       }
     }
@@ -307,7 +292,7 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      GetLogger ().FatalFormat ("Apply: not implemented/supported");
+      GetLogger ().Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }
 
@@ -321,10 +306,7 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
       else {
-        GetLogger ().WarnFormat ("MakeAnalysis: " +
-                                 "no data has been found to process the modification " +
-                                 "and it is too old, " +
-                                 "make it obsolete");
+        GetLogger ().Warn ("MakeAnalysis: no data has been found to process the modification and it is too old, make it obsolete");
         AddAnalysisLog (LogLevel.WARN, "Obsolete");
         MarkAsObsolete ();
         (new LinkOperationDAO ()).MakePersistent (this);

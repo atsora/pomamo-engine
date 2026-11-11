@@ -53,8 +53,7 @@ namespace Lemoine.Business.DynamicTimes
       var logger = GetDynamicTimeLogger (name, machine);
       if (response.Timeout) {
         if (logger.IsErrorEnabled) {
-          logger.ErrorFormat ("({0}): Timeout, dateTime={1} hint={2} limit={3}",
-            parameter, dateTime, hint, limit);
+          logger.Error ($"({parameter}): Timeout, dateTime={dateTime} hint={hint} limit={limit}");
         }
       }
       else if (response.NotApplicable) {
@@ -221,7 +220,7 @@ namespace Lemoine.Business.DynamicTimes
       else {
         if (match.Groups[3].Success) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("ExtractNameParameter: name={0} parameter={1}", match.Groups[1].Value, match.Groups[3].Value);
+            log.Debug ($"ExtractNameParameter: name={match.Groups[1].Value} parameter={match.Groups[3].Value}");
           }
           return (match.Groups[1].Value, match.Groups[3].Value);
         }
@@ -313,7 +312,7 @@ namespace Lemoine.Business.DynamicTimes
       IDynamicTimeResponse response;
 
       if (!extensions.Any ()) {
-        log.ErrorFormat ("GetDynamicTime: no dynamic time extension with name {0}", nameWithoutParameter);
+        log.Error ($"GetDynamicTime: no dynamic time extension with name {nameWithoutParameter}");
         var logger = GetDynamicTimeLogger (nameWithoutParameter, machine);
         if (logger.IsFatalEnabled) {
           logger.Fatal ($"no dynamic time with that name");
@@ -331,7 +330,7 @@ namespace Lemoine.Business.DynamicTimes
         return response;
       }
       else { // More than 1 extension
-        log.WarnFormat ("GetDynamicTime: more than one dynamic end with name {0}", nameWithoutParameter);
+        log.Warn ($"GetDynamicTime: more than one dynamic end with name {nameWithoutParameter}");
         IEnumerable<(IDynamicTimeExtension,IDynamicTimeResponse)> responses = extensions
           .Select (extension => (extension,GetDynamicTime (extension, dateTime, hint, limit)));
 
@@ -367,7 +366,7 @@ namespace Lemoine.Business.DynamicTimes
           .Select (r => r.Item2.Hint)
           .Aggregate (new UtcDateTimeRange ("(,)"), (a, b) => new UtcDateTimeRange (a.Intersects (b)));
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("GetDynamicTime: return hint {0} from multiple extensions", hint);
+          log.Debug ($"GetDynamicTime: return hint {hint} from multiple extensions");
         }
         response = responses.First ().Item1.CreateWithHint (hint);
         LogDynamicTimeResponse (nameWithoutParameter, parameter, machine, dateTime, hint, limit, response, notApplicableExpected: notApplicableExpected);
@@ -394,7 +393,7 @@ namespace Lemoine.Business.DynamicTimes
       if (name.EndsWith ("+")) {
         Debug.Assert (range.Upper.HasValue);
         if (!range.Upper.HasValue) {
-          log.ErrorFormat ("PreProcessName: dynamic time {0} with the + suffix and no upper bound in {1}", name, range);
+          log.Error ($"PreProcessName: dynamic time {name} with the + suffix and no upper bound in {range}");
           throw new ArgumentException ("incompatible name and range");
         }
         if (range.UpperInclusive) {
@@ -452,7 +451,7 @@ namespace Lemoine.Business.DynamicTimes
       var extensions = GetExtensions (nameWithoutParameter, parameter, machine);
 
       if (!extensions.Any ()) {
-        log.ErrorFormat ("IsDynamicTimeApplicable: no dynamic time extension with name {0}", nameWithoutParameter);
+        log.Error ($"IsDynamicTimeApplicable: no dynamic time extension with name {nameWithoutParameter}");
         var logger = GetDynamicTimeLogger (nameWithoutParameter, machine);
         if (logger.IsFatalEnabled) {
           logger.Fatal ("no dynamic time with that name");
@@ -468,7 +467,7 @@ namespace Lemoine.Business.DynamicTimes
         return IsApplicable (extension);
       }
       else { // More than 1 extension
-        log.WarnFormat ("IsDynamicTimeApplicable: more than one dynamic end with name {0}", nameWithoutParameter);
+        log.Warn ($"IsDynamicTimeApplicable: more than one dynamic end with name {nameWithoutParameter}");
         return extensions
           .Any (extension => IsApplicable (extension));
       }
@@ -515,7 +514,7 @@ namespace Lemoine.Business.DynamicTimes
     {
       var extensions = GetExtensions (nameWithoutParameter, parameter, machine);
       if (!extensions.Any ()) {
-        log.ErrorFormat ("IsApplicableAt: no dynamic time extension with name {0}", nameWithoutParameter);
+        log.Error ($"IsApplicableAt: no dynamic time extension with name {nameWithoutParameter}");
         var logger = GetDynamicTimeLogger (nameWithoutParameter, machine);
         if (logger.IsFatalEnabled) {
           logger.Fatal ("no dynamic time with that name");
@@ -549,19 +548,19 @@ namespace Lemoine.Business.DynamicTimes
         return IsApplicableAt (extension, at);
       }
       else { // More than 1 extension
-        log.WarnFormat ("IsApplicableAt: more than one dynamic end with name {0}", extensions.First ().Name);
+        log.Warn ($"IsApplicableAt: more than one dynamic end with name {extensions.First ().Name}");
         var results = extensions
           .Select (extension => IsApplicableAt (extension, at));
         var firstResult = results.First ();
         if (results.All (x => x.Equals (firstResult))) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("IsApplicableAt: same result in all the extensions: {0}", firstResult);
+            log.Debug ($"IsApplicableAt: same result in all the extensions: {firstResult}");
           }
           return firstResult;
         }
         if (results.Any (x => x.Equals (DynamicTimeApplicableStatus.Pending))) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("IsApplicableAt: one extension returned Pending => Pending");
+            log.Debug ("IsApplicableAt: one extension returned Pending => Pending");
           }
           return DynamicTimeApplicableStatus.Pending;
         }
@@ -571,7 +570,7 @@ namespace Lemoine.Business.DynamicTimes
         if (results.All (x => x.Equals (DynamicTimeApplicableStatus.Never) || x.Equals (DynamicTimeApplicableStatus.NoAtDateTime))) {
           return DynamicTimeApplicableStatus.NoAtDateTime;
         }
-        log.FatalFormat ("IsApplicableAt: one unexpected case");
+        log.Fatal ("IsApplicableAt: one unexpected case");
         Debug.Assert (false);
         throw new InvalidProgramException ();
       }

@@ -16,7 +16,6 @@ namespace WizardEventLongPeriod
   {
     static readonly ILog log = LogManager.GetLogger(typeof (EventLevelCell).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Get / set the time
     /// </summary>
@@ -37,7 +36,6 @@ namespace WizardEventLongPeriod
     /// Get the event level
     /// </summary>
     public IEventLevel EventLevel { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

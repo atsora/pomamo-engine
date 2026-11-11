@@ -15,13 +15,10 @@ namespace Lemoine.Alert.TestActions
   /// </summary>
   public class CollectionAction: Lemoine.Extensions.Alert.IAction
   {
-    #region Members
     ICollection<string> m_collection;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (CollectionAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Queue where the data is injected
     /// </summary>
@@ -29,7 +26,6 @@ namespace Lemoine.Alert.TestActions
     {
       get { return m_collection; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -42,7 +38,6 @@ namespace Lemoine.Alert.TestActions
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implements <see cref="IAction" />
     /// </summary>
@@ -51,6 +46,5 @@ namespace Lemoine.Alert.TestActions
     {
       m_collection.Add (data.OuterXml);
     }
-    #endregion // Methods
   }
 }

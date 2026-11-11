@@ -213,15 +213,10 @@ namespace Lemoine.Plugin.CycleDurationSummary
       public int Partial;
     }
 
-    #region Members
     IDictionary<CycleDurationSummaryKey, CycleDurationSummaryValue> m_cycleDurationSummaryAccumulator =
       new Dictionary<CycleDurationSummaryKey, CycleDurationSummaryValue> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CycleDurationSummaryAccumulator).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -276,31 +271,32 @@ namespace Lemoine.Plugin.CycleDurationSummary
                              int increment)
     {
       if (0 == increment) {
-        log.DebugFormat ("UpdateCycleCount: " +
-                         "increment is 0 => nothing to do");
+        if (log.IsDebugEnabled) {
+          log.Debug ("UpdateCycleCount: increment is 0 => nothing to do");
+        }
         return;
       }
 
       double? offsetDuration = operationCycle.OffsetDuration;
       if (!offsetDuration.HasValue) {
-        log.DebugFormat ("UpdateCycleCount: " +
-                         "offsetDuration is null => nothing to do");
+        if (log.IsDebugEnabled) {
+          log.Debug ("UpdateCycleCount: offsetDuration is null => nothing to do");
+        }
         return;
       }
 
       if (!operationCycle.Begin.HasValue && !operationCycle.End.HasValue) {
-        log.DebugFormat ("UpdateCycleCount: " +
-                         "the operation cycle count has not been fully initialized yet " +
-                         "(no begin and no end) " +
-                         "=> nothing to do");
+        if (log.IsDebugEnabled) {
+          log.Debug ("UpdateCycleCount: the operation cycle count has not been fully initialized yet (no begin and no end) => nothing to do");
+        }
         return;
       }
 
       IOperationSlot operationSlot = operationCycle.OperationSlot;
       if (null == operationSlot) {
-        log.DebugFormat ("UpdateCycleCount: " +
-                         "operationSlot is null " +
-                         "=> skip it");
+        if (log.IsDebugEnabled) {
+          log.Debug ("UpdateCycleCount: operationSlot is null => skip it");
+        }
         return;
       }
       if (!ModelDAOHelper.DAOFactory.IsInitialized (operationSlot)) {
@@ -308,9 +304,9 @@ namespace Lemoine.Plugin.CycleDurationSummary
           .FindById (operationSlot.Id, operationCycle.Machine);
       }
       if (null == operationSlot.Operation) {
-        log.DebugFormat ("UpdateCycleCount: " +
-                         "operation is null " +
-                         "=> skip it");
+        if (log.IsDebugEnabled) {
+          log.Debug ("UpdateCycleCount: operation is null => skip it");
+        }
         return;
       }
       Debug.Assert (null != operationSlot);
@@ -387,9 +383,7 @@ namespace Lemoine.Plugin.CycleDurationSummary
                                            (int)Math.Round (offsetDuration.Value));
             CycleDurationSummaryValue v;
             if (!m_cycleDurationSummaryAccumulator.TryGetValue (key, out v)) {
-              log.ErrorFormat ("AfterOperationSlotUpdate: " +
-                               "no summary found for cycle {0}, which is not expected",
-                               cycle);
+              log.Error ($"AfterOperationSlotUpdate: no summary found for cycle {cycle}, which is not expected");
             }
             else {
               if (cycle.Full) {

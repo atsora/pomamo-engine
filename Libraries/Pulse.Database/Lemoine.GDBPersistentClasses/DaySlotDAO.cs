@@ -195,16 +195,11 @@ namespace Lemoine.GDBPersistentClasses
           if (ModelDAOHelper.DAOFactory.IsTransactionReadOnly ()) {
             // alternative method to compute live a day slot at a given time
             // (i.e. without updating the database)
-            log.WarnFormat ("FindProcessedAt: " +
-                            "the transaction is read-only " +
-                            "=> compute live the day slot at {0}",
-                            dateTime);
+            log.Warn ($"FindProcessedAt: the transaction is read-only => compute live the day slot at {dateTime}");
             return GetLiveAt (daySlot.DayTemplate, dateTime);
           }
           else { // Read-write transaction
-            log.WarnFormat ("FindProcessedAt: " +
-                            "slot {0} was not processed yet, do it now",
-                            daySlot);
+            log.Warn ($"FindProcessedAt: slot {daySlot} was not processed yet, do it now");
             daySlot.ProcessTemplate (CancellationToken.None, new UtcDateTimeRange (dateTime,
                                                            dateTime,
                                                            "[]"),
@@ -241,16 +236,11 @@ namespace Lemoine.GDBPersistentClasses
           if (ModelDAOHelper.DAOFactory.IsTransactionReadOnly ()) {
             // alternative method to compute live a day slot at a given time
             // (i.e. without updating the database)
-            log.WarnFormat ("FindProcessedAt: " +
-                            "the transaction is read-only " +
-                            "=> compute live the day slot at {0}",
-                            dateTime);
+            log.Warn ($"FindProcessedAt: the transaction is read-only => compute live the day slot at {dateTime}");
             return GetLiveAt (daySlot.DayTemplate, dateTime);
           }
           else { // Read-write transaction
-            log.WarnFormat ("FindProcessedAt: " +
-                            "slot {0} was not processed yet, do it now",
-                            daySlot);
+            log.Warn ($"FindProcessedAt: slot {daySlot} was not processed yet, do it now");
             daySlot.ProcessTemplate (CancellationToken.None, new UtcDateTimeRange (dateTime,
                                                            dateTime,
                                                            "[]"),
@@ -305,9 +295,9 @@ namespace Lemoine.GDBPersistentClasses
             }
             UtcDateTimeRange dayUtcRange = new UtcDateTimeRange (dayLocalBegin, dayLocalEnd);
             if (dayUtcRange.ContainsElement (dateTime)) { // The right day is found
-              log.DebugFormat ("GetLiveAt: " +
-                               "day {0} {1} was found for {2}",
-                               day, dayUtcRange, dateTime);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetLiveAt: day {day} {dayUtcRange} was found for {dateTime}");
+              }
               IDaySlot daySlot = ModelDAOHelper.ModelFactory.CreateDaySlot (dayTemplate, dayUtcRange);
               daySlot.Day = day;
               return daySlot;
@@ -317,10 +307,7 @@ namespace Lemoine.GDBPersistentClasses
         day = day.AddDays (1).Date;
       }
 
-      log.ErrorFormat ("GetLiveAt: " +
-                       "there is no matching template item at {0} " +
-                       "=> the day slot could not be computed live",
-                       dateTime);
+      log.Error ($"GetLiveAt: there is no matching template item at {dateTime} => the day slot could not be computed live");
       throw new InvalidOperationException ("DaySlotDAO.GetLiveAt failure");
     }
 
@@ -380,10 +367,7 @@ namespace Lemoine.GDBPersistentClasses
         day = day.AddDays (1).Date;
       }
 
-      log.ErrorFormat ("GetLiveAt: " +
-                       "there is no matching template item at {0} " +
-                       "=> the day slot could not be computed live",
-                       dateTime);
+      log.Error ($"GetLiveAt: there is no matching template item at {dateTime} => the day slot could not be computed live");
       throw new InvalidOperationException ("DaySlotDAO.GetLiveAt failure");
     }
 
@@ -516,9 +500,7 @@ namespace Lemoine.GDBPersistentClasses
             Debug.Assert (false); // Normally not, else there is no need to compute it live
             // but the result is ok
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetLiveDay: " +
-                               "got day slot {0} in database directly",
-                               slot);
+              log.Debug ($"GetLiveDay: got day slot {slot} in database directly");
             }
             return slot;
           }
@@ -669,10 +651,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      log.ErrorFormat ("GetLiveDay: " +
-                       "there is no matching template item for day {0} " +
-                       "=> the day slot could not be computed live",
-                       day);
+      log.Error ($"GetLiveDay: there is no matching template item for day {day} => the day slot could not be computed live");
       throw new InvalidOperationException ("DaySlotDAO.GetLiveDay failure");
     }
 
@@ -699,9 +678,9 @@ namespace Lemoine.GDBPersistentClasses
           if (slot.Day.Value.Equals (day)) {
             Debug.Assert (false); // Normally not, else there is no need to compute it live
             // but the result is ok
-            log.DebugFormat ("GetLiveDayBegin: " +
-                             "got day slot {0} in database directly",
-                             slot);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetLiveDayBegin: got day slot {slot} in database directly");
+            }
             Debug.Assert (slot.BeginDateTime.HasValue);
             return slot.BeginDateTime.Value;
           }
@@ -726,9 +705,9 @@ namespace Lemoine.GDBPersistentClasses
 
               DateTime dayUtcBegin = day.Add (correctedCutOff).ToUniversalTime ();
               if (slot.DateTimeRange.ContainsElement (dayUtcBegin)) {
-                log.DebugFormat ("GetLiveDayBegin: " +
-                                 "day begin is {0} for {1}",
-                                 dayUtcBegin, day);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetLiveDayBegin: day begin is {dayUtcBegin} for {day}");
+                }
                 return dayUtcBegin;
               }
             } // DayOfWeek
@@ -736,10 +715,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      log.ErrorFormat ("GetLiveDayBegin: " +
-                       "there is no matching template item for day {0} " +
-                       "=> the day slot could not be computed live",
-                       day);
+      log.Error ($"GetLiveDayBegin: there is no matching template item for day {day} => the day slot could not be computed live");
       throw new InvalidOperationException ("DaySlotDAO.GetLiveDayBegin failure");
     }
 
@@ -753,9 +729,7 @@ namespace Lemoine.GDBPersistentClasses
     public IList<IDaySlot> FindProcessedInRange (UtcDateTimeRange range)
     {
       if (!IsProcessedRangeValid (range)) {
-        log.ErrorFormat ("FindProcessedInRange: " +
-                         "specified range {0} is not valid",
-                         range);
+        log.Error ($"FindProcessedInRange: specified range {range} is not valid");
         throw new ArgumentOutOfRangeException ("range");
       }
 
@@ -766,9 +740,7 @@ namespace Lemoine.GDBPersistentClasses
       IDaySlot firstSlot = FindProcessedAt (range.Lower.Value);
       if (null == firstSlot) {
         Debug.Assert (null != firstSlot);
-        log.ErrorFormat ("FindProcessedInRange: " +
-                         "no processed day slot at {0}",
-                         range.Lower.Value);
+        log.Error ($"FindProcessedInRange: no processed day slot at {range.Lower.Value}");
         throw new InvalidOperationException ("No first day slot");
       }
       result.Add (firstSlot);
@@ -786,9 +758,7 @@ namespace Lemoine.GDBPersistentClasses
       IDaySlot lastSlot = FindProcessedAt (endDateTime);
       if (null == lastSlot) {
         Debug.Assert (null != lastSlot);
-        log.ErrorFormat ("FindProcessedInRange: " +
-                         "no processed day slot at {0}",
-                         endDateTime);
+        log.Error ($"FindProcessedInRange: no processed day slot at {endDateTime}");
         throw new InvalidOperationException ("No last day slot");
       }
 
@@ -804,11 +774,7 @@ namespace Lemoine.GDBPersistentClasses
           result.Add (daySlot);
         }
         else { // null == daySlot
-          log.WarnFormat ("FindProcessedInDayRange: " +
-                          "no processed day found for {0}, " +
-                          "probably because the day is too old " +
-                          "=> skip it",
-                          day);
+          log.Warn ($"FindProcessedInDayRange: no processed day found for {day}, probably because the day is too old => skip it");
         }
       }
       result.Add (lastSlot);
@@ -826,9 +792,7 @@ namespace Lemoine.GDBPersistentClasses
     public IList<IDaySlot> FindProcessedInDayRange (DayRange range)
     {
       if (!IsProcessedDayRangeValid (range)) {
-        log.ErrorFormat ("FindProcessedInDayRange: " +
-                         "specified range {0} is not valid",
-                         range);
+        log.Error ($"FindProcessedInDayRange: specified range {range} is not valid");
         throw new ArgumentOutOfRangeException ("range");
       }
 
@@ -841,11 +805,7 @@ namespace Lemoine.GDBPersistentClasses
           result.Add (daySlot);
         }
         else { // null == daySlot
-          log.WarnFormat ("FindProcessedInDayRange: " +
-                          "no processed day found for {0}, " +
-                          "probably because the day is too old " +
-                          "=> skip it",
-                          day);
+          log.Warn ($"FindProcessedInDayRange: no processed day found for {day}, probably because the day is too old => skip it");
         }
         day = day.AddDays (1).Date;
       }
@@ -860,23 +820,17 @@ namespace Lemoine.GDBPersistentClasses
     bool IsProcessedRangeValid (UtcDateTimeRange range)
     {
       if (!range.Lower.HasValue) {
-        log.ErrorFormat ("IsProcessedRangeValid: " +
-                         "no lower bound in {0}",
-                         range);
+        log.Error ($"IsProcessedRangeValid: no lower bound in {range}");
         return false;
       }
 
       if (range.Lower.Value < AnalysisConfigHelper.MinTemplateProcessDateTime) {
-        log.ErrorFormat ("IsProcessedRangeValid: " +
-                         "lower bound of {0} is before min template process date/time {1}",
-                         range, AnalysisConfigHelper.MinTemplateProcessDateTime);
+        log.Error ($"IsProcessedRangeValid: lower bound of {range} is before min template process date/time {AnalysisConfigHelper.MinTemplateProcessDateTime}");
         return false;
       }
 
       if (!range.Upper.HasValue) {
-        log.ErrorFormat ("IsProcessedRangeValid: " +
-                         "no upper bound in {0}",
-                         range);
+        log.Error ($"IsProcessedRangeValid: no upper bound in {range}");
         return false;
       }
 
@@ -891,23 +845,17 @@ namespace Lemoine.GDBPersistentClasses
     bool IsProcessedDayRangeValid (DayRange range)
     {
       if (!range.Lower.HasValue) {
-        log.ErrorFormat ("IsProcessedDayRangeValid: " +
-                         "no lower bound in {0}",
-                         range);
+        log.Error ($"IsProcessedDayRangeValid: no lower bound in {range}");
         return false;
       }
 
       if (range.Lower.Value < AnalysisConfigHelper.MinTemplateProcessDateTime.Date) {
-        log.ErrorFormat ("IsProcessedDayRangeValid: " +
-                         "lower bound of {0} is before min template process date/time {1}",
-                         range, AnalysisConfigHelper.MinTemplateProcessDateTime);
+        log.Error ($"IsProcessedDayRangeValid: lower bound of {range} is before min template process date/time {AnalysisConfigHelper.MinTemplateProcessDateTime}");
         return false;
       }
 
       if (!range.Upper.HasValue) {
-        log.ErrorFormat ("IsProcessedDayRangeValid: " +
-                         "no upper bound in {0}",
-                         range);
+        log.Error ($"IsProcessedDayRangeValid: no upper bound in {range}");
         return false;
       }
 
@@ -926,11 +874,7 @@ namespace Lemoine.GDBPersistentClasses
       if (dateTime < AnalysisConfigHelper.MinTemplateProcessDateTime) { // Default
         DateTime localFallback = dateTime.ToLocalTime ().Date;
         DateTime fallback = new DateTime (localFallback.Year, localFallback.Month, localFallback.Day); // Unspecified
-        log.WarnFormat ("GetDay: " +
-                        "date/time is lower than {0} " +
-                        "=> fallback to {1}",
-                        AnalysisConfigHelper.MinTemplateProcessDateTime,
-                        fallback);
+        log.Warn ($"GetDay: date/time is lower than {AnalysisConfigHelper.MinTemplateProcessDateTime} => fallback to {fallback}");
         return fallback;
       }
 
@@ -941,29 +885,21 @@ namespace Lemoine.GDBPersistentClasses
             .FindProcessedAt (dateTime);
           Debug.Assert (null != daySlot);
           if (daySlot.Day.HasValue) {
-            log.DebugFormat ("GetDay: " +
-                             "day for {0} is {1}",
-                             dateTime, daySlot.Day.Value);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"GetDay: day for {dateTime} is {daySlot.Day.Value}");
+            }
             return daySlot.Day.Value;
           }
           else { // !daySlot.Day.HasValue
             Debug.Assert (daySlot.Day.HasValue); // This should not happen, the slot should be processed
             DateTime localFallback = dateTime.ToLocalTime ().Date;
             DateTime fallback = new DateTime (localFallback.Year, localFallback.Month, localFallback.Day); // Unspecified
-            log.FatalFormat ("GetDay: " +
-                             "day is unknown is slot {0}, " +
-                             "this should not happen because the slot should be processed " +
-                             "=> fallback to {1}",
-                             daySlot,
-                             fallback);
+            log.Fatal ($"GetDay: day is unknown is slot {daySlot}, this should not happen because the slot should be processed => fallback to {fallback}");
             return fallback;
           }
         }
       case DateTimeKind.Unspecified:
-        log.WarnFormat ("GetDay: " +
-                        "date/time {0} in parameter with an unspecified kind, " +
-                        "consider it is a UTC date/time",
-                        dateTime);
+        log.Warn ($"GetDay: date/time {dateTime} in parameter with an unspecified kind, consider it is a UTC date/time");
         DateTime utcDateTime = new DateTime (dateTime.Year, dateTime.Month, dateTime.Day,
                                              dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond,
                                              DateTimeKind.Utc);
@@ -972,9 +908,7 @@ namespace Lemoine.GDBPersistentClasses
         return GetDay (dateTime.ToUniversalTime ());
       default:
         Debug.Assert (false);
-        log.FatalFormat ("GetDay: " +
-                         "unknown kind {0}",
-                         dateTime.Kind);
+        log.Fatal ($"GetDay: unknown kind {dateTime.Kind}");
         throw new Exception ("Unknown date/time kind");
       }
     }
@@ -991,11 +925,7 @@ namespace Lemoine.GDBPersistentClasses
       if (dateTime < AnalysisConfigHelper.MinTemplateProcessDateTime) { // Default
         DateTime localFallback = dateTime.ToLocalTime ().Date;
         DateTime fallback = new DateTime (localFallback.Year, localFallback.Month, localFallback.Day); // Unspecified
-        log.WarnFormat ("GetDayAsync: " +
-                        "date/time is lower than {0} " +
-                        "=> fallback to {1}",
-                        AnalysisConfigHelper.MinTemplateProcessDateTime,
-                        fallback);
+        log.Warn ($"GetDayAsync: date/time is lower than {AnalysisConfigHelper.MinTemplateProcessDateTime} => fallback to {fallback}");
         return fallback;
       }
 
@@ -1080,11 +1010,7 @@ namespace Lemoine.GDBPersistentClasses
       if (range.Lower.HasValue) {
         if (range.Lower.Value < AnalysisConfigHelper.MinTemplateProcessDateTime) { // Fallback to another value
           beginDay = range.Lower.Value.ToLocalTime ().Date;
-          log.WarnFormat ("ConvertToDayRange: " +
-                          "begin date/time is lower than {0} " +
-                          "=> fallback to {1}",
-                          AnalysisConfigHelper.MinTemplateProcessDateTime,
-                          beginDay);
+          log.Warn ($"ConvertToDayRange: begin date/time is lower than {AnalysisConfigHelper.MinTemplateProcessDateTime} => fallback to {beginDay}");
         }
         else {
           beginSlot = FindProcessedAt (range.Lower.Value);
@@ -1095,11 +1021,7 @@ namespace Lemoine.GDBPersistentClasses
           }
           else { // Fallback: the day was not processed
             beginDay = range.Lower.Value.ToLocalTime ().Date;
-            log.ErrorFormat ("ConvertToDayRange: " +
-                             "day is unknown is slot {0} " +
-                             "=> fallback to {1}",
-                             beginSlot,
-                             beginDay);
+            log.Error ($"ConvertToDayRange: day is unknown is slot {beginSlot} => fallback to {beginDay}");
             beginSlot = null;
           }
         }
@@ -1117,11 +1039,7 @@ namespace Lemoine.GDBPersistentClasses
         }
         else if (range.Upper.Value < AnalysisConfigHelper.MinTemplateProcessDateTime) {
           endDay = range.Upper.Value.ToLocalTime ().AddDays (1).Date;
-          log.WarnFormat ("ConvertToDayRange: " +
-                          "begin date/time is lower than {0} " +
-                          "=> fallback to {1}",
-                          AnalysisConfigHelper.MinTemplateProcessDateTime,
-                          endDay);
+          log.Warn ($"ConvertToDayRange: begin date/time is lower than {AnalysisConfigHelper.MinTemplateProcessDateTime} => fallback to {endDay}");
         }
         else {
           endDay = GetEndDay (range.Upper.Value);
@@ -1319,12 +1237,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IDaySlot daySlot = FindProcessedByDay (day);
       if (null == daySlot) {
-        log.WarnFormat ("GetDayBegin: " +
-                        "no processed day found for {0}, " +
-                        "probably because the day is too old " +
-                        "=> fallback to {1}",
-                        day,
-                        day.Date.ToUniversalTime ());
+        log.Warn ($"GetDayBegin: no processed day found for {day}, probably because the day is too old => fallback to {day.Date.ToUniversalTime ()}");
         return day.Date.ToUniversalTime ();
       }
       Debug.Assert (daySlot.BeginDateTime.HasValue);
@@ -1356,12 +1269,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       IDaySlot daySlot = FindProcessedByDay (day);
       if (null == daySlot) {
-        log.WarnFormat ("GetDayBegin: " +
-                        "no processed day found for {0}, " +
-                        "probably because the day is too old " +
-                        "=> fallback to {1}",
-                        day,
-                        day.AddDays (1).Date.ToUniversalTime ());
+        log.Warn ($"GetDayBegin: no processed day found for {day}, probably because the day is too old => fallback to {day.AddDays (1).Date.ToUniversalTime ()}");
         return day.AddDays (1).Date.ToUniversalTime ();
       }
       Debug.Assert (daySlot.EndDateTime.HasValue);
@@ -1415,17 +1323,14 @@ namespace Lemoine.GDBPersistentClasses
     public void ProcessInRange (CancellationToken cancellationToken, UtcDateTimeRange range, Lemoine.Threading.IChecked checkedThread)
     {
       if (ModelDAOHelper.DAOFactory.IsTransactionReadOnly ()) {
-        log.FatalFormat ("ProcessInRange: " +
-                         "the transaction is read-only " +
-                         "=> the day slots can't be processed");
+        log.Fatal ("ProcessInRange: the transaction is read-only => the day slots can't be processed");
         throw new InvalidOperationException ("ProcessInRange in a read-only transaction");
       }
 
       UtcDateTimeRange effectiveRange = new UtcDateTimeRange (range.Intersects (new UtcDateTimeRange (AnalysisConfigHelper.MinTemplateProcessDateTime,
                                                                                                       DateTime.UtcNow.Add (AnalysisConfigHelper.MaxDaySlotProcess))));
       if (effectiveRange.IsEmpty ()) {
-        log.WarnFormat ("ProcessInRange: " +
-                        "effective range is empty");
+        log.Warn ("ProcessInRange: effective range is empty");
         return;
       }
 

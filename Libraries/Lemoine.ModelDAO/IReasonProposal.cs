@@ -80,7 +80,7 @@ namespace Lemoine.Model
         case ReasonProposalKind.Manual:
           return ReasonSource.Manual;
         default:
-          log.ErrorFormat ("ConvertToReasonSource: {0} can't be converted", kind);
+          log.Error ($"ConvertToReasonSource: {kind} can't be converted");
           throw new InvalidCastException ();
       }
     }

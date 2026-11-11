@@ -20,15 +20,12 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class ProductionStateSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     IList<IProductionState> m_productionStates = null;
     IProductionState m_productionState = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProductionStateSelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -113,7 +110,6 @@ namespace Lemoine.DataReferenceControls
         this.m_productionState = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -140,7 +136,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -178,7 +173,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     void ProductionStateSelectionLoad(object sender, EventArgs e)
     {

@@ -21,9 +21,6 @@ namespace Lemoine.NHibernateTypes
   {
     static readonly ILog log = LogManager.GetLogger (typeof (JsonAsTNewtonsoft<T>).FullName);
 
-    #region Members
-    #endregion Members
-
     #region Constructor
     /// <summary>
     /// Constructor
@@ -34,7 +31,6 @@ namespace Lemoine.NHibernateTypes
     }
     #endregion Constructor
 
-    #region Methods
     JsonSerializerSettings GetSerializationSettings ()
     {
       return new JsonSerializerSettings ()
@@ -56,7 +52,7 @@ namespace Lemoine.NHibernateTypes
       }
       catch (Exception ex) {
         string message = $"Data {v} is not a Json";
-        log.ErrorFormat ($"Get: {message}", ex);
+        log.Error ($"Get: {message}", ex);
         throw new FormatException (message, ex);
       }
     }
@@ -89,7 +85,6 @@ namespace Lemoine.NHibernateTypes
         throw;
       }
     }
-    #endregion // Methods
 
     #region AbstractType implementation
     /// <summary>

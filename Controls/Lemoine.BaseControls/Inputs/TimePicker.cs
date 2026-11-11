@@ -17,9 +17,7 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class TimePicker : System.Windows.Forms.DateTimePicker
   {
-    #region Members
     bool m_withSeconds = true;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -35,7 +33,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Override of "ShowUpDown", that does nothing
     /// </summary>
@@ -84,7 +81,6 @@ namespace Lemoine.BaseControls
       get { return this.Value.TimeOfDay; }
       set { this.Value = DateTime.Now.Date.Add (value); }
     }
-    #endregion // Getters / Setters
 
     #region Event reactions
     void OnMouseWheel (object sender, MouseEventArgs e)

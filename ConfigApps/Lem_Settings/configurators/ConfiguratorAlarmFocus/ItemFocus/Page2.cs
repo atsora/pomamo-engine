@@ -17,13 +17,10 @@ namespace ConfiguratorAlarmFocus
   /// </summary>
   internal partial class Page2 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     string m_currentCncType = "";
     ICncAlarmSeverity m_severity = null;
     ICncAlarmSeverityPattern m_pattern = null;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -41,7 +38,6 @@ namespace ConfiguratorAlarmFocus
           "If a default configuration is available for the current CNC, you can restore it.";
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

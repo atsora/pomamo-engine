@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.AlertConfigDirectory
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// My parameter
     /// </summary>
@@ -27,7 +26,6 @@ namespace Lemoine.Plugin.AlertConfigDirectory
     {
       get; set;
     } = "";
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

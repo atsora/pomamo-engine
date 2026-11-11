@@ -19,16 +19,13 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineStateTemplateStop: IMachineStateTemplateStop, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     WeekDay m_weekDays = (WeekDay) Int32.MaxValue;
     TimeSpan m_localTime = TimeSpan.Zero;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateStop).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// MachineStateTemplateStop Id
     /// </summary>
@@ -85,7 +82,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

@@ -15,14 +15,11 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class WeekDaySelection : UserControl
   {
-    #region Members
     private System.Windows.Forms.Button m_okButton;
     private WeekDay m_weekDay;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (WeekDaySelection).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return selected WeekDay
     /// </summary>
@@ -44,7 +41,6 @@ namespace Lemoine.DataReferenceControls
         this.m_okButton = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -64,8 +60,6 @@ namespace Lemoine.DataReferenceControls
     }
 
     #endregion // Constructors
-
-    #region Methods
     
     void WeekDaySelectionLoad(object sender, EventArgs e)
     {
@@ -184,8 +178,6 @@ namespace Lemoine.DataReferenceControls
         this.weekDayCheckedListBox.SetItemChecked(index,checkState);
       }
     }
-    
-    #endregion // Methods
     
     void NoneCheckBoxCheckedChanged(object sender, EventArgs e)
     {

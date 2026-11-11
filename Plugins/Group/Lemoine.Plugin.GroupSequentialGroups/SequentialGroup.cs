@@ -22,9 +22,6 @@ namespace Lemoine.Plugin.GroupSequentialGroups
   {
     readonly ILog log = LogManager.GetLogger (typeof (SequentialGroup).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

@@ -21,15 +21,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class Unit: DataWithTranslation, IDataWithTranslation, IUnit, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_description;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Unit).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -74,7 +71,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return string.Format ("{0}: {1}{2}",
                                   this.Id, this.Name, this.TranslationKey); }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

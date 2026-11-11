@@ -47,7 +47,7 @@ namespace Lemoine.Plugin.DetectionStatusFromDatabase
           Debug.Assert (sequenceSlots.All (s => s.BeginDateTime.HasValue));
           if (!sequenceSlots.Any ()) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetOperationDetectionDateTime: no sequence slot");
+              log.Debug ("GetOperationDetectionDateTime: no sequence slot");
             }
             return null;
           }
@@ -77,7 +77,7 @@ namespace Lemoine.Plugin.DetectionStatusFromDatabase
         }
       }
       if (null == m_machine) {
-        log.ErrorFormat ("Initialize: no monitored machine with id {0}", machine.Id);
+        log.Error ($"Initialize: no monitored machine with id {machine.Id}");
         return false;
       }
 

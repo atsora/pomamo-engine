@@ -106,7 +106,7 @@ namespace Lemoine.Business.Tool
         }
         catch (Exception ex) {
           if (Lemoine.Core.ExceptionManagement.ExceptionTest.IsStale (ex)) {
-            log.WarnFormat ("Get: machine {0} is stale, try to reload it", this.Machine.Id);
+            log.Warn ($"Get: machine {this.Machine.Id} is stale, try to reload it");
             using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
               using (var transaction = session.BeginReadOnlyTransaction ("Business.ToolLivesByMachine.MachineModules.Stale")) {
                 this.Machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (((IDataWithId)this.Machine).Id);
@@ -228,16 +228,16 @@ namespace Lemoine.Business.Tool
           .FindLastDateTimeOfAnEvent (toolLife.MachineModule, EventToolLifeType.ExpirationReached,
                                      toolLife.Position.ToolId);
         if (null != toolLifeEvent) {
-          log.DebugFormat ("CompleteExpiredWarningStatus: " +
-                           "expiration date/time of {0} was {1}",
-                           toolLife.Position.ToolId, toolLifeEvent.DateTime);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CompleteExpiredWarningStatus: expiration date/time of {toolLife.Position.ToolId} was {toolLifeEvent.DateTime}");
+          }
           toolLifeResponse.ExpirationDateTime = toolLifeEvent.DateTime;
           toolLifeResponse.ExpirationDateTimeRange = new UtcDateTimeRange (toolLifeEvent.DateTime,
                                                                            toolLifeEvent.DateTime,
                                                                            "[]");
         }
         else {
-          log.WarnFormat ("CompleteExpiredWarningStatus: no tool life event ExpirationReached to get the real expiration date/time");
+          log.Warn ("CompleteExpiredWarningStatus: no tool life event ExpirationReached to get the real expiration date/time");
         }
       }
       else { // Limit not reached
@@ -264,7 +264,7 @@ namespace Lemoine.Business.Tool
               active.Next = next.Display;
             }
             else {
-              log.ErrorFormat ("SetActiveSisterTool: next ist null for tool {0}", active.Display);
+              log.Error ($"SetActiveSisterTool: next ist null for tool {active.Display}");
             }
           }
         }
@@ -516,8 +516,7 @@ namespace Lemoine.Business.Tool
         return;
       }
       if (remainingLifeDurationToLimit.Value < TimeSpan.FromTicks (0)) {
-        log.ErrorFormat ("SetRemainingTimeIfByDuration: unexpected remaining life to limit {0}",
-          remainingLifeDurationToLimit);
+        log.Error ($"SetRemainingTimeIfByDuration: unexpected remaining life to limit {remainingLifeDurationToLimit}");
         Debug.Assert (TimeSpan.FromTicks (0) <= remainingLifeDurationToLimit.Value); // Because not expired
       }
       else {
@@ -553,7 +552,9 @@ namespace Lemoine.Business.Tool
       if (toolResponse.ActiveSisterTool) { // In case the sister tool replacement takes place after a cycle end. Note: this could be improved later
         if (this.MaxExpirationTime.HasValue
           && Bound.Compare<TimeSpan> (this.MaxExpirationTime.Value, lowerRemainingTime) < 0) {
-          log.DebugFormat ("SetRemainingTimeIfByDuration: one tool data is filtered out because it is longer than {0}", this.MaxExpirationTime.Value);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"SetRemainingTimeIfByDuration: one tool data is filtered out because it is longer than {this.MaxExpirationTime.Value}");
+          }
         }
         else {
           var minCycleNumberForCycleProgress = Lemoine.Info.ConfigSet
@@ -663,12 +664,10 @@ namespace Lemoine.Business.Tool
         Debug.Assert (toolResponse.RemainingTimeRange.Lower.HasValue);
         Debug.Assert (toolResponse.RemainingTimeRange.Upper.HasValue);
         if (!toolResponse.RemainingTimeRange.Lower.HasValue) {
-          log.FatalFormat ("CompleteExpirationDateTime: " +
-                           "RemainingTimeRange.Lower=-oo");
+          log.Fatal ("CompleteExpirationDateTime: RemainingTimeRange.Lower=-oo");
         }
         else if (!toolResponse.RemainingTimeRange.Upper.HasValue) {
-          log.FatalFormat ("CompleteExpirationDateTime: " +
-                           "RemainingTimeRange.Upper=+oo");
+          log.Fatal ("CompleteExpirationDateTime: RemainingTimeRange.Upper=+oo");
         }
         else { // toolResponse.RemainingTimeRange.Lower.HasValue && toolResponse.RemainingTimeRange.Upper.HasValue
           toolResponse.ExpirationDateTimeRange =

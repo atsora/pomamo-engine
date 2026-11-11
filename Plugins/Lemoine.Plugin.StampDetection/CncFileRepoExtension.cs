@@ -53,9 +53,7 @@ namespace Lemoine.Plugin.StampDetection
               m_machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
                 .FindById (machineFilterId);
               if (null == m_machineFilter) {
-                log.ErrorFormat ("Initialize: " +
-                                 "machine filter id {0} does not exist",
-                                 machineFilterId);
+                log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
                 return false;
               }
               else { // null != m_machineFilter

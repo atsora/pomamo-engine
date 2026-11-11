@@ -895,9 +895,7 @@ namespace Lemoine.GDBPersistentClasses
         case IMPLEMENTATION_FROM_VIEW:
           return new MachineStateTemplateSlotDAOFromView ();
         default:
-          log.FatalFormat ("MachineStateTemplateSlotDAO: " +
-                           "unknown implementation {0}",
-                           implementation);
+          log.Fatal ($"MachineStateTemplateSlotDAO: unknown implementation {implementation}");
           throw new InvalidOperationException ();
         }
       }

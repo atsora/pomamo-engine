@@ -497,7 +497,7 @@ namespace WizardMonitorMachine
               break;
             default:
               // One parameter is wrong, we log it
-              log.ErrorFormat ("unknown running-mode: {0}", nodeTmp.InnerText);
+              log.Error ($"unknown running-mode: {nodeTmp.InnerText}");
               break;
           }
         }

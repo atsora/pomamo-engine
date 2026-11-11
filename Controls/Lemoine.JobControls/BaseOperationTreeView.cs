@@ -66,22 +66,18 @@ namespace Lemoine.JobControls
   /// </summary>
   public class BaseOperationTreeView : UserControl, ITreeViewObservable
   {
-    #region Members
     /// <summary>
     ///   List of control which are impacted by change of treeview;
     ///   Main change is node selection
     /// </summary>
     List<ITreeViewObserver> m_observers = new List<ITreeViewObserver> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (BaseOperationTreeView).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Get wrapped treeview
     /// </summary>
     public virtual TreeView TreeView { get; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -268,9 +264,7 @@ namespace Lemoine.JobControls
         ReloadTreeNodes<ISequence, int> (ModelDAOHelper.DAOFactory.SequenceDAO, nodes);
       }
       else {
-        log.FatalFormat ("ReloadTreeNodes: " +
-                         "unsupported type {0}",
-                         type);
+        log.Fatal ($"ReloadTreeNodes: unsupported type {type}");
         throw new ArgumentException ("Unsupported type");
       }
     }
@@ -655,8 +649,7 @@ namespace Lemoine.JobControls
           }
           TreeNode[] children = node.Nodes.Find (id.ToString (), false);
           if (0 == children.Length) {
-            log.WarnFormat ("BuildBranch: " +
-                            "give up because there is no children");
+            log.Warn ("BuildBranch: give up because there is no children");
             return;
           }
           Debug.Assert (1 == children.Length);
@@ -909,8 +902,7 @@ namespace Lemoine.JobControls
     IPath GetSinglePath (IOperation operation)
     {
       if (operation.Paths.Count > 1) {
-        log.WarnFormat ("Operation {0} with more than one path in single path mode",
-                       operation.ToString ());
+        log.Warn ($"Operation {operation.ToString ()} with more than one path in single path mode");
       }
 
       IEnumerator<IPath> pathEnumerator = operation.Paths.GetEnumerator ();

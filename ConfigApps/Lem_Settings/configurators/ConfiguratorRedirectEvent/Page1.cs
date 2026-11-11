@@ -15,13 +15,10 @@ namespace ConfiguratorRedirectEvent
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     bool m_viewMode;
     ActionManager m_actionManager = null;
     bool m_preparation = true;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -49,7 +46,6 @@ namespace ConfiguratorRedirectEvent
           LemSettingsGlobal.PageFlag.NONE;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

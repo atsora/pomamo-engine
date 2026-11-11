@@ -50,7 +50,6 @@ namespace Lemoine.Cnc.SystemQueue
     }
     #endregion
     
-    #region Methods
     /// <summary>
     /// Initialize
     /// </summary>
@@ -135,6 +134,5 @@ namespace Lemoine.Cnc.SystemQueue
       queue.SetConfigReader (subConfigReader);
       return queue;
     }
-    #endregion // Methods
   }
 }

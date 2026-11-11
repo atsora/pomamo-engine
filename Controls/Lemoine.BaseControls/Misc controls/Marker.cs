@@ -15,11 +15,8 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class Marker: UserControl
   {
-    #region Members
     Brush m_brush;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Brush that fills the marker
     /// If null, no color will be applied
@@ -34,7 +31,6 @@ namespace Lemoine.BaseControls
         this.Invalidate();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -47,7 +43,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Redefine the paint method
     /// </summary>
@@ -59,6 +54,5 @@ namespace Lemoine.BaseControls
         e.Graphics.FillRectangle(Brush, e.ClipRectangle);
       }
     }
-    #endregion // Methods
   }
 }

@@ -21,16 +21,13 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class FieldSelection : UserControl
   {
-    #region Members
     string m_displayedProperty = "Display";
     bool m_onlyActive = true;
     IList<IField> m_fields = null;
     IField m_field = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (FieldSelection).FullName);
     
-    #region Getters / Setters
     /// <summary>
     /// Can several rows be selected ?
     /// </summary>
@@ -124,7 +121,6 @@ namespace Lemoine.DataReferenceControls
         this.m_field = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -151,7 +147,6 @@ namespace Lemoine.DataReferenceControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Raise the AfterSelect event
     /// </summary>
@@ -189,7 +184,6 @@ namespace Lemoine.DataReferenceControls
         }
       }
     }
-    #endregion // Methods
     
     /// <summary>
     /// Comparer of fields

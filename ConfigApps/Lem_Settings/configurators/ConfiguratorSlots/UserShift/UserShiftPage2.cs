@@ -16,7 +16,6 @@ namespace ConfiguratorSlots.UserShift
   /// </summary>
   public partial class UserShiftPage2 : UserControl, IPartPage2
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -27,7 +26,6 @@ namespace ConfiguratorSlots.UserShift
     /// </summary>
     public string Help { get { return "Choose here the different users whose shifts " +
           "will be displayed and possibly edited."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -39,7 +37,6 @@ namespace ConfiguratorSlots.UserShift
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Initialization of the page, happening before the first load
     /// This method is called again if the database has been updated
@@ -102,6 +99,5 @@ namespace ConfiguratorSlots.UserShift
       // The timelines need to be updated
       data.Store(AbstractItem.TIMELINE_UPDATE, true);
     }
-    #endregion // Methods
   }
 }

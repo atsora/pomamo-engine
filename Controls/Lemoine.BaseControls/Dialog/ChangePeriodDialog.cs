@@ -12,7 +12,6 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class ChangePeriodDialog : Form
   {
-    #region Getters / Setters
     /// <summary>
     /// Get StartDateTime
     /// </summary>
@@ -30,7 +29,6 @@ namespace Lemoine.BaseControls
         return date2.Value.Date.Add(time2.Value.TimeOfDay);
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

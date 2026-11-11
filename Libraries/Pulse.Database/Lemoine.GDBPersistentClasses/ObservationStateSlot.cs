@@ -134,17 +134,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.BeginDateTime.CompareTo (other.BeginDateTime);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare slots " +
-                           "for different machines {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare slots for different machines {this} {other}");
           throw new ArgumentException ("Comparison of slots from different machines");
         }
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not the right slot");
     }
     
@@ -159,10 +154,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare ObservationStateSlots " +
-                       "for different machines {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare ObservationStateSlots for different machines {this} {other}");
       throw new ArgumentException ("Comparison of ObservationStateSlots from different machines");
     }
     
@@ -290,9 +282,7 @@ namespace Lemoine.GDBPersistentClasses
       }
       else {
         Debug.Assert (false);
-        log.FatalFormat ("HandleModifiedSlot: " +
-                         "unexpected slot type {0}",
-                         oldSlot.GetType());
+        log.Fatal ($"HandleModifiedSlot: unexpected slot type {oldSlot.GetType()}");
         throw new ArgumentException ("Not supported slot");
       }
     }

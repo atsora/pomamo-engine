@@ -24,7 +24,6 @@ namespace ConfiguratorEventLevel
     internal const string EDITED = "edited";
     internal const string HAS_TRANSLATION_KEY = "has_translation_key";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -95,7 +94,6 @@ namespace ConfiguratorEventLevel
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

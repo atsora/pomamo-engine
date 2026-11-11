@@ -19,7 +19,6 @@ namespace Lemoine.GDBPersistentClasses
     , IVersionable
     , IEquatable<ISequenceMilestone>
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineModule m_machineModule;
@@ -27,7 +26,6 @@ namespace Lemoine.GDBPersistentClasses
     ISequence m_sequence;
     TimeSpan m_milestone;
     bool m_completed = false;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (SequenceMilestone).FullName);
 
@@ -48,7 +46,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// ID of the reference machine module
     /// </summary>
@@ -114,7 +111,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_completed; }
       set { m_completed = value; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// ToString

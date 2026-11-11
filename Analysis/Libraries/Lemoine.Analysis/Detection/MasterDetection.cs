@@ -31,7 +31,6 @@ namespace Lemoine.Analysis.Detection
 
     ILog log;
 
-    #region Members
     readonly IMachineModule m_machineModule;
     readonly IDictionary<int, bool> m_coherentCache = new Dictionary<int, bool> ();
     readonly SequenceDetection m_sequenceDetection;
@@ -39,7 +38,6 @@ namespace Lemoine.Analysis.Detection
     readonly OperationCycleDetection m_operationCycleDetection;
     readonly SequenceMilestoneDetection m_sequenceMilestoneDetection;
     readonly Lemoine.Threading.IChecked m_caller;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -88,12 +86,10 @@ namespace Lemoine.Analysis.Detection
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Restricted transaction level
     /// </summary>
     public TransactionLevel RestrictedTransactionLevel { get; set; }
-    #endregion // Getters / Setters
 
     #region IChecked implementation
     /// <summary>
@@ -144,9 +140,9 @@ namespace Lemoine.Analysis.Detection
         ModelDAOHelper.DAOFactory.MachineModuleDAO.Lock (m_machineModule);
 
         if (m_coherentCache.ContainsKey (((Lemoine.Collections.IDataWithId)stamp).Id)) {
-          log.DebugFormat ("CheckCoherence: " +
-                           "return coherence from cache for stamp {0}: {1}",
-                           stamp, m_coherentCache[((Lemoine.Collections.IDataWithId)stamp).Id]);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"CheckCoherence: return coherence from cache for stamp {stamp}: {m_coherentCache[((Lemoine.Collections.IDataWithId)stamp).Id]}");
+          }
           return m_coherentCache[((Lemoine.Collections.IDataWithId)stamp).Id];
         }
         m_coherentCache[((Lemoine.Collections.IDataWithId)stamp).Id] = false;
@@ -157,9 +153,7 @@ namespace Lemoine.Analysis.Detection
           ModelDAOHelper.DAOFactory;
 
         if (quantity.HasValue && !stamp.OperationCycleEnd) {
-          log.WarnFormat ("CheckCoherence: " +
-                          "a quantity {0} was defined but the stamp {1} is not a cycle end",
-                          quantity.Value, stamp);
+          log.Warn ($"CheckCoherence: a quantity {quantity.Value} was defined but the stamp {stamp} is not a cycle end");
           using (IDAOTransaction transaction = session.BeginTransaction ("Detection.LogBadCoherenceQuantityCycleEnd",
                                                                          TransactionLevel.ReadCommitted)) {
             transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -180,9 +174,7 @@ namespace Lemoine.Analysis.Detection
         }
 
         if (stamp.OperationCycleBegin && stamp.OperationCycleEnd) { // They should not be simultaneous => raise a warning
-          log.WarnFormat ("CheckCoherence: " +
-                          "the stamp {0} triggers in the same time an operation cycle begin and an operation cycle end",
-                          stamp);
+          log.Warn ($"CheckCoherence: the stamp {stamp} triggers in the same time an operation cycle begin and an operation cycle end");
           using (IDAOTransaction transaction = session.BeginTransaction ("Detection.LogBadCoherenceBeginEnd",
                                                                          TransactionLevel.ReadCommitted)) {
             transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -204,8 +196,7 @@ namespace Lemoine.Analysis.Detection
 
         if (null != stamp.Sequence) {
           if (stamp.IsoFileEnd) {
-            log.ErrorFormat ("CheckCoherence: " +
-                             "Sequence and IsoFileEnd in the same time");
+            log.Error ("CheckCoherence: Sequence and IsoFileEnd in the same time");
             using (IDAOTransaction transaction = session.BeginTransaction ("Detection.LogBadCoherenceSequenceIsoFileEnd",
                                                                            TransactionLevel.ReadCommitted)) {
               transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -228,8 +219,7 @@ namespace Lemoine.Analysis.Detection
           if ((null != stamp.Operation)
               && (!object.Equals (stamp.Sequence.Operation,
                                   stamp.Operation))) {
-            log.ErrorFormat ("CheckCoherence: " +
-                             "Sequence and Operation are not compatible ");
+            log.Error ("CheckCoherence: Sequence and Operation are not compatible ");
             using (IDAOTransaction transaction = session.BeginTransaction ("Detection.LogBadCoherenceSequenceOperation",
                                                                            TransactionLevel.ReadCommitted)) {
               transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -265,8 +255,7 @@ namespace Lemoine.Analysis.Detection
               }
             }
             if (!coherent) {
-              log.ErrorFormat ("CheckCoherence: " +
-                               "Sequence and Component are not compatible ");
+              log.Error ("CheckCoherence: Sequence and Component are not compatible ");
               using (IDAOTransaction transaction = session.BeginTransaction ("Detection.LogBadCoherenceSequenceComponent",
                                                                              TransactionLevel.ReadCommitted)) {
                 transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -305,8 +294,7 @@ namespace Lemoine.Analysis.Detection
               }
             }
             if (!coherent) {
-              log.ErrorFormat ("CheckCoherence: " +
-                               "Operation and Component are not compatible ");
+              log.Error ("CheckCoherence: Operation and Component are not compatible ");
               using (IDAOTransaction transaction = session.BeginTransaction ("Detection.LogBadCoherenceOperationComponent",
                                                                              TransactionLevel.ReadCommitted)) {
                 transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -344,27 +332,22 @@ namespace Lemoine.Analysis.Detection
     {
       using (IDAOSession daoSession = ModelDAOHelper.DAOFactory.OpenSession ()) {
         if (string.IsNullOrEmpty (operationCode)) {
-          log.DebugFormat ("GetOrCreateOperationFromCode: " +
-                           "empty operation code");
+          if (log.IsDebugEnabled) {
+            log.Debug ("GetOrCreateOperationFromCode: empty operation code");
+          }
           return null;
         }
         else { // !IsNullOrEmpty
           IList<IOperation> operations = ModelDAOHelper.DAOFactory.OperationDAO
             .FindByCode (operationCode);
           if (1 < operations.Count) {
-            log.ErrorFormat ("GetOrCreateOperationFromCode: " +
-                             "there are {0} operations with the same operation code {1} " +
-                             "=> give up",
-                             operations.Count, operationCode);
+            log.Error ($"GetOrCreateOperationFromCode: there are {operations.Count} operations with the same operation code {operationCode} => give up");
             return null;
           }
           else if (0 == operations.Count) {
             if (Lemoine.Info.ConfigSet.LoadAndGet<bool> (CREATE_OPERATION_FROM_CODE_KEY,
                                                          CREATE_OPERATION_FROM_CODE_DEFAULT)) {
-              log.WarnFormat ("StartCycle: " +
-                              "no operation was found with code {0} " +
-                              "=> create it",
-                              operationCode);
+              log.Warn ($"StartCycle: no operation was found with code {operationCode} => create it");
               IOperation operation;
               using (IDAOTransaction transaction = daoSession.BeginTransaction ("Detection.CreateOperationFromCode",
                                                                                 RestrictedTransactionLevel)) {
@@ -381,9 +364,7 @@ namespace Lemoine.Analysis.Detection
               return operation;
             }
             else { // Option CREATE_OPERATION_FROM_CODE off
-              log.ErrorFormat ("StartCycle: " +
-                               "operation code {0} does not exist => skip it",
-                               operationCode);
+              log.Error ($"StartCycle: operation code {operationCode} does not exist => skip it");
               return null;
             }
           }
@@ -446,10 +427,9 @@ namespace Lemoine.Analysis.Detection
         try {
           IOperation operation = GetOrCreateOperationFromCode (operationCode);
           if (null != operation) {
-            log.DebugFormat ("StartCycle: " +
-                             "cycle begin with operation {0} " +
-                             "=> begin the operation right now",
-                             operation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartCycle: cycle begin with operation {operation} => begin the operation right now");
+            }
             using (IDAOTransaction transaction = daoSession.BeginTransaction ("Detection.Master.StartCycleOperationCodeStartOperation",
                                                                               RestrictedTransactionLevel)) {
               transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -542,10 +522,9 @@ namespace Lemoine.Analysis.Detection
         try {
           IOperation operation = GetOrCreateOperationFromCode (operationCode);
           if (null != operation) {
-            log.DebugFormat ("StopCycle: " +
-                             "with operation {0} " +
-                             "=> extend the operation right now",
-                             ((IDataWithId<int>)operation).Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StopCycle: with operation {((IDataWithId<int>)operation).Id} => extend the operation right now");
+            }
             using (IDAOTransaction transaction = daoSession.BeginTransaction ("Detection.Master.StopCycleExtendOperation",
                                                                               RestrictedTransactionLevel)) {
               transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -639,9 +618,7 @@ namespace Lemoine.Analysis.Detection
         try {
           // - Check coherence of the data
           if (!CheckStampCoherence (stamp, quantity)) {
-            log.ErrorFormat ("StartStamp: " +
-                             "stamp {0} is not coherent",
-                             ((Lemoine.Collections.IDataWithId)stamp).Id);
+            log.Error ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} is not coherent");
             throw new Exception ("Stamp not coherent");
           }
 
@@ -650,9 +627,9 @@ namespace Lemoine.Analysis.Detection
           IIsoFileMachineModuleAssociation isoFileAssociation =
             new IsoFileMachineModuleAssociation (m_machineModule, new UtcDateTimeRange (dateTime));
           if (stamp.IsoFileEnd) {
-            log.DebugFormat ("StartStamp: " +
-                            "stamp {0} is a IsoFileEnd",
-                            ((Lemoine.Collections.IDataWithId)stamp).Id);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} is a IsoFileEnd");
+            }
             StopIsoFile (dateTime);
 
             // Process Modification MachineModule => No iso file from date time
@@ -680,10 +657,9 @@ namespace Lemoine.Analysis.Detection
               operation = stamp.Sequence.Operation;
             }
             if (null != operation) {
-              log.DebugFormat ("StartStamp: " +
-                               "stamp {0} with a cycle begin and an operation {1} " +
-                               "=> begin the operation right now",
-                               ((Lemoine.Collections.IDataWithId)stamp).Id, operation);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} with a cycle begin and an operation {operation} => begin the operation right now");
+              }
               using (IDAOTransaction transaction = session.BeginTransaction ("Detection.Master.StartStampOperation",
                                                                              RestrictedTransactionLevel)) {
                 transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -696,10 +672,9 @@ namespace Lemoine.Analysis.Detection
             }
           }
           if (stamp.OperationCycleEnd) {
-            log.DebugFormat ("StartStamp: " +
-                             "stamp {0} with a cycle end and an operation {1} " +
-                             "=> end the operation",
-                             ((Lemoine.Collections.IDataWithId)stamp).Id, stamp.Operation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} with a cycle end and an operation {stamp.Operation} => end the operation");
+            }
             using (IDAOTransaction transaction = session.BeginTransaction ("Detection.Master.StartStampExtendOperation",
                                                                            RestrictedTransactionLevel)) {
               transaction.SynchronousCommitOption = SynchronousCommit.Off;
@@ -710,27 +685,23 @@ namespace Lemoine.Analysis.Detection
           }
 
           if (null != stamp.Sequence) {
-            log.DebugFormat ("StartStamp: " +
-                            "stamp {0} is a sequence start {1}",
-                            ((Lemoine.Collections.IDataWithId)stamp).Id, stamp.Sequence);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} is a sequence start {stamp.Sequence}");
+            }
             m_sequenceDetection.StartSequence (stamp.Sequence,
                                                dateTime);
           }
           if (null != stamp.Operation) {
             if (!stamp.OperationCycleBegin && !stamp.OperationCycleEnd) {
               // UNDONE: Stamp.Operation not implemented
-              log.ErrorFormat ("StartStamp: " +
-                              "stamp {0} is an operation NYI",
-                              ((Lemoine.Collections.IDataWithId)stamp).Id);
+              log.Error ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} is an operation NYI");
               throw new NotImplementedException ();
             }
             // else stamp.Operation may be used for the operation cycle begin/end
           }
           if (null != stamp.Component) {
             // UNDONE: Stamp.Component not implemented
-            log.ErrorFormat ("StartStamp: " +
-                            "stamp {0} is a component NYI",
-                            ((Lemoine.Collections.IDataWithId)stamp).Id);
+            log.Error ($"StartStamp: stamp {((Lemoine.Collections.IDataWithId)stamp).Id} is a component NYI");
             throw new NotImplementedException ();
           }
 

@@ -148,26 +148,14 @@ namespace Lemoine.GDBPersistentClasses
       if (!object.Equals (finalItem, otherItem)) {
         switch (conflictResolution) {
           case ConflictResolution.Keep:
-            log.WarnFormat ("MergeDefined: " +
-                            "{0} conflict final={1} other={2} " +
-                            "=> keep the final data",
-                            property.Name,
-                            finalItem, otherItem);
+            log.Warn ($"MergeDefined: {property.Name} conflict final={finalItem} other={otherItem} => keep the final data");
             return;
           case ConflictResolution.Overwrite:
-            log.WarnFormat ("MergeDefined: " +
-                            "{0} conflict final={1} other={2} " +
-                            "=> overwrite the final data with the other data",
-                            property.Name,
-                            finalItem, otherItem);
+            log.Warn ($"MergeDefined: {property.Name} conflict final={finalItem} other={otherItem} => overwrite the final data with the other data");
             property.SetValue (final, otherItem, null);
             return;
           case ConflictResolution.Exception:
-            log.ErrorFormat ("MergeDefined: " +
-                             "{0} conflict final={1} other={2} " +
-                             "=> raise ConflictException",
-                             property.Name,
-                             finalItem, otherItem);
+            log.Error ($"MergeDefined: {property.Name} conflict final={finalItem} other={otherItem} => raise ConflictException");
             throw new ConflictException (other, final, property.Name);
         }
       } // else keep the current value
@@ -218,34 +206,22 @@ namespace Lemoine.GDBPersistentClasses
           if (!object.Equals (finalString, otherString)) {
             switch (conflictResolution) {
               case ConflictResolution.Keep:
-                log.WarnFormat ("MergeString: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> keep the final data",
-                                property.Name,
-                                finalString, otherString);
+                log.Warn ($"MergeString: {property.Name} conflict final={finalString} other={otherString} => keep the final data");
                 return;
               case ConflictResolution.Overwrite:
-                log.WarnFormat ("MergeString: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> overwrite the final data with the other data",
-                                property.Name,
-                                finalString, otherString);
+                log.Warn ($"MergeString: {property.Name} conflict final={finalString} other={otherString} => overwrite the final data with the other data");
                 property.SetValue (final, otherString, null);
                 return;
               case ConflictResolution.Exception:
-                log.ErrorFormat ("MergeString: " +
-                                 "{0} conflict final={1} other={2} " +
-                                 "=> raise ConflictException",
-                                 property.Name,
-                                 finalString, otherString);
+                log.Error ($"MergeString: {property.Name} conflict final={finalString} other={otherString} => raise ConflictException");
                 throw new ConflictException (other, final, property.Name);
             }
           } // else keep the current value
         }
         else {
-          log.DebugFormat ("MergeString: " +
-                           "get the name {0} from other",
-                           otherString);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MergeString: get the name {otherString} from other");
+          }
           property.SetValue (final, otherString, null);
         }
       }
@@ -298,34 +274,22 @@ namespace Lemoine.GDBPersistentClasses
           if (!object.Equals (finalValue, otherValue)) {
             switch (conflictResolution) {
               case ConflictResolution.Keep:
-                log.WarnFormat ("MergeNullable: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> keep the final data",
-                                property.Name,
-                                finalValue, otherValue);
+                log.Warn ($"MergeNullable: {property.Name} conflict final={finalValue} other={otherValue} => keep the final data");
                 return;
               case ConflictResolution.Overwrite:
-                log.WarnFormat ("MergeNullable: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> overwrite the final data with the other data",
-                                property.Name,
-                                finalValue, otherValue);
+                log.Warn ($"MergeNullable: {property.Name} conflict final={finalValue} other={otherValue} => overwrite the final data with the other data");
                 property.SetValue (final, otherValue, null);
                 return;
               case ConflictResolution.Exception:
-                log.ErrorFormat ("MergeNullable: " +
-                                 "{0} conflict final={1} other={2} " +
-                                 "=> raise ConflictException",
-                                 property.Name,
-                                 finalValue, otherValue);
+                log.Error ($"MergeNullable: {property.Name} conflict final={finalValue} other={otherValue} => raise ConflictException");
                 throw new ConflictException (other, final, property.Name);
             }
           } // else keep the current value
         }
         else {
-          log.DebugFormat ("MergeNullable: " +
-                           "get the name {0} from other",
-                           otherValue);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MergeNullable: get the name {otherValue} from other");
+          }
           property.SetValue (final, otherValue, null);
         }
       }
@@ -376,34 +340,22 @@ namespace Lemoine.GDBPersistentClasses
           if (!object.Equals (finalValue, otherValue)) {
             switch (conflictResolution) {
               case ConflictResolution.Keep:
-                log.WarnFormat ("MergeObject: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> keep the final data",
-                                property.Name,
-                                finalValue, otherValue);
+                log.Warn ($"MergeObject: {property.Name} conflict final={finalValue} other={otherValue} => keep the final data");
                 return;
               case ConflictResolution.Overwrite:
-                log.WarnFormat ("MergeObject: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> overwrite the final data with the other data",
-                                property.Name,
-                                finalValue, otherValue);
+                log.Warn ($"MergeObject: {property.Name} conflict final={finalValue} other={otherValue} => overwrite the final data with the other data");
                 property.SetValue (final, otherValue, null);
                 return;
               case ConflictResolution.Exception:
-                log.ErrorFormat ("MergeObject: " +
-                                 "{0} conflict final={1} other={2} " +
-                                 "=> raise ConflictException",
-                                 property.Name,
-                                 finalValue, otherValue);
+                log.Error ($"MergeObject: {property.Name} conflict final={finalValue} other={otherValue} => raise ConflictException");
                 throw new ConflictException (other, final, property.Name);
             }
           } // else keep the current value
         }
         else {
-          log.DebugFormat ("MergeObject: " +
-                           "get the name {0} from other",
-                           otherValue);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MergeObject: get the name {otherValue} from other");
+          }
           property.SetValue (final, otherValue, null);
         }
       }
@@ -454,34 +406,22 @@ namespace Lemoine.GDBPersistentClasses
           if (!object.Equals (finalValue, otherValue)) {
             switch (conflictResolution) {
               case ConflictResolution.Keep:
-                log.WarnFormat ("MergeReferenceData: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> keep the final data",
-                                property.Name,
-                                finalValue, otherValue);
+                log.Warn ($"MergeReferenceData: {property.Name} conflict final={finalValue} other={otherValue} => keep the final data");
                 return;
               case ConflictResolution.Overwrite:
-                log.WarnFormat ("MergeReferenceData: " +
-                                "{0} conflict final={1} other={2} " +
-                                "=> overwrite the final data with the other data",
-                                property.Name,
-                                finalValue, otherValue);
+                log.Warn ($"MergeReferenceData: {property.Name} conflict final={finalValue} other={otherValue} => overwrite the final data with the other data");
                 property.SetValue (final, otherValue, null);
                 return;
               case ConflictResolution.Exception:
-                log.ErrorFormat ("MergeReferenceData: " +
-                                 "{0} conflict final={1} other={2}" +
-                                 "=> raise ConflictException",
-                                 property.Name,
-                                 finalValue, otherValue);
+                log.Error ($"MergeReferenceData: {property.Name} conflict final={finalValue} other={otherValue}=> raise ConflictException");
                 throw new ConflictException (other, final, property.Name);
             }
           } // else keep the current value
         }
         else {
-          log.DebugFormat ("MergeReferenceData: " +
-                           "get the name {0} from other",
-                           otherValue);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MergeReferenceData: get the name {otherValue} from other");
+          }
           property.SetValue (final, otherValue, null);
         }
       }

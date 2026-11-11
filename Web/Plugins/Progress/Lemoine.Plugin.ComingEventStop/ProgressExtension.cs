@@ -35,8 +35,7 @@ namespace Lemoine.Plugin.ComingEventStop
 
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.WarnFormat ("Initialize: " +
-                        "the configuration is not valid");
+        log.Warn ("Initialize: the configuration is not valid");
         return false;
       }
 
@@ -48,9 +47,7 @@ namespace Lemoine.Plugin.ComingEventStop
           var machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
             .FindById (machineFilterId);
           if (null == machineFilter) {
-            log.ErrorFormat ("Initialize: " +
-                             "machine filter id {0} does not exist",
-                             machineFilterId);
+            log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
             return false;
           }
           // Note: machineFilter.IsMatch requires it is done in the same session

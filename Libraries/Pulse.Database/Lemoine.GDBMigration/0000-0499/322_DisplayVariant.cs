@@ -25,7 +25,7 @@ namespace Lemoine.GDBMigration
       try {
         RemoveUniqueConstraint (TableName.DISPLAY, TableName.DISPLAY + "table");
       } catch (Exception e) {
-        log.WarnFormat("Migration 322: couldn't remove the old unique constraint: {0}", e);
+        log.Warn ($"Migration 322: couldn't remove the old unique constraint: {e}");
       }
       
       Database.AddColumn (TableName.DISPLAY,

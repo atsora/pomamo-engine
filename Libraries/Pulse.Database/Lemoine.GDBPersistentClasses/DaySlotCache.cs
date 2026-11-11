@@ -19,10 +19,8 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string CACHE_SIZE_KEY = "DaySlot.Cache.Size";
     static readonly int CACHE_SIZE_DEFAULT = 365 * 5; // 5 years
 
-    #region Members
     readonly LRUDictionary<DateTime, IDaySlot> m_lru; // LRU map day -> IDaySlot
     volatile bool m_active = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (DaySlotCache).FullName);
 
@@ -42,7 +40,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Is the cache active ?
     /// </summary>
@@ -206,7 +203,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       Instance.m_lru.Clear ();
     }
-    #endregion // Methods
 
     #region Instance
     static DaySlotCache Instance

@@ -30,7 +30,6 @@ namespace Lemoine.NHibernateTypes
     { }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="SimpleGenericType{T}"/>
     /// </summary>
@@ -105,7 +104,6 @@ namespace Lemoine.NHibernateTypes
     {
       return JsonConvert.DeserializeObject<IDictionary<string, object>> (json);
     }
-    #endregion // Methods
 
     #region AbstractType implementation
     /// <summary>

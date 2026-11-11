@@ -17,7 +17,6 @@ namespace Lemoine.Plugin.GithubOauth2
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// My parameter
     /// </summary>
@@ -62,7 +61,6 @@ namespace Lemoine.Plugin.GithubOauth2
     {
       get; set;
     } = "";
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

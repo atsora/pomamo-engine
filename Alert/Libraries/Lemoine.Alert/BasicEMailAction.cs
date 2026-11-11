@@ -16,14 +16,11 @@ namespace Lemoine.Alert
   [Serializable]
   public class BasicEMailAction: GenericEMailAction
   {
-    #region Members
     string m_subject;
     string m_body;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (BasicEMailAction).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Subject of the E-Mail
     /// </summary>
@@ -41,7 +38,6 @@ namespace Lemoine.Alert
       get { return m_body; }
       set { m_body = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -52,7 +48,6 @@ namespace Lemoine.Alert
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implements <see cref="GenericEMailAction" />
     /// </summary>
@@ -72,6 +67,5 @@ namespace Lemoine.Alert
     {
       return m_body;
     }
-    #endregion // Methods
   }
 }

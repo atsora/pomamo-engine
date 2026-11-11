@@ -18,13 +18,10 @@ namespace Lemoine.Xml
   [Serializable]
   public sealed class XslFullDefinition: XslDefinition
   {
-    #region Members
     string m_xslFull;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (XslFullDefinition).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Full XSL with the full header (including xsl:stylesheet)
     /// </summary>
@@ -38,14 +35,11 @@ namespace Lemoine.Xml
           m_xslt.Load (XmlReader.Create (new StringReader (value)));
         }
         catch (Exception ex) {
-          log.ErrorFormat ("XslFull: " +
-                           "exception {0}",
-                           ex);
+          log.Error ($"XslFull: exception {ex}");
           throw;
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -64,8 +58,5 @@ namespace Lemoine.Xml
       this.XslFull = xslFull;
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

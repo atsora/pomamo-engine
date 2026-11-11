@@ -16,14 +16,9 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
   /// </summary>
   internal sealed class CycleDetectionNotifier
   {
-    #region Members
     IList<ICycleDetectionListener> m_listeners = new List<ICycleDetectionListener> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CycleDetectionNotifier).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -34,7 +29,6 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a listener
     /// </summary>
@@ -58,7 +52,6 @@ namespace Lemoine.Plugin.AnalysisDetectionStatus
         }
       }
     }
-    #endregion // Methods
 
     #region Instance
     static CycleDetectionNotifier Instance

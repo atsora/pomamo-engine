@@ -28,7 +28,7 @@ namespace Lemoine.GDBMigration
         Database.RemoveConstraint (TableName.TOOL_LIFE, "uniquelifevaluetype");
         Database.RemoveConstraint (TableName.EVENT_TOOL_LIFE_CONFIG, "uniquekey");
       } catch (Exception e) {
-        log.ErrorFormat("Couldn't remove unique constraint: {0}", e);
+        log.Error ($"Couldn't remove unique constraint: {e}");
       }
     }
     

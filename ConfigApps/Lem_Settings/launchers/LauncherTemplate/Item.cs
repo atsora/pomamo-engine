@@ -13,7 +13,6 @@ namespace LauncherTemplate
   /// </summary>
   internal class Item : GenericItem, ILauncher
   {
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -88,6 +87,5 @@ namespace LauncherTemplate
         return args;
       }
     }
-    #endregion // Getters / Setters
   }
 }

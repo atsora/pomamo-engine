@@ -23,14 +23,12 @@ namespace Lemoine.ConfigControls
     : UserControl
     , IConfigControlObserver<IMachineStateTemplate>
   {
-    #region Members
     SortableBindingList<IMachineStateTemplateFlow> m_MachineStateTemplateFlows = new SortableBindingList<IMachineStateTemplateFlow>();
     
     ISet<DataGridViewRow> m_updateSet =
       new HashSet<DataGridViewRow> ();
     IList<IMachineStateTemplateFlow> m_deleteList =
       new List<IMachineStateTemplateFlow> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateFlowConfig).FullName);
 
@@ -80,8 +78,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("MachineStateTemplateFlowConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("MachineStateTemplateFlowConfigLoad: no DAO factory is defined");
         return;
       }
       

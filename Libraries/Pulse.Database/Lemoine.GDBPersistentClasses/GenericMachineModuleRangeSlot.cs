@@ -27,14 +27,11 @@ namespace Lemoine.GDBPersistentClasses
       return log;
     }
     
-    #region Members
     /// <summary>
     /// Associated machine module
     /// </summary>
     protected IMachineModule m_machineModule;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machineModule
     /// </summary>
@@ -45,8 +42,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat ("GenericMachineModuleRangeSlot.set: " +
-                           "null value");
+          log.Fatal ("GenericMachineModuleRangeSlot.set: null value");
           throw new ArgumentNullException ();
         }
         m_machineModule = value;
@@ -65,7 +61,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.MachineModule as MachineModule; }
       set { throw new InvalidOperationException ("MachineModule read-only - deserialization not supported"); }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -117,8 +112,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != machineModule);
       if (machineModule == null) {
-        log.FatalFormat ("GenericMachineModuleRangeSlot.set: " +
-                         "null value");
+        log.Fatal ("GenericMachineModuleRangeSlot.set: null value");
         throw new ArgumentNullException ();
       }
       m_machineModule = machineModule;
@@ -129,7 +123,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="Object.GetHashCode" />
     /// </summary>
@@ -169,6 +162,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       NHibernateHelper.Unproxy<IMachineModule>(ref m_machineModule);
     }
-    #endregion // Methods
   }
 }

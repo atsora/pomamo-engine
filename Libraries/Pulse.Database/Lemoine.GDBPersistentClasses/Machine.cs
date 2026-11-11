@@ -79,9 +79,7 @@ namespace Lemoine.GDBPersistentClasses
         if (int.TryParse (value, out v)) {
           m_id = v;
         } else {
-          log.ErrorFormat ("XmlSerializationId.set: " +
-                           "{0} is not an integer",
-                           value);
+          log.Error ($"XmlSerializationId.set: {value} is not an integer");
         }
       }
     }

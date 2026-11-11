@@ -19,14 +19,11 @@ namespace Lemoine.Model
     static readonly TimeSpan BEGIN_OF_DAY = TimeSpan.FromHours (0);
     static readonly TimeSpan END_OF_DAY = TimeSpan.FromHours (24);
 
-    #region Members
     TimeSpan m_begin;
     TimeSpan m_end;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (TimePeriodOfDay).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Local begin time
     /// 
@@ -77,29 +74,25 @@ namespace Lemoine.Model
       set {
         string[] ss = value.Split (new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
         if (2 != ss.Length) {
-          log.ErrorFormat ("XmlValue: " +
-                           "invalid argument, no separator '-' in {0}",
-                           value);
+          log.Error ($"XmlValue: invalid argument, no separator '-' in {value}");
           throw new ArgumentException ("no separator '-'");
         }
 
         m_begin = TimeSpan.Parse (ss[0]);
         m_end = TimeSpan.Parse (ss[1]);
         if (END_OF_DAY == m_end) { // Replace 24:00 by 0:00
-          log.DebugFormat ("XmlValue: " +
-                           "replace 24:00 by 0:00");
+          if (log.IsDebugEnabled) {
+            log.Debug ("XmlValue: replace 24:00 by 0:00");
+          }
           m_end = BEGIN_OF_DAY;
         }
 
         if (!IsValid ()) {
-          log.ErrorFormat ("XmlValue: " +
-                           "invalid TimePeriofOfDay {0}, begin after end",
-                           ss);
+          log.Error ($"XmlValue: invalid TimePeriofOfDay {ss}, begin after end");
           throw new ArgumentException ("begin after end");
         }
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -111,24 +104,21 @@ namespace Lemoine.Model
     {
       string[] ss = s.Split (new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
       if (2 != ss.Length) {
-        log.ErrorFormat ("TimePeriodOfDay: " +
-                         "invalid argument, no separator '-' in {0}",
-                         s);
+        log.Error ($"TimePeriodOfDay: invalid argument, no separator '-' in {s}");
         throw new ArgumentException ("no separator '-'");
       }
 
       m_begin = TimeSpan.Parse (ss[0]);
       m_end = TimeSpan.Parse (ss[1]);
       if (END_OF_DAY == m_end) { // Replace 24:00 by 0:00
-        log.DebugFormat ("TimePeriofOfDay: " +
-                         "replace 24:00 by 0:00");
+        if (log.IsDebugEnabled) {
+          log.Debug ("TimePeriofOfDay: replace 24:00 by 0:00");
+        }
         m_end = BEGIN_OF_DAY;
       }
 
       if (!IsValid ()) {
-        log.ErrorFormat ("TimePeriodOfDay: " +
-                         "invalid TimePeriofOfDay {0}, begin after end",
-                         s);
+        log.Error ($"TimePeriodOfDay: invalid TimePeriofOfDay {s}, begin after end");
         throw new ArgumentException ("begin after end");
       }
     }
@@ -150,15 +140,11 @@ namespace Lemoine.Model
     public TimePeriodOfDay (TimeSpan begin, TimeSpan end, bool withException)
     {
       if (END_OF_DAY <= begin) {
-        log.ErrorFormat ("TimePeriodOfDay: " +
-                         "begin argument {0} is greater than 24 hours",
-                         begin);
+        log.Error ($"TimePeriodOfDay: begin argument {begin} is greater than 24 hours");
         throw new ArgumentException ("Invalid begin argument");
       }
       if (END_OF_DAY < end) {
-        log.ErrorFormat ("TimePeriodOfDay: " +
-                         "end argument {0} is strictly greater than 24 hours",
-                         end);
+        log.Error ($"TimePeriodOfDay: end argument {end} is strictly greater than 24 hours");
         throw new ArgumentException ("Invalid end argument");
       }
 
@@ -166,9 +152,7 @@ namespace Lemoine.Model
       m_end = (END_OF_DAY == end) ? BEGIN_OF_DAY : end;
 
       if (withException && !IsValid ()) {
-        log.ErrorFormat ("TimePeriodOfDay: " +
-                         "invalid TimePeriofOfDay, begin {0} after end {1}",
-                         begin, end);
+        log.Error ($"TimePeriodOfDay: invalid TimePeriofOfDay, begin {begin} after end {end}");
         throw new ArgumentException ("begin after end");
       }
     }
@@ -211,9 +195,9 @@ namespace Lemoine.Model
     public bool Overlaps (TimePeriodOfDay other)
     {
       if (!this.IsValid () || !other.IsValid ()) {
-        log.DebugFormat ("Overlaps: " +
-                         "return false because one of the time periods {0} and {1} is not valid",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Overlaps: return false because one of the time periods {this} and {other} is not valid");
+        }
         return false;
       }
 
@@ -231,9 +215,7 @@ namespace Lemoine.Model
     public TimePeriodOfDay Intersects (TimePeriodOfDay other)
     {
       if (!this.Overlaps (other)) { // The two time periods do not overlap with each other => raise an exception
-        log.ErrorFormat ("Intersects: " +
-                         "the two time periods {0} and {1} does not overlap with each other",
-                        this, other);
+        log.Error ($"Intersects: the two time periods {this} and {other} does not overlap with each other");
         throw new InvalidOperationException ("Intersects: not overlapping periods");
       }
 

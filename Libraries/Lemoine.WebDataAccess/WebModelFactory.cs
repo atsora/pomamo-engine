@@ -13,9 +13,7 @@ namespace Lemoine.WebDataAccess
   /// </summary>
   public class WebModelFactory: IModelFactory
   {
-    #region Members
     readonly Lemoine.ModelDAO.IDAOFactory m_daoFactory = new WebDAOFactory ();
-    #endregion // Members
     
     #region Constructors
     public WebModelFactory (string webServiceUrl)

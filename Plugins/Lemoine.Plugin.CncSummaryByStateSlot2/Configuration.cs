@@ -19,7 +19,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
   {
     static readonly ILog log = LogManager.GetLogger(typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// List of CNC Field Ids
     /// </summary>
@@ -36,7 +35,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     public bool TrackObservationStateSlotChange {
       get; set;
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Description of the constructor
@@ -45,7 +43,6 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
     {
     }
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -58,7 +55,7 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ()) {
           foreach (var fieldId in this.CncFieldIds) {
             if (ModelDAOHelper.DAOFactory.FieldDAO.FindById (fieldId) == null) {
-              log.ErrorFormat ("IsValid: field {0} does not exist", fieldId);
+              log.Error ($"IsValid: field {fieldId} does not exist");
               errorList.Add ("field " + fieldId + " does not exist");
             }
           }
@@ -68,6 +65,5 @@ namespace Lemoine.Plugin.CncSummaryByStateSlot2
       errors = errorList;
       return (0 == errorList.Count);
     }
-    #endregion // Methods
   }
 }

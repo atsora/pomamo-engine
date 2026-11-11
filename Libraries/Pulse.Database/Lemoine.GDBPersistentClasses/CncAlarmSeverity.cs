@@ -16,7 +16,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class CncAlarmSeverity : ICncAlarmSeverity, IVersionable, IDisplayable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     string m_cncInfo = "";
@@ -26,11 +25,9 @@ namespace Lemoine.GDBPersistentClasses
     CncAlarmStopStatus m_stopStatus = CncAlarmStopStatus.Unknown;
     string m_color = "";
     bool? m_focus = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncAlarmSeverity).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// CncAlarmSeverity Id
     /// </summary>
@@ -227,7 +224,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return this.Name; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

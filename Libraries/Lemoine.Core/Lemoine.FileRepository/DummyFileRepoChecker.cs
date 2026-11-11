@@ -17,9 +17,6 @@ namespace Lemoine.FileRepository
   {
     readonly ILog log = LogManager.GetLogger (typeof (DummyFileRepoChecker).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     public bool Check ()
     {
       return true;

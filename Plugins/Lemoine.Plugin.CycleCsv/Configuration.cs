@@ -15,12 +15,8 @@ namespace Lemoine.Plugin.CycleCsv
   /// </summary>
   public class Configuration: Lemoine.Extensions.Configuration.IConfiguration
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Directory path where the CSV files are stored
     /// </summary>
@@ -142,7 +138,6 @@ namespace Lemoine.Plugin.CycleCsv
     /// If empty, dismiss it
     /// </summary>
     public string TaskExternalCodeHeader { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -153,7 +148,6 @@ namespace Lemoine.Plugin.CycleCsv
     }
     #endregion // Constructors
 
-    #region Methods
     public bool IsValid (out IEnumerable<string> errors)
     {
       errors = new List<string> ();
@@ -162,6 +156,5 @@ namespace Lemoine.Plugin.CycleCsv
 
       return true;
     }
-    #endregion // Methods
   }
 }

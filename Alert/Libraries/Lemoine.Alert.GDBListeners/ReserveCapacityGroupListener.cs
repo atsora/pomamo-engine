@@ -43,12 +43,10 @@ namespace Lemoine.Alert.GDBListeners
     static readonly string THRESHOLD_KEY = "ReserveCapacityAlert.Threshold";
     static readonly int THRESHOLD_DEFAULT = 0; // generate alert only if remaining < threshold
 
-    #region Members
     IGroup m_group;
     string m_name;
     int m_threshold = 0;
     XmlSerializer m_xmlSerializer;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (ReserveCapacityGroupListener).FullName);
     IApplicationState m_reserveCapacityGroupListenerStateLastShift = null;
@@ -76,7 +74,6 @@ namespace Lemoine.Alert.GDBListeners
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get in the listener the next data.
     /// Returns null when there is no data anymore to return
@@ -216,6 +213,5 @@ namespace Lemoine.Alert.GDBListeners
       }
       
     }
-    #endregion // Methods
   }
 }

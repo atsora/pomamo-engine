@@ -15,7 +15,6 @@ namespace ConfiguratorTemplate
   {
     internal const string LINE_NAME = "line_name";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -89,7 +88,6 @@ namespace ConfiguratorTemplate
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

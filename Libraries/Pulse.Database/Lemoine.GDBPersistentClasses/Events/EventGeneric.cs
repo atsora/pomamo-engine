@@ -20,13 +20,10 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude(typeof(EventMessage))]
   public abstract class EventGeneric: Event, IEvent
   {
-    #region Members
     IDictionary<string, object> m_data = new Dictionary<string, object> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventGeneric).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Event data
     /// </summary>
@@ -34,7 +31,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IDictionary<string, object> Data {
       get { return m_data; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -54,7 +50,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a data
     /// </summary>
@@ -64,6 +59,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       m_data[key] = v;
     }
-    #endregion // Methods
   }
 }

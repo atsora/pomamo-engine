@@ -54,7 +54,6 @@ namespace Lemoine.CncEngine
     static readonly string STDOUT_REPLACE_DEFAULT = "";
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 
-    #region Members
     readonly ICncEngineConfig m_cncEngineConfig;
     readonly IExtensionsLoader m_extensionsLoader;
     readonly IAssemblyLoader m_assemblyLoader;
@@ -66,12 +65,10 @@ namespace Lemoine.CncEngine
     readonly bool m_useProcess = false;
     readonly Repository m_repository;
     AcquisitionProcessExecution m_processExecution = null;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger (typeof (Acquisition).FullName);
     static readonly ILog slog = LogManager.GetLogger<Acquisition> ();
 
-    #region Getters / Setters
     /// <summary>
     /// CncAcquisitionId
     /// </summary>
@@ -161,7 +158,6 @@ namespace Lemoine.CncEngine
         return m_cncDataHandler.FinalData;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
 #if NETSTANDARD || NET48 || NETCOREAPP
@@ -308,7 +304,6 @@ namespace Lemoine.CncEngine
 #endif // NETSTANDARD || NET48 || NETCOREAPP
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Build a parameters string from a dictionary
     /// </summary>
@@ -473,7 +468,6 @@ namespace Lemoine.CncEngine
       }
       return true;
     }
-    #endregion // Methods
 
     #region Implementation of ProcessOrThreadClass
     /// <summary>

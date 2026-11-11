@@ -18,13 +18,11 @@ namespace ConfiguratorAlarms
   /// </summary>
   public sealed class SingletonEventLevel
   {
-    #region Members
     Dictionary<string, List<IEventLevel>> m_levels; // sorted by event type
     IDictionary<string, IList<string>> m_inputItems = new Dictionary<string, IList<string>> ();
     IList<IEventLevel> m_allLevels;
     Dictionary<string, string> m_displayedName;
     public const string DEFAULT_EVENT = "EventLongPeriod";
-    #endregion // Members
 
     #region Constructors
     SingletonEventLevel ()
@@ -116,7 +114,6 @@ namespace ConfiguratorAlarms
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get all data types possible (Event long period, cnc value...)
     /// </summary>
@@ -179,7 +176,6 @@ namespace ConfiguratorAlarms
         }
       }
     }
-    #endregion // Methods
 
     #region Instance
     static SingletonEventLevel Instance { get { return Nested.instance; } }

@@ -17,17 +17,12 @@ namespace Lemoine.Alert
   [Serializable]
   public class XPathTrigger: ITrigger
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (XPathTrigger).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// XPath to evaluate
     /// </summary>
     public string XPath { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -47,7 +42,6 @@ namespace Lemoine.Alert
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Implements <see cref="ITrigger" />
     /// </summary>
@@ -66,6 +60,5 @@ namespace Lemoine.Alert
       }
       return (null != node);
     }
-    #endregion // Methods
   }
 }

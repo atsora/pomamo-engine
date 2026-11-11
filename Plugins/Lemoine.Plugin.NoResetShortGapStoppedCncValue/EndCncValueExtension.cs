@@ -18,11 +18,9 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
     : Lemoine.Extensions.MultipleInstanceConfigurableExtension<Configuration>
     , Lemoine.Extensions.Cnc.IEndCncValueExtension
   {
-    #region Members
     TimeSpan m_maxGap;
     IField m_field;
     IMachineModule m_machineModule;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (StopCncValueExtension).FullName);
     
@@ -35,8 +33,7 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
 
       Configuration configuration;
       if (!LoadConfiguration (out configuration)) {
-        log.WarnFormat ("Initialize: " +
-                        "the configuration is not valid, skip this instance");
+        log.Warn ("Initialize: the configuration is not valid, skip this instance");
         return false;
       }
       
@@ -52,9 +49,7 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
             var machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
               .FindById (machineFilterId);
             if (null == machineFilter) {
-              log.ErrorFormat ("Initialize: " +
-                               "machine filter id {0} does not exist",
-                               machineFilterId);
+              log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
               return false;
             }
             // Note: machineFilter.IsMatch requires it is done in the same session
@@ -68,9 +63,7 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
           m_field = ModelDAOHelper.DAOFactory.FieldDAO
             .FindById (fieldId);
           if (null == m_field) {
-            log.ErrorFormat ("Initialize: " +
-                             "field id {0} does not exist",
-                             fieldId);
+            log.Error ($"Initialize: field id {fieldId} does not exist");
             return false;
           }
         } // Transaction
@@ -91,18 +84,15 @@ namespace Lemoine.Plugin.NoResetShortGapStoppedCncValue
       }
       
       if (newDateTime < previousDateTime) {
-        log.ErrorFormat ("IsResetCncValueRequired: " +
-                         "newDateTime {0} before previousDateTime {1}",
-                         newDateTime, previousDateTime);
+        log.Error ($"IsResetCncValueRequired: newDateTime {newDateTime} before previousDateTime {previousDateTime}");
         return null;
       }
       
       TimeSpan gap = newDateTime.Subtract (previousDateTime);
       if (gap < m_maxGap) {
-        log.DebugFormat ("IsResetCncValueRequired: " +
-                         "Gap {0} is lower than {1} " +
-                         "=> return false",
-                        gap, m_maxGap);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsResetCncValueRequired: Gap {gap} is lower than {m_maxGap} => return false");
+        }
         return false;
       }
       

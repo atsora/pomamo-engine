@@ -16,7 +16,6 @@ namespace LauncherConfigurable
   /// </summary>
   internal class Item : GenericItem, ILauncher
   {
-    #region Members
     readonly string m_title;
     readonly string m_description;
     readonly string m_category;
@@ -28,9 +27,7 @@ namespace LauncherConfigurable
     readonly LemSettingsGlobal.ItemFlag m_flags = 0;
     readonly IDictionary<Type, LemSettingsGlobal.InteractionType> m_types =
       new Dictionary<Type, LemSettingsGlobal.InteractionType>();
-    #endregion
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -108,7 +105,6 @@ namespace LauncherConfigurable
     /// Argument to send, may be null
     /// </summary>
     public IList<String> Arguments { get { return m_args; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

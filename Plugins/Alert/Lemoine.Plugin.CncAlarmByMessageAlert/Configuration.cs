@@ -14,12 +14,9 @@ namespace Lemoine.Plugin.CncAlarmByMessageAlert
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
-
     [PluginConf ("Bool", "Filter by message (otherwise by number)", Description = "Indicates if filter must be done on the message content or on the number content")]
     [DefaultValue (true)]
     public bool FilterByMessage { get; set; } = true;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

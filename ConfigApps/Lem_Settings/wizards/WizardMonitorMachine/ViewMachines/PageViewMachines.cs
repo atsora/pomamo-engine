@@ -17,16 +17,13 @@ namespace WizardMonitorMachine
   /// </summary>
   internal partial class PageViewMachines : GenericViewPage, IViewPage
   {
-    #region Members
     readonly IDictionary<string, IList<IMachine>> m_machinesPerConfigFiles =
       new Dictionary<string, IList<IMachine>>();
     bool m_advancedMode = false;
     ItemData m_itemData = null;
     int m_machineId = -1;
     IDictionary<int, string> m_machineSuffix = new Dictionary<int, string>();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -54,7 +51,6 @@ namespace WizardMonitorMachine
         return LemSettingsGlobal.PageFlag.NONE;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

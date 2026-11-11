@@ -94,7 +94,6 @@ namespace Lemoine.Analysis
     static readonly string TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_KEY = "Analysis.Activity.TemporaryWithDelayException.Sleep";
     static readonly TimeSpan TEMPORARY_WITH_DELAY_EXCEPTION_SLEEP_TIME_DEFAULT = TimeSpan.FromSeconds (2);
 
-    #region Members
     bool m_disposed = false;
     bool m_initialized = false;
     readonly ConfigUpdateChecker m_configUpdateChecker = new ConfigUpdateChecker ();
@@ -104,7 +103,6 @@ namespace Lemoine.Analysis
       new Dictionary<int, MachineActivityAnalysis> ();
     readonly CheckThreadsAndProcesses m_checkThreads = new CheckThreadsAndProcesses ();
     readonly IList<BackgroundAnalysis> m_backgroundAnalyses = new List<BackgroundAnalysis> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ActivityAnalysis).FullName);
 
@@ -197,7 +195,6 @@ namespace Lemoine.Analysis
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Request a pause in the activity analysis
     /// </summary>
@@ -472,24 +469,18 @@ namespace Lemoine.Analysis
 
       ThreadPool.GetMaxThreads (out workerThreads, out completionPortThreads);
       if (log.IsInfoEnabled) {
-        log.InfoFormat ("RunAnalysis: " +
-                        "default workThreads={0} completionPortThreads={1}",
-                        workerThreads, completionPortThreads);
+        log.Info ($"RunAnalysis: default workThreads={workerThreads} completionPortThreads={completionPortThreads}");
       }
       int maxThreads = AnalysisConfigHelper.MaxThreadsInPool;
       if (maxThreads < workerThreads) {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("RunAnalysis: " +
-                          "decrease the number of workThreads from {0} to {1}",
-                          workerThreads, maxThreads);
+          log.Info ($"RunAnalysis: decrease the number of workThreads from {workerThreads} to {maxThreads}");
         }
         workerThreads = maxThreads;
       }
       if (maxThreads < completionPortThreads) {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("RunAnalysis: " +
-                          "decrease the number of completionPortThreads from {0} to {1}",
-                          completionPortThreads, maxThreads);
+          log.Info ($"RunAnalysis: decrease the number of completionPortThreads from {completionPortThreads} to {maxThreads}");
         }
         completionPortThreads = maxThreads;
       }
@@ -659,7 +650,7 @@ namespace Lemoine.Analysis
           }
           if (!WaitForFillAnalysisStatusCompletion (cancellationToken)) {
             if (log.IsWarnEnabled) {
-              log.WarnFormat ("FillAnalysisStatus: this is not completed, but continue");
+              log.Warn ("FillAnalysisStatus: this is not completed, but continue");
             }
           }
         }
@@ -883,7 +874,6 @@ namespace Lemoine.Analysis
                                FILL_ANALYSIS_STATUS_COMPLETION_WAIT_DEFAULT);
       return WaitForMachineAnalysisCompletion (fillAnalysisStatusCompletionWait, cancellationToken);
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

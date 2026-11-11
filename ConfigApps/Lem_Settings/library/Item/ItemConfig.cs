@@ -13,17 +13,14 @@ namespace Lemoine.Settings
   /// </summary>
   public class ItemConfig
   {
-    #region Members
     readonly IniFile m_iniFile;
     readonly IDictionary<string, string> m_values = new Dictionary<string, string>();
-    #endregion // Members
     
     static readonly string IDENTIFICATION_SECTION_NAME = "Identification";
     static readonly string PARAMETERS_SECTION_NAME = "Parameters";
     static readonly string ITEM_ID_KEY_NAME = "item_id";
     static readonly string CONF_ID_KEY_NAME = "configuration_id";
 
-    #region Getters / Setters
     /// <summary>
     /// Return true if the config is valid
     /// If false, this config must be ignored
@@ -39,7 +36,6 @@ namespace Lemoine.Settings
     /// Id of this config
     /// </summary>
     public int ConfId { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -56,7 +52,6 @@ namespace Lemoine.Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if key is defined
     /// </summary>
@@ -116,6 +111,5 @@ namespace Lemoine.Settings
         m_values[key] = m_iniFile.GetValue(PARAMETERS_SECTION_NAME, key);
       }
     }
-    #endregion // Methods
   }
 }

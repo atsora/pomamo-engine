@@ -53,8 +53,7 @@ namespace Lemoine.Plugin.DynamicTimesSequence
       if (!operationDetectionDateTime.HasValue
         || (operationDetectionDateTime.Value < dateTime)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("IsApplicableAt: operation detection date/time={0} VS dateTime={1} => Pending",
-            operationDetectionDateTime, dateTime);
+          log.Debug ($"IsApplicableAt: operation detection date/time={operationDetectionDateTime} VS dateTime={dateTime} => Pending");
         }
         return DynamicTimeApplicableStatus.Pending;
       }
@@ -84,15 +83,13 @@ namespace Lemoine.Plugin.DynamicTimesSequence
             if (!operationDetectionDateTime.HasValue
               || (operationDetectionDateTime.Value < dateTime)) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: no sequence at {0} (and after) and detection date/time {1} older => pending",
-                  dateTime, operationDetectionDateTime);
+                log.Debug ($"Get: no sequence at {dateTime} (and after) and detection date/time {operationDetectionDateTime} older => pending");
               }
               return this.CreatePending ();
             }
             else {
               if (log.IsErrorEnabled) {
-                log.ErrorFormat ("Get: there is no sequence at {0} (and after) with detection date/time {1} => not applicable",
-                  dateTime, operationDetectionDateTime);
+                log.Error ($"Get: there is no sequence at {dateTime} (and after) with detection date/time {operationDetectionDateTime} => not applicable");
               }
               return this.CreateNotApplicable ();
             }
@@ -102,7 +99,7 @@ namespace Lemoine.Plugin.DynamicTimesSequence
             var nextSequence = sequenceSlots.FirstOrDefault (s => s.Id != sequenceAt.Id);
             if (null != nextSequence) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: sequence at range is {0} with a next sequence => return {1}", sequenceAt.DateTimeRange, sequenceAt.EndDateTime);
+                log.Debug ($"Get: sequence at range is {sequenceAt.DateTimeRange} with a next sequence => return {sequenceAt.EndDateTime}");
               }
               Debug.Assert (sequenceAt.EndDateTime.HasValue);
               return this.CreateFinal (sequenceAt.EndDateTime.Value);
@@ -112,15 +109,14 @@ namespace Lemoine.Plugin.DynamicTimesSequence
               if (operationDetectionDateTime.HasValue
                 && (Bound.Compare<DateTime> (sequenceAt.EndDateTime, operationDetectionDateTime.Value) < 0)) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: sequence end {0} is before operation detection date/time, it can be returned", sequenceAt.EndDateTime);
+                  log.Debug ($"Get: sequence end {sequenceAt.EndDateTime} is before operation detection date/time, it can be returned");
                 }
                 Debug.Assert (sequenceAt.EndDateTime.HasValue);
                 return this.CreateFinal (sequenceAt.EndDateTime.Value);
               }
               else {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: operation detection date/time {0} before or equal sequence end date/time {1} => pending",
-                    operationDetectionDateTime, sequenceAt.EndDateTime);
+                  log.Debug ($"Get: operation detection date/time {operationDetectionDateTime} before or equal sequence end date/time {sequenceAt.EndDateTime} => pending");
                 }
                 return this.CreatePending ();
               }
@@ -128,8 +124,7 @@ namespace Lemoine.Plugin.DynamicTimesSequence
           }
           else { // null == SequenceAt
             if (log.IsErrorEnabled) {
-              log.ErrorFormat ("Get: there is no sequence at {0} (but there are some after) => not applicable",
-                dateTime);
+              log.Error ($"Get: there is no sequence at {dateTime} (but there are some after) => not applicable");
             }
             return this.CreateNotApplicable ();
           }
@@ -176,14 +171,14 @@ namespace Lemoine.Plugin.DynamicTimesSequence
             .FindByIdWithMachineModules (machine.Id);
           if (null == monitoredMachine) {
             if (log.IsErrorEnabled) {
-              log.ErrorFormat ("Initialize: machine id {0} is not monitored", machine.Id);
+              log.Error ($"Initialize: machine id {machine.Id} is not monitored");
             }
             return false;
           }
           m_machineModule = monitoredMachine.MainMachineModule;
           if (null == m_machineModule) {
             if (log.IsErrorEnabled) {
-              log.ErrorFormat ("Initialize: no main machine module for machine {0}", machine.Id);
+              log.Error ($"Initialize: no main machine module for machine {machine.Id}");
             }
             return false;
           }
@@ -192,7 +187,7 @@ namespace Lemoine.Plugin.DynamicTimesSequence
           int machineModuleId;
           if (!int.TryParse (parameter, out machineModuleId)) {
             if (log.IsErrorEnabled) {
-              log.ErrorFormat ("Initialize: the parameter {0} is not an integer, so not a machine module id", parameter);
+              log.Error ($"Initialize: the parameter {parameter} is not an integer, so not a machine module id");
             }
             return false;
           }
@@ -200,7 +195,7 @@ namespace Lemoine.Plugin.DynamicTimesSequence
             .FindById (machineModuleId);
           if (null == m_machineModule) {
             if (log.IsErrorEnabled) {
-              log.ErrorFormat ("Initialize: no machine module with id {0}", machineModuleId);
+              log.Error ($"Initialize: no machine module with id {machineModuleId}");
             }
             return false;
           }

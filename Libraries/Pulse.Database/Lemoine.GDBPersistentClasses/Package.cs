@@ -14,7 +14,6 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class Package: IPackage, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     int m_numVersion = 0;
@@ -22,11 +21,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_identifyingName = "";
     string m_description = "";
     bool m_activated = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Package).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Package Id
     /// </summary>
@@ -85,7 +82,6 @@ namespace Lemoine.GDBPersistentClasses
     /// Sequence detail (nullable)
     /// </summary>
     public virtual PackageDetail Detail { get; set; } = null;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -120,8 +120,7 @@ namespace Lemoine.Model
     public override bool IsAdjacentTo (Range<DateTime> other)
     {
       if (this.IsEmpty () || other.IsEmpty ()) {
-        log.WarnFormat ("IsAdjacentTo: " +
-                        "empty, return false");
+        log.Warn ("IsAdjacentTo: empty, return false");
         return false;
       }
       else if (this.Upper.HasValue

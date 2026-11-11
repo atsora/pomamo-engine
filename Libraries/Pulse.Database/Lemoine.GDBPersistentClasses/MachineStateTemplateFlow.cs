@@ -17,16 +17,13 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class MachineStateTemplateFlow: IMachineStateTemplateFlow, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineStateTemplate m_from;
     IMachineStateTemplate m_to;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateFlow).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// MachineStateTemplateFlow Id
     /// </summary>
@@ -54,8 +51,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.ErrorFormat ("From.set: " +
-                           "null value");
+          log.Error ("From.set: null value");
           throw new ArgumentNullException ("MachineStateTemplateFlow.From");
         }
         m_from = value;
@@ -73,14 +69,12 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.ErrorFormat ("To.set: " +
-                           "null value");
+          log.Error ("To.set: null value");
           throw new ArgumentNullException ("MachineStateTemplateFlow.To");
         }
         m_to = value;
       }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -102,7 +96,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Members
     /// <summary>
     /// <see cref="Object.ToString()" />
     /// </summary>
@@ -116,7 +109,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[MachineStateTemplateFlow {this.Id}]";
       }
     }
-    #endregion // Members
 
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

@@ -59,14 +59,14 @@ namespace Pulse.Web.Machine
     public override object GetWithoutCache (MachinesFromGroupsRequestDTO request)
     {
       if (string.IsNullOrEmpty (request.GroupIds)) {
-        log.ErrorFormat ("GetWithoutCache: No group id was specified");
+        log.Error ("GetWithoutCache: No group id was specified");
         return new ErrorDTO ("No group id specified", ErrorStatus.WrongRequestParameter);
       }
 
       var groupIds = request.GroupIds.Split (new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
         .Distinct ();
       if (!groupIds.Any ()) {
-        log.ErrorFormat ("GetWithoutCache: No group id was specified (only a separator)");
+        log.Error ("GetWithoutCache: No group id was specified (only a separator)");
         return new ErrorDTO ("No group id specified", ErrorStatus.WrongRequestParameter);
       }
       IList<IGroup> groups = new List<IGroup> ();
@@ -74,7 +74,7 @@ namespace Pulse.Web.Machine
         var groupFromId = new Lemoine.Business.Machine.GroupFromId (groupId);
         var group = ServiceProvider.Get (groupFromId);
         if (null == group) {
-          log.ErrorFormat ("GetWithoutCache: no group with id {0}", groupId);
+          log.Error ($"GetWithoutCache: no group with id {groupId}");
           return new ErrorDTO ("No group with id " + groupId, ErrorStatus.WrongRequestParameter);
         }
         else { // null != group
@@ -84,7 +84,7 @@ namespace Pulse.Web.Machine
 
       if (!groups.Any ()) {
         Debug.Assert (false);
-        log.FatalFormat ("GetWithoutCache: no group was found"); // Normally already processed above
+        log.Fatal ("GetWithoutCache: no group was found"); // Normally already processed above
         return new ErrorDTO ("No group found", ErrorStatus.WrongRequestParameter);
       }
 
@@ -107,8 +107,7 @@ namespace Pulse.Web.Machine
           .ToList ();
       }
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetWithoutCache: return {0} machines for groups {1}",
-          machines.Count (), request.GroupIds);
+        log.Debug ($"GetWithoutCache: return {machines.Count ()} machines for groups {request.GroupIds}");
       }
 
       // Filter machines if the user is logged or if a login is required
@@ -138,7 +137,7 @@ namespace Pulse.Web.Machine
       else {
         if (sortedGroups.Any (g => 2 <= g.SortKind)) {
           if (1 < sortedGroups.Count (g => 2 <= g.SortKind)) {
-            log.WarnFormat ("GetWithoutCache: at least two different groups with a sort kind greater than 1");
+            log.Warn ("GetWithoutCache: at least two different groups with a sort kind greater than 1");
             response.SortKind = null;
           }
           else {

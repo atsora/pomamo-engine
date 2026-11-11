@@ -21,14 +21,9 @@ namespace Lem_MTConnectSimpleViewer
     static readonly string TABLE_XSL_FILE = "table.xsl";
     static readonly string BASIC_XSL_FILE = "basic.xsl";
     
-    #region Members
     string url = "";
     XmlWriterSettings xmlSettings = new XmlWriterSettings ();
     XslCompiledTransform xslt = new XslCompiledTransform ();
-    #endregion
-
-    #region Getters / Setters
-    #endregion
 
     #region Constructors
     /// <summary>

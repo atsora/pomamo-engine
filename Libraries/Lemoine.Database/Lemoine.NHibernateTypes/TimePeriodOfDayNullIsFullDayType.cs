@@ -91,9 +91,7 @@ namespace Lemoine.NHibernateTypes
         }
         else {
           if (false == timePeriodOfDay.IsValid ()) {
-            log.FatalFormat ("NullSafeSet: " +
-                             "TimePeriodOfDay {0} is not valid",
-                             timePeriodOfDay);
+            log.Fatal ($"NullSafeSet: TimePeriodOfDay {timePeriodOfDay} is not valid");
             Debug.Assert (false);
             throw new InvalidOperationException ("Invalid TimePeriodOfDay");
           }

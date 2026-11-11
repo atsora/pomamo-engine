@@ -22,7 +22,6 @@ namespace Lemoine.Info.TargetSpecific
 
     static readonly ILog log = LogManager.GetLogger (typeof (PulseVersions).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Get the versions of the different software
     /// </summary>
@@ -41,7 +40,6 @@ namespace Lemoine.Info.TargetSpecific
     {
       get { return Instance.m_valid; }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -58,7 +56,6 @@ namespace Lemoine.Info.TargetSpecific
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Reload the Pulse info data
     /// </summary>
@@ -167,8 +164,6 @@ namespace Lemoine.Info.TargetSpecific
       }
     }
 #endif // !NETSTANDARD
-
-#endregion // Methods
 
           #region Instance
     static PulseVersions Instance

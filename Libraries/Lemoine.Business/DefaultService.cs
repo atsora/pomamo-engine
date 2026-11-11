@@ -13,13 +13,7 @@ namespace Lemoine.Business
   /// </summary>
   internal sealed class DefaultService: IService
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (DefaultService).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -30,7 +24,6 @@ namespace Lemoine.Business
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Get the result of a request
     /// </summary>
@@ -61,6 +54,5 @@ namespace Lemoine.Business
     {
       return null;
     }
-    #endregion // Methods
   }
 }

@@ -21,9 +21,6 @@ namespace Lemoine.WebMiddleware.Routing
   {
     readonly ILog log = LogManager.GetLogger (typeof (ContractRouteInitializerAssemblies).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

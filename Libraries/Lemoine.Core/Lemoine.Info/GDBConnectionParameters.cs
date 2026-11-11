@@ -241,7 +241,6 @@ namespace Lemoine.Info
       LoadGDBParameters ();
     }
 
-    #region Methods
     /// <summary>
     /// Get the connection string with a specified application name (static)
     /// </summary>
@@ -265,7 +264,6 @@ namespace Lemoine.Info
     /// Get the used database user
     /// </summary>
     public static string DatabaseUser => Instance.Username;
-    #endregion // Methods
 
     #region Instance
     static GDBConnectionParameters Instance

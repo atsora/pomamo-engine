@@ -39,17 +39,14 @@ namespace Lemoine.Threading
     static readonly string SLEEP_BEFORE_FORCE_EXIT_KEY = "CheckThreadsAndProcesses.SleepBeforeForceExit";
     static readonly TimeSpan SLEEP_BEFORE_FORCE_EXIT_DEFAULT = TimeSpan.FromSeconds (10);
 
-    #region Members
     bool m_disposed = false;
     readonly IList<ProcessClassExecution> m_processClassExecutions = new List<ProcessClassExecution> ();
     readonly IList<ILoggedThreadClass> m_threadClasses = new List<ILoggedThreadClass> ();
     readonly IList<Func<bool>> m_additionalChecks = new List<Func<bool>> ();
     readonly IList<IAdditionalChecker> m_additionalCheckers = new List<IAdditionalChecker> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (CheckThreadsAndProcesses).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// When the main thread method ends in exception, should the application be stopped ?
     /// </summary>
@@ -69,7 +66,6 @@ namespace Lemoine.Threading
     /// Global cancellation token to check if the application was really been requested to exit
     /// </summary>
     public CancellationToken GlobalCancellationToken { get; set; } = CancellationToken.None;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -80,7 +76,6 @@ namespace Lemoine.Threading
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add an additional check
     /// </summary>
@@ -508,7 +503,6 @@ namespace Lemoine.Threading
         throw;
       }
     }
-    #endregion // Methods
 
     #region IDisposable implementation
     /// <summary>

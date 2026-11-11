@@ -187,13 +187,11 @@ namespace Lemoine.DataRepository
     static readonly string IF = "if";
     static readonly string IFNOT = "ifnot";
 
-    #region Members
     LogLevel m_logThreshold = LogLevel.INFO;
     bool m_errorLogged = false;
     readonly IDictionary<Type, XmlSerializer> m_xmlSerializers = new Dictionary<Type, XmlSerializer> ();
     bool m_asynchronousCommit = false;
     bool m_autoTransaction = true;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (LemoineGDBBuilder).FullName);
 
@@ -202,7 +200,6 @@ namespace Lemoine.DataRepository
     /// </summary>
     public LemoineGDBBuilder () { }
 
-    #region Methods
     /// <summary>
     /// Give the possibility to use an asynchronous commit
     /// </summary>
@@ -341,10 +338,7 @@ namespace Lemoine.DataRepository
               || action.Equals (ACTION_ID_UPDATE)) {
             Type type = Type.GetType ("Lemoine.GDBPersistentClasses." + element.Name + ", Pulse.Database");
             if (null == type) {
-              log.ErrorFormat ("type {0} from element name is unknown " +
-                               "=> action {1} can't be processed",
-                               element.Name,
-                               action);
+              log.Error ($"type {element.Name} from element name is unknown => action {action} can't be processed");
               AddSynchronizationError ("Type " + element.Name + " is unknown and was not processed",
                                        element.OuterXml);
               throw new InvalidTypeException ("Type " + element.Name + " is unknown");
@@ -370,9 +364,9 @@ namespace Lemoine.DataRepository
                 throw;
               }
 
-              log.DebugFormat ("DeserializeAndProcesElement: " +
-                               "after de-serializing it, element {0} is {1}",
-                               element.Name, elementObject);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"DeserializeAndProcesElement: after de-serializing it, element {element.Name} is {elementObject}");
+              }
 
               if (OpenTransaction (element)) {
                 transaction = BeginTransaction (session);
@@ -403,18 +397,17 @@ namespace Lemoine.DataRepository
             XmlElement child = node as XmlElement;
             string relation = child.GetAttribute (RELATION_KEY,
                                                   PulseResolver.PULSE_GDB_NAMESPACE);
-            log.DebugFormat ("DeserializeAndProcessElement: " +
-                             "visiting in element {0} child {1} with element action={2} and child relation={3}",
-                             element.Name, child.Name, action, relation);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"DeserializeAndProcessElement: visiting in element {element.Name} child {child.Name} with element action={action} and child relation={relation}");
+            }
             if ((0 == action.Length)
                 || action.Equals (ACTION_NONE)
                 || relation.Equals (RELATION_INVERSE)
                 || relation.Equals (RELATION_NONE)) {
               if (false == DeserializeAndProcessElement (child, elementObject)) {
-                log.DebugFormat ("DeserializeAndProcessElement: " +
-                                 "recursive call of DeserializeAndProcessElement returned false " +
-                                 "=> remove the child {0} from element {1}",
-                                 child.Name, element.Name);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"DeserializeAndProcessElement: recursive call of DeserializeAndProcessElement returned false => remove the child {child.Name} from element {element.Name}");
+                }
                 childElementsToRemove.Add (child);
               }
             }
@@ -443,16 +436,16 @@ namespace Lemoine.DataRepository
 
     bool CheckConditionIf (XmlElement element)
     {
-      log.DebugFormat ("CheckConditionIf /B: " +
-                       "element={0}",
-                       element.Name);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CheckConditionIf /B: element={element.Name}");
+      }
 
       XmlAttribute ifAttribute = element.GetAttributeNode (IF,
                                                            PulseResolver.PULSE_GDB_NAMESPACE);
       if (null == ifAttribute) {
-        log.DebugFormat ("CheckConditionIf: " +
-                         "no attribute if in element {0}",
-                         element.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CheckConditionIf: no attribute if in element {element.Name}");
+        }
         return true;
       }
       return EvalCondition (element, ifAttribute);
@@ -460,16 +453,16 @@ namespace Lemoine.DataRepository
 
     bool CheckConditionIfNot (XmlElement element)
     {
-      log.DebugFormat ("CheckConditionIfNot /B: " +
-                       "element={0}",
-                       element.Name);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CheckConditionIfNot /B: element={element.Name}");
+      }
 
       XmlAttribute ifnotAttribute = element.GetAttributeNode (IFNOT,
                                                               PulseResolver.PULSE_GDB_NAMESPACE);
       if (null == ifnotAttribute) {
-        log.DebugFormat ("CheckConditionIfNot: " +
-                         "no attribute ifnot in element {0}",
-                         element.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"CheckConditionIfNot: no attribute ifnot in element {element.Name}");
+        }
         return true;
       }
       return !EvalCondition (element, ifnotAttribute);
@@ -478,18 +471,14 @@ namespace Lemoine.DataRepository
     bool EvalCondition (XmlElement element, XmlAttribute attribute)
     {
       try {
-        log.DebugFormat ("EvalCondition: " +
-                         "raw attribute value is {0} " +
-                         "for element {1}",
-                         attribute.Value,
-                         element.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"EvalCondition: raw attribute value is {attribute.Value} for element {element.Name}");
+        }
         string result =
           new XPathEvaluator (element).Replace (attribute.Value);
-        log.DebugFormat ("EvalCondition: " +
-                         "new attribute is {0} " +
-                         "for element {1}",
-                         result,
-                         element.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"EvalCondition: new attribute is {result} for element {element.Name}");
+        }
         if (result.Contains ("{")) {
           log.Debug ("EvalCondition: attribute was not fully evaluated (one remaining {) => return false");
           return false;
@@ -529,17 +518,14 @@ namespace Lemoine.DataRepository
         string relation = child.GetAttribute (RELATION_KEY,
                                               PulseResolver.PULSE_GDB_NAMESPACE);
         if (0 == relation.Length) {
-          log.DebugFormat ("ProcessElement: " +
-                           "process child {0} with no attribute pulse:relation first",
-                           child.Name);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessElement: process child {child.Name} with no attribute pulse:relation first");
+          }
           object childObject;
           PropertyInfo childInfo =
             type.GetProperty (child.Name);
           if (null == childInfo) {
-            log.WarnFormat ("ProcessElement: " +
-                            "child {0} is not a property of {1}, " +
-                            "skip it",
-                            child.Name, element.Name);
+            log.Warn ($"ProcessElement: child {child.Name} is not a property of {element.Name}, skip it");
             AddSynchronizationLog (LogLevel.WARN,
                                    child.Name + " is not a property of " + element.Name,
                                    element.OuterXml);
@@ -559,9 +545,9 @@ namespace Lemoine.DataRepository
               log.Warn ($"ProcessElement: ProcessElement did not find child element {child.Name}");
               childElementsToRemove.Add (child);
             }
-            log.DebugFormat ("ProcessElement: " +
-                             "set child {0} to element {1}",
-                             childObject, elementObject);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ProcessElement: set child {childObject} to element {elementObject}");
+            }
             childInfo.SetValue (elementObject, childObject, null);
           }
         }
@@ -581,10 +567,7 @@ namespace Lemoine.DataRepository
           PropertyInfo parentInfo =
             type.GetProperty (element.ParentNode.Name);
           if (null == parentInfo) {
-            log.ErrorFormat ("ProcessElement: " +
-                             "there is no parent {0} in the properties of {1} " +
-                             "although pulse:relation='inverse' is set",
-                             element.ParentNode.Name, element.Name);
+            log.Error ($"ProcessElement: there is no parent {element.ParentNode.Name} in the properties of {element.Name} although pulse:relation='inverse' is set");
             string error = "No parent named " +
               element.ParentNode.Name +
               " exists in " +
@@ -594,13 +577,13 @@ namespace Lemoine.DataRepository
                                      element.OuterXml);
             throw new UnknownPropertyException (error);
           }
-          log.DebugFormat ("ProcessElement: " +
-                           "about to set parent {0} property {1} to {2}",
-                           parent, parentInfo.Name, elementObject);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessElement: about to set parent {parent} property {parentInfo.Name} to {elementObject}");
+          }
           parentInfo.SetValue (elementObject, parent, null);
-          log.DebugFormat ("ProcessElement: " +
-                           "parent {0} property {1} to {2} successfully set",
-                           parent, parentInfo.Name, elementObject);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessElement: parent {parent} property {parentInfo.Name} to {elementObject} successfully set");
+          }
         }
         NHibernateHelper.GetCurrentSession ().Save (elementObject);
         NHibernateHelper.GetCurrentSession ().Flush ();
@@ -612,9 +595,7 @@ namespace Lemoine.DataRepository
                || action.Equals (ACTION_UPDATE)
                || action.Equals (ACTION_ID_UPDATE)) { // Get the item in database
         if (!(elementObject is BaseData)) {
-          log.WarnFormat ("the item {0} is not a BaseData " +
-                          "=> it can't be a reference or being updated",
-                          element.Name);
+          log.Warn ($"the item {element.Name} is not a BaseData => it can't be a reference or being updated");
         }
         else { // deserialized is BaseData
           object databaseItem;
@@ -626,23 +607,17 @@ namespace Lemoine.DataRepository
             try {
               XmlAttribute idAttribute = element.GetAttributeNode ("Id");
               if (null == idAttribute) {
-                log.ErrorFormat ("ProcessElement: " +
-                                 "no attribute Id in element {0}",
-                                 element.Name);
+                log.Error ($"ProcessElement: no attribute Id in element {element.Name}");
                 throw new ArgumentNullException ();
               }
-              log.DebugFormat ("ProcessElement: " +
-                               "raw attribute value for Id is {0} " +
-                               "for element {1}",
-                               idAttribute.Value,
-                               element.Name);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"ProcessElement: raw attribute value for Id is {idAttribute.Value} for element {element.Name}");
+              }
               idAttribute.Value =
                 new XPathEvaluator (element).Replace (idAttribute.Value);
-              log.DebugFormat ("ProcessElement: " +
-                               "new Id attribute is {0} " +
-                               "for element {1}",
-                               idAttribute.Value,
-                               element.Name);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"ProcessElement: new Id attribute is {idAttribute.Value} for element {element.Name}");
+              }
               try {
                 int id = int.Parse (idAttribute.Value);
                 databaseItem = NHibernateHelper.GetCurrentSession ().Get (elementObject.GetType (), id);
@@ -689,17 +664,16 @@ namespace Lemoine.DataRepository
             }
           }
           if (null != databaseItem) { // Found
-            log.DebugFormat ("ProcessElement: " +
-                             "{0} was found from database for element {1}",
-                             databaseItem, element.Name);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"ProcessElement: {databaseItem} was found from database for element {element.Name}");
+            }
             AddNewAttributes (element, databaseItem);
             AddNewElements (element, databaseItem);
             if (action.Equals (ACTION_UPDATE)
                 || action.Equals (ACTION_ID_UPDATE)) {
-              log.DebugFormat ("ProcessElement: " +
-                               "update item {0} with {1}",
-                               elementObject,
-                               databaseItem);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"ProcessElement: update item {elementObject} with {databaseItem}");
+              }
               if (element.GetAttribute (RELATION_KEY,
                                         PulseResolver.PULSE_GDB_NAMESPACE)
                   .Equals (RELATION_INVERSE)) {
@@ -707,10 +681,7 @@ namespace Lemoine.DataRepository
                 PropertyInfo parentInfo =
                   type.GetProperty (element.ParentNode.Name);
                 if (null == parentInfo) {
-                  log.ErrorFormat ("ProcessElement: " +
-                                   "there is no parent {0} in the properties of {1} " +
-                                   "although the pulse:relation='inverse' is set",
-                                   element.ParentNode.Name, element.Name);
+                  log.Error ($"ProcessElement: there is no parent {element.ParentNode.Name} in the properties of {element.Name} although the pulse:relation='inverse' is set");
                   string error = "No parent named " +
                     element.ParentNode.Name +
                     " exists in " +
@@ -739,10 +710,7 @@ namespace Lemoine.DataRepository
                 PropertyInfo info =
                   type.GetProperty (attribute.LocalName);
                 if (null == info) {
-                  log.WarnFormat ("ProcessElement: " +
-                                  "attribute {0} is not a property of {1}, " +
-                                  "skip it",
-                                  attribute.LocalName, element.Name);
+                  log.Warn ($"ProcessElement: attribute {attribute.LocalName} is not a property of {element.Name}, skip it");
                   AddSynchronizationLog (LogLevel.WARN,
                                          "Attribute " +
                                          attribute.LocalName +
@@ -751,22 +719,19 @@ namespace Lemoine.DataRepository
                                          element.OuterXml);
                 }
                 else if (null == info.GetSetMethod (true)) {
-                  log.WarnFormat ("ProcessElement: " +
-                                  "attribute {0} has a property {1} without any setter " +
-                                  "=> skip it",
-                                  attribute.LocalName, element.Name);
+                  log.Warn ($"ProcessElement: attribute {attribute.LocalName} has a property {element.Name} without any setter => skip it");
                 }
                 else {
                   object newValue = info.GetValue (elementObject, null);
-                  log.DebugFormat ("ProcessElement: " +
-                                   "about to set value {0} to property {1} of {2}",
-                                   newValue, info.Name, databaseItem);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"ProcessElement: about to set value {newValue} to property {info.Name} of {databaseItem}");
+                  }
                   info.SetValue (databaseItem,
                                  newValue,
                                  null);
-                  log.DebugFormat ("ProcessElement: " +
-                                   "property {0} was successfully set in {1}",
-                                   info.Name, databaseItem);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"ProcessElement: property {info.Name} was successfully set in {databaseItem}");
+                  }
                 }
               }
               elementObject = databaseItem;
@@ -779,9 +744,7 @@ namespace Lemoine.DataRepository
             }
           }
           else { // Not found: null == databaseItem
-            log.WarnFormat ("ProcessElement: " +
-                            "{0} was not found in database",
-                            element.Name);
+            log.Warn ($"ProcessElement: {element.Name} was not found in database");
             string notfound = element.GetAttribute (NOTFOUND_KEY,
                                                     PulseResolver.PULSE_GDB_NAMESPACE);
             if (notfound.Contains (NOTFOUND_FAIL)
@@ -841,9 +804,7 @@ namespace Lemoine.DataRepository
       PropertyInfo info =
         elementObject.GetType ().GetProperty (newAttribute);
       if (null == info) {
-        log.WarnFormat ("AddNewAttribute: " +
-                        "new attribute {0} is not a property of {1}",
-                        newAttribute, element.Name);
+        log.Warn ($"AddNewAttribute: new attribute {newAttribute} is not a property of {element.Name}");
         AddSynchronizationLog (LogLevel.WARN,
                                "New attribute " +
                                newAttribute +
@@ -854,9 +815,9 @@ namespace Lemoine.DataRepository
       else {
         string newAttributeValue =
           info.GetValue (elementObject, null).ToString ();
-        log.DebugFormat ("AddNewAttribute: " +
-                         "new attribute {0} value is {1}",
-                         newAttribute, newAttributeValue);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddNewAttribute: new attribute {newAttribute} value is {newAttributeValue}");
+        }
         element.SetAttribute (newAttribute,
                               newAttributeValue);
       }
@@ -894,9 +855,7 @@ namespace Lemoine.DataRepository
       PropertyInfo info =
         elementObject.GetType ().GetProperty (newElement);
       if (null == info) {
-        log.WarnFormat ("AddNewElement: " +
-                        "new element {0} is not a property of {1}",
-                        newElement, element.Name);
+        log.Warn ($"AddNewElement: new element {newElement} is not a property of {element.Name}");
         AddSynchronizationLog (LogLevel.WARN,
                                "New element " +
                                newElement +
@@ -908,14 +867,14 @@ namespace Lemoine.DataRepository
         object newElementValue =
           info.GetValue (elementObject, null);
         if (null == newElementValue) {
-          log.DebugFormat ("AddNewElement: " +
-                           "new element is null " +
-                           "=> do nothing");
+          if (log.IsDebugEnabled) {
+            log.Debug ("AddNewElement: new element is null => do nothing");
+          }
           return;
         }
-        log.DebugFormat ("AddNewElement: " +
-                         "new element {0} value is {1}",
-                         newElement, newElementValue);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"AddNewElement: new element {newElement} value is {newElementValue}");
+        }
         // Note: there are some problems serializing it directly because of some lazy properties
         // => add only the item and its id
         XmlElement childElement = element.OwnerDocument.CreateElement (newElement);
@@ -977,7 +936,6 @@ namespace Lemoine.DataRepository
         }
       }
     }
-    #endregion // Methods
 
     /// <summary>
     /// Evaluate the XPath given:
@@ -1032,10 +990,7 @@ namespace Lemoine.DataRepository
           }
         }
 
-        log.WarnFormat ("ReplaceXPath: " +
-                        "XPath {0} was not found " +
-                        "return original string {1}",
-                        xpath, m.Value);
+        log.Warn ($"ReplaceXPath: XPath {xpath} was not found return original string {m.Value}");
         return m.Value;
       }
     }

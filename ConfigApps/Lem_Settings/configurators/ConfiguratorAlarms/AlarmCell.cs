@@ -13,9 +13,7 @@ namespace ConfiguratorAlarms
   /// </summary>
   public partial class AlarmCell : UserControl
   {
-    #region Members
     readonly Alarm m_alarm;
-    #endregion // Members
 
     #region Events
     /// <summary>

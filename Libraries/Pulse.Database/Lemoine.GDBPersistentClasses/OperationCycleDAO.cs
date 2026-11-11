@@ -427,22 +427,23 @@ namespace Lemoine.GDBPersistentClasses
       if (null != slotPeriod) {
         Debug.Assert (2 == slotPeriod.Length);
         if ((null == slotPeriod[0]) || (null == slotPeriod[1])) {
-          log.DebugFormat ("GetSlotPeriodDuration: " +
-                           "operation slot with no min/max cycle end " +
-                           "=> no period found, return null");
+          if (log.IsDebugEnabled) {
+            log.Debug ("GetSlotPeriodDuration: operation slot with no min/max cycle end => no period found, return null");
+          }
           return null;
         }
         DateTime begin = (DateTime)slotPeriod[0];
         DateTime end = (DateTime)slotPeriod[1];
-        log.DebugFormat ("GetSlotPeriodDuration: " +
-                         "period is {0}-{1}",
-                         begin, end);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetSlotPeriodDuration: period is {begin}-{end}");
+        }
         Debug.Assert (begin <= end);
         return end.Subtract (begin);
       }
       else {
-        log.DebugFormat ("GetSlotPeriodDuration: " +
-                         "no period found");
+        if (log.IsDebugEnabled) {
+          log.Debug ("GetSlotPeriodDuration: no period found");
+        }
         return null;
       }
     }
@@ -807,9 +808,9 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (null != machine);
 
         m_log = logger;
-        m_log.DebugFormat ("FindFullOverlapsRangeEnumerable: " +
-                           "range={0}",
-                           range);
+        if (m_log.IsDebugEnabled) {
+          m_log.Debug ($"FindFullOverlapsRangeEnumerable: range={range}");
+        }
 
         m_enumerator = new FindFullOverlapsRangeEnumerator (dao,
           machine,
@@ -873,24 +874,24 @@ namespace Lemoine.GDBPersistentClasses
         m_step = step;
         m_descending = descending;
 
-        m_log.DebugFormat ("FindFullOverlapsRangeEnumerator: " +
-                           "corrected range={0} = {1}*{2}",
-                           m_range, range, limitRange);
+        if (m_log.IsDebugEnabled) {
+          m_log.Debug ($"FindFullOverlapsRangeEnumerator: corrected range={m_range} = {range}*{limitRange}");
+        }
       }
 
       #region IEnumerator implementation
       bool IEnumerator.MoveNext ()
       {
         if (m_futureRange.IsEmpty ()) {
-          m_log.DebugFormat ("MoveNext: " +
-                             "empty range => return false");
+          if (m_log.IsDebugEnabled) {
+            m_log.Debug ("MoveNext: empty range => return false");
+          }
           return false;
         }
 
         if (!m_initialStep) {
           if (null == m_currentEnumerator) {
-            m_log.WarnFormat ("MoveNext: " +
-                              "current numerator is null => return false (second call)");
+            m_log.Warn ("MoveNext: current numerator is null => return false (second call)");
             return false;
           }
           else if (m_currentEnumerator.MoveNext ()) {
@@ -902,9 +903,9 @@ namespace Lemoine.GDBPersistentClasses
         IEnumerable<IOperationCycle> cycles = m_dao
           .FindFirstFullOverlapsRange (m_machine, m_futureRange, m_step, m_descending);
         if (cycles.Any ()) {
-          m_log.DebugFormat ("MoveNext: " +
-                             "{0} first slots in range {1}",
-                             cycles.Count (), m_range);
+          if (m_log.IsDebugEnabled) {
+            m_log.Debug ($"MoveNext: {cycles.Count ()} first slots in range {m_range}");
+          }
           if (m_descending) {
             IOperationCycle oldestCycle = cycles.Last ();
             var oldestCycleStart = oldestCycle.Begin.HasValue ? oldestCycle.Begin.Value : oldestCycle.DateTime;
@@ -922,9 +923,9 @@ namespace Lemoine.GDBPersistentClasses
           return true;
         }
         else { // No slot: return false, there is no item
-          m_log.DebugFormat ("MoveNext: " +
-                             "no cycle in range {0} (first) => return false",
-                             m_range);
+          if (m_log.IsDebugEnabled) {
+            m_log.Debug ($"MoveNext: no cycle in range {m_range} (first) => return false");
+          }
           m_currentEnumerator = null;
           return false;
         }
@@ -1047,9 +1048,9 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (null != machine);
 
         m_log = logger;
-        m_log.DebugFormat ("FindOverlapsRangeEnumerable: " +
-                           "range={0}",
-                           range);
+        if (m_log.IsDebugEnabled) {
+          m_log.Debug ($"FindOverlapsRangeEnumerable: range={range}");
+        }
 
         m_enumerator = new FindOverlapsRangeEnumerator (dao,
           machine,
@@ -1113,24 +1114,24 @@ namespace Lemoine.GDBPersistentClasses
         m_step = step;
         m_descending = descending;
 
-        m_log.DebugFormat ("FindOverlapsRangeEnumerator: " +
-                           "corrected range={0} = {1}*{2}",
-                           m_range, range, limitRange);
+        if (m_log.IsDebugEnabled) {
+          m_log.Debug ($"FindOverlapsRangeEnumerator: corrected range={m_range} = {range}*{limitRange}");
+        }
       }
 
       #region IEnumerator implementation
       bool IEnumerator.MoveNext ()
       {
         if (m_futureRange.IsEmpty ()) {
-          m_log.DebugFormat ("MoveNext: " +
-                             "empty range => return false");
+          if (m_log.IsDebugEnabled) {
+            m_log.Debug ("MoveNext: empty range => return false");
+          }
           return false;
         }
 
         if (!m_initialStep) {
           if (null == m_currentEnumerator) {
-            m_log.WarnFormat ("MoveNext: " +
-                              "current numerator is null => return false (second call)");
+            m_log.Warn ("MoveNext: current numerator is null => return false (second call)");
             return false;
           }
           else if (m_currentEnumerator.MoveNext ()) {
@@ -1142,9 +1143,9 @@ namespace Lemoine.GDBPersistentClasses
         IEnumerable<IOperationCycle> cycles = m_dao
           .FindFirstOverlapsRange (m_machine, m_futureRange, m_step, m_descending);
         if (cycles.Any ()) {
-          m_log.DebugFormat ("MoveNext: " +
-                             "{0} first slots in range {1}",
-                             cycles.Count (), m_range);
+          if (m_log.IsDebugEnabled) {
+            m_log.Debug ($"MoveNext: {cycles.Count ()} first slots in range {m_range}");
+          }
           if (m_descending) {
             IOperationCycle oldestCycle = cycles.Last ();
             var oldestCycleStart = oldestCycle.Begin.HasValue ? oldestCycle.Begin.Value : oldestCycle.DateTime;
@@ -1162,9 +1163,9 @@ namespace Lemoine.GDBPersistentClasses
           return true;
         }
         else { // No slot: return false, there is no item
-          m_log.DebugFormat ("MoveNext: " +
-                             "no cycle in range {0} (first) => return false",
-                             m_range);
+          if (m_log.IsDebugEnabled) {
+            m_log.Debug ($"MoveNext: no cycle in range {m_range} (first) => return false");
+          }
           m_currentEnumerator = null;
           return false;
         }
@@ -1219,7 +1220,7 @@ namespace Lemoine.GDBPersistentClasses
 
       if ((null != operationCycle.OperationSlot) && !NHibernateUtil.IsInitialized (operationCycle.OperationSlot)) {
         if (log.IsInfoEnabled) {
-          log.InfoFormat ("LoadOperationSlot: operation slot id={0} is not loaded (e.g. left join not effective) => fallback: load it manually", operationCycle.OperationSlot.Id);
+          log.Info ($"LoadOperationSlot: operation slot id={operationCycle.OperationSlot.Id} is not loaded (e.g. left join not effective) => fallback: load it manually");
         }
         // If not initialized => not null
         // but do not check it with an assert because else it will be initialized
@@ -1227,17 +1228,16 @@ namespace Lemoine.GDBPersistentClasses
           operationSlot = ModelDAOHelper.DAOFactory.OperationSlotDAO
             .FindById (operationCycle.OperationSlot.Id, operationCycle.Machine);
           if (null == operationSlot) {
-            log.FatalFormat ("LoadOperationSlot: operation slot is={0} was not found for machine={1}", operationCycle.OperationSlot.Id, operationCycle.Machine.Id);
+            log.Fatal ($"LoadOperationSlot: operation slot is={operationCycle.OperationSlot.Id} was not found for machine={operationCycle.Machine.Id}");
           }
           else { // null != operationSlot
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("LoadOperationSlot: operationSlot id={0} was loaded. Initialize now operationCycle.OperationSlot={1}",
-                operationCycle.OperationSlot.Id, operationCycle.Id);
+              log.Debug ($"LoadOperationSlot: operationSlot id={operationCycle.OperationSlot.Id} was loaded. Initialize now operationCycle.OperationSlot={operationCycle.Id}");
             }
           }
           NHibernateUtil.Initialize (operationCycle.OperationSlot);
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("LoadOperationSlot: operationCycle.OperationSlot initialized");
+            log.Debug ("LoadOperationSlot: operationCycle.OperationSlot initialized");
           }
         }
         Debug.Assert (NHibernate.NHibernateUtil.IsInitialized (operationCycle.OperationSlot),

@@ -15,13 +15,10 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
   /// </summary>
   public class Configuration: Lemoine.Extensions.Configuration.IConfiguration
   {
-    #region Members
     readonly IList<string> m_errors = new List<string> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// List of machine mode IDs when this is applicable
     /// </summary>
@@ -65,7 +62,6 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
     /// Details to use
     /// </summary>
     public string Details { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -76,7 +72,6 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
     }
     #endregion // Constructors
 
-    #region Methods
     public bool IsValid (out IEnumerable<string> errors)
     {
       errors = new List<string> ();
@@ -85,6 +80,5 @@ namespace Lemoine.Plugin.DefaultReasonEndObservationStateSlot
 
       return true;
     }
-    #endregion // Methods
   }
 }

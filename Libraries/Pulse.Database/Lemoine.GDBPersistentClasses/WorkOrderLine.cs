@@ -20,16 +20,13 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class WorkOrderLine: GenericLineSlot, IVersionable, IWorkOrderLine
   {
-    #region Members
     IWorkOrder m_workOrder = null;
     DateTime m_deadline;
     int m_quantity = 0;
     IDictionary<int, IWorkOrderLineQuantity> m_intermediateWorkPieceQuantities = new Dictionary<int, IWorkOrderLineQuantity> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (WorkOrderLine).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// WorkOrder (not null)
     /// </summary>
@@ -40,7 +37,7 @@ namespace Lemoine.GDBPersistentClasses
       protected internal set {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat("WorkOrder cannot be null");
+          log.Fatal ("WorkOrder cannot be null");
           throw new ArgumentNullException("WorkOrder");
         }
         m_workOrder = value;
@@ -77,7 +74,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IDictionary<int, IWorkOrderLineQuantity> IntermediateWorkPieceQuantities {
       get { return m_intermediateWorkPieceQuantities; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Set a quantity of intermediate work pieces
@@ -179,17 +175,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.BeginDateTime.CompareTo (other.BeginDateTime);
         }
         else {
-          log.ErrorFormat ("CompareTo: " +
-                           "trying to compare line slots " +
-                           "for different lines {0} {1}",
-                           this, other);
+          log.Error ($"CompareTo: trying to compare line slots for different lines {this} {other}");
           throw new ArgumentException ("Comparison of WorkOrderLine from different lines");
         }
       }
       
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a WorkOrderLine");
     }
 
@@ -204,10 +195,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "trying to compare line slots " +
-                       "for different line {0} {1}",
-                       this, other);
+      log.Error ($"CompareTo: trying to compare line slots for different line {this} {other}");
       throw new ArgumentException ("Comparison of WorkOrderLine from different lines");
     }
     
@@ -256,9 +244,7 @@ namespace Lemoine.GDBPersistentClasses
       // If the deadline is after the new end date/time, change the deadline after raising a log
       if (Bound.Compare<DateTime> (this.EndDateTime, this.Deadline) < 0) {
         Debug.Assert (this.EndDateTime.HasValue);
-        log.WarnFormat ("Consolidate: " +
-                        "move the deadline from {0} to {1} because it was after the end date/time",
-                        this.Deadline, this.EndDateTime.Value);
+        log.Warn ($"Consolidate: move the deadline from {this.Deadline} to {this.EndDateTime.Value} because it was after the end date/time");
         // TODO: add a log in analysislog
         //       but what is currently missing is a reference to the associated modification
         this.Deadline = this.EndDateTime.Value;

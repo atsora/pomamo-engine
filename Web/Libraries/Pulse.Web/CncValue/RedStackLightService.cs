@@ -38,7 +38,6 @@ namespace Pulse.Web.CncValue
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// <see cref="GenericCncValueColorService{TRequestDTO}"/>
     /// </summary>
@@ -61,9 +60,7 @@ namespace Pulse.Web.CncValue
         IField field = ModelDAOHelper.DAOFactory.FieldDAO
             .FindById ((int)FieldId.StackLight);
         if (null == field) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown field with ID {0}",
-                           request.MachineModuleId);
+          log.Error ($"GetWithoutCache: unknown field with ID {request.MachineModuleId}");
           return new ErrorDTO ("No field with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -74,9 +71,7 @@ namespace Pulse.Web.CncValue
           machineModule = ModelDAOHelper.DAOFactory.MachineModuleDAO
             .FindByIdWithMonitoredMachine (request.MachineModuleId);
           if (null == machineModule) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown machine module with ID {0}",
-                             request.MachineModuleId);
+            log.Error ($"GetWithoutCache: unknown machine module with ID {request.MachineModuleId}");
             return new ErrorDTO ("No machine module with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -86,17 +81,13 @@ namespace Pulse.Web.CncValue
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindByIdWithMainMachineModulePerformanceFieldUnit (machineId);
           if (null == machine) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown monitored machine with ID {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: unknown monitored machine with ID {machineId}");
             return new ErrorDTO ("No monitored machine with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
           machineModule = machine.MainMachineModule;
           if (null == machineModule) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "no main machine module for monitored machine with ID {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: no main machine module for monitored machine with ID {machineId}");
             return new ErrorDTO ("No main machine module defined",
                                  ErrorStatus.MissingConfiguration);
           }
@@ -107,6 +98,5 @@ namespace Pulse.Web.CncValue
         return GetResponse (machineModule, field, range, request.SkipDetails);
       }
     }
-    #endregion // Methods
   }
 }

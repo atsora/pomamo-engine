@@ -16,12 +16,9 @@ namespace WizardCreateLine
   /// </summary>
   internal partial class Page2 : GenericWizardPage, IWizardPage
   {
-    #region Members
     int m_currentPartIndex = -1;
     IList<StructOperation> m_operations;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -36,7 +33,6 @@ namespace WizardCreateLine
           "Each operation is identified by a name and an optional code. It is possible to add, remove and " +
           "reorder them (except for blue operations: they cannot be removed). The maximum number of parts " +
           "per cycle has further to be defined.\n\n"; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

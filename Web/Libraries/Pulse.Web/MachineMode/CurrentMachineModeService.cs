@@ -90,7 +90,6 @@ namespace Pulse.Web.MachineMode
     }
     #endregion // Constructors
 
-    #region Methods
     CurrentMachineModePeriod ConvertPeriodParameter (string periodParameter)
     {
       if (string.IsNullOrEmpty (periodParameter)) {
@@ -105,7 +104,7 @@ namespace Pulse.Web.MachineMode
         case "running_machinemodecategory":
           return CurrentMachineModePeriod.Running | CurrentMachineModePeriod.MachineModeCategory;
         default:
-          log.ErrorFormat ("ConvertPeriodParameter: {0} is not a supported parameter", periodParameter);
+          log.Error ($"ConvertPeriodParameter: {periodParameter} is not a supported parameter");
           throw new ArgumentException ("Not supported period", "periodParameter");
       }
     }
@@ -200,9 +199,7 @@ namespace Pulse.Web.MachineMode
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (machineId);
           if (null == machine) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown machine with ID {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
             return new ErrorDTO ("No monitored machine with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -219,9 +216,9 @@ namespace Pulse.Web.MachineMode
             if (machineStatus.ManualActivity
                 && (Bound.Compare<DateTime> (DateTime.UtcNow,
                                              new UpperBound<DateTime> (machineStatus.ManualActivityEnd)) <= 0)) {
-              log.DebugFormat ("GetWithoutCache: " +
-                               "return a manual activity {0}",
-                               machineStatus.MachineMode);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"GetWithoutCache: return a manual activity {machineStatus.MachineMode}");
+              }
               machineMode = machineStatus.MachineMode;
               dateTime = DateTime.UtcNow;
               manualActivity = true;
@@ -243,9 +240,9 @@ namespace Pulse.Web.MachineMode
                                          REASON_SLOT_IS_CURRENT_MARGIN_IF_PERIOD_DEFAULT);
               }
               if (DateTime.UtcNow <= machineStatus.ReasonSlotEnd.Add (reasonSlotIsCurrentMargin)) {
-                log.DebugFormat ("GetWithoutCache: " +
-                                 "get current machine {0} mode from reason slot",
-                                 machineStatus.MachineMode);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetWithoutCache: get current machine {machineStatus.MachineMode} mode from reason slot");
+                }
                 machineMode = machineStatus.MachineMode;
                 dateTime = machineStatus.ReasonSlotEnd;
                 if (!request.NotRunningOnlyDuration || !machineMode.Running.HasValue || !machineMode.Running.Value) {
@@ -265,9 +262,9 @@ namespace Pulse.Web.MachineMode
                 .LoadAndGet<TimeSpan> (CURRENT_MACHINE_MODE_MARGIN_KEY,
                                        CURRENT_MACHINE_MODE_MARGIN_DEFAULT);
               if (DateTime.UtcNow <= currentMachineMode.DateTime.Add (currentMachineModeMargin)) {
-                log.DebugFormat ("GetWithoutCache: " +
-                                 "consider machine mode {0} from currentmachinemode",
-                                 currentMachineMode.MachineMode);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetWithoutCache: consider machine mode {currentMachineMode.MachineMode} from currentmachinemode");
+                }
                 machineMode = currentMachineMode.MachineMode;
                 dateTime = currentMachineMode.DateTime;
               }
@@ -285,9 +282,9 @@ namespace Pulse.Web.MachineMode
                       || (Bound.Compare<DateTime> (currentMachineMode.DateTime, fact.End) <= 0))) {
                 if (DateTime.UtcNow <= fact.End.Add (limitMargin)) {
                   // Fact is more recent than currentMachineMode
-                  log.DebugFormat ("GetWithoutCache: " +
-                                   "consider machine mode {0} from fact",
-                                   fact.CncMachineMode);
+                  if (log.IsDebugEnabled) {
+                    log.Debug ($"GetWithoutCache: consider machine mode {fact.CncMachineMode} from fact");
+                  }
                   machineMode = fact.CncMachineMode;
                   dateTime = fact.End;
                   if (!request.NotRunningOnlyDuration || !machineMode.Running.HasValue || !machineMode.Running.Value) {
@@ -297,9 +294,9 @@ namespace Pulse.Web.MachineMode
               }
               else if ((null != currentMachineMode)
                        && (DateTime.UtcNow <= currentMachineMode.DateTime.Add (limitMargin))) {
-                log.DebugFormat ("GetWithoutCache: " +
-                                 "consider machine mode {0} from currentmachinemode with the limit margin {1}",
-                                 currentMachineMode.MachineMode, limitMargin);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"GetWithoutCache: consider machine mode {currentMachineMode.MachineMode} from currentmachinemode with the limit margin {limitMargin}");
+                }
                 machineMode = currentMachineMode.MachineMode;
                 dateTime = currentMachineMode.DateTime;
               }
@@ -318,9 +315,7 @@ namespace Pulse.Web.MachineMode
             }
           }
           else {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unable to get a current machine mode for machine {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: unable to get a current machine mode for machine {machineId}");
             return new ErrorDTO ("No current machine was recorded",
                                  ErrorStatus.ProcessingDelay);
           }
@@ -330,6 +325,5 @@ namespace Pulse.Web.MachineMode
 
       return response;
     }
-    #endregion // Methods
   }
 }

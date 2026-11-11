@@ -16,12 +16,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class AutoMachineStateTemplateDialog : OKCancelDialog, IValueDialog<IAutoMachineStateTemplate>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (AutoMachineStateTemplateDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return selected AutoMachineStateTemplate
     /// </summary>
@@ -93,7 +89,6 @@ namespace Lemoine.DataReferenceControls
         this.autoMachineStateTemplateSelection.NoSelectionText = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -109,8 +104,5 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString("AutoMachineStateTemplateDialog");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

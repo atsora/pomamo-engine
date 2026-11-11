@@ -17,10 +17,8 @@ namespace Lemoine.FileRepository
   /// </summary>
   public class FileRepoClientSharedDir : IFileRepoClient
   {
-    #region Members
     readonly string m_rootPath = "";
     readonly bool m_local = false;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (FileRepoClientSharedDir).FullName);
 

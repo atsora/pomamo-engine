@@ -23,13 +23,9 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
   {
     static readonly string NEW_MACHINE_STATE_TEMPLATE_ID = "newmachinestatetemplateid";
     static readonly string RANGE = "range";
-    
-    #region Members
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventMachineStateTemplateChange).FullName);
 
-    #region Getters / Setters
     [XmlIgnore]
     public virtual IMachineStateTemplate NewMachineStateTemplate
     {
@@ -131,7 +127,6 @@ namespace Lemoine.Plugin.MachineStateTemplateChangeEvent
       // disable once ValueParameterNotUsed
       set { }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

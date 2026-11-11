@@ -113,9 +113,7 @@ namespace Lemoine.FileRepository
     const string IN_PROGRESS_FILE_TIMEOUT_KEY = "FileRepo.Synchronization.InProgressTimeout";
     static readonly TimeSpan IN_PROGRESS_FILE_TIMEOUT_DEFAULT = TimeSpan.FromMinutes (5);
 
-    #region Members
     IFileRepoClient m_implementation = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (FileRepoClient).FullName);
 
@@ -128,7 +126,6 @@ namespace Lemoine.FileRepository
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// Implementation
     /// </summary>
@@ -137,9 +134,7 @@ namespace Lemoine.FileRepository
       get { return Instance.m_implementation; }
       set { Instance.m_implementation = value; }
     }
-    #endregion // Getters / Setters
 
-    #region Methods
     public static bool Test ()
     {
       if (null == Instance.m_implementation) {
@@ -165,9 +160,7 @@ namespace Lemoine.FileRepository
       }
 
       var list = Instance.m_implementation.ListFilesInDirectory (distantDirectory, "");
-      log.InfoFormat ("ListFilesInDirectory: found files {0} in directory={1}",
-                     String.Join (", ", list.ToArray ()),
-                     distantDirectory);
+      log.Info ($"ListFilesInDirectory: found files {String.Join (", ", list.ToArray ())} in directory={distantDirectory}");
       return list;
     }
 
@@ -184,9 +177,7 @@ namespace Lemoine.FileRepository
       }
 
       var list = Instance.m_implementation.ListDirectoriesInDirectory (distantDirectory, "");
-      log.InfoFormat ("ListDirectoriesInDirectory: found directories {0} in directory={1}",
-                     String.Join (", ", list.ToArray ()),
-                     distantDirectory);
+      log.Info ($"ListDirectoriesInDirectory: found directories {String.Join (", ", list.ToArray ())} in directory={distantDirectory}");
       return list;
     }
 
@@ -923,7 +914,6 @@ namespace Lemoine.FileRepository
       }
       return true;
     }
-    #endregion // Methods
 
     #region Instance
     static FileRepoClient Instance { get { return Nested.instance; } }

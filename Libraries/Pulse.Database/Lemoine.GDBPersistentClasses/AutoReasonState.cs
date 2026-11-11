@@ -17,13 +17,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class AutoReasonState : IAutoReasonState
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMonitoredMachine m_machine;
     string m_key;
     object m_value;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (AutoReasonState).FullName);
 
@@ -45,7 +43,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// AutoReasonState Id
     /// </summary>
@@ -88,6 +85,5 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.m_value; }
       set { this.m_value = value; }
     }
-    #endregion // Getters / Setters
   }
 }

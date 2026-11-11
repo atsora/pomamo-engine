@@ -28,10 +28,8 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineDepartmentUpdate: MachineModification, IMachineDepartmentUpdate
   {
-    #region Members
     IDepartment m_oldDepartment;
     IDepartment m_newDepartment;
-    #endregion // Members
 
     #region constructor
     /// <summary>
@@ -55,7 +53,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -102,9 +99,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.NewDepartment as Department; }
       set { m_newDepartment = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -130,10 +125,9 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }    
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

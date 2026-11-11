@@ -88,7 +88,9 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="cncType"></param>
     void UpdateDefaultValues (string cncType)
     {
-      log.DebugFormat ("CncAlarmSeverityPatternDAO: updating default values for cnc '{0}'", cncType);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"CncAlarmSeverityPatternDAO: updating default values for cnc '{cncType}'");
+      }
 
       var alarmSeverityDAO = new CncAlarmSeverityDAO ();
       CncAlarmSeverityPatternRules patternRules;
@@ -309,7 +311,7 @@ namespace Lemoine.GDBPersistentClasses
         InsertDefaultValue (cncType, "warning", "5", patternRules);
         break;
       default:
-        log.WarnFormat ("Couldn't update default patterns for cnc '{0}'", cncType);
+        log.Warn ($"Couldn't update default patterns for cnc '{cncType}'");
         break;
       }
     }
@@ -365,8 +367,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       var severity = (new CncAlarmSeverityDAO ()).FindByCncName (cncType, severityName);
       if (severity == null) {
-        log.ErrorFormat ("Couldn't update a pattern of '{0}' because the severity '{1}' has not been found",
-                        cncType, severityName);
+        log.Error ($"Couldn't update a pattern of '{cncType}' because the severity '{severityName}' has not been found");
         return;
       }
 

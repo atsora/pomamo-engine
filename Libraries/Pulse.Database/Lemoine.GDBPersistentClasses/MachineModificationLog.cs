@@ -18,14 +18,11 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineModificationLog : Log, IMachineModificationLog
   {
-    #region Members
     IMachineModification m_modification;
     IMachine m_machine;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (MachineModificationLog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the modification
     /// </summary>
@@ -54,7 +51,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_machine; }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Constructor

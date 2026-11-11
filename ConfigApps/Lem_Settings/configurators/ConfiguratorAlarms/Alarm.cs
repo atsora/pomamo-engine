@@ -16,13 +16,10 @@ namespace ConfiguratorAlarms
   /// </summary>
   public class Alarm
   {
-    #region Members
     int m_daysInWeek;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (Alarm).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Alarm name
     /// </summary>
@@ -107,7 +104,6 @@ namespace ConfiguratorAlarms
     /// that compose the alarm
     /// </summary>
     public List<int> ListId { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -127,7 +123,6 @@ namespace ConfiguratorAlarms
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add an emailConfig id to the alarm
     /// </summary>
@@ -494,6 +489,5 @@ namespace ConfiguratorAlarms
     {
       return ListId.Contains(emailConfig.Id);
     }
-    #endregion // Methods
   }
 }

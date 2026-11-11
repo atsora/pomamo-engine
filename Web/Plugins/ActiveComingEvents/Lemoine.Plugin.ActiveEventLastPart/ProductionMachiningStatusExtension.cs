@@ -37,8 +37,7 @@ namespace Lemoine.Plugin.ActiveEventLastPart
             .GetLastFullCycle (m_machine);
           if (null == lastCycle) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetActiveEvents: no last full cycle for machine {0}",
-                m_machine.Id);
+              log.Debug ($"GetActiveEvents: no last full cycle for machine {m_machine.Id}");
             }
             return events;
           }
@@ -48,8 +47,7 @@ namespace Lemoine.Plugin.ActiveEventLastPart
 
           if (now <= lastCycleEnd.Add (cycleDurationTarget)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetActiveEvents: last cycle end {0} is too recent compared to the cycle duration target {1}",
-                lastCycleEnd, cycleDurationTarget);
+              log.Debug ($"GetActiveEvents: last cycle end {lastCycleEnd} is too recent compared to the cycle duration target {cycleDurationTarget}");
             }
             return events;
           }
@@ -59,9 +57,7 @@ namespace Lemoine.Plugin.ActiveEventLastPart
             .GetProductionDuration (m_machine, new UtcDateTimeRange (lastCycleEnd, now));
           if (productionDuration <= cycleDurationTarget) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("GetActiveEvents: last cycle end {0} is too recent compare to the cycle duration target {1} and production duration",
-                lastCycleEnd, cycleDurationTarget,
-                productionDuration);
+              log.Debug ($"GetActiveEvents: last cycle end {lastCycleEnd} is too recent compare to the cycle duration target {cycleDurationTarget} and production duration {productionDuration}");
             }
             return events;
           }
@@ -93,20 +89,20 @@ namespace Lemoine.Plugin.ActiveEventLastPart
         TimeSpan? cycleDuration = operationCyclePropertiesResponse.CycleDuration;
         if (cycleDuration.HasValue) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("GetCycleDurationTarget: return cycle duration target {0} from OperationCycleProperties business service", cycleDuration);
+            log.Debug ($"GetCycleDurationTarget: return cycle duration target {cycleDuration} from OperationCycleProperties business service");
           }
           return cycleDuration.Value;
         }
         else if (lastCycle.OperationSlot.Operation.MachiningDuration.HasValue) {
           if (log.IsWarnEnabled) {
-            log.WarnFormat ("GetCycleDurationTarget: return cycle duration target {0} from machining duration only", lastCycle.OperationSlot.Operation.MachiningDuration);
+            log.Warn ($"GetCycleDurationTarget: return cycle duration target {lastCycle.OperationSlot.Operation.MachiningDuration} from machining duration only");
           }
           return lastCycle.OperationSlot.Operation.MachiningDuration.Value;
         }
       }
 
       if (log.IsWarnEnabled) {
-        log.WarnFormat ("GetCycleDurationTarget: return a default value 0");
+        log.Warn ("GetCycleDurationTarget: return a default value 0");
       }
       return TimeSpan.FromSeconds (0);
     }
@@ -141,8 +137,7 @@ namespace Lemoine.Plugin.ActiveEventLastPart
       m_machine = machine;
 
       if (!LoadConfiguration (out m_configuration)) {
-        log.WarnFormat ("Initialize: " +
-                        "the configuration is not valid");
+        log.Warn ("Initialize: the configuration is not valid");
         return false;
       }
 
@@ -154,9 +149,7 @@ namespace Lemoine.Plugin.ActiveEventLastPart
           var machineFilter = ModelDAOHelper.DAOFactory.MachineFilterDAO
             .FindById (machineFilterId);
           if (null == machineFilter) {
-            log.ErrorFormat ("Initialize: " +
-                             "machine filter id {0} does not exist",
-                             machineFilterId);
+            log.Error ($"Initialize: machine filter id {machineFilterId} does not exist");
             return false;
           }
           // Note: machineFilter.IsMatch requires it is done in the same session

@@ -23,13 +23,7 @@ namespace Lemoine.Info.ConfigReader
     : ExternalAssemblyConfigReader
     , IGenericConfigReader
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger (typeof (OdbcConfigReader).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

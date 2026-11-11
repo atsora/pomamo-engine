@@ -111,9 +111,7 @@ namespace Pulse.Web.Reason
       // Time span considering the number of pixels
       Debug.Assert (range.Duration.HasValue);
       if (!range.Duration.HasValue) {
-        log.FatalFormat ("GetCacheTimeOut: " +
-          "no range duration, return {0} for {1}",
-          timeCacheTimeSpan, url);
+        log.Fatal ($"GetCacheTimeOut: no range duration, return {timeCacheTimeSpan} for {url}");
         return timeCacheTimeSpan;
       }
       double rangeSeconds = range.Duration.Value.TotalSeconds;
@@ -121,9 +119,9 @@ namespace Pulse.Web.Reason
       TimeSpan durationCacheTimeSpan = TimeSpan.FromSeconds (secondsPerPixel); // No need to expire the cache if you do not get at least one more pixel
 
       TimeSpan cacheTimeSpan = (timeCacheTimeSpan < durationCacheTimeSpan) ? durationCacheTimeSpan : timeCacheTimeSpan; // Longer duration
-      log.DebugFormat ("GetCacheTimeOut: " +
-                       "cacheTimeSpan is {0} considering time:{1}, considering duration:{2} for url={3}",
-                       cacheTimeSpan, timeCacheTimeSpan, durationCacheTimeSpan, url);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} considering time:{timeCacheTimeSpan}, considering duration:{durationCacheTimeSpan} for url={url}");
+      }
       return cacheTimeSpan;
     }
 
@@ -153,15 +151,13 @@ namespace Pulse.Web.Reason
 
       if (null == group) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: group with id {0} is not valid",
-            request.GroupId);
+          log.Error ($"GetWithoutCache: group with id {request.GroupId} is not valid");
         }
         return new ErrorDTO ("Invalid group", ErrorStatus.WrongRequestParameter);
       }
       if (!group.SingleMachine) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetWithoutCache: group with id {0} is not supported (multi-machines)",
-            request.GroupId);
+          log.Error ($"GetWithoutCache: group with id {request.GroupId} is not supported (multi-machines)");
         }
         return new ErrorDTO ("Not supported group (multi-machines)", ErrorStatus.WrongRequestParameter);
       }
@@ -175,7 +171,7 @@ namespace Pulse.Web.Reason
       using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ()) {
         UtcDateTimeRange range = ParseRange (request.Range);
         if (!range.Duration.HasValue) {
-          log.ErrorFormat ("GetWithoutCache: range duration cannot be computed");
+          log.Error ("GetWithoutCache: range duration cannot be computed");
           return new ErrorDTO ("Range duration cannot be computed",
               ErrorStatus.WrongRequestParameter);
         }
@@ -183,9 +179,7 @@ namespace Pulse.Web.Reason
         IMachine machine = ModelDAOHelper.DAOFactory.MachineDAO
           .FindById (machineId);
         if (null == machine) {
-          log.ErrorFormat ("GetWithoutCache: " +
-                           "unknown machine with ID {0}",
-                           machineId);
+          log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
           return new ErrorDTO ("No machine with the specified ID",
                                ErrorStatus.WrongRequestParameter);
         }
@@ -195,7 +189,7 @@ namespace Pulse.Web.Reason
           workOrder = ModelDAOHelper.DAOFactory.WorkOrderDAO
             .FindById (request.WorkOrderId);
           if (null == workOrder) {
-            log.ErrorFormat ("GetWithoutCache: unknown work order with ID {0}", request.WorkOrderId);
+            log.Error ($"GetWithoutCache: unknown work order with ID {request.WorkOrderId}");
             return new ErrorDTO ("No work order with the specified ID",
               ErrorStatus.WrongRequestParameter);
           }
@@ -206,7 +200,7 @@ namespace Pulse.Web.Reason
           component = ModelDAOHelper.DAOFactory.ComponentDAO
             .FindById (request.ComponentId);
           if (null == component) {
-            log.ErrorFormat ("GetWithoutCache: unknown component with ID {0}", request.ComponentId);
+            log.Error ($"GetWithoutCache: unknown component with ID {request.ComponentId}");
             return new ErrorDTO ("No component with the specified ID",
               ErrorStatus.WrongRequestParameter);
           }

@@ -23,7 +23,6 @@ namespace WizardReasonSelection
     public event Action OnChecked;
     #endregion // Events
     
-    #region Getters / Setters
     /// <summary>
     /// Get / set the checked state
     /// </summary>
@@ -83,7 +82,6 @@ namespace WizardReasonSelection
     /// Get the reason
     /// </summary>
     public IReason Reason { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

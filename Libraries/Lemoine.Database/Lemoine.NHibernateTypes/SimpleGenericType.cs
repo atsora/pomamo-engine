@@ -23,10 +23,8 @@ namespace Lemoine.NHibernateTypes
     // disable once StaticFieldInGenericType
     static readonly ILog log = LogManager.GetLogger (typeof (SimpleGenericType<T>).FullName);
 
-    #region Members
     readonly bool m_mutable = false;
     readonly NpgsqlTypes.NpgsqlDbType m_dbType;
-    #endregion // Members
 
     #region Constructor
     /// <summary>
@@ -324,7 +322,9 @@ namespace Lemoine.NHibernateTypes
     public sealed override object Get (DbDataReader rs, int index, NHibernate.Engine.ISessionImplementor session)
     {
       object result = Get (rs[index]);
-      log.DebugFormat ("returning '{0}' as column: {1}", result, rs.GetName (index));
+      if (log.IsDebugEnabled) {
+        log.Debug ($"returning '{result}' as column: {rs.GetName (index)}");
+      }
       return result;
     }
 
@@ -338,7 +338,9 @@ namespace Lemoine.NHibernateTypes
     public sealed override object Get (DbDataReader rs, string name, NHibernate.Engine.ISessionImplementor session)
     {
       object result = Get (rs[name]);
-      log.DebugFormat ("returning '{0}' as column: {1}", result, name);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"returning '{result}' as column: {name}");
+      }
       return result;
     }
 

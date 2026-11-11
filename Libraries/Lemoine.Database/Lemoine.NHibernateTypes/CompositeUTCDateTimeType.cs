@@ -70,11 +70,9 @@ namespace Lemoine.NHibernateTypes
         case 0: // Return UTC Date from dateTime
           return dateTime.Date;
         case 1: // Return UTC Time from dateTime
-          log.DebugFormat ("TimeOfDay is {0} " +
-                           "and associated date is {1}",
-                           dateTime.TimeOfDay,
-                           new DateTime (dateTime.TimeOfDay.Ticks,
-                                         DateTimeKind.Utc));
+          if (log.IsDebugEnabled) {
+            log.Debug ($"TimeOfDay is {dateTime.TimeOfDay} and associated date is {new DateTime (dateTime.TimeOfDay.Ticks, DateTimeKind.Utc)}");
+          }
           return new DateTime (dateTime.TimeOfDay.Ticks,
                                DateTimeKind.Utc);
         default:
@@ -102,18 +100,14 @@ namespace Lemoine.NHibernateTypes
       
       DateTime dbDateTime = (DateTime) value;
       if (dbDateTime.Kind != DateTimeKind.Utc) {
-        log.ErrorFormat ("SetPropertyValue: dbDateTime {0} is of kind {1}, " +
-                         "not UTC",
-                         dbDateTime,
-                         dbDateTime.Kind);
+        log.Error ($"SetPropertyValue: dbDateTime {dbDateTime} is of kind {dbDateTime.Kind}, not UTC");
         throw new ArgumentException ("value is not UTC",
                                      "value");
       }
       
-      log.DebugFormat ("SetPropertyValue: process with property={0} " +
-                       "dateTime={1} dbDateTime={2}",
-                       property,
-                       dateTime, dbDateTime);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"SetPropertyValue: process with property={property} dateTime={dateTime} dbDateTime={dbDateTime}");
+      }
       switch (property) {
         case 0: // Update the date value
           dateTime = dbDateTime.Date.Add (dateTime.TimeOfDay);
@@ -184,8 +178,9 @@ namespace Lemoine.NHibernateTypes
                                                          names [1],
                                                          session,
                                                          owner);
-      log.DebugFormat ("NullSafeGet: utcDate={0} timeSpan={1}",
-                       utcDate, timeSpan);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"NullSafeGet: utcDate={utcDate} timeSpan={timeSpan}");
+      }
       return utcDate.Add (timeSpan);
     }
     
@@ -219,8 +214,9 @@ namespace Lemoine.NHibernateTypes
       DateTime dateTime = ((DateTime) value).ToUniversalTime ();
       NHibernateUtil.Date.NullSafeSet (cmd, dateTime.Date, index, session);
       new TimeWithoutTZType ().NullSafeSet (cmd, dateTime.TimeOfDay, index+1, session);
-      log.DebugFormat ("NullSafeSet: dateTime={0}",
-                       dateTime);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"NullSafeSet: dateTime={dateTime}");
+      }
     }
     
     /// <summary>

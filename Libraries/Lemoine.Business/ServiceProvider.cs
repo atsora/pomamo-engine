@@ -43,7 +43,6 @@ namespace Lemoine.Business
       m_defaultService = new DefaultService ();
     }
 
-    #region Methods
     /// <summary>
     /// Set a custom service, for example for a unit test
     /// The custom service will be used for the thread setting it, until RemoveCustomService() is called
@@ -135,7 +134,6 @@ namespace Lemoine.Business
 
       return service.GetCacheData<T> (request);
     }
-    #endregion // Methods
 
     #region Instance
     static ServiceProvider Instance

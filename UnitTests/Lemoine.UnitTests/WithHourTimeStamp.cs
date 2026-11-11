@@ -26,11 +26,9 @@ namespace Lemoine.UnitTests
     }
     #endregion // Constructors
 
-    #region Methods
     protected override DateTime T(double n)
     {
       return m_baseDateTime.AddHours (n);
     }
-    #endregion // Methods
   }
 }

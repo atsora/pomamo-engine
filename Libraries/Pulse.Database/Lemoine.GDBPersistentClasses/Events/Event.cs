@@ -20,7 +20,6 @@ namespace Lemoine.GDBPersistentClasses
    XmlInclude (typeof (EventUnion))]
   public abstract class Event : IEvent
   {
-    #region Members
     int m_id = 0;
     /// <summary>
     /// Level
@@ -30,7 +29,6 @@ namespace Lemoine.GDBPersistentClasses
     /// UTC Date/time
     /// </summary>
     protected DateTime m_dateTime;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Event).FullName);
 
@@ -55,7 +53,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// EventLongPeriod Id
     /// </summary>
@@ -82,7 +79,7 @@ namespace Lemoine.GDBPersistentClasses
       internal protected set // internal protected for Unproxy
       {
         if (null == value) {
-          log.FatalFormat ("Level can't be null");
+          log.Fatal ("Level can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException("value", "null Level in EventLongPeriod");
         }
@@ -148,9 +145,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.DateTime.ToLocalTime ().ToString ("G"); }
       set { throw new InvalidOperationException ("LocalDateTimeG - deserialization not supported"); }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Unproxy the entity for XML serialization
     /// </summary>
@@ -158,6 +153,5 @@ namespace Lemoine.GDBPersistentClasses
     {
       NHibernateHelper.Unproxy<IEventLevel> (ref m_level);
     }
-    #endregion // Methods
   }
 }

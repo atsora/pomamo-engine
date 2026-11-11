@@ -51,13 +51,10 @@ namespace WizardChangeProductionQuantities
       }
     }
     
-    #region Members
     IList<IwptData> m_iwpts = new List<IwptData>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (WolData).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// WorkOrderLine
     /// </summary>
@@ -89,7 +86,6 @@ namespace WizardChangeProductionQuantities
     /// Start date of the production (taking into account the cut-off day)
     /// </summary>
     public DateTime StartDate { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -136,7 +132,6 @@ namespace WizardChangeProductionQuantities
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Fill the quantities of the wol
     /// </summary>
@@ -187,6 +182,5 @@ namespace WizardChangeProductionQuantities
     {
       return date.Subtract(StartDate).Days;
     }
-    #endregion // Methods
   }
 }

@@ -18,7 +18,6 @@ namespace Lemoine.DataReferenceControls
   {
     static readonly ILog log = LogManager.GetLogger(typeof (TimeSpanDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null TimeSpan a valid value ?
     /// </summary>
@@ -51,7 +50,6 @@ namespace Lemoine.DataReferenceControls
         throw new NotImplementedException();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -67,9 +65,6 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString ("TimeSpanDialogTitle");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
     
     void OkButtonClick(object sender, EventArgs e)
     {

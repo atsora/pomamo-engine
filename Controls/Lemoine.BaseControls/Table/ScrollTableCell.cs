@@ -14,9 +14,7 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class ScrollTableCell : UserControl
   {
-    #region Members
     ToolTip m_tooltip = null;
-    #endregion // Members
     
     #region Events
     /// <summary>
@@ -26,7 +24,6 @@ namespace Lemoine.BaseControls
     public event Action<int, int> ControlChanged;
     #endregion // Events
     
-    #region Getters / Setters
     /// <summary>
     /// Control contained in the cell
     /// </summary>
@@ -63,7 +60,6 @@ namespace Lemoine.BaseControls
     
     private int Row { get; set; }
     private int Column { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -102,7 +98,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set a tooltip associated with an image
     /// </summary>
@@ -141,7 +136,6 @@ namespace Lemoine.BaseControls
 
       pictureBox.Visible = false;
     }
-    #endregion // Methods
     
     #region Event reactions
     private void OnControlChanged(object sender, EventArgs e)

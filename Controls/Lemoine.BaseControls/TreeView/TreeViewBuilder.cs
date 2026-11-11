@@ -18,12 +18,9 @@ namespace Lemoine.BaseControls
   /// </summary>
   public abstract class TreeViewBuilder
   {
-    #region Members
     IList<object> m_elements = new List<object>();
     IList<IList<object>> m_storedExpandedElements = new List<IList<object>>();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the treeview
     /// </summary>
@@ -47,7 +44,6 @@ namespace Lemoine.BaseControls
     /// are restored.
     /// </summary>
     public bool KeepExpandStatesAfterRefresh { get; set; }
-    #endregion // Getters / Setters
     
     #region Constructor
     /// <summary>
@@ -61,7 +57,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructor
 
-    #region Methods
     /// <summary>
     /// Add an element in the tree
     /// "Refresh" is needed to display them
@@ -156,6 +151,5 @@ namespace Lemoine.BaseControls
       TreeView.OnTreeNodeAdded(nodeAdded);
       return nodeAdded;
     }
-    #endregion // Methods
   }
 }

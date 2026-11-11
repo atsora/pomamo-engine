@@ -67,8 +67,7 @@ namespace Lemoine.CncDataImport
       // Both must be CncVariableSet
       if ((ExchangeDataCommand.CncVariableSet != otherData.Command)
         || (ExchangeDataCommand.CncVariableSet != data.Command)) {
-        log.FatalFormat ("IsMergeable: invalid data key {0} or {1}",
-          otherData.Command, data.Command);
+        log.Fatal ($"IsMergeable: invalid data key {otherData.Command} or {data.Command}");
         throw new ArgumentException ("IsMergeable: wrong data key");
       }
 
@@ -178,7 +177,7 @@ namespace Lemoine.CncDataImport
           else { // null != cncVariable
             if (cncVariable.DateTimeRange.Upper.HasValue) {
               var timeLag = cncVariable.DateTimeRange.Upper.Value.Subtract (startDateTime);
-              log.FatalFormat ("ImportCncVariable: cnc variable id={0} has an upper bound, which is unexpected, this is probably due by a time change => remove the future data as well, after {1}, time lag={2}", cncVariable.Id, cncVariable.DateTimeRange.Upper.Value, timeLag);
+              log.Fatal ($"ImportCncVariable: cnc variable id={cncVariable.Id} has an upper bound, which is unexpected, this is probably due by a time change => remove the future data as well, after {cncVariable.DateTimeRange.Upper.Value}, time lag={timeLag}");
               var futureRange = new UtcDateTimeRange (cncVariable.DateTimeRange.Upper.Value);
               var futureCncVariables = ModelDAOHelper.DAOFactory.CncVariableDAO
                 .FindOverlapsRange (m_machineModule, key, futureRange);
@@ -252,7 +251,7 @@ namespace Lemoine.CncDataImport
           else { // null != cncVariable
             if (cncVariable.DateTimeRange.Upper.HasValue) {
               var timeLag = cncVariable.DateTimeRange.Upper.Value.Subtract (startDateTime);
-              log.FatalFormat ("StopSingleCncVariable: cnc variable id={0} has an upper bound, which is unexpected, this is probably due by a time change => remove the future data as well, after {1}, time lag={2}", cncVariable.Id, cncVariable.DateTimeRange.Upper.Value, timeLag);
+              log.Fatal ($"StopSingleCncVariable: cnc variable id={cncVariable.Id} has an upper bound, which is unexpected, this is probably due by a time change => remove the future data as well, after {cncVariable.DateTimeRange.Upper.Value}, time lag={timeLag}");
               var futureRange = new UtcDateTimeRange (cncVariable.DateTimeRange.Upper.Value);
               var futureCncVariables = ModelDAOHelper.DAOFactory.CncVariableDAO
                 .FindOverlapsRange (m_machineModule, key, futureRange);

@@ -17,12 +17,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class ReasonDialog : OKCancelDialog, IValueDialog<IReason>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (ReasonDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return selected Reason
     /// </summary>
@@ -58,7 +54,6 @@ namespace Lemoine.DataReferenceControls
         this.reasonSelection.Nullable = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -74,9 +69,5 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString("ReasonDialog");
     }
     #endregion // Constructors
-
-    #region Methods
-
-    #endregion // Methods
   }
 }

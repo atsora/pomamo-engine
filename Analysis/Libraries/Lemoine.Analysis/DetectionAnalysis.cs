@@ -36,7 +36,6 @@ namespace Lemoine.Analysis
     static readonly string NB_ATTEMPT_SERIALIZATION_FAILURE_KEY = "Analysis.Activity.NbAttemptSerializationFailure";
     static readonly int NB_ATTEMPT_SERIALIZATION_FAILURE_DEFAULT = 2;
 
-    #region Members
     readonly IMonitoredMachine m_monitoredMachine;
     readonly TransactionLevel m_restrictedTransactionLevel;
     readonly Lemoine.Threading.IChecked m_caller;
@@ -51,7 +50,6 @@ namespace Lemoine.Analysis
       new Dictionary<int, IEnumerable<IDetectionAnalysisByMachineModuleExtension>> ();
 
     IEnumerable<Lemoine.Extensions.Analysis.IDetectionExtension> m_detectionExtensions;
-    #endregion // Members
 
     readonly ILog log = LogManager.GetLogger (typeof (DetectionAnalysis).FullName);
 
@@ -138,8 +136,7 @@ namespace Lemoine.Analysis
         extension.RestrictedTransactionLevel = this.m_restrictedTransactionLevel;
       }
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("Initialize: {0} extensions are loaded for machine {1}",
-          m_extensions.Count (), m_monitoredMachine.Id);
+        log.Debug ($"Initialize: {m_extensions.Count ()} extensions are loaded for machine {m_monitoredMachine.Id}");
       }
     }
 

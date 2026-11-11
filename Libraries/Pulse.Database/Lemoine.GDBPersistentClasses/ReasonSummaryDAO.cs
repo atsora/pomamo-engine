@@ -193,7 +193,7 @@ namespace Lemoine.GDBPersistentClasses
           // disable once CompareOfFloatsByEqualityOperator
           if (0.0 == newDuration.TotalSeconds) {
             if (log.IsInfoEnabled) {
-              log.InfoFormat ($"{transactionName}.{machine.Id} UpdateDay: delete reason summary because the new time would be {newDuration} at day {day} machineobservationstate={reasonSummary.MachineObservationState.Id} shift={reasonSummary.Shift?.Id} reason={reasonSummary.Reason.Id}");
+              log.Info ($"{transactionName}.{machine.Id} UpdateDay: delete reason summary because the new time would be {newDuration} at day {day} machineobservationstate={reasonSummary.MachineObservationState.Id} shift={reasonSummary.Shift?.Id} reason={reasonSummary.Reason.Id}");
             }
           }
           else { // < 0

@@ -27,9 +27,7 @@ namespace ConfiguratorGoals
     public event Action<IGoalType> ResetClicked;
     #endregion // Events
     
-    #region Members
     readonly IGoalType m_goalType;
-    #endregion // Members
 
     #region Constructors
     /// <summary>

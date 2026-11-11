@@ -56,7 +56,6 @@ namespace Lemoine.BaseControls
     public Action<int> BarMouseMoved;
     #endregion // Events
     
-    #region Members
     IBarObjectFactory m_barData;
     Graphics m_graphics;
     IList<BarObject> m_barObjects = new List<BarObject>();
@@ -68,7 +67,6 @@ namespace Lemoine.BaseControls
     string m_name = "";
     int m_nameLength = 0;
     bool m_leftButtonDown = false;
-    #endregion // Members
 
     static readonly Font TEXT_FONT = new Font("Arial", 8);
     static readonly Brush BACKGROUND_TEXT_BRUSH = new SolidBrush(Color.FromArgb(255, 235, 235, 235));
@@ -79,7 +77,6 @@ namespace Lemoine.BaseControls
                                                            Color.FromArgb(255, 170, 170, 170),
                                                            Color.Transparent);
     
-    #region Getters / Setters
     /// <summary>
     /// Start date time of the bar
     /// </summary>
@@ -112,7 +109,6 @@ namespace Lemoine.BaseControls
     /// Bottom margin
     /// </summary>
     public int MarginBottom { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

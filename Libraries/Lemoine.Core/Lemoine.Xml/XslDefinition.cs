@@ -24,16 +24,13 @@ namespace Lemoine.Xml
   [XmlInclude (typeof (XslHtmlBodyTemplateDefinition))]
   public abstract class XslDefinition
   {
-    #region Members
     /// <summary>
     /// Compiled XSL transformation
     /// </summary>
     protected XslCompiledTransform m_xslt = new XslCompiledTransform ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (XslDefinition).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// XSL compiled transform
     /// </summary>
@@ -41,7 +38,6 @@ namespace Lemoine.Xml
     public XslCompiledTransform Xslt {
       get { return m_xslt; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -52,7 +48,6 @@ namespace Lemoine.Xml
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add the xsl:stylesheet xand xsl:output headers
     /// </summary>
@@ -98,6 +93,5 @@ namespace Lemoine.Xml
                        xpath);
       return xslTemplate;
     }
-    #endregion // Methods
   }
 }

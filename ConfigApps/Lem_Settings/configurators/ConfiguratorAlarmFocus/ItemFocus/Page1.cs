@@ -17,15 +17,12 @@ namespace ConfiguratorAlarmFocus
   /// </summary>
   internal partial class Page1 : GenericConfiguratorPage, IConfiguratorPage
   {
-    #region Members
     List<string> m_foundCncTypes = new List<string> ();
     readonly List<string> m_allCncTypes = new List<string> ();
     bool m_advancedMode = false;
     string m_currentCncType = "";
     bool m_dontReinit = false;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -52,7 +49,6 @@ namespace ConfiguratorAlarmFocus
     {
       get { return LemSettingsGlobal.PageFlag.DONT_SHOW_SUCCESS_INFORMATION; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

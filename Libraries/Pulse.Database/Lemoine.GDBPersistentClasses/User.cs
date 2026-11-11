@@ -17,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class User : Updater, IUser
   {
-    #region Members
     string m_name;
     string m_code;
     string m_externalCode;
@@ -29,11 +28,9 @@ namespace Lemoine.GDBPersistentClasses
     string m_email;
     ICompany m_company;
     TimeSpan? m_disconnectionTime;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (User).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -192,7 +189,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_disconnectionTime; }
       set { m_disconnectionTime = value; }
     }
-    #endregion
 
     /// <summary>
     /// Default Constructor

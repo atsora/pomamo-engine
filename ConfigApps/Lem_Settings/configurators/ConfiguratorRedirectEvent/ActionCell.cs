@@ -12,10 +12,8 @@ namespace ConfiguratorRedirectEvent
   /// </summary>
   public partial class ActionCell : UserControl
   {
-    #region Members
     readonly Action m_action;
     readonly bool m_preparation;
-    #endregion // Members
 
     #region Events
     /// <summary>

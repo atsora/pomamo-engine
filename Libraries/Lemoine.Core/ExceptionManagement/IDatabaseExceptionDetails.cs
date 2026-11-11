@@ -13,7 +13,6 @@ namespace Lemoine.Core.ExceptionManagement
   /// </summary>
   public interface IDatabaseExceptionDetails
   {
-    #region Getters / Setters
     /// <summary>
     /// Database exception source
     /// </summary>
@@ -73,7 +72,6 @@ namespace Lemoine.Core.ExceptionManagement
     /// Where
     /// </summary>
     string Where { get; }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// <see cref="Object.ToString()"></see>

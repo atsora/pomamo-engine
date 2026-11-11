@@ -35,11 +35,11 @@ namespace Lemoine.Conversion
       }
       pattern = pattern.Trim ();
       if (pattern.Length == 0) {
-        log.ErrorFormat ("Convert: empty pattern {0}", pattern);
+        log.Error ($"Convert: empty pattern {pattern}");
         throw new ArgumentException ("Pattern is empty.");
       }
       if (ILLEGAL_CHARACTERS.IsMatch (pattern)) {
-        log.ErrorFormat ("Convert: pattern {0} contains illegal characters", pattern);
+        log.Error ($"Convert: pattern {pattern} contains illegal characters");
         throw new ArgumentException ("Pattern contains illegal characters.");
       }
       bool hasExtension = CATCH_EXTENSION.IsMatch (pattern);

@@ -16,7 +16,6 @@ namespace ViewLine
   {
     internal const string LINE_NAME = "line_name";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -87,7 +86,6 @@ namespace ViewLine
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region View methods
     /// <summary>

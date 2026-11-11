@@ -37,7 +37,6 @@ namespace Lemoine.JobControls
       CREATE = 2
     };
 
-    #region Members
     Lemoine.Model.IComponent m_component;
     IComponentType[] m_componentTypeArray;
     IProject[] m_projectArray;
@@ -45,11 +44,9 @@ namespace Lemoine.JobControls
     TreeNode m_node;
     ITreeViewObservable m_observable;
     Type m_parentType;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ComponentControl).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Getter / Setter for type of parent of Component node
     /// </summary>
@@ -68,7 +65,6 @@ namespace Lemoine.JobControls
         }
       }
     }
-    #endregion // Getters / Setters
 
 
     #region Constructors
@@ -330,8 +326,6 @@ namespace Lemoine.JobControls
     #endregion
 
 
-    #region Methods
-
     /// <summary>
     ///   Use informations in Component to fill text in box
     /// </summary>
@@ -566,8 +560,6 @@ namespace Lemoine.JobControls
       }
       return valid;
     }
-
-    #endregion // Methods
 
 
   }

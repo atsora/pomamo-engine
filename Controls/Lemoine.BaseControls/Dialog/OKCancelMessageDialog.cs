@@ -11,7 +11,6 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class OKCancelMessageDialog : OKCancelDialog
   {
-    #region Getters / Setters
     /// <summary>
     /// Message to show in dialog
     /// </summary>
@@ -19,7 +18,6 @@ namespace Lemoine.BaseControls
       get { return this.labelMessage.Text; }
       set { this.labelMessage.Text = value; }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

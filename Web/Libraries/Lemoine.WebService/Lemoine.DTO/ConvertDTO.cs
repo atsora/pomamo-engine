@@ -21,7 +21,6 @@ namespace Lemoine.DTO
   {
     static readonly ILog log = LogManager.GetLogger(typeof (ConvertDTO).FullName);
 
-    #region Methods
     /// <summary>
     /// Convert an UTC DateTime to IsoString with T and Z
     /// </summary>
@@ -218,6 +217,5 @@ namespace Lemoine.DTO
       UpperBound<DateTime> end = new UpperBound<DateTime> (ConvertJavaTotalTicksMillisecondsToDateTime (endOffset));
       return new UtcDateTimeRange (begin, end);
     }
-    #endregion // Methods
   }
 }

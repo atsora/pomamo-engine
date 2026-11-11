@@ -43,7 +43,6 @@ namespace ConfiguratorAlarmFocus
       FOCUS_STATE_ONLY_UNKNOWN
     }
 
-    #region Members
     string m_currentCnc = "";
     FocusState m_currentFocus = FocusState.FOCUS_STATE_ALL;
     UtcDateTimeRange m_dateRange = null;
@@ -54,9 +53,7 @@ namespace ConfiguratorAlarmFocus
     IList<ICurrentCncAlarm> m_currentAlarmsFiltered = new List<ICurrentCncAlarm> ();
     IDictionary<int, bool?> m_severityFocusById = new Dictionary<int, bool?> ();
     IDictionary<int, string> m_severityNameById = new Dictionary<int, string> ();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -73,7 +70,6 @@ namespace ConfiguratorAlarmFocus
           "You can filter the alarms based on their CNC and / or importance.";
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

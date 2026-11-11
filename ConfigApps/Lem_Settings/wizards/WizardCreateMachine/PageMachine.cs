@@ -17,11 +17,8 @@ namespace WizardCreateMachine
   /// </summary>
   internal partial class PageMachine : GenericWizardPage, IWizardPage
   {
-    #region Members
     bool m_modified = true;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -35,7 +32,6 @@ namespace WizardCreateMachine
         return "Select an existing machine which will be modified.";
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

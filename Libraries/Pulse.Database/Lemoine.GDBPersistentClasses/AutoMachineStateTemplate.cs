@@ -17,17 +17,14 @@ namespace Lemoine.GDBPersistentClasses
   /// </summary>
   public class AutoMachineStateTemplate: IAutoMachineStateTemplate, IVersionable
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineMode m_machineMode;
     IMachineStateTemplate m_current;
     IMachineStateTemplate m_new;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (AutoMachineStateTemplate).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// AutoMachineStateTemplate Id
     /// </summary>
@@ -54,8 +51,7 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.ErrorFormat ("MachineMode.set: " +
-                           "null value");
+          log.Error ("MachineMode.set: null value");
           throw new ArgumentNullException ("AutoMachineStateTemplate.MachineMode");
         }
         m_machineMode = value;
@@ -83,14 +79,12 @@ namespace Lemoine.GDBPersistentClasses
       set
       {
         if (null == value) {
-          log.ErrorFormat ("New.set: " +
-                           "null value");
+          log.Error ("New.set: null value");
           throw new ArgumentNullException ("AutoMachineStateTemplate.New");
         }
         m_new = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -112,7 +106,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
 
-    #region Members
     /// <summary>
     /// <see cref="Object.ToString()" />
     /// </summary>
@@ -126,7 +119,6 @@ namespace Lemoine.GDBPersistentClasses
         return $"[AutoMachineStateTemplate {this.Id}]";
       }
     }
-    #endregion // Members
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

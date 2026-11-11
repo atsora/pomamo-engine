@@ -14,13 +14,10 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class BarEllipse : BarObject
   {
-    #region Members
     double m_verticalPosition = 0.5;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (BarEllipse).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Left limit of the ellipse
     /// </summary>
@@ -54,7 +51,6 @@ namespace Lemoine.BaseControls
     /// Height of the ellipse in pixels
     /// </summary>
     public int Height { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -68,7 +64,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Paint the object in the bar
     /// </summary>
@@ -132,6 +127,5 @@ namespace Lemoine.BaseControls
       int pyTop = Parent.MarginTop;
       return (int)(VerticalPosition * pyTop + (1.0 - VerticalPosition) * pyBottom);
     }
-    #endregion // Methods
   }
 }

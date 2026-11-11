@@ -24,7 +24,6 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
 
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Max duration
     /// </summary>
@@ -65,7 +64,6 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -79,7 +77,6 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Return true if the configuration is valid
     /// </summary>
@@ -91,18 +88,14 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("AcquisitionErrorEvent.ConfigurationErrors")) {
           if (null == ModelDAOHelper.DAOFactory.MachineModeDAO
               .FindById (this.MachineModeId)) {
-            log.ErrorFormat ("GetConfigurationErrors: " +
-                             "MachineMode {0} does not exist",
-                             this.MachineModeId);
+            log.Error ($"GetConfigurationErrors: MachineMode {this.MachineModeId} does not exist");
             errorList.Add ("MachineMode with ID "
                         + this.MachineModeId
                         + " does not exist");
           }
           if (null == ModelDAOHelper.DAOFactory.EventLevelDAO
                 .FindById (this.EventLevelId)) {
-            log.ErrorFormat ("GetConfigurationErrors: " +
-                             "Event level {0} does not exist",
-                             this.EventLevelId);
+            log.Error ($"GetConfigurationErrors: Event level {this.EventLevelId} does not exist");
             errorList.Add ("EventLevel with ID "
                         + this.EventLevelId
                         + " does not exist");
@@ -110,9 +103,7 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
           if (0 != this.MachineFilterId) {
             if (null == ModelDAOHelper.DAOFactory.MachineFilterDAO
                 .FindById (this.MachineFilterId)) {
-              log.ErrorFormat ("GetConfigurationErrors: " +
-                               "MachineFilter {0} does not exist",
-                               this.MachineFilterId);
+              log.Error ($"GetConfigurationErrors: MachineFilter {this.MachineFilterId} does not exist");
               errorList.Add ("MachineFilter with ID "
                           + this.MachineFilterId
                           + " does not exist");
@@ -124,6 +115,5 @@ namespace Lemoine.Plugin.AcquisitionErrorEvent
       errors = errorList;
       return (0 == errorList.Count);
     }
-    #endregion // Methods
   }
 }

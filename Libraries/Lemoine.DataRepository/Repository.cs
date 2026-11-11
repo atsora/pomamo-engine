@@ -112,7 +112,6 @@ namespace Lemoine.DataRepository
     };
     #endregion
 
-    #region Members
     IFactory m_mainFactory = null;
     IFactory m_copyFactory = null;
     IBuilder m_copyBuilder = null;
@@ -121,11 +120,9 @@ namespace Lemoine.DataRepository
     SourceOfData m_source;
     bool m_copyUpToDate = false;
     readonly ReaderWriterLock m_rwLock = new ReaderWriterLock ();
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (Repository).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Main factory
     /// </summary>
@@ -215,7 +212,6 @@ namespace Lemoine.DataRepository
     {
       get { return m_document; }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -271,7 +267,6 @@ namespace Lemoine.DataRepository
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Read in main. In case of failure, read in copy
     ///
@@ -382,15 +377,15 @@ namespace Lemoine.DataRepository
             m_copyUpToDate = false;
           }
           else {
-            log.DebugFormat ("UpdateData: " +
-                             "oldDoc.Equals (newDoc) copyUpToDate={0} remains unchanged",
-                             m_copyUpToDate);
+            if (log.IsDebugEnabled) {
+              log.Debug ($"UpdateData: oldDoc.Equals (newDoc) copyUpToDate={m_copyUpToDate} remains unchanged");
+            }
           }
         }
         else {
-          log.DebugFormat ("UpdateData: " +
-                           "No copy => copyUpToDate={0} ramins unchanged (true)",
-                           m_copyUpToDate);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"UpdateData: No copy => copyUpToDate={m_copyUpToDate} ramins unchanged (true)");
+          }
           System.Diagnostics.Debug.Assert (m_copyUpToDate);
         }
 
@@ -419,8 +414,7 @@ namespace Lemoine.DataRepository
     public void SynchronizeCopy (bool compareFirst, CancellationToken cancellationToken)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("SynchronizeCopy compareFirst={0} /B",
-                         compareFirst);
+        log.Debug ($"SynchronizeCopy compareFirst={compareFirst} /B");
       }
 
       using (ReadLockHolder holder = new ReadLockHolder (m_rwLock)) {
@@ -513,8 +507,7 @@ namespace Lemoine.DataRepository
     public void UpdateAndSynchronize (bool compareFirst, CancellationToken cancellationToken)
     {
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("UpdateAndSynchronize compareFirst={0} /B",
-                         compareFirst);
+        log.Debug ($"UpdateAndSynchronize compareFirst={compareFirst} /B");
       }
       try {
         UpdateData (cancellationToken);
@@ -545,10 +538,8 @@ namespace Lemoine.DataRepository
         }
       }
       catch (Exception ex) {
-        log.FatalFormat ("UpdateAndSynchronize: " +
-                         "unexpected error {0} in UpdateData",
-                         ex);
-        log.FatalFormat ("UpdateAndSynchronize: the exception should be a RepositoryException in case it is a temporary error");
+        log.Fatal ($"UpdateAndSynchronize: unexpected error {ex} in UpdateData");
+        log.Fatal ("UpdateAndSynchronize: the exception should be a RepositoryException in case it is a temporary error");
         throw;
       }
 
@@ -645,10 +636,7 @@ namespace Lemoine.DataRepository
         XPathNavigator pathNavigator = m_document.CreateNavigator ();
         XPathNavigator node = pathNavigator.SelectSingleNode (xpath, xmlnsResolver);
         if (null == node) {
-          log.InfoFormat ("GetData: " +
-                          "no node was found for xpath {0} " +
-                          "=> return null",
-                          xpath);
+          log.Info ($"GetData: no node was found for xpath {xpath} => return null");
           return null;
         }
         else {
@@ -713,6 +701,5 @@ namespace Lemoine.DataRepository
         }
       }
     }
-    #endregion
   }
 }

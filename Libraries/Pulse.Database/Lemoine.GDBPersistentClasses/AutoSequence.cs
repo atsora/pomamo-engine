@@ -17,7 +17,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class AutoSequence: IAutoSequence
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     IMachineModule m_machineModule; // not null
@@ -25,12 +24,10 @@ namespace Lemoine.GDBPersistentClasses
     IOperation m_operation; // The sequence or the operation is not null
     DateTime m_begin; // not null
     UpperBound<DateTime> m_end;
-    #endregion // Members
 
     ILog log = LogManager.GetLogger(typeof (AutoSequence).FullName);
     static readonly ILog slog = LogManager.GetLogger(typeof (AutoSequence).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// AutoSequence Id
     /// </summary>
@@ -105,7 +102,6 @@ namespace Lemoine.GDBPersistentClasses
     public virtual UtcDateTimeRange Range {
       get { return new UtcDateTimeRange (this.Begin, this.End); }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>

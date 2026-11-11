@@ -19,12 +19,9 @@ namespace ViewLinePlanning
   /// </summary>
   public partial class Page3 : GenericViewPage, IViewPage
   {
-    #region Members
     Brush m_brush = null;
     LineBarData m_barData = new LineBarData();
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -38,7 +35,6 @@ namespace ViewLinePlanning
           "Buttons just below the timeline allow you to change the period.\n\n" +
           "The productions are also listed in the left list. Details can be displayed by clicking on it. " +
           "A tree will show the different quantities to produce per shift and per day."; } }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

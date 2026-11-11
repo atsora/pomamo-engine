@@ -28,7 +28,6 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class OpSequence : DataWithDisplayFunction, ISequence, Lemoine.Collections.IDataWithId
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     int m_order = 0;
@@ -45,11 +44,9 @@ namespace Lemoine.GDBPersistentClasses
     int? m_operationStep;
     ICollection<IStamp> m_stamps = new InitialNullIdSet<IStamp, int> ();
     ICollection<IStampingValue> m_stampingValues = new InitialNullIdSet<IStampingValue, int> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (OpSequence).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -364,7 +361,6 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Default constructor

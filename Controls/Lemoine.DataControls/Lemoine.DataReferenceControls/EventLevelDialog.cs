@@ -18,13 +18,9 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class EventLevelDialog : OKCancelDialog, IValueDialog<IEventLevel>
   {
-    #region Members
-
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (EventLevelDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null EventLevel a valid value ?
     /// </summary>
@@ -65,7 +61,6 @@ namespace Lemoine.DataReferenceControls
         this.eventLevelSelection.SelectedEventLevels = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -84,7 +79,6 @@ namespace Lemoine.DataReferenceControls
 
     #endregion // Constructors
 
-    #region Methods
     void OkButtonClick(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
@@ -94,6 +88,5 @@ namespace Lemoine.DataReferenceControls
     {
       this.DialogResult = DialogResult.Cancel;
     }
-    #endregion // Methods
   }
 }

@@ -58,7 +58,6 @@ namespace Lem_CncService
     static readonly int MAX_CONNECTION_ATTEMPTS = 5;
 #endif // NETSTANDARD || NET48 || NETCOREAPP
 
-#region Members
     readonly string m_localCncConfiguration;
     readonly IFileRepoClientFactory m_fileRepoClientFactory;
     readonly IAssemblyLoader m_assemblyLoader;
@@ -70,7 +69,6 @@ namespace Lem_CncService
     readonly CheckThreadsAndProcesses m_checkThreadsAndProcesses = new CheckThreadsAndProcesses ();
 
     readonly IList<ServiceHost> m_serviceHosts = new List<ServiceHost> ();
-#endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (CncService).FullName);
 

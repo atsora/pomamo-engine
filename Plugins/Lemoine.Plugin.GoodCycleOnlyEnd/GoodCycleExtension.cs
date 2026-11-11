@@ -34,7 +34,7 @@ namespace Lemoine.Plugin.GoodCycleOnlyEnd
 
       if (!LoadConfiguration (out m_configuration)) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("Initialize: LoadConfiguration returned false");
+          log.Error ("Initialize: LoadConfiguration returned false");
         }
         return false;
       }

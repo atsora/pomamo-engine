@@ -17,12 +17,10 @@ namespace Lemoine.Service
   /// </summary>
   public class ThreadServiceBase : System.ServiceProcess.ServiceBase
   {
-    #region Members
     readonly ServiceOptions m_options;
     readonly string[] m_args;
     readonly IThreadService m_service;
     readonly string m_serviceName;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (ThreadServiceBase).FullName);
 

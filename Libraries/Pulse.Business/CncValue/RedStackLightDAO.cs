@@ -37,7 +37,7 @@ namespace Lemoine.Business.CncValue
       }
       catch (Exception ex) {
         log.Error ("IsRedStackLight: exception", ex);
-        log.ErrorFormat ("IsRedStackLight: {0} is not a valid stack light", cncValue.Value);
+        log.Error ($"IsRedStackLight: {cncValue.Value} is not a valid stack light");
         return false;
       }
     }

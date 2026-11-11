@@ -309,7 +309,7 @@ namespace Lemoine.Model
           m_upperInclusive = false;
           break;
         default:
-          log.ErrorFormat ($"ParseInclusivity: bad syntax for the upper inclusivity in parameter {inclusivity}");
+          log.Error ($"ParseInclusivity: bad syntax for the upper inclusivity in parameter {inclusivity}");
           throw new ArgumentOutOfRangeException ("inclusivity", "Bad format for lower inclusivity");
         }
       }
@@ -369,24 +369,12 @@ namespace Lemoine.Model
         if (m_upper.Value.CompareTo (m_lower.Value) < 0) {
           // Note: this fixes a problem with PostgreSQL
           // A request in PostgreSQL ends in error if Upper<Lower
-          log.WarnFormat ("ToString: the upper bound is before the lower bound " +
-                          "=> return empty instead of {0}{1},{2}{3} Stack: {4}",
-                          m_lowerInclusive ? "[" : "(",
-                          m_lower.HasValue ? convertBoundToString (m_lower.Value) : "",
-                          m_upper.HasValue ? convertBoundToString (m_upper.Value) : "",
-                          m_upperInclusive ? "]" : ")",
-                          System.Environment.StackTrace);
+          log.Warn ($"ToString: the upper bound is before the lower bound => return empty instead of {(m_lowerInclusive ? "[" : "(")}{(m_lower.HasValue ? convertBoundToString (m_lower.Value) : "")},{(m_upper.HasValue ? convertBoundToString (m_upper.Value) : "")}{(m_upperInclusive ? "]" : ")")} Stack: {System.Environment.StackTrace}");
           return "empty";
         }
         else if (object.Equals (m_upper.Value, m_lower.Value)
                  && (!m_lowerInclusive || !m_upperInclusive)) {
-          log.WarnFormat ("ToString: lower {1} and upper {2} are equal but one of them is not inclusive " +
-                          "=> return empty instead {0}{1},{2}{3} Stack: {4}",
-                          m_lowerInclusive ? "[" : "(",
-                          m_lower.HasValue ? convertBoundToString (m_lower.Value) : "",
-                          m_upper.HasValue ? convertBoundToString (m_upper.Value) : "",
-                          m_upperInclusive ? "]" : ")",
-                          System.Environment.StackTrace);
+          log.Warn ($"ToString: lower {(m_lower.HasValue ? convertBoundToString (m_lower.Value) : "")} and upper {(m_upper.HasValue ? convertBoundToString (m_upper.Value) : "")} are equal but one of them is not inclusive => return empty instead {(m_lowerInclusive ? "[" : "(")}{(m_lower.HasValue ? convertBoundToString (m_lower.Value) : "")},{(m_upper.HasValue ? convertBoundToString (m_upper.Value) : "")}{(m_upperInclusive ? "]" : ")")} Stack: {System.Environment.StackTrace}");
           return "empty";
         }
       }
@@ -507,13 +495,15 @@ namespace Lemoine.Model
       }
 
       if (a.IsEmpty () && b.IsEmpty ()) {
-        log.DebugFormat ("Equals: " +
-                         "because both empty");
+        if (log.IsDebugEnabled) {
+          log.Debug ("Equals: because both empty");
+        }
         return true;
       }
       else if (a.IsEmpty () || b.IsEmpty ()) {
-        log.DebugFormat ("Equals: " +
-                         "only one of the two arguments is empty => return false");
+        if (log.IsDebugEnabled) {
+          log.Debug ("Equals: only one of the two arguments is empty => return false");
+        }
         return false;
       }
       else if (object.Equals (a.Lower, b.Lower) && object.Equals (a.Upper, b.Upper)
@@ -538,8 +528,7 @@ namespace Lemoine.Model
     public bool ContainsRange (Range<T> other)
     {
       if (this.IsEmpty ()) {
-        log.WarnFormat ("ContainsRange: " +
-                        "empty, return false");
+        log.Warn ("ContainsRange: empty, return false");
         return false;
       }
       else if (other.IsEmpty ()) {
@@ -658,9 +647,7 @@ namespace Lemoine.Model
     public bool Overlaps (Range<T> other)
     {
       if (this.IsEmpty () || other.IsEmpty ()) {
-        log.WarnFormat ("Overlaps: " +
-                        "empty, return false. StackTrace: {0}",
-                        System.Environment.StackTrace);
+        log.Warn ($"Overlaps: empty, return false. StackTrace: {System.Environment.StackTrace}");
         return false;
       }
       else if (!this.Lower.HasValue && !this.Upper.HasValue) { // (,) => true
@@ -729,23 +716,19 @@ namespace Lemoine.Model
     public bool IsStrictlyLeftOf (Range<T> other)
     {
       if (this.IsEmpty () || other.IsEmpty ()) {
-        log.WarnFormat ("IsStrictlyLeftOf: " +
-                        "one of the value is null, return false");
+        log.Warn ("IsStrictlyLeftOf: one of the value is null, return false");
         return false;
       }
       else if (!this.Upper.HasValue) { // +oo
-        log.DebugFormat ("IsStrictlyLeftOf: " +
-                         "{0} << {1} " +
-                         "=>" +
-                         "return false because this.Upper=+oo",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsStrictlyLeftOf: {this} << {other} =>return false because this.Upper=+oo");
+        }
         return false;
       }
       else if (!other.Lower.HasValue) { // -oo
-        log.DebugFormat ("IsStrictlyLeftOf: " +
-                         "{0} << {1} " +
-                         "=> return false because other.Lower=-oo",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsStrictlyLeftOf: {this} << {other} => return false because other.Lower=-oo");
+        }
         return false;
       }
       else if (this.Upper.Value.CompareTo (other.Lower.Value) < 0) {
@@ -753,10 +736,9 @@ namespace Lemoine.Model
       }
       else if (object.Equals (this.Upper.Value, other.Lower.Value)
                && (!this.UpperInclusive || (!other.LowerInclusive))) {
-        log.DebugFormat ("IsStrictlyLeftOf: " +
-                         "{0} << {1} " +
-                         "=> return true because the bounds are equals but one of them is exclusive",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsStrictlyLeftOf: {this} << {other} => return true because the bounds are equals but one of them is exclusive");
+        }
         return true;
       }
       else {
@@ -776,23 +758,19 @@ namespace Lemoine.Model
     public bool IsStrictlyRightOf (Range<T> other)
     {
       if (this.IsEmpty () || other.IsEmpty ()) {
-        log.WarnFormat ("IsStrictlyRightOf: " +
-                        "one of the value is null, return false");
+        log.Warn ("IsStrictlyRightOf: one of the value is null, return false");
         return false;
       }
       else if (!other.Upper.HasValue) { // +oo
-        log.DebugFormat ("IsStrictlyRightOf: " +
-                         "{0} >> {1} " +
-                         "=>" +
-                         "return false because other.Upper=+oo",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsStrictlyRightOf: {this} >> {other} =>return false because other.Upper=+oo");
+        }
         return false;
       }
       else if (!this.Lower.HasValue) { // -oo
-        log.DebugFormat ("IsStrictlyRightOf: " +
-                         "{0} >> {1} " +
-                         "=> return false because this.Lower=-oo",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsStrictlyRightOf: {this} >> {other} => return false because this.Lower=-oo");
+        }
         return false;
       }
       else if (other.Upper.Value.CompareTo (this.Lower.Value) < 0) {
@@ -800,10 +778,9 @@ namespace Lemoine.Model
       }
       else if (object.Equals (other.Upper.Value, this.Lower.Value)
                && (!other.UpperInclusive || (!this.LowerInclusive))) {
-        log.DebugFormat ("IsStrictlyRightOf: " +
-                         "{0} >> {1} " +
-                         "=> return true because the bounds are equals but one of them is exclusive",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"IsStrictlyRightOf: {this} >> {other} => return true because the bounds are equals but one of them is exclusive");
+        }
         return true;
       }
       else {
@@ -823,10 +800,7 @@ namespace Lemoine.Model
     public virtual bool IsAdjacentTo (Range<T> other)
     {
       if (this.IsEmpty () || other.IsEmpty ()) {
-        log.WarnFormat ("IsAdjacentTo: " +
-                        "empty, return false. " +
-                        "StackTrace={0}",
-                        System.Environment.StackTrace);
+        log.Warn ($"IsAdjacentTo: empty, return false. StackTrace={System.Environment.StackTrace}");
         return false;
       }
       else if (this.Upper.HasValue
@@ -916,9 +890,7 @@ namespace Lemoine.Model
         return newRange;
       }
       else { // Not adjacent and no overlap
-        log.ErrorFormat ("Union: " +
-                         "operation not possible because {0} and {1} are not overlapping or are not adjacent",
-                         this, other);
+        log.Error ($"Union: operation not possible because {this} and {other} are not overlapping or are not adjacent");
         throw new ArgumentException ("Union not possible");
       }
     }
@@ -933,10 +905,9 @@ namespace Lemoine.Model
     public Range<T> Intersects (Range<T> other)
     {
       if (!this.Overlaps (other)) {
-        log.DebugFormat ("Intersects: " +
-                         "{0} and {1} do not overlap " +
-                         "=> return an empty range",
-                         this, other);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"Intersects: {this} and {other} do not overlap => return an empty range");
+        }
         return new Range<T> ();
       }
       else {
@@ -1019,9 +990,7 @@ namespace Lemoine.Model
         }
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("obj is not of the same type than this instance", "obj");
     }
 

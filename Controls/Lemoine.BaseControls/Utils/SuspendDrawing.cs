@@ -13,12 +13,9 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class SuspendDrawing : IDisposable
   {
-    #region Members
     static private readonly int WM_SETREDRAW = 0x000B;
     private readonly Control m_control;
-    #endregion // Members
 
-    #region Methods
     /// <summary>
     /// Suspend the drawing of a control, until this object is deleted.
     /// Should be used with using new SuspendDrawing...
@@ -53,6 +50,5 @@ namespace Lemoine.BaseControls
       m_control.Invalidate();
       m_control.Refresh();
     }
-    #endregion // Methods
   }
 }

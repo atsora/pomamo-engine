@@ -14,13 +14,10 @@ namespace WizardCreateLine
   /// </summary>
   public class StructOperation
   {
-    #region Members
     public int m_maxPartsPerCycle = 1;
     public IList<StructMachine> m_machines = new List<StructMachine>();
     public IPart m_part = null;
-    #endregion // Members
     
-    #region Getters / setters
     /// <summary>
     /// True if the operation already exists
     /// </summary>
@@ -40,7 +37,6 @@ namespace WizardCreateLine
     /// Operation
     /// </summary>
     public IOperation Operation { get; private set; }
-    #endregion // Getters / setters
 
     #region Constructors
     /// <summary>
@@ -73,7 +69,6 @@ namespace WizardCreateLine
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Textual description of the data
     /// </summary>
@@ -109,6 +104,5 @@ namespace WizardCreateLine
 
       return false;
     }
-    #endregion // Methods
   }
 }

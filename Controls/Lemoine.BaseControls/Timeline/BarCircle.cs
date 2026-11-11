@@ -14,13 +14,10 @@ namespace Lemoine.BaseControls
   /// </summary>
   public class BarCircle : BarObject
   {
-    #region Members
     double m_verticalPosition = 0.5;
-    #endregion // Members
     
     static readonly ILog log = LogManager.GetLogger(typeof (BarCircle).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Datetime of the circle
     /// </summary>
@@ -49,7 +46,6 @@ namespace Lemoine.BaseControls
     /// Radius of the circle in pixels
     /// </summary>
     public int Radius { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -71,7 +67,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Paint the object in the bar
     /// </summary>
@@ -130,6 +125,5 @@ namespace Lemoine.BaseControls
       int pyTop = Parent.MarginTop;
       return (int)(VerticalPosition * pyTop + (1.0 - VerticalPosition) * pyBottom);
     }
-    #endregion // Methods
   }
 }

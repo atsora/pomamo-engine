@@ -28,10 +28,8 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineCompanyUpdate: MachineModification, IMachineCompanyUpdate
   {
-    #region Members
     ICompany m_oldCompany;
     ICompany m_newCompany;
-    #endregion // Members
 
     #region constructor
     /// <summary>
@@ -55,7 +53,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion
 
-    #region Getters / Setters
     /// <summary>
     /// <see cref="IModification"/>
     /// </summary>
@@ -102,9 +99,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return this.NewCompany as Company; }
       set { m_newCompany = value; }
     }
-    #endregion // Getters / Setters
     
-    #region Methods
     /// <summary>
     /// Make the analysis
     /// </summary>
@@ -130,10 +125,9 @@ namespace Lemoine.GDBPersistentClasses
     public override void Apply ()
     {
       Debug.Assert (false);
-      log.FatalFormat ("Apply: not implemented/supported");
+      log.Fatal ("Apply: not implemented/supported");
       throw new NotImplementedException ();
     }    
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

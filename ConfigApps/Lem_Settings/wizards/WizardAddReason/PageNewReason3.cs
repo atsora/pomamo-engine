@@ -16,7 +16,6 @@ namespace WizardAddReason
   /// </summary>
   internal partial class PageNewReason3 : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -38,7 +37,6 @@ namespace WizardAddReason
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

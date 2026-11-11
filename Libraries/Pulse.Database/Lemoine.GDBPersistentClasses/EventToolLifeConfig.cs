@@ -16,18 +16,15 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class EventToolLifeConfig: IEventToolLifeConfig
   {
-    #region Members
     int m_id = 0;
     int m_version = 0;
     EventToolLifeType m_eventToolLifeType = EventToolLifeType.Unknown;
     IMachineFilter m_machineFilter = null;
     IMachineObservationState m_machineObservationState = null;
     IEventLevel m_level;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof(EventToolLifeConfig).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// EventToolLifeConfig Id
     /// </summary>
@@ -57,7 +54,7 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_level; }
       set {
         if (null == value) {
-          log.FatalFormat ("EventLevel can't be null");
+          log.Fatal ("EventLevel can't be null");
           Debug.Assert (null != value);
           throw new ArgumentNullException("Level");
         } else {
@@ -85,7 +82,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_machineObservationState; }
       set { m_machineObservationState = value; }
     }
-    #endregion // Getters / Setters
     
     #region Constructors
     /// <summary>
@@ -105,7 +101,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// Unproxy all the properties
     /// </summary>
@@ -115,6 +110,5 @@ namespace Lemoine.GDBPersistentClasses
       NHibernateHelper.Unproxy<IMachineObservationState> (ref m_machineObservationState);
       NHibernateHelper.Unproxy<IEventLevel> (ref m_level);
     }
-    #endregion // Methods
   }
 }

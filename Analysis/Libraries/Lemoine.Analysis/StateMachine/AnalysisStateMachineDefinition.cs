@@ -21,11 +21,9 @@ namespace Lemoine.Analysis.StateMachine
   {
     readonly ILog log = LogManager.GetLogger (typeof (AnalysisStateMachineDefinition<TContext>).FullName);
 
-    #region Getters / Setters
     readonly IState<TContext> m_initialState;
     readonly IStateMachineAnalysis m_analysis;
     readonly bool m_throwStateException;
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

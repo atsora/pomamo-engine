@@ -25,14 +25,12 @@ namespace Lemoine.FileRepository
     static readonly string FILE_ACCESS_ATTEMPT_SLEEP_KEY = "FileRepository.Syncronization.FileAccessSleep";
     static readonly TimeSpan FILE_ACCESS_ATTEMPT_SLEEP_DEFAULT = TimeSpan.FromMilliseconds (100);
 
-    #region Members
     static readonly string SYNCHRONIZATION_FILE_NAME = "synchronization.txt";
     static readonly string DATETIME_FORMAT = @"yyyy'/'MM'/'dd HH':'mm':'ss.fff";
     static readonly char SEPARATOR = '>';
     readonly string m_path = "";
     readonly IDictionary<string, DateTime> m_dates = new Dictionary<string, DateTime> ();
     readonly IDictionary<string, DateTime?> m_updatedDates = new Dictionary<string, DateTime?> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SynchronizerFile).FullName);
 
@@ -123,7 +121,7 @@ namespace Lemoine.FileRepository
       var currentDate = GetDate (path);
       if (object.Equals (currentDate, date)) {
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("SetDatePrivate: no change for {0}>{1} => return", path, date);
+          log.Debug ($"SetDatePrivate: no change for {path}>{date} => return");
         }
         return;
       }

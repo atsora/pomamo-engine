@@ -24,7 +24,6 @@ namespace Lemoine.ConfigControls
     : UserControl
     , IConfigControlObservable<IUser>
   {
-    #region Members
     SortableBindingList<IUser> m_users = new SortableBindingList<IUser> ();
 
     ISet<DataGridViewRow> m_updateSet =
@@ -37,7 +36,6 @@ namespace Lemoine.ConfigControls
 
     string m_noPasswordString = null;
     int m_companyId = 0;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (UserConfig).FullName);
 
@@ -116,8 +114,7 @@ namespace Lemoine.ConfigControls
     {
       IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
       if (null == daoFactory) {
-        log.ErrorFormat ("UserConfigLoad: " +
-                         "no DAO factory is defined");
+        log.Error ("UserConfigLoad: no DAO factory is defined");
         return;
       }
 

@@ -31,14 +31,12 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     static readonly string SHIFT_MACHINE_ASSOCIATION_PRIORITY = "Analysis.ShiftSlot.ShiftAssociation.Priority";
 
-    #region Members
     IShiftTemplate m_shiftTemplate;
     IShift m_shift;
     DateTime? m_day;
     ISet<IShiftSlotBreak> m_breaks = new HashSet<IShiftSlotBreak> ();
     bool m_templateProcessed = false;
     TimeSpan? m_effectiveDuration = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (ShiftSlot).FullName);
 
@@ -72,7 +70,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors and factory methods
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the shift template
     /// </summary>
@@ -152,7 +149,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return GetElapsedEffectiveDuration (DateTime.UtcNow); }
     }
-    #endregion // Getters / Setters
 
     /// <summary>
     /// Get the elapsed effective duration at the specified UTC date/time
@@ -212,8 +208,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual IShiftSlotBreak AddBreak (UtcDateTimeRange range)
     {
       if (range.IsEmpty ()) {
-        log.WarnFormat ("AddBreak: " +
-                        "empty range");
+        log.Warn ("AddBreak: empty range");
         return null;
       }
 
@@ -252,17 +247,16 @@ namespace Lemoine.GDBPersistentClasses
               if (daySlot.DateTimeRange.ContainsRange (newRange)) {
                 // Ok to just to update the day
                 if (!daySlot.Day.Value.Equals (this.Day)) {
-                  GetLogger ().DebugFormat ("UpdateDateTimeRange: " +
-                                            "update from day {0} to {1}",
-                                            this.Day, daySlot.Day);
+                  if (GetLogger ().IsDebugEnabled) {
+                    GetLogger ().Debug ($"UpdateDateTimeRange: update from day {this.Day} to {daySlot.Day}");
+                  }
                   this.Day = daySlot.Day;
                 }
               }
               else { // newRange overlaps several day range => reset template processed
-                GetLogger ().DebugFormat ("UpdateDateTimeRange: " +
-                                          "day slot id={0} does not contain newRange {1} " +
-                                          "=> reset TemplateProcessed",
-                                          daySlot.Id, newRange);
+                if (GetLogger ().IsDebugEnabled) {
+                  GetLogger ().Debug ($"UpdateDateTimeRange: day slot id={daySlot.Id} does not contain newRange {newRange} => reset TemplateProcessed");
+                }
                 this.Shift = null;
                 this.Day = null;
                 this.TemplateProcessed = false;
@@ -291,9 +285,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      log.ErrorFormat ("CompareTo: " +
-                       "object {0} of invalid type",
-                       obj);
+      log.Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not a ShiftSlot");
     }
 
@@ -360,9 +352,9 @@ namespace Lemoine.GDBPersistentClasses
             // Day matches ?
             if (templateBreak.Day.HasValue && (templateBreak.Day.Value.Equals (date))) {
               specificDate = true;
-              log.DebugFormat ("Consolidate: " +
-                               "break {0} matches a specific date {1}",
-                               templateBreak, date);
+              if (log.IsDebugEnabled) {
+                log.Debug ($"Consolidate: break {templateBreak} matches a specific date {date}");
+              }
               LocalDateTimeRange localBreakRange =
                 localRange.Intersects (date, templateBreak.TimePeriod);
               if (!localBreakRange.IsEmpty ()) {
@@ -377,9 +369,9 @@ namespace Lemoine.GDBPersistentClasses
             foreach (IShiftTemplateBreak templateBreak in this.ShiftTemplate.Breaks) {
               // DayOfWeek matches ?
               if (!templateBreak.Day.HasValue && templateBreak.WeekDays.HasFlagDayOfWeek (date.DayOfWeek)) {
-                log.DebugFormat ("Consolidate: " +
-                                 "break {0} matches the day of week",
-                                 templateBreak);
+                if (log.IsDebugEnabled) {
+                  log.Debug ($"Consolidate: break {templateBreak} matches the day of week");
+                }
                 LocalDateTimeRange localBreakRange =
                   localRange.Intersects (date, templateBreak.TimePeriod);
                 if (!localBreakRange.IsEmpty ()) {
@@ -415,10 +407,7 @@ namespace Lemoine.GDBPersistentClasses
       IOperationSlotSplit operationSlotSplit = ModelDAOHelper.DAOFactory.OperationSlotSplitDAO
         .FindById (machine.Id);
       if (null == operationSlotSplit) {
-        log.WarnFormat ("IsShiftMachineAssociationRequired: " +
-                         "operationslotsplit did not exist for machine {0} " +
-                         "=> return false",
-                         machine.Id);
+        log.Warn ($"IsShiftMachineAssociationRequired: operationslotsplit did not exist for machine {machine.Id} => return false");
         return false;
       }
       else {
@@ -673,20 +662,18 @@ namespace Lemoine.GDBPersistentClasses
       const int MAX_ATTEMPT = 10;
 
       if (this.TemplateProcessed) {
-        GetLogger ().DebugFormat ("ProcessTemplate: " +
-                                  "template is already processed");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("ProcessTemplate: template is already processed");
+        }
         return true;
       }
 
-      GetLogger ().DebugFormat ("ProcessTemplate: " +
-                                "attempt {0}",
-                                attempt);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"ProcessTemplate: attempt {attempt}");
+      }
 
       if (MAX_ATTEMPT <= attempt) {
-        GetLogger ().ErrorFormat ("ProcessTemplate: " +
-                                  "max attempt {0} is reached " +
-                                  "=> give up",
-                                  attempt);
+        GetLogger ().Error ($"ProcessTemplate: max attempt {attempt} is reached => give up");
         return false;
       }
 
@@ -694,10 +681,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (false == this.TemplateProcessed);
 
       if (!applicableRange.Overlaps (this.DateTimeRange)) { // Nothing to process, the ranges do not overlap
-        GetLogger ().InfoFormat ("ProcessTemplate: " +
-                                 "applicationRange {0} does not overlap {1} " +
-                                 "=> nothing to process",
-                                 applicableRange, this.DateTimeRange);
+        GetLogger ().Info ($"ProcessTemplate: applicationRange {applicableRange} does not overlap {this.DateTimeRange} => nothing to process");
         return true;
       }
 
@@ -731,9 +715,7 @@ namespace Lemoine.GDBPersistentClasses
                                                                   mainModification,
                                                                   partOfDetectionAnalysis, checkedThread, maxAnalysisDateTime, attempt + 1);
             if (!result) {
-              GetLogger ().WarnFormat ("ProcessTemplate: " +
-                                       "give up because ProcessTemplate on ShiftSlot {0} returned false",
-                                       shiftSlot);
+              GetLogger ().Warn ($"ProcessTemplate: give up because ProcessTemplate on ShiftSlot {shiftSlot} returned false");
               return false;
             }
 
@@ -741,17 +723,15 @@ namespace Lemoine.GDBPersistentClasses
 
             // Is it still ok to run it ?
             if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
-              log.WarnFormat ("ProcessTemplate: " +
-                              "maxAnalysisDateTime {0} is reached " +
-                              "=> return false",
-                              maxAnalysisDateTime);
+              log.Warn ($"ProcessTemplate: maxAnalysisDateTime {maxAnalysisDateTime} is reached => return false");
               return false;
             }
           }
         }
 
-        log.DebugFormat ("ProcessTemplate: " +
-                         "all the newly created shift slots were processed");
+        if (log.IsDebugEnabled) {
+          log.Debug ("ProcessTemplate: all the newly created shift slots were processed");
+        }
         return true;
       }
       else {
@@ -786,10 +766,7 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (this.DateTimeRange.Overlaps (applicationRange));
 
       if (!applicationRange.Overlaps (this.DateTimeRange)) { // Nothing to process, the ranges do not overlap
-        GetLogger ().InfoFormat ("ProcessTemplate: " +
-                                 "applicationRange {0} does not overlap {1} " +
-                                 "=> nothing to process",
-                                 applicationRange, this.DateTimeRange);
+        GetLogger ().Info ($"ProcessTemplate: applicationRange {applicationRange} does not overlap {this.DateTimeRange} => nothing to process");
         return true;
       }
 
@@ -805,10 +782,7 @@ namespace Lemoine.GDBPersistentClasses
           foreach (IDaySlot daySlot in daySlots) { // Loop on days
             // Is it still ok to run it ?
             if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
-              log.WarnFormat ("ProcessTemplate: " +
-                              "maxAnalysisDateTime {0} is reached " +
-                              "=> return false",
-                              maxAnalysisDateTime);
+              log.Warn ($"ProcessTemplate: maxAnalysisDateTime {maxAnalysisDateTime} is reached => return false");
               transaction.Commit (); // Because it is ok to return a commit here
               return false;
             }
@@ -816,14 +790,10 @@ namespace Lemoine.GDBPersistentClasses
 
             // Check the day slot was processed
             if (!daySlot.Day.HasValue) {
-              GetLogger ().InfoFormat ("ProcessTemplate: " +
-                                       "daySlot {0} was not processed, do it now",
-                                       daySlot);
+              GetLogger ().Info ($"ProcessTemplate: daySlot {daySlot} was not processed, do it now");
               if (!((DaySlot)daySlot).ProcessTemplate (cancellationToken, range, mainModification, partOfDetectionAnalysis,
                                                        checkedThread, maxAnalysisDateTime)) {
-                GetLogger ().WarnFormat ("ProcessDayTemplates: " +
-                                         "process of daySlot {0} was not completed because maxAnalysisDateTime {1} was reached",
-                                         daySlot, maxAnalysisDateTime);
+                GetLogger ().Warn ($"ProcessDayTemplates: process of daySlot {daySlot} was not completed because maxAnalysisDateTime {maxAnalysisDateTime} was reached");
               }
               else { // ProcessTemplate ok, retry
                 retry = true;
@@ -836,10 +806,7 @@ namespace Lemoine.GDBPersistentClasses
 
             // Is it still ok to run it ?
             if (maxAnalysisDateTime.HasValue && (maxAnalysisDateTime.Value <= DateTime.UtcNow)) {
-              log.WarnFormat ("ProcessTemplate: " +
-                              "maxAnalysisDateTime {0} is reached " +
-                              "=> return false",
-                              maxAnalysisDateTime);
+              log.Warn ($"ProcessTemplate: maxAnalysisDateTime {maxAnalysisDateTime} is reached => return false");
               transaction.Commit (); // Because it is ok to return a commit here
               return false;
             }
@@ -848,10 +815,7 @@ namespace Lemoine.GDBPersistentClasses
             UtcDateTimeRange adjustedRange = new UtcDateTimeRange (daySlot.DateTimeRange.Intersects (range));
             if (adjustedRange.IsEmpty ()) {
               Debug.Assert (false);
-              log.FatalFormat ("ProcessTemplate: " +
-                               "adjustedRange is empty, " +
-                               "{0} and {1} do not intersect with each other",
-                               daySlot, range);
+              log.Fatal ($"ProcessTemplate: adjustedRange is empty, {daySlot} and {range} do not intersect with each other");
             }
             Debug.Assert (adjustedRange.Lower.HasValue);
             Debug.Assert (adjustedRange.Upper.HasValue);
@@ -1041,8 +1005,9 @@ namespace Lemoine.GDBPersistentClasses
 
       LocalDateTimeRange localRange = localGlobalRange.Intersects (date, timePeriodOfDay);
       if (localRange.IsEmpty ()) {
-        log.DebugFormat ("ApplyForDay: " +
-                         "nothing to do because the time period is empty");
+        if (log.IsDebugEnabled) {
+          log.Debug ("ApplyForDay: nothing to do because the time period is empty");
+        }
         return;
       }
 

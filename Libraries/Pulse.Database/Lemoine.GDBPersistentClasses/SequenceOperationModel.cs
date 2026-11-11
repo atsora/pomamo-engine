@@ -24,15 +24,12 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class SequenceOperationModel : BaseData, ISequenceOperationModel, IEquatable<ISequenceOperationModel>, Lemoine.Collections.IDataWithId
   {
-    #region Members
     IOperationModel m_operationModel;
     ISequence m_sequence;
     int? m_pathNumber;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (SequenceOperationModel).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Possible identifiers
     /// </summary>
@@ -85,7 +82,6 @@ namespace Lemoine.GDBPersistentClasses
       this.Sequence.EstimatedTime.HasValue
       ? new List<ISequenceDuration> { new SequenceDuration (this, m_sequence.EstimatedTime.Value) }
       : new List<ISequenceDuration> { };
-    #endregion // Getters / Setters
 
     #region Contructors
     /// <summary>

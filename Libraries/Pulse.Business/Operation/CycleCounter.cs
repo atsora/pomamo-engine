@@ -73,7 +73,7 @@ namespace Lemoine.Business.Operation
         .GetAsync (extensionsRequest);
       if (!extensions.Any ()) {
         if (log.IsErrorEnabled) {
-          log.ErrorFormat ("GetAsync: no extension was registered");
+          log.Error ("GetAsync: no extension was registered");
         }
         return new List<CycleCounterValue> ();
       }
@@ -93,7 +93,7 @@ namespace Lemoine.Business.Operation
       }
 
       if (log.IsErrorEnabled) {
-        log.ErrorFormat ("GetAsync: no extension returned a valid value");
+        log.Error ("GetAsync: no extension returned a valid value");
       }
       return new List<CycleCounterValue> ();
     }

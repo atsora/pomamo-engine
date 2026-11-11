@@ -15,14 +15,9 @@ namespace Lemoine.I18N
   /// </summary>
   public class MultiCatalog: ICatalog
   {
-    #region Members
     readonly IList<ICatalog> m_catalogs = new List<ICatalog> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MultiCatalog).FullName);
-
-    #region Getters / Setters
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -33,7 +28,6 @@ namespace Lemoine.I18N
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a catalog
     /// </summary>
@@ -57,16 +51,14 @@ namespace Lemoine.I18N
 
       string translation = GetTranslation (key, cultureInfo);
       if (null != translation) {
-        log.DebugFormat ("GetString: " +
-                         "{0} found for {1} and {2}",
-                         translation, key, cultureInfo.Name);
+        if (log.IsDebugEnabled) {
+          log.Debug ($"GetString: {translation} found for {key} and {cultureInfo.Name}");
+        }
         return translation;
       }
       else { // null == translation
         if (cultureInfo.Equals (System.Globalization.CultureInfo.InvariantCulture)) {
-          log.WarnFormat ("GetString: " +
-                          "key {0} not found in any of the parent culture",
-                          key);
+          log.Warn ($"GetString: key {key} not found in any of the parent culture");
           return null;
         }
         else { // Not InvariantCulture: search recursively to its parent
@@ -91,6 +83,5 @@ namespace Lemoine.I18N
       }
       return null;
     }
-    #endregion // Methods
   }
 }

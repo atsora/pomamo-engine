@@ -43,7 +43,6 @@ namespace Lemoine.Web.Misc
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -179,8 +178,6 @@ namespace Lemoine.Web.Misc
         throw;
       }
     }
-
-    #endregion // Methods
 
     #region IBodySupport
     /// <summary>

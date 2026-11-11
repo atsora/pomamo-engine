@@ -20,18 +20,15 @@ namespace Lemoine.GDBPersistentClasses
     : Machine
     , IMonitoredMachine, IDataGridViewMonitoredMachine
   {
-    #region Members
     ICollection <IMachineModule> m_machineModules = new InitialNullIdSet<IMachineModule, int> ();
     IMachineModule m_mainMachineModule;
     IField m_performanceField;
     OperationBar m_operationBar;
     TimeSpan? m_palletChangingDuration;
     bool m_operationFromCnc;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MonitoredMachine).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Set of machine modules this monitored machine is made of
     /// </summary>
@@ -136,7 +133,6 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     [XmlIgnore]
     public virtual IStampingConfigByName StampingConfigByName { get; set; } = null;
-    #endregion // Getters / Setters
     
     #region Constructor
     /// <summary>
@@ -176,7 +172,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Add methods
     
-    #region Methods
     /// <summary>
     /// Add a machine module in the member directly
     /// 
@@ -198,7 +193,6 @@ namespace Lemoine.GDBPersistentClasses
     {
       RemoveFromProxyCollection<IMachineModule> (m_machineModules, machineModule);
     }
-    #endregion // Methods
     
     /// <summary>
     /// <see cref="Lemoine.Model.ISerializableModel"></see>

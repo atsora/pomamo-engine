@@ -40,7 +40,6 @@ namespace Pulse.Web.MachineMode
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -58,9 +57,7 @@ namespace Pulse.Web.MachineMode
           IMonitoredMachine machine = ModelDAOHelper.DAOFactory.MonitoredMachineDAO
             .FindById (machineId);
           if (null == machine) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown machine with ID {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: unknown machine with ID {machineId}");
             return new ErrorDTO ("No monitored machine with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }
@@ -68,9 +65,7 @@ namespace Pulse.Web.MachineMode
           IGoal goal = ModelDAOHelper.DAOFactory.GoalDAO
             .FindMatch (GoalTypeId.UtilizationPercentage, null, machine);
           if (null == goal) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "no defined utilization target for machine ID {0}",
-                             machineId);
+            log.Error ($"GetWithoutCache: no defined utilization target for machine ID {machineId}");
             return new ErrorDTO ("No utilization target is defined",
                                  ErrorStatus.MissingConfiguration);
           }
@@ -82,6 +77,5 @@ namespace Pulse.Web.MachineMode
 
       return response;
     }
-    #endregion // Methods
   }
 }

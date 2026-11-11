@@ -14,12 +14,9 @@ namespace Lemoine.BaseControls
   /// </summary>
   public abstract class BarObject
   {
-    #region Members
     static DistinctBrushes s_distinctBrushes = new DistinctBrushes();
     static IDictionary<Brush, string> s_legendBrushes = new Dictionary<Brush, string>();
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Brush
     /// </summary>
@@ -52,7 +49,6 @@ namespace Lemoine.BaseControls
     /// Text used in the legend
     /// </summary>
     protected string Legend { get; private set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -98,7 +94,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Reset the legend, forget all previous colors
     /// </summary>
@@ -156,6 +151,5 @@ namespace Lemoine.BaseControls
       double coef = (double)Parent.Width / (double)(Parent.EndDateTime.Subtract(Parent.StartDateTime).Ticks);
       return (int)((double)(date.Subtract(Parent.StartDateTime).Ticks) * coef);
     }
-    #endregion // Methods
   }
 }

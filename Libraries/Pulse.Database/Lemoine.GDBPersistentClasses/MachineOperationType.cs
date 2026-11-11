@@ -20,11 +20,9 @@ namespace Lemoine.GDBPersistentClasses
   [Serializable]
   public class MachineOperationType: IMachineOperationType
   {
-    #region Members
     IMachine m_machine;
     IOperationType m_operationType;
     int m_preference = 2;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineOperationType).FullName);
 
@@ -64,7 +62,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Getters / Setters
     /// <summary>
     /// Machine to associate to an operation type
     /// </summary>
@@ -92,7 +89,6 @@ namespace Lemoine.GDBPersistentClasses
       get { return m_preference; }
       set { m_preference = value; }
     }
-    #endregion // Getters / Setters
     
     /// <summary>
     /// <see cref="Object.GetHashCode" />

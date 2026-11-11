@@ -27,14 +27,11 @@ namespace Lemoine.GDBPersistentClasses
       return log;
     }
     
-    #region Members
     /// <summary>
     /// Associated machine
     /// </summary>
     protected IMachine m_machine;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Reference to the machine
     /// </summary>
@@ -44,8 +41,7 @@ namespace Lemoine.GDBPersistentClasses
       {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat ("GenericMachineRangeSlot.set: " +
-                           "null value");
+          log.Fatal ("GenericMachineRangeSlot.set: null value");
           throw new ArgumentNullException ();
         }
         m_machine = value;
@@ -54,7 +50,6 @@ namespace Lemoine.GDBPersistentClasses
                                                   value.Id));
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -106,8 +101,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       Debug.Assert (null != machine);
       if (machine == null) {
-        log.FatalFormat ("GenericMachineRangeSlot.set: " +
-                         "null value");
+        log.Fatal ("GenericMachineRangeSlot.set: null value");
         throw new ArgumentNullException ();
       }
       m_machine = machine;
@@ -117,7 +111,6 @@ namespace Lemoine.GDBPersistentClasses
     }
     #endregion // Constructors
     
-    #region Methods
     /// <summary>
     /// <see cref="Object.GetHashCode" />
     /// </summary>
@@ -149,6 +142,5 @@ namespace Lemoine.GDBPersistentClasses
       return Bound.Equals<DateTime> (this.BeginDateTime, other.BeginDateTime)
         && object.Equals(this.Machine, other.Machine);
     }
-    #endregion // Methods
   }
 }

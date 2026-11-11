@@ -16,16 +16,12 @@ namespace Lem_Settings
   /// </summary>
   public partial class TreeItem : UserControl
   {
-    #region Members
     IDictionary<IItem, bool> m_viewModes = null;
-    #endregion // Members
     
-    #region Getters / Setters
     /// <summary>
     /// Current item data, used to initialize an item triggered in the tree
     /// </summary>
     public ItemData CurrentItemData { get; set; }
-    #endregion // Getters / Setters
     
     #region Events
     /// <summary>
@@ -53,7 +49,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Fill items in the tree
     /// </summary>
@@ -202,7 +197,6 @@ namespace Lem_Settings
       control.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       return control;
     }
-    #endregion // Methods
     
     #region Event reactions
     void CellDoubleClicked(object sender, EventArgs e)

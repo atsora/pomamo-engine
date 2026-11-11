@@ -23,7 +23,6 @@ namespace Lem_Settings
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Set the current item, may be null
     /// </summary>
@@ -42,6 +41,5 @@ namespace Lem_Settings
         richTextBox.Text = item.Description;
       }
     }
-    #endregion // Methods
   }
 }

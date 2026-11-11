@@ -21,7 +21,6 @@ namespace Lemoine.JobControls
   /// </summary>
   public partial class OrphanedItemsTreeView : BaseOperationTreeView, ITreeViewObservable
   {
-    #region members
     /// <summary>
     ///   List of control which are impacted by change of treeview;
     ///   Main change is node selection
@@ -37,11 +36,8 @@ namespace Lemoine.JobControls
     TreeNode m_intermediateWorkPieceTopNode;
     TreeNode m_partTopNode;
     TreeNode m_simpleOperationTopNode;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger (typeof (OrphanedItemsTreeView).FullName);
-
-    #region Getters / Setters
 
     /// <summary>
     /// Get wrapped treeview
@@ -65,8 +61,6 @@ namespace Lemoine.JobControls
         m_operationTreeView = value;
       }
     }
-
-    #endregion // Getters / Setters
 
 
     #region Constructors
@@ -291,14 +285,11 @@ namespace Lemoine.JobControls
     public override void SelectNodes (TreeNode[] nodeArray)
     {
       if (0 == nodeArray.Length) {
-        log.WarnFormat ("SelectNodes: " +
-                        "empty nodeArray");
+        log.Warn ("SelectNodes: empty nodeArray");
         return;
       }
       else if (1 < nodeArray.Length) {
-        log.WarnFormat ("SelectNodes: " +
-                        "more than one node in the specified array, " +
-                        "this is not supported in OrphanedItemsTreeView");
+        log.Warn ("SelectNodes: more than one node in the specified array, this is not supported in OrphanedItemsTreeView");
       }
       this.TreeView.SelectedNode = nodeArray[0];
     }

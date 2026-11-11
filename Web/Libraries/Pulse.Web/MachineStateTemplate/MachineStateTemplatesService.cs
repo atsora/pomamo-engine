@@ -48,9 +48,7 @@ namespace Pulse.Web.MachineStateTemplate
           role = ModelDAOHelper.DAOFactory.RoleDAO
             .FindById (roleId);
           if (null == role) {
-            log.ErrorFormat ("GetWithoutCache: " +
-                             "unknown role with ID {0}",
-                             roleId);
+            log.Error ($"GetWithoutCache: unknown role with ID {roleId}");
             return new ErrorDTO ("No role with the specified ID",
                                  ErrorStatus.WrongRequestParameter);
           }

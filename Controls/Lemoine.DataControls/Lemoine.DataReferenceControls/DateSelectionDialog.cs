@@ -16,14 +16,11 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class DateSelectionDialog : OKCancelDialog, IValueDialog<DateTime>
   {
-    #region Members
     bool m_nullable;
     bool m_multiSelet;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (DateSelectionDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Is a null DateTime a valid value ?
     /// </summary>
@@ -103,7 +100,6 @@ namespace Lemoine.DataReferenceControls
         this.monthCalendar.SelectionRange = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -149,7 +145,6 @@ namespace Lemoine.DataReferenceControls
 
     #endregion // Constructors
 
-    #region Methods
     private void SetNullable(bool value){
       m_nullable = value;
       if(!value){
@@ -178,7 +173,5 @@ namespace Lemoine.DataReferenceControls
     {
       this.okButton.Enabled = true;
     }
-    
-    #endregion // Methods
   }
 }

@@ -14,14 +14,11 @@ namespace Lemoine.CncEngine
   /// </summary>
   public sealed class CncLicenseManager
   {
-    #region Members
     ReaderWriterLock licenseLock = new ReaderWriterLock ();
     int freeLicenses = 0;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (CncLicenseManager).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Remaining free licenses
     /// </summary>
@@ -35,7 +32,6 @@ namespace Lemoine.CncEngine
         }
       }
     }
-    #endregion
 
     #region Constructors
     /// <summary>
@@ -58,7 +54,6 @@ namespace Lemoine.CncEngine
     }
     #endregion
 
-    #region Methods
     /// <summary>
     /// Get a license.
     /// If there is no CNC license available any more,
@@ -71,22 +66,20 @@ namespace Lemoine.CncEngine
              new ReadLockHolder (Instance.licenseLock))
       {
         if (0 == Instance.freeLicenses) {
-          log.ErrorFormat ("GetLicense: " +
-                           "no license available");
+          log.Error ("GetLicense: no license available");
           return false;
         }
         using (UpgradeLockHolder upgradeHolder =
                new UpgradeLockHolder (readHolder))
         {
           --Instance.freeLicenses;
-          log.DebugFormat ("GetLicense: " +
-                           "{0} remaining licenses",
-                           Instance.freeLicenses);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"GetLicense: {Instance.freeLicenses} remaining licenses");
+          }
           return true;
         }
       }
     }
-    #endregion
     
     #region Instance
     static CncLicenseManager Instance

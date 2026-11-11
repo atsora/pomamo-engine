@@ -30,9 +30,6 @@ namespace Lemoine.Core.Extensions.Web
     const string INCLUDE_INNER_EXCEPTION_KEY = "ResponseWriter.Exception.InnerException";
     const bool INCLUDE_INNER_EXCEPTION_DEFAULT = true;
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

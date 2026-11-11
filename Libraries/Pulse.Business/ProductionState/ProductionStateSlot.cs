@@ -19,13 +19,11 @@ namespace Lemoine.Business.ProductionState
   {
     ILog log = LogManager.GetLogger (typeof (ProductionStateSlot).FullName);
 
-    #region Members
     string m_uuid = new System.Guid ().ToString ();
     IMachine m_machine;
     IProductionState m_productionState;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
-    #endregion // Members
 
     #region Constructors
     /// <summary>
@@ -83,7 +81,6 @@ namespace Lemoine.Business.ProductionState
     { }
     #endregion // Constructors
 
-    #region Getters / Setters
     /// <summary>
     /// UUID
     /// </summary>
@@ -101,8 +98,7 @@ namespace Lemoine.Business.ProductionState
       protected set {
         Debug.Assert (null != value);
         if (value == null) {
-          log.FatalFormat ("Machine.set: " +
-                           "null value");
+          log.Fatal ("Machine.set: null value");
           throw new ArgumentNullException ();
         }
         m_machine = value;
@@ -145,7 +141,6 @@ namespace Lemoine.Business.ProductionState
     {
       get { return m_dateTimeRange.Duration; }
     }
-    #endregion // Getters / Setters
 
     #region IMergeableItem implementation
     /// <summary>

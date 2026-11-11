@@ -23,7 +23,6 @@ namespace WizardChangeProductionQuantities
     internal const string GLOBAL_QUANTITY = "global_quantity";
     internal const string PRODUCTIONS_CHANGED = "productions_changed";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -100,7 +99,6 @@ namespace WizardChangeProductionQuantities
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Wizard methods
     /// <summary>

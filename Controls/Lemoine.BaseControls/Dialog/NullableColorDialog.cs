@@ -14,18 +14,14 @@ namespace Lemoine.BaseControls
   /// </summary>
   public partial class NullableColorDialog : Form
   {
-    #region Members
     bool m_isNull = false;
     double m_currentH = 180;
     double m_currentS = 1.0;
     double m_currentL = 1.0;
     readonly Pen m_circlePen = new Pen(Color.White, 2);
-    
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (NullableColorDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Set or get the color chosen
     /// </summary>
@@ -59,7 +55,6 @@ namespace Lemoine.BaseControls
         baseLayout.ColumnStyles[2].Width = value ? 60 : 0;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -112,7 +107,6 @@ namespace Lemoine.BaseControls
     }
     #endregion // Constructors
 
-    #region Methods
     void UpdateHex()
     {
       using (new SuspendDrawing(labelHex)) {
@@ -271,7 +265,6 @@ namespace Lemoine.BaseControls
       return System.Drawing.Color.FromArgb(
         (int)(r * 255), (int)(g * 255), (int)(b * 255));
     }
-    #endregion // Methods
     
     #region Event reactions
     void ButtonOkClick(object sender, EventArgs e)

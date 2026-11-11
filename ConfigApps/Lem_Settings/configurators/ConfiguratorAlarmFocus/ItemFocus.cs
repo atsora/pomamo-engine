@@ -28,7 +28,6 @@ namespace ConfiguratorAlarmFocus
     internal const string PATTERN_MESSAGE = "pattern_message";
     internal const string PATTERN_PROPERTIES = "pattern_properties";
 
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -108,7 +107,6 @@ namespace ConfiguratorAlarmFocus
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

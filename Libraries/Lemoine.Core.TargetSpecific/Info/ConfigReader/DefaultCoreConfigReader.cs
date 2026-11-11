@@ -17,9 +17,6 @@ namespace Lemoine.Info.ConfigReader.TargetSpecific
   {
     readonly ILog log = LogManager.GetLogger (typeof (DefaultCoreConfigReader).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

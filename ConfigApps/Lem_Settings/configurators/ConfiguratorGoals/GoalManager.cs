@@ -16,14 +16,11 @@ namespace ConfiguratorGoals
   /// </summary>
   public class GoalManager
   {
-    #region Members
     IGoalType m_goalType;
     IDictionary<GoalFilter, NullableDictionary<IMachineObservationState, double>> m_goals = new Dictionary<GoalFilter, NullableDictionary<IMachineObservationState, double>>();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (GoalManager).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Unit of the goal type
     /// </summary>
@@ -38,7 +35,6 @@ namespace ConfiguratorGoals
     /// Current goal filter
     /// </summary>
     public GoalFilter CurrentGoalFilter { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -47,7 +43,6 @@ namespace ConfiguratorGoals
     public GoalManager() {}
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Load configured goals of a specified type
     /// Reset all previous modified goals
@@ -230,6 +225,5 @@ namespace ConfiguratorGoals
     {
       return base.ToString();
     }
-    #endregion // Methods
   }
 }

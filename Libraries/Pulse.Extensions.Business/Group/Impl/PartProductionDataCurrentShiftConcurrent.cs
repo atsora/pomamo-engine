@@ -60,7 +60,7 @@ namespace Lemoine.Extensions.Business.Group.Impl
         }
         else {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("DateTime.get: no item, return now");
+            log.Debug ("DateTime.get: no item, return now");
           }
           return DateTime.UtcNow;
         }

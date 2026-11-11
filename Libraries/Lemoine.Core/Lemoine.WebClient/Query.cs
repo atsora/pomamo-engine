@@ -31,12 +31,10 @@ namespace Lemoine.WebClient
     static readonly string DEFAULT_PORT_KEY = "Query.Port.Default";
     static readonly string DEFAULT_PORT_DEFAULT = "5000";
 
-    #region Members
 #if NETSTANDARD
     readonly HttpClient m_httpClient;
 #endif // NETSTANDARD
     readonly string m_webServiceUrl;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger (typeof (Query).FullName);
 
@@ -474,9 +472,7 @@ namespace Lemoine.WebClient
       }
 
       if (json.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {
-        log.ErrorFormat ("List: " +
-                         "List request failed with {0}",
-                         json);
+        log.Error ($"List: List request failed with {json}");
         throw new Exception ("List error");
       }
 
@@ -543,9 +539,7 @@ namespace Lemoine.WebClient
       }
 
       if (json.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {
-        log.ErrorFormat ("List: " +
-                         "List request failed with {0}",
-                         json);
+        log.Error ($"List: List request failed with {json}");
         throw new Exception ("List error");
       }
 
@@ -596,10 +590,7 @@ namespace Lemoine.WebClient
       if (json.StartsWith ("{\"ErrorMessage\"", StringComparison.InvariantCulture)) {
         var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>> (json);
         var errorMessage = dictionary["ErrorMessage"];
-        log.ErrorFormat ("Execute: " +
-                         "error {0} received, json={1}",
-                         errorMessage,
-                         json);
+        log.Error ($"Execute: error {errorMessage} received, json={json}");
         throw new Exception (errorMessage);
       }
 #else // NETSTANDARD

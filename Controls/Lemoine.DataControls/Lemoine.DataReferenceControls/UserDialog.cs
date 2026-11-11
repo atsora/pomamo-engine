@@ -16,12 +16,8 @@ namespace Lemoine.DataReferenceControls
   /// </summary>
   public partial class UserDialog : OKCancelDialog, IValueDialog<IUser>
   {
-    #region Members
-    #endregion // Members
-
     static readonly ILog log = LogManager.GetLogger(typeof (UserDialog).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return selected User
     /// </summary>
@@ -93,7 +89,6 @@ namespace Lemoine.DataReferenceControls
         this.userSelection1.NoSelectionText = value;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -109,8 +104,5 @@ namespace Lemoine.DataReferenceControls
       this.Text = PulseCatalog.GetString("UserDialog");
     }
     #endregion // Constructors
-
-    #region Methods
-    #endregion // Methods
   }
 }

@@ -16,7 +16,6 @@ namespace Lemoine.Plugin.GroupZoomFromRegex
   {
     static readonly ILog log = LogManager.GetLogger (typeof (Configuration).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// 
     /// </summary>
@@ -39,7 +38,6 @@ namespace Lemoine.Plugin.GroupZoomFromRegex
     {
       get; set;
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

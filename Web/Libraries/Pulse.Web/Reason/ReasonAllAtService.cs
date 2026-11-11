@@ -71,9 +71,7 @@ namespace Pulse.Web.Reason
       }
 
       if (log.IsDebugEnabled) {
-        log.DebugFormat ("GetCacheTimeOut: " +
-                         "cacheTimeSpan is {0} for url={1}",
-                         cacheTimeSpan, url);
+        log.Debug ($"GetCacheTimeOut: cacheTimeSpan is {cacheTimeSpan} for url={url}");
       }
       return cacheTimeSpan;
     }

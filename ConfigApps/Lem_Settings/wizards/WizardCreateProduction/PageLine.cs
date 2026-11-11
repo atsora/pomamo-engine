@@ -16,7 +16,6 @@ namespace WizardCreateProduction
   /// </summary>
   internal partial class PageLine : GenericWizardPage, IWizardPage
   {
-    #region Getters / Setters
     /// <summary>
     /// Title
     /// </summary>
@@ -38,7 +37,6 @@ namespace WizardCreateProduction
         return types;
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

@@ -33,7 +33,6 @@ namespace Pulse.Web.Misc
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Response to GET request (no cache)
     /// </summary>
@@ -66,6 +65,5 @@ namespace Pulse.Web.Misc
       }
       return new OkDTO ($"Catch up mode switched to {request.Active}");
     }
-    #endregion // Methods
   }
 }

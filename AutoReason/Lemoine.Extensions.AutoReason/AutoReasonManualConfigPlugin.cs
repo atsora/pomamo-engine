@@ -23,12 +23,9 @@ namespace Lemoine.Extensions.AutoReason
   public abstract class AutoReasonManualConfigPlugin<TConfiguration> : PluginWithConfig<TConfiguration>, IPluginDll, IFlaggedPlugin
     where TConfiguration : AutoReasonConfiguration, new ()
   {
-    #region Members
     string m_defaultReasonTranslationKey;
     string m_defaultReasonTranslationValue;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Applicable flags
     /// </summary>
@@ -49,7 +46,6 @@ namespace Lemoine.Extensions.AutoReason
     /// Version of the plugin
     /// </summary>
     public override int Version { get { return 1; } }
-    #endregion // Getters / Setters
 
     static readonly ILog log = LogManager.GetLogger (typeof (AutoReasonAutoConfigPlugin<TConfiguration>).FullName);
 
@@ -76,7 +72,6 @@ namespace Lemoine.Extensions.AutoReason
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Install from a specific version
     /// (create or update tables if necessary, ...)
@@ -156,6 +151,5 @@ namespace Lemoine.Extensions.AutoReason
     {
       return ConfigRequests.CreateReason (translationKey, reasonGroup);
     }
-    #endregion // Methods
   }
 }

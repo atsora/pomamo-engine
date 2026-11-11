@@ -18,10 +18,8 @@ namespace Lem_CncService
   [RunInstaller(true)]
   public class ProjectInstaller : Installer
   {
-    #region Members
     readonly ServiceProcessInstaller serviceProcessInstaller;
     readonly ServiceInstaller serviceInstaller;
-    #endregion
 
     static readonly ILog log = LogManager.GetLogger(typeof (ProjectInstaller).FullName);
 

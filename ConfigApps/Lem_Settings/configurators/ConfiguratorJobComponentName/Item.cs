@@ -18,7 +18,6 @@ namespace ConfiguratorJobComponentName
     internal const string JOB_NAME = "job_name";
     internal const string COMPONENT_NAME = "component_name";
     
-    #region Getters / Setters
     /// <summary>
     /// Title of the item (appears in the main page, under the icon)
     /// </summary>
@@ -89,7 +88,6 @@ namespace ConfiguratorJobComponentName
         return pages;
       }
     }
-    #endregion // Getters / Setters
 
     #region Configurator methods
     /// <summary>

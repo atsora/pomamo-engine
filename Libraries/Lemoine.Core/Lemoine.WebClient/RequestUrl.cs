@@ -13,20 +13,16 @@ namespace Lemoine.WebClient
   /// </summary>
   public class RequestUrl
   {
-    #region Members
     string m_url;
     bool m_firstParameter = true;
     IDictionary<string, string> m_customHeaders = new Dictionary<string, string> ();
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (RequestUrl).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Associated Uri
     /// </summary>
     public Uri Uri => new Uri (this.ToString ());
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -40,7 +36,6 @@ namespace Lemoine.WebClient
     }
     #endregion // Constructors
 
-    #region Methods
     /// <summary>
     /// Add a base URL
     /// </summary>
@@ -115,6 +110,5 @@ namespace Lemoine.WebClient
     /// Additional custom headers
     /// </summary>
     public IDictionary<string, string> CustomHeaders => m_customHeaders;
-    #endregion // Methods
   }
 }

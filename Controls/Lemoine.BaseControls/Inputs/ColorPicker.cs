@@ -23,11 +23,8 @@ namespace Lemoine.BaseControls.Inputs
     public event Action<Color?> ColorChanged;
     #endregion // Events
     
-    #region Members
     Color? m_color;
-    #endregion // Members
 
-    #region Getters / Setters
     /// <summary>
     /// Get / set the color
     /// </summary>
@@ -84,7 +81,6 @@ namespace Lemoine.BaseControls.Inputs
     /// </summary>
     [Description("True if the color can be null")]
     public bool NullColorPossible { get; set; }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>

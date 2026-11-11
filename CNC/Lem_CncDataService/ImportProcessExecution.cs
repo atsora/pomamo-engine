@@ -52,9 +52,9 @@ namespace Lem_CncDataService
                                         this.ImportCncDataFromQueue.MinNbOfDataToProcess,
                                         this.ImportCncDataFromQueue.WhicheverNbOfDataProcessAfter,
                                         this.ImportCncDataFromQueue.VisitMachineModesEvery);
-      log.DebugFormat ("GetSpecificArguments: " +
-                       "arguments are: {0}",
-                       arguments);
+      if (log.IsDebugEnabled) {
+        log.Debug ($"GetSpecificArguments: arguments are: {arguments}");
+      }
       return arguments;
     }
     

@@ -18,9 +18,6 @@ namespace Lemoine.WebDataAccess
   {
     readonly ILog log = LogManager.GetLogger (typeof (Config).FullName);
 
-    #region Getters / Setters
-    #endregion // Getters / Setters
-
     #region Constructors
     /// <summary>
     /// Constructor

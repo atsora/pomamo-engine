@@ -371,19 +371,17 @@ namespace Lemoine.GDBPersistentClasses
           // but only if the slot is not in the future,
           // because there is no activity and no cycle in the future
           if (DateTime.UtcNow <= this.BeginDateTime) {
-            GetLogger ().DebugFormat ("EndDateTime.set: " +
-                                      "do not invalid the Runtime and OperationCycle values " +
-                                      "because the slot is in the future");
+            if (GetLogger ().IsDebugEnabled) {
+              GetLogger ().Debug ("EndDateTime.set: do not invalid the Runtime and OperationCycle values because the slot is in the future");
+            }
           }
           else { // Slot in present / past
                  // If the activity is consolidated, keep the consolidated range, to avoid too much process in the future
             if (m_activityConsolidated && AnalysisConfigHelper.OperationSlotRunTime) {
               Debug.Assert (this.RunTime.HasValue); // activityConsolidated => RunTime.HasValue
-              GetLogger ().DebugFormat ("EndDateTime.set: " +
-                                        "consider the activity consolidation period {0} runTime={1} for {2}, " +
-                                        "before updating the end date/time to {3}",
-                                        this.DateTimeRange, this.RunTime, this,
-                                        value);
+              if (GetLogger ().IsDebugEnabled) {
+                GetLogger ().Debug ($"EndDateTime.set: consider the activity consolidation period {this.DateTimeRange} runTime={this.RunTime} for {this}, before updating the end date/time to {value}");
+              }
               m_activityConsolidationRange.Range = this.DateTimeRange;
               m_activityConsolidationRange.Valid = true;
               m_activityConsolidated = false;
@@ -391,11 +389,9 @@ namespace Lemoine.GDBPersistentClasses
 
             // If the production is consolidated, keep the consolidated range, to avoid too much process in the future
             if (m_productionConsolidated && this.ProductionDuration.HasValue && AnalysisConfigHelper.OperationSlotProductionDuration) {
-              GetLogger ().DebugFormat ("EndDateTime.set: " +
-                                        "consider the production consolidation period {0} productionDuration={1} for {2}, " +
-                                        "before updating the end date/time to {3}",
-                                        this.DateTimeRange, this.ProductionDuration, this,
-                                        value);
+              if (GetLogger ().IsDebugEnabled) {
+                GetLogger ().Debug ($"EndDateTime.set: consider the production consolidation period {this.DateTimeRange} productionDuration={this.ProductionDuration} for {this}, before updating the end date/time to {value}");
+              }
               m_productionConsolidationRange.Range = this.DateTimeRange;
               m_productionConsolidationRange.Valid = true; // Ok because this.ProductionDuration.HasValue
               m_productionConsolidated = false;
@@ -422,12 +418,8 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (!value.HasValue || (0 <= value.Value.Ticks));
         if (value.HasValue && (value.Value.Ticks < 0)) {
           Debug.Assert (false);
-          GetLogger ().FatalFormat ("RunTime.set: " +
-                                    "New run time {0} can't be negative on operation slot id {1} range {2}",
-                                    value.Value, this.Id, this.DateTimeRange);
-          GetLogger ().FatalFormat ("RunTime.set: " +
-                                    "fallback: set 0 for the run time instead of {0} on operation slot id {1} range {2}",
-                                    value.Value, this.Id, this.DateTimeRange);
+          GetLogger ().Fatal ($"RunTime.set: New run time {value.Value} can't be negative on operation slot id {this.Id} range {this.DateTimeRange}");
+          GetLogger ().Fatal ($"RunTime.set: fallback: set 0 for the run time instead of {value.Value} on operation slot id {this.Id} range {this.DateTimeRange}");
           m_runTime = TimeSpan.FromTicks (0);
           return;
         }
@@ -551,9 +543,9 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_activityConsolidated && m_productionConsolidated; }
       set {
-        GetLogger ().DebugFormat ("Consolidated.set: " +
-                                  "set {0} to Consolidated for {1}",
-                                  value, this);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"Consolidated.set: set {value} to Consolidated for {this}");
+        }
         m_activityConsolidated = value;
         m_productionConsolidated = value;
       }
@@ -581,8 +573,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.Display;
       }
       else {
-        GetLogger ().FatalFormat ("GetDisplay: not implemented for variant {0}",
-                                  variant);
+        GetLogger ().Fatal ($"GetDisplay: not implemented for variant {variant}");
         throw new NotImplementedException ("OperationSlot.GetDisplay with variant " + variant);
       }
     }
@@ -651,30 +642,26 @@ namespace Lemoine.GDBPersistentClasses
       // because there is no activity and no cycle in the future
       if ((Bound.Compare<DateTime> (DateTime.UtcNow, newRange.Lower) <= 0)
           && (Bound.Compare<DateTime> (DateTime.UtcNow, this.DateTimeRange.Lower) <= 0)) {
-        GetLogger ().DebugFormat ("UpdateDateTimeRange: " +
-                                  "do not invalid the Runtime and OperationCycle values " +
-                                  "because the slot is in the future");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("UpdateDateTimeRange: do not invalid the Runtime and OperationCycle values because the slot is in the future");
+        }
       }
       else { // Slot in present / past
         if (!newRange.Equals (this.DateTimeRange)) { // New range
                                                      // If the operation cycles or activity or production are consolidated, keep the consolidated range, to avoid too much process in the future
           if (m_activityConsolidated && AnalysisConfigHelper.OperationSlotRunTime) {
             Debug.Assert (this.RunTime.HasValue); // m_activityConsolidated => this.RunTime.HasValue
-            GetLogger ().DebugFormat ("UpdateDateTimeRange: " +
-                                      "consider the activity consolidation period {0} runTime={1} for {2}, " +
-                                      "before updating the date/time range to {3}",
-                                      this.DateTimeRange, this.RunTime, this,
-                                      newRange);
+            if (GetLogger ().IsDebugEnabled) {
+              GetLogger ().Debug ($"UpdateDateTimeRange: consider the activity consolidation period {this.DateTimeRange} runTime={this.RunTime} for {this}, before updating the date/time range to {newRange}");
+            }
             m_activityConsolidationRange.Range = this.DateTimeRange;
             m_activityConsolidationRange.Valid = true;
             m_activityConsolidated = false;
           }
           if (m_productionConsolidated && this.ProductionDuration.HasValue && AnalysisConfigHelper.OperationSlotProductionDuration) {
-            GetLogger ().DebugFormat ("UpdateDateTimeRange: " +
-                                      "consider the production consolidation period {0} productionDuration={1} for {2}, " +
-                                      "before updating the date/time range to {3}",
-                                      this.DateTimeRange, this.ProductionDuration, this,
-                                      newRange);
+            if (GetLogger ().IsDebugEnabled) {
+              GetLogger ().Debug ($"UpdateDateTimeRange: consider the production consolidation period {this.DateTimeRange} productionDuration={this.ProductionDuration} for {this}, before updating the date/time range to {newRange}");
+            }
             m_productionConsolidationRange.Range = this.DateTimeRange;
             m_productionConsolidationRange.Valid = true; // Ok because this.ProductionDuration.HasValue
             m_productionConsolidated = false;
@@ -704,17 +691,12 @@ namespace Lemoine.GDBPersistentClasses
           return this.BeginDateTime.CompareTo (other.BeginDateTime);
         }
         else {
-          GetLogger ().ErrorFormat ("CompareTo: " +
-                                    "trying to compare operation slots " +
-                                    "for different machines {0} {1}",
-                                    this, other);
+          GetLogger ().Error ($"CompareTo: trying to compare operation slots for different machines {this} {other}");
           throw new ArgumentException ("Comparison of OperationSlots from different machines");
         }
       }
 
-      GetLogger ().ErrorFormat ("CompareTo: " +
-                                "object {0} of invalid type",
-                                obj);
+      GetLogger ().Error ($"CompareTo: object {obj} of invalid type");
       throw new ArgumentException ("object is not an OperationSlot");
     }
 
@@ -729,10 +711,7 @@ namespace Lemoine.GDBPersistentClasses
         return this.BeginDateTime.CompareTo (other.BeginDateTime);
       }
 
-      GetLogger ().ErrorFormat ("CompareTo: " +
-                                "trying to compare operation slots " +
-                                "for different machines {0} {1}",
-                                this, other);
+      GetLogger ().Error ($"CompareTo: trying to compare operation slots for different machines {this} {other}");
       throw new ArgumentException ("Comparison of OperationSlots from different machines");
     }
 
@@ -770,9 +749,9 @@ namespace Lemoine.GDBPersistentClasses
                      && (null == this.Line)
                      && (null == this.ManufacturingOrder))
         || this.DateTimeRange.IsEmpty ();
-      GetLogger ().DebugFormat ("IsEmpty: " +
-                                "return {0} for {1}",
-                                result, this);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"IsEmpty: return {result} for {this}");
+      }
       return result;
     }
 
@@ -827,13 +806,14 @@ namespace Lemoine.GDBPersistentClasses
       if ((0 == this.TotalCycles) && (0 == this.PartialCycles)) {
         Debug.Assert (0 == this.AdjustedCycles);
         Debug.Assert (0 == this.AdjustedQuantity);
-        GetLogger ().DebugFormat ("HandleRemovedSlot: " +
-                                  "no cycle in the removed slot");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("HandleRemovedSlot: no cycle in the removed slot");
+        }
       }
       else { // 0 != this.TotalCycles
-        GetLogger ().DebugFormat ("HandleRemovedSlot: " +
-                                  "remove {0} existing cycles and {1} partial cycles",
-                                  this.TotalCycles, this.PartialCycles);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"HandleRemovedSlot: remove {this.TotalCycles} existing cycles and {this.PartialCycles} partial cycles");
+        }
         IList<IOperationCycle> cycles = ModelDAOHelper.DAOFactory.OperationCycleDAO.FindAllWithOperationSlot (this);
         foreach (IOperationCycle cycle in cycles) {
           cycle.OperationSlot = null; // For the moment it looks to be sufficient
@@ -857,8 +837,9 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void ConsolidateRunTime ()
     {
       if (!AnalysisConfigHelper.OperationSlotRunTime) { // Option is not active, do nothing
-        GetLogger ().DebugFormat ("ConsolidateRunTime: " +
-                                  "return immediately because the option is not active");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("ConsolidateRunTime: return immediately because the option is not active");
+        }
         return;
       }
 
@@ -866,19 +847,16 @@ namespace Lemoine.GDBPersistentClasses
 
       // Shortcut for slots in the future
       if (Bound.Compare<DateTime> (DateTime.UtcNow, this.BeginDateTime) <= 0) {
-        GetLogger ().DebugFormat ("ConsolidateRunTime: " +
-                                  "slot in the future " +
-                                  "=> no possible run time, set it to 0");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("ConsolidateRunTime: slot in the future => no possible run time, set it to 0");
+        }
         runTime = TimeSpan.FromTicks (0);
       }
       else {
         IMonitoredMachine monitoredMachine =
           ModelDAOHelper.DAOFactory.MonitoredMachineDAO.FindById (this.Machine.Id);
         if (null == monitoredMachine) {
-          GetLogger ().InfoFormat ("ConsolidateRunTime: " +
-                                   "machine {0} is not a monitored one " +
-                                   "=> skip ConsolidateRunTime",
-                                   this.Machine.Id);
+          GetLogger ().Info ($"ConsolidateRunTime: machine {this.Machine.Id} is not a monitored one => skip ConsolidateRunTime");
           return;
         }
 
@@ -891,11 +869,9 @@ namespace Lemoine.GDBPersistentClasses
         }
         else { // Intersection...
           runTime = this.RunTime.Value;
-          GetLogger ().DebugFormat ("ConsolidateRunTime: " +
-                                    "intersection with activityConsolidationRange {0}, " +
-                                    "vs OperationSlot {1} {2}",
-                                    m_activityConsolidationRange.Range,
-                                    this, this.DateTimeRange);
+          if (GetLogger ().IsDebugEnabled) {
+            GetLogger ().Debug ($"ConsolidateRunTime: intersection with activityConsolidationRange {m_activityConsolidationRange.Range}, vs OperationSlot {this} {this.DateTimeRange}");
+          }
           // Begin
           Debug.Assert (m_activityConsolidationRange.Range.Lower.HasValue);
           if (m_activityConsolidationRange.Range.Lower.HasValue
@@ -932,11 +908,9 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (!object.Equals (RunTime, runTime)) {
-        GetLogger ().DebugFormat ("ConsolidateRunTime: " +
-                                  "update run time from {0} to {1} " +
-                                  "for operation slot {2}",
-                                  this.RunTime, runTime,
-                                  this);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"ConsolidateRunTime: update run time from {this.RunTime} to {runTime} for operation slot {this}");
+        }
         RunTime = runTime;
       }
 
@@ -973,10 +947,9 @@ namespace Lemoine.GDBPersistentClasses
       SetActive ();
 
       if (Bound.Compare<DateTime> (DateTime.UtcNow, range.Lower) <= 0) { // Shortcut for periods in the future
-        GetLogger ().DebugFormat ("GetRunTimeBetween: " +
-                                  "period {0} in the future " +
-                                  "=> return 0",
-                                  range);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"GetRunTimeBetween: period {range} in the future => return 0");
+        }
       }
       else {
         // Use the ReasonSlots here, so that the data here is synchronized with the activities analysis
@@ -1006,9 +979,9 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      GetLogger ().DebugFormat ("GetRunTimeBetween: " +
-                                "run time in period {0} is {1}",
-                                range, runTime);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"GetRunTimeBetween: run time in period {range} is {runTime}");
+      }
       return runTime;
     }
 
@@ -1018,8 +991,9 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void ConsolidateProduction ()
     {
       if (!AnalysisConfigHelper.OperationSlotProductionDuration) { // Option is not active, do nothing
-        GetLogger ().DebugFormat ("ConsolidateProduction: " +
-                                  "return immediately because the option is not active");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("ConsolidateProduction: return immediately because the option is not active");
+        }
         return;
       }
 
@@ -1027,9 +1001,9 @@ namespace Lemoine.GDBPersistentClasses
 
       // Shortcut for slots in the future
       if (Bound.Compare<DateTime> (DateTime.UtcNow, this.BeginDateTime) <= 0) {
-        GetLogger ().DebugFormat ("ConsolidateProduction: " +
-                                  "slot in the future " +
-                                  "=> no production yet set it to 0");
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ("ConsolidateProduction: slot in the future => no production yet set it to 0");
+        }
         productionDuration = TimeSpan.FromTicks (0);
       }
       else {
@@ -1038,15 +1012,13 @@ namespace Lemoine.GDBPersistentClasses
           .FindById (this.Machine.Id);
         SetActive ();
         if (null == productionAnalysisStatus) {
-          GetLogger ().ErrorFormat ("ConsolidateProduction: " +
-                                    "the row in productionanalysisstatus has not been intialized yet " +
-                                    "=> return");
+          GetLogger ().Error ("ConsolidateProduction: the row in productionanalysisstatus has not been intialized yet => return");
           return;
         }
         if (Bound.Compare<DateTime> (productionAnalysisStatus.AnalysisDateTime, this.BeginDateTime) <= 0) {
-          GetLogger ().DebugFormat ("ConsolidateProduction: " +
-                                    "slot after the analysis date/time " +
-                                    "=> no production yet, set it to 0");
+          if (GetLogger ().IsDebugEnabled) {
+            GetLogger ().Debug ("ConsolidateProduction: slot after the analysis date/time => no production yet, set it to 0");
+          }
           productionDuration = TimeSpan.FromTicks (0);
         }
         else {
@@ -1064,18 +1036,15 @@ namespace Lemoine.GDBPersistentClasses
           }
           else if (!this.ProductionDuration.HasValue) {
             Debug.Assert (this.ProductionDuration.HasValue);
-            GetLogger ().FatalFormat ("ConsolidateProduction: " +
-                                      "ConsolidationRange ok but productionDuration is null");
+            GetLogger ().Fatal ("ConsolidateProduction: ConsolidationRange ok but productionDuration is null");
             productionDuration = GetProductionDurationInRange (this.Machine, range);
           }
           else { // The new range is an extension of the production in cache
             Debug.Assert (this.ProductionDuration.HasValue); // m_productionConsolidationRange.Valid => ProductionDuration.HasValue
             productionDuration = this.ProductionDuration.Value;
-            GetLogger ().DebugFormat ("ConsolidateProduction: " +
-                                      "intersection with productionConsolidationRange {0}, " +
-                                      "vs OperationSlot {1} {2}",
-                                      m_productionConsolidationRange.Range,
-                                      this, range);
+            if (GetLogger ().IsDebugEnabled) {
+              GetLogger ().Debug ($"ConsolidateProduction: intersection with productionConsolidationRange {m_productionConsolidationRange.Range}, vs OperationSlot {this} {range}");
+            }
             // Begin
             Debug.Assert (Bound.Compare<DateTime> (range.Lower, m_productionConsolidationRange.Range.Lower) <= 0);
             Debug.Assert (m_productionConsolidationRange.Range.Lower.HasValue);
@@ -1096,11 +1065,9 @@ namespace Lemoine.GDBPersistentClasses
 
       if (!this.ProductionDuration.HasValue
           || !object.Equals (this.ProductionDuration.Value, productionDuration)) {
-        GetLogger ().DebugFormat ("ConsolidateProduction: " +
-                                  "update production duration from {0} to {1} " +
-                                  "for operation slot {2}",
-                                  this.ProductionDuration, productionDuration,
-                                  this);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"ConsolidateProduction: update production duration from {this.ProductionDuration} to {productionDuration} for operation slot {this}");
+        }
         this.ProductionDuration = productionDuration;
       }
 
@@ -1132,10 +1099,9 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       if (Bound.Compare<DateTime> (DateTime.UtcNow, range.Lower) <= 0) { // Shortcut for periods in the future
-        GetLogger ().DebugFormat ("GetProductionDurationInRange: " +
-                                  "period {0} in the future " +
-                                  "=> return 0",
-                                  range);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"GetProductionDurationInRange: period {range} in the future => return 0");
+        }
       }
       else {
         IList<IObservationStateSlot> observationStateSlots =
@@ -1164,9 +1130,9 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
 
-      GetLogger ().DebugFormat ("GetProductionDurationInRange: " +
-                                "production duration in period {0} is {1}",
-                                range, productionDuration);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"GetProductionDurationInRange: production duration in period {range} is {productionDuration}");
+      }
       return productionDuration;
     }
 
@@ -1176,10 +1142,7 @@ namespace Lemoine.GDBPersistentClasses
     public virtual void UpdateAverageCycleTime ()
     {
       if (this.TotalCycles <= 1) {
-        GetLogger ().InfoFormat ("UpdateAverageCycleTime: " +
-                                 "the number of total cycles {0} " +
-                                 "is too low to get an average cycle time",
-                                 this.TotalCycles);
+        GetLogger ().Info ($"UpdateAverageCycleTime: the number of total cycles {this.TotalCycles} is too low to get an average cycle time");
         this.AverageCycleTime = null;
       }
       else {
@@ -1194,9 +1157,7 @@ namespace Lemoine.GDBPersistentClasses
           UpdateAverageCycleTime (periodDuration.Value);
         }
         else {
-          GetLogger ().ErrorFormat ("UpdateAverageCycleTime: " +
-                                    "the slot period could not be determined, " +
-                                    "which should not occur because the number of total cycles is positive");
+          GetLogger ().Error ("UpdateAverageCycleTime: the slot period could not be determined, which should not occur because the number of total cycles is positive");
           this.AverageCycleTime = null;
         }
       }
@@ -1211,10 +1172,7 @@ namespace Lemoine.GDBPersistentClasses
     void UpdateAverageCycleTime (TimeSpan periodDuration)
     {
       if (this.TotalCycles <= 1) {
-        GetLogger ().InfoFormat ("UpdateAverageCycleTime: " +
-                                 "the number of total cycles {0} " +
-                                 "is too low to get an average cycle time",
-                                 this.TotalCycles);
+        GetLogger ().Info ($"UpdateAverageCycleTime: the number of total cycles {this.TotalCycles} is too low to get an average cycle time");
         this.AverageCycleTime = null;
       }
       else {
@@ -1224,13 +1182,9 @@ namespace Lemoine.GDBPersistentClasses
           TimeSpan.FromTicks (periodDuration
                               .Ticks
                               / (this.TotalCycles - 1));
-        GetLogger ().DebugFormat ("UpdateAverageCycleTime: " +
-                                  "for duration={0} " +
-                                  "totalCycles={1} " +
-                                  "=> average cycle time={2}",
-                                  periodDuration,
-                                  this.TotalCycles,
-                                  this.AverageCycleTime);
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"UpdateAverageCycleTime: for duration={periodDuration} totalCycles={this.TotalCycles} => average cycle time={this.AverageCycleTime}");
+        }
       }
     }
 
@@ -1250,9 +1204,9 @@ namespace Lemoine.GDBPersistentClasses
       var nextOperationSlot = nextSlot as OperationSlot;
       Debug.Assert (null != nextOperationSlot);
 
-      GetLogger ().DebugFormat ("Merge: " +
-                                "merge nextSlot={0} into {1}",
-                                nextSlot, this);
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"Merge: merge nextSlot={nextSlot} into {this}");
+      }
 
       // Try to keep the consolidated values
       var activityRange = new ConsolidationRange ();

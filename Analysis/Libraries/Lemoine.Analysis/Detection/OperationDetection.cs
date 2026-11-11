@@ -426,10 +426,9 @@ namespace Lemoine.Analysis.Detection
 
         if (IsAutoSequenceActivity (gap.Lower.Value, gap.Upper.Value)) {
           // Auto-sequence activity in gap, return false
-          log.DebugFormat ("ProcessAutoComponent: " +
-                           "auto-sequence activity in gap {0} " +
-                           "=> return false",
-                           gap);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ProcessAutoComponent: auto-sequence activity in gap {gap} => return false");
+          }
           return false;
         }
 
@@ -746,9 +745,7 @@ namespace Lemoine.Analysis.Detection
             return;
           }
           else { // null == operationSlot
-            log.WarnFormat ("ExtendOperation: " +
-                            "there is no operation slot strictly before {0}",
-                            dateTime);
+            log.Warn ($"ExtendOperation: there is no operation slot strictly before {dateTime}");
             { // Log it
               IDetectionAnalysisLog detectionAnalysisLog = ModelDAOHelper.ModelFactory
                 .CreateDetectionAnalysisLog (LogLevel.WARN,

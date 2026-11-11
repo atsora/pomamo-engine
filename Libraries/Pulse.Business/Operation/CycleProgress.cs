@@ -84,27 +84,21 @@ namespace Lemoine.Business.Operation
               .GetFirstBeginBefore (this.Machine, this.At.Value);
             if (null == operationCycle) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: " +
-                                 "no operation cycle before {0}",
-                                 this.At.Value);
+                log.Debug ($"Get: no operation cycle before {this.At.Value}");
               }
               response.Flags = response.Flags.Add (CycleProgressResponseFlags.NotApplicable);
               return response;
             }
             if (!operationCycle.Full) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: " +
-                                 "cycle that starts before {0} is not full",
-                                 this.At.Value);
+                log.Debug ($"Get: cycle that starts before {this.At.Value} is not full");
               }
               response.Flags = response.Flags.Add (CycleProgressResponseFlags.InvalidCycle);
               return response;
             }
             if (!operationCycle.End.HasValue || (operationCycle.End.Value <= this.At.Value)) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: " +
-                                 "cycle that starts before {0} does not overlap it",
-                                 this.At.Value);
+                log.Debug ($"Get: cycle that starts before {this.At.Value} does not overlap it");
               }
               response.Flags = response.Flags.Add (CycleProgressResponseFlags.InvalidCycle);
               return response;
@@ -122,14 +116,13 @@ namespace Lemoine.Business.Operation
                 .GetLastCycle (operationSlot);
               if (null == operationCycle) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: " +
-                                   "no last operation cycle");
+                  log.Debug ("Get: no last operation cycle");
                 }
                 var lastCycle = ModelDAOHelper.DAOFactory.OperationCycleDAO
                   .GetLast (this.Machine);
                 if (null == lastCycle) {
                   if (log.IsDebugEnabled) {
-                    log.DebugFormat ("Get: no cycle on this machine");
+                    log.Debug ("Get: no cycle on this machine");
                   }
                   response.Flags = response.Flags.Add (CycleProgressResponseFlags.NotApplicable);
                 }
@@ -137,16 +130,14 @@ namespace Lemoine.Business.Operation
             }
             else {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: " +
-                                 "no effective operation right now " +
-                                 "=> return an empty response");
+                log.Debug ("Get: no effective operation right now => return an empty response");
               }
               response.Flags = response.Flags.Add (CycleProgressResponseFlags.NoEffectiveOperation);
               var lastCycle = ModelDAOHelper.DAOFactory.OperationCycleDAO
                 .GetLast (this.Machine);
               if (null == lastCycle) {
                 if (log.IsDebugEnabled) {
-                  log.DebugFormat ("Get: no cycle on this machine");
+                  log.Debug ("Get: no cycle on this machine");
                 }
                 response.Flags = response.Flags.Add (CycleProgressResponseFlags.NotApplicable);
               }
@@ -155,24 +146,22 @@ namespace Lemoine.Business.Operation
           }
           if ((null == operationSlot) || (null == operationSlot.Operation)) {
             if (log.IsDebugEnabled) {
-              log.DebugFormat ("Get: " +
-                               "no effective operation right now " +
-                               "=> return an empty response");
+              log.Debug ("Get: no effective operation right now => return an empty response");
             }
             response.Flags = response.Flags.Add (CycleProgressResponseFlags.NoEffectiveOperation);
             var lastCycle = ModelDAOHelper.DAOFactory.OperationCycleDAO
               .GetLast (this.Machine);
             if (null == lastCycle) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("Get: no cycle on this machine");
+                log.Debug ("Get: no cycle on this machine");
               }
               response.Flags = response.Flags.Add (CycleProgressResponseFlags.NotApplicable);
             }
             return response; // With a null operation
           }
-          log.DebugFormat ("Get: " +
-                           "effective operation is {0}",
-                           operationSlot.Operation);
+          if (log.IsDebugEnabled) {
+            log.Debug ($"Get: effective operation is {operationSlot.Operation}");
+          }
           operation = operationSlot.Operation;
           response.Operation = operation;
           response.OperationCycle = operationCycle;
@@ -284,8 +273,7 @@ namespace Lemoine.Business.Operation
               && (Bound.Compare<DateTime> (sequenceSlot.BeginDateTime, operationCycle.Begin.Value.Subtract (sequenceSlotStartVsOperationCycleMargin)) < 0)
               && (1 == sequences.Count ())) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("GetByMachineModulePart: sequence slot starts before the operation cycle, this is probably wrong, replace {0} by {1}",
-                  sequenceSlot.BeginDateTime, operationCycle.Begin);
+                log.Debug ($"GetByMachineModulePart: sequence slot starts before the operation cycle, this is probably wrong, replace {sequenceSlot.BeginDateTime} by {operationCycle.Begin}");
               }
               byMachineModule.CurrentSequenceBeginDateTime = operationCycle.Begin.Value;
             }
@@ -404,7 +392,7 @@ namespace Lemoine.Business.Operation
             }
             else if (null != byMachineModule.CurrentSequence) {
               if (log.IsDebugEnabled) {
-                log.DebugFormat ("GetByMachineModulePart: try to guess the completion time from the sequences");
+                log.Debug ("GetByMachineModulePart: try to guess the completion time from the sequences");
               }
               var totalSequences = byMachineModule.Sequences.Count ();
               var completedSequences = byMachineModule.Sequences
@@ -517,7 +505,7 @@ namespace Lemoine.Business.Operation
           .Select (d => d.Completion.Value)
           .Average ();
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ApproximateCompletionAndCycleEndFromSequences: get {0} from byMachineModule completion", completion);
+          log.Debug ($"ApproximateCompletionAndCycleEndFromSequences: get {completion} from byMachineModule completion");
         }
         response.Completion = completion;
         response.Notices.Add ("Approximated completion from the currently active sequence");
@@ -531,7 +519,7 @@ namespace Lemoine.Business.Operation
           * response.Completion.Value);
         response.EstimatedEndDateTime = dateTime.Add (remainingTime);
         if (log.IsDebugEnabled) {
-          log.DebugFormat ("ApproximateCompletionAndCycleEndFromSequences: get estimated cycle end {0} from completion {1} and machining duration {2}", response.EstimatedEndDateTime, response.Completion.Value, response.Operation.MachiningDuration.Value);
+          log.Debug ($"ApproximateCompletionAndCycleEndFromSequences: get estimated cycle end {response.EstimatedEndDateTime} from completion {response.Completion.Value} and machining duration {response.Operation.MachiningDuration.Value}");
         }
         response.Notices.Add ("Approximated cycle end from the the operation duration and the currently active sequence");
       }
@@ -565,9 +553,7 @@ namespace Lemoine.Business.Operation
             if (operation.MachiningDuration.HasValue) {
               totalDuration = operation.MachiningDuration.Value; // Takes the priority
               if (operation.MachiningDuration.Value < maxMachiningDurationByMachineModule) {
-                log.ErrorFormat ("SetCompletionInCycleInProgress: " +
-                                   "maxMachiningDurationByMachineModule {0} is greater than operation machining duration {1}",
-                                   maxMachiningDurationByMachineModule, operation.MachiningDuration.Value);
+                log.Error ($"SetCompletionInCycleInProgress: maxMachiningDurationByMachineModule {maxMachiningDurationByMachineModule} is greater than operation machining duration {operation.MachiningDuration.Value}");
                 string message = $"The sum of the sequence durations {maxMachiningDurationByMachineModule} is greater than the operation machining duration {operation.MachiningDuration.Value}";
                 response.Errors.Add (message);
                 machiningDuration = maxMachiningDurationByMachineModule;
@@ -575,10 +561,7 @@ namespace Lemoine.Business.Operation
               }
               else if (maxMachiningDurationByMachineModule < operation.MachiningDuration.Value) {
                 if (1 == response.MachineModuleCycleProgress.Count) { // Unique machine module
-                  log.WarnFormat ("SetCompletionInCycleInProgress: " +
-                                  "the sum of sequence durations {0} is less than operation machining duration {1} " +
-                                  $"(and unique machine module) for operation id {((IDataWithId<int>)operation).Id}",
-                                    maxMachiningDurationByMachineModule, operation.MachiningDuration.Value);
+                  log.Warn ($"SetCompletionInCycleInProgress: the sum of sequence durations {maxMachiningDurationByMachineModule} is less than operation machining duration {operation.MachiningDuration.Value} (and unique machine module) for operation id {((IDataWithId<int>)operation).Id}");
                   string message = $"The sum of the sequence durations {maxMachiningDurationByMachineModule} is less than the operation machining duration {operation.MachiningDuration.Value}";
                   response.Warnings.Add (message);
                   machiningDuration = maxMachiningDurationByMachineModule;
@@ -603,10 +586,7 @@ namespace Lemoine.Business.Operation
             && totalDuration.HasValue
             && (0.0 < totalDuration.Value.TotalSeconds)) {
           if (totalDuration.Value < totalRemainingTime) {
-            log.FatalFormat ("SetCompletionInCycleInProgress: " +
-                                 "the total remaining time {0} is greater that the total duration {1} =>" +
-                                 "=> fallback: completion is 0",
-                                 totalRemainingTime.Value, totalDuration.Value);
+            log.Fatal ($"SetCompletionInCycleInProgress: the total remaining time {totalRemainingTime.Value} is greater that the total duration {totalDuration.Value} =>=> fallback: completion is 0");
             response.Completion = 0;
           }
           response.Completion = (totalDuration.Value.TotalSeconds - totalRemainingTime.Value.TotalSeconds)
@@ -616,10 +596,7 @@ namespace Lemoine.Business.Operation
         if (machiningDuration.HasValue
             && (0.0 < machiningDuration.Value.TotalSeconds)) {
           if (machiningDuration.Value < remainingTime) {
-            log.FatalFormat ("SetCompletionInCycleInProgress: " +
-                                 "the remaining time {0} is greater that the machining duration {1} =>" +
-                                 "=> fallback: completion is 0",
-                                 remainingTime, machiningDuration.Value);
+            log.Fatal ($"SetCompletionInCycleInProgress: the remaining time {remainingTime} is greater that the machining duration {machiningDuration.Value} =>=> fallback: completion is 0");
             response.MachiningCompletion = 0;
           }
           response.MachiningCompletion = (machiningDuration.Value.TotalSeconds - remainingTime.TotalSeconds)
@@ -649,8 +626,7 @@ namespace Lemoine.Business.Operation
           && (null != operationCycle.OperationSlot.Operation)
           && operationCycle.OperationSlot.Operation.MachiningDuration.HasValue) {
           if (log.IsDebugEnabled) {
-            log.DebugFormat ("SetEstimatedCycleEndDateTimeInCycleInProgress: estimated cycle end, consider the partial cycle on operation id {0} that started at {1}",
-              ((IDataWithId)operationCycle.OperationSlot.Operation).Id, operationCycle.Begin.Value);
+            log.Debug ($"SetEstimatedCycleEndDateTimeInCycleInProgress: estimated cycle end, consider the partial cycle on operation id {((IDataWithId)operationCycle.OperationSlot.Operation).Id} that started at {operationCycle.Begin.Value}");
           }
           response.EstimatedEndDateTime = operationCycle.Begin.Value
             .Add (operationCycle.OperationSlot.Operation.MachiningDuration.Value);

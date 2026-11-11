@@ -17,13 +17,10 @@ namespace Lem_MachineStateTemplateGUI
   /// </summary>
   public partial class MachineStateTemplateMainPage : UserControl
   {
-    #region Members
     DateTime? m_endDatetime = null;
-    #endregion // Members
 
     static readonly ILog log = LogManager.GetLogger(typeof (MachineStateTemplateMainPage).FullName);
 
-    #region Getters / Setters
     /// <summary>
     /// Return selectedd MachineStateTemplate
     /// </summary>
@@ -79,7 +76,6 @@ namespace Lem_MachineStateTemplateGUI
         return this.GetSelectedMachines();
       }
     }
-    #endregion // Getters / Setters
 
     #region Constructors
     /// <summary>
@@ -91,7 +87,6 @@ namespace Lem_MachineStateTemplateGUI
     }
     #endregion // Constructors
 
-    #region Methods
     void MachineStateTemplateMainPageLoad(object sender, EventArgs e)
     {
       //I18N
@@ -170,8 +165,6 @@ namespace Lem_MachineStateTemplateGUI
       
       return true;
     }
-    
-    #endregion // Methods
     
     #region Events
     void EndDateCheckBoxCheckStateChanged(object sender, EventArgs e)
