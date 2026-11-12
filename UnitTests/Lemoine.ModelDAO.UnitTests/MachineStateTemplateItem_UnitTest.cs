@@ -29,6 +29,7 @@ namespace Lemoine.ModelDAO.UnitTests
       public int Order => 0;
       public IMachineObservationState MachineObservationState { get; set; }
       public IMachineStateTemplate SubMachineStateTemplate { get; set; }
+      public IMachineObservationState ReplacedMachineObservationState { get; set; }
       public IShift Shift { get; set; }
       public WeekDay WeekDays { get; set; } = WeekDay.AllDays;
       public TimePeriodOfDay TimePeriod { get; set; }

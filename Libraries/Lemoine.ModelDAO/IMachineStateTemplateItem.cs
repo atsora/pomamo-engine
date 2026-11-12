@@ -29,19 +29,37 @@ namespace Lemoine.Model
     /// Associated machine observation state
     ///
     /// It must not be null, except when <see cref="SubMachineStateTemplate"/> is set
+    ///
+    /// When <see cref="SubMachineStateTemplate"/> is set, it is only considered
+    /// with <see cref="ReplacedMachineObservationState"/>: it is then the machine observation state
+    /// that replaces <see cref="ReplacedMachineObservationState"/>
     /// </summary>
     IMachineObservationState MachineObservationState { get; set; }
 
     /// <summary>
     /// Associated machine state template to apply recursively (nullable)
     ///
-    /// When it is set, <see cref="MachineObservationState"/> is not considered:
-    /// the items of the referenced machine state template are applied one after the other
-    /// on the period that is applicable for this item
+    /// When it is set, the items of the referenced machine state template are applied one after the other
+    /// on the period that is applicable for this item.
+    /// <see cref="MachineObservationState"/> is then only considered when
+    /// <see cref="ReplacedMachineObservationState"/> is set
     ///
     /// Note: a machine state template must not reference itself, directly or indirectly
     /// </summary>
     IMachineStateTemplate SubMachineStateTemplate { get; set; }
+
+    /// <summary>
+    /// Machine observation state of <see cref="SubMachineStateTemplate"/> that is replaced
+    /// by <see cref="MachineObservationState"/> (nullable)
+    ///
+    /// This allows to define a machine state template from an existing one,
+    /// in which a machine observation state is replaced by another one.
+    /// The replacement also applies to the machine state templates that are applied recursively
+    /// by <see cref="SubMachineStateTemplate"/>
+    ///
+    /// It requires both <see cref="SubMachineStateTemplate"/> and <see cref="MachineObservationState"/>
+    /// </summary>
+    IMachineObservationState ReplacedMachineObservationState { get; set; }
 
     /// <summary>
     /// Associated shift (nullable)
@@ -81,6 +99,23 @@ namespace Lemoine.Model
   public static class IMachineStateTemplateItemExtensions
   {
     static readonly ILog log = LogManager.GetLogger (typeof (IMachineStateTemplateItemExtensions).FullName);
+
+    /// <summary>
+    /// Does this item replace a machine observation state of its sub machine state template ?
+    /// </summary>
+    /// <param name="item">not null</param>
+    /// <returns></returns>
+    public static bool HasReplacement (this IMachineStateTemplateItem item)
+    {
+      if (item is null) {
+        log.Fatal ("HasReplacement: item is null");
+        throw new ArgumentNullException (nameof (item));
+      }
+
+      return (item.SubMachineStateTemplate is not null)
+        && (item.ReplacedMachineObservationState is not null)
+        && (item.MachineObservationState is not null);
+    }
 
     /// <summary>
     /// Does this item restrict the days on which it is applicable ?

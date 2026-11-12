@@ -21,6 +21,11 @@
                  class="MachineStateTemplate"
                  cascade="none"
                  not-found="exception" />
+    <many-to-one name="ReplacedMachineObservationState"
+                 column="machinestatetemplateitemreplacedid"
+                 class="MachineObservationState"
+                 cascade="none"
+                 not-found="exception" />
     <many-to-one name="Shift"
                  column="shiftid"
                  class="Shift"

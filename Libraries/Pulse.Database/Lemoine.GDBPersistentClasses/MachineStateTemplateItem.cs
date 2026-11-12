@@ -25,6 +25,7 @@ namespace Lemoine.GDBPersistentClasses
     int m_order = 0;
     IMachineObservationState m_machineObservationState;
     IMachineStateTemplate m_subMachineStateTemplate;
+    IMachineObservationState m_replacedMachineObservationState;
     IShift m_shift;
     WeekDay m_weekDays = (WeekDay) Int32.MaxValue;
     TimePeriodOfDay m_timePeriod;
@@ -110,6 +111,37 @@ namespace Lemoine.GDBPersistentClasses
     /// used to serialize SubMachineStateTemplate only when not null
     /// </summary>
     public virtual bool XmlSerializationSubMachineStateTemplateSpecified => null != this.SubMachineStateTemplate;
+
+    /// <summary>
+    /// Machine observation state of <see cref="SubMachineStateTemplate"/> that is replaced
+    /// by <see cref="MachineObservationState"/>
+    ///
+    /// nullable
+    ///
+    /// <see cref="IMachineStateTemplateItem"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual IMachineObservationState ReplacedMachineObservationState
+    {
+      get { return m_replacedMachineObservationState; }
+      set { m_replacedMachineObservationState = value; }
+    }
+
+    /// <summary>
+    /// Reference to the replaced machine observation state
+    /// for Xml Serialization
+    /// </summary>
+    [XmlElement ("ReplacedMachineObservationState")]
+    public virtual MachineObservationState XmlSerializationReplacedMachineObservationState
+    {
+      get { return this.ReplacedMachineObservationState as MachineObservationState; }
+      set { this.ReplacedMachineObservationState = value; }
+    }
+
+    /// <summary>
+    /// used to serialize ReplacedMachineObservationState only when not null
+    /// </summary>
+    public virtual bool XmlSerializationReplacedMachineObservationStateSpecified => null != this.ReplacedMachineObservationState;
 
     /// <summary>
     /// Reference to a shift
@@ -355,6 +387,7 @@ namespace Lemoine.GDBPersistentClasses
     {
       NHibernateHelper.Unproxy<IMachineObservationState> (ref m_machineObservationState);
       NHibernateHelper.Unproxy<IMachineStateTemplate> (ref m_subMachineStateTemplate);
+      NHibernateHelper.Unproxy<IMachineObservationState> (ref m_replacedMachineObservationState);
       NHibernateHelper.Unproxy<IShift> (ref m_shift);
     }
 

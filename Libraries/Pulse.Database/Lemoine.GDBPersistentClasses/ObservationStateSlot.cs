@@ -32,6 +32,40 @@ namespace Lemoine.GDBPersistentClasses
     static readonly string MACHINE_STATE_TEMPLATE_MAX_RECURSION_DEPTH_KEY = "MachineStateTemplate.Process.MaxRecursionDepth";
     static readonly int MACHINE_STATE_TEMPLATE_MAX_RECURSION_DEPTH_DEFAULT = 10;
 
+    /// <summary>
+    /// Replacement of a machine observation state by another one,
+    /// that is defined by an item that applies a sub machine state template
+    /// </summary>
+    sealed class StateReplacement
+    {
+      /// <summary>
+      /// Constructor
+      /// </summary>
+      /// <param name="replaced">not null</param>
+      /// <param name="replacing">not null</param>
+      public StateReplacement (IMachineObservationState replaced, IMachineObservationState replacing)
+      {
+        Debug.Assert (null != replaced);
+        Debug.Assert (null != replacing);
+        this.Replaced = replaced;
+        this.Replacing = replacing;
+      }
+
+      /// <summary>
+      /// Replaced machine observation state
+      /// </summary>
+      public IMachineObservationState Replaced { get; }
+
+      /// <summary>
+      /// Machine observation state that replaces <see cref="Replaced"/>
+      /// </summary>
+      public IMachineObservationState Replacing { get; }
+    }
+
+    /// <summary>
+    /// No machine observation state replacement (root machine state template)
+    /// </summary>
+    static readonly IReadOnlyList<StateReplacement> NO_REPLACEMENT = new List<StateReplacement> ();
 
     IMachineObservationState m_machineObservationState;
     IMachineStateTemplate m_machineStateTemplate;
@@ -458,7 +492,8 @@ namespace Lemoine.GDBPersistentClasses
           { // Process the item one after each other
             // until 'maxEndDateTime' only
             foreach (IMachineStateTemplateItem item in machineStateTemplate.Items) {
-              ProcessTemplateItem (machine, machineStateTemplate, ancestorTemplateIds, user, currentShift, item,
+              ProcessTemplateItem (machine, machineStateTemplate, ancestorTemplateIds, NO_REPLACEMENT,
+                                   user, currentShift, item,
                                    utcBeginDateTime.Value, applicableRange.Upper.Value,
                                    mainModification, partOfDetectionAnalysis, checkedThread, log);
               checkedThread?.SetActive ();
@@ -529,6 +564,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="machine">not null</param>
     /// <param name="machineStateTemplate">machine state template that is associated to the machine (the root one in case of recursion)</param>
     /// <param name="ancestorTemplateIds">ids of the machine state templates that are being applied, from the root one to the one that owns the item</param>
+    /// <param name="replacements">machine observation state replacements of the ancestor items, from the root one to the closest one</param>
     /// <param name="user"></param>
     /// <param name="currentShift"></param>
     /// <param name="item"></param>
@@ -541,6 +577,7 @@ namespace Lemoine.GDBPersistentClasses
     static void ProcessTemplateItem (IMachine machine,
                                      IMachineStateTemplate machineStateTemplate,
                                      IEnumerable<int> ancestorTemplateIds,
+                                     IReadOnlyList<StateReplacement> replacements,
                                      IUser user,
                                      IShift currentShift,
                                      IMachineStateTemplateItem item,
@@ -565,7 +602,7 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (item.WeekDays.HasFlag (WeekDay.AllDays));
         Debug.Assert (DateTimeKind.Local == item.Day.Value.Kind);
         if (item.IsWeekApplicable (item.Day.Value)) {
-          ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, item,
+          ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, replacements, item,
                             user, shift, item.Day.Value, begin, end,
                             mainModification, partOfDetectionAnalysis, checkedThread, log);
         }
@@ -577,7 +614,7 @@ namespace Lemoine.GDBPersistentClasses
         for (var year = firstYear; year <= lastYear; ++year) { // Loop on years
           var day = item.GetYearlyDay (year);
           if (day.HasValue && item.IsWeekApplicable (day.Value)) {
-            ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, item,
+            ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, replacements, item,
                               user, shift, day.Value, begin, end,
                               mainModification, partOfDetectionAnalysis, checkedThread, log);
           }
@@ -590,7 +627,7 @@ namespace Lemoine.GDBPersistentClasses
         DateTime lastDay = end.ToLocalTime ().Date;
         while (currentDay <= lastDay) { // Loop on days
           if (item.IsDayApplicable (currentDay)) { // Day of week and week number are ok
-            ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, item,
+            ApplyItemForDate (machine, machineStateTemplate, ancestorTemplateIds, replacements, item,
                               user, shift, currentDay, begin, end,
                               mainModification, partOfDetectionAnalysis, checkedThread, log);
           }
@@ -599,7 +636,7 @@ namespace Lemoine.GDBPersistentClasses
         }
       }
       else { // long period
-        ApplyItem (machine, machineStateTemplate, ancestorTemplateIds, item,
+        ApplyItem (machine, machineStateTemplate, ancestorTemplateIds, replacements, item,
                    user, shift, new UtcDateTimeRange (begin, end),
                    mainModification, partOfDetectionAnalysis, checkedThread, log);
       }
@@ -611,6 +648,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="machine">not null</param>
     /// <param name="machineStateTemplate"></param>
     /// <param name="ancestorTemplateIds"></param>
+    /// <param name="replacements">machine observation state replacements of the ancestor items</param>
     /// <param name="item"></param>
     /// <param name="user"></param>
     /// <param name="shift"></param>
@@ -624,6 +662,7 @@ namespace Lemoine.GDBPersistentClasses
     static void ApplyItemForDate (IMachine machine,
                                   IMachineStateTemplate machineStateTemplate,
                                   IEnumerable<int> ancestorTemplateIds,
+                                  IReadOnlyList<StateReplacement> replacements,
                                   IMachineStateTemplateItem item,
                                   IUser user,
                                   IShift shift,
@@ -671,19 +710,20 @@ namespace Lemoine.GDBPersistentClasses
         Debug.Assert (!range.IsEmpty ());
       }
 
-      ApplyItem (machine, machineStateTemplate, ancestorTemplateIds, item,
+      ApplyItem (machine, machineStateTemplate, ancestorTemplateIds, replacements, item,
                  user, shift, range.ToUniversalTime (),
                  mainModification, partOfDetectionAnalysis, checkedThread, log);
     }
 
     /// <summary>
     /// Apply a machine state template item on a specified range:
-    /// either apply its machine observation state,
+    /// either apply its machine observation state (after the replacements of the ancestor items),
     /// or apply recursively the machine state template it references
     /// </summary>
     /// <param name="machine">not null</param>
     /// <param name="machineStateTemplate"></param>
     /// <param name="ancestorTemplateIds"></param>
+    /// <param name="replacements">machine observation state replacements of the ancestor items, from the root one to the closest one</param>
     /// <param name="item"></param>
     /// <param name="user"></param>
     /// <param name="shift"></param>
@@ -695,6 +735,7 @@ namespace Lemoine.GDBPersistentClasses
     static void ApplyItem (IMachine machine,
                            IMachineStateTemplate machineStateTemplate,
                            IEnumerable<int> ancestorTemplateIds,
+                           IReadOnlyList<StateReplacement> replacements,
                            IMachineStateTemplateItem item,
                            IUser user,
                            IShift shift,
@@ -707,7 +748,18 @@ namespace Lemoine.GDBPersistentClasses
       Debug.Assert (!range.IsEmpty ());
 
       if (null != item.SubMachineStateTemplate) { // Recursive application of another machine state template
-        ProcessSubMachineStateTemplate (machine, machineStateTemplate, ancestorTemplateIds,
+        var subReplacements = replacements;
+        if (item.HasReplacement ()) {
+          // The replacement of this item applies first to the observation states of the sub template,
+          // then the replacements of the ancestor items
+          subReplacements = replacements
+            .Concat (new StateReplacement[] { new StateReplacement (item.ReplacedMachineObservationState, item.MachineObservationState) })
+            .ToList ();
+        }
+        else if (null != item.ReplacedMachineObservationState) {
+          log.Error ($"ApplyItem: item {item} has a replaced machine observation state but no replacing machine observation state => ignore the replacement");
+        }
+        ProcessSubMachineStateTemplate (machine, machineStateTemplate, ancestorTemplateIds, subReplacements,
                                         item.SubMachineStateTemplate, user, shift, range,
                                         mainModification, partOfDetectionAnalysis, checkedThread, log);
         return;
@@ -718,9 +770,37 @@ namespace Lemoine.GDBPersistentClasses
         return;
       }
 
-      ApplyMachineObservationState (machine, machineStateTemplate, item.MachineObservationState,
+      var machineObservationState = ReplaceMachineObservationState (item.MachineObservationState, replacements, log);
+      ApplyMachineObservationState (machine, machineStateTemplate, machineObservationState,
                                     user, shift, range,
                                     mainModification, partOfDetectionAnalysis, log, checkedThread);
+    }
+
+    /// <summary>
+    /// Apply the machine observation state replacements of the ancestor items,
+    /// from the closest one to the root one
+    /// </summary>
+    /// <param name="machineObservationState">not null</param>
+    /// <param name="replacements">from the root one to the closest one</param>
+    /// <param name="log"></param>
+    /// <returns>not null</returns>
+    static IMachineObservationState ReplaceMachineObservationState (IMachineObservationState machineObservationState,
+                                                                    IReadOnlyList<StateReplacement> replacements,
+                                                                    ILog log)
+    {
+      Debug.Assert (null != machineObservationState);
+
+      var result = machineObservationState;
+      for (int i = replacements.Count - 1; 0 <= i; --i) {
+        var replacement = replacements[i];
+        if (replacement.Replaced.Id == result.Id) {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"ReplaceMachineObservationState: {result.Id} replaced by {replacement.Replacing.Id}");
+          }
+          result = replacement.Replacing;
+        }
+      }
+      return result;
     }
 
     /// <summary>
@@ -732,6 +812,7 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="machine">not null</param>
     /// <param name="machineStateTemplate">root machine state template</param>
     /// <param name="ancestorTemplateIds">not null</param>
+    /// <param name="replacements">machine observation state replacements to apply to the sub machine state template, from the root one to the closest one</param>
     /// <param name="subMachineStateTemplate">not null</param>
     /// <param name="user"></param>
     /// <param name="currentShift"></param>
@@ -743,6 +824,7 @@ namespace Lemoine.GDBPersistentClasses
     static void ProcessSubMachineStateTemplate (IMachine machine,
                                                 IMachineStateTemplate machineStateTemplate,
                                                 IEnumerable<int> ancestorTemplateIds,
+                                                IReadOnlyList<StateReplacement> replacements,
                                                 IMachineStateTemplate subMachineStateTemplate,
                                                 IUser user,
                                                 IShift currentShift,
@@ -782,7 +864,8 @@ namespace Lemoine.GDBPersistentClasses
         .Concat (new int[] { subMachineStateTemplate.Id })
         .ToList ();
       foreach (var subItem in subMachineStateTemplate.Items) {
-        ProcessTemplateItem (machine, machineStateTemplate, subAncestorTemplateIds, user, currentShift, subItem,
+        ProcessTemplateItem (machine, machineStateTemplate, subAncestorTemplateIds, replacements,
+                             user, currentShift, subItem,
                              range.Lower.Value, range.Upper.Value,
                              mainModification, partOfDetectionAnalysis, checkedThread, log);
         checkedThread?.SetActive ();
