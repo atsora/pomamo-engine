@@ -19,5 +19,12 @@ namespace Lemoine.ModelDAO
     /// <param name="machineStateTemplate"></param>
     /// <returns></returns>
     IEnumerable<IMachineStateTemplate> FindNext (IMachineStateTemplate machineStateTemplate);
+
+    /// <summary>
+    /// Find the possible next machine state templates to a specified machine state template
+    /// </summary>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <returns>not null</returns>
+    System.Threading.Tasks.Task<IEnumerable<IMachineStateTemplate>> FindNextAsync (IMachineStateTemplate machineStateTemplate);
   }
 }

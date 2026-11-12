@@ -34,5 +34,19 @@ namespace Lemoine.GDBPersistentClasses
         .List<IMachineStateTemplateFlow> ()
         .Select (flow => flow.To);
     }
+
+    /// <summary>
+    /// Implements <see cref="IMachineStateTemplateFlowDAO" />
+    /// </summary>
+    /// <param name="machineStateTemplate">not null</param>
+    /// <returns>not null</returns>
+    public async System.Threading.Tasks.Task<IEnumerable<IMachineStateTemplate>> FindNextAsync (IMachineStateTemplate machineStateTemplate)
+    {
+      var flows = await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<MachineStateTemplateFlow> ()
+        .Add (Restrictions.Eq ("From", machineStateTemplate))
+        .ListAsync<IMachineStateTemplateFlow> ();
+      return flows.Select (flow => flow.To).ToList ();
+    }
   }
 }
