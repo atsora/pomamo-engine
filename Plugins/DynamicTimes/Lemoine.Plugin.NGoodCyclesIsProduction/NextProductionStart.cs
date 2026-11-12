@@ -254,8 +254,13 @@ namespace Lemoine.Plugin.NGoodCyclesIsProduction
               case GoodCycleExtensionResponse.KO:
                 nbGoodCycles = 0;
                 if (cycle.Full) { // If partial, it may be ok in the future
-                  // The next good cycle can't start before the end of this bad cycle
-                  afterResponse = cycle.End ?? cycle.DateTime;
+                  // The hint remains the begin of the bad cycle and does not jump to its end:
+                  // the cycle may still become good later, because Full does not mean
+                  // a real end (SetEstimatedEnd keeps Full), the begin may be estimated,
+                  // or the operation (and its machining duration) may be detected or corrected later.
+                  // Re-reading this cycle in the next call costs little:
+                  // all the following cycles are read anyway
+                  afterResponse = cycle.Begin ?? cycle.DateTime;
                 }
                 firstGoodCycleStart = null;
                 break;
