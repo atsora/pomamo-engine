@@ -263,7 +263,7 @@ namespace Lemoine.Database.Persistent
 
           if (null == m_sessionFactory) {
             if (log.IsDebugEnabled) {
-              log.Debug ($"GetSessionFactory: status={m_status} connectionString={connectionString}");
+              log.Debug ($"GetSessionFactory: status={m_status} connectionString={ConnectionParameters.MaskPassword (connectionString)}");
             }
             switch (m_status) {
             case NHibernateStatus.NotInitialized:
@@ -408,7 +408,7 @@ namespace Lemoine.Database.Persistent
 
           if (null == m_sessionFactory) {
             if (log.IsDebugEnabled) {
-              log.Debug ($"GetInstanceSessionFactoryAsync: status={m_status} connectionString={connectionString}");
+              log.Debug ($"GetInstanceSessionFactoryAsync: status={m_status} connectionString={ConnectionParameters.MaskPassword (connectionString)}");
             }
             switch (m_status) {
             case NHibernateStatus.NotInitialized:

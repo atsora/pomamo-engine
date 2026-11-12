@@ -40,6 +40,24 @@ namespace Lemoine.Info
     static readonly ILog log = LogManager.GetLogger (typeof (ConnectionParameters).FullName);
 
     /// <summary>
+    /// Password (or Pwd) entry of a connection string, until the next ; or the end of the string
+    /// </summary>
+    static readonly Regex CONNECTION_STRING_PASSWORD_REGEX = new Regex (@"(?<key>(?:^|;)\s*(?:password|pwd)\s*=)[^;]*", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+    /// <summary>
+    /// Connection string in which the password is masked, to be logged or displayed
+    /// </summary>
+    /// <param name="connectionString">nullable</param>
+    /// <returns></returns>
+    public static string MaskPassword (string connectionString)
+    {
+      if (string.IsNullOrEmpty (connectionString)) {
+        return connectionString;
+      }
+      return CONNECTION_STRING_PASSWORD_REGEX.Replace (connectionString, "${key}***");
+    }
+
+    /// <summary>
     /// DSN Name
     /// </summary>
     public string DsnName
@@ -120,7 +138,7 @@ namespace Lemoine.Info
       "User ID=" + Username + ";" +
       "Password=" + Password + ";SSL Mode=Prefer;Trust Server Certificate=true;";
         if (log.IsDebugEnabled) {
-          log.Debug ($"ConnectionString.Get: return {connectionString}");
+          log.Debug ($"ConnectionString.Get: return {MaskPassword (connectionString)}");
         }
         return connectionString;
       }

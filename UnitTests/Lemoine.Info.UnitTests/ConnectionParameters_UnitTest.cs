@@ -137,5 +137,25 @@ namespace Lemoine.Info.UnitTests
         Lemoine.Info.ConfigSet.ResetForceValues ();
       }
     }
+
+    /// <summary>
+    /// The password of a connection string is masked, whatever its position and the case of its key
+    /// </summary>
+    [Test]
+    public void TestMaskPassword ()
+    {
+      Assert.Multiple (() => {
+        Assert.That (ConnectionParameters.MaskPassword ("Server=localhost;Port=5432;Database=db;User ID=user;Password=secret;SSL Mode=Prefer;"),
+                     Is.EqualTo ("Server=localhost;Port=5432;Database=db;User ID=user;Password=***;SSL Mode=Prefer;"));
+        Assert.That (ConnectionParameters.MaskPassword ("password=secret;Server=localhost"),
+                     Is.EqualTo ("password=***;Server=localhost"));
+        Assert.That (ConnectionParameters.MaskPassword ("Server=localhost; Pwd = secret"),
+                     Is.EqualTo ("Server=localhost; Pwd =***"));
+        Assert.That (ConnectionParameters.MaskPassword ("Server=localhost;Database=passwords"),
+                     Is.EqualTo ("Server=localhost;Database=passwords"));
+        Assert.That (ConnectionParameters.MaskPassword (""), Is.EqualTo (""));
+        Assert.That (ConnectionParameters.MaskPassword (null), Is.Null);
+      });
+    }
   }
 }

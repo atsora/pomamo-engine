@@ -75,7 +75,7 @@ namespace Lemoine.GDBUtils
     {
       try {
         string connectionString = GDBConnectionParameters.GetGDBConnectionString (applicationName);
-        log.Info ($"Connection string={connectionString}");
+        log.Info ($"Connection string={ConnectionParameters.MaskPassword (connectionString)}");
         var nhibernateConfigManager = NHibernateConfigManager
           .CreateNoCacheNoExtensions (m_assembly);
         nhibernateConfigManager.Configure (connectionString);

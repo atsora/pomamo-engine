@@ -219,7 +219,7 @@ namespace Lemoine.Info
           connectionString += $"Connection Idle Lifetime={(int)connectionIdleLifetime.TotalSeconds};";
         }
         if (log.IsDebugEnabled) {
-          log.Debug ($"ConnectionString.get: return {connectionString}");
+          log.Debug ($"ConnectionString.get: return {MaskPassword (connectionString)}");
         }
         return connectionString;
       }
