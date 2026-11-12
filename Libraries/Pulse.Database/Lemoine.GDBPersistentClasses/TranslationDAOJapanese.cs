@@ -232,6 +232,7 @@ namespace Lemoine.GDBPersistentClasses
       ["RoleQuality"] = "品質",
       ["RoleSupervisor"] = "監督者",
       ["RoleManager"] = "マネージャー",
+      ["RoleMaintenance"] = "保全",
       ["RoleAdministrator"] = "管理者",
       ["DocKindNcMainProgram"] = "NCメインプログラム",
       ["DocKindNcSubProgram"] = "NCサブプログラム",

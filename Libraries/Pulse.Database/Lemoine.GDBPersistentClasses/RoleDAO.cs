@@ -70,7 +70,12 @@ namespace Lemoine.GDBPersistentClasses
         role.WebAppKey = "administrator";
         InsertDefaultValue (role);
       }
-      
+      { // 7: Maintenance manager
+        IRole role = new Role (7, "RoleMaintenance");
+        role.WebAppKey = "maintenance";
+        InsertDefaultValue (role);
+      }
+
       ResetSequence (100);
     }
     

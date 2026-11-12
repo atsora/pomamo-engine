@@ -3439,6 +3439,22 @@ namespace Lemoine.GDBPersistentClasses
       }
 
       {
+        ITranslation translation = new Translation ("", "RoleMaintenance");
+        translation.TranslationValue = "Maintenance";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("fr", "RoleMaintenance");
+        translation.TranslationValue = "Responsable maintenance";
+        InsertDefaultValue (translation);
+      }
+      {
+        ITranslation translation = new Translation ("de", "RoleMaintenance");
+        translation.TranslationValue = "Instandhaltung";
+        InsertDefaultValue (translation);
+      }
+
+      {
         ITranslation translation = new Translation ("", "RoleAdministrator");
         translation.TranslationValue = "Administrator";
         InsertDefaultValue (translation);
