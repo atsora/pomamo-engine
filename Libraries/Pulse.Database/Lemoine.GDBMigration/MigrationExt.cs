@@ -659,6 +659,50 @@ namespace Lemoine.GDBMigration
     {
       return m_transformationProviderExt.UnpartitionTable (tableName);
     }
+
+    /// <summary>
+    /// Rename a table that may be partitioned by pgfkpart, including its pgfkpart objects
+    /// </summary>
+    /// <param name="oldTableName">lower case</param>
+    /// <param name="newTableName">lower case</param>
+    internal void RenamePartitionedTable (string oldTableName, string newTableName)
+    {
+      m_transformationProviderExt.RenamePartitionedTable (oldTableName, newTableName);
+    }
+
+    /// <summary>
+    /// Rename a column of a table that may be partitioned by pgfkpart,
+    /// and report it in the pgfkpart catalog (indexes of the future partitions)
+    /// </summary>
+    /// <param name="tableName">lower case</param>
+    /// <param name="oldColumnName">lower case</param>
+    /// <param name="newColumnName">lower case</param>
+    internal void RenamePartitionedColumn (string tableName, string oldColumnName, string newColumnName)
+    {
+      m_transformationProviderExt.RenameColumn (tableName, oldColumnName, newColumnName);
+    }
+
+    /// <summary>
+    /// Report in the pgfkpart catalog the rename of a column that was already renamed
+    /// </summary>
+    /// <param name="tableName">lower case</param>
+    /// <param name="oldColumnName">lower case</param>
+    /// <param name="newColumnName">lower case</param>
+    internal void RenameColumnInPartitionMetadata (string tableName, string oldColumnName, string newColumnName)
+    {
+      m_transformationProviderExt.RenameColumnInPartitionMetadata (tableName, oldColumnName, newColumnName);
+    }
+
+    /// <summary>
+    /// Rename an index of a table that may be partitioned by pgfkpart
+    /// </summary>
+    /// <param name="tableName">lower case</param>
+    /// <param name="oldIndexName">lower case</param>
+    /// <param name="newIndexName">lower case</param>
+    internal void RenameIndex (string tableName, string oldIndexName, string newIndexName)
+    {
+      m_transformationProviderExt.RenameIndex (tableName, oldIndexName, newIndexName);
+    }
     #endregion // Partitioning
     
     #region Timestamp trigger

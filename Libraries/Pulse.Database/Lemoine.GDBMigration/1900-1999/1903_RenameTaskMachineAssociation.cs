@@ -32,43 +32,63 @@ namespace Lemoine.GDBMigration
         Database.RemoveForeignKey (TableName.TASK_MACHINE_ASSOCIATION, $"fk_{TableName.TASK_MACHINE_ASSOCIATION}_machine");
         Database.RemoveForeignKey (TableName.TASK_MACHINE_ASSOCIATION, $"fk_{TableName.TASK_MACHINE_ASSOCIATION}_machinemodification");
 
-        Database.RenameTable (TableName.TASK_MACHINE_ASSOCIATION, TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION);
+        // The table may be partitioned by pgfkpart (migration 508 or the partitioning script):
+        // its partitions, its pgfkpart catalog entries and its insert trigger functions are renamed with it
+        RenamePartitionedTable (TableName.TASK_MACHINE_ASSOCIATION, TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION);
         foreach (var suffix in new string[] { "range", "option" }) {
-          Database.RenameColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION,
+          RenamePartitionedColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION,
             $"{TableName.TASK_MACHINE_ASSOCIATION}{suffix}",
             $"{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}{suffix}");
         }
-        Database.RenameColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, ColumnName.TASK_ID, ColumnName.MANUFACTURING_ORDER_ID);
+        RenamePartitionedColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, ColumnName.TASK_ID, ColumnName.MANUFACTURING_ORDER_ID);
         Database.ExecuteNonQuery ("""
           UPDATE machinemodification
           SET modificationreferencedtable='ManufacturingOrderMachineAssociation'
           WHERE modificationreferencedtable='TaskMachineAssociation';
           """);
 
-        // Indexes
-        Database.ExecuteNonQuery ($"""
-          ALTER INDEX {TableName.TASK_MACHINE_ASSOCIATION}_pkey
-          RENAME TO {TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_pkey;
-          """);
-        Database.ExecuteNonQuery ($"""
-          ALTER INDEX {TableName.TASK_MACHINE_ASSOCIATION}_machineid_idx
-          RENAME TO {TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_machineid_idx;
-          """);
+        // Indexes: on a partitioned table, the machineid index is not on the parent table any more
+        // (it is in pgfkpart.parentindex, already renamed with the table)
+        RenameIndex (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION,
+          $"{TableName.TASK_MACHINE_ASSOCIATION}_pkey",
+          $"{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_pkey");
+        RenameIndex (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION,
+          $"{TableName.TASK_MACHINE_ASSOCIATION}_machineid_idx",
+          $"{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_machineid_idx");
 
-        Database.GenerateForeignKey (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, ColumnName.MODIFICATION_ID,
-                                     TableName.MACHINE_MODIFICATION, ColumnName.MODIFICATION_ID,
-                                     Migrator.Framework.ForeignKeyConstraint.Cascade);
+        // On a partitioned table, the foreign key to machinemodification is kept by pgfkpart in the partitions
+        if (!IsPartitioned (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION)) {
+          Database.GenerateForeignKey (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, ColumnName.MODIFICATION_ID,
+                                       TableName.MACHINE_MODIFICATION, ColumnName.MODIFICATION_ID,
+                                       Migrator.Framework.ForeignKeyConstraint.Cascade);
+        }
         Database.GenerateForeignKey (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, ColumnName.MACHINE_ID,
                                      TableName.MACHINE, ColumnName.MACHINE_ID,
                                      Migrator.Framework.ForeignKeyConstraint.Cascade);
 
         // Rules
-        Database.ExecuteNonQuery ($"""
-          ALTER RULE {TableName.TASK_MACHINE_ASSOCIATION}_delete
-          ON {TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}
-          RENAME TO {TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_delete;
-          """);
+        RenameDeleteRule ();
       }
+    }
+
+    /// <summary>
+    /// Rename the delete rule of the machine modification table, if it has still its old name
+    /// </summary>
+    void RenameDeleteRule ()
+    {
+      Database.ExecuteNonQuery ($$"""
+        DO $renamerule$
+        BEGIN
+          IF EXISTS (SELECT 1 FROM pg_rules
+                     WHERE schemaname='public' AND tablename='{{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}}'
+                       AND rulename='{{TableName.TASK_MACHINE_ASSOCIATION}}_delete') THEN
+            ALTER RULE {{TableName.TASK_MACHINE_ASSOCIATION}}_delete
+            ON {{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}}
+            RENAME TO {{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}}_delete;
+          END IF;
+        END
+        $renamerule$;
+        """);
     }
 
     /// <summary>
@@ -80,32 +100,32 @@ namespace Lemoine.GDBMigration
         Database.RemoveForeignKey (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, $"fk_{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_machine");
         Database.RemoveForeignKey (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, $"fk_{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_machinemodification");
 
-        // Indexes
-        Database.ExecuteNonQuery ($"""
-          ALTER INDEX {TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_pkey
-          RENAME TO {TableName.TASK_MACHINE_ASSOCIATION}_pkey;
-          """);
-        Database.ExecuteNonQuery ($"""
-          ALTER INDEX {TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_machineid_idx
-          RENAME TO {TableName.TASK_MACHINE_ASSOCIATION}_machineid_idx;
-          """);
-
         Database.ExecuteNonQuery ("""
           UPDATE machinemodification
           SET modificationreferencedtable='TaskMachineAssociation'
           WHERE modificationreferencedtable='ManufacturingOrderMachineAssociation';
           """);
-        Database.RenameColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, "manuforderid", "taskid");
+        RenamePartitionedColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, "manuforderid", "taskid");
         foreach (var suffix in new string[] { "range", "option" }) {
-          Database.RenameColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION,
+          RenamePartitionedColumn (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION,
             $"{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}{suffix}",
             $"{TableName.TASK_MACHINE_ASSOCIATION}{suffix}");
         }
-        Database.RenameTable (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, TableName.TASK_MACHINE_ASSOCIATION);
+        RenamePartitionedTable (TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION, TableName.TASK_MACHINE_ASSOCIATION);
 
-        Database.GenerateForeignKey (TableName.TASK_MACHINE_ASSOCIATION, ColumnName.MODIFICATION_ID,
-                                     TableName.MACHINE_MODIFICATION, ColumnName.MODIFICATION_ID,
-                                     Migrator.Framework.ForeignKeyConstraint.Cascade);
+        // Indexes
+        RenameIndex (TableName.TASK_MACHINE_ASSOCIATION,
+          $"{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_pkey",
+          $"{TableName.TASK_MACHINE_ASSOCIATION}_pkey");
+        RenameIndex (TableName.TASK_MACHINE_ASSOCIATION,
+          $"{TableName.MANUFACTURING_ORDER_MACHINE_ASSOCIATION}_machineid_idx",
+          $"{TableName.TASK_MACHINE_ASSOCIATION}_machineid_idx");
+
+        if (!IsPartitioned (TableName.TASK_MACHINE_ASSOCIATION)) {
+          Database.GenerateForeignKey (TableName.TASK_MACHINE_ASSOCIATION, ColumnName.MODIFICATION_ID,
+                                       TableName.MACHINE_MODIFICATION, ColumnName.MODIFICATION_ID,
+                                       Migrator.Framework.ForeignKeyConstraint.Cascade);
+        }
         Database.GenerateForeignKey (TableName.TASK_MACHINE_ASSOCIATION, ColumnName.MACHINE_ID,
                                      TableName.MACHINE, ColumnName.MACHINE_ID,
                                      Migrator.Framework.ForeignKeyConstraint.Cascade);

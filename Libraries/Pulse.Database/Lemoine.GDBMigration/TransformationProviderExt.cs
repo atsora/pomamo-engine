@@ -152,6 +152,7 @@ namespace Lemoine.GDBMigration
     public void RenameColumn (string tableName, string oldColumnName, string newColumnName)
     {
       Database.RenameColumn (tableName, oldColumnName, newColumnName);
+      RenameColumnInPartitionMetadata (tableName, oldColumnName, newColumnName);
     }
 
     /// <summary>
@@ -1271,6 +1272,241 @@ WHERE schema_name = 'pgfkpart'")) {
         // should not happen (connection lost)
         return false;
       }
+    }
+
+    static readonly Regex SQL_IDENTIFIER_REGEX = new Regex ("^[a-z_][a-z0-9_]*$");
+
+    /// <summary>
+    /// Check a name is a simple lower case SQL identifier, that can be inserted in a request without any quote
+    /// </summary>
+    static void CheckSqlIdentifier (string name)
+    {
+      if (string.IsNullOrEmpty (name) || !SQL_IDENTIFIER_REGEX.IsMatch (name)) {
+        throw new ArgumentException ($"Invalid SQL identifier {name}", nameof (name));
+      }
+    }
+
+    /// <summary>
+    /// Rename a table of the public schema, that may be partitioned by pgfkpart
+    ///
+    /// pgfkpart refers to a partitioned table by its name: in its catalog (pgfkpart.partition, pgfkpart.partforeignkey,
+    /// pgfkpart.parentindex), in the names of the partitions (pgfkpart.{table}_p{id}) and in the trigger functions
+    /// {table}_child_insert and {table}_parent_remove, whose body uses the name of the table.
+    /// A plain ALTER TABLE RENAME breaks all the inserts in the table.
+    /// This method renames the table and all these pgfkpart objects.
+    ///
+    /// It is idempotent: if the table was already renamed but not its pgfkpart objects,
+    /// only the pgfkpart objects are renamed
+    /// </summary>
+    /// <param name="oldTableName">lower case</param>
+    /// <param name="newTableName">lower case</param>
+    public void RenamePartitionedTable (string oldTableName, string newTableName)
+    {
+      CheckSqlIdentifier (oldTableName);
+      CheckSqlIdentifier (newTableName);
+
+      Database.ExecuteNonQuery ($$"""
+        DO $rename$
+        DECLARE
+          _old CONSTANT name := '{{oldTableName}}';
+          _new CONSTANT name := '{{newTableName}}';
+          _functiondefs text[] := ARRAY[]::text[];
+          _triggerdefs text[] := ARRAY[]::text[];
+          _partitioned boolean := FALSE;
+          _def text;
+          _newname name;
+          _r RECORD;
+        BEGIN
+          IF to_regclass ('public.' || _old) IS NOT NULL THEN
+            IF to_regclass ('public.' || _new) IS NOT NULL THEN
+              RAISE EXCEPTION 'The tables public.% and public.% both exist', _old, _new;
+            END IF;
+          END IF;
+
+          -- Note: two separate IF, because an expression that refers to pgfkpart.partition
+          -- fails without pgfkpart, even after a false condition in an OR
+          IF to_regclass ('pgfkpart.partition') IS NOT NULL THEN
+            _partitioned := EXISTS (SELECT 1 FROM pgfkpart.partition WHERE table_schema='public' AND table_name=_old);
+          END IF;
+          IF NOT _partitioned THEN
+            -- Not partitioned (any more)
+            IF to_regclass ('public.' || _old) IS NOT NULL THEN
+              EXECUTE format ('ALTER TABLE public.%I RENAME TO %I', _old, _new);
+            END IF;
+            RETURN;
+          END IF;
+
+          -- Keep the definition of the pgfkpart trigger functions and of their triggers, then remove them
+          FOR _r IN SELECT p.oid FROM pg_proc p
+            WHERE p.pronamespace='public'::regnamespace AND p.pronargs=0
+              AND p.proname IN (_old || '_child_insert', _old || '_parent_remove')
+          LOOP
+            _functiondefs := _functiondefs || replace (pg_get_functiondef (_r.oid), _old, _new);
+            SELECT _triggerdefs || coalesce (array_agg (replace (pg_get_triggerdef (t.oid), _old, _new)), ARRAY[]::text[])
+              INTO _triggerdefs
+              FROM pg_trigger t
+              WHERE t.tgfoid=_r.oid AND NOT t.tgisinternal;
+            EXECUTE format ('DROP FUNCTION %s CASCADE', _r.oid::regprocedure);
+          END LOOP;
+
+          -- Parent table
+          IF to_regclass ('public.' || _old) IS NOT NULL THEN
+            EXECUTE format ('ALTER TABLE public.%I RENAME TO %I', _old, _new);
+          END IF;
+
+          -- Partitions
+          FOR _r IN SELECT c.relname FROM pg_class c
+            WHERE c.relnamespace='pgfkpart'::regnamespace AND c.relkind='r'
+              AND c.relname ~ ('^' || _old || '_p\d+$')
+          LOOP
+            EXECUTE format ('ALTER TABLE pgfkpart.%I RENAME TO %I', _r.relname, replace (_r.relname, _old, _new));
+          END LOOP;
+
+          -- Constraints of the partitions (the index of a primary key or unique constraint is renamed with it)
+          FOR _r IN SELECT con.conrelid::regclass AS partition, con.conname FROM pg_constraint con
+            JOIN pg_class c ON c.oid=con.conrelid
+            WHERE c.relnamespace='pgfkpart'::regnamespace AND c.relname ~ ('^' || _new || '_p\d+$')
+              AND position (_old IN con.conname) > 0
+          LOOP
+            _newname := replace (_r.conname, _old, _new);
+            IF octet_length (replace (_r.conname, _old, _new)) <= 63 THEN
+              EXECUTE format ('ALTER TABLE %s RENAME CONSTRAINT %I TO %I', _r.partition, _r.conname, _newname);
+            END IF;
+          END LOOP;
+
+          -- Other indexes of the partitions
+          FOR _r IN SELECT i.relname FROM pg_index x
+            JOIN pg_class i ON i.oid=x.indexrelid
+            JOIN pg_class c ON c.oid=x.indrelid
+            WHERE c.relnamespace='pgfkpart'::regnamespace AND c.relname ~ ('^' || _new || '_p\d+$')
+              AND position (_old IN i.relname) > 0
+          LOOP
+            _newname := replace (_r.relname, _old, _new);
+            IF octet_length (replace (_r.relname, _old, _new)) <= 63 THEN
+              EXECUTE format ('ALTER INDEX pgfkpart.%I RENAME TO %I', _r.relname, _newname);
+            END IF;
+          END LOOP;
+
+          -- pgfkpart catalog
+          UPDATE pgfkpart.partition SET table_name=_new
+            WHERE table_schema='public' AND table_name=_old;
+          UPDATE pgfkpart.partition SET foreign_table_name=_new
+            WHERE foreign_table_schema='public' AND foreign_table_name=_old;
+          UPDATE pgfkpart.partforeignkey SET table_name=_new, constraint_name=replace (constraint_name, _old, _new)
+            WHERE table_schema='public' AND table_name=_old;
+          UPDATE pgfkpart.partforeignkey SET foreign_table_name=_new
+            WHERE foreign_table_schema='public' AND foreign_table_name=_old;
+          UPDATE pgfkpart.parentindex
+            SET table_name=_new,
+              index_name=replace (index_name, _old, _new),
+              index_def=replace (index_def, _old, _new),
+              constraint_def=replace (constraint_def, _old, _new)
+            WHERE table_schema='public' AND table_name=_old;
+
+          -- Restore the trigger functions and their triggers
+          FOREACH _def IN ARRAY _functiondefs LOOP
+            EXECUTE _def;
+          END LOOP;
+          FOREACH _def IN ARRAY _triggerdefs LOOP
+            EXECUTE _def;
+          END LOOP;
+        END
+        $rename$;
+        """);
+    }
+
+    /// <summary>
+    /// Report the rename of a column in the pgfkpart catalog, after the column was renamed
+    ///
+    /// pgfkpart keeps the definition of the indexes of a partitioned table in pgfkpart.parentindex
+    /// to create them in the new partitions. If they still refer to the old column,
+    /// the creation of the partition of a new machine fails
+    /// </summary>
+    /// <param name="tableName">lower case</param>
+    /// <param name="oldColumnName">lower case</param>
+    /// <param name="newColumnName">lower case</param>
+    public void RenameColumnInPartitionMetadata (string tableName, string oldColumnName, string newColumnName)
+    {
+      CheckSqlIdentifier (tableName);
+      CheckSqlIdentifier (oldColumnName);
+      CheckSqlIdentifier (newColumnName);
+
+      Database.ExecuteNonQuery ($$"""
+        DO $renamecolumn$
+        BEGIN
+          IF to_regclass ('pgfkpart.partition') IS NULL THEN
+            RETURN;
+          END IF;
+          UPDATE pgfkpart.parentindex
+            SET index_def=regexp_replace (index_def, '\m{{oldColumnName}}\M', '{{newColumnName}}', 'g'),
+              constraint_def=regexp_replace (constraint_def, '\m{{oldColumnName}}\M', '{{newColumnName}}', 'g')
+            WHERE table_schema='public' AND table_name='{{tableName}}'
+              AND (index_def ~ '\m{{oldColumnName}}\M' OR constraint_def ~ '\m{{oldColumnName}}\M');
+          UPDATE pgfkpart.partition SET column_name='{{newColumnName}}'
+            WHERE table_schema='public' AND table_name='{{tableName}}' AND column_name='{{oldColumnName}}';
+          UPDATE pgfkpart.partition SET foreign_column_name='{{newColumnName}}'
+            WHERE foreign_table_schema='public' AND foreign_table_name='{{tableName}}' AND foreign_column_name='{{oldColumnName}}';
+          UPDATE pgfkpart.partforeignkey SET column_name='{{newColumnName}}'
+            WHERE table_schema='public' AND table_name='{{tableName}}' AND column_name='{{oldColumnName}}';
+          UPDATE pgfkpart.partforeignkey SET foreign_column_name='{{newColumnName}}'
+            WHERE foreign_table_schema='public' AND foreign_table_name='{{tableName}}' AND foreign_column_name='{{oldColumnName}}';
+        END
+        $renamecolumn$;
+        """);
+    }
+
+    /// <summary>
+    /// Rename an index of a table of the public schema, that may be partitioned by pgfkpart
+    ///
+    /// If the table is partitioned, the index is not on the parent table but is kept in pgfkpart.parentindex,
+    /// and each partition has its own copy, named pgfkpart.{table}_p{id}... instead of {table}...
+    ///
+    /// It does nothing if the index does not exist with its old name
+    /// </summary>
+    /// <param name="tableName">lower case</param>
+    /// <param name="oldIndexName">lower case, starting with the table name</param>
+    /// <param name="newIndexName">lower case, starting with the table name</param>
+    public void RenameIndex (string tableName, string oldIndexName, string newIndexName)
+    {
+      CheckSqlIdentifier (tableName);
+      CheckSqlIdentifier (oldIndexName);
+      CheckSqlIdentifier (newIndexName);
+
+      Database.ExecuteNonQuery ($$"""
+        DO $renameindex$
+        DECLARE
+          _table CONSTANT name := '{{tableName}}';
+          _old CONSTANT text := '{{oldIndexName}}';
+          _new CONSTANT text := '{{newIndexName}}';
+          _oldpartindex name;
+          _newpartindex name;
+          _r RECORD;
+        BEGIN
+          IF to_regclass ('public.' || _old) IS NOT NULL AND to_regclass ('public.' || _new) IS NULL THEN
+            EXECUTE format ('ALTER INDEX public.%I RENAME TO %I', _old, _new);
+          END IF;
+
+          IF to_regclass ('pgfkpart.parentindex') IS NULL THEN
+            RETURN;
+          END IF;
+          UPDATE pgfkpart.parentindex
+            SET index_name=_new, index_def=replace (index_def, _old, _new)
+            WHERE table_schema='public' AND table_name=_table AND index_name=_old;
+          FOR _r IN SELECT c.relname FROM pg_class c
+            WHERE c.relnamespace='pgfkpart'::regnamespace AND c.relkind='r'
+              AND c.relname ~ ('^' || _table || '_p\d+$')
+          LOOP
+            -- Same name as pgfkpart._get_index_name, truncated like any PostgreSQL identifier
+            _oldpartindex := regexp_replace (_old, '^' || _table, _r.relname);
+            _newpartindex := regexp_replace (_new, '^' || _table, _r.relname);
+            IF to_regclass ('pgfkpart.' || quote_ident (_oldpartindex)) IS NOT NULL
+              AND to_regclass ('pgfkpart.' || quote_ident (_newpartindex)) IS NULL THEN
+              EXECUTE format ('ALTER INDEX pgfkpart.%I RENAME TO %I', _oldpartindex, _newpartindex);
+            END IF;
+          END LOOP;
+        END
+        $renameindex$;
+        """);
     }
     #endregion // Partitioning
 

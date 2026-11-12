@@ -26,10 +26,10 @@ namespace Lemoine.GDBMigration
     override public void Up ()
     {
       if (Database.ColumnExists (TableName.OPERATION_SLOT, $"{TableName.TASK}id")) {
-        Database.RenameColumn (TableName.OPERATION_SLOT, $"{TableName.TASK}id", $"{TableName.MANUFACTURING_ORDER}id");
+        RenamePartitionedColumn (TableName.OPERATION_SLOT, $"{TableName.TASK}id", $"{TableName.MANUFACTURING_ORDER}id");
       }
       if (Database.ColumnExists (TableName.OPERATION_SLOT, $"{TableName.OPERATION_SLOT}autotask")) {
-        Database.RenameColumn (TableName.OPERATION_SLOT, $"{TableName.OPERATION_SLOT}autotask", $"{TableName.OPERATION_SLOT}automanuforder");
+        RenamePartitionedColumn (TableName.OPERATION_SLOT, $"{TableName.OPERATION_SLOT}autotask", $"{TableName.OPERATION_SLOT}automanuforder");
       }
     }
 
@@ -39,8 +39,8 @@ namespace Lemoine.GDBMigration
     override public void Down ()
     {
       if (Lemoine.Info.ConfigSet.LoadAndGet (USE_DEPRECATED_TASK_KEY, USE_DEPRECATED_TASK_DEFAULT)) {
-        Database.RenameColumn (TableName.OPERATION_SLOT, $"{TableName.OPERATION_SLOT}automanuforder", $"{TableName.OPERATION_SLOT}autotask");
-        Database.RenameColumn (TableName.OPERATION_SLOT, $"{TableName.MANUFACTURING_ORDER}id", $"{TableName.TASK}id");
+        RenamePartitionedColumn (TableName.OPERATION_SLOT, $"{TableName.OPERATION_SLOT}automanuforder", $"{TableName.OPERATION_SLOT}autotask");
+        RenamePartitionedColumn (TableName.OPERATION_SLOT, $"{TableName.MANUFACTURING_ORDER}id", $"{TableName.TASK}id");
       }
     }
 

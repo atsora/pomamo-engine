@@ -26,7 +26,7 @@ namespace Lemoine.GDBMigration
     override public void Up ()
     {
       if (Database.ColumnExists (TableName.WORKORDER_MACHINE_ASSOCIATION, $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resettask")) {
-        Database.RenameColumn (TableName.WORKORDER_MACHINE_ASSOCIATION, $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resettask", $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resetmanuforder");
+        RenamePartitionedColumn (TableName.WORKORDER_MACHINE_ASSOCIATION, $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resettask", $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resetmanuforder");
       }
     }
 
@@ -36,7 +36,7 @@ namespace Lemoine.GDBMigration
     override public void Down ()
     {
       if (Lemoine.Info.ConfigSet.LoadAndGet (USE_DEPRECATED_TASK_KEY, USE_DEPRECATED_TASK_DEFAULT)) {
-        Database.RenameColumn (TableName.WORKORDER_MACHINE_ASSOCIATION, $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resetmanuforder", $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resettask");
+        RenamePartitionedColumn (TableName.WORKORDER_MACHINE_ASSOCIATION, $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resetmanuforder", $"{TableName.WORKORDER_MACHINE_ASSOCIATION}resettask");
       }
     }
 
