@@ -139,30 +139,7 @@ namespace Lemoine.Business.Oee
     /// <see cref="IRequest{T}"/> implementation
     /// </summary>
     /// <returns></returns>
-    public OeeResponse Get ()
-    {
-      var response = new OeeResponse (m_oeeType, m_range);
-      if (m_range.IsEmpty ()) {
-        if (log.IsDebugEnabled) {
-          log.Debug ($"Get: empty range {m_range} => return an empty response");
-        }
-        return response;
-      }
-
-      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        var dayRange = GetSummaryDayRange ();
-        if (dayRange is null) {
-          FillFromReasonSlots (response, ModelDAOHelper.DAOFactory.ReasonSlotDAO
-            .FindOverlapsRange (m_machine, m_range));
-        }
-        else {
-          FillFromSummary (response, ModelDAOHelper.DAOFactory.ProductionRateSummaryDAO
-            .FindInDayRange (m_machine, dayRange));
-        }
-      }
-
-      return response;
-    }
+    public OeeResponse Get () => GetAsync ().GetAwaiter ().GetResult ();
 
     /// <summary>
     /// <see cref="IRequest{T}"/> implementation
@@ -196,23 +173,6 @@ namespace Lemoine.Business.Oee
     /// <summary>
     /// Day range to consider to use the production rate summary table,
     /// null if the summary table can't be used here
-    /// </summary>
-    /// <returns></returns>
-    DayRange GetSummaryDayRange ()
-    {
-      if (!IsSummaryActive ()) {
-        return null;
-      }
-
-      var dayRange = ServiceProvider
-        .Get (new Lemoine.Business.Time.DayRangeFromRange (m_range));
-      var rangeFromDayRange = ServiceProvider
-        .Get (new Lemoine.Business.Time.RangeFromDayRange (dayRange));
-      return CheckSummaryDayRange (dayRange, rangeFromDayRange);
-    }
-
-    /// <summary>
-    /// Asynchronous version of GetSummaryDayRange
     /// </summary>
     /// <returns></returns>
     async Task<DayRange> GetSummaryDayRangeAsync ()
