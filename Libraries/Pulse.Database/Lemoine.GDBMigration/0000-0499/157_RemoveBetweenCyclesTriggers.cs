@@ -22,7 +22,7 @@ namespace Lemoine.GDBMigration
     /// </summary>
     override public void Up ()
     {
-      Database.ExecuteNonQuery (@"BEGIN;
+      Database.ExecuteNonQuery (@"
       
 DROP TRIGGER IF EXISTS betweencycles_insert ON betweencycles CASCADE;
 DROP TRIGGER IF EXISTS betweencycles_cycle_update ON betweencycles CASCADE;
@@ -35,7 +35,7 @@ DROP FUNCTION IF EXISTS betweencycles_offsetduration(integer, integer) CASCADE;
 DROP FUNCTION IF EXISTS betweencycles_offsetduration(integer, integer, integer) CASCADE;
 DROP FUNCTION IF EXISTS betweencycles_offsetduration(integer, timestamp without time zone, timestamp without time zone, integer, integer) CASCADE;
 
-COMMIT;");
+");
     }
     
     /// <summary>
