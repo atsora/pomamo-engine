@@ -79,7 +79,7 @@ namespace Lemoine.Plugin.ReasonToProductionState
     }
 
     /// <summary>
-    /// 
+    /// Check the configuration is valid
     /// </summary>
     /// <param name="errors"></param>
     /// <returns></returns>
@@ -107,7 +107,7 @@ namespace Lemoine.Plugin.ReasonToProductionState
       // TODO: check colors
 
       using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
-        using (var transaction = session.BeginReadOnlyDeferrableTransaction ("Plugin.RunningMachineModeIsProduction.IsValidConfiguration")) {
+        using (var transaction = session.BeginReadOnlyDeferrableTransaction ("Plugin.ReasonToProductionState.IsValidConfiguration")) {
           if (0 != this.ProductionStateId) { // Else consider the default running production state
             if (this.ProductionStateId <= 0) {
               string message = $"invalid production state id {this.ProductionStateId}: not strictly positive";
@@ -145,9 +145,9 @@ namespace Lemoine.Plugin.ReasonToProductionState
       return result && (!errors.Any ());
     }
 
-    protected override bool IsMachineFilterRequired ()
-    {
-      return false;
-    }
+    /// <summary>
+    /// The machine filter is optional
+    /// </summary>
+    protected override bool IsMachineFilterRequired () => false;
   }
 }

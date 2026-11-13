@@ -15,7 +15,7 @@ using System.Diagnostics;
 namespace Lemoine.Plugin.ReasonToProductionState
 {
   /// <summary>
-  /// Description of Plugin.
+  /// Plugin to determine a production state and a production rate from a reason
   /// </summary>
   public class Plugin : PluginWithAutoConfig<Configuration>, IPluginDll, IFlaggedPlugin
   {
@@ -31,6 +31,9 @@ namespace Lemoine.Plugin.ReasonToProductionState
     /// </summary>
     public override string Description => "Determine a production state from a reason";
 
+    /// <summary>
+    /// Plugin flags
+    /// </summary>
     public PluginFlag Flags => PluginFlag.Analysis;
 
     /// <summary>

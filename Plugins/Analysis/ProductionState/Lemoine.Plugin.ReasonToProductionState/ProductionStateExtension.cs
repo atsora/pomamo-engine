@@ -33,17 +33,25 @@ namespace Lemoine.Plugin.ReasonToProductionState
 
     IReason m_reason;
 
+    /// <summary>
+    /// <see cref="IProductionStateExtension"/>
+    /// </summary>
     public double Score => m_score;
 
-    public bool IsRequired (IReasonSlot oldReasonSlot, IReasonSlot newReasonSlot, IModification modification, ReasonSlotChange reasonSlotChange)
-    {
-      return reasonSlotChange.HasFlag (ReasonSlotChange.Requested) || reasonSlotChange.HasFlag (ReasonSlotChange.NewActivity) || reasonSlotChange.HasFlag (ReasonSlotChange.Reason);
-    }
-
+    /// <summary>
+    /// <see cref="IProductionStateExtension"/>
+    /// </summary>
     public bool ConsolidateProductionStateRate (IReasonSlot oldReasonSlot, IReasonSlot newReasonSlot, IModification modification, ReasonSlotChange reasonSlotChange)
     {
       Debug.Assert (null != m_reason);
       Debug.Assert (null != m_productionState);
+
+      if (newReasonSlot?.Reason is null) {
+        if (log.IsDebugEnabled) {
+          log.Debug ($"ConsolidateProductionStateRate: no reason in the new reason slot => return false");
+        }
+        return false;
+      }
 
       if (newReasonSlot.Reason.Id != m_reason.Id) {
         return false;
@@ -54,6 +62,9 @@ namespace Lemoine.Plugin.ReasonToProductionState
       return true;
     }
 
+    /// <summary>
+    /// <see cref="IInitializedByMonitoredMachineExtension"/>
+    /// </summary>
     public bool Initialize (IMonitoredMachine machine)
     {
       Debug.Assert (null != machine);
@@ -104,7 +115,7 @@ namespace Lemoine.Plugin.ReasonToProductionState
           m_productionState = ConfigRequests.AddProductionState (m_defaultProductionStateTranslationKey,
             m_defaultProductionStateTranslationValue, m_defaultProductionStateColor);
         }
-        else { // 0 != runningId
+        else { // 0 != productionStateId
           m_productionState = ModelDAOHelper.DAOFactory.ProductionStateDAO
             .FindById (productionStateId);
         }
@@ -112,10 +123,8 @@ namespace Lemoine.Plugin.ReasonToProductionState
           log.Error ($"Initialize: production state {productionStateId} or {m_defaultProductionStateTranslationKey} could not be loaded");
           return false;
         }
-        else {
-          if (log.IsDebugEnabled) {
-            log.Debug ($"Initialize: successfully loaded production state {m_defaultProductionStateTranslationKey}: id {m_productionState.Id}");
-          }
+        else if (log.IsDebugEnabled) {
+          log.Debug ($"Initialize: successfully loaded production state {productionStateId}/{m_defaultProductionStateTranslationKey}: id {m_productionState.Id}");
         }
 
         m_reason = ModelDAOHelper.DAOFactory.ReasonDAO
@@ -128,7 +137,5 @@ namespace Lemoine.Plugin.ReasonToProductionState
 
       return true;
     }
-
-
   }
 }
