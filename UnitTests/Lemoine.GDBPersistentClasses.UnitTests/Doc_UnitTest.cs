@@ -175,6 +175,96 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
     }
 
     /// <summary>
+    /// Test FindBySearchAsync also matches the name, the code and the external code of the
+    /// components and of the operations the documents are associated to
+    /// </summary>
+    [Test]
+    public async Task TestFindBySearchWorkInformationAsync ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var daoFactory = ModelDAOHelper.DAOFactory;
+          var marker = Guid.NewGuid ().ToString ("N");
+          var componentDoc = ModelDAOHelper.ModelFactory.CreateDoc ($"wi/{Guid.NewGuid ():N}/drawing.pdf");
+          await daoFactory.DocDAO.MakePersistentAsync (componentDoc);
+          var operationDoc = ModelDAOHelper.ModelFactory.CreateDoc ($"wi/{Guid.NewGuid ():N}/program.nc");
+          await daoFactory.DocDAO.MakePersistentAsync (operationDoc);
+          var otherDoc = ModelDAOHelper.ModelFactory.CreateDoc ($"wi/{Guid.NewGuid ():N}/other.pdf");
+          await daoFactory.DocDAO.MakePersistentAsync (otherDoc);
+
+          var project = ModelDAOHelper.ModelFactory.CreateProjectFromName ($"project-{marker}");
+          await daoFactory.ProjectDAO.MakePersistentAsync (project);
+          var component = ModelDAOHelper.ModelFactory.CreateComponentFromName (project, $"Shaft-{marker}",
+            await daoFactory.ComponentTypeDAO.FindByIdAsync (1));
+          component.Code = $"cc-{marker}";
+          component.ExternalCode = $"ce-{marker}";
+          await daoFactory.ComponentDAO.MakePersistentAsync (component);
+          component.Docs.Add (componentDoc);
+          var operation = ModelDAOHelper.ModelFactory.CreateOperation (await daoFactory.OperationTypeDAO.FindByIdAsync (1));
+          operation.Name = $"Op10-{marker}";
+          operation.Code = $"oc-{marker}";
+          operation.ExternalCode = $"oe-{marker}";
+          await daoFactory.OperationDAO.MakePersistentAsync (operation);
+          operation.ActiveRevision.Docs.Add (operationDoc);
+          daoFactory.Flush ();
+
+          var componentName = await daoFactory.DocDAO.FindBySearchAsync ($"SHAFT-{marker.ToUpperInvariant ()}", null, null, 10);
+          var componentCode = await daoFactory.DocDAO.FindBySearchAsync ($"cc-{marker}", null, null, 10);
+          var componentExternalCode = await daoFactory.DocDAO.FindBySearchAsync ($"ce-{marker}", null, null, 10);
+          var operationName = await daoFactory.DocDAO.FindBySearchAsync ($"op10-{marker}", null, null, 10);
+          var operationCode = await daoFactory.DocDAO.FindBySearchAsync ($"oc-{marker}", null, null, 10);
+          var operationExternalCode = await daoFactory.DocDAO.FindBySearchAsync ($"oe-{marker}", null, null, 10);
+          var both = await daoFactory.DocDAO.FindBySearchAsync (marker, null, null, 10);
+          var withKind = await daoFactory.DocDAO.FindBySearchAsync ($"cc-{marker}", null, 3, 10);
+          Assert.Multiple (() => {
+            Assert.That (componentName.Select (x => x.Id), Is.EqualTo (new[] { componentDoc.Id }));
+            Assert.That (componentCode.Select (x => x.Id), Is.EqualTo (new[] { componentDoc.Id }));
+            Assert.That (componentExternalCode.Select (x => x.Id), Is.EqualTo (new[] { componentDoc.Id }));
+            Assert.That (operationName.Select (x => x.Id), Is.EqualTo (new[] { operationDoc.Id }));
+            Assert.That (operationCode.Select (x => x.Id), Is.EqualTo (new[] { operationDoc.Id }));
+            Assert.That (operationExternalCode.Select (x => x.Id), Is.EqualTo (new[] { operationDoc.Id }));
+            Assert.That (both.Select (x => x.Id), Is.EquivalentTo (new[] { componentDoc.Id, operationDoc.Id }));
+            Assert.That (withKind, Is.Empty);
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Test FindAllTagsAsync returns the distinct tags, ordered
+    /// </summary>
+    [Test]
+    public async Task TestFindAllTagsAsync ()
+    {
+      using (IDAOSession session = ModelDAOHelper.DAOFactory.OpenSession ())
+      using (IDAOTransaction transaction = session.BeginTransaction ()) {
+        try {
+          var marker = Guid.NewGuid ().ToString ("N");
+          var first = ModelDAOHelper.ModelFactory.CreateDoc ($"tags/{marker}/first.pdf");
+          first.Tags = new List<string> { $"{marker}-b", $"{marker}-a" };
+          await ModelDAOHelper.DAOFactory.DocDAO.MakePersistentAsync (first);
+          var second = ModelDAOHelper.ModelFactory.CreateDoc ($"tags/{marker}/second.pdf");
+          second.Tags = new List<string> { $"{marker}-a", $"{marker}-c" };
+          await ModelDAOHelper.DAOFactory.DocDAO.MakePersistentAsync (second);
+          ModelDAOHelper.DAOFactory.Flush ();
+
+          var tags = await ModelDAOHelper.DAOFactory.DocDAO.FindAllTagsAsync ();
+          Assert.Multiple (() => {
+            Assert.That (tags.Where (x => x.StartsWith (marker)), Is.EqualTo (new[] { $"{marker}-a", $"{marker}-b", $"{marker}-c" }));
+            Assert.That (tags, Is.Unique);
+          });
+        }
+        finally {
+          transaction.Rollback ();
+        }
+      }
+    }
+
+    /// <summary>
     /// Test FindByTagAsync returns only the docs that carry the tag
     /// </summary>
     [Test]

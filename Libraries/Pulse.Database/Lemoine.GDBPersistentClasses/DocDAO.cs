@@ -136,7 +136,25 @@ ORDER BY {doc}.docid
     /// <summary>
     /// <see cref="IDocDAO"/>
     /// </summary>
-    /// <param name="search">nullable or empty: text the path contains, whatever the case</param>
+    /// <returns>not null, ordered</returns>
+    public async Task<IList<string>> FindAllTagsAsync ()
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateSQLQuery ("""
+SELECT DISTINCT unnest(doctags) AS tag
+FROM doc
+ORDER BY tag
+""")
+        .AddScalar ("tag", NHibernateUtil.String)
+        .ListAsync<string> ();
+    }
+
+    /// <summary>
+    /// <see cref="IDocDAO"/>
+    /// </summary>
+    /// <param name="search">nullable or empty: text the path contains, or the name, the code or the
+    /// external code of a component (part) or of an operation the document is associated to contains,
+    /// whatever the case</param>
     /// <param name="tag">nullable or empty: tag the document carries (case sensitive, gin index)</param>
     /// <param name="kindId">nullable: id of the kind of the document</param>
     /// <param name="maxResults">maximum number of returned documents, strictly positive</param>
@@ -152,7 +170,19 @@ ORDER BY {doc}.docid
       // and a criteria SQL restriction does not bind a parameter inside ARRAY[...]
       var conditions = new List<string> ();
       if (!string.IsNullOrWhiteSpace (search)) {
-        conditions.Add ("{doc}.docpath ILIKE :search");
+        // The path, or the work informations (component / part, operation revision) the document
+        // is associated to
+        conditions.Add ("""
+({doc}.docpath ILIKE :search
+ OR EXISTS (SELECT 1
+            FROM componentdoc cd JOIN component c ON c.componentid = cd.componentid
+            WHERE cd.docid = {doc}.docid
+              AND (c.componentname ILIKE :search OR c.componentcode ILIKE :search OR c.componentexternalcode ILIKE :search))
+ OR EXISTS (SELECT 1
+            FROM operationrevisiondoc od JOIN operation o ON o.operationid = od.operationrevisionid
+            WHERE od.docid = {doc}.docid
+              AND (o.operationname ILIKE :search OR o.operationcode ILIKE :search OR o.operationexternalcode ILIKE :search)))
+""");
       }
       if (!string.IsNullOrWhiteSpace (tag)) {
         conditions.Add ("{doc}.doctags @> ARRAY[:tag]");
