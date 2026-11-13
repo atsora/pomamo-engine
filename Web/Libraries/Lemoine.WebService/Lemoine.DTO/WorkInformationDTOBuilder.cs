@@ -122,6 +122,7 @@ namespace Lemoine.DTO
       WorkInformationDTO wpInfoDTO = new WorkInformationDTO();
       wpInfoDTO.Kind = WorkInformationKind.WorkOrder;
       wpInfoDTO.Value = workOrder.Display;
+      wpInfoDTO.Id = workOrder.Id;
       return wpInfoDTO;
     }
 
@@ -134,6 +135,7 @@ namespace Lemoine.DTO
       WorkInformationDTO wpInfoDTO = new WorkInformationDTO();
       wpInfoDTO.Kind = WorkInformationKind.Part;
       wpInfoDTO.Value = part.Display;
+      wpInfoDTO.Id = part.ComponentId;
       return wpInfoDTO;
     }
 
@@ -146,6 +148,7 @@ namespace Lemoine.DTO
       WorkInformationDTO wpInfoDTO = new WorkInformationDTO();
       wpInfoDTO.Kind = WorkInformationKind.Component;
       wpInfoDTO.Value = component.Display;
+      wpInfoDTO.Id = component.Id;
       return wpInfoDTO;
     }
     
@@ -158,6 +161,7 @@ namespace Lemoine.DTO
       WorkInformationDTO wpInfoDTO = new WorkInformationDTO();
       wpInfoDTO.Kind = WorkInformationKind.Operation;
       wpInfoDTO.Value = operation.Display;
+      wpInfoDTO.Id = operation.Id;
       return wpInfoDTO;
     }
 
@@ -170,6 +174,7 @@ namespace Lemoine.DTO
       WorkInformationDTO wpInfoDTO = new WorkInformationDTO();
       wpInfoDTO.Kind = WorkInformationKind.Job;
       wpInfoDTO.Value = job.Display;
+      wpInfoDTO.Id = job.Id;
       return wpInfoDTO;
     }
 
@@ -182,6 +187,7 @@ namespace Lemoine.DTO
       WorkInformationDTO wpInfoDTO = new WorkInformationDTO();
       wpInfoDTO.Kind = WorkInformationKind.Project;
       wpInfoDTO.Value = project.Display;
+      wpInfoDTO.Id = project.Id;
       return wpInfoDTO;
     }
     

@@ -116,15 +116,15 @@ namespace Pulse.Web.Operation
           responseDto.WorkInformations = new List<WorkInformationDTO> ();
           if (null != workOrder) {
             responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.WorkOrder,
-              workOrder.Display));
+              workOrder.Display, workOrder.Id));
           }
           if (null != component) {
             responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Component,
-              component.Display));
+              component.Display, component.Id));
           }
           if (null != operation) {
             responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Operation,
-              operation.Display));
+              operation.Display, operation.Id));
           }
 
           // - Day/shift
@@ -165,11 +165,11 @@ namespace Pulse.Web.Operation
           responseDto.WorkInformations = new List<WorkInformationDTO> ();
           if (null != component) {
             responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Component,
-                                                              component.Display));
+                                                              component.Display, component.Id));
           }
           if (null != operation) {
             responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Operation,
-                                                              operation.Display));
+                                                              operation.Display, operation.Id));
           }
 
           // - Day/shift
@@ -254,10 +254,10 @@ namespace Pulse.Web.Operation
 
           // - Work information (deprecated)
           if (null != component) {
-            responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Component, component.Display));
+            responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Component, component.Display, component.Id));
           }
           if (null != operation) {
-            responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Operation, operation.Display));
+            responseDto.WorkInformations.Add (new WorkInformationDTO (WorkInformationKind.Operation, operation.Display, operation.Id));
           }
 
           // - Day/shift

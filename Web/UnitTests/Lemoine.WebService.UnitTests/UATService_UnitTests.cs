@@ -669,18 +669,23 @@ namespace Lemoine.WebService.UnitTests
             switch(wpInfoDTO.Kind) {
               case WorkInformationKind.WorkOrder:
                 Assert.That (workOrder1.Display, Is.EqualTo (wpInfoDTO.Value));
+                Assert.That (wpInfoDTO.Id, Is.EqualTo (workOrder1.Id));
                 break;
               case WorkInformationKind.Operation:
                 Assert.That (operation1.Display, Is.EqualTo (wpInfoDTO.Value));
+                Assert.That (wpInfoDTO.Id, Is.EqualTo (operation1.Id));
                 break;
               case WorkInformationKind.Part:
                 Assert.That (part1.Display, Is.EqualTo (wpInfoDTO.Value));
+                Assert.That (wpInfoDTO.Id, Is.EqualTo (part1.ComponentId));
                 break;
               case WorkInformationKind.Component:
                 Assert.That (component1.Display, Is.EqualTo (wpInfoDTO.Value));
+                Assert.That (wpInfoDTO.Id, Is.EqualTo (component1.Id));
                 break;
               case WorkInformationKind.Project:
                 Assert.That (component1.Project.Display, Is.EqualTo (wpInfoDTO.Value));
+                Assert.That (wpInfoDTO.Id, Is.EqualTo (component1.Project.Id));
                 break;
               default:
                 Assert.Fail ($"Bad kind {wpInfoDTO.Kind}");

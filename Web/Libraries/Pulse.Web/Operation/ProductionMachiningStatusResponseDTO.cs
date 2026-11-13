@@ -149,6 +149,11 @@ namespace Pulse.Web.Operation
     public string Value { get; set; }
 
     /// <summary>
+    /// Id of the work order, component or operation (null if unknown)
+    /// </summary>
+    public int? Id { get; set; }
+
+    /// <summary>
     /// Default constructor
     /// </summary>
     public WorkInformationDTO ()
@@ -159,10 +164,12 @@ namespace Pulse.Web.Operation
     /// </summary>
     /// <param name="kind"></param>
     /// <param name="value"></param>
-    public WorkInformationDTO (WorkInformationKind kind, string value)
+    /// <param name="id">nullable</param>
+    public WorkInformationDTO (WorkInformationKind kind, string value, int? id = null)
     {
       this.Kind = kind;
       this.Value = value;
+      this.Id = id;
     }
   }
 }
