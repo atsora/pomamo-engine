@@ -58,6 +58,23 @@ namespace Pulse.Extensions.Web.Doc
     static readonly ILog log = LogManager.GetLogger (typeof (DocUploader).FullName);
 
     /// <summary>
+    /// Name of the author of an upload: the name of the connected user, else his login
+    /// </summary>
+    /// <param name="user">nullable: no connected user</param>
+    /// <returns>null if the user is not known</returns>
+    public static string GetAuthor (System.Security.Claims.ClaimsPrincipal user)
+    {
+      if (user is null) {
+        return null;
+      }
+      var name = user.FindFirst (System.Security.Claims.ClaimTypes.GivenName)?.Value;
+      if (string.IsNullOrWhiteSpace (name)) {
+        name = user.FindFirst (System.Security.Claims.ClaimTypes.Name)?.Value;
+      }
+      return string.IsNullOrWhiteSpace (name) ? null : name.Trim ();
+    }
+
+    /// <summary>
     /// Upload a new revision of a document
     /// </summary>
     /// <param name="content">not null</param>
@@ -68,9 +85,10 @@ namespace Pulse.Extensions.Web.Doc
     /// <param name="tags">tags of the document, that replace the existing ones. If null, the tags are left unchanged</param>
     /// <param name="setKind">set the kind of the document to kindId. If false, the kind is left unchanged</param>
     /// <param name="kindId">id of the kind of the document if setKind is true, null to remove the kind</param>
+    /// <param name="author">name of the user who uploads the new revision, see <see cref="GetAuthor"/>. If null or empty, the default author of the doc extension</param>
     /// <returns></returns>
     /// <exception cref="DataProcessingException">invalid parameters, missing configuration or upload failure</exception>
-    public static async Task<DocUploadResult> UploadAsync (Stream content, int? docId, string path, string fileName, string description, IEnumerable<string> tags = null, bool setKind = false, int? kindId = null)
+    public static async Task<DocUploadResult> UploadAsync (Stream content, int? docId, string path, string fileName, string description, IEnumerable<string> tags = null, bool setKind = false, int? kindId = null, string author = null)
     {
       if (content is null) {
         log.Fatal ("UploadAsync: content is null");
@@ -122,7 +140,7 @@ namespace Pulse.Extensions.Web.Doc
 
           int revision;
           try {
-            revision = await extension.UploadAsync (content, description ?? "");
+            revision = await extension.UploadAsync (content, description ?? "", author ?? "");
           }
           catch (Exception ex) {
             log.Error ($"UploadAsync: upload of {path} failed", ex);

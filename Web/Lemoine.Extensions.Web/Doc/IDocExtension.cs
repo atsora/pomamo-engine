@@ -67,7 +67,8 @@ namespace Lemoine.Extensions.Web.Doc
     /// </summary>
     /// <param name="content">not null. It is only read, it is not disposed</param>
     /// <param name="description">description of the new revision. In the git implementation, the commit message</param>
+    /// <param name="author">name of the user who uploads the new revision. In the git implementation, the commit author. If empty, the default author of the implementation</param>
     /// <returns>the new revision number</returns>
-    Task<int> UploadAsync (Stream content, string description = "");
+    Task<int> UploadAsync (Stream content, string description = "", string author = "");
   }
 }

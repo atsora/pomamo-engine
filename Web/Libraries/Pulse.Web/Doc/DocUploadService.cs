@@ -246,7 +246,7 @@ namespace Pulse.Web.Doc
     {
       try {
         var result = await DocUploader.UploadAsync (content, docId, path, fileName, description,
-          properties.Tags, properties.SetKind, properties.KindId);
+          properties.Tags, properties.SetKind, properties.KindId, DocUploader.GetAuthor (this.HttpContext?.User));
         return new DocUploadResponseDTO {
           DocId = result.DocId,
           Path = result.Path,
