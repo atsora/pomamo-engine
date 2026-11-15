@@ -61,6 +61,17 @@ namespace Lemoine.ModelDAO
     Task<IList<string>> FindAllTagsAsync ();
 
     /// <summary>
+    /// Number of distinct <see cref="IDoc"/>s associated to a component and/or to an operation
+    /// revision, a document associated to both being counted once
+    ///
+    /// Only the associations are counted: the document store is not requested
+    /// </summary>
+    /// <param name="componentId">nullable: id of the component (or of the part)</param>
+    /// <param name="operationRevisionId">nullable: id of the operation revision (an operation in this version)</param>
+    /// <returns>0 if none is set or if the ids are unknown</returns>
+    Task<int> CountDistinctAsync (int? componentId, int? operationRevisionId);
+
+    /// <summary>
     /// Search the <see cref="IDoc"/>s, the criteria that are set being combined
     /// </summary>
     /// <param name="search">nullable or empty: text the path contains, or the name, the code or the

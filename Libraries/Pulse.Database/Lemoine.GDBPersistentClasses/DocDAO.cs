@@ -152,6 +152,37 @@ ORDER BY tag
     /// <summary>
     /// <see cref="IDocDAO"/>
     /// </summary>
+    /// <param name="componentId">nullable</param>
+    /// <param name="operationRevisionId">nullable</param>
+    /// <returns></returns>
+    public async Task<int> CountDistinctAsync (int? componentId, int? operationRevisionId)
+    {
+      if (!componentId.HasValue && !operationRevisionId.HasValue) {
+        return 0;
+      }
+      // UNION removes the duplicate docids
+      var selects = new List<string> ();
+      if (componentId.HasValue) {
+        selects.Add ("SELECT docid FROM componentdoc WHERE componentid = :componentId");
+      }
+      if (operationRevisionId.HasValue) {
+        selects.Add ("SELECT docid FROM operationrevisiondoc WHERE operationrevisionid = :operationRevisionId");
+      }
+      var query = NHibernateHelper.GetCurrentSession ()
+        .CreateSQLQuery ($"SELECT CAST(COUNT(*) AS integer) AS doccount FROM ({string.Join (" UNION ", selects)}) docs")
+        .AddScalar ("doccount", NHibernateUtil.Int32);
+      if (componentId.HasValue) {
+        query.SetInt32 ("componentId", componentId.Value);
+      }
+      if (operationRevisionId.HasValue) {
+        query.SetInt32 ("operationRevisionId", operationRevisionId.Value);
+      }
+      return await query.UniqueResultAsync<int> ();
+    }
+
+    /// <summary>
+    /// <see cref="IDocDAO"/>
+    /// </summary>
     /// <param name="search">nullable or empty: text the path contains, or the name, the code or the
     /// external code of a component (part) or of an operation the document is associated to contains,
     /// whatever the case</param>
