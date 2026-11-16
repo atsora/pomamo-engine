@@ -131,6 +131,16 @@ namespace Pulse.Web.Operation
     /// Operation kind
     /// </summary>
     Operation,
+
+    /// <summary>
+    /// Part kind (its id is the id of its component)
+    /// </summary>
+    Part,
+
+    /// <summary>
+    /// Job kind
+    /// </summary>
+    Job,
   }
 
   /// <summary>

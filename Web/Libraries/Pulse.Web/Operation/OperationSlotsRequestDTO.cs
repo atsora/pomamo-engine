@@ -49,5 +49,13 @@ namespace Pulse.Web.Operation
     /// </summary>
     [ApiMember(Name="SkipDetails", Description="Skip the details in the answer. Default: false", ParameterType="path", DataType="boolean", IsRequired=false)]
     public bool SkipDetails { get; set; }
+
+    /// <summary>
+    /// Add the work informations (with their id) to the details. Default: false
+    ///
+    /// Only for a few slots (for example a single date/time): the items of each slot are loaded
+    /// </summary>
+    [ApiMember (Name = "WorkInformations", Description = "Add the work informations (with their id) to the details, ignored with SkipDetails. Default: false", ParameterType = "path", DataType = "boolean", IsRequired = false)]
+    public bool WorkInformations { get; set; }
   }
 }

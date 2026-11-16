@@ -71,8 +71,14 @@ namespace Pulse.Web.Operation
     /// Display
     /// </summary>
     public string Display { get; set; }
-    
-    // TODO: Work information details. To complete later
+
+    /// <summary>
+    /// Work informations of the slot (work order or job, part or component, operation),
+    /// with their id. Only the items that are set are listed.
+    ///
+    /// Only when the request has WorkInformations=true (else null)
+    /// </summary>
+    public List<WorkInformationDTO> WorkInformations { get; set; }
   }
 
 }

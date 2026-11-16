@@ -96,12 +96,12 @@ namespace Pulse.Web.Operation
         
         using (IDAOTransaction transaction = session.BeginReadOnlyTransaction ("Web.OperationSlots"))
         {
-          return GetAutoSplit (machine, range, request.SkipDetails); // Less than a week
+          return GetAutoSplit (machine, range, request.SkipDetails, request.WorkInformations); // Less than a week
         }
       }
     }
     
-    OperationSlotsResponseDTO GetAutoSplit (IMachine machine, UtcDateTimeRange range, bool skipDetails)
+    OperationSlotsResponseDTO GetAutoSplit (IMachine machine, UtcDateTimeRange range, bool skipDetails, bool workInformations)
     {
       Debug.Assert (range.Duration.HasValue);
       
@@ -166,10 +166,10 @@ namespace Pulse.Web.Operation
         if ( (null != previousSlot)
             && (minimumSplitDuration <= slot.DateTimeRange.Lower.Value.Subtract (previousSlot.DateTimeRange.Upper.Value))) {
           // Large gap
-          PushBlockAndAddToPending (result, pending, skipDetails, slot);
+          PushBlockAndAddToPending (result, pending, skipDetails, workInformations, slot);
         }
         else if (minimumSplitDuration <= slotRange.Duration.Value) { // Long enough
-          PushBlockAndAddSlot (result, pending, skipDetails, slot);
+          PushBlockAndAddSlot (result, pending, skipDetails, workInformations, slot);
         }
         else {
           pending.Add (slot);
@@ -177,30 +177,30 @@ namespace Pulse.Web.Operation
 
         previousSlot = slot;
       }
-      PushBlock (result, pending, skipDetails);
+      PushBlock (result, pending, skipDetails, workInformations);
       
       return result;
     }
 
     void PushBlockAndAddToPending (OperationSlotsResponseDTO result, IList<IOperationSlot> pending,
-                                   bool skipDetails, IOperationSlot slot)
+                                   bool skipDetails, bool workInformations, IOperationSlot slot)
     {
-      PushBlock (result, pending, skipDetails);
+      PushBlock (result, pending, skipDetails, workInformations);
       pending.Clear ();
       pending.Add (slot);
     }
 
     void PushBlockAndAddSlot (OperationSlotsResponseDTO result, IList<IOperationSlot> pending,
-                              bool skipDetails, IOperationSlot slot)
+                              bool skipDetails, bool workInformations, IOperationSlot slot)
     {
-      PushBlock (result, pending, skipDetails);
+      PushBlock (result, pending, skipDetails, workInformations);
       pending.Clear ();
       pending.Add (slot);
-      PushBlock (result, pending, skipDetails);
+      PushBlock (result, pending, skipDetails, workInformations);
       pending.Clear ();
     }
     
-    void PushBlock (OperationSlotsResponseDTO response, IList<IOperationSlot> slots, bool skipDetails)
+    void PushBlock (OperationSlotsResponseDTO response, IList<IOperationSlot> slots, bool skipDetails, bool workInformations)
     {
       if (!slots.Any ()) {
         return;
@@ -257,6 +257,9 @@ namespace Pulse.Web.Operation
           var detail = new OperationSlotBlockDetailDTO ();
           detail.Range = slot.DateTimeRange.ToString (bound => ConvertDTO.DateTimeUtcToIsoString (bound));
           detail.Display = slot.Display;
+          if (workInformations) {
+            detail.WorkInformations = OperationSlotWorkInformations.Build (slot);
+          }
           block.Details.Add (detail);
         }
       }
