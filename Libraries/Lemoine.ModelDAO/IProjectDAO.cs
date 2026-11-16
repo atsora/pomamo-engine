@@ -98,7 +98,9 @@ namespace Lemoine.ModelDAO
     /// </summary>
     /// <param name="search">not null or empty</param>
     /// <param name="maxResults">maximum number of items to return</param>
+    /// <param name="archived">null: every item, false: the items that are not archived only,
+    /// true: the archived items only</param>
     /// <returns>not null</returns>
-    System.Threading.Tasks.Task<IList<IProject>> FindBySearchAsync (string search, int maxResults);
+    System.Threading.Tasks.Task<IList<IProject>> FindBySearchAsync (string search, int maxResults, bool? archived = null);
   }
 }

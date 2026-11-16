@@ -62,17 +62,35 @@ namespace Lemoine.GDBPersistentClasses
       Matches (search, "Name", "Code", "ExternalCode");
 
     /// <summary>
-    /// Put the archived items last, then sort them by id
+    /// Keep the items of the requested archive state, put the archived items last, then sort
+    /// them by id
+    ///
+    /// The filter is in the query, before the limit, so that the limit applies to the
+    /// filtered items
     ///
     /// In PostgreSQL, a descending order puts the nulls first: the items that are not
     /// archived come first
     /// </summary>
     /// <param name="criteria">not null</param>
     /// <param name="archiveDateTimeProperty">null if the items are never archived</param>
+    /// <param name="archived">null: every item, false: the items that are not archived only,
+    /// true: the archived items only</param>
     /// <param name="maxResults"></param>
     /// <returns></returns>
-    public static ICriteria OrderAndLimit (ICriteria criteria, string archiveDateTimeProperty, int maxResults)
+    public static ICriteria OrderAndLimit (ICriteria criteria, string archiveDateTimeProperty, bool? archived, int maxResults)
     {
+      if (archived.HasValue) {
+        if (archiveDateTimeProperty is null) {
+          if (archived.Value) { // Never archived: nothing matches
+            criteria = criteria.Add (Expression.Sql ("1=0"));
+          }
+        }
+        else {
+          criteria = criteria.Add (archived.Value
+            ? Restrictions.IsNotNull (archiveDateTimeProperty)
+            : Restrictions.IsNull (archiveDateTimeProperty));
+        }
+      }
       if (archiveDateTimeProperty is not null) {
         criteria = criteria.AddOrder (Order.Desc (archiveDateTimeProperty));
       }

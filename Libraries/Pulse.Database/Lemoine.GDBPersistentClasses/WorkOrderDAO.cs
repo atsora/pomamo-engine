@@ -344,13 +344,14 @@ namespace Lemoine.GDBPersistentClasses
     /// </summary>
     /// <param name="search">not null or empty</param>
     /// <param name="maxResults"></param>
+    /// <param name="archived"></param>
     /// <returns></returns>
-    public async System.Threading.Tasks.Task<IList<IWorkOrder>> FindBySearchAsync (string search, int maxResults)
+    public async System.Threading.Tasks.Task<IList<IWorkOrder>> FindBySearchAsync (string search, int maxResults, bool? archived = null)
     {
       var criteria = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<WorkOrder> ()
         .Add (WorkInfoSearch.MatchesNameOrCode (search));
-      return await WorkInfoSearch.OrderAndLimit (criteria, null, maxResults)
+      return await WorkInfoSearch.OrderAndLimit (criteria, null, archived, maxResults)
         .ListAsync<IWorkOrder> ();
     }
   }
