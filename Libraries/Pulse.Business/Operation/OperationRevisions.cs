@@ -16,15 +16,21 @@ namespace Lemoine.Business.Operation
   /// The operation revisions of this major version, until they get a table of their own
   ///
   /// A revision is an operation: the revisions of an operation are the operations that share
-  /// its base name, the first one with no suffix (revision 1), the next ones with the suffix
-  /// " revN" (revision N)
+  /// its base name, the first one with no suffix or the suffix " - rev 1" (revision 1), the
+  /// next ones with the suffix " - rev N" (revision N). The suffix " revN" of the first
+  /// revisions that were created is still recognized
   ///
   /// The active revision is the one that is not archived, the highest one if several are
-  /// not, the highest one again if all of them are
+  /// not, the highest one again if all of them are. Between two operations with the same
+  /// revision number, the most recent one comes last
+  ///
+  /// TODO: once the operation revisions have a table of their own, read them from it, and
+  /// remove this class
   /// </summary>
   public static class OperationRevisions
   {
-    static readonly Regex REVISION_SUFFIX = new Regex (@"^(?<base>.*) rev(?<number>[0-9]+)$",
+    // " - rev N" (spaces optional around the dash and before the number), or the former " revN"
+    static readonly Regex REVISION_SUFFIX = new Regex (@"^(?<base>.+?)\s*-\s*rev\s*(?<number>[0-9]+)$|^(?<base>.+) rev(?<number>[0-9]+)$",
       RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     /// <summary>
@@ -50,10 +56,11 @@ namespace Lemoine.Business.Operation
     /// <param name="number"></param>
     /// <returns></returns>
     public static string GetName (string baseName, int number) =>
-      1 == number ? baseName : $"{baseName} rev{number}";
+      1 == number ? baseName : $"{baseName} - rev {number}";
 
     /// <summary>
-    /// The revisions of an operation, the operation itself included, by revision number
+    /// The revisions of an operation, the operation itself included, by revision number, then
+    /// from the oldest to the most recent one
     ///
     /// An operation with no name has no other revision
     ///
@@ -75,6 +82,7 @@ namespace Lemoine.Business.Operation
       }
       return revisions
         .OrderBy (x => Parse (x.Name).Number)
+        .ThenBy (x => x.CreationDateTime)
         .ThenBy (x => x.Id)
         .ToList ();
     }
