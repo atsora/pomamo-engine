@@ -1339,6 +1339,292 @@ namespace Lemoine.GDBPersistentClasses.UnitTests
       }
     }
 
+    /// <summary>
+    /// Run a test of the option DynamicEndBeforeRealEnd with the aggressive strategy:
+    /// <item>a machine state template mst (next machine state template: unattended) is applied on [T(4), T(10))
+    /// with the dynamic end Test and the option DynamicEndBeforeRealEnd</item>
+    /// <item>first step: the dynamic end is not known yet (hint from T(4)),
+    /// so mst is applied aggressively and a dynamic end tracker with the option CancelAfterEnd is created</item>
+    /// <item>second step: the dynamic end is resolved with the specified response</item>
+    /// </summary>
+    /// <param name="initialize">initialize the observation state slots before the association, from T(1)</param>
+    /// <param name="secondStepResponse">response of the dynamic end in the second step</param>
+    /// <param name="beforeSecondStep">optional action to run before the second step</param>
+    /// <param name="check">checks to run at the end</param>
+    void RunCancelAfterEndTest (Action<IMonitoredMachine, IUser> initialize,
+                                Func<TestDynamicTime, IDynamicTimeResponse> secondStepResponse,
+                                Action<IMonitoredMachine, IMachineStateTemplate> beforeSecondStep,
+                                Action<ISession, IMonitoredMachine, IMachineStateTemplate, IMachineStateTemplate> check)
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          IMachineStateTemplate unattended = daoFactory.MachineStateTemplateDAO
+            .FindById ((int)StateTemplate.Unattended);
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          IMachineStateTemplate mst = ModelDAOHelper.ModelFactory.CreateMachineStateTemplate ("TestDynamicEnd");
+          mst.AddItem (attendedMOS);
+          mst.NextMachineStateTemplate = unattended;
+          daoFactory.MachineStateTemplateDAO.MakePersistent (mst);
+
+          initialize (machine1, user1);
+
+          // First step: the dynamic end is not known yet, the machine state template is applied aggressively
+          TestDynamicTime.SetResponses (x => x.CreateWithHint (R (4)));
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, mst, R (4, 10));
+            association.User = user1;
+            association.DateTime = T (4);
+            association.Dynamic = ",Test";
+            association.Option = AssociationOption.DynamicEndBeforeRealEnd;
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+          RunFirstSeveralTimes (10);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.EqualTo (mst),
+              "the machine state template was not applied aggressively");
+            Assert.That (session.CreateCriteria<MachineStateTemplateAssociation> ()
+              .List<MachineStateTemplateAssociation> ()
+              .Any (a => a.Option.HasValue && a.Option.Value.HasFlag (AssociationOption.CancelAfterEnd)
+                && object.Equals (a.MachineStateTemplate, unattended)
+                && Bound.Equals<DateTime> (a.End, T (10))),
+              Is.True, "no dynamic end tracker with the option CancelAfterEnd and the end T(10)");
+          });
+
+          beforeSecondStep?.Invoke (machine1, mst);
+
+          // Second step: the dynamic end is resolved
+          TestDynamicTime.SetResponses (secondStepResponse);
+          RunFirstSeveralTimes (20);
+          DAOFactory.EmptyAccumulators ();
+
+          check (session, machine1, mst, unattended);
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
+    void InitializeAttendedMachineObservationState (IMonitoredMachine machine, IUser user)
+    {
+      IMachineObservationState attendedMOS = ModelDAOHelper.DAOFactory.MachineObservationStateDAO
+        .FindById ((int)MachineObservationStateId.Attended);
+      InitializeObservationStateSlots (machine, attendedMOS, user);
+    }
+
+    static void CheckCancelledWarning ()
+    {
+      var logs = ModelDAOHelper.DAOFactory.MachineModificationLogDAO.FindAll ();
+      Assert.That (logs.Any (l => l.Level.Equals (LogLevel.WARN) && l.Message.Contains ("is cancelled")), Is.True,
+        "no warning analysis log records the cancellation");
+    }
+
+    /// <summary>
+    /// Option DynamicEndBeforeRealEnd: the dynamic end is finally after the end:
+    /// the machine state template that was applied aggressively is cancelled,
+    /// the machine observation state that was effective before is restored
+    /// and the next machine state template is not applied
+    /// </summary>
+    [Test]
+    public void TestDynamicEndBeforeRealEnd_FinalAfterEnd_Cancelled ()
+    {
+      RunCancelAfterEndTest (InitializeAttendedMachineObservationState,
+        x => x.CreateFinal (T (15)),
+        null,
+        (session, machine, mst, unattended) => {
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (4)), Is.Null, "not cancelled at T(4)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (8)), Is.Null, "not cancelled at T(8)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (16)), Is.Not.EqualTo (unattended),
+              "the next machine state template was applied");
+          });
+          CheckCancelledWarning ();
+        });
+    }
+
+    /// <summary>
+    /// Option DynamicEndBeforeRealEnd: the dynamic end is never reached: the machine state template is cancelled
+    /// </summary>
+    [Test]
+    public void TestDynamicEndBeforeRealEnd_NoData_Cancelled ()
+    {
+      RunCancelAfterEndTest (InitializeAttendedMachineObservationState,
+        x => x.CreateNoData (),
+        null,
+        (session, machine, mst, unattended) => {
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (4)), Is.Null, "not cancelled at T(4)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (8)), Is.Null, "not cancelled at T(8)");
+          });
+          CheckCancelledWarning ();
+        });
+    }
+
+    /// <summary>
+    /// Option DynamicEndBeforeRealEnd: the dynamic end is before the end:
+    /// the machine state template applies up to the dynamic end, then the next machine state template,
+    /// also after the end of the association
+    /// </summary>
+    [Test]
+    public void TestDynamicEndBeforeRealEnd_FinalBeforeEnd_NextMachineStateTemplate ()
+    {
+      RunCancelAfterEndTest (InitializeAttendedMachineObservationState,
+        x => x.CreateFinal (T (6)),
+        null,
+        (session, machine, mst, unattended) => {
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (5)), Is.EqualTo (mst), "wrong machine state template at T(5)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (8)), Is.EqualTo (unattended), "wrong machine state template at T(8)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (12)), Is.EqualTo (unattended), "wrong machine state template at T(12)");
+          });
+        });
+    }
+
+    /// <summary>
+    /// Option DynamicEndBeforeRealEnd: the dynamic end is exactly at the end: it is accepted
+    /// </summary>
+    [Test]
+    public void TestDynamicEndBeforeRealEnd_FinalAtEnd_NextMachineStateTemplate ()
+    {
+      RunCancelAfterEndTest (InitializeAttendedMachineObservationState,
+        x => x.CreateFinal (T (10)),
+        null,
+        (session, machine, mst, unattended) => {
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (8)), Is.EqualTo (mst), "wrong machine state template at T(8)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (12)), Is.EqualTo (unattended), "wrong machine state template at T(12)");
+          });
+        });
+    }
+
+    /// <summary>
+    /// Option DynamicEndBeforeRealEnd: the machine state template that was effective before is restored
+    /// </summary>
+    [Test]
+    public void TestDynamicEndBeforeRealEnd_Cancelled_PreviousMachineStateTemplateRestored ()
+    {
+      IMachineStateTemplate attended = null;
+      RunCancelAfterEndTest ((machine, user) => {
+          attended = ModelDAOHelper.DAOFactory.MachineStateTemplateDAO.FindById ((int)StateTemplate.Attended);
+          var association = ModelDAOHelper.ModelFactory
+            .CreateMachineStateTemplateAssociation (machine, attended, R (1));
+          association.User = user;
+          association.DateTime = T (1);
+          ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          AnalysisUnitTests.RunMakeAnalysis<MachineStateTemplateAssociation> (NHibernateHelper.GetCurrentSession ());
+        },
+        x => x.CreateFinal (T (15)),
+        null,
+        (session, machine, mst, unattended) => {
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (4)), Is.EqualTo (attended), "not restored at T(4)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (8)), Is.EqualTo (attended), "not restored at T(8)");
+          });
+          CheckCancelledWarning ();
+        });
+    }
+
+    /// <summary>
+    /// Option DynamicEndBeforeRealEnd: the restore stops at the next association that was created afterwards,
+    /// even if it has the same machine state template
+    /// </summary>
+    [Test]
+    public void TestDynamicEndBeforeRealEnd_Cancelled_UpToLaterAssociation ()
+    {
+      RunCancelAfterEndTest (InitializeAttendedMachineObservationState,
+        x => x.CreateFinal (T (15)),
+        (machine, mst) => {
+          var association = ModelDAOHelper.ModelFactory
+            .CreateMachineStateTemplateAssociation (machine, mst, R (7, 9));
+          association.DateTime = T (7);
+          ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+        },
+        (session, machine, mst, unattended) => {
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (4)), Is.Null, "not cancelled at T(4)");
+            Assert.That (GetMachineStateTemplateAt (session, machine, T (8)), Is.EqualTo (mst),
+              "the later association was cancelled at T(8)");
+          });
+          CheckCancelledWarning ();
+        });
+    }
+
+    /// <summary>
+    /// Option DynamicEndBeforeRealEnd without any next machine state template:
+    /// no dynamic end tracker is possible, so the machine state template is not applied aggressively,
+    /// the dynamic end is awaited instead
+    /// </summary>
+    [Test]
+    public void TestDynamicEndBeforeRealEnd_NoNextMachineStateTemplate_Wait ()
+    {
+      Lemoine.Extensions.ExtensionManager.Add (typeof (TestDynamicTime));
+
+      try {
+        IDAOFactory daoFactory = ModelDAOHelper.DAOFactory;
+        using (IDAOSession daoSession = daoFactory.OpenSession ())
+        using (IDAOTransaction transaction = daoSession.BeginTransaction ()) {
+          ISession session = NHibernateHelper.GetCurrentSession ();
+          IUser user1 = daoFactory.UserDAO.FindById (1);
+          IMonitoredMachine machine1 = daoFactory.MonitoredMachineDAO.FindById (3);
+          Assume.That (machine1.DefaultMachineStateTemplate, Is.Null, "the machine has a default machine state template");
+          IMachineObservationState attendedMOS = daoFactory.MachineObservationStateDAO
+            .FindById ((int)MachineObservationStateId.Attended);
+
+          IMachineStateTemplate mst = ModelDAOHelper.ModelFactory.CreateMachineStateTemplate ("TestDynamicEnd");
+          mst.AddItem (attendedMOS);
+          daoFactory.MachineStateTemplateDAO.MakePersistent (mst);
+
+          InitializeObservationStateSlots (machine1, attendedMOS, user1);
+
+          TestDynamicTime.SetResponses (x => x.CreateWithHint (R (4)));
+          {
+            var association = ModelDAOHelper.ModelFactory
+              .CreateMachineStateTemplateAssociation (machine1, mst, R (4, 10));
+            association.User = user1;
+            association.DateTime = T (4);
+            association.Dynamic = ",Test";
+            association.Option = AssociationOption.DynamicEndBeforeRealEnd;
+            daoFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+          }
+          RunFirstSeveralTimes (10);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.That (GetMachineStateTemplateAt (session, machine1, T (4)), Is.Not.EqualTo (mst),
+            "the machine state template was applied aggressively");
+
+          TestDynamicTime.SetResponses (x => x.CreateFinal (T (6)));
+          RunFirstSeveralTimes (10);
+          DAOFactory.EmptyAccumulators ();
+
+          Assert.Multiple (() => {
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (5)), Is.EqualTo (mst), "wrong machine state template at T(5)");
+            Assert.That (GetMachineStateTemplateAt (session, machine1, T (8)), Is.Not.EqualTo (mst), "wrong machine state template at T(8)");
+          });
+
+          transaction.Rollback ();
+        }
+      }
+      finally {
+        Lemoine.Extensions.ExtensionManager.ClearAdditionalExtensions ();
+        TestDynamicTime.Reset ();
+      }
+    }
+
     [OneTimeSetUp]
     public void Init()
     {

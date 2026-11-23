@@ -429,9 +429,11 @@ namespace Lemoine.GDBPersistentClasses
     /// Mark the modification as not applicable because a dynamic time could not be resolved
     ///
     /// Note: on the contrary to <see cref="ReasonMachineAssociation"/>, a machine state template that was
-    /// already applied is never reverted here. This is on purpose: there is no trace of the machine state
+    /// already applied is not reverted here. This is on purpose: there is no trace of the machine state
     /// template that was effective before, so it could not be restored. This is why the consequence is
     /// always recorded in the analysis logs.
+    /// The only exception is the dynamic end tracker with the option <see cref="AssociationOption.CancelAfterEnd"/>,
+    /// see <see cref="CancelTrackedMachineStateTemplate"/>
     /// </summary>
     /// <param name="message">reason why the dynamic time is not applicable and its consequence, recorded in the analysis logs</param>
     void MarkDynamicTimeNotApplicable (string message)
@@ -706,6 +708,10 @@ namespace Lemoine.GDBPersistentClasses
         SetModificationInError ("Incompatible properties Begin==null VS DynamicStart");
         return;
       }
+      if (this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.CancelAfterEnd)) {
+        MakeAnalysisDynamicEndTrackerWithLimit (dynamicStart);
+        return;
+      }
       try {
         IDynamicTimeResponse dynamicStartResponse = Lemoine.Business.DynamicTimes.DynamicTime
          .GetDynamicTime (dynamicStart, this.Machine, this.Range.Lower.Value);
@@ -749,6 +755,172 @@ namespace Lemoine.GDBPersistentClasses
       catch (NoDynamicTime) {
         GetLogger ().Error ($"MakeAnalysisDynamicStart: no dynamic start {dynamicStart}");
         SetModificationInError ("Dynamic start " + dynamicStart + " unknown");
+      }
+    }
+
+    /// <summary>
+    /// Dynamic end tracker with the option <see cref="AssociationOption.CancelAfterEnd"/>
+    ///
+    /// The tracked dynamic end is the dynamic start of the tracker and the end of the range of the tracker is a limit:
+    /// <item>dynamic end before or at the limit: apply the next machine state template (of the tracker) from the dynamic end, with no upper bound</item>
+    /// <item>dynamic end after the limit, or never reached: cancel the machine state template that was applied aggressively</item>
+    /// </summary>
+    /// <param name="trackedDynamicEnd">dynamic end that is tracked, not null or empty</param>
+    void MakeAnalysisDynamicEndTrackerWithLimit (string trackedDynamicEnd)
+    {
+      Debug.Assert (this.Begin.HasValue);
+      if (!this.End.HasValue) {
+        SetModificationInError ("Incompatible properties End=null VS option CancelAfterEnd");
+        return;
+      }
+
+      IDynamicTimeResponse response;
+      try {
+        // Note: the upper limit is inclusive, so that a dynamic end at the limit is accepted
+        var limit = new UtcDateTimeRange (this.Range.Lower, this.Range.Upper, true, true);
+        response = Lemoine.Business.DynamicTimes.DynamicTime
+          .GetDynamicTime (trackedDynamicEnd, this.Machine, this.Range.Lower.Value, new UtcDateTimeRange ("(,)"), limit);
+      }
+      catch (NoDynamicTime) {
+        GetLogger ().Error ($"MakeAnalysisDynamicEndTrackerWithLimit: no dynamic time {trackedDynamicEnd}");
+        SetModificationInError ("Dynamic end " + trackedDynamicEnd + " unknown");
+        return;
+      }
+      Debug.Assert (null != response);
+
+      if (response.Timeout) {
+        if (log.IsWarnEnabled) {
+          log.Warn ($"MakeAnalysisDynamicEndTrackerWithLimit: Timeout for the dynamic end {trackedDynamicEnd} at {this.Range.Lower} => try again later");
+        }
+        MarkAsPending (null);
+      }
+      else if (response.NotApplicable) {
+        CancelTrackedMachineStateTemplate ($"The dynamic end {trackedDynamicEnd} is not applicable at {this.Range.Lower}");
+      }
+      else if (response.NoData) {
+        CancelTrackedMachineStateTemplate ($"The dynamic end {trackedDynamicEnd} is not reached before the end {this.End}");
+      }
+      else if (response.Final.HasValue) {
+        var dynamicEnd = response.Final.Value;
+        if (Bound.Compare<DateTime> (this.End, dynamicEnd) < 0) {
+          CancelTrackedMachineStateTemplate ($"The dynamic end {trackedDynamicEnd} at {dynamicEnd} is after the end {this.End}");
+        }
+        else {
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MakeAnalysisDynamicEndTrackerWithLimit: dynamic end {dynamicEnd} before the end {this.End} => apply {this.MachineStateTemplate} from it");
+          }
+          var subModification = this.Clone (new UtcDateTimeRange (dynamicEnd));
+          subModification.Dynamic = null;
+          subModification.Option = subModification.Option?.Remove (AssociationOption.CancelAfterEnd);
+          subModification = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (subModification);
+          subModification.Parent = this.MainModification ?? this;
+          subModification.Priority = this.Priority;
+          MarkAsCompleted ("");
+        }
+      }
+      else if (response.Hint.Lower.HasValue && (Bound.Compare<DateTime> (this.End, response.Hint.Lower.Value) < 0)) {
+        CancelTrackedMachineStateTemplate ($"The dynamic end {trackedDynamicEnd} is after {response.Hint.Lower}, after the end {this.End}");
+      }
+      else { // Pending
+        if (GetLogger ().IsDebugEnabled) {
+          GetLogger ().Debug ($"MakeAnalysisDynamicEndTrackerWithLimit: the dynamic end {trackedDynamicEnd} is not known yet, hint={response.Hint}");
+        }
+        MarkAsPending (response.Hint.Lower.HasValue ? response.Hint.Lower.Value : (DateTime?)null);
+      }
+    }
+
+    /// <summary>
+    /// Cancel the machine state template that was applied aggressively on the range of this dynamic end tracker
+    ///
+    /// The machine state template (or the machine observation state if there was no machine state template)
+    /// that was effective just before the range is restored, only where the tracked machine state template
+    /// is still effective, and only up to the next association that was created afterwards
+    /// </summary>
+    /// <param name="reason">reason of the cancellation, recorded in the analysis logs</param>
+    void CancelTrackedMachineStateTemplate (string reason)
+    {
+      Debug.Assert (this.Begin.HasValue);
+      Debug.Assert (this.End.HasValue);
+
+      var trackedMachineStateTemplate = ((this.Parent as IMachineStateTemplateAssociation)
+        ?? (this.MainModification as IMachineStateTemplateAssociation))?.MachineStateTemplate;
+      if (trackedMachineStateTemplate is null) {
+        log.Error ($"CancelTrackedMachineStateTemplate: no tracked machine state template for the tracker {this.Id}");
+        MarkDynamicTimeNotApplicable ($"{reason} => the machine state template should be cancelled on {this.Range}, but the tracked machine state template is unknown");
+        return;
+      }
+
+      // Restrict the cancellation up to the next association that was created afterwards
+      var mainModificationId = (this.MainModification ?? this).Id;
+      var restoreRange = new UtcDateTimeRange (this.Begin.Value, this.End.Value);
+      var laterAssociations = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
+        .FindByMachineAndPeriod (this.Machine, this.Begin.Value, this.End.Value)
+        .Where (a => mainModificationId < a.Id);
+      foreach (var laterAssociation in laterAssociations) {
+        var laterStart = Bound.Compare<DateTime> (laterAssociation.Begin, restoreRange.Lower) < 0
+          ? restoreRange.Lower.Value
+          : laterAssociation.Begin.Value;
+        if (Bound.Compare<DateTime> (laterStart, restoreRange.Upper) < 0) {
+          restoreRange = new UtcDateTimeRange (restoreRange.Lower, laterStart);
+        }
+      }
+      if (restoreRange.IsEmpty ()) {
+        MarkDynamicTimeNotApplicable ($"{reason} => the machine state template {trackedMachineStateTemplate} should be cancelled on {this.Range}, but a more recent association already applies");
+        return;
+      }
+
+      var previousSlot = ModelDAOHelper.DAOFactory.ObservationStateSlotDAO
+        .FindWithEnd (this.Machine, this.Begin.Value);
+      if (previousSlot is null) {
+        MarkDynamicTimeNotApplicable ($"{reason} => the machine state template {trackedMachineStateTemplate} should be cancelled on {restoreRange}, but nothing was effective just before, so it is kept");
+        return;
+      }
+      if (trackedMachineStateTemplate.Equals (previousSlot.MachineStateTemplate)) {
+        MarkDynamicTimeNotApplicable ($"{reason} => the machine state template {trackedMachineStateTemplate} was already effective before {this.Begin}, so it is kept");
+        return;
+      }
+      if ((previousSlot.MachineStateTemplate is null) && (previousSlot.MachineObservationState is null)) {
+        MarkDynamicTimeNotApplicable ($"{reason} => the machine state template {trackedMachineStateTemplate} should be cancelled on {restoreRange}, but nothing was effective just before, so it is kept");
+        return;
+      }
+
+      // Only where the tracked machine state template is still effective
+      var trackedRanges = ModelDAOHelper.DAOFactory.MachineStateTemplateSlotDAO
+        .FindOverlapsRangeMatchingMachineStateTemplate (this.Machine, restoreRange, trackedMachineStateTemplate)
+        .Select (s => new UtcDateTimeRange (s.DateTimeRange.Intersects (restoreRange)))
+        .Where (r => !r.IsEmpty ())
+        .ToList ();
+      foreach (var range in trackedRanges) {
+        IMachineModification restoreModification;
+        if (null != previousSlot.MachineStateTemplate) {
+          var association = ModelDAOHelper.ModelFactory
+            .CreateMachineStateTemplateAssociation (this.Machine, previousSlot.MachineStateTemplate, range);
+          association.DateTime = this.DateTime;
+          restoreModification = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO.MakePersistent (association);
+        }
+        else {
+          var association = ModelDAOHelper.ModelFactory
+            .CreateMachineObservationStateAssociation (this.Machine, previousSlot.MachineObservationState, range);
+          association.User = previousSlot.User;
+          association.Shift = previousSlot.Shift;
+          association.DateTime = this.DateTime;
+          restoreModification = ModelDAOHelper.DAOFactory.MachineObservationStateAssociationDAO.MakePersistent (association);
+        }
+        restoreModification.Parent = this.MainModification ?? this;
+        restoreModification.Priority = this.StatusPriority;
+      }
+
+      var restored = (null != previousSlot.MachineStateTemplate)
+        ? $"the machine state template {previousSlot.MachineStateTemplate}"
+        : $"the machine observation state {previousSlot.MachineObservationState}";
+      var message = $"{reason} => the machine state template {trackedMachineStateTemplate} is cancelled: {restored} that was effective before {this.Begin} is restored on {string.Join (", ", trackedRanges)}";
+      if (trackedRanges.Any ()) {
+        // Note: not MarkAsNotApplicable here, else the restore sub-modifications would not be processed (ParentInError)
+        AddAnalysisLog (LogLevel.WARN, message);
+        MarkAsCompleted ("");
+      }
+      else {
+        MarkDynamicTimeNotApplicable (message);
       }
     }
 
@@ -893,7 +1065,22 @@ namespace Lemoine.GDBPersistentClasses
           MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicEnd} is out of {this.Range} while the option DynamicEndBeforeRealEnd is set => the machine state template {this.MachineStateTemplate} is not applied on {this.Range}");
           return;
         }
-        
+
+        // With the option DynamicEndBeforeRealEnd, the machine state template that is applied aggressively
+        // must be cancelled if the dynamic end is finally after the end:
+        // this is the dynamic end tracker that takes care of it, with the option CancelAfterEnd
+        var cancelAfterEnd = this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)
+          && this.End.HasValue && !this.Dynamic.EndsWith ("+");
+        if (cancelAfterEnd && (GetNextMachineStateTemplate (this) is null)) {
+          // No dynamic end tracker is possible without a next machine state template:
+          // do not apply the machine state template aggressively, wait for the dynamic end instead
+          if (log.IsDebugEnabled) {
+            log.Debug ($"MakeAnalysisDynamicEndAggressive: option DynamicEndBeforeRealEnd and no next machine state template => wait for the dynamic end, hint={dynamicEndResponse.Hint}");
+          }
+          MarkAsPending (dynamicEndResponse.Hint.Lower.HasValue ? dynamicEndResponse.Hint.Lower.Value : (DateTime?)null);
+          return;
+        }
+
         if (!this.Range.IsEmpty ()) {
           var range = this.CloneRange;
           bool removeDynamicPlus = false;
@@ -930,11 +1117,15 @@ namespace Lemoine.GDBPersistentClasses
               }
             }
             else {
+              // With the option CancelAfterEnd, the end of the range of the tracker is the limit
+              // after which the machine state template is cancelled
               var trackerRange = this.Dynamic.EndsWith ("+")
                 ? new UtcDateTimeRange (range.Upper.Value)
-                : new UtcDateTimeRange (range.Lower.Value);
+                : (cancelAfterEnd
+                  ? new UtcDateTimeRange (range.Lower.Value, this.End.Value)
+                  : new UtcDateTimeRange (range.Lower.Value));
               var trackDynamicEndModification = ModelDAOHelper.DAOFactory.MachineStateTemplateAssociationDAO
-                .InsertSub (this, trackerRange, association => MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (dynamicEnd, dynamicEndResponse.Hint, aggressiveSubModification, association, removeDynamicPlus), aggressiveSubModification);
+                .InsertSub (this, trackerRange, association => MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (dynamicEnd, dynamicEndResponse.Hint, aggressiveSubModification, association, removeDynamicPlus, cancelAfterEnd), aggressiveSubModification);
               if (dynamicEndResponse.Hint.Lower.HasValue) {
                 ((MachineStateTemplateAssociation)trackDynamicEndModification).MarkAsInProgress (dynamicEndResponse.Hint.Lower.Value);
               }
@@ -972,8 +1163,11 @@ namespace Lemoine.GDBPersistentClasses
       ?? association.MachineStateTemplate?.NextMachineStateTemplate
       ?? association.Machine?.DefaultMachineStateTemplate;
 
-    static void MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (string dynamicEnd, UtcDateTimeRange hint, IMachineModification parent, IMachineStateTemplateAssociation association, bool removeDynamicPlus)
+    static void MakeAnalysisDynamicEndAggressiveSubChangeDynamicEndTracker (string dynamicEnd, UtcDateTimeRange hint, IMachineModification parent, IMachineStateTemplateAssociation association, bool removeDynamicPlus, bool cancelAfterEnd)
     {
+      if (cancelAfterEnd) {
+        association.Option = AssociationOption.CancelAfterEnd.Add (association.Option);
+      }
       var nextMachineStateTemplate = GetNextMachineStateTemplate (association);
       association.Dynamic = $"{dynamicEnd},";
       association.MachineStateTemplate = nextMachineStateTemplate;
@@ -998,7 +1192,12 @@ namespace Lemoine.GDBPersistentClasses
     {
       if ((Bound.Compare<DateTime> (this.End, dynamicApplicableEnd) < 0)
         && this.Option.HasValue && this.Option.Value.HasFlag (AssociationOption.DynamicEndBeforeRealEnd)) {
-        MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicApplicableEnd} is after the end {this.End} while the option DynamicEndBeforeRealEnd is set => the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted");
+        // Note: applyNextMachineStateTemplate is set by the aggressive strategy when the dynamic end is known at once:
+        // nothing was applied yet then
+        var consequence = applyNextMachineStateTemplate
+          ? $"the machine state template {this.MachineStateTemplate} is not applied on {this.Range}"
+          : $"the part of {this.Range} that was already applied for the machine state template {this.MachineStateTemplate} is kept, it is not reverted";
+        MarkDynamicTimeNotApplicable ($"The dynamic end {dynamicApplicableEnd} is after the end {this.End} while the option DynamicEndBeforeRealEnd is set => {consequence}");
         return;
       }
 

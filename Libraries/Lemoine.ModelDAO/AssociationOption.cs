@@ -72,6 +72,16 @@ namespace Lemoine.Model
     /// Skip the compatibility check
     /// </summary>
     NoCompatibilityCheck = 2048, // 1 << 11
+    /// <summary>
+    /// Dynamic end tracker of a machine state template association
+    /// with the option <see cref="DynamicEndBeforeRealEnd"/>: the end of its range is a limit.
+    ///
+    /// If the tracked dynamic end is after this limit (or is never reached), the machine state template
+    /// that was applied aggressively is cancelled: the machine state template (or the machine observation state)
+    /// that was effective before it is restored.
+    /// Else the next machine state template applies from the dynamic end, with no upper bound
+    /// </summary>
+    CancelAfterEnd = 4096, // 1 << 12
   };
   
   /// <summary>

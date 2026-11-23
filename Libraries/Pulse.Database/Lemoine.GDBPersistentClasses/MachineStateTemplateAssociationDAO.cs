@@ -47,10 +47,10 @@ namespace Lemoine.GDBPersistentClasses
         .Add (GetMachineCriterion (machine.Id))
         .Add (Restrictions.IsNull ("ParentGlobal"))
         .Add (Restrictions.IsNull ("ParentMachine"))
-        .Add (Restrictions.Lt ("Begin", end))
+        .Add (Restrictions.Lt ("Begin", (LowerBound<DateTime>)end))
         .Add (Restrictions.Or (
           Restrictions.IsNull ("End"),
-          Restrictions.Gt ("End", start)))
+          Restrictions.Gt ("End", (UpperBound<DateTime>)start)))
         .List<IMachineStateTemplateAssociation> ();
     }
 
