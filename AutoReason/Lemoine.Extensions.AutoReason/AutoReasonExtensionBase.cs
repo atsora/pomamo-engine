@@ -43,6 +43,7 @@ namespace Lemoine.Extensions.AutoReason
 
     string m_defaultReasonTranslationKey;
     string m_defaultReasonTranslationValue;
+    IDictionary<string, string> m_defaultReasonTranslations;
     readonly string m_pluginKey;
 
     readonly IList<IAutoReasonAction> m_delayedActions = new List<IAutoReasonAction> ();
@@ -109,6 +110,18 @@ namespace Lemoine.Extensions.AutoReason
     {
       m_defaultReasonTranslationKey = defaultReasonTranslationKey;
       m_pluginKey = pluginKey;
+    }
+
+    /// <summary>
+    /// Constructor with the translations of the default reason in other locales
+    /// </summary>
+    /// <param name="defaultReasonTranslationKey"></param>
+    /// <param name="defaultReasonTranslations">translations of the default reason by locale (for example fr or de), added if missing. Nullable</param>
+    /// <param name="pluginKey"></param>
+    protected AutoReasonExtensionBase (string defaultReasonTranslationKey, IDictionary<string, string> defaultReasonTranslations, string pluginKey)
+      : this (defaultReasonTranslationKey, pluginKey)
+    {
+      m_defaultReasonTranslations = defaultReasonTranslations;
     }
 
     /// <summary>
@@ -207,6 +220,7 @@ namespace Lemoine.Extensions.AutoReason
         Debug.Assert (!string.IsNullOrEmpty (configuration.DefaultReasonTranslationValue));
         m_defaultReasonTranslationKey = configuration.DefaultReasonTranslationKey;
         m_defaultReasonTranslationValue = configuration.DefaultReasonTranslationValue;
+        m_defaultReasonTranslations = configuration.DefaultReasonTranslations;
       }
 
       if ( (0 == configuration.ReasonId) && string.IsNullOrEmpty (m_defaultReasonTranslationKey)) {
@@ -227,7 +241,7 @@ namespace Lemoine.Extensions.AutoReason
         if (0 == reasonId) {
           Debug.Assert (!string.IsNullOrEmpty (m_defaultReasonTranslationKey)); // See above
           m_reason = ConfigRequests.AddReason (m_defaultReasonTranslationKey,
-            m_defaultReasonTranslationValue);
+            m_defaultReasonTranslationValue, m_defaultReasonTranslations);
         }
         else { // 0 != reasonId
           m_reason = ModelDAOHelper.DAOFactory.ReasonDAO

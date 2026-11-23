@@ -26,6 +26,7 @@ namespace Lemoine.Extensions.AutoReason
   {
     string m_defaultReasonTranslationKey;
     string m_defaultReasonTranslationValue;
+    IDictionary<string, string> m_defaultReasonTranslations;
 
     static readonly ILog log = LogManager.GetLogger (typeof (AutoReasonAutoConfigPlugin<TConfiguration>).FullName);
 
@@ -39,6 +40,18 @@ namespace Lemoine.Extensions.AutoReason
     {
       m_defaultReasonTranslationKey = defaultReasonTranslationKey;
       m_defaultReasonTranslationValue = defaultReasonTranslationValue;
+    }
+
+    /// <summary>
+    /// Constructor with the default reason and its translations in other locales
+    /// </summary>
+    /// <param name="defaultReasonTranslationKey">not null or empty</param>
+    /// <param name="defaultReasonTranslationValue">not null or empty</param>
+    /// <param name="defaultReasonTranslations">translations of the default reason by locale (for example fr or de). Nullable</param>
+    protected AutoReasonAutoConfigPlugin (string defaultReasonTranslationKey, string defaultReasonTranslationValue, IDictionary<string, string> defaultReasonTranslations)
+      : this (defaultReasonTranslationKey, defaultReasonTranslationValue)
+    {
+      m_defaultReasonTranslations = defaultReasonTranslations;
     }
 
     /// <summary>
@@ -72,7 +85,7 @@ namespace Lemoine.Extensions.AutoReason
         && !string.IsNullOrEmpty (m_defaultReasonTranslationValue)) {
         using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
           using (var transaction = session.BeginTransaction ("AutoReason.Plugin.Install.1")) {
-            AddReason (m_defaultReasonTranslationKey, m_defaultReasonTranslationValue);
+            ConfigRequests.AddReason (m_defaultReasonTranslationKey, m_defaultReasonTranslationValue, m_defaultReasonTranslations);
             transaction.Commit ();
           }
         }

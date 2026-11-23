@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+using Lemoine.Core.Log;
 using Lemoine.Model;
 using Lemoine.ModelDAO;
 using System;
@@ -14,6 +15,8 @@ namespace Lemoine.Extensions.AutoReason
 {
   public static class ConfigRequests
   {
+    static readonly ILog log = LogManager.GetLogger (typeof (ConfigRequests).FullName);
+
     /// <summary>
     /// Add a translation if it does not exist yet
     /// </summary>
@@ -32,6 +35,41 @@ namespace Lemoine.Extensions.AutoReason
           }
           transaction.Commit ();
           return translation;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Add the translations of a translation key in locales other than the default one,
+    /// if they do not exist yet. An existing translation is never overwritten
+    /// </summary>
+    /// <param name="translationKey">not null or empty</param>
+    /// <param name="translations">translation value by locale (for example fr or de). Nullable</param>
+    internal static void AddMissingTranslations (string translationKey, IDictionary<string, string> translations)
+    {
+      Debug.Assert (!string.IsNullOrEmpty (translationKey));
+
+      var validTranslations = translations?
+        .Where (t => !string.IsNullOrEmpty (t.Key) && !string.IsNullOrEmpty (t.Value))
+        .ToList ();
+      if (validTranslations is null || !validTranslations.Any ()) {
+        return;
+      }
+
+      using (var session = ModelDAOHelper.DAOFactory.OpenSession ()) {
+        using (var transaction = session.BeginTransaction ("AutoReason.Plugin.ConfigRequests.AddMissingTranslations")) {
+          foreach (var t in validTranslations) {
+            var translation = ModelDAOHelper.DAOFactory.TranslationDAO.Find (t.Key, translationKey);
+            if (translation is null) {
+              if (log.IsInfoEnabled) {
+                log.Info ($"AddMissingTranslations: add the translation {t.Value} of {translationKey} for locale {t.Key}");
+              }
+              translation = ModelDAOHelper.ModelFactory.CreateTranslation (t.Key, translationKey);
+              translation.TranslationValue = t.Value;
+              ModelDAOHelper.DAOFactory.TranslationDAO.MakePersistent (translation);
+            }
+          }
+          transaction.Commit ();
         }
       }
     }
@@ -71,8 +109,9 @@ namespace Lemoine.Extensions.AutoReason
     /// </summary>
     /// <param name="translationKey">not null or empty</param>
     /// <param name="translationValue">not null if the reason must be created</param>
+    /// <param name="translations">translations in other locales (for example fr or de), added if missing, even when the reason already exists. Nullable</param>
     /// <returns></returns>
-    public static IReason AddReason (string translationKey, string translationValue)
+    public static IReason AddReason (string translationKey, string translationValue, IDictionary<string, string> translations = null)
     {
       Debug.Assert (!string.IsNullOrEmpty (translationKey));
 
@@ -87,6 +126,7 @@ namespace Lemoine.Extensions.AutoReason
             AddTranslation (translationKey, translationValue);
             reason = CreateReason (translationKey, reasonGroup);
           }
+          AddMissingTranslations (translationKey, translations);
           transaction.Commit ();
           return reason;
         }
