@@ -33,6 +33,12 @@ namespace Lemoine.GDBPersistentClasses
     int m_partialCycles;
     TimeSpan? m_averageCycleTime;
     TimeSpan? m_productionDuration;
+    int m_reportedCycles = 0;
+    int m_reportedParts = 0;
+    int m_validParts = 0;
+    int m_setupParts = 0;
+    int m_scrapParts = 0;
+    int m_fixableParts = 0;
     UtcDateTimeRange m_dateTimeRange;
     DayRange m_dayRange;
 
@@ -151,6 +157,28 @@ namespace Lemoine.GDBPersistentClasses
               operationSlot.PartialCycles, operationSlot.AverageCycleTime, operationSlot.ProductionDuration,
               operationSlot.DateTimeRange, operationSlot.DayRange)
     {
+      m_reportedCycles = operationSlot.ReportedCycles;
+      m_reportedParts = operationSlot.ReportedParts;
+      m_validParts = operationSlot.ValidParts;
+      m_setupParts = operationSlot.SetupParts;
+      m_scrapParts = operationSlot.ScrapParts;
+      m_fixableParts = operationSlot.FixableParts;
+    }
+
+    /// <summary>
+    /// Add the scrap counters of another slot (to merge them)
+    /// </summary>
+    /// <param name="other">not null</param>
+    internal protected virtual void AddScrapCounters (IWorkOrderToOperationOnlySlot other)
+    {
+      Debug.Assert (null != other);
+
+      m_reportedCycles += other.ReportedCycles;
+      m_reportedParts += other.ReportedParts;
+      m_validParts += other.ValidParts;
+      m_setupParts += other.SetupParts;
+      m_scrapParts += other.ScrapParts;
+      m_fixableParts += other.FixableParts;
     }
     #endregion // Constructors
 
@@ -258,6 +286,36 @@ namespace Lemoine.GDBPersistentClasses
     {
       get { return m_productionDuration; }
     }
+
+    /// <summary>
+    /// <see cref="IWorkOrderToOperationOnlySlot"/>
+    /// </summary>
+    public virtual int ReportedCycles => m_reportedCycles;
+
+    /// <summary>
+    /// <see cref="IWorkOrderToOperationOnlySlot"/>
+    /// </summary>
+    public virtual int ReportedParts => m_reportedParts;
+
+    /// <summary>
+    /// <see cref="IWorkOrderToOperationOnlySlot"/>
+    /// </summary>
+    public virtual int ValidParts => m_validParts;
+
+    /// <summary>
+    /// <see cref="IWorkOrderToOperationOnlySlot"/>
+    /// </summary>
+    public virtual int SetupParts => m_setupParts;
+
+    /// <summary>
+    /// <see cref="IWorkOrderToOperationOnlySlot"/>
+    /// </summary>
+    public virtual int ScrapParts => m_scrapParts;
+
+    /// <summary>
+    /// <see cref="IWorkOrderToOperationOnlySlot"/>
+    /// </summary>
+    public virtual int FixableParts => m_fixableParts;
 
     /// <summary>
     /// Date/time range of the slot

@@ -86,6 +86,36 @@ namespace Lemoine.Model
     TimeSpan? ProductionDuration { get; }
 
     /// <summary>
+    /// Number of cycles covered by the applied scrap reports
+    /// </summary>
+    int ReportedCycles { get; }
+
+    /// <summary>
+    /// Number of parts covered by the applied scrap reports
+    /// </summary>
+    int ReportedParts { get; }
+
+    /// <summary>
+    /// Number of valid parts in the applied scrap reports
+    /// </summary>
+    int ValidParts { get; }
+
+    /// <summary>
+    /// Number of set-up parts in the applied scrap reports
+    /// </summary>
+    int SetupParts { get; }
+
+    /// <summary>
+    /// Number of scrap parts in the applied scrap reports
+    /// </summary>
+    int ScrapParts { get; }
+
+    /// <summary>
+    /// Number of parts that can be fixed in the applied scrap reports
+    /// </summary>
+    int FixableParts { get; }
+
+    /// <summary>
     /// Duration of the slot
     /// </summary>
     TimeSpan? Duration { get; }

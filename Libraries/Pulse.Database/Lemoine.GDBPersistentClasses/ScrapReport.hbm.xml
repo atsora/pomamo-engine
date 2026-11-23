@@ -23,7 +23,7 @@
                  not-null="true"
                  cascade="none" />
     <property name="Quantity"
-              column="scrapreasonreportquantity"
+              column="scrapreasonquantity"
               not-null="true" />
   </class>
   <subclass name="ScrapReport"
@@ -44,7 +44,7 @@
                 column="scrapreportdatetimerange"
                 not-null="true" />
       <property name="Day"
-                column="operationslotday"
+                column="scrapreportday"
                 access="nosetter.camelcase-m-underscore" />
       <many-to-one name="Shift" column="shiftid" class="Shift"
                    access="nosetter.camelcase-m-underscore" />
@@ -90,7 +90,7 @@
       <bag name="Reasons"
            access="nosetter.camelcase-m-underscore"
            table="scrapreasonreport"
-           cascade="none"
+           cascade="save-update"
            inverse="true" lazy="true">
         <key column="modificationid" />
         <one-to-many class="ScrapReasonReport" />

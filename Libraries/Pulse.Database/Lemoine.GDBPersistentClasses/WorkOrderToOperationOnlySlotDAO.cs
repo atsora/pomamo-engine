@@ -153,7 +153,7 @@ namespace Lemoine.GDBPersistentClasses
       else {
         productionDuration = right.ProductionDuration;
       }
-      IWorkOrderToOperationOnlySlot result = new WorkOrderToOperationOnlySlot (left.Machine,
+      var result = new WorkOrderToOperationOnlySlot (left.Machine,
                                                                                left.ManufacturingOrder,
                                                                                left.WorkOrder,
                                                                                left.Component,
@@ -167,6 +167,8 @@ namespace Lemoine.GDBPersistentClasses
                                                                                averageCycleTime, productionDuration,
                                                                                newRange,
                                                                                newDayRange);
+      result.AddScrapCounters (left);
+      result.AddScrapCounters (right);
       return result;
     }
     

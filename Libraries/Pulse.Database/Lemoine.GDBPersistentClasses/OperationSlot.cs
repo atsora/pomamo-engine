@@ -131,7 +131,27 @@ namespace Lemoine.GDBPersistentClasses
     TimeSpan? m_averageCycleTime; // in s
     bool? m_autoManufacturingOrder;
     TimeSpan? m_productionDuration = null;
+    int m_reportedCycles = 0;
+    int m_reportedParts = 0;
+    int m_validParts = 0;
+    int m_setupParts = 0;
+    int m_scrapParts = 0;
+    int m_fixableParts = 0;
 
+    /// <summary>
+    /// Are the scrap counters up to date ?
+    ///
+    /// They must be recomputed from the scrap reports after a new slot is created,
+    /// or after its range or its operation changed.
+    /// Not when the slot is only extended to the future, since there is no scrap report there yet
+    /// </summary>
+    bool m_scrapConsolidated = true;
+    /// <summary>
+    /// If valid, range for which the scrap counters were consolidated (with the same operation),
+    /// so that only the changed periods are considered by the next consolidation
+    /// </summary>
+    [NonSerialized]
+    ConsolidationRange m_scrapConsolidationRange = new ConsolidationRange ();
     bool m_activityConsolidated = true;
     [NonSerialized]
     ConsolidationRange m_activityConsolidationRange = new ConsolidationRange ();
@@ -160,6 +180,7 @@ namespace Lemoine.GDBPersistentClasses
                           UtcDateTimeRange range)
   : base (true, machine, range)
     {
+      m_scrapConsolidated = IsInTheFuture (range);
     }
 
     /// <summary>
@@ -196,6 +217,7 @@ namespace Lemoine.GDBPersistentClasses
       m_manufacturingOrder = manufacturingOrder;
       m_day = day;
       m_shift = shift;
+      m_scrapConsolidated = IsInTheFuture (range);
       if (Bound.Compare<DateTime> (range.Lower, DateTime.UtcNow) <= 0) {
         // Invalid the consolidation only if the slot is not only in the future
         m_activityConsolidated = false;
@@ -234,6 +256,8 @@ namespace Lemoine.GDBPersistentClasses
         using (ChangeTracker changeTracker = new ChangeTracker (this)) {
           m_operation = value;
         }
+        // The scrap reports of the slot must match its operation: full recompute
+        InvalidateScrapFully ();
       }
     }
 
@@ -402,6 +426,12 @@ namespace Lemoine.GDBPersistentClasses
           m_endDateTimeInitialized = true;
         }
 
+        if (Bound.Compare<DateTime> (value, base.EndDateTime) < 0) {
+          // Some scrap reports may not be included in the slot any more.
+          // Note: an extension of the end is ignored, since there is no scrap report there yet
+          InvalidateScrapForNewRange ();
+        }
+
         using (ChangeTracker changeTracker = new ChangeTracker (this)) {
           base.EndDateTime = value;
         }
@@ -537,17 +567,245 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IOperationSlot"/>
+    /// </summary>
+    public virtual int ReportedCycles => m_reportedCycles;
+
+    /// <summary>
+    /// <see cref="IOperationSlot"/>
+    /// </summary>
+    public virtual int ReportedParts => m_reportedParts;
+
+    /// <summary>
+    /// <see cref="IOperationSlot"/>
+    /// </summary>
+    public virtual int ValidParts => m_validParts;
+
+    /// <summary>
+    /// <see cref="IOperationSlot"/>
+    /// </summary>
+    public virtual int SetupParts => m_setupParts;
+
+    /// <summary>
+    /// <see cref="IOperationSlot"/>
+    /// </summary>
+    public virtual int ScrapParts => m_scrapParts;
+
+    /// <summary>
+    /// <see cref="IOperationSlot"/>
+    /// </summary>
+    public virtual int FixableParts => m_fixableParts;
+
+    /// <summary>
     /// <see cref="Slot.Consolidated" />
+    ///
+    /// Note: the setter does not change the consolidation state of the scrap counters,
+    /// which depends only on the changes of range and operation
     /// </summary>
     public override bool Consolidated
     {
-      get { return m_activityConsolidated && m_productionConsolidated; }
+      get { return m_activityConsolidated && m_productionConsolidated && m_scrapConsolidated; }
       set {
         if (GetLogger ().IsDebugEnabled) {
           GetLogger ().Debug ($"Consolidated.set: set {value} to Consolidated for {this}");
         }
         m_activityConsolidated = value;
         m_productionConsolidated = value;
+      }
+    }
+
+    /// <summary>
+    /// Is a range in the future only ? There is no scrap report there yet
+    /// </summary>
+    static bool IsInTheFuture (UtcDateTimeRange range) =>
+      Bound.Compare<DateTime> (DateTime.UtcNow, range.Lower) <= 0;
+
+    /// <summary>
+    /// Is the full range of a scrap report included in the range of this slot ?
+    ///
+    /// A scrap report applies to a single operation slot
+    /// </summary>
+    /// <param name="scrapReport">not null</param>
+    /// <returns></returns>
+    internal protected virtual bool IsScrapReportIn (IScrapReport scrapReport)
+    {
+      Debug.Assert (null != scrapReport);
+
+      return this.DateTimeRange.ContainsRange (scrapReport.DateTimeRange);
+    }
+
+    /// <summary>
+    /// Does a scrap report apply to this slot: is it included in the slot with the same operation ?
+    /// </summary>
+    /// <param name="scrapReport">not null</param>
+    /// <returns></returns>
+    internal protected virtual bool IsScrapReportApplicable (IScrapReport scrapReport) =>
+      IsScrapReportIn (scrapReport) && object.Equals (scrapReport.Operation, this.Operation);
+
+    /// <summary>
+    /// Add (multiplicator = +1) or remove (multiplicator = -1) the counters of a scrap report
+    /// </summary>
+    /// <param name="scrapReport">not null</param>
+    /// <param name="multiplicator">+1 or -1</param>
+    internal protected virtual void AddScrapReport (IScrapReport scrapReport, int multiplicator = +1)
+    {
+      Debug.Assert (null != scrapReport);
+      Debug.Assert ((1 == multiplicator) || (-1 == multiplicator));
+
+      m_reportedCycles += multiplicator * scrapReport.NbCycles;
+      m_reportedParts += multiplicator * scrapReport.NbParts;
+      m_validParts += multiplicator * scrapReport.NbValid;
+      m_setupParts += multiplicator * scrapReport.NbSetup;
+      m_scrapParts += multiplicator * scrapReport.NbScrap;
+      m_fixableParts += multiplicator * scrapReport.NbFixable;
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"AddScrapReport: scrap report {scrapReport.Id} multiplicator={multiplicator} => reported cycles={m_reportedCycles} parts={m_reportedParts} valid={m_validParts} setup={m_setupParts} scrap={m_scrapParts} fixable={m_fixableParts}");
+      }
+    }
+
+    void ResetScrapCounters ()
+    {
+      m_reportedCycles = 0;
+      m_reportedParts = 0;
+      m_validParts = 0;
+      m_setupParts = 0;
+      m_scrapParts = 0;
+      m_fixableParts = 0;
+    }
+
+    /// <summary>
+    /// The range of the slot is about to change: keep the range the scrap counters were consolidated for,
+    /// so that only the changed periods are considered by the next consolidation
+    ///
+    /// To call before the range is updated
+    /// </summary>
+    void InvalidateScrapForNewRange ()
+    {
+      if (m_scrapConsolidated) {
+        m_scrapConsolidationRange = new ConsolidationRange { Range = this.DateTimeRange, Valid = true };
+        m_scrapConsolidated = false;
+      }
+      // else keep the current consolidation range, valid or not
+    }
+
+    /// <summary>
+    /// The scrap counters must be fully recomputed, for example after a change of operation
+    /// </summary>
+    void InvalidateScrapFully ()
+    {
+      m_scrapConsolidated = false;
+      m_scrapConsolidationRange = new ConsolidationRange ();
+    }
+
+    /// <summary>
+    /// Consolidate the scrap counters if needed
+    /// </summary>
+    internal protected virtual void EnsureScrapConsolidated ()
+    {
+      if (!m_scrapConsolidated) {
+        ConsolidateScrap ();
+      }
+    }
+
+    /// <summary>
+    /// Consolidate the scrap counters
+    ///
+    /// The scrap counters are the sum of the completed scrap reports (analysis status Done) that are included in the slot,
+    /// that are not updated by another completed report and whose operation is the operation of the slot.
+    /// A scrap report that is not completed yet is added by its own analysis (<see cref="ScrapReport.MakeAnalysis"/>).
+    /// A scrap report that overlaps the slot but that is not included in it (it overlaps several operation slots),
+    /// or whose operation is another one, does not apply: it is discarded (with an analysis log, once).
+    ///
+    /// If the range was only changed (same operation), only the reports in the changed periods are considered:
+    /// a report is counted in the new range if it is included in it, and it was counted in the previous range if it was included in it.
+    /// Else all the reports of the slot are considered.
+    /// Nothing is written in the scrap reports, so this can be run several times
+    /// </summary>
+    public virtual void ConsolidateScrap ()
+    {
+      if (IsInTheFuture (this.DateTimeRange)) {
+        ResetScrapCounters ();
+      }
+      else if (m_scrapConsolidationRange.Valid && m_scrapConsolidationRange.Range.Overlaps (this.DateTimeRange)) {
+        ConsolidateScrapChangedPeriods (m_scrapConsolidationRange.Range);
+      }
+      else {
+        ResetScrapCounters ();
+        var scrapReports = ModelDAOHelper.DAOFactory.ScrapReportDAO
+          .FindCompletedNotUpdatedOverlapping (this.Machine, this.DateTimeRange);
+        SetActive ();
+        foreach (var scrapReport in scrapReports) {
+          if (IsScrapReportApplicable (scrapReport)) {
+            AddScrapReport (scrapReport);
+          }
+          else {
+            LogScrapReportDiscard (scrapReport);
+          }
+        }
+      }
+      m_scrapConsolidated = true;
+      m_scrapConsolidationRange = new ConsolidationRange ();
+    }
+
+    /// <summary>
+    /// Consolidate the scrap counters considering only the periods that changed since the previous range
+    /// </summary>
+    /// <param name="previousRange">range the scrap counters were consolidated for, with the same operation, that overlaps the current range</param>
+    void ConsolidateScrapChangedPeriods (UtcDateTimeRange previousRange)
+    {
+      var changedPeriods = new List<UtcDateTimeRange> ();
+      if (!Bound.Equals<DateTime> (previousRange.Lower, this.DateTimeRange.Lower)) {
+        var (min, max) = (Bound.Compare<DateTime> (previousRange.Lower, this.DateTimeRange.Lower) < 0)
+          ? (previousRange.Lower, this.DateTimeRange.Lower)
+          : (this.DateTimeRange.Lower, previousRange.Lower);
+        changedPeriods.Add (new UtcDateTimeRange (min, new UpperBound<DateTime> (max.HasValue ? max.Value : (DateTime?)null)));
+      }
+      if (!Bound.Equals<DateTime> (previousRange.Upper, this.DateTimeRange.Upper)) {
+        var (min, max) = (Bound.Compare<DateTime> (previousRange.Upper, this.DateTimeRange.Upper) < 0)
+          ? (previousRange.Upper, this.DateTimeRange.Upper)
+          : (this.DateTimeRange.Upper, previousRange.Upper);
+        changedPeriods.Add (new UtcDateTimeRange (new LowerBound<DateTime> (min.HasValue ? min.Value : (DateTime?)null), max));
+      }
+
+      var scrapReports = changedPeriods
+        .Where (p => !p.IsEmpty ())
+        .SelectMany (p => ModelDAOHelper.DAOFactory.ScrapReportDAO.FindCompletedNotUpdatedOverlapping (this.Machine, p))
+        .GroupBy (r => ((Lemoine.Collections.IDataWithId<long>)r).Id)
+        .Select (g => g.First ());
+      SetActive ();
+      foreach (var scrapReport in scrapReports) {
+        var sameOperation = object.Equals (scrapReport.Operation, this.Operation);
+        var inPrevious = sameOperation && previousRange.ContainsRange (scrapReport.DateTimeRange);
+        var inNew = sameOperation && IsScrapReportIn (scrapReport);
+        if (inNew && !inPrevious) {
+          AddScrapReport (scrapReport, +1);
+        }
+        else if (inPrevious && !inNew) {
+          AddScrapReport (scrapReport, -1);
+        }
+        if (!inNew && this.DateTimeRange.Overlaps (scrapReport.DateTimeRange)) {
+          LogScrapReportDiscard (scrapReport);
+        }
+      }
+      if (GetLogger ().IsDebugEnabled) {
+        GetLogger ().Debug ($"ConsolidateScrapChangedPeriods: previous range {previousRange} => {this.DateTimeRange}, {changedPeriods.Count} changed periods");
+      }
+    }
+
+    /// <summary>
+    /// A scrap report overlaps the slot but does not apply to it: log it (once)
+    /// </summary>
+    /// <param name="scrapReport">not null</param>
+    void LogScrapReportDiscard (IScrapReport scrapReport)
+    {
+      var discardReason = IsScrapReportIn (scrapReport)
+        ? $"the operation of the period is now {((Lemoine.Collections.IDataWithId)this.Operation)?.Id.ToString () ?? "none"} instead of {((Lemoine.Collections.IDataWithId)scrapReport.Operation)?.Id}"
+        : $"its range {scrapReport.DateTimeRange} is not included in a single operation slot, for example {this.DateTimeRange}";
+      if (scrapReport is ScrapReport persistentScrapReport) {
+        persistentScrapReport.LogDiscard (LogLevel.WARN, discardReason);
+      }
+      else {
+        GetLogger ().Fatal ($"LogScrapReportDiscard: unexpected type of scrap report {scrapReport.GetType ()}");
       }
     }
 
@@ -614,6 +872,20 @@ namespace Lemoine.GDBPersistentClasses
       clone.m_averageCycleTime = null;
       clone.m_adjustedCycles = 0;
       clone.m_adjustedQuantity = 0;
+
+      // Keep the scrap counters with the range they were consolidated for,
+      // so that only the changed periods are considered once the range of the clone is set
+      if (this.m_scrapConsolidated) {
+        clone.m_scrapConsolidationRange = new ConsolidationRange { Range = this.DateTimeRange, Valid = true };
+      }
+      else if (this.m_scrapConsolidationRange.Valid) {
+        clone.m_scrapConsolidationRange = (ConsolidationRange)this.m_scrapConsolidationRange.Clone ();
+      }
+      else {
+        clone.ResetScrapCounters ();
+        clone.m_scrapConsolidationRange = new ConsolidationRange ();
+      }
+      clone.m_scrapConsolidated = false;
       return clone;
     }
 
@@ -668,6 +940,13 @@ namespace Lemoine.GDBPersistentClasses
           }
         } // End if new begin date/time
       } // End Future VS present / past
+
+      // Recompute the scrap counters, except if the slot is only extended to the future,
+      // because there is no scrap report there yet
+      if (!Bound.Equals<DateTime> (newRange.Lower, this.DateTimeRange.Lower)
+          || (Bound.Compare<DateTime> (newRange.Upper, this.DateTimeRange.Upper) < 0)) {
+        InvalidateScrapForNewRange ();
+      }
 
       // Apply in all the cases the parent method
       using (ChangeTracker changeTracker = new ChangeTracker (this)) {
@@ -780,6 +1059,11 @@ namespace Lemoine.GDBPersistentClasses
           GetLogger ().Debug ("Consolidate: " +
                               "consolidate the production properties");
           ConsolidateProduction ();
+        }
+
+        if (!m_scrapConsolidated) {
+          GetLogger ().Debug ("Consolidate: consolidate the scrap counters");
+          ConsolidateScrap ();
         }
       }
 
@@ -1299,7 +1583,25 @@ namespace Lemoine.GDBPersistentClasses
         // Note: the number of partial cycles and of full cycles is managed by the accumulators
       }
 
+      // Sum the scrap counters: a scrap report applies only to a single initial operation slot,
+      // so the reports of the merged slot are the reports of the two slots
+      // (only if both are consolidated, else full recompute)
+      bool scrapConsolidated = this.m_scrapConsolidated && nextOperationSlot.m_scrapConsolidated;
+      m_reportedCycles += nextOperationSlot.m_reportedCycles;
+      m_reportedParts += nextOperationSlot.m_reportedParts;
+      m_validParts += nextOperationSlot.m_validParts;
+      m_setupParts += nextOperationSlot.m_setupParts;
+      m_scrapParts += nextOperationSlot.m_scrapParts;
+      m_fixableParts += nextOperationSlot.m_fixableParts;
+
       this.EndDateTime = nextSlot.EndDateTime;
+      if (scrapConsolidated) {
+        m_scrapConsolidated = true;
+        m_scrapConsolidationRange.Valid = false;
+      }
+      else {
+        InvalidateScrapFully ();
+      }
 
       if (AnalysisConfigHelper.OperationSlotRunTime) {
         m_activityConsolidated = false;

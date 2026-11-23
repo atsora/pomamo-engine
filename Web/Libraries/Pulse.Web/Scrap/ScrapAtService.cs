@@ -149,7 +149,7 @@ namespace Pulse.Web.Scrap
           }
           bool currentOperationSlot = recent && (operationSlotDateTime <= operationSlot.DateTimeRange.Upper);
           var existingReports = await ModelDAOHelper.DAOFactory.ScrapReportDAO
-            .FindOverlapsRange (machine, operationSlot.DateTimeRange);
+            .FindOverlapsRangeAsync (machine, operationSlot.DateTimeRange);
           if (!existingReports.Any ()) {
             response.ExtendedRange = operationSlot.DateTimeRange.ToString (ConvertDTO.DateTimeUtcToIsoString);
             response.Current = currentOperationSlot;
@@ -217,7 +217,7 @@ namespace Pulse.Web.Scrap
               response.ScrapCount = matchingReport.NbScrap;
               response.FixableCount = matchingReport.NbFixable;
               response.UnclassifiedCount = matchingReport.NbParts
-                - matchingReport.NbValid - matchingReport.NbSetup - matchingReport.NbSetup - matchingReport.NbScrap - matchingReport.NbFixable;
+                - matchingReport.NbValid - matchingReport.NbSetup - matchingReport.NbScrap - matchingReport.NbFixable;
               response.ScrapReport = new ScrapReportDTO ();
               response.ScrapReport.Id = matchingReport.Id;
               response.ScrapReport.Reasons = matchingReport.Reasons

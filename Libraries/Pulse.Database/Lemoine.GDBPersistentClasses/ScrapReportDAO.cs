@@ -101,7 +101,63 @@ namespace Lemoine.GDBPersistentClasses
       }
     }
 
-    public async Task<IEnumerable<IScrapReport>> FindOverlapsRange (IMachine machine, UtcDateTimeRange range)
+    /// <summary>
+    /// <see cref="IScrapReportDAO"/>
+    /// </summary>
+    /// <summary>
+    /// Analysis statuses of a completed scrap report
+    /// </summary>
+    static readonly AnalysisStatus[] COMPLETED_STATUSES = new AnalysisStatus[] { AnalysisStatus.Done, AnalysisStatus.DonePurge };
+
+    /// <summary>
+    /// <see cref="IScrapReportDAO"/>
+    /// </summary>
+    public IList<IScrapReport> FindCompletedNotUpdatedOverlapping (IMachine machine, UtcDateTimeRange range)
+    {
+      Debug.Assert (null != machine);
+      Debug.Assert (!range.IsEmpty ());
+
+      // Completed reports that update the report r
+      var updatingReports = DetachedCriteria.For<ScrapReport> ("u")
+        .Add (Restrictions.Eq ("u.Machine.Id", machine.Id))
+        .Add (Restrictions.EqProperty ("u.ReportUpdate.Id", "r.Id"))
+        .Add (Restrictions.In ("u.AnalysisStatus", COMPLETED_STATUSES))
+        .SetProjection (Projections.Id ());
+
+      return NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<ScrapReport> ("r")
+        .Add (Restrictions.Eq ("Machine.Id", machine.Id))
+        // Gist index on (machineid, scrapreportdatetimerange)
+        .Add (OverlapRange (range))
+        .Add (Restrictions.In ("AnalysisStatus", COMPLETED_STATUSES))
+        .Add (Subqueries.NotExists (updatingReports))
+        .List<IScrapReport> ();
+    }
+
+    /// <summary>
+    /// <see cref="IScrapReportDAO"/>
+    /// </summary>
+    public bool IsCompletedAndNotUpdated (IScrapReport scrapReport)
+    {
+      Debug.Assert (null != scrapReport);
+
+      if (!COMPLETED_STATUSES.Contains (scrapReport.AnalysisStatus)) {
+        return false;
+      }
+      var nbUpdatingReports = NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<ScrapReport> ()
+        .Add (Restrictions.Eq ("Machine.Id", scrapReport.Machine.Id))
+        .Add (Restrictions.Eq ("ReportUpdate.Id", ((Lemoine.Collections.IDataWithId<long>)scrapReport).Id))
+        .Add (Restrictions.In ("AnalysisStatus", COMPLETED_STATUSES))
+        .SetProjection (Projections.RowCount ())
+        .UniqueResult<int> ();
+      return 0 == nbUpdatingReports;
+    }
+
+    /// <summary>
+    /// <see cref="IScrapReportDAO"/>
+    /// </summary>
+    public async Task<IEnumerable<IScrapReport>> FindOverlapsRangeAsync (IMachine machine, UtcDateTimeRange range)
     {
       var scrapReports = await NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<ScrapReport> ()

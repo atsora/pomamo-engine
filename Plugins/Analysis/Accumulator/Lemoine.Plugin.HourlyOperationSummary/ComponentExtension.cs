@@ -51,8 +51,8 @@ namespace Lemoine.Plugin.HourlyOperationSummary
                                           operationSummary.Shift, operationSummary.LocalDateHour);
             created.Duration = operationSummary.Duration;
             created.TotalCycles = operationSummary.TotalCycles;
-            created.AdjustedCycles = created.AdjustedCycles;
-            created.AdjustedQuantity = created.AdjustedQuantity;
+            created.AdjustedCycles = operationSummary.AdjustedCycles;
+            created.AdjustedQuantity = operationSummary.AdjustedQuantity;
             new HourlyOperationSummaryDAO ()
               .MakePersistent (created);
           }

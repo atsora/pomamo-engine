@@ -110,6 +110,10 @@ namespace Pulse.Web.Scrap
               return new ErrorDTO ("No operation slots for scrap report", ErrorStatus.WrongRequestParameter);
             }
             var operationSlot = operationSlots.Single ();
+            if (!operationSlot.DateTimeRange.ContainsRange (range)) {
+              log.Error ($"Post: range {range} not included in the operation slot {operationSlot.DateTimeRange}");
+              return new ErrorDTO ("Scrap report not included in a single operation slot", ErrorStatus.WrongRequestParameter);
+            }
 
             var scrapReport = ModelDAOHelper.ModelFactory.CreateScrapReport (operationSlot, range);
             if (0 < deserializedResult.Id) {
@@ -117,19 +121,31 @@ namespace Pulse.Web.Scrap
                 .FindById (deserializedResult.Id, machine);
               scrapReport.ReportUpdate = updateScapReport;
             }
+            // Cycles and parts of the report: same computation as in the ScrapAt service
+            var cycles = await ModelDAOHelper.DAOFactory.OperationCycleDAO
+              .FindOverlapsRangeAsync (machine, range);
+            var adjustedCycles = cycles.Where (x => x.Quantity.HasValue).ToList ();
+            scrapReport.NbCycles = cycles.Count ();
+            scrapReport.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (scrapReport.NbCycles - adjustedCycles.Count)
+              + adjustedCycles.Sum (x => x.Quantity.Value);
             scrapReport.NbValid = deserializedResult.ValidCount;
+            scrapReport.NbSetup = deserializedResult.SetupCount;
+            scrapReport.NbFixable = deserializedResult.FixableCount;
             scrapReport.Details = deserializedResult.Details;
-            await ModelDAOHelper.DAOFactory.ScrapReportDAO.MakePersistentAsync (scrapReport);
 
-            IList<IScrapReasonReport> reasons = new List<IScrapReasonReport> ();
             foreach (var r in deserializedResult.Reasons) {
               var nonConformanceReason = await ModelDAOHelper.DAOFactory.NonConformanceReasonDAO
                 .FindByIdAsync (r.Id);
-              reasons.Add (ModelDAOHelper.ModelFactory.CreateScrapReasonReport (scrapReport, nonConformanceReason, r.Number));
+              if (nonConformanceReason is null) {
+                log.Error ($"Post: unknown non conformance reason id {r.Id}");
+                return new ErrorDTO ($"Unknown non conformance reason {r.Id}", ErrorStatus.WrongRequestParameter);
+              }
+              scrapReport.Reasons.Add (ModelDAOHelper.ModelFactory.CreateScrapReasonReport (scrapReport, nonConformanceReason, r.Number));
             }
-            scrapReport.Reasons = reasons;
+            scrapReport.NbScrap = deserializedResult.Reasons.Sum (r => r.Number);
 
-            // TODO: scrapReport and details...
+            // Note: the reasons are saved with the report (cascade)
+            await ModelDAOHelper.DAOFactory.ScrapReportDAO.MakePersistentAsync (scrapReport);
 
             revision.AddModification (scrapReport);
           }

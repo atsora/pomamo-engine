@@ -82,5 +82,23 @@
     <property name="ProductionDuration"
               type="Lemoine.NHibernateTypes.SecondsAsTimeSpanType, Lemoine.Database"
               column="operationslotproductionduration" />
+    <property name="ReportedCycles" column="operationslotreportedcycles"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="ReportedParts" column="operationslotreportedparts"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="ValidParts" column="operationslotvalidparts"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="SetupParts" column="operationslotsetupparts"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="ScrapParts" column="operationslotscrapparts"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
+    <property name="FixableParts" column="operationslotfixableparts"
+              access="nosetter.camelcase-m-underscore"
+              not-null="true" />
   </class>
 </hibernate-mapping>

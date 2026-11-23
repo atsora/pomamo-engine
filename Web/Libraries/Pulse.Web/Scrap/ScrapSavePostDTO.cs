@@ -43,6 +43,14 @@ namespace Pulse.Web.Scrap
     [DefaultValue (0)]
     public int ValidCount { get; set; } = 0;
 
+    [ApiMember (Name = "SetupCount", Description = "Number of set-up parts", ParameterType = "post", DataType = "int", IsRequired = false)]
+    [DefaultValue (0)]
+    public int SetupCount { get; set; } = 0;
+
+    [ApiMember (Name = "FixableCount", Description = "Number of parts that can be fixed", ParameterType = "post", DataType = "int", IsRequired = false)]
+    [DefaultValue (0)]
+    public int FixableCount { get; set; } = 0;
+
     [ApiMember (Name = "Details", Description = "Additional comment", ParameterType = "post", DataType = "String", IsRequired = false)]
     [DefaultValue ("")]
     public string Details { get; set; } = "";
