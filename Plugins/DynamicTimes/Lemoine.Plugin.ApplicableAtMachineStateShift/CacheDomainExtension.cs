@@ -63,6 +63,7 @@ namespace Lemoine.Plugin.ApplicableAtMachineStateShift
       case "taskassociation":
       case "productioninformation":
       case "nonconformancereport":
+      case "scrapreport":
         return new List<string> { };
       default:
         log.Error ($"GetPrefixexByMachine: unknown domain {domain}");

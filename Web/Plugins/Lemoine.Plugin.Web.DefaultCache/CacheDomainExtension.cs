@@ -187,6 +187,11 @@ namespace Lemoine.Plugin.Web.DefaultCache
             "(Operation/)?OperationProgress",
             "GetProductionMachiningStatus"
           };
+      case "scrapreport":
+        return new List<string> {
+            "Scrap/CurrentShift",
+            "Scrap/?At"
+          };
       case "productioninformation":
       case "nonconformancereport":
         return new List<string> { };

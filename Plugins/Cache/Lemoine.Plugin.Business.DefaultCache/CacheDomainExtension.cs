@@ -198,6 +198,7 @@ namespace Lemoine.Plugin.Business.DefaultCache
         };
         case "productioninformation":
         case "nonconformancereport":
+        case "scrapreport":
         case "shiftassociation":
         case "serialnumberstamp":
           return new List<string> { };
@@ -308,6 +309,7 @@ namespace Lemoine.Plugin.Business.DefaultCache
         case "reasonassociation":
         case "productioninformation":
         case "nonconformancereport":
+        case "scrapreport":
         case "shiftassociation":
         case "serialnumberstamp":
         case "manufacturingorderassociation":
