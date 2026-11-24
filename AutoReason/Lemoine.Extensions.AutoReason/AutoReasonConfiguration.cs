@@ -57,6 +57,13 @@ namespace Lemoine.Extensions.AutoReason
     public string DefaultReasonTranslationValue { get; set; }
 
     /// <summary>
+    /// Optional translations of the default reason in other locales, by locale (for example fr or de).
+    /// Considered only if <see cref="DefaultReasonTranslationKey"/> is set.
+    /// They are added in the translation table if missing, an existing translation is never overwritten
+    /// </summary>
+    public IDictionary<string, string> DefaultReasonTranslations { get; set; }
+
+    /// <summary>
     /// Constructor
     /// </summary>
     public AutoReasonConfiguration ()
