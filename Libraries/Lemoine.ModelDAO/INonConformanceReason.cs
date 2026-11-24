@@ -41,5 +41,21 @@ namespace Lemoine.Model
     /// </summary>
     bool DetailsRequired { get ; set ; }
 
+    /// <summary>
+    /// Color, in #RRGGBB format
+    ///
+    /// not null (default: #FF8000)
+    /// </summary>
+    string Color { get; set; }
+
+    /// <summary>
+    /// Display priority: the reasons are sorted by ascending display priority, then by display
+    /// </summary>
+    double? DisplayPriority { get; set; }
+
+    /// <summary>
+    /// Category: scrap or fixable part
+    /// </summary>
+    NonConformanceReasonCategory Category { get; set; }
   }
 }

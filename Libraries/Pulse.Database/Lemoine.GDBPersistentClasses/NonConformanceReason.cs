@@ -109,7 +109,25 @@ namespace Lemoine.GDBPersistentClasses
     public virtual bool DetailsRequired {
       get { return this.m_detailsrequired; }
       set { this.m_detailsrequired = value; }
-    }    
+    }
+
+    /// <summary>
+    /// <see cref="INonConformanceReason"/>
+    /// </summary>
+    [XmlAttribute ("Color")]
+    public virtual string Color { get; set; } = "#FF8000";
+
+    /// <summary>
+    /// <see cref="INonConformanceReason"/>
+    /// </summary>
+    [XmlIgnore]
+    public virtual double? DisplayPriority { get; set; }
+
+    /// <summary>
+    /// <see cref="INonConformanceReason"/>
+    /// </summary>
+    [XmlAttribute ("Category")]
+    public virtual NonConformanceReasonCategory Category { get; set; } = NonConformanceReasonCategory.Scrap;
     
     /// <summary>
     ///   Indicates whether the current object

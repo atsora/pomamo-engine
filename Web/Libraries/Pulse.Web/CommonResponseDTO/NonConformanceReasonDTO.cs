@@ -47,10 +47,23 @@ namespace Pulse.Web.CommonResponseDTO
 
     /// <summary>
     /// Color
-    /// 
-    /// Note: this will be replaced soon by the reason group color
     /// </summary>
     public string Color { get; set; }
+
+    /// <summary>
+    /// Code (omitted if none)
+    /// </summary>
+    public string Code { get; set; }
+
+    /// <summary>
+    /// Category: Scrap or Fixable
+    /// </summary>
+    public string Category { get; set; }
+
+    /// <summary>
+    /// Are some details required when the reason is used ?
+    /// </summary>
+    public bool DetailsRequired { get; set; }
   }
 
   /// <summary>
@@ -68,12 +81,14 @@ namespace Pulse.Web.CommonResponseDTO
       var reasonDTO = new NonConformanceReasonDTO ();
       reasonDTO.Id = nonConformanceReason.Id;
       reasonDTO.Display = nonConformanceReason.Display;
-      // TODO: ...
-      /*
-      reasonDTO.LongDisplay = nonConformanceReason.LongDisplay;
-      reasonDTO.Description = nonConformanceReason.DescriptionOrTranslation;
+      reasonDTO.Description = nonConformanceReason.Description;
+      reasonDTO.LongDisplay = string.IsNullOrEmpty (nonConformanceReason.Description)
+        ? nonConformanceReason.Display
+        : $"{nonConformanceReason.Display}: {nonConformanceReason.Description}";
       reasonDTO.Color = nonConformanceReason.Color;
-      */
+      reasonDTO.Code = nonConformanceReason.Code;
+      reasonDTO.Category = nonConformanceReason.Category.ToString ();
+      reasonDTO.DetailsRequired = nonConformanceReason.DetailsRequired;
       return reasonDTO;
     }
 

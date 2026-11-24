@@ -21,5 +21,8 @@
               type="Lemoine.NHibernateTypes.StringEmptyIsNullType, Lemoine.Database" />
     <property name="DetailsRequired"
               column="nonconformancereasondetailsrequired" not-null="true" />
+    <property name="Color" column="nonconformancereasoncolor" not-null="true" />
+    <property name="DisplayPriority" column="nonconformancereasondisplaypriority" />
+    <property name="Category" column="nonconformancereasoncategory" not-null="true" />
   </class>
 </hibernate-mapping>
