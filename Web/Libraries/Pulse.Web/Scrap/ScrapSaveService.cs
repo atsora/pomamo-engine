@@ -99,6 +99,10 @@ namespace Pulse.Web.Scrap
             var deserializedResult = PostDTO.Deserialize<ScrapSavePostDTO> (m_body);
 
             var range = new UtcDateTimeRange (deserializedResult.Range);
+            if (range.IsEmpty () || !range.Lower.HasValue || !range.Upper.HasValue) {
+              log.Error ($"Post: range {range} is empty or not bounded");
+              return new ErrorDTO ("The range of a scrap report must be bounded", ErrorStatus.WrongRequestParameter);
+            }
             var operationSlots = await ModelDAOHelper.DAOFactory.OperationSlotDAO
               .FindOverlapsRangeAsync (machine, range);
             if (1 < operationSlots.Count) {
@@ -115,19 +119,48 @@ namespace Pulse.Web.Scrap
               return new ErrorDTO ("Scrap report not included in a single operation slot", ErrorStatus.WrongRequestParameter);
             }
 
-            var scrapReport = ModelDAOHelper.ModelFactory.CreateScrapReport (operationSlot, range);
+            // The dates of a report never change: an update is a new report with the same range,
+            // which replaces the latest version of the report on this range
+            // (the version that was displayed may have been replaced since: the latest one is considered)
+            var activeReports = (await ModelDAOHelper.DAOFactory.ScrapReportDAO
+              .FindOverlapsRangeAsync (machine, range))
+              .ToList ();
+            IScrapReport updatedReport = null;
             if (0 < deserializedResult.Id) {
-              var updateScapReport = ModelDAOHelper.DAOFactory.ScrapReportDAO
+              var displayedReport = ModelDAOHelper.DAOFactory.ScrapReportDAO
                 .FindById (deserializedResult.Id, machine);
-              scrapReport.ReportUpdate = updateScapReport;
+              if (displayedReport is null) {
+                log.Error ($"Post: unknown scrap report id {deserializedResult.Id}");
+                return new ErrorDTO ($"Unknown scrap report {deserializedResult.Id}", ErrorStatus.WrongRequestParameter);
+              }
+              if (!object.Equals (displayedReport.DateTimeRange, range)) {
+                log.Error ($"Post: range {range} is not the range {displayedReport.DateTimeRange} of the updated report {deserializedResult.Id}");
+                return new ErrorDTO ("The range of a scrap report can't be changed", ErrorStatus.WrongRequestParameter);
+              }
+              updatedReport = activeReports
+                .Where (x => object.Equals (x.DateTimeRange, range))
+                .OrderByDescending (x => x.Id)
+                .FirstOrDefault () ?? displayedReport;
             }
-            // Cycles and parts of the report: same computation as in the ScrapAt service
-            var cycles = await ModelDAOHelper.DAOFactory.OperationCycleDAO
-              .FindOverlapsRangeAsync (machine, range);
-            var adjustedCycles = cycles.Where (x => x.Quantity.HasValue).ToList ();
-            scrapReport.NbCycles = cycles.Count ();
-            scrapReport.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (scrapReport.NbCycles - adjustedCycles.Count)
-              + adjustedCycles.Sum (x => x.Quantity.Value);
+            // A new report must not overlap an existing report, an update must not overlap the reports of other ranges
+            var overlappingReport = activeReports
+              .FirstOrDefault (x => (updatedReport is null) || !object.Equals (x.DateTimeRange, range));
+            if (overlappingReport is not null) {
+              log.Error ($"Post: range {range} overlaps the scrap report {overlappingReport.Id} {overlappingReport.DateTimeRange}");
+              return new ErrorDTO ("The scrap report overlaps another scrap report", ErrorStatus.WrongRequestParameter);
+            }
+
+            // Cycles and parts of the report: same computation as in the ScrapAt service,
+            // the completed cycles whose end is in the range
+            var cycles = await ScrapReportCycles.FindAsync (machine, range.Lower.Value, range.Upper.Value);
+            if (!cycles.Any ()) {
+              log.Error ($"Post: no completed cycle in {range}");
+              return new ErrorDTO ("No completed cycle in the period of the scrap report", ErrorStatus.WrongRequestParameter);
+            }
+            var scrapReport = ModelDAOHelper.ModelFactory.CreateScrapReport (operationSlot, range);
+            scrapReport.ReportUpdate = updatedReport;
+            scrapReport.NbCycles = cycles.Count;
+            scrapReport.NbParts = ScrapReportCycles.GetNbParts (operationSlot.Operation, cycles);
             scrapReport.NbValid = deserializedResult.ValidCount;
             scrapReport.Details = deserializedResult.Details;
 
