@@ -56,7 +56,7 @@ namespace Pulse.Web.CommonResponseDTO
     public string Code { get; set; }
 
     /// <summary>
-    /// Category: Scrap or Fixable
+    /// Category: Scrap, Fixable or Setup
     /// </summary>
     public string Category { get; set; }
 

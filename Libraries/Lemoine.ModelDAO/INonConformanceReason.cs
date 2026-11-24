@@ -54,7 +54,7 @@ namespace Lemoine.Model
     double? DisplayPriority { get; set; }
 
     /// <summary>
-    /// Category: scrap or fixable part
+    /// Category: scrap, fixable or set-up part
     /// </summary>
     NonConformanceReasonCategory Category { get; set; }
   }

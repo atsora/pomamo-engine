@@ -129,13 +129,14 @@ namespace Pulse.Web.Scrap
             scrapReport.NbParts = operationSlot.Operation.GetTotalNumberOfIntermediateWorkPieces () * (scrapReport.NbCycles - adjustedCycles.Count)
               + adjustedCycles.Sum (x => x.Quantity.Value);
             scrapReport.NbValid = deserializedResult.ValidCount;
-            scrapReport.NbSetup = deserializedResult.SetupCount;
             scrapReport.Details = deserializedResult.Details;
 
             // Scrap parts: the reasons of category Scrap
             // Fixable parts: the reasons of category Fixable, plus the optional FixableCount (parts without reason)
+            // Set-up parts: the reasons of category Setup, plus the optional SetupCount (parts without reason)
             int nbScrap = 0;
             int nbFixable = deserializedResult.FixableCount;
+            int nbSetup = deserializedResult.SetupCount;
             foreach (var r in deserializedResult.Reasons) {
               var nonConformanceReason = await ModelDAOHelper.DAOFactory.NonConformanceReasonDAO
                 .FindByIdAsync (r.Id);
@@ -144,15 +145,22 @@ namespace Pulse.Web.Scrap
                 return new ErrorDTO ($"Unknown non conformance reason {r.Id}", ErrorStatus.WrongRequestParameter);
               }
               scrapReport.Reasons.Add (ModelDAOHelper.ModelFactory.CreateScrapReasonReport (scrapReport, nonConformanceReason, r.Number));
-              if (NonConformanceReasonCategory.Fixable == nonConformanceReason.Category) {
-                nbFixable += r.Number;
-              }
-              else {
-                nbScrap += r.Number;
+              switch (nonConformanceReason.Category) {
+                case NonConformanceReasonCategory.Fixable:
+                  nbFixable += r.Number;
+                  break;
+                case NonConformanceReasonCategory.Setup:
+                  nbSetup += r.Number;
+                  break;
+                case NonConformanceReasonCategory.Scrap:
+                default:
+                  nbScrap += r.Number;
+                  break;
               }
             }
             scrapReport.NbScrap = nbScrap;
             scrapReport.NbFixable = nbFixable;
+            scrapReport.NbSetup = nbSetup;
 
             // Note: the reasons are saved with the report (cascade)
             await ModelDAOHelper.DAOFactory.ScrapReportDAO.MakePersistentAsync (scrapReport);
