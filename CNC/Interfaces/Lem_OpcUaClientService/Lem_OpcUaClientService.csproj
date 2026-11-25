@@ -23,7 +23,7 @@
 
   <!-- Only GPL-2.0 compatible projects here: do not add any Apache-2.0 reference -->
   <ItemGroup>
-    <ProjectReference Include="..\..\pomamo-cncmodules\Lemoine.Cnc.OpcUaClient\Lemoine.Cnc.OpcUaClient.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\..\pomamo-cncmodules\Lemoine.Cnc.OpcUaClient\Lemoine.Cnc.OpcUaClient.csproj" AdditionalProperties="Platform=AnyCPU" />
   </ItemGroup>
 
   <ItemGroup>

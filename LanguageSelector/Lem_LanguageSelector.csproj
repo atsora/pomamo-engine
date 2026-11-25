@@ -14,8 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;TargetPlatform=AnyCPU" />
-    <ProjectReference Include="..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="TargetPlatform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.Core\Lemoine.Core.csproj" AdditionalProperties="TargetFramework=netstandard2.0;Platform=AnyCPU" />
+    <ProjectReference Include="..\Libraries\Lemoine.Core.TargetSpecific\Lemoine.Core.TargetSpecific.csproj" AdditionalProperties="Platform=AnyCPU" />
   </ItemGroup>
   
   <ItemGroup>
