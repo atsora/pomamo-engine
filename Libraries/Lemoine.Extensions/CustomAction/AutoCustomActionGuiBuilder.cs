@@ -104,7 +104,7 @@ namespace Lemoine.Extensions.CustomAction
           configuration = this.ConfigurationLoader.LoadConfiguration (parameters);
           IEnumerable<string> errors;
           if (!configuration.IsValid (out errors)) {
-            log.Warn ("LoadConfiguration: the configuration is not valid, skip this instance");
+            log.Error ($"LoadConfiguration: the configuration of instance {association.InstanceName} (id={association.InstanceId}) is not valid, skip this instance, errors: {string.Join ("; ", errors ?? Array.Empty<string> ())}");
           }
           else {
             configurations.Add (configuration);

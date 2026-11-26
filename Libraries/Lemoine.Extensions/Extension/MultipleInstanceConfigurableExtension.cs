@@ -103,7 +103,7 @@ namespace Lemoine.Extensions
 
       IEnumerable<string> errors;
       if (!configuration.IsValid (out errors)) {
-        log.Warn ($"LoadConfiguration: the configuration is not valid, skip this instance, errors={errors}");
+        log.Error ($"LoadConfiguration: the configuration of instance {m_instance.InstanceName} (id={m_instance.InstanceId}) is not valid, skip this instance, errors: {string.Join ("; ", errors ?? Array.Empty<string> ())}");
         return false;
       }
 
