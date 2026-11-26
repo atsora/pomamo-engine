@@ -87,7 +87,15 @@ namespace Lemoine.ModelDAO
     /// <param name="machine"></param>
     /// <returns></returns>
     IMonitoredMachine FindByMachine(IMachine machine);
-    
+
+    /// <summary>
+    /// Find the IMonitoredMachine corresponding to a machine id, null if the machine is not a monitored machine
+    /// Note: this is registered to be cacheable
+    /// </summary>
+    /// <param name="machineId"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IMonitoredMachine> FindByMachineAsync (int machineId);
+
     /// <summary>
     /// Find all IMonitoredMachine ordered by name
     /// </summary>

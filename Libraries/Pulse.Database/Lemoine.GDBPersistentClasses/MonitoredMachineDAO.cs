@@ -219,6 +219,20 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="IMonitoredMachineDAO"/>
+    /// </summary>
+    /// <param name="machineId"></param>
+    /// <returns></returns>
+    public async Task<IMonitoredMachine> FindByMachineAsync (int machineId)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<MonitoredMachine> ()
+        .Add (Restrictions.IdEq (machineId))
+        .SetCacheable (true)
+        .UniqueResultAsync<IMonitoredMachine> ();
+    }
+
+    /// <summary>
     /// Find all IMonitoredMachine ordered by name
     /// 
     /// Note: this is registered to be cacheable
