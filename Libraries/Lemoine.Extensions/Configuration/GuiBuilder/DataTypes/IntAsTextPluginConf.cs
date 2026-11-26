@@ -52,7 +52,7 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
     {
       if (this.Multiple) {
         var o = GetProperty (propertyInfo, configuration);
-        var configurationKeys = (IEnumerable<int>)o;
+        var configurationKeys = (IEnumerable<int>)o ?? Enumerable.Empty<int> (); // null when the property is missing in the configuration
         return string.Join (DEFAULT_SEPARATOR, configurationKeys
           .Select (x => x.ToString ())
           .ToArray ());

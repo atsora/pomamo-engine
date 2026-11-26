@@ -50,12 +50,12 @@ namespace Lemoine.Extensions.Configuration.GuiBuilder.DataTypes
     {
       if (this.Multiple) {
         var o = GetProperty (propertyInfo, configuration);
-        var configurationKeys = (IEnumerable<string>)o;
+        var configurationKeys = (IEnumerable<string>)o ?? Enumerable.Empty<string> (); // null when the property is missing in the configuration
         return configurationKeys.ToListString<string> ();
       }
       else { // !this.Multiple
         var o = GetProperty (propertyInfo, configuration);
-        return o.ToString ();
+        return o?.ToString () ?? "";
       }
     }
 
