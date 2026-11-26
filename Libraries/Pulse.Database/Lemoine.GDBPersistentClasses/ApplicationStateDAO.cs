@@ -132,5 +132,19 @@ SELECT SETVAL('{0}_{1}_seq', CASE WHEN (SELECT maxid FROM maxid) < {2} THEN {2} 
       query.SetParameter ("v", v);
       query.ExecuteUpdate ();
     }
+
+    /// <summary>
+    /// Update directly an application state (asynchronous version)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="v"></param>
+    public async System.Threading.Tasks.Task UpdateAsync (string key, object v)
+    {
+      var query = NHibernateHelper.GetCurrentSession ()
+        .GetNamedQuery ("ApplicationStateUpdate");
+      query.SetParameter ("key", key);
+      query.SetParameter ("v", v);
+      await query.ExecuteUpdateAsync ();
+    }
   }
 }

@@ -79,6 +79,21 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// Find all associations related to a package
+    /// with an early fetch of the plugin (asynchronous version)
+    /// </summary>
+    /// <param name="package"></param>
+    /// <returns></returns>
+    public async System.Threading.Tasks.Task<IList<IPackagePluginAssociation>> FindByPackageAsync (IPackage package)
+    {
+      return await NHibernateHelper.GetCurrentSession ()
+        .CreateCriteria<PackagePluginAssociation> ()
+        .Add (Restrictions.Eq ("Package", package))
+        .Fetch (SelectMode.Fetch, "Plugin")
+        .ListAsync<IPackagePluginAssociation> ();
+    }
+
+    /// <summary>
     /// Find all associations related to a plugin
     /// with an early fetch of the package.
     /// </summary>

@@ -35,5 +35,13 @@ namespace Lemoine.ModelDAO
     /// <param name="v"></param>
     /// <returns></returns>
     void Update (string key, object v);
+
+    /// <summary>
+    /// Create or update directly an application state value (asynchronous version)
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="v"></param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task UpdateAsync (string key, object v);
   }
 }

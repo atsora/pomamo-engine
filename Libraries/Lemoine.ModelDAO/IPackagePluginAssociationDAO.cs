@@ -40,6 +40,13 @@ namespace Lemoine.ModelDAO
     IList<IPackagePluginAssociation> FindByPackage (IPackage package);
 
     /// <summary>
+    /// Find all the associations of a package, with an early fetch of the plugin (asynchronous version)
+    /// </summary>
+    /// <param name="package">not null</param>
+    /// <returns></returns>
+    Task<IList<IPackagePluginAssociation>> FindByPackageAsync (IPackage package);
+
+    /// <summary>
     /// Find all associations related to a plugin
     /// with an early fetch of the package
     /// </summary>
