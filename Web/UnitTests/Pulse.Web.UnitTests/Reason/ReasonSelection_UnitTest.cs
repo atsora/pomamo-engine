@@ -231,6 +231,12 @@ namespace Pulse.Web.UnitTests.Reason
             Assert.That (withDataSelections.Select (x => x.ClassificationId), Has.One.With.EqualTo ("MST1"));
             Assert.That (withDataSelections.Select (x => x.Display), Has.One.With.EqualTo ("MachineStateTemplateAttended"));
           });
+          var reasonGroupColor = ModelDAOHelper.DAOFactory.ReasonGroupDAO.FindById (1).Color;
+          Assert.Multiple (() => {
+            Assert.That (reasonGroupColor, Is.Not.Empty);
+            Assert.That (withDataSelections.Single ().Color, Is.EqualTo (reasonGroupColor));
+            Assert.That (withDataSelections.Single ().ReasonGroupColor, Is.EqualTo (reasonGroupColor));
+          });
         }
         finally {
           Lemoine.Extensions.ExtensionManager.ClearDeactivate ();

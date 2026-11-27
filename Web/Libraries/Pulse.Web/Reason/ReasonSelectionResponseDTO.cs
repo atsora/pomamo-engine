@@ -209,8 +209,7 @@ namespace Pulse.Web.Reason
           reasonSelectionResponseDTO.Description = string.IsNullOrEmpty (reasonSelection.AlternativeDescription)
             ? ""
             : reasonSelection.AlternativeDescription;
-          reasonSelectionResponseDTO.Color = ColorGenerator.GetColor ("MachineStateTemplate", machineStateTemplate.Id);
-          // TODO: store the color
+          // Color: the one of the reason group, set below
         }
         else {
           log.Fatal ($"Assemble: reason or machineStateTemplate must not be null");
@@ -225,6 +224,11 @@ namespace Pulse.Web.Reason
         reasonSelectionResponseDTO.ReasonGroupLongDisplay = reasonGroup.LongDisplay;
         reasonSelectionResponseDTO.ReasonGroupDescription = reasonGroup.DescriptionOrTranslation;
         reasonSelectionResponseDTO.ReasonGroupColor = reasonGroup.Color;
+        if (null == reason) { // Machine state template: no color of its own, the one of its reason group
+          reasonSelectionResponseDTO.Color = string.IsNullOrEmpty (reasonGroup.Color)
+            ? ColorGenerator.GetColor ("MachineStateTemplate", machineStateTemplate.Id)
+            : reasonGroup.Color;
+        }
 
         reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
         reasonSelectionResponseDTO.NoDetails = reasonSelection.NoDetails;
