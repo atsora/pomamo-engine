@@ -100,6 +100,11 @@ namespace Pulse.Web.Reason
     public string ReasonGroupDescription { get; set; }
 
     /// <summary>
+    /// Color of the reason group
+    /// </summary>
+    public string ReasonGroupColor { get; set; }
+
+    /// <summary>
     /// Id of associated reason group
     /// </summary>
     public int ReasonGroupId { get; set; }
@@ -207,6 +212,7 @@ namespace Pulse.Web.Reason
         reasonSelectionResponseDTO.ReasonGroupDisplay = reasonGroup.Display;
         reasonSelectionResponseDTO.ReasonGroupLongDisplay = reasonGroup.LongDisplay;
         reasonSelectionResponseDTO.ReasonGroupDescription = reasonGroup.DescriptionOrTranslation;
+        reasonSelectionResponseDTO.ReasonGroupColor = reasonGroup.Color;
 
         reasonSelectionResponseDTO.ReasonScore = reasonSelection.ReasonScore;
         reasonSelectionResponseDTO.NoDetails = reasonSelection.NoDetails;
