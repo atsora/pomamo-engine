@@ -149,7 +149,8 @@ namespace Lemoine.ConfigControls
 
     void BindingSourceAddingNew (object sender, AddingNewEventArgs e)
     {
-      e.NewObject = ModelDAOHelper.ModelFactory.CreateComputer("","");
+      // New row: proposed with the local computer
+      e.NewObject = ModelDAOHelper.ModelFactory.CreateComputer (System.Environment.MachineName, System.Net.Dns.GetHostName ());
     }
   }
 }

@@ -629,8 +629,8 @@ namespace Lemoine.GDBPersistentClasses
     public IComputer CreateComputer (string name, string address)
     {
       IComputer computer = new Computer ();
-      computer.Name = System.Environment.MachineName;
-      computer.Address = System.Net.Dns.GetHostName ();
+      computer.Name = name;
+      computer.Address = address;
       return computer;
     }
 
