@@ -42,6 +42,8 @@ namespace Pulse.Web.Scrap
       return bound.Value;
     }
 
+    static bool IsRecent (DateTime at) => DateTime.UtcNow.AddHours (-12) <= at;
+
     /// <summary>
     /// Get the cache time out
     /// </summary>
@@ -50,7 +52,8 @@ namespace Pulse.Web.Scrap
     /// <returns></returns>
     protected override TimeSpan GetCacheTimeOut (string url, ScrapAtRequestDTO request)
     {
-      var cacheTimeSpan = string.IsNullOrEmpty (request.At)
+      // A recent period may still change (cycles, current operation slot)
+      var cacheTimeSpan = (string.IsNullOrEmpty (request.At) || IsRecent (ParseDateTime (request.At)))
         ? CacheTimeOut.CurrentShort.GetTimeSpan ()
         : CacheTimeOut.PastLong.GetTimeSpan ();
       if (log.IsDebugEnabled) {
@@ -107,12 +110,21 @@ namespace Pulse.Web.Scrap
       }
 
       var operationSlotDateTime = at;
-      var recent = current || DateTime.UtcNow.AddHours (-12) <= at;
+      var recent = current || IsRecent (at);
+      // The operation slot that contains this date/time is the current one:
+      // the last operation slot before the operation detection date/time
+      var currentOperationSlotDateTime = DateTime.UtcNow;
+      var operationDetectionStatusRequest = new Lemoine.Business.Operation.OperationDetectionStatus (machine);
+      var operationDetectionStatus = await Lemoine.Business.ServiceProvider.GetAsync (operationDetectionStatusRequest);
+      if (operationDetectionStatus.HasValue) {
+        currentOperationSlotDateTime = operationDetectionStatus.Value.AddSeconds (-1);
+      }
+      else {
+        log.Error ($"GetAsync: operation detection status can't be retrieved");
+      }
       // The cycles after the operation or cycle detection date/time may still change
       DateTime? detectionLimit = null;
       if (recent) {
-        var operationDetectionStatusRequest = new Lemoine.Business.Operation.OperationDetectionStatus (machine);
-        var operationDetectionStatus = await Lemoine.Business.ServiceProvider.GetAsync (operationDetectionStatusRequest);
         if (operationDetectionStatus.HasValue) {
           detectionLimit = operationDetectionStatus.Value;
           if (operationDetectionStatus.Value < at) {
@@ -121,9 +133,6 @@ namespace Pulse.Web.Scrap
             }
             operationSlotDateTime = operationDetectionStatus.Value.AddSeconds (-1);
           }
-        }
-        else {
-          log.Error ($"GetAsync: operation detection status can't be retrieved");
         }
         var cycleDetectionStatusRequest = new Lemoine.Business.Operation.CycleDetectionStatus (machine);
         var cycleDetectionStatus = await Lemoine.Business.ServiceProvider.GetAsync (cycleDetectionStatusRequest);
@@ -157,7 +166,7 @@ namespace Pulse.Web.Scrap
             return new ErrorDTO ("Operation slot with no start",
               ErrorStatus.NotApplicable);
           }
-          bool currentOperationSlot = recent && (operationSlotDateTime <= operationSlot.DateTimeRange.Upper);
+          bool currentOperationSlot = operationSlot.DateTimeRange.ContainsElement (currentOperationSlotDateTime);
           response.SetOperationSlot (operationSlot, currentOperationSlot);
           // Active reports only (not replaced by a newer version), bounded
           var existingReports = (await ModelDAOHelper.DAOFactory.ScrapReportDAO
@@ -231,11 +240,12 @@ namespace Pulse.Web.Scrap
             if (log.IsDebugEnabled) {
               log.Debug ($"GetAsync: no completed cycle to declare in ({lower},{limit}]");
             }
-            // Nothing to declare. The extended range is only for the navigation
+            // Nothing to declare. The extended range is for the display and the navigation,
+            // open when the detection is not yet after the end of the previous report
             response.Range = "";
             response.ExtendedRange = (lower < limit.Value)
               ? new UtcDateTimeRange (lower, limit.Value, "(]").ToString (ConvertDTO.DateTimeUtcToIsoString)
-              : "";
+              : new UtcDateTimeRange (lower, new UpperBound<DateTime> (null), "()").ToString (ConvertDTO.DateTimeUtcToIsoString);
             response.FullCycleCount = 0;
             response.TotalCount = 0;
             return response;
