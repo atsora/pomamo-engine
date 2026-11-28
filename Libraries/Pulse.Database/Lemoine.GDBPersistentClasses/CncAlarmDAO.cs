@@ -265,6 +265,14 @@ namespace Lemoine.GDBPersistentClasses
     }
 
     /// <summary>
+    /// <see cref="ICncAlarmDAO"/>
+    /// </summary>
+    public async System.Threading.Tasks.Task<IList<string>> FindAllCncTypesAsync () =>
+      await NHibernateHelper.GetCurrentSession ()
+        .CreateQuery ("SELECT DISTINCT CncInfo FROM CncAlarm")
+        .ListAsync<string> ();
+
+    /// <summary>
     /// Get all alarms of a particular cnc, after a specific date
     /// The severity is NOT loaded
     /// </summary>

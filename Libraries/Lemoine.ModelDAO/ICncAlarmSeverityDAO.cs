@@ -27,7 +27,15 @@ namespace Lemoine.ModelDAO
     /// <param name="withStatusDisabled">true if we also want the disabled severities</param>
     /// <returns></returns>
     IList<ICncAlarmSeverity> FindByCnc(string cncInfo, bool withStatusDisabled);
-    
+
+    /// <summary>
+    /// Find all ICncAlarmSeverity for a specified cnc type, ordered by name
+    /// </summary>
+    /// <param name="cncInfo"></param>
+    /// <param name="withStatusDisabled">true if we also want the disabled severities</param>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IList<ICncAlarmSeverity>> FindByCncAsync (string cncInfo, bool withStatusDisabled);
+
     /// <summary>
     /// Find a ICncAlarmSeverity with the specified cnc type and name
     /// </summary>

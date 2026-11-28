@@ -124,6 +124,12 @@ namespace Lemoine.ModelDAO
     IList<string> FindAllCncTypes();
 
     /// <summary>
+    /// Get all cnc types that have been found in the alarms
+    /// </summary>
+    /// <returns></returns>
+    System.Threading.Tasks.Task<IList<string>> FindAllCncTypesAsync ();
+
+    /// <summary>
     /// Get all alarms of a particular cnc in a specific range (should not be too large)
     /// The severity is NOT loaded
     /// </summary>

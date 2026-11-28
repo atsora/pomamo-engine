@@ -58,7 +58,16 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="cncInfo"></param>
     /// <param name="withStatusDisabled">true if we also want the disabled severities</param>
     /// <returns></returns>
-    public IList<ICncAlarmSeverity> FindByCnc (string cncInfo, bool withStatusDisabled)
+    public IList<ICncAlarmSeverity> FindByCnc (string cncInfo, bool withStatusDisabled) =>
+      CreateFindByCncCriteria (cncInfo, withStatusDisabled).List<ICncAlarmSeverity> ();
+
+    /// <summary>
+    /// <see cref="ICncAlarmSeverityDAO"/>
+    /// </summary>
+    public async System.Threading.Tasks.Task<IList<ICncAlarmSeverity>> FindByCncAsync (string cncInfo, bool withStatusDisabled) =>
+      await CreateFindByCncCriteria (cncInfo, withStatusDisabled).ListAsync<ICncAlarmSeverity> ();
+
+    static ICriteria CreateFindByCncCriteria (string cncInfo, bool withStatusDisabled)
     {
       var criteria = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<CncAlarmSeverity> ()
@@ -69,7 +78,7 @@ namespace Lemoine.GDBPersistentClasses
         criteria = criteria.Add (Restrictions.In ("Status", new object[] { 0, 1, 2 }));
       }
 
-      return criteria.AddOrder (new Order ("Name", true)).List<ICncAlarmSeverity> ();
+      return criteria.AddOrder (new Order ("Name", true));
     }
 
     IList<string> GetAllCncWithDefaultValues ()
