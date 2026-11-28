@@ -24,9 +24,15 @@ namespace Pulse.Extensions.Web.Reason
     string Name { get; }
 
     /// <summary>
-    /// Values of the option, never null
+    /// Value of the option, not null and not empty
+    ///
+    /// An option is turned on by being carried, always with a value: a reason that does not
+    /// carry it does not have it. An implementation refuses an option with no value
+    ///
+    /// One option carries one value: an option that would need several of them declares
+    /// several options instead
     /// </summary>
-    IEnumerable<string> Values { get; }
+    string Value { get; }
   }
 
   /// <summary>
@@ -51,7 +57,18 @@ namespace Pulse.Extensions.Web.Reason
 
     /// <summary>
     /// The values the option accepts, never null
+    ///
+    /// Empty when the accepted values are not listed
     /// </summary>
     IEnumerable<string> Values { get; }
+
+    /// <summary>
+    /// The option may be set at the creation of a reason
+    ///
+    /// When false, the option is only declared so that a configuration screen may present it
+    /// on the reasons that carry it, these reasons being configured another way (manually for
+    /// example). A creation with this option is refused
+    /// </summary>
+    bool Creatable { get; }
   }
 }
