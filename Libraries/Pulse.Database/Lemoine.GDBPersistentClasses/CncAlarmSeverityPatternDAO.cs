@@ -29,7 +29,16 @@ namespace Lemoine.GDBPersistentClasses
     /// <param name="severity"></param>
     /// <param name="withStatusDisabled">true if we also want the disabled patterns</param>
     /// <returns></returns>
-    public IList<ICncAlarmSeverityPattern> FindBySeverity (ICncAlarmSeverity severity, bool withStatusDisabled)
+    public IList<ICncAlarmSeverityPattern> FindBySeverity (ICncAlarmSeverity severity, bool withStatusDisabled) =>
+      CreateFindBySeverityCriteria (severity, withStatusDisabled).List<ICncAlarmSeverityPattern> ();
+
+    /// <summary>
+    /// <see cref="ICncAlarmSeverityPatternDAO"/>
+    /// </summary>
+    public async System.Threading.Tasks.Task<IList<ICncAlarmSeverityPattern>> FindBySeverityAsync (ICncAlarmSeverity severity, bool withStatusDisabled) =>
+      await CreateFindBySeverityCriteria (severity, withStatusDisabled).ListAsync<ICncAlarmSeverityPattern> ();
+
+    static ICriteria CreateFindBySeverityCriteria (ICncAlarmSeverity severity, bool withStatusDisabled)
     {
       var criteria = NHibernateHelper.GetCurrentSession ()
         .CreateCriteria<CncAlarmSeverityPattern> ()
@@ -40,7 +49,7 @@ namespace Lemoine.GDBPersistentClasses
         criteria = criteria.Add (Restrictions.In ("Status", new object[] { 0, 1, 2 }));
       }
 
-      return criteria.List<ICncAlarmSeverityPattern> ();
+      return criteria;
     }
 
     /// <summary>
