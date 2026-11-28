@@ -40,6 +40,11 @@ namespace Pulse.Extensions.Web.Reason
   /// screen may propose it without knowing the extension
   ///
   /// Any extension may declare a new one; whether an implementation reads it is up to it
+  ///
+  /// The texts (<see cref="Display"/>, <see cref="Description"/> and those of the choices) are
+  /// in the UI culture of the request (<see cref="System.Globalization.CultureInfo.CurrentUICulture"/>),
+  /// evaluated when they are read: an implementation translates them there, and does not keep
+  /// them from a previous read
   /// </summary>
   public interface IReasonConfigAvailableOption
   {
@@ -49,18 +54,27 @@ namespace Pulse.Extensions.Web.Reason
     string Name { get; }
 
     /// <summary>
-    /// Description of the option
+    /// Short label of the option, in the UI culture, not null
+    ///
+    /// The name when there is no better label
+    /// </summary>
+    string Display { get; }
+
+    /// <summary>
+    /// Help text of the option, in the UI culture
+    ///
+    /// It does not quote the values, which have their own label: see <see cref="Choices"/>
     ///
     /// nullable
     /// </summary>
     string Description { get; }
 
     /// <summary>
-    /// The values the option accepts, never null
+    /// The values the option accepts, with their labels, never null
     ///
     /// Empty when the accepted values are not listed
     /// </summary>
-    IEnumerable<string> Values { get; }
+    IEnumerable<IReasonConfigOptionChoice> Choices { get; }
 
     /// <summary>
     /// The option may be set at the creation of a reason
@@ -70,5 +84,31 @@ namespace Pulse.Extensions.Web.Reason
     /// example). A creation with this option is refused
     /// </summary>
     bool Creatable { get; }
+  }
+
+  /// <summary>
+  /// A value a <see cref="IReasonConfigAvailableOption"/> accepts
+  /// </summary>
+  public interface IReasonConfigOptionChoice
+  {
+    /// <summary>
+    /// The value, as <see cref="IReasonConfigOption.Value"/> carries it, not null and not empty
+    /// </summary>
+    string Value { get; }
+
+    /// <summary>
+    /// Label of the value, in the UI culture, not null
+    ///
+    /// For example the name of a machine state template for its id. The value when there is
+    /// no better label
+    /// </summary>
+    string Display { get; }
+
+    /// <summary>
+    /// Help text of the value, in the UI culture
+    ///
+    /// nullable
+    /// </summary>
+    string Description { get; }
   }
 }
